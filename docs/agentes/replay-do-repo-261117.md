@@ -262,7 +262,39 @@ migration e é justamente o item 2.
    `allowed_mime_types` ficariam nulos — o alvo aceitaria upload que produção recusa
    (`call-recordings` tem 100 MB e 12 mime types; `quote-pdfs`, só `application/pdf`).
    Verificado no alvo restaurado: 14 + 2 policies e os 6 buckets idênticos a produção
-   nas 6 colunas de definição; total de policies 1035 = 1035 de produção.
+   nas 6 colunas de definição.
+
+   **Os dois totais de policy não se contradizem, têm escopos diferentes:** a tabela do
+   inventário acima conta **1017**, que são as de `public`/`private`; somando as 18 que
+   vivem em schema de plataforma (16 da aplicação + 2 que o `pg_cron` cria sozinho)
+   chega-se a **1035**, e esse é o total de `pg_policy` tanto no alvo quanto em produção.
+   O inventário de 5329 objetos cobre só `public`/`private`; a verificação desta seção
+   precisou sair desse recorte, por definição.
+
+### A seção 92 não pode abortar a restauração
+
+`CREATE POLICY` exige ser dono da tabela, e em produção `storage.objects` pertence a
+`supabase_storage_admin` e `realtime.messages` a `supabase_realtime_admin` — `postgres`
+não é membro de nenhum dos dois. Com `ON_ERROR_STOP=1`, um único `must be owner of table
+objects` mataria o `psql` **ali**, e tudo o que vem depois nunca rodaria: publicação
+realtime, `REPLICA IDENTITY`, as 1017 policies de `public`/`private`, a normalização de
+ACL, os grants e as foreign keys. O arquivo ficaria pela metade, e em silêncio.
+
+Cada statement da seção roda dentro do seu próprio `BEGIN ... EXCEPTION WHEN
+insufficient_privilege`. Medido num Postgres 16 com as tabelas de plataforma de outro
+dono e a restauração rodando como papel não-dono:
+
+| | sem o `EXCEPTION` | com o `EXCEPTION` |
+|---|---|---|
+| saída do `psql` | **3** (abortou) | **0** |
+| statement seguinte executou | **não** | **sim** |
+| o que foi pulado | — | 6 buckets + 16 policies, cada um com `WARNING` nominal |
+
+Rodando o **mesmo arquivo** depois como dono da tabela: **0 warnings, 16 policies, 6
+buckets**. Ele é idempotente, então a recuperação é reexecutá-lo.
+
+E a falha é segura: o que não instala deixa a tabela com RLS ligada e **sem** policy —
+acesso fechado, não aberto.
 
 Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o bloco de
 verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas

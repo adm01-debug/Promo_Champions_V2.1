@@ -26303,9 +26303,19 @@ $do$;
 -- Guardado por to_regclass: num Postgres avulso sem storage/realtime a secao so avisa.
 -- Privilegio para aplicar: CREATE POLICY exige ser dono da tabela. Em producao storage.objects
 --   pertence a supabase_storage_admin e realtime.messages a supabase_realtime_admin, e o papel
---   postgres nao e membro de nenhum dos dois (pg_has_role(...,'USAGE') = false). Restaure a
---   Parte 2 com supabase_admin ou com o dono da tabela; a Parte 1 roda como postgres (tem
---   rolbypassrls e INSERT/UPDATE em storage.buckets).
+--   postgres nao e membro de nenhum dos dois (pg_has_role(...,'USAGE') = false). A Parte 1 roda
+--   como postgres (tem rolbypassrls e INSERT/UPDATE em storage.buckets).
+-- POR QUE ESTA SECAO NAO ABORTA A RESTAURACAO: cada statement roda dentro do seu proprio
+--   BEGIN ... EXCEPTION WHEN insufficient_privilege. Sem isso, um unico 'must be owner of
+--   table objects' com ON_ERROR_STOP=1 mataria o psql AQUI e as secoes seguintes nunca
+--   rodariam — publicacao realtime, replica identity, RLS de public/private, normalizacao de
+--   ACL, grants e foreign keys. O arquivo continua sendo um comando so.
+-- O QUE FAZER SE ALGO FOR PULADO: cada item pulado sai como WARNING com o nome, e o fim de
+--   cada bloco avisa quantos foram. Para instalar os que faltam, rode SO ESTE ARQUIVO de novo
+--   com o dono da tabela (ele e idempotente):
+--     psql -v ON_ERROR_STOP=1 -U supabase_admin -f 92-objetos-app-plataforma.sql
+--   Enquanto nao rodar, a tabela fica com RLS ligada e sem as policies da aplicacao: o acesso
+--   fica FECHADO, nao aberto. Falha segura.
 -- NAO VERIFICADO: se o runner de migrations do Supabase contorna essa checagem de dono. As 16
 --   policies existem em producao criadas por migration do repo, mas DDL em producao e proibido
 --   aqui, entao a checagem nao foi exercitada.
@@ -26328,16 +26338,34 @@ $do$;
 --   sem tocar em created_at/owner nem nos objetos ja gravados.
 
 DO $do$
+DECLARE
+  r      record;
+  ok     int := 0;
+  pulou  int := 0;
 BEGIN
-  IF to_regclass('storage.buckets') IS NOT NULL THEN
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('avatars', 'avatars', true, false, 5242880, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('call-recordings', 'call-recordings', false, false, 104857600, ARRAY['audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/x-m4a', 'audio/wav', 'audio/x-wav', 'audio/vnd.wave', 'audio/webm', 'audio/ogg', 'audio/m4a', 'video/webm', 'video/mp4']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('quote-pdfs', 'quote-pdfs', false, false, 20971520, ARRAY['application/pdf']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-exports', 'report-exports', false, false, 52428800, ARRAY['application/pdf', 'application/json', 'text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-snapshots', 'report-snapshots', false, false, 20971520, ARRAY['application/json', 'text/csv']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('winloss-reports', 'winloss-reports', false, false, 5242880, ARRAY['text/markdown']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
-  ELSE
-    RAISE NOTICE 'tabela % ausente: buckets nao criados (alvo sem o schema storage)', 'storage.buckets';
+  IF to_regclass('storage.buckets') IS NULL THEN
+    RAISE NOTICE 'tabela storage.buckets ausente: buckets nao criados (alvo sem o schema storage)';
+    RETURN;
+  END IF;
+  FOR r IN SELECT * FROM (VALUES
+    ($q$avatars$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('avatars', 'avatars', true, false, 5242880, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$),
+    ($q$call-recordings$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('call-recordings', 'call-recordings', false, false, 104857600, ARRAY['audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/x-m4a', 'audio/wav', 'audio/x-wav', 'audio/vnd.wave', 'audio/webm', 'audio/ogg', 'audio/m4a', 'video/webm', 'video/mp4']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$),
+    ($q$quote-pdfs$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('quote-pdfs', 'quote-pdfs', false, false, 20971520, ARRAY['application/pdf']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$),
+    ($q$report-exports$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-exports', 'report-exports', false, false, 52428800, ARRAY['application/pdf', 'application/json', 'text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$),
+    ($q$report-snapshots$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-snapshots', 'report-snapshots', false, false, 20971520, ARRAY['application/json', 'text/csv']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$),
+    ($q$winloss-reports$q$, $q$INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('winloss-reports', 'winloss-reports', false, false, 5242880, ARRAY['text/markdown']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types$q$)
+  ) AS t(bucket, ddl) LOOP
+    BEGIN
+      EXECUTE r.ddl;
+      ok := ok + 1;
+    EXCEPTION WHEN insufficient_privilege THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'bucket "%" NAO criado: sem privilegio em storage.buckets (%)', r.bucket, SQLERRM;
+    END;
+  END LOOP;
+  RAISE NOTICE 'storage.buckets: % criados/atualizados, % pulados', ok, pulou;
+  IF pulou > 0 THEN
+    RAISE WARNING '% bucket(s) pulado(s) por privilegio. Rode 92-objetos-app-plataforma.sql como o dono de storage.buckets.', pulou;
   END IF;
 END
 $do$;
@@ -26352,52 +26380,106 @@ $do$;
 
 -- realtime.messages
 DO $do$
+DECLARE
+  r      record;
+  ok     int := 0;
+  pulou  int := 0;
 BEGIN
-  IF to_regclass('realtime.messages') IS NOT NULL THEN
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Authenticated users can use realtime" ON realtime.messages $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Authenticated users can use realtime" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (true) WITH CHECK (true) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Scoped realtime subscriptions" ON realtime.messages $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Scoped realtime subscriptions" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text)))) WITH CHECK (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text)))) $stmt$;
-  ELSE
-    RAISE NOTICE 'tabela % ausente: policies nao instaladas (alvo sem esse schema de plataforma)', 'realtime.messages';
+  IF to_regclass('realtime.messages') IS NULL THEN
+    RAISE NOTICE 'tabela realtime.messages ausente: policies nao instaladas (alvo sem esse schema de plataforma)';
+    RETURN;
+  END IF;
+  FOR r IN SELECT * FROM (VALUES
+    ($q$Authenticated users can use realtime$q$,
+     $q$DROP POLICY IF EXISTS "Authenticated users can use realtime" ON realtime.messages$q$,
+     $q$CREATE POLICY "Authenticated users can use realtime" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (true) WITH CHECK (true)$q$),
+    ($q$Scoped realtime subscriptions$q$,
+     $q$DROP POLICY IF EXISTS "Scoped realtime subscriptions" ON realtime.messages$q$,
+     $q$CREATE POLICY "Scoped realtime subscriptions" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text)))) WITH CHECK (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text))))$q$)
+  ) AS t(pol, ddl_drop, ddl_create) LOOP
+    BEGIN
+      EXECUTE r.ddl_drop;
+      EXECUTE r.ddl_create;
+      ok := ok + 1;
+    EXCEPTION WHEN insufficient_privilege THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'policy "%" em realtime.messages NAO instalada: sem privilegio de dono (%)', r.pol, SQLERRM;
+    END;
+  END LOOP;
+  RAISE NOTICE 'realtime.messages: % policies instaladas, % puladas', ok, pulou;
+  IF pulou > 0 THEN
+    RAISE WARNING '% policy(s) de realtime.messages pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Rode 92-objetos-app-plataforma.sql como o dono da tabela.', pulou;
   END IF;
 END
 $do$;
 
 -- storage.objects
 DO $do$
+DECLARE
+  r      record;
+  ok     int := 0;
+  pulou  int := 0;
 BEGIN
-  IF to_regclass('storage.objects') IS NOT NULL THEN
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Authenticated users can upload their own avatar" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Authenticated users can upload their own avatar" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople delete own call audio" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Salespeople delete own call audio" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople read own call audio" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Salespeople read own call audio" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople upload own call audio" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Salespeople upload own call audio" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'call-recordings'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Service role can update quote PDFs" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Service role can update quote PDFs" ON storage.objects AS PERMISSIVE FOR UPDATE TO service_role USING ((bucket_id = 'quote-pdfs'::text)) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Service role can upload quote PDFs" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Service role can upload quote PDFs" ON storage.objects AS PERMISSIVE FOR INSERT TO service_role WITH CHECK ((bucket_id = 'quote-pdfs'::text)) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can delete own quote PDFs" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Users can delete own quote PDFs" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Users can delete their own avatar" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can list their own avatars" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Users can list their own avatars" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can read own quote PDFs" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Users can read own quote PDFs" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "Users can update their own avatar" ON storage.objects AS PERMISSIVE FOR UPDATE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS "owner can read own report snapshots" ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY "owner can read own report snapshots" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-snapshots'::text) AND (is_admin_or_manager(auth.uid()) OR ((storage.foldername(name))[1] = (auth.uid())::text)))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS report_owners_can_read_exports ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY report_owners_can_read_exports ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-exports'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
-    EXECUTE $stmt$ DROP POLICY IF EXISTS report_owners_can_write_exports ON storage.objects $stmt$;
-    EXECUTE $stmt$ CREATE POLICY report_owners_can_write_exports ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'report-exports'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
-  ELSE
-    RAISE NOTICE 'tabela % ausente: policies nao instaladas (alvo sem esse schema de plataforma)', 'storage.objects';
+  IF to_regclass('storage.objects') IS NULL THEN
+    RAISE NOTICE 'tabela storage.objects ausente: policies nao instaladas (alvo sem esse schema de plataforma)';
+    RETURN;
+  END IF;
+  FOR r IN SELECT * FROM (VALUES
+    ($q$Authenticated users can upload their own avatar$q$,
+     $q$DROP POLICY IF EXISTS "Authenticated users can upload their own avatar" ON storage.objects$q$,
+     $q$CREATE POLICY "Authenticated users can upload their own avatar" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$),
+    ($q$Salespeople delete own call audio$q$,
+     $q$DROP POLICY IF EXISTS "Salespeople delete own call audio" ON storage.objects$q$,
+     $q$CREATE POLICY "Salespeople delete own call audio" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid()))))$q$),
+    ($q$Salespeople read own call audio$q$,
+     $q$DROP POLICY IF EXISTS "Salespeople read own call audio" ON storage.objects$q$,
+     $q$CREATE POLICY "Salespeople read own call audio" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid()))))$q$),
+    ($q$Salespeople upload own call audio$q$,
+     $q$DROP POLICY IF EXISTS "Salespeople upload own call audio" ON storage.objects$q$,
+     $q$CREATE POLICY "Salespeople upload own call audio" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'call-recordings'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$),
+    ($q$Service role can update quote PDFs$q$,
+     $q$DROP POLICY IF EXISTS "Service role can update quote PDFs" ON storage.objects$q$,
+     $q$CREATE POLICY "Service role can update quote PDFs" ON storage.objects AS PERMISSIVE FOR UPDATE TO service_role USING ((bucket_id = 'quote-pdfs'::text))$q$),
+    ($q$Service role can upload quote PDFs$q$,
+     $q$DROP POLICY IF EXISTS "Service role can upload quote PDFs" ON storage.objects$q$,
+     $q$CREATE POLICY "Service role can upload quote PDFs" ON storage.objects AS PERMISSIVE FOR INSERT TO service_role WITH CHECK ((bucket_id = 'quote-pdfs'::text))$q$),
+    ($q$Users can delete own quote PDFs$q$,
+     $q$DROP POLICY IF EXISTS "Users can delete own quote PDFs" ON storage.objects$q$,
+     $q$CREATE POLICY "Users can delete own quote PDFs" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid()))))$q$),
+    ($q$Users can delete their own avatar$q$,
+     $q$DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects$q$,
+     $q$CREATE POLICY "Users can delete their own avatar" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$),
+    ($q$Users can list their own avatars$q$,
+     $q$DROP POLICY IF EXISTS "Users can list their own avatars" ON storage.objects$q$,
+     $q$CREATE POLICY "Users can list their own avatars" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$),
+    ($q$Users can read own quote PDFs$q$,
+     $q$DROP POLICY IF EXISTS "Users can read own quote PDFs" ON storage.objects$q$,
+     $q$CREATE POLICY "Users can read own quote PDFs" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid()))))$q$),
+    ($q$Users can update their own avatar$q$,
+     $q$DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects$q$,
+     $q$CREATE POLICY "Users can update their own avatar" ON storage.objects AS PERMISSIVE FOR UPDATE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$),
+    ($q$owner can read own report snapshots$q$,
+     $q$DROP POLICY IF EXISTS "owner can read own report snapshots" ON storage.objects$q$,
+     $q$CREATE POLICY "owner can read own report snapshots" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-snapshots'::text) AND (is_admin_or_manager(auth.uid()) OR ((storage.foldername(name))[1] = (auth.uid())::text))))$q$),
+    ($q$report_owners_can_read_exports$q$,
+     $q$DROP POLICY IF EXISTS report_owners_can_read_exports ON storage.objects$q$,
+     $q$CREATE POLICY report_owners_can_read_exports ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-exports'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid()))))$q$),
+    ($q$report_owners_can_write_exports$q$,
+     $q$DROP POLICY IF EXISTS report_owners_can_write_exports ON storage.objects$q$,
+     $q$CREATE POLICY report_owners_can_write_exports ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'report-exports'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])))$q$)
+  ) AS t(pol, ddl_drop, ddl_create) LOOP
+    BEGIN
+      EXECUTE r.ddl_drop;
+      EXECUTE r.ddl_create;
+      ok := ok + 1;
+    EXCEPTION WHEN insufficient_privilege THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'policy "%" em storage.objects NAO instalada: sem privilegio de dono (%)', r.pol, SQLERRM;
+    END;
+  END LOOP;
+  RAISE NOTICE 'storage.objects: % policies instaladas, % puladas', ok, pulou;
+  IF pulou > 0 THEN
+    RAISE WARNING '% policy(s) de storage.objects pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Rode 92-objetos-app-plataforma.sql como o dono da tabela.', pulou;
   END IF;
 END
 $do$;
