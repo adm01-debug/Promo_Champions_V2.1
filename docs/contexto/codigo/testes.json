@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 245,
+ "total": 246,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 178
+  "unit": 179
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 161
+   "arquivos": 162
   },
   {
    "padrao": "tests/",
@@ -554,6 +554,15 @@
     "src/services/knownDeviceService.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/components/sequences/sendTimeHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 39,
+   "testa": [
+    "src/components/sequences/sendTimeHelpers.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/tasks/CreateTaskDialog.test.tsx",
@@ -2136,6 +2145,7 @@
   "src/components/sales/cadence/ContactFrequencyRules.tsx": 1,
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": 1,
   "src/components/security/KnownDevices.tsx": 1,
+  "src/components/sequences/sendTimeHelpers.ts": 1,
   "src/components/tasks/CreateTaskDialog.tsx": 1,
   "src/components/ui/tooltip.tsx": 1,
   "src/config/external.ts": 1,

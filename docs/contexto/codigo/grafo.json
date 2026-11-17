@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2331,
- "arestas": 9600,
+ "nos": 2332,
+ "arestas": 9605,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 714
+   "importado_por": 715
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 320
+   "importado_por": 321
   },
   {
    "arquivo": "src/lib/money.ts",

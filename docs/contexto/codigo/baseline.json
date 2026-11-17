@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8a0bc946dd3d428b530e563c96ae5b113b395f6a",
+  "commit": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
   "branch": "main",
-  "data_commit": "2026-11-17T18:12:42-03:00",
+  "data_commit": "2026-11-17T18:30:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "58dbc25",
+    "data": "2026-11-17",
+    "assunto": "feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)"
+   },
    {
     "sha": "8a0bc94",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "f94042e",
     "data": "2026-11-17",
     "assunto": "fix(bi): remove promessa de retorno que a curva ABC nao sustenta (#547)"
-   },
-   {
-    "sha": "8f38219",
-    "data": "2026-11-17",
-    "assunto": "docs(db): mede o replay do repo e registra a decisão de não consertar agora (#546)"
    }
   ],
-  "arquivos_mudados_7d": 719,
+  "arquivos_mudados_7d": 724,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -266,10 +266,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 7
-   },
-   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -286,6 +282,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 6
    },
@@ -294,14 +294,14 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/sales-assistant-chat/index.ts",
+    "arquivo": "supabase/functions/send-multichannel-message/index.ts",
     "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 177
+    "commits": 178
    },
    {
     "autor": "dependabot[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3600,
-  "arquivos_codigo": 2570,
-  "linhas_codigo": 442121,
+  "arquivos_total": 3602,
+  "arquivos_codigo": 2572,
+  "linhas_codigo": 442287,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1288,
+  "componentes": 1289,
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
   "migrations": 699,
   "cron_jobs": 31,
-  "testes": 245,
+  "testes": 246,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 212
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1224,
-   "linhas": 192894
+   "arquivos": 1226,
+   "linhas": 193017
   },
   "src/config": {
    "arquivos": 4,
@@ -616,7 +616,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64480
+   "linhas": 64523
   },
   "src/integrations": {
    "arquivos": 4,

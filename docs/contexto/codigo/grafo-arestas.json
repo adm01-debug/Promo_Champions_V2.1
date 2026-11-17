@@ -6741,6 +6741,12 @@
    "src/components/sequences/autoReplyHelpers.ts",
    "src/components/ui/badge.tsx"
   ],
+  "src/components/sequences/BestSendWindowCard.tsx": [
+   "src/components/sequences/sendTimeHelpers.ts",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/engagement/useSendTimeOptimization.ts"
+  ],
   "src/components/sequences/EmailVariablesHelper.tsx": [
    "src/components/sequences/emailComposerHelpers.ts",
    "src/components/ui/badge.tsx"
@@ -6773,6 +6779,7 @@
   "src/components/sequences/SequenceEnrollmentsDrawer.tsx": [
    "src/components/multichannel/OutboundMessageLog.tsx",
    "src/components/sequences/AutoPausedBadge.tsx",
+   "src/components/sequences/BestSendWindowCard.tsx",
    "src/components/sequences/EngagementBadgeForContact.tsx",
    "src/components/sequences/ResumeEnrollmentButton.tsx",
    "src/components/sequences/sendTimeHelpers.ts",

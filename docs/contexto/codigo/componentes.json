@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1288,
+ "total": 1289,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -14541,6 +14541,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/sequences/BestSendWindowCard.tsx",
+   "exports": [
+    "BestSendWindowCard"
+   ],
+   "export_default": null,
+   "linhas": 62,
+   "dominio": "components/sequences",
+   "hooks_locais": [
+    "useContactSendProfile"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/sequences/EmailVariablesHelper.tsx",
    "exports": [
     "EmailVariablesHelper"
@@ -14626,7 +14642,7 @@
     "SequenceEnrollmentsDrawer"
    ],
    "export_default": null,
-   "linhas": 110,
+   "linhas": 121,
    "dominio": "components/sequences",
    "hooks_locais": [
     "useSequenceEnrollments"
@@ -15755,7 +15771,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 714,
+   "usado_por": 715,
    "orfao": false
   },
   {
@@ -16156,7 +16172,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 320,
+   "usado_por": 321,
    "orfao": false
   },
   {

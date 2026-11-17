@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8a0bc946dd` · branch `main` · 2026-11-17 21:23 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `58dbc2530c` · branch `main` · 2026-11-17 21:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2212,6 +2212,10 @@ _nenhum item encontrado_
   ```
   if (!metrics) return { strengths: [], improvements: [] }; const schedulingRate = metrics.current.schedulingRate; const leads = metrics.current.totalLeads; const qualified = metrics.current.qualifiedLeads; const active = metrics.current.activeProspects; const strengths = []; const improvements = []; // Dinamic insights based on real metrics if (schedulingRate > 20) { strengths.push( `Alta taxa de agendamento (${schedulingRate.toFixed(1)}%) - Acima da média do setor` ); } else if (schedulingRate > …
   ```
+- **normalizeScore(score: number, max: number)** — `src/components/sequences/sendTimeHelpers.ts`
+  ```
+  if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0) return 0; const pct = (score / max) * 100; return Math.max(0, Math.min(100, pct));
+  ```
 - **EligibleBonusesCard({ salespersonId }: Props)** — `src/components/vendedor/EligibleBonusesCard.tsx`
   ```
   const { data: bonuses = [], isLoading } = useEligibleBonuses(salespersonId); const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isLoading) { return ( <Card className="p-4"> <div className="h-24 animate-pulse rounded-lg bg-muted/30" /> </C …
@@ -4251,7 +4255,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1661 testes em 211 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1670 testes em 212 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4308,6 +4312,7 @@ _nenhum item encontrado_
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/components/analytics/ABCActionableAutomations.test.ts` | 9 | buildAbcAutomations · não gera nada sem clientes · não gera nada com receita zero, mesmo havendo clientes · classe A acima do limiar de concentração vira risco … |
+| `src/components/sequences/sendTimeHelpers.test.ts` | 9 | formatWindow · formata dia da semana e hora com dois digitos · usa interrogacao para dia fora da faixa · normalizeScore … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/hooks/useLoginRateLimiter.test.tsx` | 9 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/bi/useABCAnalysis.test.tsx` | 9 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |

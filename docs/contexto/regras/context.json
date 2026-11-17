@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8a0bc946dd3d428b530e563c96ae5b113b395f6a",
+  "sha": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-17 21:23 UTC",
-  "files_total": 3615,
-  "code_files": 3278,
-  "code_lines": 476071
+  "generated_at": "2026-11-17 21:31 UTC",
+  "files_total": 3617,
+  "code_files": 3280,
+  "code_lines": 476237
  },
  "version": "1.3.2",
- "facts_hash": "88cfe3d2567486dd",
+ "facts_hash": "ba0e6443ef45234a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -391,8 +391,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1375,
-   ".ts": 1113,
+   ".tsx": 1376,
+   ".ts": 1114,
    ".sql": 708,
    ".mjs": 72,
    ".js": 6,
@@ -94427,6 +94427,7 @@
     "component": "SequencesPage",
     "tables_transitive": [
      "channel_credentials",
+     "contact_best_send_window",
      "contact_engagement_score",
      "engagement_score_history",
      "engagement_score_leaderboard",
@@ -94435,6 +94436,7 @@
      "sales",
      "salespeople",
      "scheduled_sends",
+     "send_time_profiles",
      "sequence_enrollments",
      "sequence_step_variants",
      "sequence_steps",
@@ -94446,14 +94448,16 @@
      "engagement-score-recompute",
      "schedule-optimal-send",
      "send-multichannel-message",
+     "send-time-optimizer",
      "sequence-ab-promote",
      "sequence-enroll",
      "sequence-runner"
     ],
     "rpc_transitive": [
-     "declare_step_winner"
+     "declare_step_winner",
+     "get_global_send_time_stats"
     ],
-    "deps_count": 60
+    "deps_count": 63
    },
    {
     "path": "",
@@ -95342,6 +95346,7 @@
     "file": "src/pages/SendTimeOptimization.tsx",
     "component": "SendTimeOptimization",
     "tables_transitive": [
+     "contact_best_send_window",
      "salespeople",
      "scheduled_sends",
      "send_time_profiles",
@@ -102243,7 +102248,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1224,
+  "components_count": 1226,
   "hooks": [
    {
     "name": "useContacts",
@@ -103579,6 +103584,10 @@
    },
    {
     "name": "useTopSendTimeProfiles",
+    "file": "src/hooks/engagement/useSendTimeOptimization.ts"
+   },
+   {
+    "name": "useContactSendProfile",
     "file": "src/hooks/engagement/useSendTimeOptimization.ts"
    },
    {
@@ -106190,8 +106199,8 @@
   },
   {
    "module": "src/components",
-   "files": 1224,
-   "lines": 192893,
+   "files": 1226,
+   "lines": 193016,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106520,7 +106529,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64480,
+   "lines": 64523,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106588,6 +106597,7 @@
     "competitive_seasons",
     "competitor_mentions",
     "competitors_registry",
+    "contact_best_send_window",
     "contact_engagement_score",
     "conversation_analyses",
     "custom_reports",
@@ -109225,6 +109235,11 @@
     ],
     "delete": [
      "src/hooks/conversational/useCompetitorsRegistry.ts"
+    ]
+   },
+   "contact_best_send_window": {
+    "select": [
+     "src/hooks/engagement/useSendTimeOptimization.ts"
     ]
    },
    "contact_engagement_score": {
@@ -113017,6 +113032,10 @@
     "id",
     "is_active",
     "name"
+   ],
+   "contact_best_send_window": [
+    "contact_id",
+    "contact_type"
    ],
    "contact_engagement_score": [
     "contact_id",
@@ -153595,6 +153614,12 @@
     "body": "if (!metrics) return { strengths: [], improvements: [] }; const schedulingRate = metrics.current.schedulingRate; const leads = metrics.current.totalLeads; const qualified = metrics.current.qualifiedLeads; const active = metrics.current.activeProspects; const strengths = []; const improvements = []; // Dinamic insights based on real metrics if (schedulingRate > 20) { strengths.push( `Alta taxa de agendamento (${schedulingRate.toFixed(1)}%) - Acima da média do setor` ); } else if (schedulingRate > …"
    },
    {
+    "file": "src/components/sequences/sendTimeHelpers.ts",
+    "name": "normalizeScore",
+    "params": "score: number, max: number",
+    "body": "if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0) return 0; const pct = (score / max) * 100; return Math.max(0, Math.min(100, pct));"
+   },
+   {
     "file": "src/components/vendedor/EligibleBonusesCard.tsx",
     "name": "EligibleBonusesCard",
     "params": "{ salespersonId }: Props",
@@ -158575,6 +158600,42 @@
    {
     "file": "src/components/security/KnownDevices.test.tsx",
     "name": "descarta resposta antiga quando o usuário troca durante o fetch"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "formatWindow"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "formata dia da semana e hora com dois digitos"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "usa interrogacao para dia fora da faixa"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "normalizeScore"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "da 100% para a melhor janela do contato"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "é proporcional à melhor janela"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "devolve 0 quando o maior score é zero ou negativo"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "nunca estoura a barra nem fica negativa"
+   },
+   {
+    "file": "src/components/sequences/sendTimeHelpers.test.ts",
+    "name": "devolve 0 para valores nao finitos"
    },
    {
     "file": "src/components/tasks/CreateTaskDialog.test.tsx",
@@ -244339,6 +244400,13 @@
     "function AutoPausedBadge"
    ]
   },
+  "src/components/sequences/BestSendWindowCard.tsx": {
+   "path": "src/components/sequences/BestSendWindowCard.tsx",
+   "lines": 62,
+   "exports": [
+    "function BestSendWindowCard"
+   ]
+  },
   "src/components/sequences/EmailVariablesHelper.tsx": {
    "path": "src/components/sequences/EmailVariablesHelper.tsx",
    "lines": 26,
@@ -244376,7 +244444,7 @@
   },
   "src/components/sequences/SequenceEnrollmentsDrawer.tsx": {
    "path": "src/components/sequences/SequenceEnrollmentsDrawer.tsx",
-   "lines": 110,
+   "lines": 121,
    "exports": [
     "function SequenceEnrollmentsDrawer"
    ]
@@ -244460,12 +244528,36 @@
     }
    ]
   },
+  "src/components/sequences/sendTimeHelpers.test.ts": {
+   "path": "src/components/sequences/sendTimeHelpers.test.ts",
+   "lines": 39,
+   "is_test": true,
+   "tests": [
+    "formatWindow",
+    "formata dia da semana e hora com dois digitos",
+    "usa interrogacao para dia fora da faixa",
+    "normalizeScore",
+    "da 100% para a melhor janela do contato",
+    "é proporcional à melhor janela",
+    "devolve 0 quando o maior score é zero ou negativo",
+    "nunca estoura a barra nem fica negativa",
+    "devolve 0 para valores nao finitos"
+   ]
+  },
   "src/components/sequences/sendTimeHelpers.ts": {
    "path": "src/components/sequences/sendTimeHelpers.ts",
-   "lines": 14,
+   "lines": 25,
    "exports": [
     "function formatWindow",
-    "function formatOptimizedFor"
+    "function formatOptimizedFor",
+    "function normalizeScore"
+   ],
+   "calc_fns": [
+    {
+     "name": "normalizeScore",
+     "params": "score: number, max: number",
+     "body": "if (!Number.isFinite(score) || !Number.isFinite(max) || max <= 0) return 0; const pct = (score / max) * 100; return Math.max(0, Math.min(100, pct));"
+    }
    ]
   },
   "src/components/sequences/sequenceHelpers.ts": {
@@ -260015,20 +260107,32 @@
   },
   "src/hooks/engagement/useSendTimeOptimization.ts": {
    "path": "src/hooks/engagement/useSendTimeOptimization.ts",
-   "lines": 91,
+   "lines": 134,
    "exports": [
     "interface SendTimeProfile",
     "interface ScheduledSend",
     "function useOptimizeSendTime",
     "function useGlobalSendTimeStats",
-    "function useTopSendTimeProfiles"
+    "function useTopSendTimeProfiles",
+    "interface BestSendWindow",
+    "function useContactSendProfile"
    ],
    "tables": [
     {
      "table": "send_time_profiles",
      "op": "select"
+    },
+    {
+     "table": "contact_best_send_window",
+     "op": "select"
     }
    ],
+   "table_cols": {
+    "contact_best_send_window": [
+     "contact_id",
+     "contact_type"
+    ]
+   },
    "rpc": [
     "get_global_send_time_stats"
    ],
@@ -260048,7 +260152,8 @@
    "hooks": [
     "useOptimizeSendTime",
     "useGlobalSendTimeStats",
-    "useTopSendTimeProfiles"
+    "useTopSendTimeProfiles",
+    "useContactSendProfile"
    ],
    "side_effects": [
     "invoke("
@@ -296989,10 +297094,23 @@
   }
  },
  "git": {
-  "sha": "8a0bc946dd3d428b530e563c96ae5b113b395f6a",
+  "sha": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "58dbc25",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)",
+    "files": [
+     "src/components/sequences/BestSendWindowCard.tsx",
+     "src/components/sequences/SequenceEnrollmentsDrawer.tsx",
+     "src/components/sequences/sendTimeHelpers.test.ts",
+     "src/components/sequences/sendTimeHelpers.ts",
+     "src/hooks/engagement/useSendTimeOptimization.ts"
+    ]
+   },
    {
     "sha": "8a0bc94",
     "date": "2026-11-17",
@@ -297275,15 +297393,6 @@
      "src/hooks/bi/useABCAnalysis.test.tsx",
      "src/hooks/bi/useABCAnalysis.ts"
     ]
-   },
-   {
-    "sha": "31ed35d",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(db): remove do ledger as 241 versoes de migration sem arquivo local (#540)",
-    "files": [
-     "supabase/migrations/20261117080000_remove_versoes_orfas_do_ledger.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -297316,6 +297425,26 @@
     2
    ],
    [
+    "src/components/sequences/BestSendWindowCard.tsx",
+    1
+   ],
+   [
+    "src/components/sequences/SequenceEnrollmentsDrawer.tsx",
+    1
+   ],
+   [
+    "src/components/sequences/sendTimeHelpers.test.ts",
+    1
+   ],
+   [
+    "src/components/sequences/sendTimeHelpers.ts",
+    1
+   ],
+   [
+    "src/hooks/engagement/useSendTimeOptimization.ts",
+    1
+   ],
+   [
     "src/components/pipeline/DealCard.tsx",
     1
    ],
@@ -297345,26 +297474,6 @@
    ],
    [
     "src/hooks/gamification/useSalespersonXP.ts",
-    1
-   ],
-   [
-    "src/components/dashboard/MyAssignedTasks.tsx",
-    1
-   ],
-   [
-    "src/pages/VendedorDashboard.tsx",
-    1
-   ],
-   [
-    "src/components/analytics/ABCMatrixShift.test.ts",
-    1
-   ],
-   [
-    "src/components/analytics/ABCMatrixShift.tsx",
-    1
-   ],
-   [
-    "scripts/regras_negocio/indice.py",
     1
    ]
   ]

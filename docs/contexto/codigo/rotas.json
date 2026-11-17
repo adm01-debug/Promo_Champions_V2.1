@@ -5642,6 +5642,7 @@
     "useAuth",
     "useCallback",
     "useCancelScheduledSend",
+    "useContactSendProfile",
     "useContext",
     "useEffect",
     "useGlobalSendTimeStats",
@@ -5661,6 +5662,7 @@
    "hooks_locais": [
     "useAuth",
     "useCancelScheduledSend",
+    "useContactSendProfile",
     "useGlobalSendTimeStats",
     "useOptimizeSendTime",
     "useScheduleOptimalSend",
@@ -5671,6 +5673,7 @@
     "useUserRoles"
    ],
    "tabelas": [
+    "contact_best_send_window",
     "salespeople",
     "scheduled_sends",
     "send_time_profiles",
@@ -10207,6 +10210,7 @@
     "useAuth",
     "useCallback",
     "useCancelScheduledSend",
+    "useContactSendProfile",
     "useContext",
     "useCreateSequence",
     "useDeclareStepWinner",
@@ -10217,9 +10221,11 @@
     "useEngagementScore",
     "useEnrollContacts",
     "useGenerateEmail",
+    "useGlobalSendTimeStats",
     "useInboundReplyEvents",
     "useMemo",
     "useMutation",
+    "useOptimizeSendTime",
     "useOutboundMessages",
     "usePromoteSequenceWinners",
     "useQuery",
@@ -10238,6 +10244,7 @@
     "useStepVariants",
     "useToast",
     "useToggleSendTimeOptimization",
+    "useTopSendTimeProfiles",
     "useTriggerSequenceRunner",
     "useUpdateAutoPauseSettings",
     "useUpdateSequence",
@@ -10247,6 +10254,7 @@
    "hooks_locais": [
     "useAuth",
     "useCancelScheduledSend",
+    "useContactSendProfile",
     "useCreateSequence",
     "useDeclareStepWinner",
     "useDeleteSequence",
@@ -10255,7 +10263,9 @@
     "useEngagementScore",
     "useEnrollContacts",
     "useGenerateEmail",
+    "useGlobalSendTimeStats",
     "useInboundReplyEvents",
+    "useOptimizeSendTime",
     "useOutboundMessages",
     "usePromoteSequenceWinners",
     "useRecomputeContactEngagement",
@@ -10271,6 +10281,7 @@
     "useStepVariants",
     "useToast",
     "useToggleSendTimeOptimization",
+    "useTopSendTimeProfiles",
     "useTriggerSequenceRunner",
     "useUpdateAutoPauseSettings",
     "useUpdateSequence",
@@ -10279,6 +10290,7 @@
    ],
    "tabelas": [
     "channel_credentials",
+    "contact_best_send_window",
     "contact_engagement_score",
     "engagement_score_history",
     "engagement_score_leaderboard",
@@ -10286,6 +10298,7 @@
     "outbound_messages",
     "salespeople",
     "scheduled_sends",
+    "send_time_profiles",
     "sequence_enrollments",
     "sequence_step_variants",
     "sequence_steps",
@@ -10293,13 +10306,15 @@
     "sequences"
    ],
    "rpcs": [
-    "declare_step_winner"
+    "declare_step_winner",
+    "get_global_send_time_stats"
    ],
    "edges": [
     "ai-email-composer",
     "engagement-score-recompute",
     "schedule-optimal-send",
     "send-multichannel-message",
+    "send-time-optimizer",
     "sequence-ab-promote",
     "sequence-enroll",
     "sequence-runner"
@@ -10307,7 +10322,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 63
+   "arquivos_puxados": 65
   },
   {
    "protegida": false,

@@ -4031,13 +4031,15 @@
   {
    "arquivo": "src/hooks/engagement/useSendTimeOptimization.ts",
    "hooks_exportados": [
+    "useContactSendProfile",
     "useGlobalSendTimeStats",
     "useOptimizeSendTime",
     "useTopSendTimeProfiles"
    ],
-   "linhas": 91,
+   "linhas": 134,
    "dominio": "hooks/engagement",
    "tabelas": [
+    "contact_best_send_window",
     "send_time_profiles"
    ],
    "rpcs": [
@@ -4052,8 +4054,9 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/sequences/BestSendWindowCard.tsx",
     "src/pages/SendTimeOptimization.tsx"
    ],
    "coberto_por_testes": 0
