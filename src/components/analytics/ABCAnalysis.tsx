@@ -2,11 +2,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/bi/useABCAnalysis';
-import { Package, Users, Layers, Download, Lightbulb } from 'lucide-react';
+import { Package, Users, Layers, Download, Lightbulb, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
 import { ABCNeuralInsights } from './ABCNeuralInsights';
+import {
+  ABCActionableAutomations,
+  buildAbcAutomations,
+} from './ABCActionableAutomations';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Maximize2 } from 'lucide-react';
@@ -20,6 +24,11 @@ const COLORS = {
 
 export function ABCAnalysis() {
   const { data, isLoading } = useABCAnalysis();
+  const automations = buildAbcAutomations(
+    data?.clients ?? [],
+    data?.products ?? [],
+    data?.totalRevenue ?? 0
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const isDedicatedPage = location.pathname === '/analytics/abc';
@@ -111,6 +120,20 @@ export function ABCAnalysis() {
             <h3 className="text-section-title text-foreground">Insights da curva ABC</h3>
           </div>
           <ABCNeuralInsights insights={data?.neuralInsights || []} />
+        </div>
+      )}
+
+      {/* Automações derivadas da própria curva; cada card cita o número que o
+          gerou. Sem dado que sustente, a seção não aparece. */}
+      {automations.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 px-1">
+            <Workflow className="h-5 w-5 text-primary" />
+            <h3 className="text-section-title text-foreground">
+              O que fazer com a curva
+            </h3>
+          </div>
+          <ABCActionableAutomations automations={automations} />
         </div>
       )}
 
