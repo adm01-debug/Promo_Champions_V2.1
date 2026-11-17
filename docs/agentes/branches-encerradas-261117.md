@@ -197,3 +197,41 @@ real; é regressão, não resgate.
 
 **Resultado: nenhum trabalho perdido. As 29 exclusões estão provadas por
 conteúdo, não por presença de arquivo.**
+
+## As 8 branches do dependabot (encerradas em 17/11)
+
+Nenhuma tinha PR aberta — só a #485 do release-please seguia aberta. Conferido
+o que cada uma propunha contra o `package.json` da `main`: em **todos** os
+casos a branch traz versão **menor** que a `main`, isto é, o bump já entrou ou
+foi superado.
+
+| pacote                       | `main`     | branch     |
+| ---------------------------- | ---------- | ---------- |
+| `@hookform/resolvers`        | `^7.0.6`   | `^5.9.1`   |
+| `framer-motion`              | `^14.13.0` | `^13.2.0`  |
+| `@simplewebauthn/server`     | `14.0.3`   | `14.0.2`   |
+| `@xyflow/react`              | `^12.12.1` | `^12.12.0` |
+| `@lovable.dev/cloud-auth-js` | `^1.2.3`   | `^1.2.1`   |
+| `papaparse`                  | `^5.7.1`   | `^5.7.0`   |
+
+A `cloud-auth-js-1.2.3` propunha 1.2.3 e a `main` já está em `^1.2.3`; a
+`react-hook-form-7.92.0` nem aparece no diff de `package.json`, porque a `main`
+já tem `^7.92.0`. Os pins de `actions/*` apontam para o mesmo SHA — a `main` só
+tem o comentário mais preciso (`# v7.0.1` em vez de `# v7`). As branches ainda
+carregam os 3 componentes-maquete e não têm os scripts `maintenance:*`,
+`debt:report` e `automation:doctor` que a `main` tem.
+
+As 8 foram arquivadas em `archive/<nome>` com SHA conferido (8/8 iguais) e só
+então apagadas. Recuperação testada: extraí o `package.json` de dentro da tag
+de uma branch já apagada.
+
+**Total: 37 de 43 branches encerradas.** As 6 que ficam não são encerráveis:
+
+| branch                              | por quê                                         |
+| ----------------------------------- | ----------------------------------------------- |
+| `main`                              | branch principal                                |
+| `contexto`                          | contexto gerado, lido em runtime (AGENTS.md §8) |
+| `automation/inventario-estado`      | idem — alimenta `inventario/estado/*.json`      |
+| `automation/types-sync`             | idem — gera `types.ts`                          |
+| `release-please--branches--main--…` | carrega a PR aberta #485; o bot a regenera      |
+| `computador_local`                  | máquina do dono                                 |
