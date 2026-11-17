@@ -223,7 +223,7 @@ aplicação real revelou** — nenhuma delas aparecia na leitura do SQL:
 
 Antes dessas correções: 59 erros não-privilégio. Depois: 2, ambos de ambiente.
 
-### Cinco lacunas achadas por revisor externo
+### Oito lacunas, cinco achadas por revisor externo e três pela causa sistemática
 
 Meus 12 críticos adversariais não acharam nenhuma delas, por um motivo que vale
 registrar: **eu mesmo lhes dei o escopo** ("só `public` e `private`"). Crítico não
@@ -295,6 +295,85 @@ buckets**. Ele é idempotente, então a recuperação é reexecutá-lo.
 
 E a falha é segura: o que não instala deixa a tabela com RLS ligada e **sem** policy —
 acesso fechado, não aberto.
+
+**Essa correção estava pela metade, e quem achou foi um crítico de outra seção.** Eu
+protegi os *statements* e deixei a **guarda** exposta: `to_regclass('storage.buckets')`
+precisa de USAGE no schema, e sem ele **erra** em vez de devolver `NULL`. Medido:
+`permission denied for schema storage`, `psql` exit 1. Em produção o papel `postgres`
+**não é superusuário** e tem USAGE em `storage`/`cron` apenas por grant explícito, então
+o caminho não é hipotético. As três guardas da seção passaram a rodar no próprio
+`BEGIN ... EXCEPTION`.
+
+### Mais duas lacunas da mesma classe, e a causa sistemática
+
+Depois da quinta lacuna fiz a pergunta certa uma vez só: **que configuração da aplicação
+vive como LINHA numa tabela de plataforma, e não como objeto de schema?** Um inventário
+de `pg_class`/`pg_proc`/`pg_policy` nunca enxerga isso. A varredura de todas as tabelas
+de plataforma com linhas deu:
+
+| tabela | o que é | no dump |
+|---|---|---|
+| `cron.job` | **45 agendamentos da aplicação** | **faltava** |
+| `pg_db_role_setting` | `search_path` e `app.settings.jwt_exp` do banco | **faltava** |
+| `supabase_migrations.schema_migrations` | **692** versões aplicadas | **faltava** |
+| `storage.buckets` | 6 buckets | já corrigido (item 5) |
+| `auth.users`, `auth.sessions`, `refresh_tokens`, `net._http_response` | dado de usuário e log de execução | fora, e corretamente |
+| `auth.schema_migrations`, `realtime.schema_migrations`, `storage.migrations` | ledgers da própria plataforma | fora, e corretamente |
+
+**6. Os 45 agendamentos do `pg_cron`.** Achado por revisor externo (Codex, P2) e confirmado:
+as 12 ocorrências de `cron.job` no dump eram todas **leitura** dentro de função de
+monitoramento; nenhuma chamada a `cron.schedule`. Restaurar daria um banco com o schema
+inteiro e **nada rodando**: sync do Bitrix24, SLA de lead, cadências, expiração de
+orçamento, retenção de dados, liga e confrontos semanais. Todos os 45 estão `active`.
+
+Critério de recorte: 42 dos 45 nomes aparecem em migration do repo; os outros 3
+(`capture-rollback-snapshot-5min`, `detect_slow_queries_hourly`, `purge_old_telemetry_daily`)
+chamam funções `public.*` deste app, agendadas à mão. O Supabase não instala cron job por
+conta própria aqui, então os 45 entram.
+
+Verificado em Postgres 16 / pg_cron 1.6: 45 agendados, `FALTA 0 SOBRA 0`, fidelidade
+campo a campo **45/45** em `schedule` e `command` — incluindo os 26 com aspas simples e os
+2 multilinha de `net.http_post` (336 e 306 bytes, byte a byte). Três aplicações seguidas:
+45 linhas, 45 nomes, mesmo `jobid` máximo — `cron.schedule` faz *upsert*, não duplica.
+
+Gate de segredo rodado sobre os 45 comandos antes de versionar qualquer coisa, com 21
+padrões: **zero**. Os 2 jobs com `net.http_post` leem `url` e `apikey` de
+`public._internal_secrets` em subquery de runtime — o literal no comando é só o **nome**
+da chave. O gate está embutido no gerador, que aborta em vez de publicar.
+
+Ressalva que o crítico levantou: o *upsert* é por `(jobname, username)`, não por
+`jobname`. Aplicar com um segundo papel levou `cron.job` de 45 para 90 linhas — cada job
+disparando duas vezes. Está no cabeçalho da seção: restaure sempre com o mesmo papel.
+
+**7. Settings gravados no banco.** O `SET search_path` do cabeçalho vale só para a sessão
+que aplica o dump. Sem `ALTER DATABASE`, toda conexão **futura** do alvo pega o padrão — e
+aí função que referencia `vector` sem qualificar o schema deixa de resolver. Foi
+exatamente essa diferença que me fez ver 3 funções como divergentes numa comparação antes
+de eu usar o `search_path` de produção. Verificado: os 2 settings gravados idênticos.
+
+**8. O ledger de migrations.** Sem ele o alvo tem o schema completo e um ledger **vazio**:
+a CLI do Supabase e o `migrations-drift.yml` casam por `version` e tentariam reaplicar as
+692 sobre uma base que já tem tudo. A coluna `statements` fica de fora de propósito — são
+84 kB de SQL já versionado em `supabase/migrations/`, e a CLI casa por `version`.
+Verificado: 692 inseridas, idempotente, e numa base sem o schema a seção só avisa.
+
+### A prova que fecha as oito
+
+Papel **sem USAGE** em `storage`, `realtime` nem `cron`, restaurando com
+`ON_ERROR_STOP=1`, com um marcador no fim do arquivo:
+
+```
+WARNING: sem USAGE no schema storage ...: buckets nao criados
+WARNING: sem USAGE no schema realtime ...: policies nao instaladas
+WARNING: sem USAGE no schema storage ...: policies nao instaladas
+WARNING: sem privilegio no schema cron: os 45 agendamentos NAO foram criados
+WARNING: ledger de migrations NAO preenchido: sem privilegio ...
+saída do psql: 0
+marcador no fim do arquivo: existe
+```
+
+Cinco falhas de privilégio, cinco avisos nomeados, **restauração completa**. Antes do
+conserto, a primeira delas matava o `psql` e levava embora tudo o que vem depois.
 
 Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o bloco de
 verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas

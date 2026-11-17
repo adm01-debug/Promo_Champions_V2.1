@@ -16,12 +16,52 @@
 -- Como aplicar numa base nova:
 --   psql -v ON_ERROR_STOP=1 -f supabase/schema.sql
 -- Ordem das secoes e de dependencia; nao reordene.
+-- As secoes que mexem em objeto de plataforma (settings do banco, buckets, policies de
+-- storage/realtime, agendamentos, ledger) rodam cada statement no seu proprio
+-- BEGIN ... EXCEPTION WHEN insufficient_privilege: falta de privilegio sai como WARNING
+-- nominal e a restauracao SEGUE, em vez de morrer com ON_ERROR_STOP=1 e deixar o resto
+-- do arquivo sem aplicar. Se algo for pulado, reexecute este mesmo arquivo com o dono
+-- (ele e idempotente de ponta a ponta).
 
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 -- O search_path real da secao 10 espelha o de producao
 -- (search_path="$user", public, extensions). Nao acrescente private aqui:
 -- producao nao o tem no path, e o DDL de private ja sai qualificado.
+
+-- ==========================================================
+-- SETTINGS DO BANCO
+-- ==========================================================
+-- Settings gravados NO BANCO (pg_db_role_setting), nao na sessao.
+-- Por que esta secao existe: a linha "SET search_path" no cabecalho do schema.sql vale
+--   somente para a sessao que aplica o dump. Sem o ALTER DATABASE abaixo, toda conexao
+--   FUTURA do alvo restaurado pega o search_path padrao, e ai funcao que referencia um
+--   tipo sem qualificar o schema (vector, do pgvector instalado em extensions) deixa de
+--   resolver. Foi exatamente essa diferenca que fez 3 funcoes parecerem divergentes numa
+--   comparacao minha antes de eu usar o search_path de producao.
+-- Origem: pg_db_role_setting do banco de producao, 2 setting(s).
+-- Ordem: PRIMEIRA secao. Nao depende de nada e nao afeta a sessao atual (ALTER DATABASE
+--   so vale para conexoes novas), por isso nao substitui o SET do cabecalho.
+-- Guardado: roda dentro de BEGIN ... EXCEPTION, porque ALTER DATABASE exige ser dono do
+--   banco e a restauracao pode rodar com papel que nao e. Pular isso nao impede o resto.
+-- Nenhum dos settings guarda credencial: sao app.settings.jwt_exp, search_path.
+
+DO $do$
+DECLARE
+  pulou int := 0;
+BEGIN
+  BEGIN
+    EXECUTE format('ALTER DATABASE %I SET app.settings.jwt_exp = 3600', current_database());
+    EXECUTE format('ALTER DATABASE %I SET search_path = "$user", public, extensions', current_database());
+  EXCEPTION WHEN insufficient_privilege THEN
+    pulou := 1;
+    RAISE WARNING 'ALTER DATABASE SET nao aplicado: sem privilegio de dono do banco (%). Rode como dono: ALTER DATABASE <alvo> SET app.settings.jwt_exp=3600 / ALTER DATABASE <alvo> SET search_path="$user", public, extensions', SQLERRM;
+  END;
+  IF pulou = 0 THEN
+    RAISE NOTICE 'settings do banco aplicados: 2 (valem para conexoes novas)';
+  END IF;
+END
+$do$;
 
 -- ==========================================================
 -- EXTENSOES E SCHEMAS
@@ -26306,14 +26346,22 @@ $do$;
 --   postgres nao e membro de nenhum dos dois (pg_has_role(...,'USAGE') = false). A Parte 1 roda
 --   como postgres (tem rolbypassrls e INSERT/UPDATE em storage.buckets).
 -- POR QUE ESTA SECAO NAO ABORTA A RESTAURACAO: cada statement roda dentro do seu proprio
---   BEGIN ... EXCEPTION WHEN insufficient_privilege. Sem isso, um unico 'must be owner of
+--   BEGIN ... EXCEPTION WHEN insufficient_privilege, E A GUARDA TAMBEM. Proteger so os
+--   statements nao basta: to_regclass('storage.buckets') precisa de USAGE no schema e, sem
+--   ele, ERRA em vez de devolver NULL (medido: 'permission denied for schema storage',
+--   psql exit 1). Em producao o papel postgres nao e superusuario e tem USAGE apenas por
+--   grant explicito, logo esse caminho nao e hipotetico. Sem isso, um unico 'must be owner of
 --   table objects' com ON_ERROR_STOP=1 mataria o psql AQUI e as secoes seguintes nunca
 --   rodariam — publicacao realtime, replica identity, RLS de public/private, normalizacao de
 --   ACL, grants e foreign keys. O arquivo continua sendo um comando so.
 -- O QUE FAZER SE ALGO FOR PULADO: cada item pulado sai como WARNING com o nome, e o fim de
---   cada bloco avisa quantos foram. Para instalar os que faltam, rode SO ESTE ARQUIVO de novo
---   com o dono da tabela (ele e idempotente):
---     psql -v ON_ERROR_STOP=1 -U supabase_admin -f 92-objetos-app-plataforma.sql
+--   cada bloco avisa quantos foram. Para instalar os que faltam, reexecute o PROPRIO
+--   supabase/schema.sql com o dono das tabelas de plataforma. O arquivo inteiro e
+--   idempotente (ON CONFLICT nos buckets, DROP POLICY IF EXISTS antes de cada CREATE,
+--   CREATE OR REPLACE nas funcoes), entao reaplica-lo nao causa dano e instala o que faltou:
+--     psql -v ON_ERROR_STOP=1 -U supabase_admin -f supabase/schema.sql
+--   Nao existe um arquivo so com esta secao no repo de proposito: o dump e um unico
+--   artefato versionado, e dividi-lo criaria dois arquivos para manter em sincronia.
 --   Enquanto nao rodar, a tabela fica com RLS ligada e sem as policies da aplicacao: o acesso
 --   fica FECHADO, nao aberto. Falha segura.
 -- NAO VERIFICADO: se o runner de migrations do Supabase contorna essa checagem de dono. As 16
@@ -26342,8 +26390,20 @@ DECLARE
   r      record;
   ok     int := 0;
   pulou  int := 0;
+  pronto boolean := false;
 BEGIN
-  IF to_regclass('storage.buckets') IS NULL THEN
+  -- A guarda roda no proprio bloco protegido: resolver 'storage.buckets' exige USAGE no schema
+  -- storage, e sem esse privilegio to_regclass ERRA ('permission denied for schema storage')
+  -- em vez de devolver NULL. Fora de bloco, isso mata o psql com ON_ERROR_STOP=1 aqui e
+  -- as secoes seguintes nunca rodam. Em producao o papel postgres nao e superusuario e
+  -- tem USAGE so por grant explicito, entao o caminho e real.
+  BEGIN
+    pronto := to_regclass('storage.buckets') IS NOT NULL;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'sem USAGE no schema storage (%): buckets nao criados. Reexecute supabase/schema.sql com o dono.', SQLERRM;
+    RETURN;
+  END;
+  IF NOT pronto THEN
     RAISE NOTICE 'tabela storage.buckets ausente: buckets nao criados (alvo sem o schema storage)';
     RETURN;
   END IF;
@@ -26365,7 +26425,7 @@ BEGIN
   END LOOP;
   RAISE NOTICE 'storage.buckets: % criados/atualizados, % pulados', ok, pulou;
   IF pulou > 0 THEN
-    RAISE WARNING '% bucket(s) pulado(s) por privilegio. Rode 92-objetos-app-plataforma.sql como o dono de storage.buckets.', pulou;
+    RAISE WARNING '% bucket(s) pulado(s) por privilegio. Reexecute supabase/schema.sql como o dono de storage.buckets.', pulou;
   END IF;
 END
 $do$;
@@ -26384,8 +26444,20 @@ DECLARE
   r      record;
   ok     int := 0;
   pulou  int := 0;
+  pronto boolean := false;
 BEGIN
-  IF to_regclass('realtime.messages') IS NULL THEN
+  -- A guarda roda no proprio bloco protegido: resolver 'realtime.messages' exige USAGE no schema
+  -- realtime, e sem esse privilegio to_regclass ERRA ('permission denied for schema realtime')
+  -- em vez de devolver NULL. Fora de bloco, isso mata o psql com ON_ERROR_STOP=1 aqui e
+  -- as secoes seguintes nunca rodam. Em producao o papel postgres nao e superusuario e
+  -- tem USAGE so por grant explicito, entao o caminho e real.
+  BEGIN
+    pronto := to_regclass('realtime.messages') IS NOT NULL;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'sem USAGE no schema realtime (%): policies nao instaladas. Reexecute supabase/schema.sql com o dono.', SQLERRM;
+    RETURN;
+  END;
+  IF NOT pronto THEN
     RAISE NOTICE 'tabela realtime.messages ausente: policies nao instaladas (alvo sem esse schema de plataforma)';
     RETURN;
   END IF;
@@ -26408,7 +26480,7 @@ BEGIN
   END LOOP;
   RAISE NOTICE 'realtime.messages: % policies instaladas, % puladas', ok, pulou;
   IF pulou > 0 THEN
-    RAISE WARNING '% policy(s) de realtime.messages pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Rode 92-objetos-app-plataforma.sql como o dono da tabela.', pulou;
+    RAISE WARNING '% policy(s) de realtime.messages pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Reexecute supabase/schema.sql como o dono da tabela.', pulou;
   END IF;
 END
 $do$;
@@ -26419,8 +26491,20 @@ DECLARE
   r      record;
   ok     int := 0;
   pulou  int := 0;
+  pronto boolean := false;
 BEGIN
-  IF to_regclass('storage.objects') IS NULL THEN
+  -- A guarda roda no proprio bloco protegido: resolver 'storage.objects' exige USAGE no schema
+  -- storage, e sem esse privilegio to_regclass ERRA ('permission denied for schema storage')
+  -- em vez de devolver NULL. Fora de bloco, isso mata o psql com ON_ERROR_STOP=1 aqui e
+  -- as secoes seguintes nunca rodam. Em producao o papel postgres nao e superusuario e
+  -- tem USAGE so por grant explicito, entao o caminho e real.
+  BEGIN
+    pronto := to_regclass('storage.objects') IS NOT NULL;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'sem USAGE no schema storage (%): policies nao instaladas. Reexecute supabase/schema.sql com o dono.', SQLERRM;
+    RETURN;
+  END;
+  IF NOT pronto THEN
     RAISE NOTICE 'tabela storage.objects ausente: policies nao instaladas (alvo sem esse schema de plataforma)';
     RETURN;
   END IF;
@@ -26479,7 +26563,7 @@ BEGIN
   END LOOP;
   RAISE NOTICE 'storage.objects: % policies instaladas, % puladas', ok, pulou;
   IF pulou > 0 THEN
-    RAISE WARNING '% policy(s) de storage.objects pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Rode 92-objetos-app-plataforma.sql como o dono da tabela.', pulou;
+    RAISE WARNING '% policy(s) de storage.objects pulada(s) por privilegio. A tabela fica com RLS ligada e SEM essas policies (acesso fechado). Reexecute supabase/schema.sql como o dono da tabela.', pulou;
   END IF;
 END
 $do$;
@@ -37586,3 +37670,895 @@ ALTER TABLE public.xp_adjustments ADD CONSTRAINT xp_adjustments_related_assignme
 -- public.xp_history
 ALTER TABLE public.xp_history DROP CONSTRAINT IF EXISTS xp_history_salesperson_id_fkey;
 ALTER TABLE public.xp_history ADD CONSTRAINT xp_history_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
+
+-- ==========================================================
+-- AGENDAMENTOS DO PG_CRON
+-- ==========================================================
+-- agendamentos do pg_cron: 45 jobs
+-- Origem: Supabase usyxfpqlsspldubptrdl (producao), leitura de cron.job
+--   (jobname, schedule, command) em 45 linhas, todas com active = true.
+-- POR QUE ESTA SECAO EXISTE: o resto do dump LE cron.job dentro de corpo de funcao de
+--   monitoramento, mas nunca CHAMA cron.schedule. Sem este arquivo a restauracao sobe o
+--   schema inteiro e deixa os 45 jobs sem agendar: sync do Bitrix24, SLA de lead, cadencias,
+--   expiracao de orcamento, retencao de dados, liga semanal e os demais simplesmente nao
+--   rodam. Perda silenciosa de funcionalidade - nada falha, so para de acontecer.
+-- Criterio de inclusao: TODOS os 45 entram. 42 dos 45 nomes aparecem em migration de
+--   supabase/migrations/. Os 3 sem migration (capture-rollback-snapshot-5min,
+--   detect_slow_queries_hourly, purge_old_telemetry_daily) chamam
+--   public.admin_capture_rollback_snapshot(), public.detect_slow_queries(500, 100) e
+--   public.purge_old_telemetry(90) - funcoes DESTE app, agendadas a mao pelo painel.
+--   O Supabase nao instala cron job por conta propria, entao nao ha job de plataforma a
+--   descartar. Diferente das policies cron_job_policy e cron_job_run_details_policy, que a
+--   extensao cria sozinha e por isso ficaram fora da secao 92 de proposito.
+-- Nos 45 jobs, nodename = 'localhost', nodeport = 5432, database = 'postgres' e
+--   username = 'postgres' - ou seja, todos no default. Por isso cron.schedule(nome, schedule,
+--   comando) reproduz exatamente, sem precisar de cron.schedule_in_database: database e
+--   username saem de current_database() e do papel que aplica o arquivo, que numa restauracao
+--   de projeto Supabase sao justamente postgres/postgres.
+-- Depende de: 10-extensoes-schemas.sql (pg_cron), 70-funcoes.sql (as funcoes chamadas pelos
+--   comandos) e 30-tabelas.sql (public._internal_secrets e as tabelas dos 2 DELETE diretos).
+--   Vem depois dos grants (97) e das FKs (98) porque agendar e o ultimo passo: so faz sentido
+--   ligar o relogio quando o schema inteiro ja esta de pe.
+-- QUOTING: cada valor sai como literal SQL com aspas simples duplicadas (26 dos 45
+--   comandos tem aspas simples; 2 tem newline embutido, preservado dentro do literal).
+--   Nenhum comando contem backslash, entao literal comum basta e nao e preciso E-string;
+--   nenhum contem $do$, entao o dollar-quote do bloco externo nao pode ser fechado cedo.
+--   Verificado com assert de round-trip nos 45 valores no gerador (gerar_99.py), nao a olho.
+-- Guardado por to_regclass('cron.job') + to_regprocedure('cron.schedule(text,text,text)'):
+--   num alvo sem a extensao pg_cron (ou com cron.job mas sem a funcao de 3 argumentos, caso do
+--   pg_cron < 1.1) a secao so emite NOTICE e a restauracao NAO aborta.
+-- POR QUE ESTA SECAO NAO ABORTA A RESTAURACAO: cada cron.schedule roda dentro do seu proprio
+--   BEGIN ... EXCEPTION, E a propria guarda tambem. A guarda precisa de protecao porque
+--   to_regclass('cron.job') exige USAGE no schema cron: num papel sem esse privilegio ela
+--   ERRA ("permission denied for schema cron") em vez de retornar NULL, e com ON_ERROR_STOP=1
+--   isso mataria o psql AQUI - antes do 99b (ledger de migrations), que vem depois desta secao
+--   em montar.py. Testado: psql exit 0 nos 4 caminhos (sem pg_cron, cron.job sem a funcao,
+--   papel sem USAGE em cron, aplicacao normal).
+-- CUIDADO, APLIQUE SEMPRE COM O MESMO PAPEL: o upsert do cron.schedule e por
+--   (jobname, username), NAO por jobname sozinho. Medido: aplicar este arquivo com um
+--   segundo papel levou cron.job de 45 para 90 linhas, 45 delas com o outro username —
+--   cada job passaria a disparar DUAS vezes. Em producao os 45 estao com
+--   username='postgres'. Portanto: restaure sempre com postgres (ou com o mesmo papel
+--   usado antes), e se desconfiar de duplicata confira
+--   SELECT jobname, count(*) FROM cron.job GROUP BY 1 HAVING count(*) > 1.
+-- Idempotente: cron.schedule faz upsert por (jobname, username) no pg_cron >= 1.4, entao
+--   rodar duas vezes atualiza em vez de duplicar. Verificado rodando 2x em pg_cron 1.6.
+-- active: os 45 estao active = true em producao e cron.schedule cria ja ativo, entao nao ha
+--   nada a desativar. Se algum dia um job for pausado em producao, esta secao passa a precisar
+--   de um UPDATE cron.job SET active = false - hoje nao precisa.
+-- Nenhum valor de credencial e emitido: gate rodado nos 45 comandos com os padroes eyJ...,
+--   sbp_..., service_role, sk-..., Bearer ..., api_key/secret/password/token := '...',
+--   AC<32hex>, xox[baprs]-, ghp_..., AKIA..., connection string e base64 longo: 0 ocorrencias.
+--   Os 2 jobs com net.http_post (deal-risk-digest-daily, email-bulk-retry-15min) leem url e
+--   apikey de public._internal_secrets em tempo de execucao; nao ha valor literal no comando.
+-- ATENCAO NA RESTAURACAO: este dump nao carrega DADO. Esses 2 jobs vao falhar em runtime
+--   enquanto public._internal_secrets estiver vazia - as chaves functions_base_url e anon_key
+--   precisam ser inseridas depois. Os outros 43 nao dependem de dado.
+-- NAO VERIFICADO: se o worker do pg_cron no alvo realmente dispara os jobs. cron.schedule
+--   registra a linha, mas o worker so le a fila do banco apontado por cron.database_name
+--   (GUC de servidor, exige shared_preload_libraries e restart). Aqui foi verificado o
+--   registro das 45 linhas, nao a execucao delas.
+-- NAO VERIFICADO: comportamento em pg_cron < 1.4, onde cron.schedule nao faz upsert por nome
+--   e rodar 2x duplicaria. Producao tem 1.6.4 e o teste local rodou em 1.6.
+
+DO $do$
+DECLARE
+  r      record;
+  ok     int := 0;
+  pulou  int := 0;
+  pronto boolean := false;
+BEGIN
+  -- A guarda fica dentro do seu proprio BEGIN ... EXCEPTION porque resolver 'cron.job' exige
+  -- USAGE no schema cron: sem esse privilegio o to_regclass ERRA (nao retorna NULL) e, com
+  -- ON_ERROR_STOP=1, mataria o psql aqui - abortando a restauracao antes do 99b (ledger).
+  BEGIN
+    pronto := to_regclass('cron.job') IS NOT NULL
+          AND to_regprocedure('cron.schedule(text,text,text)') IS NOT NULL;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'sem privilegio no schema cron: os 45 agendamentos NAO foram criados. Reexecute supabase/schema.sql com um papel que tenha USAGE em cron e EXECUTE em cron.schedule (o arquivo e idempotente).';
+    RETURN;
+  END;
+  IF NOT pronto THEN
+    RAISE NOTICE 'cron.job/cron.schedule ausentes: os 45 agendamentos nao foram criados (alvo sem a extensao pg_cron)';
+    RETURN;
+  END IF;
+  FOR r IN SELECT * FROM (VALUES
+    ('access-denied-alerts-hourly'::text, '0 * * * *'::text, 'SELECT public.trigger_internal_edge_job(''access-denied-alerts'');'::text),
+    ('activity-goal-alerts-daily', '0 18 * * *', 'SELECT public.trigger_internal_edge_job(''activity-goal-alerts'');'),
+    ('auto-reassign-inactive-daily', '0 9 * * *', 'SELECT public.trigger_internal_edge_job(''auto-reassign-inactive'');'),
+    ('auto-task-queue-hourly', '0 * * * *', 'SELECT public.trigger_generate_urgent_client_tasks();'),
+    ('bitrix24-sync-hourly', '17 * * * *', 'SELECT public.trigger_internal_edge_job(''bitrix24-sync'');'),
+    ('campaign-health-alert-30min', '*/30 * * * *', 'SELECT public.trigger_campaign_health_alert();'),
+    ('capture-rollback-snapshot-5min', '*/5 * * * *', 'SELECT public.admin_capture_rollback_snapshot()'),
+    ('challenge-expiration-alerts-daily', '0 12 * * *', 'SELECT public.trigger_internal_edge_job(''challenge-expiration-alerts'');'),
+    ('challenge-progress-sync', '15 3 * * *', 'SELECT public.sync_challenge_progress()'),
+    ('check-lead-sla-15min', '*/15 * * * *', 'SELECT public.trigger_internal_edge_job(''check-lead-sla'');'),
+    ('check-quote-expiration-daily', '0 8 * * *', 'SELECT public.trigger_internal_edge_job(''check-quote-expiration'');'),
+    ('check-v4-callback-alerts-every-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''check-v4-callback-alerts'');'),
+    ('cleanup-stale-logs-daily', '15 3 * * *', ' SELECT public.fn_cleanup_stale_logs(90); '),
+    ('cleanup-webhook-dedupe', '0 */6 * * *', 'SELECT public.fn_cleanup_webhook_dedupe();'),
+    ('cron-failure-alerter-10min', '*/10 * * * *', 'SELECT public.trigger_internal_edge_job(''cron-failure-alerter'');'),
+    ('data-retention-purge-daily', '45 3 * * *', 'SELECT public.fn_apply_data_retention();'),
+    ('deal-risk-digest-daily', '0 11 * * *', 'SELECT net.http_post(
+    url := (SELECT value FROM public._internal_secrets WHERE key=''functions_base_url'') || ''/deal-risk-digest'',
+    headers := jsonb_build_object(''Content-Type'',''application/json'',''apikey'',(SELECT value FROM public._internal_secrets WHERE key=''anon_key'')),
+    body := jsonb_build_object(''triggered_at'', now())
+  );'),
+    ('detect-client-churn-alerts-hourly', '15 * * * *', 'SELECT public.trigger_detect_client_churn_alerts();'),
+    ('detect-stalled-cron-15min', '*/15 * * * *', 'SELECT public.detect_stalled_cron_jobs()'),
+    ('detect_slow_queries_hourly', '20 * * * *', 'SELECT public.detect_slow_queries(500, 100)'),
+    ('edge-retry-threshold-alert-15min', '*/15 * * * *', 'SELECT public.trigger_internal_edge_job(''edge-retry-threshold-alert'');'),
+    ('email-bulk-retry-15min', '*/15 * * * *', 'SELECT net.http_post(
+    url := (SELECT value FROM public._internal_secrets WHERE key=''functions_base_url'') || ''/email-bulk-retry'',
+    headers := jsonb_build_object(''Content-Type'',''application/json'',''apikey'',(SELECT value FROM public._internal_secrets WHERE key=''anon_key'')),
+    body := ''{}''::jsonb
+  );'),
+    ('enforce-telemetry-retention-daily', '30 3 * * *', 'SELECT public.enforce_telemetry_retention();'),
+    ('gc-call-recording-ingest-jobs', '15 3 * * *', ' SELECT public.fn_gc_call_recording_ingest_jobs(); '),
+    ('notify-v4-quote-status-every-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''notify-v4-quote-status'');'),
+    ('process-cadence-tasks-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''process-cadence-tasks'');'),
+    ('process-call-recording-ingest-1min', '* * * * *', 'SELECT public.trigger_internal_edge_job(''process-call-recording-ingest'');'),
+    ('process-scheduled-sends-15min', '*/15 * * * *', 'SELECT public.trigger_internal_edge_job(''process-scheduled-sends'');'),
+    ('purge-quote-sync-inbound-log-30d', '15 3 * * *', 'DELETE FROM public.quote_sync_inbound_log WHERE received_at < now() - interval ''30 days'';'),
+    ('purge-rollback-snapshots-daily', '20 3 * * *', 'SELECT public.fn_purge_rollback_snapshots()'),
+    ('purge-telemetry-retention-daily', '30 3 * * *', 'SELECT public.purge_telemetry_retention();'),
+    ('purge-webhook-inbound-dedupe-30d', '0 3 * * *', 'DELETE FROM public.webhook_inbound_dedupe WHERE received_at < now() - interval ''30 days'';'),
+    ('purge_old_telemetry_daily', '15 3 * * *', 'SELECT public.purge_old_telemetry(90)'),
+    ('reset-pg-stat-statements-weekly', '0 4 * * 1', 'SELECT public.reset_pg_stat_statements_weekly();'),
+    ('rotate-daily-challenges-daily', '10 3 * * *', 'SELECT public.trigger_internal_edge_job(''rotate-daily-challenges'');'),
+    ('scheduled-reports-runner-hourly', '10 * * * *', 'SELECT public.trigger_internal_edge_job(''scheduled-reports-runner'');'),
+    ('sdr-consecutive-alerts-daily', '0 11 * * *', 'SELECT public.trigger_internal_edge_job(''sdr-consecutive-alerts'');'),
+    ('send-alert-notifications-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''send-alert-notifications'');'),
+    ('sequence-runner-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''sequence-runner'');'),
+    ('wal-health-alert-5min', '*/5 * * * *', 'SELECT public.trigger_internal_edge_job(''wal-health-alert'');'),
+    ('webvitals-regression-alert-daily', '15 11 * * *', 'SELECT public.trigger_internal_edge_job(''webvitals-regression-alert'');'),
+    ('weekly-league-reset', '0 0 * * 1', 'SELECT public.process_weekly_league_reset()'),
+    ('weekly-matchmaking', '1 0 * * 1', 'SELECT public.match_weekly_players()'),
+    ('weekly-matchups-resolution', '5 0 * * 1', 'SELECT public.resolve_weekly_matchups()'),
+    ('winloss-webhook-health-monitor-15min', '*/15 * * * *', 'SELECT public.trigger_internal_edge_job(''winloss-webhook-health-monitor'');')
+  ) AS t(jobname, sched, cmd) LOOP
+    BEGIN
+      PERFORM cron.schedule(r.jobname, r.sched, r.cmd);
+      ok := ok + 1;
+    EXCEPTION WHEN insufficient_privilege THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'job "%" NAO agendado: sem privilegio em cron.schedule (%)', r.jobname, SQLERRM;
+    END;
+  END LOOP;
+  RAISE NOTICE 'cron.job: % agendados/atualizados, % pulados', ok, pulou;
+  IF pulou > 0 THEN
+    RAISE WARNING '% job(s) pulado(s) por privilegio: a funcionalidade agendada NAO vai rodar. Reexecute supabase/schema.sql com um papel que tenha EXECUTE em cron.schedule (o arquivo e idempotente).', pulou;
+  END IF;
+END
+$do$;
+
+-- ==========================================================
+-- LEDGER DE MIGRATIONS
+-- ==========================================================
+-- Ledger de migrations aplicadas: supabase_migrations.schema_migrations, 692 versoes.
+-- Por que esta secao existe: sem ela o alvo restaurado tem o schema completo mas um
+--   ledger VAZIO. A CLI do Supabase e o workflow migrations-drift.yml casam por `version`:
+--   com o ledger vazio eles consideram as 692 migrations como nao aplicadas e tentariam
+--   reaplicar tudo sobre uma base que ja tem os objetos. O alvo ficaria inoperavel com a
+--   ferramenta do proprio projeto.
+-- Coluna `statements` OMITIDA de proposito: sao 84 kB de SQL que ja esta versionado em
+--   supabase/migrations/, e a CLI casa por version, nao por statements. Duplicar inflaria
+--   o dump sem ganho. Fica NULL.
+-- Ordem: ULTIMA secao, depois dos agendamentos. Nao tem dependencia de objeto; fica no fim
+--   para que o ledger so seja marcado como aplicado quando tudo antes dele passou.
+-- ON CONFLICT (version) DO NOTHING: nao sobrescreve ledger de uma base que ja tem o seu.
+-- Nenhum segredo: so version e name (o proprio nome do arquivo de migration).
+-- Guardado por to_regclass e por EXCEPTION: numa base sem o schema supabase_migrations a
+--   secao so avisa, e falta de privilegio nao aborta a restauracao.
+
+DO $do$
+DECLARE
+  ok int := 0;
+BEGIN
+  IF to_regclass('supabase_migrations.schema_migrations') IS NULL THEN
+    RAISE NOTICE 'supabase_migrations.schema_migrations ausente: ledger nao preenchido (alvo sem a CLI do Supabase)';
+    RETURN;
+  END IF;
+  BEGIN
+    INSERT INTO supabase_migrations.schema_migrations (version, name)
+    VALUES
+    ('20241231000000', 'saved_filters'),
+    ('20241231000001', '20241231000001_entity_versions'),
+    ('20250102000001', '20250102000001_audit_log'),
+    ('20250102000002', '20250102000002_saved_filters'),
+    ('20250102000003', '20250102000003_versioning'),
+    ('20251212200226', '20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e'),
+    ('20251212200311', '20251212200311_00d2a618-8739-47a1-8ba1-7de3f668765b'),
+    ('20251212201120', '20251212201120_b81a2517-fcbe-47dd-abb5-ef80c7baf4ab'),
+    ('20251212201956', '20251212201956_c63f99af-d08e-4fdd-95d9-3f43010e5e16'),
+    ('20251212211727', '20251212211727_4354f5d5-7e98-4892-ab55-eb026b851ca0'),
+    ('20251212212817', '20251212212817_64502cca-2836-4466-b62d-f7cafbb0801b'),
+    ('20251213010319', '20251213010319_3edab12d-13d1-46fb-bdb6-e1a8edac611a'),
+    ('20251213011714', '20251213011714_1faa1708-ebdd-42a5-acab-18c6a56378a4'),
+    ('20251213012228', '20251213012228_118199a5-ff1f-4d60-b0ed-0ab60e9bfd22'),
+    ('20251213105021', '20251213105021_4b959b7c-d24d-49d8-80b6-2ef62bf588ec'),
+    ('20251213112502', '20251213112502_edf404a2-6f3f-4337-90ed-edf6d391bceb'),
+    ('20251213120556', '20251213120556_4ed9cc11-041f-4ef1-aa05-5dbada662b8a'),
+    ('20251213121059', '20251213121059_5cefc298-307c-4566-a955-a92aacd28984'),
+    ('20251213122333', '20251213122333_bd6a3540-97c2-4bbf-98a8-1e4fc57436ee'),
+    ('20251213123634', '20251213123634_c60a3b0d-5c49-40fa-afec-01bad357345d'),
+    ('20251213124609', '20251213124609_9d267bf3-6850-4109-8709-b4a7065de928'),
+    ('20251213134739', '20251213134739_48496e18-f416-48df-8f89-da782ad4f10e'),
+    ('20251213171413', '20251213171413_a2a072e1-89fd-49ad-9521-7b6b36988d40'),
+    ('20251213172816', '20251213172816_8f8793bd-13ad-4c30-b65a-1ee3123f793e'),
+    ('20251214012659', '20251214012659_3118d383-73c6-4815-a245-4105e62cb87b'),
+    ('20251214025653', '20251214025653_0cf4785a-e064-43d9-9147-8030f118c23c'),
+    ('20251214025902', '20251214025902_0719d8a5-de34-40be-9369-03273d385b61'),
+    ('20251214103344', '20251214103344_640296e4-5119-4bf4-aefe-f0749de6003f'),
+    ('20251214113854', '20251214113854_f02c2aac-633d-4d0a-aaa3-6a1cc5d5dbf3'),
+    ('20251214115240', '20251214115240_39838550-4d02-4097-93ca-e3ec8060c387'),
+    ('20251214122159', '20251214122159_c7e91996-3c5a-4609-a196-cc55e284a6f7'),
+    ('20251214123050', '20251214123050_948154a3-9f8b-411e-9140-318f92bddb7f'),
+    ('20251214145216', '20251214145216_a67a07f4-c360-4528-876b-a4ce0ec73834'),
+    ('20251214150351', '20251214150351_b7c62695-6f80-4ce9-83cf-f6f4f12e50ca'),
+    ('20251214170231', '20251214170231_bc7e9f48-3331-445c-b4a6-4deab326cb28'),
+    ('20251214172514', '20251214172514_c1966e7a-669e-4dd9-9967-5bc3a36a8192'),
+    ('20251214174647', '20251214174647_99a3d41e-bc2d-428c-92ef-c682687f3790'),
+    ('20251214195655', '20251214195655_c7694413-8900-4702-bbc9-076aef416b28'),
+    ('20251214201213', '20251214201213_f0b4aaa3-5bdf-4c9a-a8f4-860ddf7dcc7a'),
+    ('20251214202234', '20251214202234_1dd06e24-652c-46fb-b255-d8e173601653'),
+    ('20251214202329', '20251214202329_05566717-ff06-4ae0-8370-13a070401d82'),
+    ('20251214203613', '20251214203613_0747efdb-aa79-4b67-96d1-43465422df9a'),
+    ('20251214213427', '20251214213427_7cc1560e-eeac-4425-a7e7-20bf56cc21a1'),
+    ('20251215011011', '20251215011011_d75fbfee-b6cd-47e1-a6e5-a030ff0760af'),
+    ('20251215021721', '20251215021721_0514f500-3275-4deb-b61a-cd09835c6233'),
+    ('20251215105100', '20251215105100_f93958d0-6b67-4962-b5bc-6cd80ccb9260'),
+    ('20251220134342', '20251220134342_08bca4e6-70f7-4f15-a505-bc1d60b6b323'),
+    ('20251220140346', '20251220140346_1ac9eb9e-6f70-48c7-835f-345e7ba2f85a'),
+    ('20251220142553', '20251220142553_58df5395-4e0a-4a82-83ea-f398f8977013'),
+    ('20251220151233', '20251220151233_db2268bd-0f54-4da8-8433-99249eae31c0'),
+    ('20251220181346', '20251220181346_ade3d719-7ebf-4afa-9fa7-5a1a1578797b'),
+    ('20251220181739', '20251220181739_63a312a6-4970-40fd-860b-04dbb14ddc2f'),
+    ('20251227180749', '20251227180749_ae9f1cfd-d5f2-4424-a6e6-9d36b9d6be1d'),
+    ('20251227180950', '20251227180950_1c4db781-f1ed-4c0e-8e5a-feed06d3270d'),
+    ('20251228000001', '20251228000001_add_soft_delete'),
+    ('20251228000002', '20251228000002_advanced_permissions'),
+    ('20251228000003', '20251228000003_move_extensions_to_schema'),
+    ('20251231120039', '20251231120039_b2152855-d5fa-4fa1-8557-b2884e44108d'),
+    ('20251231120846', '20251231120846_562120aa-f001-412e-8054-805485a4cfb6'),
+    ('20251231121413', '20251231121413_c4826621-81ba-45f1-86f9-092fac5d9ee4'),
+    ('20251231124536', '20251231124536_b90feb11-36b2-4de9-bfb5-ca04c1638a98'),
+    ('20251231125636', '20251231125636_26067a0b-d8f7-4c1e-9081-28906716994d'),
+    ('20251231131342', '20251231131342_a0f87441-d86b-49d8-a197-f97973da46fc'),
+    ('20260103201133', '20260103201133_44db697a-4db6-4a32-9d5f-434672cac928'),
+    ('20260103202206', '20260103202206_ac6fcd9f-cb93-495a-8ee3-ae9cdca9f5e7'),
+    ('20260104143929', '20260104143929_2fa_system'),
+    ('20260104143930', '20260104143930_audit_trail'),
+    ('20260104143931', '20260104143931_webhooks_system'),
+    ('20260104144318', '20260104144318_performance_indexes'),
+    ('20260104144330', '20260104144330_materialized_views'),
+    ('20260104165753', '20260104165753_comprehensive_rls_policies'),
+    ('20260104170152', '20260104170152_additional_indexes'),
+    ('20260104170153', '20260104170153_stored_procedures'),
+    ('20260104180000', '20260104180000_webhooks_complete'),
+    ('20260104181000', '20260104181000_materialized_views_enhanced'),
+    ('20260104181001', '20260104181001_stored_procedures_additional'),
+    ('20260104182000', '20260104182000_additional_tables'),
+    ('20260104183000', '20260104183000_security_enhancements'),
+    ('20260104184000', '20260104184000_performance_indexes_additional'),
+    ('20260104200000', '20260104200000_2fa_complete'),
+    ('20260104200100', '20260104200100_audit_trail_complete'),
+    ('20260104210000', '20260104210000_soft_delete_enhanced'),
+    ('20260105000001', '20260105000001_2fa_system'),
+    ('20260105000002', '20260105000002_audit_trail'),
+    ('20260105000003', '20260105000003_rls_policies'),
+    ('20260105000004', '20260105000004_performance_indexes'),
+    ('20260105000005', '20260105000005_stored_procedures'),
+    ('20260105000006', '20260105000006_new_ab_tests'),
+    ('20260105000007', '20260105000007_new_feature_flags'),
+    ('20260105000008', '20260105000008_new_webhooks'),
+    ('20260106183941', '20260106183941_1d5b39a6-d3ee-48cb-9840-c9a068f5d84b'),
+    ('20260224122543', '20260224122543_2f8671be-0b7b-4e02-a676-c51df0746d97'),
+    ('20260224131348', '20260224131348_057440fe-994a-4e43-84a5-c5f70ae14743'),
+    ('20260224142333', '20260224142333_aa540699-bd1c-4912-90dd-4d094b2c249b'),
+    ('20260224205444', '20260224205444_492795c9-0e31-4555-a12b-dfb29e93908d'),
+    ('20260317184958', '20260317184958_063ceb86-e16c-46bd-9b5c-abfe93a6ba14'),
+    ('20260317201136', '20260317201136_8691bb82-5602-424a-aa93-68a498faae1d'),
+    ('20260317203315', '20260317203315_3ba616a1-7b24-4da7-b8d8-465983a8b1cd'),
+    ('20260317205046', '20260317205046_fb209f26-f880-47ae-b7bf-f31db1831418'),
+    ('20260317213028', '20260317213028_11b8943a-3509-425a-83fb-13f4f5379360'),
+    ('20260317214242', '20260317214242_f905236d-0c6e-4708-8267-18dc849295d9'),
+    ('20260317215431', '20260317215431_2cc79944-6a99-47c8-b348-bae816d9eda7'),
+    ('20260317222248', '20260317222248_86053b52-4af4-4981-9cf3-64ff87d5fe6c'),
+    ('20260317222313', '20260317222313_f211f621-4aba-45d6-ba14-d74b5c43058d'),
+    ('20260317222414', '20260317222414_c12099ab-6e90-45d0-a69b-233eb11444c6'),
+    ('20260317222446', '20260317222446_8bfd723d-0187-4c10-83ca-cda04447636a'),
+    ('20260317223307', '20260317223307_3515dddb-53e3-4662-9a89-5fc1087d5d4f'),
+    ('20260317224211', '20260317224211_099806dc-6ccf-4718-9e04-ca38cac097be'),
+    ('20260317224507', '20260317224507_81d89282-552e-4a1f-adcb-44aec5b8e92e'),
+    ('20260317230319', '20260317230319_9ec47ff8-1d4c-4fba-ad42-05d84753ae73'),
+    ('20260317230752', '20260317230752_59f7cd10-885e-4b37-8df8-d05cf8731a58'),
+    ('20260317231111', '20260317231111_4ff6235a-b905-4b7b-b5ca-e1773eb55f51'),
+    ('20260317231542', '20260317231542_f0212157-71aa-46ad-a0f0-a6652e4d2991'),
+    ('20260317232020', '20260317232020_3ffedbc8-f43d-4ea0-88ca-738a20c96fc5'),
+    ('20260317232030', '20260317232030_9d17c4af-486d-4e93-80d4-994570d9a2c4'),
+    ('20260317232412', '20260317232412_85638406-bf3a-4459-a8ec-0950531a5b6d'),
+    ('20260317232629', '20260317232629_fd223670-41a5-4504-9bc7-cc6f9ec296e7'),
+    ('20260317232651', '20260317232651_91700624-5f5f-49e4-b7fb-32b621dd1b10'),
+    ('20260317235601', '20260317235601_72687ab3-882f-45c8-bace-35c0d9482a39'),
+    ('20260317235953', '20260317235953_65951e06-efae-4fb8-a605-7bd6ae12aa4e'),
+    ('20260318000319', '20260318000319_80af82b1-7ae9-42e9-a63b-ad7faf665d23'),
+    ('20260321195552', '20260321195552_1a939365-b697-4a37-870b-c118281c25b2'),
+    ('20260321200002', '20260321200002_790e76ed-c48f-4f06-9044-48b7057b86ae'),
+    ('20260321200014', '20260321200014_9c22f821-aec8-4a19-9496-489937f12599'),
+    ('20260321200233', '20260321200233_750551d2-a5fe-4de6-af50-37cf5b339982'),
+    ('20260321200552', '20260321200552_3940e5d4-c27a-430f-ae74-e29909efc243'),
+    ('20260321200657', '20260321200657_5b96fe0c-42b1-4f9c-be84-076d9d0d0b95'),
+    ('20260323120713', '20260323120713_191479e2-2f2a-4336-b5c5-85b819457578'),
+    ('20260323124429', '20260323124429_7492f3d1-92db-4bf7-b07e-ff5c2cf4814f'),
+    ('20260330135126', '20260330135126_2e3c42f1-5cc7-4566-8e0b-2196a312249f'),
+    ('20260330135140', '20260330135140_45089049-8d94-4ffd-83a8-254c8bef164b'),
+    ('20260330160529', '20260330160529_7fb0479f-39a2-452b-9254-65b7714d38d1'),
+    ('20260330181929', '20260330181929_7bd6f520-5bb7-4669-b3bd-5fa7d2af218b'),
+    ('20260402110607', '20260402110607_58d6a56f-2cbb-4544-9fb4-d66cd4d32ac5'),
+    ('20260402110638', '20260402110638_3fc25660-a01a-4e9a-8859-a4f8077b7e93'),
+    ('20260402110711', '20260402110711_bc8566d0-e7aa-476b-870c-7d517defb199'),
+    ('20260402110810', '20260402110810_a6d7728b-b5d7-493a-a68b-f95cb8fbda42'),
+    ('20260402110955', '20260402110955_63a1a5c4-4145-43a6-a810-93c6e580e74e'),
+    ('20260402111117', '20260402111117_b1d331e5-b182-43c4-9e2a-5b2262283c41'),
+    ('20260402111507', '20260402111507_e4626b9e-2b43-4e41-b30f-e879b8dcd115'),
+    ('20260402111636', '20260402111636_c875b645-b4e5-4c0f-b58d-b20c51979eed'),
+    ('20260402111650', '20260402111650_ca437b80-8abb-4987-8509-3e34c5aac259'),
+    ('20260402114944', '20260402114944_69ceffa7-70a2-44d1-9c6d-ba4872fdbc77'),
+    ('20260402203815', '20260402203815_9798c222-1983-4486-8904-3b7e86f668fa'),
+    ('20260402214537', '20260402214537_4c15af24-3450-4487-8fa2-ef631fed83b6'),
+    ('20260404121408', '20260404121408_2e483bdf-bf38-4db9-86d3-2a92e8686422'),
+    ('20260404140006', '20260404140006_c21c92b8-53e3-47ae-9d25-29d93dd7387e'),
+    ('20260404151705', '20260404151705_f2d92570-021d-4e14-82fe-578535c45fb6'),
+    ('20260404154338', '20260404154338_8884326f-3a3b-4ab1-83da-b474e45f84ec'),
+    ('20260404154431', '20260404154431_3b3a3256-8798-4d00-baf9-b4ded08b6100'),
+    ('20260404154450', '20260404154450_34762f2e-c921-4c80-91fe-453f29d2c601'),
+    ('20260404155258', '20260404155258_7109bf7e-3093-412b-97a9-e67436fd98ba'),
+    ('20260404155936', '20260404155936_8b0c0ef2-d84f-40d7-b488-544e7a431b0e'),
+    ('20260404161351', '20260404161351_d53443ba-8f31-4fe5-b682-193dc710b80e'),
+    ('20260404163626', '20260404163626_40b01aff-cbaa-4bba-9d9c-7dbc40b4c778'),
+    ('20260404190343', '20260404190343_2067f25b-b414-477c-a112-310acd73d67e'),
+    ('20260404191439', '20260404191439_0af779d5-47f3-410e-8f9c-a11f66976bb2'),
+    ('20260404192611', '20260404192611_a55036e1-ea02-48ce-86c7-d7ec19fbaee1'),
+    ('20260404193218', '20260404193218_05127d3e-1b30-4c95-aca7-6682c311121d'),
+    ('20260404195916', '20260404195916_79fe720e-a9f3-4d27-b875-357e91ed4d80'),
+    ('20260404202534', '20260404202534_4aceb073-2e38-4374-a25d-a447c3da6af6'),
+    ('20260404204416', '20260404204416_9ad10335-2f93-4d84-801c-f1a816ad9b29'),
+    ('20260406142257', '20260406142257_98ec91da-5cb8-4a46-84ab-e19051172614'),
+    ('20260406194500', '20260406194500_65867cb5-7e3a-4623-a118-1a1d6e239fc3'),
+    ('20260409002850', '20260409002850_b08bd57f-b10f-4d8c-afed-adea06a2e97e'),
+    ('20260412114313', '20260412114313_acb65e9c-57ea-4578-924e-47fc59129dfb'),
+    ('20260412114554', '20260412114554_3c1b4eac-10fa-42eb-96b8-9db8385ecc4f'),
+    ('20260412114808', '20260412114808_21a14a17-3912-4a14-86dc-55aebea09e2d'),
+    ('20260412115357', '20260412115357_dcf9ab46-7f4b-484f-bf6f-7a87bcbc40f7'),
+    ('20260412115439', '20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa'),
+    ('20260416104458', '20260416104458_a8fc916a-0907-4aa4-92a7-42a4bf4ed461'),
+    ('20260416105317', '20260416105317_628b38a5-14b7-40c1-8a58-aaa7576bca19'),
+    ('20260416170135', '20260416170135_cc109372-7eb4-4589-89a9-d89b0f3b3c00'),
+    ('20260416180351', '20260416180351_66d853e8-c85a-4648-8a3b-316312dd6361'),
+    ('20260416180740', '20260416180740_8f30bfcc-c013-4df1-9dd9-4c7ed8b2621e'),
+    ('20260416181124', '20260416181124_7ac5204a-43b3-4cdc-aa9e-70b44426c96b'),
+    ('20260416181418', '20260416181418_6d978eeb-e572-497a-be87-f6935ebd7af2'),
+    ('20260416181656', '20260416181656_6c621378-b2d7-42d5-a6d9-0fff5c1e78bd'),
+    ('20260416182649', '20260416182649_6e133557-89ac-41bc-b1b9-0f6b89b01f1c'),
+    ('20260416183440', '20260416183440_f56efa12-55aa-464a-aa49-9a6f12a46db1'),
+    ('20260416183454', '20260416183454_62bcf58d-fe3b-4bd4-bd2f-7b1f17f5f989'),
+    ('20260416194432', '20260416194432_c11a9419-4322-4cbb-a68e-c82a354b1440'),
+    ('20260416194617', '20260416194617_15964d76-f47d-46e4-8278-553b2a12f680'),
+    ('20260416194718', '20260416194718_556dc61c-9560-41ad-950e-ac7823601ae2'),
+    ('20260416195006', '20260416195006_fefd2801-b414-41e2-842c-1914a9fdb276'),
+    ('20260416195445', '20260416195445_1055a333-92bf-4deb-93aa-d42127aa91fa'),
+    ('20260416195725', '20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c'),
+    ('20260416195950', '20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3'),
+    ('20260416200128', '20260416200128_9a349ada-690b-440b-b745-6f94b7e4160e'),
+    ('20260416204402', '20260416204402_75401a87-25f7-449b-baf9-b6f553bd2129'),
+    ('20260416204457', '20260416204457_1d50cec8-6696-4792-9bd7-9c8aec65f8b2'),
+    ('20260416215425', '20260416215425_1ba06426-5891-47eb-bac8-3f8aea6119f4'),
+    ('20260416231940', '20260416231940_a82b593c-b778-454c-b3ac-97ab40286cfd'),
+    ('20260416232618', '20260416232618_f6dcab79-5212-4086-b46f-7ff5f3532a80'),
+    ('20260416234424', '20260416234424_66fbe1df-5677-4a6c-bea6-daf700e06009'),
+    ('20260417000949', '20260417000949_a89d07df-24c2-4acf-9877-e041ba2414ef'),
+    ('20260417001358', '20260417001358_0b921521-ed97-499b-98f4-bcd0d0b0c054'),
+    ('20260417003056', '20260417003056_5c5ebfb6-15ce-4df8-adf1-1fc58fbc4bb6'),
+    ('20260417003115', '20260417003115_23db46c1-6f77-4995-992c-4c871b1e829f'),
+    ('20260417004724', '20260417004724_5b69c678-9bcb-4757-afa3-c7f08a0bd49c'),
+    ('20260417011542', '20260417011542_fc8fac96-2267-42a9-83f9-fde79549238b'),
+    ('20260417011558', '20260417011558_0c4e2ba5-6872-4d32-bc09-a39af7b3ad8e'),
+    ('20260417105640', '20260417105640_f90fe72d-ce4d-4999-9ab0-239b02795e32'),
+    ('20260417105658', '20260417105658_605cd85e-cfd8-4688-8002-fa867ff9ee0b'),
+    ('20260417110613', '20260417110613_75829d1b-cd98-4ce9-b51b-2c0ba819bf43'),
+    ('20260417112931', '20260417112931_1cd3847f-3cf1-44bb-853f-20cd0066df36'),
+    ('20260417115509', '20260417115509_514f0fe4-af62-4b72-aec8-3ce37b4ed9ac'),
+    ('20260417120210', '20260417120210_00a66fee-a4de-44a1-97ab-db5926583629'),
+    ('20260417122626', '20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4'),
+    ('20260417123624', '20260417123624_68ec9996-f000-46cf-958d-418554185750'),
+    ('20260417123641', '20260417123641_8e43f5c0-c79c-4f96-b743-60721dbd2e67'),
+    ('20260417150930', '20260417150930_73c2611e-f064-4b26-94d2-c4095e49076d'),
+    ('20260417155732', '20260417155732_08d9a90e-f30b-4744-8c96-8f455d1b5a03'),
+    ('20260417163016', '20260417163016_10247063-3375-460e-b955-9678367cde57'),
+    ('20260417171744', '20260417171744_c2d3563b-ba1c-4e4a-92ca-dc21d1729a3c'),
+    ('20260417171801', '20260417171801_296f10b5-a019-4921-bbe8-fa9d52f40d1a'),
+    ('20260417172401', '20260417172401_58a897ab-98e9-45fb-a275-94c9112b6be4'),
+    ('20260417173508', '20260417173508_8c5e3567-b605-4680-883e-e4e336d4b305'),
+    ('20260417174122', '20260417174122_6ffab81c-1745-49c8-9551-aa285faf02f3'),
+    ('20260417174827', '20260417174827_5d14e75f-67d1-4c4d-b663-cac1ab830b39'),
+    ('20260417181059', '20260417181059_373308ac-cd9e-4c9f-b695-1c5b3ba6d799'),
+    ('20260417192759', '20260417192759_7f3510a7-b879-4cae-9664-c805075cea6a'),
+    ('20260417193322', '20260417193322_744fd297-7c0e-4c6d-8ce7-79fb68e00dca'),
+    ('20260417193918', '20260417193918_df10455e-4b6a-486a-8fcc-3ebc3d43dccf'),
+    ('20260417194731', '20260417194731_498cbdf7-8f76-4dc5-805d-cefe7ccb2aef'),
+    ('20260417195120', '20260417195120_e6042ca1-c9ed-4411-ad92-08f88fff9a24'),
+    ('20260417202813', '20260417202813_6803938d-e003-42c1-8b38-f8515132e8f5'),
+    ('20260417233223', '20260417233223_364fa3d6-8e4f-4f76-8e5c-071358f29020'),
+    ('20260418004622', '20260418004622_d7fe1b7b-e43d-44b0-a0bf-ce1e7e8b4d74'),
+    ('20260418011827', '20260418011827_7fcfe507-9c73-47df-a4ee-fefafbd84866'),
+    ('20260418020829', '20260418020829_4d0d1ab4-bd8b-4e52-a36c-408838b4d77a'),
+    ('20260418102425', '20260418102425_a99cbb4a-67de-402a-9ee4-09aab4e488e8'),
+    ('20260418104126', '20260418104126_4c039bef-e31d-4154-a40f-49b00f8164c2'),
+    ('20260418104152', '20260418104152_181550fb-12b2-49f4-958e-683a5e300a74'),
+    ('20260418105004', '20260418105004_2bd433cd-01ce-49be-bdfc-e57ba66fcda7'),
+    ('20260418105237', '20260418105237_c858c8c8-9022-4de0-8bc3-07202890cc53'),
+    ('20260418112030', '20260418112030_67e99465-ae26-4a3c-babd-deda5c803bdc'),
+    ('20260418112504', '20260418112504_c05cff67-eb09-48f3-ad0a-0fdfb2851533'),
+    ('20260418112932', '20260418112932_6567da58-7721-4de2-9741-a368e8c274b7'),
+    ('20260418113523', '20260418113523_148a16ea-d7a6-46cf-9ffc-ef8c5560b462'),
+    ('20260418114042', '20260418114042_d907ed8f-14d2-4e96-bdc4-9ae344af97e4'),
+    ('20260418114540', '20260418114540_be4880c4-39d7-4eec-ba72-106428258b1d'),
+    ('20260418115119', '20260418115119_5b57b9ab-4471-47b9-b63b-bf86ef3f59eb'),
+    ('20260418121800', '20260418121800_50392e48-27b4-44b2-a825-26ca2f846981'),
+    ('20260418121957', '20260418121957_fc704718-f9d4-4b71-bdd9-03ab135026ff'),
+    ('20260418122352', '20260418122352_0616b0f7-20cd-4165-b811-f996899f13df'),
+    ('20260418122634', '20260418122634_3693b705-5379-422d-9c74-17d713608ad9'),
+    ('20260418123231', '20260418123231_479e5dde-c713-4e98-8e3e-8561e9395b0e'),
+    ('20260418123911', '20260418123911_58f252ff-e7e8-4938-8e82-8b83bfdedb14'),
+    ('20260418124334', '20260418124334_2874267c-1cbc-441f-aef4-75fc83de067d'),
+    ('20260418125205', '20260418125205_353e42ff-a04d-4094-aff2-5aae8049e83c'),
+    ('20260418125713', '20260418125713_5de7c565-1eb7-4067-bf9f-0e03adca9628'),
+    ('20260418130551', '20260418130551_ca97fbcf-269b-4188-a615-9dfd0b78707f'),
+    ('20260418131113', '20260418131113_cbce1b9b-ac76-479d-8b86-cb0601c74bf6'),
+    ('20260418131646', '20260418131646_6f1e2cf8-8267-4018-912e-cf8673199ca0'),
+    ('20260418133954', '20260418133954_5b3abeb3-5848-4edc-9926-47d9f23308a5'),
+    ('20260418134600', '20260418134600_e77c9969-4ad9-49a2-b8aa-407c9fc0cb85'),
+    ('20260418140149', '20260418140149_36a06b0c-3258-499a-b621-cc477b64632f'),
+    ('20260418141204', '20260418141204_3fb25886-929c-4f90-bf2c-01bf1c4d7f3f'),
+    ('20260418144503', '20260418144503_ac87a9aa-e2eb-4f90-ac70-2de4b82c6759'),
+    ('20260418145810', '20260418145810_12bb184d-4a92-4f48-852e-7c8c4ba91e92'),
+    ('20260418150311', '20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3'),
+    ('20260418151200', '20260418151200_f3721bce-9ab4-4188-aacd-524d2fbc3ffe'),
+    ('20260418162310', '20260418162310_4e1bd709-f02a-48bd-a65e-c9a4f0036498'),
+    ('20260418182126', '20260418182126_59dea17a-40da-48e8-9327-fe84ef6d6194'),
+    ('20260418183748', '20260418183748_06f327a8-6929-4ad3-a771-2e32e39ca212'),
+    ('20260418183805', '20260418183805_093b7fb3-6ad9-49eb-8a45-290b11ae3b4b'),
+    ('20260418184704', '20260418184704_8c963d1e-289b-4aea-a587-6c0339ead56e'),
+    ('20260418184853', '20260418184853_ad5313bf-7691-4632-acdb-47ecbfad7709'),
+    ('20260418220458', '20260418220458_110a7a73-478d-488c-baa2-6b896b12deed'),
+    ('20260419004748', '20260419004748_028ddcdb-272a-435e-ac03-134995a21ac3'),
+    ('20260419013547', '20260419013547_f104315c-909b-4f00-83d2-da0adabf7082'),
+    ('20260419022222', '20260419022222_1e3af362-5ee7-465a-b3a4-247f2c0611f1'),
+    ('20260419103919', '20260419103919_9e3ce9fd-938b-4ce8-b42f-3a35d50545f2'),
+    ('20260419144054', '20260419144054_cf429e7d-d208-43df-8d08-510e1f94cb16'),
+    ('20260419145440', '20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b'),
+    ('20260420123930', '20260420123930_76e7578c-8365-49dc-84a7-448a1307ab4f'),
+    ('20260420164159', '20260420164159_cf92ebaa-ec97-47bc-8050-148172459663'),
+    ('20260420172423', '20260420172423_b783d097-77a3-471f-a38a-52570de26911'),
+    ('20260420172633', '20260420172633_4c398898-55dd-4a98-becc-7910b412644e'),
+    ('20260420183125', '20260420183125_f5e675d5-e87c-49d4-b990-c71cef132905'),
+    ('20260420193304', '20260420193304_97bb7cee-225d-4fca-a676-09ffb4c3a6ca'),
+    ('20260420210849', '20260420210849_5e5fd280-33bb-4015-9d44-9aea02b83b83'),
+    ('20260421101729', '20260421101729_9e60825c-1009-48b4-93e3-79030c85f9cd'),
+    ('20260421105327', '20260421105327_bf178259-3ef6-4887-95b9-36e35c1047c1'),
+    ('20260421105726', '20260421105726_89f46747-cb0c-4d68-959f-1ea8b6da8e70'),
+    ('20260421114942', '20260421114942_f301ed0b-9066-4674-9ed9-70a0b1fb4466'),
+    ('20260421142452', '20260421142452_a3f92ed7-5a1a-4834-afe7-3e505bb49a63'),
+    ('20260421193256', '20260421193256_2f28d138-f04d-4be4-97d0-c8a3391467f4'),
+    ('20260422120410', '20260422120410_b9f6e2ca-bb45-485d-a371-f46b50cbb715'),
+    ('20260422151947', '20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0'),
+    ('20260422160753', '20260422160753_51647e33-0cc6-42fa-8ef1-f6ccfab210e2'),
+    ('20260422161607', '20260422161607_7cfce110-f9a6-493a-b035-44ddfffda298'),
+    ('20260422162048', '20260422162048_f634af54-bf5f-4f88-a43a-9f6add87eea1'),
+    ('20260422162601', '20260422162601_55953e33-9b8c-47d5-b503-b11bbdd12d4c'),
+    ('20260422163009', '20260422163009_2c772f27-0fbe-4eaa-a764-e0a4d67a0837'),
+    ('20260422164313', '20260422164313_23b544d6-0be1-4eb3-ab60-93ec956d0c72'),
+    ('20260422165926', '20260422165926_54a42181-7747-49b1-a67d-8627e2e4ace2'),
+    ('20260422171002', '20260422171002_a15ec08b-e711-4031-ba8c-3366e1131005'),
+    ('20260425134635', '20260425134635_3ac0d5c6-a014-4bf2-bc93-adde2f5969d8'),
+    ('20260508113718', '20260508113718_7744bc51-2cd5-4750-968f-870bab57625d'),
+    ('20260508114244', '20260508114244_2f96b68a-d750-4bd2-b206-3336cc4aee1c'),
+    ('20260508120104', '20260508120104_ebb64f16-54a4-44c8-9042-8d3431a46e42'),
+    ('20260508122042', '20260508122042_74966fbb-d765-4797-a788-0448adfeb7ab'),
+    ('20260508122426', '20260508122426_44fc9d78-6fc3-42b9-9b80-aa1f2d4d9c7b'),
+    ('20260508124844', '20260508124844_c86da704-a5d0-486b-bf52-afc741508ded'),
+    ('20260508132539', '20260508132539_d5256bef-0481-4b31-89a8-4f6080d553a3'),
+    ('20260508134301', '20260508134301_7ab33b60-c0d0-45ec-bb02-1821ac71c3aa'),
+    ('20260508140136', '20260508140136_6cd38f9d-2630-4357-a3b8-ea51ad311a1f'),
+    ('20260508140523', '20260508140523_28e78fde-2027-440d-b35a-5630b561af6d'),
+    ('20260508140725', '20260508140725_50c6c4b5-49e2-4532-b086-bea2a02a4471'),
+    ('20260508141126', '20260508141126_292b6f0c-6a25-4221-b648-8a5e4e4f3585'),
+    ('20260508142744', '20260508142744_126d6a8c-4101-45a1-ba8b-832fbd98857c'),
+    ('20260508143211', '20260508143211_3c970f2c-7dfe-415e-88a6-842b383229b4'),
+    ('20260508143713', '20260508143713_3072990b-098d-4ce2-83af-b83c9bfd7bed'),
+    ('20260508200552', '20260508200552_f1c2dfe3-e021-4b21-8dbd-4bf0bd24bf03'),
+    ('20260509104627', '20260509104627_58b3ddd5-5353-4b0f-94d8-ac91bbf782af'),
+    ('20260509113031', '20260509113031_f3e3c4a8-cc05-4aa1-bd73-799a8931113b'),
+    ('20260509115652', '20260509115652_088f7d98-dabd-43e6-b438-b1e778e04fac'),
+    ('20260509153607', '20260509153607_6ed3db5a-aaaf-4fe4-b1af-94fc3fd7846d'),
+    ('20260509154326', '20260509154326_23f5e628-df2b-4ed2-a657-6c547412df4d'),
+    ('20260509154657', '20260509154657_5cdef2cc-6259-4e75-955e-9002a1c54be1'),
+    ('20260509160905', '20260509160905_eec852a9-1ce0-419d-ade9-9065ab248d2d'),
+    ('20260509161205', '20260509161205_431304a3-a756-49a8-bc14-dc5eafc61d83'),
+    ('20260509162133', '20260509162133_733a25ba-0880-46cf-989d-48af7262f22b'),
+    ('20260509162507', '20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf'),
+    ('20260509180844', '20260509180844_debf4913-957c-48b8-bb85-a2fda8951cf1'),
+    ('20260509182848', '20260509182848_a140c5d8-f21d-4169-9378-ab41e29bc730'),
+    ('20260509183748', '20260509183748_5c02f0d7-e35d-4352-ae63-99981366fc1d'),
+    ('20260509184206', '20260509184206_ce500ccc-d327-4234-abad-200a7a136bac'),
+    ('20260511141834', '20260511141834_310eb6b0-f9b9-4a42-bac2-39a65a44f0e4'),
+    ('20260511141928', '20260511141928_1b5f75d8-ab43-4b45-bed6-e81c3d0a4169'),
+    ('20260511142015', '20260511142015_6c8cb361-ec2c-4387-9718-d90205a9fb1b'),
+    ('20260511185728', '20260511185728_8146716e-03a3-4ac2-864f-cf44bba951f7'),
+    ('20260511190708', '20260511190708_f05ff1cd-bfa9-4c49-8adb-5a3ed59bed91'),
+    ('20260511191111', '20260511191111_91594c2a-9d38-44bd-b643-27866aa1433e'),
+    ('20260511191456', '20260511191456_bc24abbd-21b4-41a9-8be9-59725c8bd8c1'),
+    ('20260511191606', '20260511191606_e5367d8a-02a8-4386-ab33-15d3e47a2342'),
+    ('20260511191805', '20260511191805_e49c3187-79d7-47b1-8a93-24c9c11ca33b'),
+    ('20260511192130', '20260511192130_c4275dc5-b910-48d1-b4ac-77964f83aaee'),
+    ('20260511192718', '20260511192718_753cd7e3-f027-41a4-b078-7cf88ddc68a9'),
+    ('20260511193055', '20260511193055_5e3b9a97-97de-4f2d-af49-4b5fc1d4672c'),
+    ('20260511200629', '20260511200629_df60df51-532c-4ec5-b373-5dcf27a6ca76'),
+    ('20260511203112', '20260511203112_2dd0b918-e14b-411d-bfd7-1c4018d0432d'),
+    ('20260511203820', '20260511203820_d51ad6cb-e025-448f-a7fb-6ae7ed0e13c3'),
+    ('20260512133030', '20260512133030_7ce226ca-c592-410d-8a40-5fa3c27f8c3c'),
+    ('20260512134826', '20260512134826_aafe105e-6916-46dd-8bca-e3222480ef9c'),
+    ('20260512135333', '20260512135333_6f3119ea-d7e7-4507-a613-fd6b5d04ae74'),
+    ('20260512142206', '20260512142206_5eeeaa29-0766-41ef-abbc-71c57d0c7e6a'),
+    ('20260512143013', '20260512143013_d0ee44c6-25d4-42a1-8f86-4492bda7491c'),
+    ('20260512144635', '20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f'),
+    ('20260512144912', '20260512144912_b9041e04-0f44-49ce-978a-6f5b9e7acb90'),
+    ('20260512162448', '20260512162448_b9eaf42a-cff1-4a89-97f7-ef4de13a96e7'),
+    ('20260512162711', '20260512162711_6b0d489f-bf02-476a-87b9-331862e25b3e'),
+    ('20260512163542', '20260512163542_0c29a7c7-0fd3-4850-9a7d-aac29b82dcba'),
+    ('20260512173204', '20260512173204_ec319bd8-aba8-402c-8759-9a58301b212f'),
+    ('20260512173228', '20260512173228_6ca6387d-4312-459f-8568-2a0afb160aa2'),
+    ('20260512173434', '20260512173434_39997521-5514-4ee1-a3fc-dcaf9f771c19'),
+    ('20260512173553', '20260512173553_7f272b1f-d4f5-4210-beed-5c28fd3b1f63'),
+    ('20260512173734', '20260512173734_23dd99dd-8472-486d-82c2-026320629418'),
+    ('20260512174142', '20260512174142_73f7e0f7-d80e-4c9f-8493-97027a0d9672'),
+    ('20260512174528', '20260512174528_edb98a5b-cb15-451f-928c-7bb53757cd11'),
+    ('20260512174635', '20260512174635_d8463aa2-20ec-4b60-afa0-3be56d306bca'),
+    ('20260512175415', '20260512175415_c1f6c125-1386-4a39-8c56-001ce8e7dbb3'),
+    ('20260512175511', '20260512175511_fd7dbc59-9654-4535-b6cf-cd4502c99103'),
+    ('20260512175533', '20260512175533_78cf979e-7c54-47b9-9938-7690639d0ad3'),
+    ('20260512175631', '20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f'),
+    ('20260512175755', '20260512175755_6b79f43e-8c98-44cd-83ca-31fdacae57e4'),
+    ('20260512175911', '20260512175911_987b4a76-042f-40c1-a01c-40835a8bebb9'),
+    ('20260512183808', '20260512183808_569f3898-c979-487d-8f5d-b2bd512141d7'),
+    ('20260512184157', '20260512184157_4fb6807e-164e-43ef-92ea-00266e437054'),
+    ('20260512184319', '20260512184319_c82514dd-ce87-4dce-8921-916ef258a7a5'),
+    ('20260512191103', '20260512191103_395a3146-26cb-43f1-904d-59fa4d441723'),
+    ('20260512191126', '20260512191126_7861e535-7f68-40ee-b4b1-06725ac61299'),
+    ('20260512192519', '20260512192519_769ada8c-cdd4-4329-a74f-b884464f38bf'),
+    ('20260512192535', '20260512192535_e29eeb89-47d4-42fc-8bb8-1d358014d73d'),
+    ('20260512192603', '20260512192603_9ecb3ed1-a9bf-4da5-8fbb-f5f524f305ba'),
+    ('20260512192931', '20260512192931_a3224c81-646c-41f5-9efe-bf59c6850c9c'),
+    ('20260512213243', '20260512213243_8e4190b5-be17-4171-bb9c-614b97b107a7'),
+    ('20260512213357', '20260512213357_15e3dcb3-7cf3-4f6e-9af2-21233a6401d4'),
+    ('20260512214007', '20260512214007_64196e26-e33f-4899-987f-ca2db55743f7'),
+    ('20260513143248', '20260513143248_93b16c35-2f21-4554-bfe6-699f703512ee'),
+    ('20260513164208', '20260513164208_76631815-da68-40a2-a7f0-fa104eb5901f'),
+    ('20260513174900', '20260513174900_947d27f3-0d9c-45e9-91ae-03978e64c0d2'),
+    ('20260513175936', '20260513175936_7ba0ca9a-0007-4c14-89c3-01228fd1e6c9'),
+    ('20260513180157', '20260513180157_7b569e65-7319-4292-af0f-834390a6d501'),
+    ('20260513191533', '20260513191533_8a884eae-6666-44b5-898d-c5450a7791fc'),
+    ('20260513191550', '20260513191550_61df0d8b-4a90-420a-bc5b-092b9d7becee'),
+    ('20260513191606', '20260513191606_9a1dbc1b-7735-4ce9-9d57-7dd4f35f0ee9'),
+    ('20260513191625', '20260513191625_73169e2b-7cf4-469e-9c01-dd5f44bc7a59'),
+    ('20260513191723', '20260513191723_bd57c0f6-d652-4db3-b4d5-b1b7f0deb0a5'),
+    ('20260513191853', '20260513191853_4b70f3e2-b5bc-449c-bcd3-543b119b5321'),
+    ('20260513191959', '20260513191959_5056e64f-3123-42f4-b84c-03035d301fa5'),
+    ('20260513192039', '20260513192039_fd28a7be-6453-4c57-8641-e230e85db2f5'),
+    ('20260513192202', '20260513192202_2837a40f-3502-42fe-8c10-fbe4b1de98ae'),
+    ('20260513192235', '20260513192235_93150d83-cdca-468b-a5dd-4958b62e2a04'),
+    ('20260513192309', '20260513192309_941ec5e7-0b44-4d26-94cf-210aec6bae9f'),
+    ('20260513192406', '20260513192406_ef2d75ae-77a0-44d8-be60-b4f1a6aba82b'),
+    ('20260513192524', '20260513192524_0d483376-feda-4a3b-8407-4904a6a0b6d1'),
+    ('20260513192607', '20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1'),
+    ('20260513194107', '20260513194107_bb8ad733-bca3-4702-82b3-f9eeffc3cd1a'),
+    ('20260513194322', '20260513194322_de774cc9-8b6f-4814-9c4e-3f80fbffaadb'),
+    ('20260514211202', '20260514211202_a6925846-148b-41a2-a354-f5391d6c5051'),
+    ('20260514211409', '20260514211409_31e2e007-b605-424b-bc77-9c42e830402b'),
+    ('20260514211844', '20260514211844_0f8cef18-04e7-41cc-8599-826f6338347b'),
+    ('20260515113801', '20260515113801_7da2c363-ac4a-44a6-99ae-5da8daa78f95'),
+    ('20260515122056', '20260515122056_74ffbc26-39b1-44bf-a020-8fee46859b6f'),
+    ('20260515122234', '20260515122234_53279a7e-b713-4839-8f8f-66f253955f25'),
+    ('20260515143023', '20260515143023_89c2d843-d81c-414f-8a22-244a1e54b333'),
+    ('20260515143053', '20260515143053_f0134f76-c133-40c4-ab0d-9ff4b2c3bccf'),
+    ('20260515150338', '20260515150338_65253b31-9d8a-4fa3-afcb-29f800b62731'),
+    ('20260516112626', '20260516112626_93ca40c5-8fb6-4bc7-ad53-4f82de84c12d'),
+    ('20260516113250', '20260516113250_3855ad2a-a649-49b0-bd92-b848cb46a00e'),
+    ('20260516113416', '20260516113416_76c6c717-61cf-4599-9558-6dbec29b9588'),
+    ('20260517112315', '20260517112315_9fb13796-481a-460c-81d5-e8cc5bcf713f'),
+    ('20260517113636', '20260517113636_5784febe-49bc-4777-8b42-1dbcfa15f528'),
+    ('20260517113717', '20260517113717_fdf8012e-f32e-4cde-95d2-b92d61f473a0'),
+    ('20260517113746', '20260517113746_ba2cd7eb-24e5-40ef-a0e6-2b2a233dedb2'),
+    ('20260517123736', '20260517123736_d4d7b1c2-f841-4a67-9670-508437764896'),
+    ('20260517123801', '20260517123801_7cfe32de-66b2-4da2-8f2e-9fc171818b41'),
+    ('20260517131244', '20260517131244_419ed71c-170d-4a29-a1b9-66aa785fd0ec'),
+    ('20260517132342', '20260517132342_8859b5fc-de51-484f-ada7-1992f48a62c7'),
+    ('20260517132555', '20260517132555_5a1914b2-c835-4d17-ae73-0c958363648a'),
+    ('20260517135219', '20260517135219_bbc623ec-3969-47d5-bee0-63c8eed8a21a'),
+    ('20260517141024', '20260517141024_1f4d6bac-8e1c-4897-aa69-85ce4597c5dc'),
+    ('20260517141803', '20260517141803_59e85b61-a7ba-42e9-ace3-190cf721e280'),
+    ('20260517164212', '20260517164212_34ed2f20-28ad-4b7b-8602-d1aa2b9aa499'),
+    ('20260519114051', '20260519114051_b744fae6-d3fd-45c5-9f94-6032cff12b8e'),
+    ('20260519114133', '20260519114133_a91a5ce9-d50c-49a6-b517-de49bed3abf9'),
+    ('20260522130044', '20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e'),
+    ('20260522142405', '20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694'),
+    ('20260524193748', '20260524193748_25f26b22-820e-47be-8a11-773c0244c033'),
+    ('20260524194411', '20260524194411_8e8af783-c606-4d73-9c4f-d79d5bfa277b'),
+    ('20260524202710', '20260524202710_227fb3ae-4720-4b90-a76c-d67c545ef1e0'),
+    ('20260529192650', '20260529192650_b1602d40-2c0a-4fe6-9bbf-fbfa7ac08dd5'),
+    ('20260530000001', '20260530000001_add_missing_fk_indexes'),
+    ('20260530000002', '20260530000002_enable_rls_and_remove_env_risk'),
+    ('20260530000003', '20260530000003_idempotent_tables_if_not_exists'),
+    ('20260619143510', '20260619143510_dbfea0d9-4540-4074-815e-6d0031b31c9f'),
+    ('20260619143547', '20260619143547_b610290e-fc03-40a9-8bbc-f583125f6375'),
+    ('20260619143627', '20260619143627_0ae20a6f-5950-4418-be64-68e4ef54c6c0'),
+    ('20260619143950', '20260619143950_d6aae558-c974-4edc-b5e5-6e64b8ab8be0'),
+    ('20260619144016', '20260619144016_88bd3301-677b-4c81-8ee8-5634567d03f6'),
+    ('20260619144542', '20260619144542_a653d2f5-450c-42f6-9c81-6ec8f008b20a'),
+    ('20260619145322', '20260619145322_df537bec-72b5-4e50-8778-17637a1e009d'),
+    ('20260619145905', '20260619145905_635f6d8b-682a-4279-9bb3-66b1e6f8689e'),
+    ('20260619150222', '20260619150222_b6ebda93-1d74-4f98-8ed2-3b4aab9631ce'),
+    ('20260619150359', '20260619150359_fc8052a0-e949-49e7-9812-ffb4239aed14'),
+    ('20260619150542', '20260619150542_a101a1f8-3e5e-4f96-9768-1f7e5d6a5ab4'),
+    ('20260619153009', '20260619153009_1e9daa13-7549-4e0e-bfcb-e23a168aabb7'),
+    ('20260619153334', '20260619153334_1aa38cac-e2bb-4037-a9e8-5b967be04daf'),
+    ('20260619153643', '20260619153643_ce7e36b2-3bee-452f-826e-603ad831c677'),
+    ('20260619155157', '20260619155157_d4195614-845d-4c7d-adc7-bc14f014b940'),
+    ('20260619155424', '20260619155424_5da31b30-755a-41cd-a046-41f993039cab'),
+    ('20260619160638', '20260619160638_6dcd00e4-ef48-4a01-a064-86ecff4ede08'),
+    ('20260619161140', '20260619161140_60bfeb2c-cce1-4291-8667-d0a4c0cb7de0'),
+    ('20260619183452', '20260619183452_9f6193ae-9180-49c1-adc4-786bce4c64ca'),
+    ('20260619192803', '20260619192803_2acc8134-644c-4a39-a608-435e3a94d797'),
+    ('20260619192904', '20260619192904_c578edff-6aa1-491a-8b07-717cbf5ad16e'),
+    ('20260619194330', '20260619194330_1340850b-0b5d-4621-8fbf-e8da33667704'),
+    ('20260619195106', '20260619195106_34b805a8-7321-48d9-bbd7-e4cd54050617'),
+    ('20260619201655', '20260619201655_a515d994-3d05-4295-affd-789091a10be9'),
+    ('20260627185517', '20260627185517_2ad2ea8a-25bf-4972-a0fe-c533b2571a13'),
+    ('20260628103613', '20260628103613_07c84c52-87cd-4350-b4c3-a0fcb570bf24'),
+    ('20260628103936', '20260628103936_30ea318a-029d-4c36-bb4f-2e8fe66974e2'),
+    ('20260628110159', '20260628110159_ae22d525-f55a-4505-871a-d832cd3babdb'),
+    ('20260706144104', '20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0'),
+    ('20260706160203', '20260706160203_849fd5c0-44df-47ae-8fe5-96a9dddd27e7'),
+    ('20260706160230', '20260706160230_61fb1e1d-c3ac-4f87-b91e-576d3d914869'),
+    ('20260706160605', '20260706160605_b3261767-3d5c-4a1e-9f5a-f5a5847ecc3d'),
+    ('20260706163053', '20260706163053_2452df1f-1769-439c-87fd-46103e8bedbc'),
+    ('20260706190052', '20260706190052_ed4cf967-52bc-437a-9d49-60c29505a5ef'),
+    ('20260706205446', '20260706205446_8a1a4355-b3d3-4f4d-89ba-4d42810487ee'),
+    ('20260706211149', '20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f'),
+    ('20260706211719', '20260706211719_475beda8-d84e-451f-b5f1-b6f483b8a782'),
+    ('20260706215158', '20260706215158_5ff9ab03-a44a-40de-a023-912020d1cb3e'),
+    ('20260706220424', '20260706220424_f92638b0-88de-4d89-9601-7dba07a6afbc'),
+    ('20260706221948', '20260706221948_d57f86fe-ce75-48f4-93f8-d9568da023b0'),
+    ('20260706222109', '20260706222109_7d20cf4f-ffaa-47e0-a32f-04dc2d80e268'),
+    ('20260706222315', '20260706222315_b970d946-38ec-491c-bac6-5a86d333fcf4'),
+    ('20260707102536', '20260707102536_6fc73674-9a8f-4a4d-93a5-98d8e1e9ca36'),
+    ('20260707103004', '20260707103004_900a6456-c06a-477b-8a62-8d1f9f8cca1b'),
+    ('20260707112143', '20260707112143_36a63a51-b9c2-4922-a4c8-0ebfa1dbfba3'),
+    ('20260707112331', '20260707112331_508956a2-e06a-4cd5-b9b4-a47dffdec10a'),
+    ('20260707112448', '20260707112448_b6939ac5-58b7-4545-a8b9-885dd8c6e8ba'),
+    ('20260707112738', '20260707112738_f5ab1a7d-a539-4b29-8dc8-e6e09364eec7'),
+    ('20260707112835', '20260707112835_ffb436ef-7edc-463a-83b2-5cd9be1de09c'),
+    ('20260707113327', '20260707113327_49decc76-84ef-40ad-97a3-519ad678ecda'),
+    ('20260707114644', '20260707114644_b81f23a5-133f-4edb-9cf7-c19b5fff50bb'),
+    ('20260707114709', '20260707114709_e4b54238-e7f4-42ee-a659-7ff41a23227a'),
+    ('20260707114811', '20260707114811_d822e9a5-1228-463e-8a65-0d22f4db82bd'),
+    ('20260707114840', '20260707114840_4586855c-9d65-4288-9eee-e06b1b311446'),
+    ('20260708125556', '20260708125556_bff05f17-7b7e-4b33-a72e-b37ea1147c87'),
+    ('20260708125950', '20260708125950_37e29cae-9643-4f28-8d79-8e53d534207c'),
+    ('20260708131452', '20260708131452_51c83881-2872-405e-b486-a81d212174e6'),
+    ('20260708132809', '20260708132809_4962962a-5310-4b63-9686-b7952f4b3ce3'),
+    ('20260708132928', '20260708132928_792c1922-0e95-43a9-a639-0e0a6ea7897b'),
+    ('20260708133041', '20260708133041_2f01ba16-b10f-4769-87d3-bff881b9ac57'),
+    ('20260708133153', '20260708133153_bde984b9-bdd4-43b0-b666-42311d8d3148'),
+    ('20260708133313', '20260708133313_898cab6d-d606-4161-8094-150091e9e683'),
+    ('20260708133426', '20260708133426_ef822259-f8e4-47f1-b156-962c1fdfd863'),
+    ('20260708134149', '20260708134149_43dd5c32-2363-4663-8718-3469140ad8fd'),
+    ('20260708134842', '20260708134842_fd3e5f78-b315-4078-8bb1-315778671975'),
+    ('20260710142058', '20260710142058_6b19ba08-4a71-42a5-8e9e-b029b6f72f4d'),
+    ('20260710142606', '20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6'),
+    ('20260710173448', '20260710173448_50407b18-4982-4a14-a64e-102661a6078d'),
+    ('20260711134320', '20260711134320_f46c46d9-295a-4e9e-a0da-ca57174d135d'),
+    ('20260711145130', '20260711145130_b2c8eda9-8da9-46fe-aefe-3b950fa412d1'),
+    ('20260711151406', '20260711151406_fd14194a-1b24-422f-bd8a-c274b1fe60e6'),
+    ('20260711153757', '20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f'),
+    ('20260711164210', '20260711164210_6d366cea-f6dd-46ee-b1e6-0116e8d85541'),
+    ('20260712183258', '20260712183258_4d96a682-79a6-4678-8921-682510449404'),
+    ('20260712192125', '20260712192125_4c3be166-f0e9-462d-a421-69c7f33ea822'),
+    ('20260712194744', '20260712194744_9cf964a3-d45a-4e83-becb-ecccb4b7171a'),
+    ('20260712195036', '20260712195036_8f5ccb9f-79f8-4320-8443-d4da1abe4200'),
+    ('20260712195109', '20260712195109_93d2c7b7-7fbb-4e7c-8a3f-ebae3d404292'),
+    ('20260712195559', '20260712195559_b13930cc-ebf4-47ab-8d4d-7023f66f9316'),
+    ('20260712195947', '20260712195947_c9a0699a-b7e5-4af9-91f8-e1a5816f81f2'),
+    ('20260712212305', '20260712212305_f2dce21f-f0e2-420b-a2c3-012503384c39'),
+    ('20260712212417', '20260712212417_ae1222eb-fbbd-453e-bc5f-b9c124c7af32'),
+    ('20260712212637', '20260712212637_e88efdd7-647d-4ec7-be79-a45eb193fe46'),
+    ('20260712212750', '20260712212750_1c79fa22-b782-498b-a765-b4766cd0a61a'),
+    ('20260712212950', '20260712212950_4ecea14a-d357-44de-b2fa-ac2cd16492f0'),
+    ('20260712213509', '20260712213509_3b994669-1c3f-47ef-90fa-a5e71a1093b2'),
+    ('20260712213630', '20260712213630_85d48e51-71fa-4a2f-8161-ece309fe0345'),
+    ('20260712214818', '20260712214818_6474e22f-a332-4b40-928d-0e4b1c15ea6d'),
+    ('20260712215451', '20260712215451_0295f3bd-7617-4aa5-9709-fbbbd762eb5d'),
+    ('20260712215611', '20260712215611_39d586d5-863d-4617-903b-cbfcc9f544a7'),
+    ('20260712220049', '20260712220049_acf458b7-581a-4bba-b0b9-aaa4483e588a'),
+    ('20260712220130', '20260712220130_4232377c-8085-469d-af1b-ea13afa5219a'),
+    ('20260712220239', '20260712220239_7d875e88-07c9-45c0-a739-7cc51a5dce4a'),
+    ('20260712220502', '20260712220502_5ca0e3c4-a941-4c38-b79c-ca9e1dced3e4'),
+    ('20260712221013', '20260712221013_99a59155-4a17-460b-882e-ebb04bbe42d9'),
+    ('20260712222235', '20260712222235_9e62e6db-2673-42b4-bdef-a2022108b162'),
+    ('20260712222949', '20260712222949_56531d44-d326-4545-84ff-2aafdde2d2a3'),
+    ('20260712223213', '20260712223213_56f364cb-a066-450b-ad3e-1b9d3b40c751'),
+    ('20260712230117', '20260712230117_598d71a5-beaa-46b3-876a-df1bde70d0f7'),
+    ('20260712230734', '20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020'),
+    ('20260712230906', '20260712230906_1031d7dd-3d6d-4eca-9312-36fdb4432c9b'),
+    ('20260712231310', '20260712231310_b4d39c3c-b39d-45f4-a1f5-ae4cb06587aa'),
+    ('20260712231501', '20260712231501_204c3ba6-97ac-4159-9d75-4785991db844'),
+    ('20260712231649', '20260712231649_1cc215fd-80c1-4e9e-badb-b88ef75c6317'),
+    ('20260712231828', '20260712231828_3451b85e-69b0-47db-89dd-b2e9e05519ee'),
+    ('20260712232346', '20260712232346_aec818ed-0486-4b47-8528-f607bf2d2811'),
+    ('20260712232606', '20260712232606_1587a3f1-2450-4a43-acc5-c7d6b47ad17b'),
+    ('20260712232718', '20260712232718_6cfc1884-5c14-4d44-b3b3-ba91edde064a'),
+    ('20260712232817', '20260712232817_1d446366-555f-48f3-b5c8-845283da3b06'),
+    ('20260713104701', '20260713104701_2c01ec2b-2b38-4391-b376-cd3fa754d17f'),
+    ('20260715184427', '20260715184427_8e4ec70a-caf2-4a8d-9042-e26e29fa3a54'),
+    ('20260715185200', '20260715185200_9fc1d221-0437-4d45-a3fb-cb782be8c945'),
+    ('20260718000001', '20260718000001_fix_sync_quote_no_status_downgrade'),
+    ('20260718000002', '20260718000002_fix_portfolio_settings_rls_credential_leak'),
+    ('20260718000003', '20260718000003_add_claim_pending_cadence_tasks'),
+    ('20260718000004', '20260718000004_fix_security_definer_search_path'),
+    ('20260718000005', '20260718000005_fix_trg_convert_quote_to_order_guard'),
+    ('20260719000001', '20260719000001_restore_login_attempts_insert_policy'),
+    ('20260722112916', '20260722112916_c7c2c805-f441-4f27-995c-8c0dada0b675'),
+    ('20260723121427', '20260723121427_efc04139-5ade-4a2c-8afb-300dc30157c4'),
+    ('20260723122258', '20260723122258_04332939-3a35-43e1-b47e-9ec896a02355'),
+    ('20260723130329', '20260723130329_184b0dbd-6049-4c29-acfe-ee1fcf9fc7eb'),
+    ('20260723131334', '20260723131334_b95ee8a8-ebf1-4bda-9be1-c40f23282b0b'),
+    ('20260723131706', '20260723131706_70222a42-2805-40d7-946a-96b83c9d2b91'),
+    ('20260723131925', '20260723131925_dccc0206-6a5c-4394-9873-1d26d852cc29'),
+    ('20260723132212', '20260723132212_21cd0f38-cda7-4ffd-9fff-31d375ce1722'),
+    ('20260723144816', '20260723144816_6bf3d2f3-d07e-4c6a-a431-6cd90711ca95'),
+    ('20260723145227', '20260723145227_59cdd465-92b4-4e16-9b3d-34d0ebf83267'),
+    ('20260723145549', '20260723145549_1d9beb05-6f0b-4c9e-8f9f-985fc1c9d301'),
+    ('20260723150447', '20260723150447_1a999680-abdf-4e4b-8995-c1ea9c5eafb5'),
+    ('20260723150906', '20260723150906_c326d00a-1256-43fd-a89f-703b017a1a06'),
+    ('20260723151215', '20260723151215_f7cf53ed-4485-4aad-a45b-b5b1874bf3a0'),
+    ('20260723151516', '20260723151516_c7c62770-8857-445f-8643-3245a5d2a6a7'),
+    ('20260723172148', '20260723172148_0351fc97-c155-4187-9650-3494c0c2fd87'),
+    ('20260726200015', '20260726200015_4da82c03-38f9-4478-b6f8-5ba0e25d9cbe'),
+    ('20260726200751', '20260726200751_2012c381-c742-419d-88ed-27f5a8969775'),
+    ('20260726201605', '20260726201605_3607fd5d-02c0-4cd5-954f-0934fc3b2dbe'),
+    ('20260726201829', '20260726201829_a1a4c133-a273-49ce-90de-29793d0be153'),
+    ('20260726202149', '20260726202149_6fc1d93a-adf2-458c-946e-87a93d62a8b7'),
+    ('20260726202421', '20260726202421_0e6c60a8-07a3-4e75-9aa4-934a5fbafc09'),
+    ('20260726202545', '20260726202545_ba25ae3a-5e67-48b6-8293-a40a51613430'),
+    ('20260726202803', '20260726202803_bf875e3a-a6cf-4666-968e-ba62e6fbd582'),
+    ('20260802150910', 'dbc250ba-8d86-47fb-8b72-f7ce31d58576'),
+    ('20260814072502', '20260814072502_winloss_extend_sales'),
+    ('20260814190000', '20260814190000_fix_broken_sales_triggers'),
+    ('20260814200000', '20260814200000_fix_client_portfolio_status_check'),
+    ('20260814210000', '20260814210000_fix_clients_update_triggers'),
+    ('20260814220000', '20260814220000_fix_stock_movements_type_check'),
+    ('20260815110000', '20260815110000_fix_maintain_sales_streaks'),
+    ('20260815140000', '20260815140000_fix_automation_workflows_trigger_check'),
+    ('20260827000001', '20260827000001_harden_webhooks_portfolio_and_idempotency'),
+    ('20260830000000', '20260830000000_fix_race_leaderboard_status'),
+    ('20260830000001', '20260830000001_secure_prize_wheel_spins'),
+    ('20260830000002', '20260830000002_harden_lead_routing'),
+    ('20260831130000', '20260831130000_harden_public_access_and_privileged_rpcs'),
+    ('20260831130001', '20260831130001_repair_cron_and_fk_indexes'),
+    ('20260831130002', '20260831130002_harden_storage_buckets'),
+    ('20260831130003', '20260831130003_fix_campaign_health_cron'),
+    ('20260831163000', '20260831163000_secure_churn_and_task_crons'),
+    ('20260831170000', '20260831170000_secure_operational_edge_crons'),
+    ('20260902120000', 'revoke_anon_truncate_and_fix_battle_score'),
+    ('20260902121000', 'fix_default_privileges_truncate_and_battle_score_search_path'),
+    ('20260902180000', 'fix_sync_battle_score_stale_v_score'),
+    ('20260902221500', '20260902221500_enable_rls_orphan_tables_and_fix_search_path'),
+    ('20260903000001', '20260903000001_enable_rls_leads'),
+    ('20260903000002', '20260903000002_fix_cron_project_ref'),
+    ('20260904190000', 'fix_unlock_race_item_missing_arena_user_stats'),
+    ('20260910153000', '20260910153000_reconcile_operational_edge_crons'),
+    ('20260913150000', '20260913150000_restore_sql_maintenance_crons'),
+    ('20261001144000', 'schedule_wal_and_webhook_health_crons'),
+    ('20261001150000', 'rls_user_2fa_log'),
+    ('20261001150100', 'lgpd_consent_and_anonymization'),
+    ('20261001151000', 'log_retention_indexes_and_purge'),
+    ('20261001160000', 'centralize_internal_edge_calls'),
+    ('20261001190000', 'dedupe_unique_constraints'),
+    ('20261001190500', 'fk_on_delete_actions'),
+    ('20261001193000', 'soft_delete_business_tables'),
+    ('20261001193100', 'audit_log_canonical'),
+    ('20261001193200', 'optimistic_locking'),
+    ('20261001200000', 'atomic_quote_sync_rpc'),
+    ('20261001203000', 'audit_trigger_user_roles'),
+    ('20261001203100', 'drop_legacy_rbac'),
+    ('20261001203200', 'restrict_user_roles_select'),
+    ('20261001203300', 'deny_dead_tables_revoke_anon_grants'),
+    ('20261001203400', 'reauth_stepup_hardening'),
+    ('20261001203500', 'mfa_native_migration_flag'),
+    ('20261001210000', 'geocode_cache'),
+    ('20261001211000', 'role_permissions_frontend_sync'),
+    ('20261001213000', 'status_transitions_state_machine'),
+    ('20261001214000', 'app_config_sla_xp'),
+    ('20261001220000', 'stage_probabilities'),
+    ('20261001220100', 'sales_status_canonico'),
+    ('20261002000000', 'seed_race_smart_notifications_flag'),
+    ('20261002000100', 'slo_burn_rate'),
+    ('20261002010000', 'webvitals_regression_alert_cron'),
+    ('20261002010100', 'transition_expected_version'),
+    ('20261002020100', 'transition_sale_status_closer_owner'),
+    ('20261005140000', 'restore_anon_execute_rls_helpers'),
+    ('20261005150000', 'fix_fn_admin_cron_alert_breakdown'),
+    ('20261005160000', 'restrict_role_helpers_to_self'),
+    ('20261005170000', 'quote_items_owner_write_policy'),
+    ('20261005180000', 'territory_conquests_null_salesperson'),
+    ('20261005190000', 'auto_link_sale_account_race'),
+    ('20261005200000', 'trg_refresh_ranking_security_definer'),
+    ('20261005210000', 'territory_history_fk_and_conquest_fix'),
+    ('20261005220000', NULL),
+    ('20261013120000', '20261013120000_agenda_crons_maquina_vendas'),
+    ('20261013121000', '20261013121000_wrappers_private_sequence_rpcs'),
+    ('20261013122000', '20261013122000_admin_edge_cron_status'),
+    ('20261013130000', '20261013130000_comissao_regras_e_split_sdr'),
+    ('20261013152000', '20261013152000_fix_kpis_auditoria_top25'),
+    ('20261013153000', '20261013153000_integration_secret_refs'),
+    ('20261013170000', '20261013170000_bitrix24_sync_cron'),
+    ('20261013171000', '20261013171000_channel_credentials_provider_evolution'),
+    ('20261013172000', '20261013172000_inbound_reply_events_full_unique'),
+    ('20261014000000', '20261014000000_gamificacao_server_side'),
+    ('20261014000001', '20261014000001_fix_allowlist_bitrix24_gamificacao'),
+    ('20261014000002', '20261014000002_fix_concurrently_indexes'),
+    ('20261018120000', '20261018120000_lgpd_consent_e_optout_por_telefone'),
+    ('20261018130000', '20261018130000_outbound_messages_to_number_digits'),
+    ('20261018190000', '20261018190000_lgpd_fixes_consent_anonymize'),
+    ('20261018190100', '20261018190100_gamificacao_claim_matchups_rotations'),
+    ('20261018200000', '20261018200000_fix_stage_history_views_e_forecast_category'),
+    ('20261019153000', '20261019153000_lgpd_gamificacao_r2'),
+    ('20261027120000', '20261027120000_sales_status_canonizacao_rpcs'),
+    ('20261027120100', '20261027120100_edge_job_lock_lease'),
+    ('20261027130000', '20261027130000_agent_runs_owner_check_e_grants'),
+    ('20261027131000', '20261027131000_agent_runs_r3_rls_lockdown'),
+    ('20261027140000', '20261027140000_lgpd_gamificacao_r3'),
+    ('20261027210000', '20261027210000_r3_db_kpis_fixes'),
+    ('20261027211000', '20261027211000_match_whatsapp_reply_e_lock_release'),
+    ('20261112134500', '20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache'),
+    ('20261112140000', '20261112140000_feed_comments_update_delete_proprio'),
+    ('20261112140100', '20261112140100_activities_remove_triggers_audit_legados'),
+    ('20261112140200', '20261112140200_activities_soft_delete_apostas_placar'),
+    ('20261112190000', '20261112190000_feed_batalha_post_unico'),
+    ('20261112190100', '20261112190100_accounts_delete_so_gestor'),
+    ('20261112190200', '20261112190200_funcoes_activities_ignoram_soft_delete'),
+    ('20261112224500', '20261112224500_fix_agenda_crons_maquina_vendas'),
+    ('20261113060500', '20261113060500_battle_participants_insert_gestor'),
+    ('20261113181500', '20261113181500_account_plans_um_por_conta'),
+    ('20261116220000', '20261116220000_lost_deals_benchmark'),
+    ('20261116223000', '20261116223000_revoke_supabase_admin_default_truncate'),
+    ('20261116223100', '20261116223100_constraints_integridade_negocio'),
+    ('20261117001000', '20261117001000_combo_gamificacao_trigger'),
+    ('20261117010000', '20261117010000_fix_seasonality_total_value'),
+    ('20261117020000', '20261117020000_role_permissions_admin'),
+    ('20261117030000', '20261117030000_fix_seasonality_extract_cast'),
+    ('20261117040000', '20261117040000_integridade_resgatada_rlx'),
+    ('20261117050000', '20261117050000_webhook_ssrf_e_rate_limit'),
+    ('20261117060000', '20261117060000_revoke_grants_tabelas_webhook'),
+    ('20261117070000', '20261117070000_reconcilia_objetos_orfaos_producao'),
+    ('20261117080000', '20261117080000_remove_versoes_orfas_do_ledger'),
+    ('20261117090000', '20261117090000_marca_594_migrations_como_aplicadas')
+    ON CONFLICT (version) DO NOTHING;
+    SELECT count(*) INTO ok FROM supabase_migrations.schema_migrations;
+    RAISE NOTICE 'ledger de migrations: % versoes na tabela', ok;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'ledger de migrations NAO preenchido: sem privilegio em supabase_migrations.schema_migrations (%). Reexecute supabase/schema.sql como dono.', SQLERRM;
+  END;
+END
+$do$;
