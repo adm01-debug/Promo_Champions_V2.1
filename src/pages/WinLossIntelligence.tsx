@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
 import { WinLossPageHeader } from '@/components/win-loss/WinLossPageHeader';
@@ -38,6 +38,8 @@ import { WebhookSubscriptionsPanel } from '@/components/win-loss/WebhookSubscrip
 import { WebhookHealthPanel } from '@/components/win-loss/WebhookHealthPanel';
 import { WebhookDeadLetterPanel } from '@/components/win-loss/WebhookDeadLetterPanel';
 import { ExportPdfButton } from '@/components/win-loss/ExportPdfButton';
+import { DashboardLayoutEditor } from '@/components/win-loss/DashboardLayoutEditor';
+import type { WidgetId } from '@/hooks/win-loss/useUserDashboardLayout';
 
 import { useWinLossFilters } from '@/hooks/win-loss/useWinLossFilters';
 import {
@@ -238,6 +240,190 @@ export default function WinLossIntelligence() {
   const isEmpty = !isLoading && allRows.length === 0;
   const url = `${SITE}/win-loss-intelligence`;
 
+  const winLossWidgets: Record<
+    WidgetId,
+    { label: string; node: ReactNode; className?: string }
+  > = {
+    kpi: {
+      label: 'KPIs',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="KPIs">
+          <WinLossKpiBanner
+            kpis={kpis}
+            onWinsClick={onWins}
+            onLossesClick={onLosses}
+            delta={delta}
+            forecast={forecast}
+          />
+        </WinLossErrorBoundary>
+      ),
+    },
+    'next-best': {
+      label: 'Next Best Action',
+      className: 'lg:col-span-6 no-print',
+      node: (
+        <WinLossErrorBoundary section="Next Best Action">
+          <NextBestWinLossCard />
+        </WinLossErrorBoundary>
+      ),
+    },
+    trend: {
+      label: 'Tendência',
+      className: 'lg:col-span-4',
+      node: (
+        <WinLossErrorBoundary section="Tendência" fallbackHeight={260}>
+          <WinLossTrendChart
+            monthly={monthly}
+            weekly={weekly}
+            granularity={viewPrefs.granularity}
+            onGranularityChange={g => updateViewPrefs({ granularity: g })}
+            onPointClick={onPeriod}
+          />
+        </WinLossErrorBoundary>
+      ),
+    },
+    matrix: {
+      label: 'Matriz de motivos',
+      className: 'lg:col-span-2',
+      node: (
+        <WinLossErrorBoundary section="Matriz de motivos" fallbackHeight={260}>
+          <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    cycle: {
+      label: 'Histograma de ciclo',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="Histograma de ciclo" fallbackHeight={220}>
+          <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    'loss-flow': {
+      label: 'Funil de perdas',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="Funil de perdas" fallbackHeight={220}>
+          <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    cohort: {
+      label: 'Cohort',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="Cohort">
+          <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    'win-by-hour': {
+      label: 'Heatmap horário',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="Heatmap horário">
+          <WinByHourHeatmap onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    salespeople: {
+      label: 'Vendedores',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="Vendedores">
+          <SalespersonWinLossTable
+            stats={spStats}
+            isLoading={spLoading}
+            onRowClick={onSalesperson}
+          />
+        </WinLossErrorBoundary>
+      ),
+    },
+    competitors: {
+      label: 'Concorrentes',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="Concorrentes">
+          <CompetitorBattleCard
+            competitors={competitors}
+            onCompetitorClick={onCompetitor}
+          />
+        </WinLossErrorBoundary>
+      ),
+    },
+    'script-ab': {
+      label: 'Script A/B',
+      className: 'lg:col-span-6',
+      node: (
+        <WinLossErrorBoundary section="Script A/B">
+          <ScriptABPanel />
+        </WinLossErrorBoundary>
+      ),
+    },
+    scenarios: {
+      label: 'Forecast cenários',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="Forecast cenários" fallbackHeight={260}>
+          <ScenarioForecastChart
+            points={monthly}
+            horizon={viewPrefs.forecastHorizon}
+            onHorizonChange={h => updateViewPrefs({ forecastHorizon: h })}
+          />
+        </WinLossErrorBoundary>
+      ),
+    },
+    icp: {
+      label: 'ICP correlação',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="ICP correlação" fallbackHeight={260}>
+          <ICPCorrelationMatrix rows={rows} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    sentiment: {
+      label: 'Sentimento × Win',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="Sentimento × Win" fallbackHeight={260}>
+          <SentimentTrendChart />
+        </WinLossErrorBoundary>
+      ),
+    },
+    season: {
+      label: 'Comparativo de safras',
+      className: 'lg:col-span-3',
+      node: (
+        <WinLossErrorBoundary section="Comparativo de safras">
+          <SeasonComparisonPanel rows={rows} />
+        </WinLossErrorBoundary>
+      ),
+    },
+    'at-risk': {
+      label: 'Deals em risco e webhooks',
+      className: 'lg:col-span-6',
+      node: (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <WinLossErrorBoundary section="Deals em risco">
+            <AtRiskDealsFromPatterns />
+          </WinLossErrorBoundary>
+          <WinLossErrorBoundary section="Webhooks">
+            <div className="space-y-4">
+              <WebhookHealthPanel />
+              <WebhookSubscriptionsPanel />
+            </div>
+          </WinLossErrorBoundary>
+          <WinLossErrorBoundary section="Webhooks Dead Letter">
+            <WebhookDeadLetterPanel />
+          </WinLossErrorBoundary>
+        </div>
+      ),
+    },
+  };
+
   return (
     <>
       <Helmet>
@@ -336,117 +522,7 @@ export default function WinLossIntelligence() {
               isAnalyzing={runAnalysis.isPending}
             />
           ) : (
-            <>
-              <WinLossErrorBoundary section="KPIs">
-                <WinLossKpiBanner
-                  kpis={kpis}
-                  onWinsClick={onWins}
-                  onLossesClick={onLosses}
-                  delta={delta}
-                  forecast={forecast}
-                />
-              </WinLossErrorBoundary>
-
-              <div className="no-print">
-                <WinLossErrorBoundary section="Next Best Action">
-                  <NextBestWinLossCard />
-                </WinLossErrorBoundary>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2">
-                  <WinLossErrorBoundary section="Tendência" fallbackHeight={260}>
-                    <WinLossTrendChart
-                      monthly={monthly}
-                      weekly={weekly}
-                      granularity={viewPrefs.granularity}
-                      onGranularityChange={g => updateViewPrefs({ granularity: g })}
-                      onPointClick={onPeriod}
-                    />
-                  </WinLossErrorBoundary>
-                </div>
-                <div>
-                  <WinLossErrorBoundary section="Matriz de motivos" fallbackHeight={260}>
-                    <WinLossReasonMatrix cells={matrix} onCellClick={onMatrix} />
-                  </WinLossErrorBoundary>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <WinLossErrorBoundary section="Histograma de ciclo" fallbackHeight={220}>
-                  <CycleTimeHistogram rows={rows} onBinClick={onCycleBin} />
-                </WinLossErrorBoundary>
-                <WinLossErrorBoundary section="Funil de perdas" fallbackHeight={220}>
-                  <LossReasonFlow rows={rows} onLeafClick={onLossLeaf} />
-                </WinLossErrorBoundary>
-              </div>
-
-              <WinLossErrorBoundary section="Cohort">
-                <WinLossCohortHeatmap rows={rows} onCellClick={onCohort} />
-              </WinLossErrorBoundary>
-
-              <WinLossErrorBoundary section="Heatmap horário">
-                <WinByHourHeatmap
-                  onCellClick={(d, h) => openDrawer(`Fechamentos ${d}h${h}`)}
-                />
-              </WinLossErrorBoundary>
-
-              <WinLossErrorBoundary section="Vendedores">
-                <SalespersonWinLossTable
-                  stats={spStats}
-                  isLoading={spLoading}
-                  onRowClick={onSalesperson}
-                />
-              </WinLossErrorBoundary>
-
-              <WinLossErrorBoundary section="Concorrentes">
-                <CompetitorBattleCard
-                  competitors={competitors}
-                  onCompetitorClick={onCompetitor}
-                />
-              </WinLossErrorBoundary>
-
-              <WinLossErrorBoundary section="Script A/B">
-                <ScriptABPanel />
-              </WinLossErrorBoundary>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <WinLossErrorBoundary section="Forecast cenários" fallbackHeight={260}>
-                  <ScenarioForecastChart
-                    points={monthly}
-                    horizon={viewPrefs.forecastHorizon}
-                    onHorizonChange={h => updateViewPrefs({ forecastHorizon: h })}
-                  />
-                </WinLossErrorBoundary>
-                <WinLossErrorBoundary section="ICP correlação" fallbackHeight={260}>
-                  <ICPCorrelationMatrix rows={rows} />
-                </WinLossErrorBoundary>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <WinLossErrorBoundary section="Sentimento × Win" fallbackHeight={260}>
-                  <SentimentTrendChart />
-                </WinLossErrorBoundary>
-                <WinLossErrorBoundary section="Comparativo de safras">
-                  <SeasonComparisonPanel rows={rows} />
-                </WinLossErrorBoundary>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <WinLossErrorBoundary section="Deals em risco">
-                  <AtRiskDealsFromPatterns />
-                </WinLossErrorBoundary>
-                <WinLossErrorBoundary section="Webhooks">
-                  <div className="space-y-4">
-                    <WebhookHealthPanel />
-                    <WebhookSubscriptionsPanel />
-                  </div>
-                </WinLossErrorBoundary>
-                <WinLossErrorBoundary section="Webhooks Dead Letter">
-                  <WebhookDeadLetterPanel />
-                </WinLossErrorBoundary>
-              </div>
-            </>
+            <DashboardLayoutEditor widgets={winLossWidgets} />
           )}
 
           <div
