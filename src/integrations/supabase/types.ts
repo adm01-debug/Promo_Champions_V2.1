@@ -2457,6 +2457,7 @@ export type Database = {
           scheduled_date: string
           status: string
           task_type: string | null
+          updated_at: string
         }
         Insert: {
           cadence_step_id: string
@@ -2470,6 +2471,7 @@ export type Database = {
           scheduled_date: string
           status?: string
           task_type?: string | null
+          updated_at?: string
         }
         Update: {
           cadence_step_id?: string
@@ -2483,6 +2485,7 @@ export type Database = {
           scheduled_date?: string
           status?: string
           task_type?: string | null
+          updated_at?: string
         }
         Relationships: [
           {

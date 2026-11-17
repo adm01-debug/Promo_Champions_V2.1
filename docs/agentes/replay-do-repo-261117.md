@@ -146,11 +146,293 @@ Tornar o repo replayável é um projeto com escopo próprio, não um item de fil
 - **PITR desligado** — sem recuperação para um instante no tempo.
 - **Nenhum backup restaurável listado** pela API.
 - `walg_enabled: true` — o mecanismo físico está ligado.
-- **NÃO VERIFICADO**: se o plano guarda snapshot diário fora dessa listagem. O
-  endpoint de projeto não expõe o plano. Visível em Dashboard → Database → Backups.
+- **Plano da organização: `free`** — verificado em
+  `GET /v1/organizations/xkwxmfhdzgjzbkmbozcg` → `{"plan":"free"}`. O plano gratuito
+  do Supabase não inclui backup: nem snapshot diário, nem PITR. É por isso que a
+  listagem vem vazia. Não há snapshot escondido fora dela.
+  (Isto substitui o "NÃO VERIFICADO" que esta seção trazia na primeira versão.)
 
 Isto importa junto com o resto: se o repo não reconstrói o banco **e** não há
 backup restaurável, não existe caminho verificado de reconstrução. Hoje o dado é
 de teste (957 linhas em `public.sales`, todas fictícias), então a perda seria de
 **schema**, não de dado de cliente — 692 migrations e os 11 objetos órfãos
-reconciliados em #538. Ligar backup é decisão de plano e custo: do dono.
+reconciliados em #538. Ligar backup exige sair do plano gratuito — decisão de
+custo, do dono.
+
+**Mitigação feita:** `supabase/schema.sql`, dump do schema de produção por
+introspecção de catálogo, versionado no repo. Não substitui backup (não tem dado),
+mas passa a existir um caminho de reconstrução do schema onde antes não havia
+nenhum. Ver o cabeçalho do próprio arquivo.
+
+### O dump foi testado, não só gerado
+
+Aplicado num Postgres limpo e comparado **objeto por objeto** com produção:
+
+```
+producao: 5329 objetos   restaurado: 5329 objetos
+FALTA: 0   SOBRA: 0
+```
+
+| classe | produção | restaurado |
+|---|---:|---:|
+| índice | 1423 | 1423 |
+| constraint | 1245 | 1245 |
+| policy | 1017 | 1017 |
+| tabela | 408 | 408 |
+| RLS ligado | 408 | 408 |
+| trigger | 386 | 386 |
+| função | 378 | 378 |
+| view | 35 | 35 |
+| enum | 25 | 25 |
+| sequence | 3 | 3 |
+| matview | 1 | 1 |
+
+Dois erros sobram na aplicação, e são **do container de teste**, não do arquivo:
+`pg_net` e `supabase_vault` não existem no apt desta máquina (`pgvector` e
+`pg_cron` foram instalados e por isso saíram da lista).
+
+Um terceiro grupo de 1.289 erros aparece **somente** num Postgres 16: o privilégio
+`MAINTAIN`, que existe a partir do **Postgres 17**. Produção roda 17.6. Medido
+com duas aplicações idênticas onde a única diferença era remover essa palavra:
+
+```
+íntegro:         erros=1291  privilegio=1289  outros=2
+sem MAINTAIN:    erros=2     privilegio=0     outros=2
+```
+
+Contagens de objeto iguais nas duas. Em alvo PG17 (que é o caso de produção) esses
+1.289 não ocorrem. **Não testável localmente**: o PG17 não está nos repositórios
+deste container.
+
+### Três defeitos de ordem achados pelo teste, e corrigidos
+
+O arquivo só chegou a 0 divergência depois de três correções que **apenas a
+aplicação real revelou** — nenhuma delas aparecia na leitura do SQL:
+
+1. `migration_log_id_seq` caía depois das tabelas, mas `migration_log.id` tem
+   `DEFAULT nextval(...)`. O roteador testava `OWNED BY` no texto todo e um
+   comentário acima do `CREATE SEQUENCE` citava a expressão.
+2. **Ciclo entre classes de objeto**: `fn_admin_platform_slo`,
+   `fn_admin_security_definer_exposure`, `fn_admin_wal_health` e
+   `fn_admin_web_vitals_p75` retornam `SETOF v_*` (precisam das views antes),
+   enquanto `revenue_forecast_view` e `sales_with_markup` usam `has_role` e
+   `is_salesperson_active` (precisam de funções antes). Ordenar por classe não
+   resolve: as 4 funções saem depois das views.
+3. O índice de `mv_competitive_ranking` saía na seção de índices, antes da matview
+   existir — e a seção de views já o emitia no lugar certo. Duplicata removida.
+
+Antes dessas correções: 59 erros não-privilégio. Depois: 2, ambos de ambiente.
+
+### Oito lacunas, cinco achadas por revisor externo e três pela causa sistemática
+
+Meus 12 críticos adversariais não acharam nenhuma delas, por um motivo que vale
+registrar: **eu mesmo lhes dei o escopo** ("só `public` e `private`"). Crítico não
+questiona a premissa que recebe. Foi preciso revisor de fora — Codex e Devin, na PR #548.
+
+O critério certo não é o schema da tabela, é a **origem do objeto**: foi criado por
+migration deste repo? Aplicado aos objetos fora de `public`/`private`, ele separa as
+duas coisas sem ambiguidade. Produção tem 18 policies fora desses schemas: as 16 da
+aplicação têm de 1 a 4 migrations no repo e entram no dump; `cron_job_policy` e
+`cron_job_run_details_policy` têm **zero** e ficam de fora — prova disso é que, no
+alvo restaurado, essas duas aparecem mesmo assim, criadas pela extensão `pg_cron`.
+Os 12 triggers de `storage.buckets`/`storage.objects`/`realtime.subscription` passam
+no mesmo teste com zero e também ficam de fora; `on_auth_user_created_role` tem uma
+migration e é justamente o item 2.
+
+1. **ACL herdada (segurança).** 371 das 378 funções não têm `anon` no EXECUTE em
+   produção, e 297 dessas são `SECURITY DEFINER`. O dump só concedia e revogava de
+   `PUBLIC`; num Supabase novo, cujo padrão já concede a `anon`, ausência de linha
+   **não é revogação**. Corrigido com uma seção de normalização que zera as ACLs
+   antes dos grants. Verificado no alvo restaurado: `anon` com EXECUTE em 7 funções
+   (igual a produção) e `add_salesperson_xp` em `service_role, postgres`.
+2. **Trigger da aplicação em tabela de plataforma.** `auth.users` →
+   `on_auth_user_created_role` → `private.handle_new_user_role`. A seção de triggers
+   filtrava pelo schema da *tabela*. Sem ele, cadastro novo não recebe papel.
+   Verificado: triggers 387 → 388 no alvo.
+3. **Publicação `supabase_realtime`** (77 tabelas) ausente. **NÃO VERIFICADO
+   localmente**: a publicação é da plataforma e não existe num Postgres avulso; a
+   guarda roda sem erro, mas o `ADD TABLE` não foi exercitado.
+4. **`REPLICA IDENTITY FULL`** em 26 tabelas, ausente. Verificado: 26 no alvo.
+5. **Policies da aplicação em tabela de plataforma, e os buckets.** Mesma causa do
+   item 2, agora em `storage.objects` (14 policies), `realtime.messages` (2) e a
+   definição dos 6 buckets. A seção de RLS filtrava pelo schema da *tabela*. Sem
+   elas, o alvo restaurado teria `storage.objects` com RLS ligada e **zero** policy:
+   avatar, áudio de ligação, PDF de orçamento e export de relatório ficariam
+   inacessíveis ao usuário final. E sem os buckets, `file_size_limit` e
+   `allowed_mime_types` ficariam nulos — o alvo aceitaria upload que produção recusa
+   (`call-recordings` tem 100 MB e 12 mime types; `quote-pdfs`, só `application/pdf`).
+   Verificado no alvo restaurado: 14 + 2 policies e os 6 buckets idênticos a produção
+   nas 6 colunas de definição.
+
+   **Os dois totais de policy não se contradizem, têm escopos diferentes:** a tabela do
+   inventário acima conta **1017**, que são as de `public`/`private`; somando as 18 que
+   vivem em schema de plataforma (16 da aplicação + 2 que o `pg_cron` cria sozinho)
+   chega-se a **1035**, e esse é o total de `pg_policy` tanto no alvo quanto em produção.
+   O inventário de 5329 objetos cobre só `public`/`private`; a verificação desta seção
+   precisou sair desse recorte, por definição.
+
+### A seção 92 não pode abortar a restauração
+
+`CREATE POLICY` exige ser dono da tabela, e em produção `storage.objects` pertence a
+`supabase_storage_admin` e `realtime.messages` a `supabase_realtime_admin` — `postgres`
+não é membro de nenhum dos dois. Com `ON_ERROR_STOP=1`, um único `must be owner of table
+objects` mataria o `psql` **ali**, e tudo o que vem depois nunca rodaria: publicação
+realtime, `REPLICA IDENTITY`, as 1017 policies de `public`/`private`, a normalização de
+ACL, os grants e as foreign keys. O arquivo ficaria pela metade, e em silêncio.
+
+Cada statement da seção roda dentro do seu próprio `BEGIN ... EXCEPTION WHEN
+insufficient_privilege`. Medido num Postgres 16 com as tabelas de plataforma de outro
+dono e a restauração rodando como papel não-dono:
+
+| | sem o `EXCEPTION` | com o `EXCEPTION` |
+|---|---|---|
+| saída do `psql` | **3** (abortou) | **0** |
+| statement seguinte executou | **não** | **sim** |
+| o que foi pulado | — | 6 buckets + 16 policies, cada um com `WARNING` nominal |
+
+Rodando o **mesmo arquivo** depois como dono da tabela: **0 warnings, 16 policies, 6
+buckets**. Ele é idempotente, então a recuperação é reexecutá-lo.
+
+E a falha é segura: o que não instala deixa a tabela com RLS ligada e **sem** policy —
+acesso fechado, não aberto.
+
+**Essa correção estava pela metade, e quem achou foi um crítico de outra seção.** Eu
+protegi os *statements* e deixei a **guarda** exposta: `to_regclass('storage.buckets')`
+precisa de USAGE no schema, e sem ele **erra** em vez de devolver `NULL`. Medido:
+`permission denied for schema storage`, `psql` exit 1. Em produção o papel `postgres`
+**não é superusuário** e tem USAGE em `storage`/`cron` apenas por grant explícito, então
+o caminho não é hipotético. As três guardas da seção passaram a rodar no próprio
+`BEGIN ... EXCEPTION`.
+
+### Mais duas lacunas da mesma classe, e a causa sistemática
+
+Depois da quinta lacuna fiz a pergunta certa uma vez só: **que configuração da aplicação
+vive como LINHA numa tabela de plataforma, e não como objeto de schema?** Um inventário
+de `pg_class`/`pg_proc`/`pg_policy` nunca enxerga isso. A varredura de todas as tabelas
+de plataforma com linhas deu:
+
+| tabela | o que é | no dump |
+|---|---|---|
+| `cron.job` | **45 agendamentos da aplicação** | **faltava** |
+| `pg_db_role_setting` | `search_path` e `app.settings.jwt_exp` do banco | **faltava** |
+| `supabase_migrations.schema_migrations` | **692** versões aplicadas | **faltava** |
+| `storage.buckets` | 6 buckets | já corrigido (item 5) |
+| `auth.users`, `auth.sessions`, `refresh_tokens`, `net._http_response` | dado de usuário e log de execução | fora, e corretamente |
+| `auth.schema_migrations`, `realtime.schema_migrations`, `storage.migrations` | ledgers da própria plataforma | fora, e corretamente |
+
+**6. Os 45 agendamentos do `pg_cron`.** Achado por revisor externo (Codex, P2) e confirmado:
+as 12 ocorrências de `cron.job` no dump eram todas **leitura** dentro de função de
+monitoramento; nenhuma chamada a `cron.schedule`. Restaurar daria um banco com o schema
+inteiro e **nada rodando**: sync do Bitrix24, SLA de lead, cadências, expiração de
+orçamento, retenção de dados, liga e confrontos semanais. Todos os 45 estão `active`.
+
+Critério de recorte: 42 dos 45 nomes aparecem em migration do repo; os outros 3
+(`capture-rollback-snapshot-5min`, `detect_slow_queries_hourly`, `purge_old_telemetry_daily`)
+chamam funções `public.*` deste app, agendadas à mão. O Supabase não instala cron job por
+conta própria aqui, então os 45 entram.
+
+Verificado em Postgres 16 / pg_cron 1.6: 45 agendados, `FALTA 0 SOBRA 0`, fidelidade
+campo a campo **45/45** em `schedule` e `command` — incluindo os 26 com aspas simples e os
+2 multilinha de `net.http_post` (336 e 306 bytes, byte a byte). Três aplicações seguidas:
+45 linhas, 45 nomes, mesmo `jobid` máximo — `cron.schedule` faz *upsert*, não duplica.
+
+Gate de segredo rodado sobre os 45 comandos antes de versionar qualquer coisa, com 21
+padrões: **zero**. Os 2 jobs com `net.http_post` leem `url` e `apikey` de
+`public._internal_secrets` em subquery de runtime — o literal no comando é só o **nome**
+da chave. O gate está embutido no gerador, que aborta em vez de publicar.
+
+Ressalva que o crítico levantou: o *upsert* é por `(jobname, username)`, não por
+`jobname`. Aplicar com um segundo papel levou `cron.job` de 45 para 90 linhas — cada job
+disparando duas vezes. Está no cabeçalho da seção: restaure sempre com o mesmo papel.
+
+**7. Settings gravados no banco.** O `SET search_path` do cabeçalho vale só para a sessão
+que aplica o dump. Sem `ALTER DATABASE`, toda conexão **futura** do alvo pega o padrão — e
+aí função que referencia `vector` sem qualificar o schema deixa de resolver. Foi
+exatamente essa diferença que me fez ver 3 funções como divergentes numa comparação antes
+de eu usar o `search_path` de produção. Verificado: os 2 settings gravados idênticos.
+
+**8. O ledger de migrations.** Sem ele o alvo tem o schema completo e um ledger **vazio**:
+a CLI do Supabase e o `migrations-drift.yml` casam por `version` e tentariam reaplicar as
+692 sobre uma base que já tem tudo. A coluna `statements` fica de fora de propósito — são
+84 kB de SQL já versionado em `supabase/migrations/`, e a CLI casa por `version`.
+Verificado: 692 inseridas, idempotente, e numa base sem o schema a seção só avisa.
+
+### A prova que fecha as oito
+
+Papel **sem USAGE** em `storage`, `realtime` nem `cron`, restaurando com
+`ON_ERROR_STOP=1`, com um marcador no fim do arquivo:
+
+```
+WARNING: sem USAGE no schema storage ...: buckets nao criados
+WARNING: sem USAGE no schema realtime ...: policies nao instaladas
+WARNING: sem USAGE no schema storage ...: policies nao instaladas
+WARNING: sem privilegio no schema cron: os 45 agendamentos NAO foram criados
+WARNING: ledger de migrations NAO preenchido: sem privilegio ...
+saída do psql: 0
+marcador no fim do arquivo: existe
+```
+
+Cinco falhas de privilégio, cinco avisos nomeados, **restauração completa**. Antes do
+conserto, a primeira delas matava o `psql` e levava embora tudo o que vem depois.
+
+Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o bloco de
+verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas
+`pg_get_userbyid(0)` devolve a string `'unknown (OID=0)'`, nunca NULL — sobra de ACL
+do `PUBLIC` passava em silêncio anunciando "0 entrada".
+
+### Duas lacunas que invalidavam a própria receita de restauração
+
+Achadas pelo Codex na PR #548, depois de eu ter publicado duas vezes que o arquivo
+era reaplicável. As duas são da mesma classe — **o dump concedia mas nunca revogava,
+e derrubava o que não devia** — e só apareceram porque o revisor aplicou o arquivo
+**duas vezes**. Todos os meus testes aplicavam **uma vez numa base limpa**: testei o
+que projetei, não o que documentei.
+
+1. **Não era reexecutável.** As seções de constraints (825) e de FKs (420) emitiam
+   `DROP CONSTRAINT IF EXISTS` antes de cada `ADD`. O `IF EXISTS` suprime "não
+   existe", não suprime dependência: derrubar uma PK que sustenta o índice de uma FK
+   falha com `cannot drop constraint ..._pkey because other objects depend on it`, e o
+   `ADD` seguinte vira `multiple primary keys for table ... are not allowed`. Medido
+   na 2ª aplicação: **87 + 87 = 174 erros**, e com `ON_ERROR_STOP=1` o psql saía 3 em
+   `account_contacts_pkey` (linha 5834) — **antes** das seções 92, 99 e 99b, que são
+   justamente as que dependem de reexecutar para instalar o que ficou de fora por
+   falta de privilégio. Consertado consultando `pg_constraint` antes de agir:
+   ausente → `ADD`; presente e idêntica (`pg_get_constraintdef`) → nada; presente e
+   diferente → `WARNING` com as duas definições e **nenhum `DROP`**. Zero `DROP` no
+   arquivo montado. A leitura do catálogo roda com `search_path = ''`, porque com
+   `public` no path o `pg_get_constraintdef` devolve `REFERENCES accounts(id)` em vez
+   de `REFERENCES public.accounts(id)` e as 420 FKs seriam acusadas de divergentes em
+   toda reexecução.
+2. **`pg_default_acl` não era normalizado.** O dump tinha 8 `ALTER DEFAULT PRIVILEGES
+   ... GRANT` e nenhum `REVOKE`. Num Supabase novo, cujo padrão de fábrica concede
+   tudo a `PUBLIC`/`anon`, restaurar **desfazia** o endurecimento de
+   `20260902121000` (TRUNCATE revogado de `anon`/`authenticated`) e os cinco
+   `REVOKE EXECUTE ... FROM PUBLIC/anon`. Consertado com 12 `REVOKE ALL` imediatamente
+   antes dos 8 `GRANT`, no escopo exato que as migrations deste repo criaram
+   (`dono = postgres`, `schema = public`, objtypes `r`/`S`/`f`); as 24 linhas de
+   plataforma (`storage`, `auth`, `realtime`, `cron`, `graphql`) ficam intactas.
+
+Medição minha, rig próprio, PostgreSQL 16 descartável, três aplicações:
+
+| aplicação | `ON_ERROR_STOP` | psql | erros | constraint/PK |
+|---|---|---|---|---|
+| 1ª (base limpa) | 0 | **0** | 1291 (1289 `MAINTAIN` do PG16 + 2 extensões indisponíveis) | **0** |
+| 2ª | **1** | **0** | **0** | **0** |
+| 3ª | **1** | **0** | **0** | **0** |
+
+Estado final do alvo: `pg_constraint` em `public`/`private` = **1245** (c 291, f 420,
+p 408, u 126), igual a produção; inventário nome a nome **4941/4941, FALTA 0 SOBRA 0**
+(as 12 diferenças restantes são triggers de plataforma em `storage`/`realtime`, sem
+migration neste repo); `pg_default_acl` com **3 linhas**, todas `(postgres, public)`,
+`S` e `f` batendo byte a byte com produção e `r` divergindo só no bit `m`
+(`MAINTAIN`, que o PG16 não conhece) — `anon` e `authenticated` **sem** `D`
+(TRUNCATE) e `f` **sem** `PUBLIC`/`anon`, ou seja, o endurecimento preservado.
+
+Correção de um número que eu publiquei: eu havia relatado **438** erros de dependência
+e aborto na linha 5846. Três medições independentes deram **87 + 87 = 174** e linha
+5834. O 438 não reproduz e está descartado.
+
+**Defeito desta classe que permanece, declarado e não consertado** (uma tarefa por
+vez): a seção 10 emite `CREATE EXTENSION` sem guarda, então uma extensão indisponível
+no alvo mata o psql na linha 89 com `ON_ERROR_STOP=1`, antes de qualquer seção — foi
+o que me obrigou a comentar `pg_net` e `supabase_vault` na variante de teste.
