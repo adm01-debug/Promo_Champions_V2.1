@@ -27,9 +27,11 @@ Deno.test("inbound-email-webhook: telemetria é tratada antes da busca de inscri
 
 Deno.test("inbound-email-webhook: falha da busca de inscrição não derruba o evento", async () => {
   const source = await read("./index.ts");
+  // Qualquer forma de relançar conta, não só a de uma linha: `if (matchError)
+  // { throw matchError; }` quebraria a invariante do mesmo jeito.
   assert(
-    !/if \(matchError\) throw matchError;/.test(source),
-    "erro da RPC de inscrição não pode ser relançado: derrubava o registro do evento, o opt-out e o sinal de engajamento junto",
+    !/throw\s+matchError/.test(source),
+    "erro da RPC de inscrição não pode ser relançado em nenhuma forma: derrubava o registro do evento, o opt-out e o sinal de engajamento junto",
   );
   assert(
     source.includes("'match_reply_to_enrollment_falhou'"),
