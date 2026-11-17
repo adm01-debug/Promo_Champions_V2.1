@@ -146,11 +146,79 @@ Tornar o repo replayável é um projeto com escopo próprio, não um item de fil
 - **PITR desligado** — sem recuperação para um instante no tempo.
 - **Nenhum backup restaurável listado** pela API.
 - `walg_enabled: true` — o mecanismo físico está ligado.
-- **NÃO VERIFICADO**: se o plano guarda snapshot diário fora dessa listagem. O
-  endpoint de projeto não expõe o plano. Visível em Dashboard → Database → Backups.
+- **Plano da organização: `free`** — verificado em
+  `GET /v1/organizations/xkwxmfhdzgjzbkmbozcg` → `{"plan":"free"}`. O plano gratuito
+  do Supabase não inclui backup: nem snapshot diário, nem PITR. É por isso que a
+  listagem vem vazia. Não há snapshot escondido fora dela.
+  (Isto substitui o "NÃO VERIFICADO" que esta seção trazia na primeira versão.)
 
 Isto importa junto com o resto: se o repo não reconstrói o banco **e** não há
 backup restaurável, não existe caminho verificado de reconstrução. Hoje o dado é
 de teste (957 linhas em `public.sales`, todas fictícias), então a perda seria de
 **schema**, não de dado de cliente — 692 migrations e os 11 objetos órfãos
-reconciliados em #538. Ligar backup é decisão de plano e custo: do dono.
+reconciliados em #538. Ligar backup exige sair do plano gratuito — decisão de
+custo, do dono.
+
+**Mitigação feita:** `supabase/schema.sql`, dump do schema de produção por
+introspecção de catálogo, versionado no repo. Não substitui backup (não tem dado),
+mas passa a existir um caminho de reconstrução do schema onde antes não havia
+nenhum. Ver o cabeçalho do próprio arquivo.
+
+### O dump foi testado, não só gerado
+
+Aplicado num Postgres limpo e comparado **objeto por objeto** com produção:
+
+```
+producao: 5329 objetos   restaurado: 5329 objetos
+FALTA: 0   SOBRA: 0
+```
+
+| classe | produção | restaurado |
+|---|---:|---:|
+| índice | 1423 | 1423 |
+| constraint | 1245 | 1245 |
+| policy | 1017 | 1017 |
+| tabela | 408 | 408 |
+| RLS ligado | 408 | 408 |
+| trigger | 386 | 386 |
+| função | 378 | 378 |
+| view | 35 | 35 |
+| enum | 25 | 25 |
+| sequence | 3 | 3 |
+| matview | 1 | 1 |
+
+Dois erros sobram na aplicação, e são **do container de teste**, não do arquivo:
+`pg_net` e `supabase_vault` não existem no apt desta máquina (`pgvector` e
+`pg_cron` foram instalados e por isso saíram da lista).
+
+Um terceiro grupo de 1.289 erros aparece **somente** num Postgres 16: o privilégio
+`MAINTAIN`, que existe a partir do **Postgres 17**. Produção roda 17.6. Medido
+com duas aplicações idênticas onde a única diferença era remover essa palavra:
+
+```
+íntegro:         erros=1291  privilegio=1289  outros=2
+sem MAINTAIN:    erros=2     privilegio=0     outros=2
+```
+
+Contagens de objeto iguais nas duas. Em alvo PG17 (que é o caso de produção) esses
+1.289 não ocorrem. **Não testável localmente**: o PG17 não está nos repositórios
+deste container.
+
+### Três defeitos de ordem achados pelo teste, e corrigidos
+
+O arquivo só chegou a 0 divergência depois de três correções que **apenas a
+aplicação real revelou** — nenhuma delas aparecia na leitura do SQL:
+
+1. `migration_log_id_seq` caía depois das tabelas, mas `migration_log.id` tem
+   `DEFAULT nextval(...)`. O roteador testava `OWNED BY` no texto todo e um
+   comentário acima do `CREATE SEQUENCE` citava a expressão.
+2. **Ciclo entre classes de objeto**: `fn_admin_platform_slo`,
+   `fn_admin_security_definer_exposure`, `fn_admin_wal_health` e
+   `fn_admin_web_vitals_p75` retornam `SETOF v_*` (precisam das views antes),
+   enquanto `revenue_forecast_view` e `sales_with_markup` usam `has_role` e
+   `is_salesperson_active` (precisam de funções antes). Ordenar por classe não
+   resolve: as 4 funções saem depois das views.
+3. O índice de `mv_competitive_ranking` saía na seção de índices, antes da matview
+   existir — e a seção de views já o emitia no lugar certo. Duplicata removida.
+
+Antes dessas correções: 59 erros não-privilégio. Depois: 2, ambos de ambiente.
