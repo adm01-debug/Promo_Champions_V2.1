@@ -1,7 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Flame } from 'lucide-react';
-import { useEngagementLeaderboard } from '@/hooks/engagement/useEngagementScore';
+import { Button } from '@/components/ui/button';
+import { Flame, RefreshCw } from 'lucide-react';
+import {
+  useEngagementLeaderboard,
+  useRecomputeContactEngagement,
+} from '@/hooks/engagement/useEngagementScore';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { cn } from '@/lib/utils';
 import { EngagementScoreBadge } from './EngagementScoreBadge';
 
 interface Props {
@@ -10,14 +16,32 @@ interface Props {
 
 export function EngagementLeaderboardWidget({ limit = 10 }: Props) {
   const { data, isLoading } = useEngagementLeaderboard(limit);
+  const recompute = useRecomputeContactEngagement();
+  const { isAdminOrManager } = useUserRoles();
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-section-title flex items-center gap-2">
-          <Flame className="h-4 w-4 text-destructive" />
-          Top Contatos Quentes
-        </CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-section-title flex items-center gap-2">
+            <Flame className="h-4 w-4 text-destructive" />
+            Top Contatos Quentes
+          </CardTitle>
+          {isAdminOrManager && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => recompute.mutate(undefined)}
+              disabled={recompute.isPending}
+              title="Recalcular o engajamento de todos os contatos com sinal registrado"
+            >
+              <RefreshCw
+                className={cn('h-4 w-4', recompute.isPending && 'animate-spin')}
+              />
+              <span className="sr-only">Recalcular engajamento</span>
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
