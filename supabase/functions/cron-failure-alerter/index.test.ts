@@ -326,7 +326,10 @@ Deno.test("E2E — chamadas consecutivas são idempotentes (mesma janela, sem no
       },
       body: "{}",
     });
-    return { status: r.status, body: JSON.parse(await r.text()) as { ok: boolean; failures: number; notified: number } };
+    // Devolve o texto cru: parsear aqui estoura antes de alguem olhar o status,
+    // e um 401 do gateway nao responde JSON. A guarda de 401 abaixo so funciona
+    // se o parse vier DEPOIS dela -- mesmo padrao do teste irmao acima.
+    return { status: r.status, text: await r.text() };
   };
   const a = await call();
   if (a.status === 401) {
@@ -334,11 +337,15 @@ Deno.test("E2E — chamadas consecutivas são idempotentes (mesma janela, sem no
     return;
   }
   const b = await call();
-  assertEquals(a.body.ok, true);
-  assertEquals(b.body.ok, true);
+  assertEquals(a.status, 200, `edge status inesperado na 1a chamada: ${a.status} body=${a.text.slice(0, 300)}`);
+  assertEquals(b.status, 200, `edge status inesperado na 2a chamada: ${b.status} body=${b.text.slice(0, 300)}`);
+  const aBody = JSON.parse(a.text) as { ok: boolean; failures: number; notified: number };
+  const bBody = JSON.parse(b.text) as { ok: boolean; failures: number; notified: number };
+  assertEquals(aBody.ok, true);
+  assertEquals(bBody.ok, true);
   // Segunda chamada não deve criar novas notificações para as MESMAS falhas.
-  assert(b.body.notified <= a.body.notified,
-    `dedupe regrediu: primeira notificou ${a.body.notified}, segunda notificou ${b.body.notified}`);
+  assert(bBody.notified <= aBody.notified,
+    `dedupe regrediu: primeira notificou ${aBody.notified}, segunda notificou ${bBody.notified}`);
 });
 
 Deno.test("E2E — OPTIONS preflight retorna CORS headers", async () => {
