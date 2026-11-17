@@ -119,3 +119,69 @@ NÃO VERIFICADO se há disparo duplo em algum caminho.
 | objetos de `public` | 772                               | 8 sem arquivo → PR #538                               |
 | crons `pg_cron`     | 45                                | 3 sem arquivo → PR #538                               |
 | edge functions      | 100 deployadas × 171 no repo      | **0** só em produção                                  |
+
+## Decisões tomadas em 17/11 (atualização dos itens 4 e 5)
+
+O item 5 deste documento dizia que a limpeza do registro de migrations era
+decisão do dono. Foi executada (PR #540) e o diagnóstico que a acompanhava
+estava **incompleto**. Fica o registro do que realmente era.
+
+### O `Supabase Preview` não falhava por policy não idempotente
+
+Só `20241231000001_entity_versions.sql` cria a policy
+`"Users can insert versions"`, então uma preview do zero não daria conflito. O
+Branching **clona o schema de produção e aplica as migrations ausentes do
+ledger**. Com o ledger em 96 registros e 691 arquivos, ele tentava reaplicar
+594 migrations sobre um banco que já tinha tudo, e morria no primeiro comando
+não idempotente. A limpeza da #540 tirou o bloqueio de versões e **expôs** esse
+replay condenado — não o criou.
+
+Correção aplicada (PR #543): registrar as 594 como aplicadas, depois de
+conferir objeto por objeto que o efeito delas já está no schema:
+
+- 398 tabelas criadas por elas → todas existem, menos 3
+  (`user_permissions_cache` e `cadence_enrollments` têm `DROP` posterior;
+  `call_tracking`, ver abaixo)
+- 320 funções → todas existem, menos 6, e **todas as 6 têm `DROP` posterior**
+
+Estado final: ledger 692, arquivos 692, divergência zero nas duas direções.
+
+Duas correções de rumo no caminho, porque mudaram a conclusão: a contagem
+inicial de 46 funções ausentes olhava **só o schema `public`** (42 estão em
+`private`), e o regex de extração capturava palavras-chave SQL (`for`, `roles`,
+`to`, `grants`) como nome de objeto.
+
+### `call_tracking`: decidido não criar
+
+A tabela está em `20260104182000_additional_tables.sql`, não existe em
+produção, não tem `DROP` e **nada em `src/` nem `supabase/functions` a
+referencia**. A causa de nunca ter sido criada é concreta:
+
+    deal_id UUID REFERENCES deals(id) ON DELETE SET NULL
+
+**`public.deals` não existe em produção.** Criar `call_tracking` exigiria uma
+variante sem essa FK, ou seja, divergir do repo em vez de reconciliar. Fica
+como divergência conhecida e inofensiva.
+
+### A tabela `deals` é fantasma: o conjunto de migrations não é autoconsistente
+
+**Nenhuma migration cria `public.deals`**, e **7 arquivos a referenciam**:
+
+| arquivo                                             | refs                        |
+| --------------------------------------------------- | --------------------------- |
+| `20251228000001_add_soft_delete.sql`                | 2                           |
+| `20260104144318_performance_indexes.sql`            | 6                           |
+| `20260104170152_additional_indexes.sql`             | 2                           |
+| `20260104182000_additional_tables.sql`              | 1 (a FK de `call_tracking`) |
+| `20260104184000_performance_indexes_additional.sql` | 4                           |
+| `20260105000004_performance_indexes.sql`            | 6                           |
+| `20261014000002_fix_concurrently_indexes.sql`       | 8                           |
+
+Consequência: **reconstruir o banco a partir do repo é impossível**, não apenas
+trabalhoso — o replay morre no primeiro desses arquivos. Isso é maior que o
+BUG_0002 e explica por que marcar as migrations como aplicadas (PR #543) é a
+única abordagem viável: fazer o Branching pular o que já está aplicado, em vez
+de tentar reproduzir um histórico que não se reproduz.
+
+Sem impacto em produção hoje: o schema está correto e o sistema roda. Só
+importa para quem tentar subir uma base nova a partir dos arquivos.
