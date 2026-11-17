@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 export type EngagementTier = 'cold' | 'warm' | 'hot' | 'on_fire';
@@ -83,5 +84,43 @@ export function useEngagementLeaderboard(limit = 10) {
       return (data ?? []) as EngagementLeaderboardEntry[];
     },
     staleTime: 120_000,
+  });
+}
+
+/**
+ * Recálculo em lote do engajamento de contato (abre/clica/responde).
+ *
+ * O caminho normal é automático: `record_engagement_signal` grava o sinal em
+ * `contact_send_time_profile` e o trigger `trg_recompute_engagement_on_signal`
+ * recalcula o score. Esta mutation existe para o caso em que o automático não
+ * cobre — backfill depois de mudança na fórmula, ou contato cujo sinal entrou
+ * antes do trigger. Era a única ponta sem chamador: a edge function
+ * `engagement-score-recompute` estava deployada e inalcançável pela UI.
+ *
+ * A própria function exige admin/gestor (`is_admin_or_manager`) e usa
+ * service_role para varrer todos os owners, então o botão também é restrito.
+ */
+export function useRecomputeContactEngagement() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (params?: { ownerId?: string }) => {
+      const { data, error } = await supabase.functions.invoke(
+        'engagement-score-recompute',
+        { body: params?.ownerId ? { ownerId: params.ownerId } : {} }
+      );
+      if (error) throw error;
+      return data as { ok: boolean; updated: number; ownerId: string | null };
+    },
+    onSuccess: res => {
+      queryClient.invalidateQueries({ queryKey: ['engagement-leaderboard'] });
+      queryClient.invalidateQueries({ queryKey: ['engagement-score'] });
+      if ((res?.updated ?? 0) > 0) {
+        toast.success(`Engajamento recalculado: ${res.updated} contato(s)`);
+      } else {
+        toast.info('Nenhum contato com sinal de engajamento para recalcular');
+      }
+    },
+    onError: (error: Error) =>
+      toast.error(`Falha ao recalcular engajamento: ${error.message}`),
   });
 }
