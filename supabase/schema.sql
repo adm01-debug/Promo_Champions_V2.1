@@ -26254,6 +26254,195 @@ DROP TRIGGER IF EXISTS tr_sync_total_xp ON public.xp_history;
 CREATE TRIGGER tr_sync_total_xp AFTER INSERT ON public.xp_history FOR EACH ROW EXECUTE FUNCTION sync_total_xp();
 
 -- ==========================================================
+-- TRIGGER EM AUTH.USERS
+-- ==========================================================
+-- triggers da aplicacao em schema de plataforma: 1 objetos
+-- Origem: pg_trigger WHERE NOT tgisinternal AND tgconstraint = 0,
+--   tabela FORA de public/private e funcao do trigger EM public/private.
+-- Complementa 90-triggers.sql, que filtra pelo schema da TABELA e por isso
+--   nao cobre trigger da aplicacao instalado em tabela de plataforma.
+-- Em producao ha 14 triggers nao-internos fora de public/private; os outros 13
+--   sao da plataforma (funcao em storage/realtime/cron) e o proprio Supabase
+--   os recria, por isso ficam de fora.
+-- DDL exata via pg_get_triggerdef(oid); cada CREATE precedido de DROP TRIGGER IF EXISTS.
+-- Guardado por to_regclass: num Postgres avulso sem o schema auth a secao so avisa.
+-- Depende de: 70-funcoes.sql (private.handle_new_user_role).
+--
+-- auth.users -> on_auth_user_created_role (tgenabled=O)
+
+DO $do$
+BEGIN
+  IF to_regclass('auth.users') IS NOT NULL THEN
+    EXECUTE 'DROP TRIGGER IF EXISTS on_auth_user_created_role ON auth.users';
+    EXECUTE 'CREATE TRIGGER on_auth_user_created_role AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION private.handle_new_user_role()';
+  ELSE
+    RAISE NOTICE 'tabela % ausente: trigger on_auth_user_created_role nao instalado (alvo sem esse schema de plataforma)', 'auth.users';
+  END IF;
+END
+$do$;
+
+-- ==========================================================
+-- PUBLICACAO REALTIME
+-- ==========================================================
+-- publicacao supabase_realtime: 77 objetos (tabelas publicadas)
+-- Fonte: producao usyxfpqlsspldubptrdl (pg_publication / pg_publication_rel), schemas public e private.
+-- Parametros da publicacao em producao (todos no default do CREATE PUBLICATION):
+--   puballtables=f pubinsert=t pubupdate=t pubdelete=t pubtruncate=t pubviaroot=f
+-- Nenhuma das tabelas tem lista de colunas (pg_publication_rel.prattrs) nem row filter (prqual).
+-- A publicacao supabase_realtime e criada pela plataforma Supabase. Num Postgres avulso ela
+-- nao existe: o bloco abaixo so age se ela existir, e so adiciona tabela que ainda nao esta nela.
+-- Esta secao NAO define REPLICA IDENTITY (ver nota no retorno da tarefa).
+DO $realtime_pub$
+DECLARE
+  r      record;
+  reg    regclass;
+  add_n  int := 0;
+  skip_n int := 0;
+  miss_n int := 0;
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    RAISE NOTICE 'publicacao supabase_realtime nao existe neste servidor; 77 tabelas nao foram adicionadas (alvo nao-Supabase)';
+  ELSIF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime' AND puballtables) THEN
+    RAISE NOTICE 'publicacao supabase_realtime e FOR ALL TABLES; nada a adicionar';
+  ELSE
+    FOR r IN
+      SELECT * FROM (VALUES
+        ('public', 'activities'),
+        ('public', 'ai_agent_runs'),
+        ('public', 'approval_requests'),
+        ('public', 'battle_participants'),
+        ('public', 'cadence_tasks'),
+        ('public', 'call_coaching_scorecards'),
+        ('public', 'call_conversation_metrics'),
+        ('public', 'call_critical_moments'),
+        ('public', 'call_metric_benchmarks'),
+        ('public', 'call_objection_analysis'),
+        ('public', 'call_objections'),
+        ('public', 'call_question_analysis'),
+        ('public', 'call_questions'),
+        ('public', 'coaching_opportunities'),
+        ('public', 'coaching_skill_benchmarks'),
+        ('public', 'commission_bonus_awards'),
+        ('public', 'committee_coverage_history'),
+        ('public', 'committee_extraction_runs'),
+        ('public', 'competitive_chat_messages'),
+        ('public', 'critical_moment_notifications'),
+        ('public', 'deal_chat_history'),
+        ('public', 'deal_committee_coverage'),
+        ('public', 'deal_health_history'),
+        ('public', 'deal_health_scores'),
+        ('public', 'deal_probability_scores'),
+        ('public', 'deal_stage_transitions'),
+        ('public', 'deal_stakeholders'),
+        ('public', 'deal_velocity_alerts'),
+        ('public', 'deal_velocity_predictions'),
+        ('public', 'forecast_accuracy'),
+        ('public', 'forecast_confidence_scores'),
+        ('public', 'forecast_deal_contributions'),
+        ('public', 'forecast_snapshots'),
+        ('public', 'kudos'),
+        ('public', 'league_members'),
+        ('public', 'notifications'),
+        ('public', 'objection_library'),
+        ('public', 'performance_bets'),
+        ('public', 'pipeline_coverage_recommendations'),
+        ('public', 'pipeline_coverage_snapshots'),
+        ('public', 'prize_wheel_spins'),
+        ('public', 'prospect_cadences'),
+        ('public', 'quota_attainment_actions'),
+        ('public', 'quota_attainment_alerts'),
+        ('public', 'quota_attainment_forecasts'),
+        ('public', 'quota_attainment_predictions'),
+        ('public', 'race_cars'),
+        ('public', 'race_events'),
+        ('public', 'race_powerups'),
+        ('public', 'race_reactions'),
+        ('public', 'race_scoring_rules'),
+        ('public', 'race_seasons'),
+        ('public', 'rank_change_notifications'),
+        ('public', 'ranking_notifications'),
+        ('public', 'revenue_forecasts'),
+        ('public', 'sales'),
+        ('public', 'sales_battles'),
+        ('public', 'sales_streaks'),
+        ('public', 'sales_territories'),
+        ('public', 'salesperson_badges'),
+        ('public', 'salesperson_coaching_aggregates'),
+        ('public', 'salesperson_xp'),
+        ('public', 'skill_assessments'),
+        ('public', 'skill_development_tracks'),
+        ('public', 'stage_bottleneck_insights'),
+        ('public', 'stage_conversion_metrics'),
+        ('public', 'stage_velocity_baselines'),
+        ('public', 'tournament_matches'),
+        ('public', 'v4_callback_dead_letters'),
+        ('public', 'victory_feed'),
+        ('public', 'win_calibration_buckets'),
+        ('public', 'win_loss_analyses'),
+        ('public', 'win_loss_insight_comments'),
+        ('public', 'win_loss_insights'),
+        ('public', 'win_loss_patterns'),
+        ('public', 'win_probability_calibrations'),
+        ('public', 'win_probability_deal_calibrations')
+      ) AS v(sch, tab)
+    LOOP
+      reg := to_regclass(format('%I.%I', r.sch, r.tab));
+      IF reg IS NULL THEN
+        miss_n := miss_n + 1;
+        RAISE NOTICE 'tabela %.% nao existe; fora da publicacao', r.sch, r.tab;
+      ELSIF EXISTS (
+        SELECT 1 FROM pg_publication_rel pr
+        JOIN pg_publication p ON p.oid = pr.prpubid
+        WHERE p.pubname = 'supabase_realtime' AND pr.prrelid = reg
+      ) THEN
+        skip_n := skip_n + 1;
+      ELSE
+        EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE %I.%I', r.sch, r.tab);
+        add_n := add_n + 1;
+      END IF;
+    END LOOP;
+    RAISE NOTICE 'supabase_realtime: % adicionadas, % ja presentes, % ausentes', add_n, skip_n, miss_n;
+  END IF;
+END
+$realtime_pub$;
+
+-- ==========================================================
+-- REPLICA IDENTITY
+-- ==========================================================
+-- replica identity: 26 objetos
+-- Tabelas com relreplident <> 'd' (default) em public/private.
+-- Sem isso, os eventos UPDATE/DELETE do realtime nao carregam os valores antigos.
+-- Idempotente: ALTER TABLE ... REPLICA IDENTITY pode ser reexecutado.
+-- Roda depois de 30-tabelas.sql (e de 50-indices.sql, se houver USING INDEX).
+
+ALTER TABLE public.ai_agent_runs REPLICA IDENTITY FULL;
+ALTER TABLE public.call_coaching_scorecards REPLICA IDENTITY FULL;
+ALTER TABLE public.call_critical_moments REPLICA IDENTITY FULL;
+ALTER TABLE public.call_objection_analysis REPLICA IDENTITY FULL;
+ALTER TABLE public.call_objections REPLICA IDENTITY FULL;
+ALTER TABLE public.coaching_opportunities REPLICA IDENTITY FULL;
+ALTER TABLE public.coaching_skill_benchmarks REPLICA IDENTITY FULL;
+ALTER TABLE public.commission_bonus_awards REPLICA IDENTITY FULL;
+ALTER TABLE public.critical_moment_notifications REPLICA IDENTITY FULL;
+ALTER TABLE public.deal_committee_coverage REPLICA IDENTITY FULL;
+ALTER TABLE public.deal_health_history REPLICA IDENTITY FULL;
+ALTER TABLE public.deal_health_scores REPLICA IDENTITY FULL;
+ALTER TABLE public.deal_stakeholders REPLICA IDENTITY FULL;
+ALTER TABLE public.deal_velocity_predictions REPLICA IDENTITY FULL;
+ALTER TABLE public.notifications REPLICA IDENTITY FULL;
+ALTER TABLE public.objection_library REPLICA IDENTITY FULL;
+ALTER TABLE public.race_reactions REPLICA IDENTITY FULL;
+ALTER TABLE public.ranking_notifications REPLICA IDENTITY FULL;
+ALTER TABLE public.salesperson_coaching_aggregates REPLICA IDENTITY FULL;
+ALTER TABLE public.sdr_alert_history REPLICA IDENTITY FULL;
+ALTER TABLE public.security_alert_history REPLICA IDENTITY FULL;
+ALTER TABLE public.skill_assessments REPLICA IDENTITY FULL;
+ALTER TABLE public.skill_development_tracks REPLICA IDENTITY FULL;
+ALTER TABLE public.stage_bottleneck_insights REPLICA IDENTITY FULL;
+ALTER TABLE public.stage_conversion_metrics REPLICA IDENTITY FULL;
+ALTER TABLE public.stage_velocity_baselines REPLICA IDENTITY FULL;
+
+-- ==========================================================
 -- RLS E POLICIES
 -- ==========================================================
 -- RLS e policies: 1425 objetos (408 tabelas com RLS, 1017 policies)
@@ -32083,6 +32272,239 @@ CREATE POLICY "Admin can view xp adjustments" ON public.xp_adjustments AS PERMIS
 DROP POLICY IF EXISTS "Users can read own xp_history" ON public.xp_history;
 CREATE POLICY "Users can read own xp_history" ON public.xp_history AS PERMISSIVE FOR SELECT TO authenticated
   USING (((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())));
+
+-- ==========================================================
+-- NORMALIZACAO DE ACL
+-- ==========================================================
+-- normalizacao de ACL: 36 objetos
+-- 36 REVOKE = 4 grantees (PUBLIC, anon, authenticated, service_role) x 9 alvos:
+-- ALL FUNCTIONS / ALL TABLES / ALL SEQUENCES em public e private, a matview
+-- public.mv_competitive_ranking, e os schemas public e private. Fecha com 1 bloco de
+-- verificacao que avisa se sobrou ACL desses papeis.
+--
+-- PRE-REQUISITO DO 97-grants.sql -- NAO APLIQUE SOZINHO.
+-- Esta secao so REMOVE acesso: aplicada isolada, ela deixa anon, authenticated e
+-- service_role sem nada em public/private e o sistema para de funcionar. Ela existe
+-- para rodar IMEDIATAMENTE ANTES dos GRANT do 97, que reconstroem o estado real de
+-- producao. Ordem da montagem: 10..95 -> 96 (este) -> 97-grants -> 98-fks.
+--
+-- POR QUE EXISTE (achado de seguranca; medido em producao em 2026-11-17,
+-- ref usyxfpqlsspldubptrdl, PostgreSQL 17.6)
+--   - public + private tem 378 funcoes; 371 delas NAO dao EXECUTE a anon, e 297 dessas
+--     371 sao SECURITY DEFINER (rodam com o privilegio do dono e ignoram RLS).
+--   - Num projeto Supabase NOVO o acesso dos papeis ao que o dump cria nasce de duas
+--     fontes, ambas lidas em producao (pg_default_acl, 2026-11-17):
+--       a) ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public -- 3 entradas de
+--          fabrica que valem para objetos criados por postgres, que e quem aplica o dump:
+--            TABLES    -> anon, authenticated, service_role
+--            SEQUENCES -> anon, authenticated, service_role
+--            FUNCTIONS -> authenticated, service_role (sem anon)
+--          Sao as mesmas 8 linhas que o 97-grants.sql reaplica na sua secao 8.
+--       b) CREATE FUNCTION concede EXECUTE a PUBLIC por padrao, e anon herda de PUBLIC.
+--     (As 9 entradas FOR ROLE supabase_admin, comentadas no fim do 97-grants.sql, valem
+--     so para objetos criados por supabase_admin -- nao para os do dump.)
+--   - O 97-grants.sql so CONCEDE, e revoga apenas de PUBLIC (343 REVOKE EXECUTE); nunca
+--     revoga de anon nem de authenticated. Sem esta secao, depois de restaurar sobrariam
+--     acessos que producao nao tem (medido em producao):
+--       48 funcoes de public sem authenticated no proacl, 47 delas SECURITY DEFINER
+--          -- ex.: public.add_salesperson_xp, SECURITY DEFINER, proacl
+--          {postgres=X/postgres,service_role=X/postgres}, que authenticated passaria a
+--          poder executar;
+--       35 relacoes de public sem anon e 6 sem authenticated no relacl, que ganhariam
+--          SELECT/INSERT/UPDATE/DELETE pelo default privilege de TABLES.
+--   Com o 96 aplicado, a ausencia de uma linha no 97 passa a significar revogacao, que
+--   e o comportamento esperado de um dump fiel.
+--
+-- PAPEIS -- exatamente os que aparecem em ACLs de public/private em producao
+-- (aclexplode de nspacl, relacl, proacl e attacl; nenhum papel inventado):
+--   anon (2.874 entradas), authenticated (3.353), service_role (3.940) e PUBLIC
+--   (36: 35 funcoes + USAGE no schema public) -> revogados aqui.
+--   postgres (dono das 447 relacoes e das 378 funcoes, e dono do schema private) e
+--   pg_database_owner (dono do schema public) -> NAO revogados: revogar do dono
+--   quebraria a propria restauracao.
+--   supabase_admin: 0 entradas em public/private -- nada a revogar.
+--   authenticator: 0 entradas; ele alcanca public via SET ROLE para anon/authenticated/
+--   service_role, entao revogar desses tres ja o cobre.
+--
+-- FIDELIDADE E SEGURANCA DA RESTAURACAO
+--   - Cada papel vem embrulhado em DO $$ ... IF EXISTS (pg_roles) ... END $$ porque num
+--     Postgres avulso anon/authenticated/service_role podem nao existir; nesse caso o
+--     bloco so emite NOTICE e segue.
+--   - 378/378 funcoes e 447/447 relacoes de public/private tem ACL explicita em producao
+--     (nenhuma proacl/relacl nula), entao revogar tudo e reaplicar o 97 reproduz producao
+--     objeto por objeto, sem depender de ACL default do servidor.
+--   - 0 ACL de coluna (pg_attribute.attacl) em public/private: nao ha o que revogar por
+--     coluna.
+--   - 0 objeto de extensao em public/private (pg_cron, pg_net, pg_trgm, pgcrypto,
+--     uuid-ossp, vector, pg_stat_statements e supabase_vault moram em outros schemas),
+--     entao nenhum REVOKE em massa atinge objeto de extensao.
+--   - ALL FUNCTIONS basta: as 378 sao prokind='f' (0 procedures, 0 agregados), logo nao
+--     e preciso ALL ROUTINES.
+--   - A matview public.mv_competitive_ranking leva REVOKE explicito: a documentacao do
+--     GRANT so garante que ALL TABLES cobre views e foreign tables, nao matviews. No
+--     teste local (PostgreSQL 16.15) ALL TABLES cobriu a matview, logo a linha explicita
+--     e redundante la -- mas e idempotente e protege servidores que nao a cubram. O
+--     IF to_regclass evita erro se a restauracao for parcial.
+--   - REVOKE feito por quem nao e dono do objeto NAO aborta: o Postgres emite
+--     WARNING 'no privileges could be revoked for "public"' e segue (medido). Por isso
+--     nao ha tratamento de excecao aqui; o bloco final de verificacao e que denuncia o
+--     que sobrou.
+--   - Requer que os schemas public e private ja existam (10-extensoes-schemas.sql), como
+--     o 97-grants.sql tambem requer.
+--   - Idempotente: REVOKE e idempotente por natureza. Sem BEGIN/COMMIT. Sem segredo.
+--   - Par 96+97 fecha com producao: para os 4 papeis revogados aqui, o 97-grants.sql
+--     emite exatamente os pares (objeto, papel) que existem em producao -- anon 420
+--     (412 relacoes + 7 funcoes + 1 schema), authenticated 763 (441+321+1),
+--     service_role 826 (447+377+2) e PUBLIC 36 (35 funcoes + schema public). Conferido
+--     contra o catalogo de producao e contra a contagem de GRANT do 97.
+--   - Escopo do REVOKE em massa: ele atinge TUDO que estiver em public/private no alvo,
+--     inclusive objeto que nao veio deste dump. Restaure em projeto novo ou em schema
+--     vazio; em producao esses dois schemas tem 0 objeto de extensao (conferido).
+--
+-- TESTADO em cluster local PostgreSQL 16.15 (producao e 17.6) nos tres cenarios:
+--   A) alvo tipo Supabase com os 3 papeis e tudo liberado -> sobra so o dono em todas as
+--      relacoes, funcoes, sequences, views, matview e nos dois schemas;
+--   B) Postgres avulso sem os 3 papeis -> 4 blocos DO executam, 0 erro;
+--   C) restaurador sem ser dono do schema public -> WARNING no schema, 0 erro, demais
+--      revogacoes aplicadas.
+--
+-- DDL montada em SQL com format('%I'/'%L') e string_agg contra o catalogo de producao,
+-- nunca escrita objeto por objeto a mao. Ordem fixa e deterministica: grantee, depois
+-- classe de alvo, depois schema.
+
+-- PUBLIC: pseudo-papel, sempre existe; dispensa checagem em pg_roles.
+-- CREATE FUNCTION concede EXECUTE a PUBLIC por padrao; em producao so 35 das 378
+-- funcoes mantem PUBLIC no proacl, e o 97-grants.sql devolve EXECUTE a essas 35.
+DO $$
+BEGIN
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA private FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA private FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA private FROM PUBLIC';
+  IF to_regclass('public.mv_competitive_ranking') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.mv_competitive_ranking FROM PUBLIC';
+  END IF;
+  EXECUTE 'REVOKE ALL ON SCHEMA public FROM PUBLIC';
+  EXECUTE 'REVOKE ALL ON SCHEMA private FROM PUBLIC';
+END
+$$;
+
+-- anon
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    RAISE NOTICE 'ACL: papel anon nao existe neste servidor -- nada a revogar';
+    RETURN;
+  END IF;
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM anon';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM anon';
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA private FROM anon';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA private FROM anon';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA private FROM anon';
+  IF to_regclass('public.mv_competitive_ranking') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.mv_competitive_ranking FROM anon';
+  END IF;
+  EXECUTE 'REVOKE ALL ON SCHEMA public FROM anon';
+  EXECUTE 'REVOKE ALL ON SCHEMA private FROM anon';
+END
+$$;
+
+-- authenticated
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    RAISE NOTICE 'ACL: papel authenticated nao existe neste servidor -- nada a revogar';
+    RETURN;
+  END IF;
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM authenticated';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM authenticated';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM authenticated';
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA private FROM authenticated';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA private FROM authenticated';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA private FROM authenticated';
+  IF to_regclass('public.mv_competitive_ranking') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.mv_competitive_ranking FROM authenticated';
+  END IF;
+  EXECUTE 'REVOKE ALL ON SCHEMA public FROM authenticated';
+  EXECUTE 'REVOKE ALL ON SCHEMA private FROM authenticated';
+END
+$$;
+
+-- service_role
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+    RAISE NOTICE 'ACL: papel service_role nao existe neste servidor -- nada a revogar';
+    RETURN;
+  END IF;
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public FROM service_role';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA public FROM service_role';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM service_role';
+  EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA private FROM service_role';
+  EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA private FROM service_role';
+  EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA private FROM service_role';
+  IF to_regclass('public.mv_competitive_ranking') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.mv_competitive_ranking FROM service_role';
+  END IF;
+  EXECUTE 'REVOKE ALL ON SCHEMA public FROM service_role';
+  EXECUTE 'REVOKE ALL ON SCHEMA private FROM service_role';
+END
+$$;
+
+-- Verificacao: depois dos REVOKE acima e ANTES dos GRANT do 97-grants.sql, nenhum dos
+-- quatro grantees pode ter sobrado em ACL de public/private. PUBLIC e detectado por
+-- (a).grantee = 0, nao por COALESCE: pg_get_userbyid(0) devolve a string
+-- 'unknown (OID=0)', nunca NULL, entao COALESCE deixaria PUBLIC passar sem aviso. Sobrou = o papel que aplicou
+-- o dump nao tinha privilegio para revogar aquele objeto (ver WARNING acima); o estado
+-- final ficaria mais permissivo que producao. Apenas avisa, nunca aborta.
+DO $$
+DECLARE
+  restos text;
+BEGIN
+  WITH alvos(papel) AS (VALUES ('PUBLIC'),('anon'),('authenticated'),('service_role')),
+  entradas AS (
+    SELECT CASE WHEN (a).grantee = 0 THEN 'PUBLIC'
+                ELSE pg_get_userbyid((a).grantee) END AS papel
+    FROM pg_namespace n, LATERAL aclexplode(n.nspacl) a
+    WHERE n.nspname IN ('public','private')
+    UNION ALL
+    SELECT CASE WHEN (a).grantee = 0 THEN 'PUBLIC'
+                ELSE pg_get_userbyid((a).grantee) END
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace,
+    LATERAL aclexplode(c.relacl) a
+    WHERE n.nspname IN ('public','private')
+    UNION ALL
+    SELECT CASE WHEN (a).grantee = 0 THEN 'PUBLIC'
+                ELSE pg_get_userbyid((a).grantee) END
+    FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace,
+    LATERAL aclexplode(p.proacl) a
+    WHERE n.nspname IN ('public','private')
+    UNION ALL
+    SELECT CASE WHEN (a).grantee = 0 THEN 'PUBLIC'
+                ELSE pg_get_userbyid((a).grantee) END
+    FROM pg_attribute at
+    JOIN pg_class c ON c.oid = at.attrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace,
+    LATERAL aclexplode(at.attacl) a
+    WHERE n.nspname IN ('public','private')
+  )
+  SELECT string_agg(format('%s=%s', e.papel, cnt), ', ' ORDER BY e.papel)
+    INTO restos
+  FROM (SELECT papel, count(*) AS cnt FROM entradas GROUP BY papel) e
+  JOIN alvos ON alvos.papel = e.papel;
+
+  IF restos IS NULL THEN
+    RAISE NOTICE 'ACL normalizada: 0 entrada de PUBLIC/anon/authenticated/service_role em public/private. Aplique agora o 97-grants.sql.';
+  ELSE
+    RAISE WARNING 'ACL NAO normalizada por completo (entradas que sobraram: %). O estado final pode ficar mais permissivo que producao -- revise antes de liberar o banco.', restos;
+  END IF;
+END
+$$;
 
 -- ==========================================================
 -- GRANTS E COMMENTS

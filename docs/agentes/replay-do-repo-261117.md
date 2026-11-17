@@ -222,3 +222,29 @@ aplicação real revelou** — nenhuma delas aparecia na leitura do SQL:
    existir — e a seção de views já o emitia no lugar certo. Duplicata removida.
 
 Antes dessas correções: 59 erros não-privilégio. Depois: 2, ambos de ambiente.
+
+### Quatro lacunas achadas por revisor externo
+
+Meus 12 críticos adversariais não acharam nenhuma delas, por um motivo que vale
+registrar: **eu mesmo lhes dei o escopo** ("só `public` e `private`"). Crítico não
+questiona a premissa que recebe. Foi preciso revisor de fora — Codex e Devin, na PR #548.
+
+1. **ACL herdada (segurança).** 371 das 378 funções não têm `anon` no EXECUTE em
+   produção, e 297 dessas são `SECURITY DEFINER`. O dump só concedia e revogava de
+   `PUBLIC`; num Supabase novo, cujo padrão já concede a `anon`, ausência de linha
+   **não é revogação**. Corrigido com uma seção de normalização que zera as ACLs
+   antes dos grants. Verificado no alvo restaurado: `anon` com EXECUTE em 7 funções
+   (igual a produção) e `add_salesperson_xp` em `service_role, postgres`.
+2. **Trigger da aplicação em tabela de plataforma.** `auth.users` →
+   `on_auth_user_created_role` → `private.handle_new_user_role`. A seção de triggers
+   filtrava pelo schema da *tabela*. Sem ele, cadastro novo não recebe papel.
+   Verificado: triggers 387 → 388 no alvo.
+3. **Publicação `supabase_realtime`** (77 tabelas) ausente. **NÃO VERIFICADO
+   localmente**: a publicação é da plataforma e não existe num Postgres avulso; a
+   guarda roda sem erro, mas o `ADD TABLE` não foi exercitado.
+4. **`REPLICA IDENTITY FULL`** em 26 tabelas, ausente. Verificado: 26 no alvo.
+
+Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o bloco de
+verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas
+`pg_get_userbyid(0)` devolve a string `'unknown (OID=0)'`, nunca NULL — sobra de ACL
+do `PUBLIC` passava em silêncio anunciando "0 entrada".
