@@ -1,4 +1,4 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import {
@@ -11,6 +11,8 @@ import { authenticateInboundEmailWebhook } from '../_shared/webhook-auth.ts';
 import { readUtf8BodyWithinLimit } from '../_shared/request-body.ts';
 import {
   type InboundEmailPayload,
+  isEmailTelemetryEvent,
+  type ParsedInboundEmailEvent,
   parseInboundEmailEvents,
   shouldMatchAndPauseEnrollment,
 } from '../_shared/webhook-integrity.ts';
@@ -22,6 +24,128 @@ function json(req: Request, body: unknown, status = 200): Response {
     status,
     headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
+}
+
+
+/**
+ * Vocabulário de public.email_tracking_events. 'opened'/'clicked' é o que a UI
+ * (src/hooks/useEmailTracking.ts), o email-engagement-scorer e o
+ * send-time-optimizer já leem — não inventa um terceiro dialeto.
+ */
+const TRACKING_EVENT_TYPE = { open: 'opened', click: 'clicked' } as const;
+
+/**
+ * Escapa os curingas de LIKE para o e-mail ser comparado como texto literal:
+ * sem isso `joao_silva@x.com` casaria com `joaoXsilva@x.com` no ilike, e `_`
+ * em endereço de e-mail é comum.
+ */
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, (match) => `\\${match}`);
+}
+
+function extractClickLink(payload: Record<string, unknown>): string | null {
+  const data = (payload.data ?? {}) as Record<string, unknown>;
+  const click = (data.click ?? {}) as Record<string, unknown>;
+  const candidate = click.link ?? payload.url ?? data.link;
+  return typeof candidate === 'string' && candidate.trim().length > 0
+    ? candidate.trim()
+    : null;
+}
+
+type TelemetryOutcome = 'recorded' | 'no_contact' | 'duplicate' | 'no_recipient';
+
+/**
+ * Abertura e clique viram (1) uma linha em email_tracking_events, a trilha que
+ * as telas de e-mail já leem, e (2) um sinal de engajamento do contato, que
+ * alimenta contact_send_time_profile -> contact_engagement_score -> widget
+ * "Top Contatos Quentes".
+ *
+ * O contato é resolvido pelo DESTINATÁRIO em public.clients. Não uso
+ * match_reply_to_enrollment (caminho da resposta) de propósito: além de só
+ * valer para quem está inscrito numa sequência — produção tem 0 inscrições —
+ * aquela função consulta sales.email, coluna que não existe mais no banco.
+ */
+async function recordEmailTelemetry(
+  // deno-lint-ignore no-explicit-any -- clientes Supabase têm generics variados por function
+  admin: SupabaseClient<any, any, any>,
+  event: ParsedInboundEmailEvent,
+): Promise<TelemetryOutcome> {
+  const recipient = event.recipientEmail;
+  if (!recipient) return 'no_recipient';
+  const trackingType = TRACKING_EVENT_TYPE[event.eventType as 'open' | 'click'];
+
+  // Idempotência: o svix reentrega o mesmo evento enquanto não recebe 2xx.
+  // A chave natural é (message_id, tipo, instante) — dois cliques de verdade no
+  // mesmo e-mail têm instantes diferentes e continuam contando os dois.
+  if (event.messageId) {
+    const { data: existing, error: dupErr } = await admin
+      .from('email_tracking_events')
+      .select('id')
+      .eq('event_type', trackingType)
+      .eq('tracked_at', event.receivedAt)
+      .eq('metadata->>message_id', event.messageId)
+      .limit(1);
+    if (dupErr) throw dupErr;
+    if (existing?.length) return 'duplicate';
+  }
+
+  const { data: candidates, error: clientErr } = await admin
+    .from('clients')
+    .select('id, user_id')
+    .ilike('email', escapeLikePattern(recipient))
+    .is('deleted_at', null)
+    .order('created_at', { ascending: true })
+    .limit(2);
+  if (clientErr) throw clientErr;
+  const client = (candidates?.[0] ?? null) as
+    | { id: string; user_id: string | null }
+    | null;
+
+  // salesperson_id deixa o evento visível no painel de e-mail do dono da
+  // carteira (useEmailTracking filtra por ele).
+  let salespersonId: string | null = null;
+  if (client?.user_id) {
+    const { data: sp, error: spErr } = await admin
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', client.user_id)
+      .maybeSingle();
+    if (spErr) throw spErr;
+    salespersonId = (sp as { id?: string } | null)?.id ?? null;
+  }
+
+  const link = event.eventType === 'click'
+    ? extractClickLink(event.payload)
+    : null;
+
+  const { error: insertErr } = await admin.from('email_tracking_events').insert({
+    recipient_email: recipient,
+    subject: event.subject ?? '(sem assunto)',
+    event_type: trackingType,
+    tracked_at: event.receivedAt,
+    salesperson_id: salespersonId,
+    metadata: {
+      provider: event.provider,
+      message_id: event.messageId,
+      source: 'inbound-email-webhook',
+      ...(link ? { link } : {}),
+      ...(candidates && candidates.length > 1
+        ? { ambiguous_recipient: true }
+        : {}),
+    } as never,
+  });
+  if (insertErr) throw insertErr;
+
+  if (!client) return 'no_contact';
+
+  const { error: signalErr } = await admin.rpc('record_engagement_signal', {
+    _contact_id: client.id,
+    _contact_type: 'client',
+    _signal: event.eventType,
+    _occurred_at: event.receivedAt,
+  });
+  if (signalErr) throw signalErr;
+  return 'recorded';
 }
 
 Deno.serve(
@@ -90,7 +214,26 @@ Deno.serve(
 
     try {
       const matchedEnrollmentIds: string[] = [];
+      let telemetryRecorded = 0;
       for (const event of events) {
+        // Telemetria não entra em inbound_reply_events: a chave única daquela
+        // tabela é (provider, message_id), de um evento terminal por mensagem,
+        // e um clique depois de uma abertura do mesmo e-mail seria descartado
+        // junto com o sinal de engajamento.
+        if (isEmailTelemetryEvent(event.eventType)) {
+          const outcome = await recordEmailTelemetry(admin, event);
+          if (outcome === 'recorded') {
+            telemetryRecorded += 1;
+          } else {
+            ctx.log('info', 'email_telemetry_sem_sinal', {
+              outcome,
+              event_type: event.eventType,
+              provider: event.provider,
+            });
+          }
+          continue;
+        }
+
         let matchedEnrollmentId: string | null = null;
         const affectsEnrollment = shouldMatchAndPauseEnrollment(event.eventType);
         if (affectsEnrollment && event.fromEmail) {
@@ -189,6 +332,7 @@ Deno.serve(
         ok: true,
         processed: events.length,
         matched: matchedEnrollmentIds.length,
+        telemetry: telemetryRecorded,
         event_type: events.length === 1 ? events[0].eventType : undefined,
       });
     } catch (e) {

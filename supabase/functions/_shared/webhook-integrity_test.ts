@@ -4,6 +4,7 @@ import {
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   canAdvanceMessageStatus,
+  isEmailTelemetryEvent,
   parseInboundEmailEvents,
   previousStatusesFor,
   shouldMatchAndPauseEnrollment,
@@ -215,4 +216,83 @@ Deno.test("SendGrid: timestamp inválido cai no relógio da função, nunca em e
     () => fallback,
   );
   assertEquals(ok.receivedAt, new Date(1_725_000_000 * 1000).toISOString());
+});
+
+Deno.test("Resend: email.clicked é telemetria, resolve destinatário e não pausa inscrição", () => {
+  const [event] = parseInboundEmailEvents(
+    {
+      type: "email.clicked",
+      data: {
+        email_id: "resend-click-1",
+        from: "Vendas <vendas@promo.com>",
+        to: ["Cliente X <cliente@empresa.com>"],
+        subject: "Sua proposta",
+        created_at: "2026-11-17T12:00:00Z",
+        click: {
+          link: "https://promo.com/orcamento/123",
+          timestamp: "2026-11-17T12:00:00Z",
+        },
+      },
+    },
+    "resend",
+  );
+
+  assertEquals(event.eventType, "click");
+  // Em telemetria quem importa é o destinatário, não o remetente (que somos nós).
+  assertEquals(event.recipientEmail, "cliente@empresa.com");
+  assertEquals(event.fromEmail, "vendas@promo.com");
+  assertEquals(event.messageId, "resend-click-1");
+  assert(isEmailTelemetryEvent(event.eventType));
+  assertEquals(shouldMatchAndPauseEnrollment(event.eventType), false);
+});
+
+Deno.test("Resend: email.opened vira sinal de abertura", () => {
+  const [event] = parseInboundEmailEvents(
+    {
+      type: "email.opened",
+      data: {
+        email_id: "resend-open-1",
+        to: "cliente@empresa.com",
+        subject: "Sua proposta",
+        created_at: "2026-11-17T12:05:00Z",
+      },
+    },
+    "resend",
+  );
+
+  assertEquals(event.eventType, "open");
+  assertEquals(event.recipientEmail, "cliente@empresa.com");
+  assertEquals(shouldMatchAndPauseEnrollment(event.eventType), false);
+});
+
+Deno.test("SendGrid: open e click usam o campo email como destinatário", () => {
+  const events = parseInboundEmailEvents(
+    [
+      { event: "click", email: "a@empresa.com", url: "https://promo.com/x" },
+      { event: "open", email: "b@empresa.com" },
+      { event: "bounce", email: "c@empresa.com" },
+    ],
+    "sendgrid",
+  );
+
+  assertEquals(events.map((e) => e.eventType), ["click", "open", "bounce"]);
+  assertEquals(events.map((e) => e.recipientEmail), [
+    "a@empresa.com",
+    "b@empresa.com",
+    "c@empresa.com",
+  ]);
+  // Só o bounce mexe na inscrição; engajamento positivo nunca pausa cadência.
+  assertEquals(events.map((e) => shouldMatchAndPauseEnrollment(e.eventType)), [
+    false,
+    false,
+    true,
+  ]);
+});
+
+Deno.test("Telemetria não é confundida com os eventos terminais da inscrição", () => {
+  for (const terminal of ["reply", "bounce", "complaint", "unsubscribe"] as const) {
+    assertEquals(isEmailTelemetryEvent(terminal), false);
+    assertEquals(shouldMatchAndPauseEnrollment(terminal), true);
+  }
+  assertEquals(shouldMatchAndPauseEnrollment("other"), false);
 });

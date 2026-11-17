@@ -15,7 +15,9 @@ interface EmailLog {
 
 interface TrackingEvent {
   id: string;
-  event_type: 'open' | 'click';
+  // Vocabulário real da tabela email_tracking_events, o mesmo de
+  // useEmailTracking.ts e do email-engagement-scorer.
+  event_type: 'sent' | 'opened' | 'clicked' | 'bounced' | 'replied';
   recipient_email: string;
   subject: string;
   tracked_at: string;
@@ -86,8 +88,8 @@ export function useEmailMetrics(days: number = 30) {
 
       const totalSent = emailLogs.filter(l => l.status === 'sent').length;
       const totalFailed = emailLogs.filter(l => l.status === 'failed').length;
-      const totalOpened = trackingEvents.filter(e => e.event_type === 'open').length;
-      const totalClicked = trackingEvents.filter(e => e.event_type === 'click').length;
+      const totalOpened = trackingEvents.filter(e => e.event_type === 'opened').length;
+      const totalClicked = trackingEvents.filter(e => e.event_type === 'clicked').length;
 
       const successRate =
         emailLogs.length > 0 ? (totalSent / emailLogs.length) * 100 : 100;
@@ -114,8 +116,8 @@ export function useEmailMetrics(days: number = 30) {
         const date = format(new Date(event.tracked_at), 'yyyy-MM-dd');
         const stats = dailyMap.get(date);
         if (stats) {
-          if (event.event_type === 'open') stats.opened++;
-          else if (event.event_type === 'click') stats.clicked++;
+          if (event.event_type === 'opened') stats.opened++;
+          else if (event.event_type === 'clicked') stats.clicked++;
         }
       });
 
@@ -135,8 +137,8 @@ export function useEmailMetrics(days: number = 30) {
         if (!event.subject) return;
         const s = subjectMap.get(event.subject);
         if (s) {
-          if (event.event_type === 'open') s.opens++;
-          else if (event.event_type === 'click') s.clicks++;
+          if (event.event_type === 'opened') s.opens++;
+          else if (event.event_type === 'clicked') s.clicks++;
         }
       });
 
