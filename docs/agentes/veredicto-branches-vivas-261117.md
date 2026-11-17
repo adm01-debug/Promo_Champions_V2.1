@@ -211,3 +211,74 @@ comparação é de **conteúdo**, não de ancestralidade.
 **Conclusão: nenhuma das 79 PRs fechadas guarda trabalho recuperável.** O que era
 bom foi incorporado (verificado byte a byte onde o arquivo existe na main), o
 resto é conteúdo pré-reescrita sem consumidor.
+
+## Prova por blob das 5 branches restantes — 17/11/2026
+
+A primeira varredura destas branches usou **ancestralidade** (commit contido na
+`main`). Isso não prova nada aqui: a história da `main` foi reescrita. Esta
+seção refaz o veredicto com comparação de **blob e de linha**.
+
+Método, por branch: `git ls-tree -r` da branch e da `main` reduzidos a
+`<sha-do-blob> <caminho>`; `comm` para separar o que é idêntico; e, para todo
+caminho comum com blob diferente, `diff` entre as duas versões contando as
+linhas que existem **só na branch** (`grep -c '^>'`). Linha exclusiva é o único
+indício real de trabalho que a `main` não tem — blob diferente, por si, é quase
+sempre versão velha de arquivo que a `main` já tem mais novo.
+
+| branch                            | blobs | idênticos à main | caminhos ausentes na main | linhas só na branch |
+| --------------------------------- | ----- | ---------------- | ------------------------- | ------------------- |
+| `computador_local`                | 3620  | 3618             | 0                         | 16                  |
+| `automation/types-sync`           | 3618  | 3611             | 0                         | 20                  |
+| `automation/inventario-estado`    | 3484  | 3292             | 2                         | 4225                |
+| `release-please--branches--main…` | 3620  | 3610             | 0                         | 55                  |
+| `contexto`                        | 1158  | 2                | 1154                      | 5                   |
+
+Veredicto de cada uma:
+
+- **`computador_local`** — 0 caminho ausente. As 16 linhas são o corpo inline da
+  busca de cliente por e-mail e o `if (matchError) throw matchError;`, ou seja
+  exatamente o código que as PRs #561 e #563 extraíram para
+  `resolveClientByEmail` / `recordReplyEngagement` e removeram de propósito. A
+  `main` tem a versão posterior. **Nada a recuperar.** A branch é ponteiro
+  automático da máquina local e reaparece sozinha apontando para um commit da
+  própria `main` (hoje `beed1098a`) — apagá-la não resolve nada.
+- **`automation/types-sync`** e **`release-please--branches--main…`** — 0 caminho
+  ausente; as linhas exclusivas são versões anteriores dos mesmos arquivos que as
+  PRs #558/#562/#563 alteraram, mais o `CHANGELOG.md` e o bump de versão que são
+  o conteúdo próprio da PR de release. **Nada a recuperar.**
+- **`contexto`** — os 1154 caminhos ausentes estão todos sob `docs/contexto/`
+  (nenhum fora: verificado com `comm … | grep -v '^docs/contexto/'`, saída
+  vazia), e as 5 linhas exclusivas são o `README.md` da própria branch avisando
+  "não edite nem abra PR desta branch" e o `vercel.json` que desliga deploy dela.
+  Branch gerada por design (AGENTS.md §8). **Manter, nunca mergear.**
+- **`automation/inventario-estado`** — é um retrato semanal da `main` feito pelo
+  bot em 12/11 (`660347cb5 chore: inventario do estado real [auto]`, e esse
+  commit toca só `inventario/estado/*.json`); todos os commits abaixo dele são
+  commits reais da `main` com número de PR. As 4225 linhas são, portanto, cinco
+  dias de `main` andando para frente. **Nada a recuperar.**
+
+### Os 2 caminhos que não existem na main
+
+Só estes dois arquivos existiam numa branch e não existem na `main`:
+
+| arquivo                                               | veredicto               |
+| ----------------------------------------------------- | ----------------------- |
+| `src/components/analytics/ABCMatrixShift.tsx`         | descartado de propósito |
+| `src/components/clients/Client360PredictiveCards.tsx` | descartado de propósito |
+
+Evidência de que é descarte deliberado, não perda:
+
+- `ABCMatrixShift` recebia `data?.matrixShifts` de `useABCAnalysis()`. No
+  retrato de 12/11 esse `matrixShifts` era um **array fixo no código** —
+  `'Cliente VIP S/A'`, `'Distribuidora Beta'`, `'Tech Solutions'`. A `main` hoje
+  tem um teste que proíbe o campo de voltar:
+  `src/hooks/bi/useABCAnalysis.test.tsx` — *"não devolve insights, movimentações
+  nem automações fictícias"*, com `expect(keys).not.toContain('matrixShifts')`.
+  Restaurar o componente seria reintroduzir dado falso e quebrar esse teste.
+- `Client360PredictiveCards` é mock inteiro no JSX ("Linha Industrial X", "92%
+  Probabilidade" escritos à mão). A `main` cobre o mesmo espaço da tela com
+  `Client360HealthNbaSection.tsx` e `Client360AffinityCard.tsx`, que leem dado
+  real via `useClient360`.
+
+**Conclusão: as 5 branches vivas não guardam trabalho recuperável, agora provado
+por blob e por linha, não por ancestralidade.**
