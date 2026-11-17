@@ -276,6 +276,15 @@ Deno.serve(
         let matchedEnrollmentId: string | null = null;
         const affectsEnrollment = shouldMatchAndPauseEnrollment(event.eventType);
         if (affectsEnrollment && event.fromEmail) {
+          // Falha aqui não derruba o evento inteiro. match_reply_to_enrollment
+          // é uma RPC de banco: quando ela quebra (foi o caso até
+          // 20261117200000, que consultava sales.email, coluna inexistente —
+          // 42703 em toda chamada), o `throw` fazia o handler devolver 500 e
+          // perdia TUDO o que vem depois: o registro do evento, o opt-out de
+          // bounce/descadastro e o sinal de engajamento da resposta. E o
+          // provedor ficava reentregando o mesmo evento para sempre.
+          // Sem inscrição casada o único efeito que se perde é a pausa da
+          // cadência, e o log deixa isso visível em vez de silencioso.
           const { data: matched, error: matchError } = await admin.rpc(
             'match_reply_to_enrollment',
             {
@@ -283,8 +292,15 @@ Deno.serve(
               _received_at: event.receivedAt,
             }
           );
-          if (matchError) throw matchError;
-          matchedEnrollmentId = (matched as string | null) ?? null;
+          if (matchError) {
+            ctx.log('error', 'match_reply_to_enrollment_falhou', {
+              event_type: event.eventType,
+              provider: event.provider,
+              error: matchError.message,
+            });
+          } else {
+            matchedEnrollmentId = (matched as string | null) ?? null;
+          }
         }
 
         const { data: insertedRows, error: insertError } = await admin
