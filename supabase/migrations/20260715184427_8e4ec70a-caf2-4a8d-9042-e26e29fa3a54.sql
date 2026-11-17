@@ -1,6 +1,19 @@
 
 -- Onda D — Security & RLS Hardening
 
+-- 0) A tabela nasceu de DDL direto no editor e nunca teve arquivo de migration,
+--    entao um replay cronologico do repo morria aqui com
+--    "relation public._internal_secrets does not exist" e nao chegava a
+--    20261117070000, que a reconcilia. Criar antes de usar: no-op em producao
+--    e em qualquer base que ja a tenha.
+CREATE TABLE IF NOT EXISTS public._internal_secrets (
+  key        text PRIMARY KEY,
+  value      text        NOT NULL,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE public._internal_secrets ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Deny all access to _internal_secrets" ON public._internal_secrets;
+
 -- 1) _internal_secrets: RLS enabled but no policy. Add explicit deny-all for anon/authenticated.
 --    Service role bypasses RLS, so edge functions retain access.
 CREATE POLICY "Deny all access to _internal_secrets"
