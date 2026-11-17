@@ -5824,2070 +5824,1334 @@ CREATE TABLE IF NOT EXISTS public.xp_history (
 -- NOT NULL de coluna nao e constraint de catalogo no PG 17 (sai no CREATE TABLE).
 -- DDL exata de pg_get_constraintdef(oid); identificadores via format('%I').
 -- Ordem: schema, tabela, tipo (PK, UNIQUE, CHECK, EXCLUDE), nome da constraint.
--- Reaplicavel: DROP CONSTRAINT IF EXISTS antes de cada ADD (ADD CONSTRAINT nao aceita IF NOT EXISTS).
--- Atencao ao montador: o DROP de uma PK/UNIQUE derruba o indice que a sustenta; se a secao
--- de indices emitir o indice dessas constraints, rode esta secao ANTES dela. Nenhuma constraint
--- aqui e DEFERRABLE e nenhuma usa indice com opclass/INCLUDE/NULLS NOT DISTINCT fora do default,
--- entao USING INDEX nao e necessario. 3 CHECK estao NOT VALID em producao e o NOT VALID foi preservado.
+-- Nenhuma constraint aqui e DEFERRABLE e nenhuma usa indice com opclass/INCLUDE/
+--   NULLS NOT DISTINCT fora do default, entao USING INDEX nao e necessario. 3 CHECK estao
+--   NOT VALID em producao e o NOT VALID foi preservado.
+--
+-- REEXECUTAVEL SEM DROP (corrige P2 da PR 548). A versao anterior emitia, por constraint,
+--   ALTER TABLE ... DROP CONSTRAINT IF EXISTS c; ALTER TABLE ... ADD CONSTRAINT c ...;
+--   Isso NAO era reaplicavel: o DROP de uma PRIMARY KEY/UNIQUE que sustenta o indice de
+--   uma FOREIGN KEY falha com 'cannot drop constraint ..._pkey because other objects
+--   depend on it' (IF EXISTS suprime 'nao existe', nao suprime dependencia), e o ADD
+--   seguinte insistia, gerando 'multiple primary keys for table ... are not allowed'.
+--   Medido numa 2a aplicacao em PostgreSQL 16 descartavel: 87 erros 'cannot drop
+--   constraint ... because other objects depend on it' + 87 'multiple primary keys for
+--   table ... are not allowed' (174 no total, 0 de outra natureza); com ON_ERROR_STOP=1
+--   o psql saia 3 em account_contacts_pkey, na linha 5834, antes das secoes 92, 99 e 99b
+--   -- justamente as que dependem da reexecucao para instalar o que foi pulado por falta
+--   de privilegio. (Numero medido tres vezes, em rigs independentes. Uma medicao anterior
+--   minha falava em 438 erros de dependencia e linha 5846; nao reproduz e esta descartada.)
+-- Agora consulta o catalogo antes de agir, por (conrelid, conname):
+--   AUSENTE                                  -> ADD CONSTRAINT
+--   PRESENTE com pg_get_constraintdef igual  -> nao faz nada
+--   PRESENTE com definicao diferente         -> RAISE WARNING nomeando a constraint e as
+--     duas definicoes, e NAO TOCA. Derrubar constraint que tem dependente e pior que
+--     deixar como esta: o DROP ou falha, ou leva junto a FK que usa o indice.
+-- search_path fixado em '' (transacao) antes da leitura: pg_get_constraintdef qualifica
+--   conforme o search_path, e foi assim que o texto de producao foi extraido. Sem isso a
+--   comparacao acusaria diferenca onde nao ha. As 825 definicoes sao identicas com e sem
+--   'public' no path (conferido em producao), e as unicas funcoes citadas em CHECK sao de
+--   pg_catalog (char_length, lower, pg_column_size), logo o ADD tambem roda com path vazio.
+-- Um unico bloco DO com laco sobre VALUES (mesmo padrao de 92-objetos-app-plataforma.sql e
+--   99-agendamentos-cron.sql); cada ADD e a leitura do catalogo em BEGIN ... EXCEPTION
+--   proprios, porque to_regclass ERRA (nao devolve NULL) sem USAGE no schema. Falta de
+--   privilegio ou tabela ausente sai como WARNING nominal e a restauracao SEGUE.
+-- Nao emite nenhum DROP: aplicar este arquivo nunca remove constraint do alvo.
 
--- public._internal_secrets
-ALTER TABLE public._internal_secrets DROP CONSTRAINT IF EXISTS _internal_secrets_pkey;
-ALTER TABLE public._internal_secrets ADD CONSTRAINT _internal_secrets_pkey PRIMARY KEY (key);
--- public.ab_tests
-ALTER TABLE public.ab_tests DROP CONSTRAINT IF EXISTS ab_tests_pkey;
-ALTER TABLE public.ab_tests ADD CONSTRAINT ab_tests_pkey PRIMARY KEY (id);
--- public.access_denied_logs
-ALTER TABLE public.access_denied_logs DROP CONSTRAINT IF EXISTS access_denied_logs_pkey;
-ALTER TABLE public.access_denied_logs ADD CONSTRAINT access_denied_logs_pkey PRIMARY KEY (id);
--- public.account_activities
-ALTER TABLE public.account_activities DROP CONSTRAINT IF EXISTS account_activities_pkey;
-ALTER TABLE public.account_activities ADD CONSTRAINT account_activities_pkey PRIMARY KEY (id);
--- public.account_contacts
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_pkey;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_pkey PRIMARY KEY (id);
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_buying_role_check;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_buying_role_check CHECK ((buying_role = ANY (ARRAY['decision_maker'::text, 'champion'::text, 'influencer'::text, 'blocker'::text, 'user'::text, 'technical'::text])));
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_influence_level_check;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_influence_level_check CHECK (((influence_level >= 1) AND (influence_level <= 5)));
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_seniority_check;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_seniority_check CHECK ((seniority = ANY (ARRAY['c_level'::text, 'vp'::text, 'director'::text, 'manager'::text, 'ic'::text])));
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_sentiment_check;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_sentiment_check CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text])));
--- public.account_plans
-ALTER TABLE public.account_plans DROP CONSTRAINT IF EXISTS account_plans_pkey;
-ALTER TABLE public.account_plans ADD CONSTRAINT account_plans_pkey PRIMARY KEY (id);
--- public.accounts
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_pkey;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_account_score_check;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_account_score_check CHECK (((account_score >= 0) AND (account_score <= 100)));
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_health_status_check;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_health_status_check CHECK ((health_status = ANY (ARRAY['healthy'::text, 'at_risk'::text, 'critical'::text, 'unknown'::text])));
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_size_bucket_check;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_size_bucket_check CHECK ((size_bucket = ANY (ARRAY['smb'::text, 'mid'::text, 'enterprise'::text])));
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_tier_check;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_tier_check CHECK ((tier = ANY (ARRAY['strategic'::text, 'enterprise'::text, 'mid_market'::text, 'smb'::text])));
--- public.achievements
-ALTER TABLE public.achievements DROP CONSTRAINT IF EXISTS achievements_pkey;
-ALTER TABLE public.achievements ADD CONSTRAINT achievements_pkey PRIMARY KEY (id);
--- public.active_power_ups
-ALTER TABLE public.active_power_ups DROP CONSTRAINT IF EXISTS active_power_ups_pkey;
-ALTER TABLE public.active_power_ups ADD CONSTRAINT active_power_ups_pkey PRIMARY KEY (id);
--- public.active_sessions
-ALTER TABLE public.active_sessions DROP CONSTRAINT IF EXISTS active_sessions_pkey;
-ALTER TABLE public.active_sessions ADD CONSTRAINT active_sessions_pkey PRIMARY KEY (id);
--- public.activities
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_pkey;
-ALTER TABLE public.activities ADD CONSTRAINT activities_pkey PRIMARY KEY (id);
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_duration_positive;
-ALTER TABLE public.activities ADD CONSTRAINT activities_duration_positive CHECK (((duration_minutes IS NULL) OR (duration_minutes >= 0)));
--- public.activity_audit_logs
-ALTER TABLE public.activity_audit_logs DROP CONSTRAINT IF EXISTS activity_audit_logs_pkey;
-ALTER TABLE public.activity_audit_logs ADD CONSTRAINT activity_audit_logs_pkey PRIMARY KEY (id);
--- public.activity_goals
-ALTER TABLE public.activity_goals DROP CONSTRAINT IF EXISTS activity_goals_pkey;
-ALTER TABLE public.activity_goals ADD CONSTRAINT activity_goals_pkey PRIMARY KEY (id);
-ALTER TABLE public.activity_goals DROP CONSTRAINT IF EXISTS activity_goals_salesperson_id_key;
-ALTER TABLE public.activity_goals ADD CONSTRAINT activity_goals_salesperson_id_key UNIQUE (salesperson_id);
--- public.agenda_events
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_pkey;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_pkey PRIMARY KEY (id);
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_event_type_check;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_event_type_check CHECK ((event_type = ANY (ARRAY['reminder'::text, 'follow_up'::text, 'meeting'::text, 'call'::text, 'task'::text])));
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_priority_check;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_priority_check CHECK ((priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])));
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_status_check;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])));
--- public.ai_agent_actions
-ALTER TABLE public.ai_agent_actions DROP CONSTRAINT IF EXISTS ai_agent_actions_pkey;
-ALTER TABLE public.ai_agent_actions ADD CONSTRAINT ai_agent_actions_pkey PRIMARY KEY (id);
-ALTER TABLE public.ai_agent_actions DROP CONSTRAINT IF EXISTS ai_agent_actions_executed_by_check;
-ALTER TABLE public.ai_agent_actions ADD CONSTRAINT ai_agent_actions_executed_by_check CHECK ((executed_by = ANY (ARRAY['ai'::text, 'user'::text, 'system'::text])));
-ALTER TABLE public.ai_agent_actions DROP CONSTRAINT IF EXISTS ai_agent_actions_status_check;
-ALTER TABLE public.ai_agent_actions ADD CONSTRAINT ai_agent_actions_status_check CHECK ((status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text, 'executing'::text])));
--- public.ai_agent_runs
-ALTER TABLE public.ai_agent_runs DROP CONSTRAINT IF EXISTS ai_agent_runs_pkey;
-ALTER TABLE public.ai_agent_runs ADD CONSTRAINT ai_agent_runs_pkey PRIMARY KEY (id);
-ALTER TABLE public.ai_agent_runs DROP CONSTRAINT IF EXISTS ai_agent_runs_agent_type_check;
-ALTER TABLE public.ai_agent_runs ADD CONSTRAINT ai_agent_runs_agent_type_check CHECK ((agent_type = ANY (ARRAY['qualify_lead'::text, 'build_proposal'::text, 'schedule_followup'::text, 'enrich_client'::text, 'recover_cold_lead'::text])));
-ALTER TABLE public.ai_agent_runs DROP CONSTRAINT IF EXISTS ai_agent_runs_status_check;
-ALTER TABLE public.ai_agent_runs ADD CONSTRAINT ai_agent_runs_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'awaiting_approval'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])));
-ALTER TABLE public.ai_agent_runs DROP CONSTRAINT IF EXISTS ai_agent_runs_target_entity_type_check;
-ALTER TABLE public.ai_agent_runs ADD CONSTRAINT ai_agent_runs_target_entity_type_check CHECK ((target_entity_type = ANY (ARRAY['lead'::text, 'client'::text, 'deal'::text, 'activity'::text])));
--- public.ai_narrative_cache
-ALTER TABLE public.ai_narrative_cache DROP CONSTRAINT IF EXISTS ai_narrative_cache_pkey;
-ALTER TABLE public.ai_narrative_cache ADD CONSTRAINT ai_narrative_cache_pkey PRIMARY KEY (id);
-ALTER TABLE public.ai_narrative_cache DROP CONSTRAINT IF EXISTS ai_narrative_cache_cache_key_key;
-ALTER TABLE public.ai_narrative_cache ADD CONSTRAINT ai_narrative_cache_cache_key_key UNIQUE (cache_key);
--- public.ai_sales_insights
-ALTER TABLE public.ai_sales_insights DROP CONSTRAINT IF EXISTS ai_sales_insights_pkey;
-ALTER TABLE public.ai_sales_insights ADD CONSTRAINT ai_sales_insights_pkey PRIMARY KEY (id);
--- public.api_tokens
-ALTER TABLE public.api_tokens DROP CONSTRAINT IF EXISTS api_tokens_pkey;
-ALTER TABLE public.api_tokens ADD CONSTRAINT api_tokens_pkey PRIMARY KEY (id);
-ALTER TABLE public.api_tokens DROP CONSTRAINT IF EXISTS api_tokens_token_key;
-ALTER TABLE public.api_tokens ADD CONSTRAINT api_tokens_token_key UNIQUE (token);
--- public.app_config
-ALTER TABLE public.app_config DROP CONSTRAINT IF EXISTS app_config_pkey;
-ALTER TABLE public.app_config ADD CONSTRAINT app_config_pkey PRIMARY KEY (key);
--- public.approval_decisions
-ALTER TABLE public.approval_decisions DROP CONSTRAINT IF EXISTS approval_decisions_pkey;
-ALTER TABLE public.approval_decisions ADD CONSTRAINT approval_decisions_pkey PRIMARY KEY (id);
-ALTER TABLE public.approval_decisions DROP CONSTRAINT IF EXISTS approval_decisions_decision_check;
-ALTER TABLE public.approval_decisions ADD CONSTRAINT approval_decisions_decision_check CHECK ((decision = ANY (ARRAY['approved'::text, 'rejected'::text])));
--- public.approval_requests
-ALTER TABLE public.approval_requests DROP CONSTRAINT IF EXISTS approval_requests_pkey;
-ALTER TABLE public.approval_requests ADD CONSTRAINT approval_requests_pkey PRIMARY KEY (id);
-ALTER TABLE public.approval_requests DROP CONSTRAINT IF EXISTS approval_requests_status_check;
-ALTER TABLE public.approval_requests ADD CONSTRAINT approval_requests_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'cancelled'::text])));
--- public.approval_workflows
-ALTER TABLE public.approval_workflows DROP CONSTRAINT IF EXISTS approval_workflows_pkey;
-ALTER TABLE public.approval_workflows ADD CONSTRAINT approval_workflows_pkey PRIMARY KEY (id);
-ALTER TABLE public.approval_workflows DROP CONSTRAINT IF EXISTS approval_workflows_workflow_type_check;
-ALTER TABLE public.approval_workflows ADD CONSTRAINT approval_workflows_workflow_type_check CHECK ((workflow_type = ANY (ARRAY['discount'::text, 'proposal'::text, 'exception'::text, 'refund'::text])));
--- public.asset_usage_logs
-ALTER TABLE public.asset_usage_logs DROP CONSTRAINT IF EXISTS asset_usage_logs_pkey;
-ALTER TABLE public.asset_usage_logs ADD CONSTRAINT asset_usage_logs_pkey PRIMARY KEY (id);
--- public.audit_log
-ALTER TABLE public.audit_log DROP CONSTRAINT IF EXISTS audit_log_pkey;
-ALTER TABLE public.audit_log ADD CONSTRAINT audit_log_pkey PRIMARY KEY (id);
-ALTER TABLE public.audit_log DROP CONSTRAINT IF EXISTS audit_log_action_check;
-ALTER TABLE public.audit_log ADD CONSTRAINT audit_log_action_check CHECK ((action = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text])));
--- public.audit_logs
-ALTER TABLE public.audit_logs DROP CONSTRAINT IF EXISTS audit_logs_pkey;
-ALTER TABLE public.audit_logs ADD CONSTRAINT audit_logs_pkey PRIMARY KEY (id);
--- public.auto_task_queue_settings
-ALTER TABLE public.auto_task_queue_settings DROP CONSTRAINT IF EXISTS auto_task_queue_settings_pkey;
-ALTER TABLE public.auto_task_queue_settings ADD CONSTRAINT auto_task_queue_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.auto_task_queue_settings DROP CONSTRAINT IF EXISTS auto_task_queue_settings_singleton_key;
-ALTER TABLE public.auto_task_queue_settings ADD CONSTRAINT auto_task_queue_settings_singleton_key UNIQUE (singleton);
-ALTER TABLE public.auto_task_queue_settings DROP CONSTRAINT IF EXISTS auto_task_queue_settings_max_tasks_per_salesperson_check;
-ALTER TABLE public.auto_task_queue_settings ADD CONSTRAINT auto_task_queue_settings_max_tasks_per_salesperson_check CHECK (((max_tasks_per_salesperson >= 1) AND (max_tasks_per_salesperson <= 50)));
-ALTER TABLE public.auto_task_queue_settings DROP CONSTRAINT IF EXISTS auto_task_queue_settings_min_urgency_check;
-ALTER TABLE public.auto_task_queue_settings ADD CONSTRAINT auto_task_queue_settings_min_urgency_check CHECK ((min_urgency = ANY (ARRAY['critical'::text, 'high'::text, 'medium'::text])));
--- public.automation_runs
-ALTER TABLE public.automation_runs DROP CONSTRAINT IF EXISTS automation_runs_pkey;
-ALTER TABLE public.automation_runs ADD CONSTRAINT automation_runs_pkey PRIMARY KEY (id);
-ALTER TABLE public.automation_runs DROP CONSTRAINT IF EXISTS automation_runs_status_check;
-ALTER TABLE public.automation_runs ADD CONSTRAINT automation_runs_status_check CHECK ((status = ANY (ARRAY['success'::text, 'failed'::text, 'skipped'::text, 'partial'::text])));
--- public.automation_workflows
-ALTER TABLE public.automation_workflows DROP CONSTRAINT IF EXISTS automation_workflows_pkey;
-ALTER TABLE public.automation_workflows ADD CONSTRAINT automation_workflows_pkey PRIMARY KEY (id);
-ALTER TABLE public.automation_workflows DROP CONSTRAINT IF EXISTS automation_workflows_trigger_type_check;
-ALTER TABLE public.automation_workflows ADD CONSTRAINT automation_workflows_trigger_type_check CHECK ((trigger_type = ANY (ARRAY['deal_created'::text, 'stage_changed'::text, 'activity_logged'::text, 'scheduled'::text, 'manual'::text, 'no_activity_days'::text, 'proposal_opened'::text, 'price_clicked'::text])));
--- public.available_spins
-ALTER TABLE public.available_spins DROP CONSTRAINT IF EXISTS available_spins_pkey;
-ALTER TABLE public.available_spins ADD CONSTRAINT available_spins_pkey PRIMARY KEY (id);
-ALTER TABLE public.available_spins DROP CONSTRAINT IF EXISTS available_spins_salesperson_id_key;
-ALTER TABLE public.available_spins ADD CONSTRAINT available_spins_salesperson_id_key UNIQUE (salesperson_id);
--- public.battle_participants
-ALTER TABLE public.battle_participants DROP CONSTRAINT IF EXISTS battle_participants_pkey;
-ALTER TABLE public.battle_participants ADD CONSTRAINT battle_participants_pkey PRIMARY KEY (id);
-ALTER TABLE public.battle_participants DROP CONSTRAINT IF EXISTS battle_participants_battle_id_salesperson_id_key;
-ALTER TABLE public.battle_participants ADD CONSTRAINT battle_participants_battle_id_salesperson_id_key UNIQUE (battle_id, salesperson_id);
--- public.bitrix24_sync_logs
-ALTER TABLE public.bitrix24_sync_logs DROP CONSTRAINT IF EXISTS bitrix24_sync_logs_pkey;
-ALTER TABLE public.bitrix24_sync_logs ADD CONSTRAINT bitrix24_sync_logs_pkey PRIMARY KEY (id);
--- public.blocked_ips
-ALTER TABLE public.blocked_ips DROP CONSTRAINT IF EXISTS blocked_ips_pkey;
-ALTER TABLE public.blocked_ips ADD CONSTRAINT blocked_ips_pkey PRIMARY KEY (id);
-ALTER TABLE public.blocked_ips DROP CONSTRAINT IF EXISTS blocked_ips_ip_address_key;
-ALTER TABLE public.blocked_ips ADD CONSTRAINT blocked_ips_ip_address_key UNIQUE (ip_address);
--- public.buying_committee
-ALTER TABLE public.buying_committee DROP CONSTRAINT IF EXISTS buying_committee_pkey;
-ALTER TABLE public.buying_committee ADD CONSTRAINT buying_committee_pkey PRIMARY KEY (id);
--- public.buying_committee_members
-ALTER TABLE public.buying_committee_members DROP CONSTRAINT IF EXISTS buying_committee_members_pkey;
-ALTER TABLE public.buying_committee_members ADD CONSTRAINT buying_committee_members_pkey PRIMARY KEY (id);
-ALTER TABLE public.buying_committee_members DROP CONSTRAINT IF EXISTS buying_committee_members_influence_level_check;
-ALTER TABLE public.buying_committee_members ADD CONSTRAINT buying_committee_members_influence_level_check CHECK (((influence_level >= 1) AND (influence_level <= 5)));
--- public.buying_signals
-ALTER TABLE public.buying_signals DROP CONSTRAINT IF EXISTS buying_signals_pkey;
-ALTER TABLE public.buying_signals ADD CONSTRAINT buying_signals_pkey PRIMARY KEY (id);
-ALTER TABLE public.buying_signals DROP CONSTRAINT IF EXISTS buying_signals_significance_score_check;
-ALTER TABLE public.buying_signals ADD CONSTRAINT buying_signals_significance_score_check CHECK (((significance_score >= 1) AND (significance_score <= 100)));
--- public.cadence_ab_assignments
-ALTER TABLE public.cadence_ab_assignments DROP CONSTRAINT IF EXISTS cadence_ab_assignments_pkey;
-ALTER TABLE public.cadence_ab_assignments ADD CONSTRAINT cadence_ab_assignments_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_ab_assignments DROP CONSTRAINT IF EXISTS cadence_ab_assignments_ab_test_id_prospect_cadence_id_key;
-ALTER TABLE public.cadence_ab_assignments ADD CONSTRAINT cadence_ab_assignments_ab_test_id_prospect_cadence_id_key UNIQUE (ab_test_id, prospect_cadence_id);
-ALTER TABLE public.cadence_ab_assignments DROP CONSTRAINT IF EXISTS cadence_ab_assignments_variant_check;
-ALTER TABLE public.cadence_ab_assignments ADD CONSTRAINT cadence_ab_assignments_variant_check CHECK ((variant = ANY (ARRAY['a'::text, 'b'::text])));
--- public.cadence_ab_tests
-ALTER TABLE public.cadence_ab_tests DROP CONSTRAINT IF EXISTS cadence_ab_tests_pkey;
-ALTER TABLE public.cadence_ab_tests ADD CONSTRAINT cadence_ab_tests_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_ab_tests DROP CONSTRAINT IF EXISTS chk_distinct_variants;
-ALTER TABLE public.cadence_ab_tests ADD CONSTRAINT chk_distinct_variants CHECK ((variant_a_id <> variant_b_id));
-ALTER TABLE public.cadence_ab_tests DROP CONSTRAINT IF EXISTS chk_split_range;
-ALTER TABLE public.cadence_ab_tests ADD CONSTRAINT chk_split_range CHECK (((traffic_split >= 1) AND (traffic_split <= 99)));
--- public.cadence_advanced_stats
-ALTER TABLE public.cadence_advanced_stats DROP CONSTRAINT IF EXISTS cadence_advanced_stats_pkey;
-ALTER TABLE public.cadence_advanced_stats ADD CONSTRAINT cadence_advanced_stats_pkey PRIMARY KEY (id);
--- public.cadence_alert_templates
-ALTER TABLE public.cadence_alert_templates DROP CONSTRAINT IF EXISTS cadence_alert_templates_pkey;
-ALTER TABLE public.cadence_alert_templates ADD CONSTRAINT cadence_alert_templates_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_alert_templates DROP CONSTRAINT IF EXISTS cadence_alert_templates_type_check;
-ALTER TABLE public.cadence_alert_templates ADD CONSTRAINT cadence_alert_templates_type_check CHECK ((type = ANY (ARRAY['push'::text, 'email'::text])));
--- public.cadence_enrollment_rules
-ALTER TABLE public.cadence_enrollment_rules DROP CONSTRAINT IF EXISTS cadence_enrollment_rules_pkey;
-ALTER TABLE public.cadence_enrollment_rules ADD CONSTRAINT cadence_enrollment_rules_pkey PRIMARY KEY (id);
--- public.cadence_funnel_rules
-ALTER TABLE public.cadence_funnel_rules DROP CONSTRAINT IF EXISTS cadence_funnel_rules_pkey;
-ALTER TABLE public.cadence_funnel_rules ADD CONSTRAINT cadence_funnel_rules_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_funnel_rules DROP CONSTRAINT IF EXISTS cadence_funnel_rules_condition_type_check;
-ALTER TABLE public.cadence_funnel_rules ADD CONSTRAINT cadence_funnel_rules_condition_type_check CHECK ((condition_type = ANY (ARRAY['email_open'::text, 'quote_open'::text, 'price_click'::text, 'reply'::text, 'manual'::text])));
-ALTER TABLE public.cadence_funnel_rules DROP CONSTRAINT IF EXISTS cadence_funnel_rules_from_stage_check;
-ALTER TABLE public.cadence_funnel_rules ADD CONSTRAINT cadence_funnel_rules_from_stage_check CHECK ((from_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])));
-ALTER TABLE public.cadence_funnel_rules DROP CONSTRAINT IF EXISTS cadence_funnel_rules_to_stage_check;
-ALTER TABLE public.cadence_funnel_rules ADD CONSTRAINT cadence_funnel_rules_to_stage_check CHECK ((to_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])));
--- public.cadence_outcome_rules
-ALTER TABLE public.cadence_outcome_rules DROP CONSTRAINT IF EXISTS cadence_outcome_rules_pkey;
-ALTER TABLE public.cadence_outcome_rules ADD CONSTRAINT cadence_outcome_rules_pkey PRIMARY KEY (id);
--- public.cadence_steps
-ALTER TABLE public.cadence_steps DROP CONSTRAINT IF EXISTS cadence_steps_pkey;
-ALTER TABLE public.cadence_steps ADD CONSTRAINT cadence_steps_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_steps DROP CONSTRAINT IF EXISTS cadence_steps_action_type_check;
-ALTER TABLE public.cadence_steps ADD CONSTRAINT cadence_steps_action_type_check CHECK ((action_type = ANY (ARRAY['email'::text, 'call'::text, 'linkedin'::text, 'whatsapp'::text, 'meeting'::text, 'other'::text])));
--- public.cadence_tasks
-ALTER TABLE public.cadence_tasks DROP CONSTRAINT IF EXISTS cadence_tasks_pkey;
-ALTER TABLE public.cadence_tasks ADD CONSTRAINT cadence_tasks_pkey PRIMARY KEY (id);
-ALTER TABLE public.cadence_tasks DROP CONSTRAINT IF EXISTS cadence_tasks_status_check;
-ALTER TABLE public.cadence_tasks ADD CONSTRAINT cadence_tasks_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'completed'::text, 'skipped'::text])));
--- public.cadences
-ALTER TABLE public.cadences DROP CONSTRAINT IF EXISTS cadences_pkey;
-ALTER TABLE public.cadences ADD CONSTRAINT cadences_pkey PRIMARY KEY (id);
--- public.call_coaching_scorecards
-ALTER TABLE public.call_coaching_scorecards DROP CONSTRAINT IF EXISTS call_coaching_scorecards_pkey;
-ALTER TABLE public.call_coaching_scorecards ADD CONSTRAINT call_coaching_scorecards_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_coaching_scorecards DROP CONSTRAINT IF EXISTS call_coaching_scorecards_recording_id_key;
-ALTER TABLE public.call_coaching_scorecards ADD CONSTRAINT call_coaching_scorecards_recording_id_key UNIQUE (recording_id);
-ALTER TABLE public.call_coaching_scorecards DROP CONSTRAINT IF EXISTS call_coaching_scorecards_health_check;
-ALTER TABLE public.call_coaching_scorecards ADD CONSTRAINT call_coaching_scorecards_health_check CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])));
--- public.call_conversation_metrics
-ALTER TABLE public.call_conversation_metrics DROP CONSTRAINT IF EXISTS call_conversation_metrics_pkey;
-ALTER TABLE public.call_conversation_metrics ADD CONSTRAINT call_conversation_metrics_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_conversation_metrics DROP CONSTRAINT IF EXISTS call_conversation_metrics_recording_id_key;
-ALTER TABLE public.call_conversation_metrics ADD CONSTRAINT call_conversation_metrics_recording_id_key UNIQUE (recording_id);
-ALTER TABLE public.call_conversation_metrics DROP CONSTRAINT IF EXISTS call_conversation_metrics_health_check;
-ALTER TABLE public.call_conversation_metrics ADD CONSTRAINT call_conversation_metrics_health_check CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])));
--- public.call_critical_moments
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_pkey;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_moment_type_check;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_moment_type_check CHECK ((moment_type = ANY (ARRAY['objection'::text, 'buying_signal'::text, 'price_mention'::text, 'discount_request'::text, 'churn_signal'::text, 'competitor'::text, 'commitment'::text, 'next_step'::text])));
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_severity_check;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_severity_check CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_status_check;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_status_check CHECK ((status = ANY (ARRAY['new'::text, 'acknowledged'::text, 'actioned'::text, 'dismissed'::text])));
--- public.call_insights
-ALTER TABLE public.call_insights DROP CONSTRAINT IF EXISTS call_insights_pkey;
-ALTER TABLE public.call_insights ADD CONSTRAINT call_insights_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_insights DROP CONSTRAINT IF EXISTS call_insights_sentiment_label_check;
-ALTER TABLE public.call_insights ADD CONSTRAINT call_insights_sentiment_label_check CHECK ((sentiment_label = ANY (ARRAY['very_negative'::text, 'negative'::text, 'neutral'::text, 'positive'::text, 'very_positive'::text])));
--- public.call_intelligence_triggers
-ALTER TABLE public.call_intelligence_triggers DROP CONSTRAINT IF EXISTS call_intelligence_triggers_pkey;
-ALTER TABLE public.call_intelligence_triggers ADD CONSTRAINT call_intelligence_triggers_pkey PRIMARY KEY (id);
--- public.call_logs
-ALTER TABLE public.call_logs DROP CONSTRAINT IF EXISTS call_logs_pkey;
-ALTER TABLE public.call_logs ADD CONSTRAINT call_logs_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_logs DROP CONSTRAINT IF EXISTS call_logs_disposition_check;
-ALTER TABLE public.call_logs ADD CONSTRAINT call_logs_disposition_check CHECK ((disposition = ANY (ARRAY['connected'::text, 'voicemail'::text, 'no_answer'::text, 'busy'::text, 'wrong_number'::text, 'do_not_call'::text])));
-ALTER TABLE public.call_logs DROP CONSTRAINT IF EXISTS call_logs_outcome_check;
-ALTER TABLE public.call_logs ADD CONSTRAINT call_logs_outcome_check CHECK ((outcome = ANY (ARRAY['meeting_set'::text, 'interested'::text, 'not_interested'::text, 'callback'::text, 'nurture'::text])));
--- public.call_metric_benchmarks
-ALTER TABLE public.call_metric_benchmarks DROP CONSTRAINT IF EXISTS call_metric_benchmarks_pkey;
-ALTER TABLE public.call_metric_benchmarks ADD CONSTRAINT call_metric_benchmarks_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_metric_benchmarks DROP CONSTRAINT IF EXISTS call_metric_benchmarks_metric_key;
-ALTER TABLE public.call_metric_benchmarks ADD CONSTRAINT call_metric_benchmarks_metric_key UNIQUE (metric);
--- public.call_objection_analysis
-ALTER TABLE public.call_objection_analysis DROP CONSTRAINT IF EXISTS call_objection_analysis_pkey;
-ALTER TABLE public.call_objection_analysis ADD CONSTRAINT call_objection_analysis_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_objection_analysis DROP CONSTRAINT IF EXISTS call_objection_analysis_recording_id_key;
-ALTER TABLE public.call_objection_analysis ADD CONSTRAINT call_objection_analysis_recording_id_key UNIQUE (recording_id);
--- public.call_objections
-ALTER TABLE public.call_objections DROP CONSTRAINT IF EXISTS call_objections_pkey;
-ALTER TABLE public.call_objections ADD CONSTRAINT call_objections_pkey PRIMARY KEY (id);
--- public.call_question_analysis
-ALTER TABLE public.call_question_analysis DROP CONSTRAINT IF EXISTS call_question_analysis_pkey;
-ALTER TABLE public.call_question_analysis ADD CONSTRAINT call_question_analysis_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_question_analysis DROP CONSTRAINT IF EXISTS call_question_analysis_recording_id_key;
-ALTER TABLE public.call_question_analysis ADD CONSTRAINT call_question_analysis_recording_id_key UNIQUE (recording_id);
-ALTER TABLE public.call_question_analysis DROP CONSTRAINT IF EXISTS call_question_analysis_health_check;
-ALTER TABLE public.call_question_analysis ADD CONSTRAINT call_question_analysis_health_check CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])));
--- public.call_questions
-ALTER TABLE public.call_questions DROP CONSTRAINT IF EXISTS call_questions_pkey;
-ALTER TABLE public.call_questions ADD CONSTRAINT call_questions_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_questions DROP CONSTRAINT IF EXISTS call_questions_category_check;
-ALTER TABLE public.call_questions ADD CONSTRAINT call_questions_category_check CHECK ((category = ANY (ARRAY['open'::text, 'closed'::text, 'discovery'::text, 'impact'::text, 'leading'::text, 'other'::text])));
--- public.call_recording_ingest_jobs
-ALTER TABLE public.call_recording_ingest_jobs DROP CONSTRAINT IF EXISTS call_recording_ingest_jobs_pkey;
-ALTER TABLE public.call_recording_ingest_jobs ADD CONSTRAINT call_recording_ingest_jobs_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_recording_ingest_jobs DROP CONSTRAINT IF EXISTS call_recording_ingest_jobs_idempotency_key_key;
-ALTER TABLE public.call_recording_ingest_jobs ADD CONSTRAINT call_recording_ingest_jobs_idempotency_key_key UNIQUE (idempotency_key);
-ALTER TABLE public.call_recording_ingest_jobs DROP CONSTRAINT IF EXISTS call_recording_ingest_jobs_status_check;
-ALTER TABLE public.call_recording_ingest_jobs ADD CONSTRAINT call_recording_ingest_jobs_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'processing'::text, 'succeeded'::text, 'failed'::text, 'dead_letter'::text])));
--- public.call_recordings
-ALTER TABLE public.call_recordings DROP CONSTRAINT IF EXISTS call_recordings_pkey;
-ALTER TABLE public.call_recordings ADD CONSTRAINT call_recordings_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_recordings DROP CONSTRAINT IF EXISTS call_recordings_status_check;
-ALTER TABLE public.call_recordings ADD CONSTRAINT call_recordings_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'transcribing'::text, 'analyzing'::text, 'ready'::text, 'failed'::text])));
--- public.call_sentiment_timeline
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_pkey;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_pkey PRIMARY KEY (id);
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_confidence_check;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_confidence_check CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)));
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_score_check;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_score_check CHECK (((score >= ('-1'::integer)::numeric) AND (score <= (1)::numeric)));
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_sentiment_check;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_sentiment_check CHECK ((sentiment = ANY (ARRAY['very_negative'::text, 'negative'::text, 'neutral'::text, 'positive'::text, 'very_positive'::text])));
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_speaker_check;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_speaker_check CHECK ((speaker = ANY (ARRAY['salesperson'::text, 'client'::text, 'unknown'::text, 'mixed'::text])));
--- public.call_transcripts
-ALTER TABLE public.call_transcripts DROP CONSTRAINT IF EXISTS call_transcripts_pkey;
-ALTER TABLE public.call_transcripts ADD CONSTRAINT call_transcripts_pkey PRIMARY KEY (id);
--- public.campaign_health_alerts
-ALTER TABLE public.campaign_health_alerts DROP CONSTRAINT IF EXISTS campaign_health_alerts_pkey;
-ALTER TABLE public.campaign_health_alerts ADD CONSTRAINT campaign_health_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.campaign_health_alerts DROP CONSTRAINT IF EXISTS campaign_health_alerts_alert_type_check;
-ALTER TABLE public.campaign_health_alerts ADD CONSTRAINT campaign_health_alerts_alert_type_check CHECK ((alert_type = ANY (ARRAY['opt_out_rate'::text, 'stalled'::text, 'failure_rate'::text])));
-ALTER TABLE public.campaign_health_alerts DROP CONSTRAINT IF EXISTS campaign_health_alerts_severity_check;
-ALTER TABLE public.campaign_health_alerts ADD CONSTRAINT campaign_health_alerts_severity_check CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])));
--- public.category_metrics
-ALTER TABLE public.category_metrics DROP CONSTRAINT IF EXISTS category_metrics_pkey;
-ALTER TABLE public.category_metrics ADD CONSTRAINT category_metrics_pkey PRIMARY KEY (id);
-ALTER TABLE public.category_metrics DROP CONSTRAINT IF EXISTS category_metrics_date_category_key;
-ALTER TABLE public.category_metrics ADD CONSTRAINT category_metrics_date_category_key UNIQUE (date, category);
--- public.challenge_progress
-ALTER TABLE public.challenge_progress DROP CONSTRAINT IF EXISTS challenge_progress_pkey;
-ALTER TABLE public.challenge_progress ADD CONSTRAINT challenge_progress_pkey PRIMARY KEY (id);
-ALTER TABLE public.challenge_progress DROP CONSTRAINT IF EXISTS challenge_progress_challenge_id_salesperson_id_key;
-ALTER TABLE public.challenge_progress ADD CONSTRAINT challenge_progress_challenge_id_salesperson_id_key UNIQUE (challenge_id, salesperson_id);
--- public.channel_credentials
-ALTER TABLE public.channel_credentials DROP CONSTRAINT IF EXISTS channel_credentials_pkey;
-ALTER TABLE public.channel_credentials ADD CONSTRAINT channel_credentials_pkey PRIMARY KEY (id);
-ALTER TABLE public.channel_credentials DROP CONSTRAINT IF EXISTS channel_credentials_channel_check;
-ALTER TABLE public.channel_credentials ADD CONSTRAINT channel_credentials_channel_check CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])));
-ALTER TABLE public.channel_credentials DROP CONSTRAINT IF EXISTS channel_credentials_provider_check;
-ALTER TABLE public.channel_credentials ADD CONSTRAINT channel_credentials_provider_check CHECK ((provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text, 'evolution'::text])));
--- public.channel_interactions
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_pkey;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_pkey PRIMARY KEY (id);
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_channel_check;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_channel_check CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text, 'phone'::text])));
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_direction_check;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_direction_check CHECK ((direction = ANY (ARRAY['inbound'::text, 'outbound'::text])));
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_status_check;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_status_check CHECK ((status = ANY (ARRAY['sent'::text, 'delivered'::text, 'read'::text, 'replied'::text, 'failed'::text, 'scheduled'::text])));
--- public.chat_conversations
-ALTER TABLE public.chat_conversations DROP CONSTRAINT IF EXISTS chat_conversations_pkey;
-ALTER TABLE public.chat_conversations ADD CONSTRAINT chat_conversations_pkey PRIMARY KEY (id);
--- public.chat_messages
-ALTER TABLE public.chat_messages DROP CONSTRAINT IF EXISTS chat_messages_pkey;
-ALTER TABLE public.chat_messages ADD CONSTRAINT chat_messages_pkey PRIMARY KEY (id);
-ALTER TABLE public.chat_messages DROP CONSTRAINT IF EXISTS chat_messages_role_check;
-ALTER TABLE public.chat_messages ADD CONSTRAINT chat_messages_role_check CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])));
--- public.churn_alert_settings
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_pkey;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_auto_task_cooldown_hours_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_auto_task_cooldown_hours_check CHECK (((auto_task_cooldown_hours >= 1) AND (auto_task_cooldown_hours <= 720)));
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_auto_task_due_in_days_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_auto_task_due_in_days_check CHECK (((auto_task_due_in_days >= 0) AND (auto_task_due_in_days <= 30)));
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_auto_task_min_level_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_auto_task_min_level_check CHECK ((auto_task_min_level = ANY (ARRAY['medium'::text, 'high'::text, 'critical'::text])));
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_auto_task_priority_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_auto_task_priority_check CHECK ((auto_task_priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])));
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_cooldown_hours_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_cooldown_hours_check CHECK ((cooldown_hours >= 1));
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_id_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_id_check CHECK (id);
-ALTER TABLE public.churn_alert_settings DROP CONSTRAINT IF EXISTS churn_alert_settings_min_level_check;
-ALTER TABLE public.churn_alert_settings ADD CONSTRAINT churn_alert_settings_min_level_check CHECK ((min_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.circuit_breaker_events
-ALTER TABLE public.circuit_breaker_events DROP CONSTRAINT IF EXISTS circuit_breaker_events_pkey;
-ALTER TABLE public.circuit_breaker_events ADD CONSTRAINT circuit_breaker_events_pkey PRIMARY KEY (id);
--- public.client_churn_alerts_state
-ALTER TABLE public.client_churn_alerts_state DROP CONSTRAINT IF EXISTS client_churn_alerts_state_pkey;
-ALTER TABLE public.client_churn_alerts_state ADD CONSTRAINT client_churn_alerts_state_pkey PRIMARY KEY (id);
-ALTER TABLE public.client_churn_alerts_state DROP CONSTRAINT IF EXISTS client_churn_alerts_state_salesperson_id_client_name_key;
-ALTER TABLE public.client_churn_alerts_state ADD CONSTRAINT client_churn_alerts_state_salesperson_id_client_name_key UNIQUE (salesperson_id, client_name);
-ALTER TABLE public.client_churn_alerts_state DROP CONSTRAINT IF EXISTS client_churn_alerts_state_last_level_check;
-ALTER TABLE public.client_churn_alerts_state ADD CONSTRAINT client_churn_alerts_state_last_level_check CHECK ((last_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.client_interactions
-ALTER TABLE public.client_interactions DROP CONSTRAINT IF EXISTS client_interactions_pkey;
-ALTER TABLE public.client_interactions ADD CONSTRAINT client_interactions_pkey PRIMARY KEY (id);
--- public.client_portfolio
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_pkey;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_pkey PRIMARY KEY (id);
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_client_id_salesperson_id_key;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_client_id_salesperson_id_key UNIQUE (client_id, salesperson_id);
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_status_check;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_status_check CHECK ((status = ANY (ARRAY['active'::text, 'nurturing'::text, 'at_risk'::text, 'inactive'::text, 'churned'::text])));
--- public.client_renewals
-ALTER TABLE public.client_renewals DROP CONSTRAINT IF EXISTS client_renewals_pkey;
-ALTER TABLE public.client_renewals ADD CONSTRAINT client_renewals_pkey PRIMARY KEY (id);
--- public.clients
-ALTER TABLE public.clients DROP CONSTRAINT IF EXISTS clients_pkey;
-ALTER TABLE public.clients ADD CONSTRAINT clients_pkey PRIMARY KEY (id);
--- public.coaching_actions
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_pkey;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_pkey PRIMARY KEY (id);
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_category_chk;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_category_chk CHECK ((category = ANY (ARRAY['opening'::text, 'discovery'::text, 'objection'::text, 'closing'::text, 'talk_ratio'::text, 'pace'::text, 'empathy'::text, 'other'::text])));
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_severity_chk;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_severity_chk CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])));
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_status_chk;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_status_chk CHECK ((status = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text, 'practiced'::text])));
--- public.coaching_opportunities
-ALTER TABLE public.coaching_opportunities DROP CONSTRAINT IF EXISTS coaching_opportunities_pkey;
-ALTER TABLE public.coaching_opportunities ADD CONSTRAINT coaching_opportunities_pkey PRIMARY KEY (id);
-ALTER TABLE public.coaching_opportunities DROP CONSTRAINT IF EXISTS coaching_opportunities_metric_key_check;
-ALTER TABLE public.coaching_opportunities ADD CONSTRAINT coaching_opportunities_metric_key_check CHECK ((metric_key = ANY (ARRAY['conversion_rate'::text, 'stage_duration'::text, 'win_rate'::text, 'avg_ticket'::text, 'activities_per_day'::text])));
-ALTER TABLE public.coaching_opportunities DROP CONSTRAINT IF EXISTS coaching_opportunities_severity_check;
-ALTER TABLE public.coaching_opportunities ADD CONSTRAINT coaching_opportunities_severity_check CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
-ALTER TABLE public.coaching_opportunities DROP CONSTRAINT IF EXISTS coaching_opportunities_skill_focus_check;
-ALTER TABLE public.coaching_opportunities ADD CONSTRAINT coaching_opportunities_skill_focus_check CHECK ((skill_focus = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])));
--- public.coaching_scorecard_config
-ALTER TABLE public.coaching_scorecard_config DROP CONSTRAINT IF EXISTS coaching_scorecard_config_pkey;
-ALTER TABLE public.coaching_scorecard_config ADD CONSTRAINT coaching_scorecard_config_pkey PRIMARY KEY (id);
--- public.coaching_sessions
-ALTER TABLE public.coaching_sessions DROP CONSTRAINT IF EXISTS coaching_sessions_pkey;
-ALTER TABLE public.coaching_sessions ADD CONSTRAINT coaching_sessions_pkey PRIMARY KEY (id);
-ALTER TABLE public.coaching_sessions DROP CONSTRAINT IF EXISTS coaching_sessions_duration_min_check;
-ALTER TABLE public.coaching_sessions ADD CONSTRAINT coaching_sessions_duration_min_check CHECK (((duration_min > 0) AND (duration_min <= 240)));
-ALTER TABLE public.coaching_sessions DROP CONSTRAINT IF EXISTS coaching_sessions_outcome_rating_check;
-ALTER TABLE public.coaching_sessions ADD CONSTRAINT coaching_sessions_outcome_rating_check CHECK (((outcome_rating >= 1) AND (outcome_rating <= 5)));
-ALTER TABLE public.coaching_sessions DROP CONSTRAINT IF EXISTS coaching_sessions_status_check;
-ALTER TABLE public.coaching_sessions ADD CONSTRAINT coaching_sessions_status_check CHECK ((status = ANY (ARRAY['scheduled'::text, 'completed'::text, 'canceled'::text])));
--- public.coaching_skill_benchmarks
-ALTER TABLE public.coaching_skill_benchmarks DROP CONSTRAINT IF EXISTS coaching_skill_benchmarks_pkey;
-ALTER TABLE public.coaching_skill_benchmarks ADD CONSTRAINT coaching_skill_benchmarks_pkey PRIMARY KEY (id);
-ALTER TABLE public.coaching_skill_benchmarks DROP CONSTRAINT IF EXISTS coaching_skill_benchmarks_metric_key_key;
-ALTER TABLE public.coaching_skill_benchmarks ADD CONSTRAINT coaching_skill_benchmarks_metric_key_key UNIQUE (metric_key);
-ALTER TABLE public.coaching_skill_benchmarks DROP CONSTRAINT IF EXISTS coaching_skill_benchmarks_metric_key_check;
-ALTER TABLE public.coaching_skill_benchmarks ADD CONSTRAINT coaching_skill_benchmarks_metric_key_check CHECK ((metric_key = ANY (ARRAY['conversion_rate'::text, 'stage_duration'::text, 'win_rate'::text, 'avg_ticket'::text, 'activities_per_day'::text])));
--- public.cohort_analyses
-ALTER TABLE public.cohort_analyses DROP CONSTRAINT IF EXISTS cohort_analyses_pkey;
-ALTER TABLE public.cohort_analyses ADD CONSTRAINT cohort_analyses_pkey PRIMARY KEY (id);
-ALTER TABLE public.cohort_analyses DROP CONSTRAINT IF EXISTS cohort_analyses_period_type_check;
-ALTER TABLE public.cohort_analyses ADD CONSTRAINT cohort_analyses_period_type_check CHECK ((period_type = ANY (ARRAY['week'::text, 'month'::text, 'quarter'::text])));
--- public.collectible_badges
-ALTER TABLE public.collectible_badges DROP CONSTRAINT IF EXISTS collectible_badges_pkey;
-ALTER TABLE public.collectible_badges ADD CONSTRAINT collectible_badges_pkey PRIMARY KEY (id);
--- public.combo_tracking
-ALTER TABLE public.combo_tracking DROP CONSTRAINT IF EXISTS combo_tracking_pkey;
-ALTER TABLE public.combo_tracking ADD CONSTRAINT combo_tracking_pkey PRIMARY KEY (id);
-ALTER TABLE public.combo_tracking DROP CONSTRAINT IF EXISTS combo_tracking_salesperson_id_combo_date_key;
-ALTER TABLE public.combo_tracking ADD CONSTRAINT combo_tracking_salesperson_id_combo_date_key UNIQUE (salesperson_id, combo_date);
--- public.commercial_approval_requests
-ALTER TABLE public.commercial_approval_requests DROP CONSTRAINT IF EXISTS commercial_approval_requests_pkey;
-ALTER TABLE public.commercial_approval_requests ADD CONSTRAINT commercial_approval_requests_pkey PRIMARY KEY (id);
-ALTER TABLE public.commercial_approval_requests DROP CONSTRAINT IF EXISTS commercial_approval_requests_status_check;
-ALTER TABLE public.commercial_approval_requests ADD CONSTRAINT commercial_approval_requests_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])));
-ALTER TABLE public.commercial_approval_requests DROP CONSTRAINT IF EXISTS commercial_approval_requests_type_check;
-ALTER TABLE public.commercial_approval_requests ADD CONSTRAINT commercial_approval_requests_type_check CHECK ((type = ANY (ARRAY['goal'::text, 'scoring_rule'::text, 'commission'::text])));
--- public.commission_bonus_awards
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_pkey;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_pkey PRIMARY KEY (id);
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_bonus_id_salesperson_id_period_mont_key;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_bonus_id_salesperson_id_period_mont_key UNIQUE (bonus_id, salesperson_id, period_month);
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_bonus_kind_check;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_bonus_kind_check CHECK ((bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])));
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_status_check;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text])));
--- public.commission_bonuses
-ALTER TABLE public.commission_bonuses DROP CONSTRAINT IF EXISTS commission_bonuses_pkey;
-ALTER TABLE public.commission_bonuses ADD CONSTRAINT commission_bonuses_pkey PRIMARY KEY (id);
-ALTER TABLE public.commission_bonuses DROP CONSTRAINT IF EXISTS commission_bonuses_bonus_amount_check;
-ALTER TABLE public.commission_bonuses ADD CONSTRAINT commission_bonuses_bonus_amount_check CHECK ((bonus_amount >= (0)::numeric));
-ALTER TABLE public.commission_bonuses DROP CONSTRAINT IF EXISTS commission_bonuses_bonus_kind_check;
-ALTER TABLE public.commission_bonuses ADD CONSTRAINT commission_bonuses_bonus_kind_check CHECK ((bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])));
-ALTER TABLE public.commission_bonuses DROP CONSTRAINT IF EXISTS commission_bonuses_bonus_type_check;
-ALTER TABLE public.commission_bonuses ADD CONSTRAINT commission_bonuses_bonus_type_check CHECK ((bonus_type = ANY (ARRAY['first_sale'::text, 'milestone'::text, 'ranking'::text, 'streak'::text, 'other'::text])));
--- public.commission_rules
-ALTER TABLE public.commission_rules DROP CONSTRAINT IF EXISTS commission_rules_pkey;
-ALTER TABLE public.commission_rules ADD CONSTRAINT commission_rules_pkey PRIMARY KEY (id);
-ALTER TABLE public.commission_rules DROP CONSTRAINT IF EXISTS commission_rules_percentage_check;
-ALTER TABLE public.commission_rules ADD CONSTRAINT commission_rules_percentage_check CHECK (((percentage >= (0)::numeric) AND (percentage <= (100)::numeric)));
--- public.commissions
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_pkey;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_pkey PRIMARY KEY (id);
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_sale_salesperson_key;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_sale_salesperson_key UNIQUE (sale_id, salesperson_id);
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_status_check;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'paid'::text, 'cancelled'::text])));
--- public.committee_coverage_history
-ALTER TABLE public.committee_coverage_history DROP CONSTRAINT IF EXISTS committee_coverage_history_pkey;
-ALTER TABLE public.committee_coverage_history ADD CONSTRAINT committee_coverage_history_pkey PRIMARY KEY (id);
--- public.committee_extraction_runs
-ALTER TABLE public.committee_extraction_runs DROP CONSTRAINT IF EXISTS committee_extraction_runs_pkey;
-ALTER TABLE public.committee_extraction_runs ADD CONSTRAINT committee_extraction_runs_pkey PRIMARY KEY (id);
--- public.competitive_chat_messages
-ALTER TABLE public.competitive_chat_messages DROP CONSTRAINT IF EXISTS competitive_chat_messages_pkey;
-ALTER TABLE public.competitive_chat_messages ADD CONSTRAINT competitive_chat_messages_pkey PRIMARY KEY (id);
--- public.competitive_seasons
-ALTER TABLE public.competitive_seasons DROP CONSTRAINT IF EXISTS competitive_seasons_pkey;
-ALTER TABLE public.competitive_seasons ADD CONSTRAINT competitive_seasons_pkey PRIMARY KEY (id);
--- public.competitor_mentions
-ALTER TABLE public.competitor_mentions DROP CONSTRAINT IF EXISTS competitor_mentions_pkey;
-ALTER TABLE public.competitor_mentions ADD CONSTRAINT competitor_mentions_pkey PRIMARY KEY (id);
--- public.competitors_pricing
-ALTER TABLE public.competitors_pricing DROP CONSTRAINT IF EXISTS competitors_pricing_pkey;
-ALTER TABLE public.competitors_pricing ADD CONSTRAINT competitors_pricing_pkey PRIMARY KEY (id);
--- public.competitors_registry
-ALTER TABLE public.competitors_registry DROP CONSTRAINT IF EXISTS competitors_registry_pkey;
-ALTER TABLE public.competitors_registry ADD CONSTRAINT competitors_registry_pkey PRIMARY KEY (id);
--- public.consent_records
-ALTER TABLE public.consent_records DROP CONSTRAINT IF EXISTS consent_records_pkey;
-ALTER TABLE public.consent_records ADD CONSTRAINT consent_records_pkey PRIMARY KEY (id);
-ALTER TABLE public.consent_records DROP CONSTRAINT IF EXISTS consent_records_legal_basis_check;
-ALTER TABLE public.consent_records ADD CONSTRAINT consent_records_legal_basis_check CHECK ((legal_basis = ANY (ARRAY['consent'::text, 'legitimate_interest'::text, 'contract'::text, 'legal_obligation'::text])));
-ALTER TABLE public.consent_records DROP CONSTRAINT IF EXISTS consent_records_subject_required;
-ALTER TABLE public.consent_records ADD CONSTRAINT consent_records_subject_required CHECK (((subject_id IS NOT NULL) OR (subject_email IS NOT NULL) OR (subject_client_id IS NOT NULL)));
--- public.contact_engagement_score
-ALTER TABLE public.contact_engagement_score DROP CONSTRAINT IF EXISTS contact_engagement_score_pkey;
-ALTER TABLE public.contact_engagement_score ADD CONSTRAINT contact_engagement_score_pkey PRIMARY KEY (id);
-ALTER TABLE public.contact_engagement_score DROP CONSTRAINT IF EXISTS contact_engagement_score_contact_id_contact_type_key;
-ALTER TABLE public.contact_engagement_score ADD CONSTRAINT contact_engagement_score_contact_id_contact_type_key UNIQUE (contact_id, contact_type);
-ALTER TABLE public.contact_engagement_score DROP CONSTRAINT IF EXISTS contact_engagement_score_contact_type_check;
-ALTER TABLE public.contact_engagement_score ADD CONSTRAINT contact_engagement_score_contact_type_check CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])));
-ALTER TABLE public.contact_engagement_score DROP CONSTRAINT IF EXISTS contact_engagement_score_tier_check;
-ALTER TABLE public.contact_engagement_score ADD CONSTRAINT contact_engagement_score_tier_check CHECK ((tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'on_fire'::text])));
--- public.contact_send_time_profile
-ALTER TABLE public.contact_send_time_profile DROP CONSTRAINT IF EXISTS contact_send_time_profile_pkey;
-ALTER TABLE public.contact_send_time_profile ADD CONSTRAINT contact_send_time_profile_pkey PRIMARY KEY (id);
-ALTER TABLE public.contact_send_time_profile DROP CONSTRAINT IF EXISTS contact_send_time_profile_contact_id_contact_type_hour_of_d_key;
-ALTER TABLE public.contact_send_time_profile ADD CONSTRAINT contact_send_time_profile_contact_id_contact_type_hour_of_d_key UNIQUE (contact_id, contact_type, hour_of_day, day_of_week);
-ALTER TABLE public.contact_send_time_profile DROP CONSTRAINT IF EXISTS contact_send_time_profile_contact_type_check;
-ALTER TABLE public.contact_send_time_profile ADD CONSTRAINT contact_send_time_profile_contact_type_check CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])));
-ALTER TABLE public.contact_send_time_profile DROP CONSTRAINT IF EXISTS contact_send_time_profile_day_of_week_check;
-ALTER TABLE public.contact_send_time_profile ADD CONSTRAINT contact_send_time_profile_day_of_week_check CHECK (((day_of_week >= 0) AND (day_of_week <= 6)));
-ALTER TABLE public.contact_send_time_profile DROP CONSTRAINT IF EXISTS contact_send_time_profile_hour_of_day_check;
-ALTER TABLE public.contact_send_time_profile ADD CONSTRAINT contact_send_time_profile_hour_of_day_check CHECK (((hour_of_day >= 0) AND (hour_of_day <= 23)));
--- public.conversation_analyses
-ALTER TABLE public.conversation_analyses DROP CONSTRAINT IF EXISTS conversation_analyses_pkey;
-ALTER TABLE public.conversation_analyses ADD CONSTRAINT conversation_analyses_pkey PRIMARY KEY (id);
-ALTER TABLE public.conversation_analyses DROP CONSTRAINT IF EXISTS conversation_analyses_sentiment_check;
-ALTER TABLE public.conversation_analyses ADD CONSTRAINT conversation_analyses_sentiment_check CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text, 'mixed'::text])));
-ALTER TABLE public.conversation_analyses DROP CONSTRAINT IF EXISTS conversation_analyses_source_check;
-ALTER TABLE public.conversation_analyses ADD CONSTRAINT conversation_analyses_source_check CHECK ((source = ANY (ARRAY['call'::text, 'email'::text, 'meeting'::text, 'whatsapp'::text])));
--- public.critical_moment_notifications
-ALTER TABLE public.critical_moment_notifications DROP CONSTRAINT IF EXISTS critical_moment_notifications_pkey;
-ALTER TABLE public.critical_moment_notifications ADD CONSTRAINT critical_moment_notifications_pkey PRIMARY KEY (id);
--- public.cron_failure_alerts
-ALTER TABLE public.cron_failure_alerts DROP CONSTRAINT IF EXISTS cron_failure_alerts_pkey;
-ALTER TABLE public.cron_failure_alerts ADD CONSTRAINT cron_failure_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.cron_failure_alerts DROP CONSTRAINT IF EXISTS cron_failure_alerts_unique;
-ALTER TABLE public.cron_failure_alerts ADD CONSTRAINT cron_failure_alerts_unique UNIQUE (jobid, start_time);
--- public.cs_tickets
-ALTER TABLE public.cs_tickets DROP CONSTRAINT IF EXISTS cs_tickets_pkey;
-ALTER TABLE public.cs_tickets ADD CONSTRAINT cs_tickets_pkey PRIMARY KEY (id);
--- public.csat_ces_surveys
-ALTER TABLE public.csat_ces_surveys DROP CONSTRAINT IF EXISTS csat_ces_surveys_pkey;
-ALTER TABLE public.csat_ces_surveys ADD CONSTRAINT csat_ces_surveys_pkey PRIMARY KEY (id);
--- public.custom_reports
-ALTER TABLE public.custom_reports DROP CONSTRAINT IF EXISTS custom_reports_pkey;
-ALTER TABLE public.custom_reports ADD CONSTRAINT custom_reports_pkey PRIMARY KEY (id);
-ALTER TABLE public.custom_reports DROP CONSTRAINT IF EXISTS custom_reports_entity_check;
-ALTER TABLE public.custom_reports ADD CONSTRAINT custom_reports_entity_check CHECK ((entity = ANY (ARRAY['sales'::text, 'accounts'::text, 'activities'::text, 'leads'::text, 'salespeople'::text, 'clients'::text, 'cross'::text])));
--- public.daily_challenge_progress
-ALTER TABLE public.daily_challenge_progress DROP CONSTRAINT IF EXISTS daily_challenge_progress_pkey;
-ALTER TABLE public.daily_challenge_progress ADD CONSTRAINT daily_challenge_progress_pkey PRIMARY KEY (id);
-ALTER TABLE public.daily_challenge_progress DROP CONSTRAINT IF EXISTS daily_challenge_progress_challenge_id_salesperson_id_key;
-ALTER TABLE public.daily_challenge_progress ADD CONSTRAINT daily_challenge_progress_challenge_id_salesperson_id_key UNIQUE (challenge_id, salesperson_id);
--- public.daily_challenge_rotations
-ALTER TABLE public.daily_challenge_rotations DROP CONSTRAINT IF EXISTS daily_challenge_rotations_pkey;
-ALTER TABLE public.daily_challenge_rotations ADD CONSTRAINT daily_challenge_rotations_pkey PRIMARY KEY (challenge_date);
--- public.daily_challenges
-ALTER TABLE public.daily_challenges DROP CONSTRAINT IF EXISTS daily_challenges_pkey;
-ALTER TABLE public.daily_challenges ADD CONSTRAINT daily_challenges_pkey PRIMARY KEY (id);
--- public.daily_metrics
-ALTER TABLE public.daily_metrics DROP CONSTRAINT IF EXISTS daily_metrics_pkey;
-ALTER TABLE public.daily_metrics ADD CONSTRAINT daily_metrics_pkey PRIMARY KEY (id);
-ALTER TABLE public.daily_metrics DROP CONSTRAINT IF EXISTS daily_metrics_date_key;
-ALTER TABLE public.daily_metrics ADD CONSTRAINT daily_metrics_date_key UNIQUE (date);
--- public.daily_streak_achievements
-ALTER TABLE public.daily_streak_achievements DROP CONSTRAINT IF EXISTS daily_streak_achievements_pkey;
-ALTER TABLE public.daily_streak_achievements ADD CONSTRAINT daily_streak_achievements_pkey PRIMARY KEY (id);
-ALTER TABLE public.daily_streak_achievements DROP CONSTRAINT IF EXISTS daily_streak_achievements_salesperson_id_streak_type_key;
-ALTER TABLE public.daily_streak_achievements ADD CONSTRAINT daily_streak_achievements_salesperson_id_streak_type_key UNIQUE (salesperson_id, streak_type);
--- public.dashboard_layouts
-ALTER TABLE public.dashboard_layouts DROP CONSTRAINT IF EXISTS dashboard_layouts_pkey;
-ALTER TABLE public.dashboard_layouts ADD CONSTRAINT dashboard_layouts_pkey PRIMARY KEY (id);
-ALTER TABLE public.dashboard_layouts DROP CONSTRAINT IF EXISTS dashboard_layouts_salesperson_id_key;
-ALTER TABLE public.dashboard_layouts ADD CONSTRAINT dashboard_layouts_salesperson_id_key UNIQUE (salesperson_id);
--- public.data_access_log
-ALTER TABLE public.data_access_log DROP CONSTRAINT IF EXISTS data_access_log_pkey;
-ALTER TABLE public.data_access_log ADD CONSTRAINT data_access_log_pkey PRIMARY KEY (id);
-ALTER TABLE public.data_access_log DROP CONSTRAINT IF EXISTS data_access_log_action_check;
-ALTER TABLE public.data_access_log ADD CONSTRAINT data_access_log_action_check CHECK ((action = ANY (ARRAY['SELECT'::text, 'INSERT'::text, 'UPDATE'::text, 'DELETE'::text])));
--- public.data_retention_policies
-ALTER TABLE public.data_retention_policies DROP CONSTRAINT IF EXISTS data_retention_policies_pkey;
-ALTER TABLE public.data_retention_policies ADD CONSTRAINT data_retention_policies_pkey PRIMARY KEY (table_name);
-ALTER TABLE public.data_retention_policies DROP CONSTRAINT IF EXISTS data_retention_policies_retention_days_check;
-ALTER TABLE public.data_retention_policies ADD CONSTRAINT data_retention_policies_retention_days_check CHECK ((retention_days > 0));
--- public.data_subject_requests
-ALTER TABLE public.data_subject_requests DROP CONSTRAINT IF EXISTS data_subject_requests_pkey;
-ALTER TABLE public.data_subject_requests ADD CONSTRAINT data_subject_requests_pkey PRIMARY KEY (id);
-ALTER TABLE public.data_subject_requests DROP CONSTRAINT IF EXISTS data_subject_requests_request_type_check;
-ALTER TABLE public.data_subject_requests ADD CONSTRAINT data_subject_requests_request_type_check CHECK ((request_type = ANY (ARRAY['access'::text, 'rectification'::text, 'erasure'::text, 'portability'::text, 'consent_revocation'::text, 'information'::text])));
-ALTER TABLE public.data_subject_requests DROP CONSTRAINT IF EXISTS data_subject_requests_status_check;
-ALTER TABLE public.data_subject_requests ADD CONSTRAINT data_subject_requests_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'rejected'::text])));
--- public.db_rollback_snapshots
-ALTER TABLE public.db_rollback_snapshots DROP CONSTRAINT IF EXISTS db_rollback_snapshots_pkey;
-ALTER TABLE public.db_rollback_snapshots ADD CONSTRAINT db_rollback_snapshots_pkey PRIMARY KEY (id);
--- public.dead_letter_replay_audit
-ALTER TABLE public.dead_letter_replay_audit DROP CONSTRAINT IF EXISTS dead_letter_replay_audit_pkey;
-ALTER TABLE public.dead_letter_replay_audit ADD CONSTRAINT dead_letter_replay_audit_pkey PRIMARY KEY (id);
-ALTER TABLE public.dead_letter_replay_audit DROP CONSTRAINT IF EXISTS dead_letter_replay_audit_outcome_check;
-ALTER TABLE public.dead_letter_replay_audit ADD CONSTRAINT dead_letter_replay_audit_outcome_check CHECK ((outcome = ANY (ARRAY['replayed'::text, 'skipped_locked'::text, 'not_found_or_not_dead_letter'::text])));
--- public.deal_chat_history
-ALTER TABLE public.deal_chat_history DROP CONSTRAINT IF EXISTS deal_chat_history_pkey;
-ALTER TABLE public.deal_chat_history ADD CONSTRAINT deal_chat_history_pkey PRIMARY KEY (id);
--- public.deal_committee_coverage
-ALTER TABLE public.deal_committee_coverage DROP CONSTRAINT IF EXISTS deal_committee_coverage_pkey;
-ALTER TABLE public.deal_committee_coverage ADD CONSTRAINT deal_committee_coverage_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_committee_coverage DROP CONSTRAINT IF EXISTS deal_committee_coverage_sale_id_key;
-ALTER TABLE public.deal_committee_coverage ADD CONSTRAINT deal_committee_coverage_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.deal_committee_coverage DROP CONSTRAINT IF EXISTS deal_committee_coverage_coverage_score_check;
-ALTER TABLE public.deal_committee_coverage ADD CONSTRAINT deal_committee_coverage_coverage_score_check CHECK (((coverage_score >= 0) AND (coverage_score <= 100)));
-ALTER TABLE public.deal_committee_coverage DROP CONSTRAINT IF EXISTS deal_committee_coverage_tier_check;
-ALTER TABLE public.deal_committee_coverage ADD CONSTRAINT deal_committee_coverage_tier_check CHECK ((tier = ANY (ARRAY['weak'::text, 'partial'::text, 'strong'::text, 'complete'::text])));
--- public.deal_health_history
-ALTER TABLE public.deal_health_history DROP CONSTRAINT IF EXISTS deal_health_history_pkey;
-ALTER TABLE public.deal_health_history ADD CONSTRAINT deal_health_history_pkey PRIMARY KEY (id);
--- public.deal_health_scores
-ALTER TABLE public.deal_health_scores DROP CONSTRAINT IF EXISTS deal_health_scores_pkey;
-ALTER TABLE public.deal_health_scores ADD CONSTRAINT deal_health_scores_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_health_scores DROP CONSTRAINT IF EXISTS deal_health_scores_health_label_check;
-ALTER TABLE public.deal_health_scores ADD CONSTRAINT deal_health_scores_health_label_check CHECK ((health_label = ANY (ARRAY['critical'::text, 'at_risk'::text, 'healthy'::text, 'excellent'::text])));
-ALTER TABLE public.deal_health_scores DROP CONSTRAINT IF EXISTS deal_health_scores_health_score_check;
-ALTER TABLE public.deal_health_scores ADD CONSTRAINT deal_health_scores_health_score_check CHECK (((health_score >= 0) AND (health_score <= 100)));
-ALTER TABLE public.deal_health_scores DROP CONSTRAINT IF EXISTS deal_health_scores_tier_check;
-ALTER TABLE public.deal_health_scores ADD CONSTRAINT deal_health_scores_tier_check CHECK ((tier = ANY (ARRAY['healthy'::text, 'watch'::text, 'at_risk'::text, 'critical'::text])));
--- public.deal_outcomes
-ALTER TABLE public.deal_outcomes DROP CONSTRAINT IF EXISTS deal_outcomes_pkey;
-ALTER TABLE public.deal_outcomes ADD CONSTRAINT deal_outcomes_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_outcomes DROP CONSTRAINT IF EXISTS deal_outcomes_outcome_check;
-ALTER TABLE public.deal_outcomes ADD CONSTRAINT deal_outcomes_outcome_check CHECK ((outcome = ANY (ARRAY['won'::text, 'lost'::text])));
--- public.deal_probability_scores
-ALTER TABLE public.deal_probability_scores DROP CONSTRAINT IF EXISTS deal_probability_scores_pkey;
-ALTER TABLE public.deal_probability_scores ADD CONSTRAINT deal_probability_scores_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_probability_scores DROP CONSTRAINT IF EXISTS deal_probability_scores_confidence_check;
-ALTER TABLE public.deal_probability_scores ADD CONSTRAINT deal_probability_scores_confidence_check CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)));
--- public.deal_risk_signals
-ALTER TABLE public.deal_risk_signals DROP CONSTRAINT IF EXISTS deal_risk_signals_pkey;
-ALTER TABLE public.deal_risk_signals ADD CONSTRAINT deal_risk_signals_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_risk_signals DROP CONSTRAINT IF EXISTS deal_risk_signals_severity_check;
-ALTER TABLE public.deal_risk_signals ADD CONSTRAINT deal_risk_signals_severity_check CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
-ALTER TABLE public.deal_risk_signals DROP CONSTRAINT IF EXISTS deal_risk_signals_signal_type_check;
-ALTER TABLE public.deal_risk_signals ADD CONSTRAINT deal_risk_signals_signal_type_check CHECK ((signal_type = ANY (ARRAY['stagnation'::text, 'no_contact'::text, 'engagement_drop'::text, 'price_resistance'::text, 'competitor_mentioned'::text, 'single_threaded'::text, 'overdue_followup'::text])));
--- public.deal_stage_history
-ALTER TABLE public.deal_stage_history DROP CONSTRAINT IF EXISTS deal_stage_history_pkey;
-ALTER TABLE public.deal_stage_history ADD CONSTRAINT deal_stage_history_pkey PRIMARY KEY (id);
--- public.deal_stage_transitions
-ALTER TABLE public.deal_stage_transitions DROP CONSTRAINT IF EXISTS deal_stage_transitions_pkey;
-ALTER TABLE public.deal_stage_transitions ADD CONSTRAINT deal_stage_transitions_pkey PRIMARY KEY (id);
--- public.deal_stakeholders
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_pkey;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_dmu_role_check;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_dmu_role_check CHECK ((dmu_role = ANY (ARRAY['decision_maker'::text, 'economic_buyer'::text, 'champion'::text, 'influencer'::text, 'user'::text, 'blocker'::text, 'unknown'::text])));
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_engagement_score_check;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_engagement_score_check CHECK (((engagement_score >= 0) AND (engagement_score <= 100)));
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_influence_level_check;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_influence_level_check CHECK ((influence_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])));
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_sentiment_check;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_sentiment_check CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text])));
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_source_check;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_source_check CHECK ((source = ANY (ARRAY['manual'::text, 'ai_extracted'::text, 'email'::text, 'call'::text])));
--- public.deal_velocity_alerts
-ALTER TABLE public.deal_velocity_alerts DROP CONSTRAINT IF EXISTS deal_velocity_alerts_pkey;
-ALTER TABLE public.deal_velocity_alerts ADD CONSTRAINT deal_velocity_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_velocity_alerts DROP CONSTRAINT IF EXISTS deal_velocity_alerts_sale_id_key;
-ALTER TABLE public.deal_velocity_alerts ADD CONSTRAINT deal_velocity_alerts_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.deal_velocity_alerts DROP CONSTRAINT IF EXISTS severity_chk;
-ALTER TABLE public.deal_velocity_alerts ADD CONSTRAINT severity_chk CHECK ((severity = ANY (ARRAY['watch'::text, 'stuck'::text, 'critical'::text])));
--- public.deal_velocity_predictions
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_pkey;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_pkey PRIMARY KEY (id);
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_sale_id_key;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_confidence_score_check;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_confidence_score_check CHECK (((confidence_score >= 0) AND (confidence_score <= 100)));
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_confidence_tier_check;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_confidence_tier_check CHECK ((confidence_tier = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])));
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_velocity_status_check;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_velocity_status_check CHECK ((velocity_status = ANY (ARRAY['ahead'::text, 'on_track'::text, 'slow'::text, 'stalled'::text])));
--- public.demand_forecasts
-ALTER TABLE public.demand_forecasts DROP CONSTRAINT IF EXISTS demand_forecasts_pkey;
-ALTER TABLE public.demand_forecasts ADD CONSTRAINT demand_forecasts_pkey PRIMARY KEY (id);
--- public.dialer_queue_items
-ALTER TABLE public.dialer_queue_items DROP CONSTRAINT IF EXISTS dialer_queue_items_pkey;
-ALTER TABLE public.dialer_queue_items ADD CONSTRAINT dialer_queue_items_pkey PRIMARY KEY (id);
-ALTER TABLE public.dialer_queue_items DROP CONSTRAINT IF EXISTS dialer_queue_items_queue_id_sale_id_key;
-ALTER TABLE public.dialer_queue_items ADD CONSTRAINT dialer_queue_items_queue_id_sale_id_key UNIQUE (queue_id, sale_id);
-ALTER TABLE public.dialer_queue_items DROP CONSTRAINT IF EXISTS dialer_queue_items_status_check;
-ALTER TABLE public.dialer_queue_items ADD CONSTRAINT dialer_queue_items_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'calling'::text, 'done'::text, 'skipped'::text, 'snoozed'::text])));
--- public.dialer_queues
-ALTER TABLE public.dialer_queues DROP CONSTRAINT IF EXISTS dialer_queues_pkey;
-ALTER TABLE public.dialer_queues ADD CONSTRAINT dialer_queues_pkey PRIMARY KEY (id);
-ALTER TABLE public.dialer_queues DROP CONSTRAINT IF EXISTS dialer_queues_priority_strategy_check;
-ALTER TABLE public.dialer_queues ADD CONSTRAINT dialer_queues_priority_strategy_check CHECK ((priority_strategy = ANY (ARRAY['score'::text, 'recency'::text, 'send_time'::text, 'hybrid'::text])));
--- public.digital_signatures
-ALTER TABLE public.digital_signatures DROP CONSTRAINT IF EXISTS digital_signatures_pkey;
-ALTER TABLE public.digital_signatures ADD CONSTRAINT digital_signatures_pkey PRIMARY KEY (id);
-ALTER TABLE public.digital_signatures DROP CONSTRAINT IF EXISTS digital_signatures_status_check;
-ALTER TABLE public.digital_signatures ADD CONSTRAINT digital_signatures_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'pending'::text, 'signed'::text, 'rejected'::text, 'expired'::text])));
--- public.document_signers
-ALTER TABLE public.document_signers DROP CONSTRAINT IF EXISTS document_signers_pkey;
-ALTER TABLE public.document_signers ADD CONSTRAINT document_signers_pkey PRIMARY KEY (id);
-ALTER TABLE public.document_signers DROP CONSTRAINT IF EXISTS document_signers_status_check;
-ALTER TABLE public.document_signers ADD CONSTRAINT document_signers_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'signed'::text, 'rejected'::text])));
--- public.duplicate_block_logs
-ALTER TABLE public.duplicate_block_logs DROP CONSTRAINT IF EXISTS duplicate_block_logs_pkey;
-ALTER TABLE public.duplicate_block_logs ADD CONSTRAINT duplicate_block_logs_pkey PRIMARY KEY (id);
--- public.edge_call_failures
-ALTER TABLE public.edge_call_failures DROP CONSTRAINT IF EXISTS edge_call_failures_pkey;
-ALTER TABLE public.edge_call_failures ADD CONSTRAINT edge_call_failures_pkey PRIMARY KEY (id);
--- public.edge_job_locks
-ALTER TABLE public.edge_job_locks DROP CONSTRAINT IF EXISTS edge_job_locks_pkey;
-ALTER TABLE public.edge_job_locks ADD CONSTRAINT edge_job_locks_pkey PRIMARY KEY (job_name);
--- public.edge_retry_events
-ALTER TABLE public.edge_retry_events DROP CONSTRAINT IF EXISTS edge_retry_events_pkey;
-ALTER TABLE public.edge_retry_events ADD CONSTRAINT edge_retry_events_pkey PRIMARY KEY (id);
-ALTER TABLE public.edge_retry_events DROP CONSTRAINT IF EXISTS edge_retry_events_attempt_check;
-ALTER TABLE public.edge_retry_events ADD CONSTRAINT edge_retry_events_attempt_check CHECK ((attempt >= 1));
-ALTER TABLE public.edge_retry_events DROP CONSTRAINT IF EXISTS edge_retry_events_outcome_check;
-ALTER TABLE public.edge_retry_events ADD CONSTRAINT edge_retry_events_outcome_check CHECK ((outcome = ANY (ARRAY['retry'::text, 'success_after_retry'::text, 'exhausted'::text, 'non_retryable'::text])));
--- public.email_bulk_drafts
-ALTER TABLE public.email_bulk_drafts DROP CONSTRAINT IF EXISTS email_bulk_drafts_pkey;
-ALTER TABLE public.email_bulk_drafts ADD CONSTRAINT email_bulk_drafts_pkey PRIMARY KEY (id);
--- public.email_bulk_jobs
-ALTER TABLE public.email_bulk_jobs DROP CONSTRAINT IF EXISTS email_bulk_jobs_pkey;
-ALTER TABLE public.email_bulk_jobs ADD CONSTRAINT email_bulk_jobs_pkey PRIMARY KEY (id);
--- public.email_engagement_score_history
-ALTER TABLE public.email_engagement_score_history DROP CONSTRAINT IF EXISTS email_engagement_score_history_pkey;
-ALTER TABLE public.email_engagement_score_history ADD CONSTRAINT email_engagement_score_history_pkey PRIMARY KEY (id);
--- public.email_engagement_scores
-ALTER TABLE public.email_engagement_scores DROP CONSTRAINT IF EXISTS email_engagement_scores_pkey;
-ALTER TABLE public.email_engagement_scores ADD CONSTRAINT email_engagement_scores_pkey PRIMARY KEY (id);
-ALTER TABLE public.email_engagement_scores DROP CONSTRAINT IF EXISTS email_engagement_scores_sale_id_key;
-ALTER TABLE public.email_engagement_scores ADD CONSTRAINT email_engagement_scores_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.email_engagement_scores DROP CONSTRAINT IF EXISTS email_engagement_scores_score_check;
-ALTER TABLE public.email_engagement_scores ADD CONSTRAINT email_engagement_scores_score_check CHECK (((score >= 0) AND (score <= 100)));
-ALTER TABLE public.email_engagement_scores DROP CONSTRAINT IF EXISTS email_engagement_scores_tier_check;
-ALTER TABLE public.email_engagement_scores ADD CONSTRAINT email_engagement_scores_tier_check CHECK ((tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'champion'::text])));
--- public.email_logs
-ALTER TABLE public.email_logs DROP CONSTRAINT IF EXISTS email_logs_pkey;
-ALTER TABLE public.email_logs ADD CONSTRAINT email_logs_pkey PRIMARY KEY (id);
--- public.email_opt_outs
-ALTER TABLE public.email_opt_outs DROP CONSTRAINT IF EXISTS email_opt_outs_pkey;
-ALTER TABLE public.email_opt_outs ADD CONSTRAINT email_opt_outs_pkey PRIMARY KEY (id);
--- public.email_tracking_events
-ALTER TABLE public.email_tracking_events DROP CONSTRAINT IF EXISTS email_tracking_events_pkey;
-ALTER TABLE public.email_tracking_events ADD CONSTRAINT email_tracking_events_pkey PRIMARY KEY (id);
--- public.embedded_report_tokens
-ALTER TABLE public.embedded_report_tokens DROP CONSTRAINT IF EXISTS embedded_report_tokens_pkey;
-ALTER TABLE public.embedded_report_tokens ADD CONSTRAINT embedded_report_tokens_pkey PRIMARY KEY (id);
-ALTER TABLE public.embedded_report_tokens DROP CONSTRAINT IF EXISTS embedded_report_tokens_public_token_key;
-ALTER TABLE public.embedded_report_tokens ADD CONSTRAINT embedded_report_tokens_public_token_key UNIQUE (public_token);
--- public.engagement_score_history
-ALTER TABLE public.engagement_score_history DROP CONSTRAINT IF EXISTS engagement_score_history_pkey;
-ALTER TABLE public.engagement_score_history ADD CONSTRAINT engagement_score_history_pkey PRIMARY KEY (id);
-ALTER TABLE public.engagement_score_history DROP CONSTRAINT IF EXISTS engagement_score_history_contact_id_contact_type_captured_a_key;
-ALTER TABLE public.engagement_score_history ADD CONSTRAINT engagement_score_history_contact_id_contact_type_captured_a_key UNIQUE (contact_id, contact_type, captured_at);
-ALTER TABLE public.engagement_score_history DROP CONSTRAINT IF EXISTS engagement_score_history_contact_type_check;
-ALTER TABLE public.engagement_score_history ADD CONSTRAINT engagement_score_history_contact_type_check CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])));
--- public.enriched_company_intelligence
-ALTER TABLE public.enriched_company_intelligence DROP CONSTRAINT IF EXISTS enriched_company_intelligence_pkey;
-ALTER TABLE public.enriched_company_intelligence ADD CONSTRAINT enriched_company_intelligence_pkey PRIMARY KEY (id);
-ALTER TABLE public.enriched_company_intelligence DROP CONSTRAINT IF EXISTS enriched_company_intelligence_company_name_key;
-ALTER TABLE public.enriched_company_intelligence ADD CONSTRAINT enriched_company_intelligence_company_name_key UNIQUE (company_name);
--- public.entity_versions
-ALTER TABLE public.entity_versions DROP CONSTRAINT IF EXISTS entity_versions_pkey;
-ALTER TABLE public.entity_versions ADD CONSTRAINT entity_versions_pkey PRIMARY KEY (id);
-ALTER TABLE public.entity_versions DROP CONSTRAINT IF EXISTS unique_entity_version;
-ALTER TABLE public.entity_versions ADD CONSTRAINT unique_entity_version UNIQUE (entity_type, entity_id, version_number);
--- public.error_logs
-ALTER TABLE public.error_logs DROP CONSTRAINT IF EXISTS error_logs_pkey;
-ALTER TABLE public.error_logs ADD CONSTRAINT error_logs_pkey PRIMARY KEY (id);
--- public.executive_briefings
-ALTER TABLE public.executive_briefings DROP CONSTRAINT IF EXISTS executive_briefings_pkey;
-ALTER TABLE public.executive_briefings ADD CONSTRAINT executive_briefings_pkey PRIMARY KEY (id);
-ALTER TABLE public.executive_briefings DROP CONSTRAINT IF EXISTS executive_briefings_briefing_date_key;
-ALTER TABLE public.executive_briefings ADD CONSTRAINT executive_briefings_briefing_date_key UNIQUE (briefing_date);
-ALTER TABLE public.executive_briefings DROP CONSTRAINT IF EXISTS executive_briefings_generated_by_check;
-ALTER TABLE public.executive_briefings ADD CONSTRAINT executive_briefings_generated_by_check CHECK ((generated_by = ANY (ARRAY['auto'::text, 'manual'::text])));
--- public.expansion_opportunities
-ALTER TABLE public.expansion_opportunities DROP CONSTRAINT IF EXISTS expansion_opportunities_pkey;
-ALTER TABLE public.expansion_opportunities ADD CONSTRAINT expansion_opportunities_pkey PRIMARY KEY (id);
--- public.expansion_playbooks
-ALTER TABLE public.expansion_playbooks DROP CONSTRAINT IF EXISTS expansion_playbooks_pkey;
-ALTER TABLE public.expansion_playbooks ADD CONSTRAINT expansion_playbooks_pkey PRIMARY KEY (id);
--- public.experiment_assignments
-ALTER TABLE public.experiment_assignments DROP CONSTRAINT IF EXISTS experiment_assignments_pkey;
-ALTER TABLE public.experiment_assignments ADD CONSTRAINT experiment_assignments_pkey PRIMARY KEY (user_id, experiment_id);
--- public.experiment_variants
-ALTER TABLE public.experiment_variants DROP CONSTRAINT IF EXISTS experiment_variants_pkey;
-ALTER TABLE public.experiment_variants ADD CONSTRAINT experiment_variants_pkey PRIMARY KEY (id);
--- public.experiments
-ALTER TABLE public.experiments DROP CONSTRAINT IF EXISTS experiments_pkey;
-ALTER TABLE public.experiments ADD CONSTRAINT experiments_pkey PRIMARY KEY (id);
--- public.external_seller_map
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS external_seller_map_pkey;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT external_seller_map_pkey PRIMARY KEY (id);
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS external_seller_map_external_source_external_id_key;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT external_seller_map_external_source_external_id_key UNIQUE (external_source, external_id);
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS chk_external_seller_map_email_format;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT chk_external_seller_map_email_format CHECK (((external_email IS NULL) OR (external_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text)));
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS chk_external_seller_map_external_id_len;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT chk_external_seller_map_external_id_len CHECK (((char_length(external_id) >= 1) AND (char_length(external_id) <= 128)));
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS chk_external_seller_map_source_allowed;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT chk_external_seller_map_source_allowed CHECK ((external_source = ANY (ARRAY['bitrix24'::text, 'gift_store'::text, 'promogifts'::text, 'n8n'::text, 'manual'::text, 'api'::text])));
--- public.feature_flags
-ALTER TABLE public.feature_flags DROP CONSTRAINT IF EXISTS feature_flags_pkey;
-ALTER TABLE public.feature_flags ADD CONSTRAINT feature_flags_pkey PRIMARY KEY (id);
-ALTER TABLE public.feature_flags DROP CONSTRAINT IF EXISTS feature_flags_key_key;
-ALTER TABLE public.feature_flags ADD CONSTRAINT feature_flags_key_key UNIQUE (key);
-ALTER TABLE public.feature_flags DROP CONSTRAINT IF EXISTS feature_flags_rollout_percentage_check;
-ALTER TABLE public.feature_flags ADD CONSTRAINT feature_flags_rollout_percentage_check CHECK (((rollout_percentage >= 0) AND (rollout_percentage <= 100)));
--- public.feed_comments
-ALTER TABLE public.feed_comments DROP CONSTRAINT IF EXISTS feed_comments_pkey;
-ALTER TABLE public.feed_comments ADD CONSTRAINT feed_comments_pkey PRIMARY KEY (id);
--- public.feed_reactions
-ALTER TABLE public.feed_reactions DROP CONSTRAINT IF EXISTS feed_reactions_pkey;
-ALTER TABLE public.feed_reactions ADD CONSTRAINT feed_reactions_pkey PRIMARY KEY (id);
-ALTER TABLE public.feed_reactions DROP CONSTRAINT IF EXISTS feed_reactions_feed_item_id_salesperson_id_key;
-ALTER TABLE public.feed_reactions ADD CONSTRAINT feed_reactions_feed_item_id_salesperson_id_key UNIQUE (feed_item_id, salesperson_id);
--- public.follow_up_audit_logs
-ALTER TABLE public.follow_up_audit_logs DROP CONSTRAINT IF EXISTS follow_up_audit_logs_pkey;
-ALTER TABLE public.follow_up_audit_logs ADD CONSTRAINT follow_up_audit_logs_pkey PRIMARY KEY (id);
--- public.follow_up_notifications
-ALTER TABLE public.follow_up_notifications DROP CONSTRAINT IF EXISTS follow_up_notifications_pkey;
-ALTER TABLE public.follow_up_notifications ADD CONSTRAINT follow_up_notifications_pkey PRIMARY KEY (id);
--- public.follow_up_settings
-ALTER TABLE public.follow_up_settings DROP CONSTRAINT IF EXISTS follow_up_settings_pkey;
-ALTER TABLE public.follow_up_settings ADD CONSTRAINT follow_up_settings_pkey PRIMARY KEY (id);
--- public.follow_up_templates
-ALTER TABLE public.follow_up_templates DROP CONSTRAINT IF EXISTS follow_up_templates_pkey;
-ALTER TABLE public.follow_up_templates ADD CONSTRAINT follow_up_templates_pkey PRIMARY KEY (id);
--- public.follow_up_territory_rules
-ALTER TABLE public.follow_up_territory_rules DROP CONSTRAINT IF EXISTS follow_up_territory_rules_pkey;
-ALTER TABLE public.follow_up_territory_rules ADD CONSTRAINT follow_up_territory_rules_pkey PRIMARY KEY (id);
--- public.forecast_accuracy
-ALTER TABLE public.forecast_accuracy DROP CONSTRAINT IF EXISTS forecast_accuracy_pkey;
-ALTER TABLE public.forecast_accuracy ADD CONSTRAINT forecast_accuracy_pkey PRIMARY KEY (id);
-ALTER TABLE public.forecast_accuracy DROP CONSTRAINT IF EXISTS forecast_accuracy_snapshot_id_key;
-ALTER TABLE public.forecast_accuracy ADD CONSTRAINT forecast_accuracy_snapshot_id_key UNIQUE (snapshot_id);
-ALTER TABLE public.forecast_accuracy DROP CONSTRAINT IF EXISTS forecast_accuracy_bias_check;
-ALTER TABLE public.forecast_accuracy ADD CONSTRAINT forecast_accuracy_bias_check CHECK ((bias = ANY (ARRAY['optimistic'::text, 'pessimistic'::text, 'accurate'::text])));
--- public.forecast_confidence_scores
-ALTER TABLE public.forecast_confidence_scores DROP CONSTRAINT IF EXISTS forecast_confidence_scores_pkey;
-ALTER TABLE public.forecast_confidence_scores ADD CONSTRAINT forecast_confidence_scores_pkey PRIMARY KEY (id);
-ALTER TABLE public.forecast_confidence_scores DROP CONSTRAINT IF EXISTS forecast_confidence_scores_owner_id_source_key;
-ALTER TABLE public.forecast_confidence_scores ADD CONSTRAINT forecast_confidence_scores_owner_id_source_key UNIQUE (owner_id, source);
--- public.forecast_deal_contributions
-ALTER TABLE public.forecast_deal_contributions DROP CONSTRAINT IF EXISTS forecast_deal_contributions_pkey;
-ALTER TABLE public.forecast_deal_contributions ADD CONSTRAINT forecast_deal_contributions_pkey PRIMARY KEY (id);
-ALTER TABLE public.forecast_deal_contributions DROP CONSTRAINT IF EXISTS forecast_deal_contributions_category_check;
-ALTER TABLE public.forecast_deal_contributions ADD CONSTRAINT forecast_deal_contributions_category_check CHECK ((category = ANY (ARRAY['commit'::text, 'best'::text, 'upside'::text, 'omitted'::text])));
-ALTER TABLE public.forecast_deal_contributions DROP CONSTRAINT IF EXISTS forecast_deal_contributions_probability_check;
-ALTER TABLE public.forecast_deal_contributions ADD CONSTRAINT forecast_deal_contributions_probability_check CHECK (((probability >= (0)::numeric) AND (probability <= (1)::numeric)));
--- public.forecast_narrative_dead_letters
-ALTER TABLE public.forecast_narrative_dead_letters DROP CONSTRAINT IF EXISTS forecast_narrative_dead_letters_pkey;
-ALTER TABLE public.forecast_narrative_dead_letters ADD CONSTRAINT forecast_narrative_dead_letters_pkey PRIMARY KEY (id);
--- public.forecast_snapshots
-ALTER TABLE public.forecast_snapshots DROP CONSTRAINT IF EXISTS forecast_snapshots_pkey;
-ALTER TABLE public.forecast_snapshots ADD CONSTRAINT forecast_snapshots_pkey PRIMARY KEY (id);
-ALTER TABLE public.forecast_snapshots DROP CONSTRAINT IF EXISTS forecast_snapshots_source_check;
-ALTER TABLE public.forecast_snapshots ADD CONSTRAINT forecast_snapshots_source_check CHECK ((source = ANY (ARRAY['manual'::text, 'weighted'::text, 'ai'::text])));
--- public.geo_access_logs
-ALTER TABLE public.geo_access_logs DROP CONSTRAINT IF EXISTS geo_access_logs_pkey;
-ALTER TABLE public.geo_access_logs ADD CONSTRAINT geo_access_logs_pkey PRIMARY KEY (id);
--- public.geo_blocked_regions
-ALTER TABLE public.geo_blocked_regions DROP CONSTRAINT IF EXISTS geo_blocked_regions_pkey;
-ALTER TABLE public.geo_blocked_regions ADD CONSTRAINT geo_blocked_regions_pkey PRIMARY KEY (id);
-ALTER TABLE public.geo_blocked_regions DROP CONSTRAINT IF EXISTS geo_blocked_regions_country_code_key;
-ALTER TABLE public.geo_blocked_regions ADD CONSTRAINT geo_blocked_regions_country_code_key UNIQUE (country_code);
--- public.geocode_cache
-ALTER TABLE public.geocode_cache DROP CONSTRAINT IF EXISTS geocode_cache_pkey;
-ALTER TABLE public.geocode_cache ADD CONSTRAINT geocode_cache_pkey PRIMARY KEY (query_key);
--- public.icp_data
-ALTER TABLE public.icp_data DROP CONSTRAINT IF EXISTS icp_data_pkey;
-ALTER TABLE public.icp_data ADD CONSTRAINT icp_data_pkey PRIMARY KEY (id);
-ALTER TABLE public.icp_data DROP CONSTRAINT IF EXISTS icp_data_client_id_key;
-ALTER TABLE public.icp_data ADD CONSTRAINT icp_data_client_id_key UNIQUE (client_id);
--- public.icp_parameters
-ALTER TABLE public.icp_parameters DROP CONSTRAINT IF EXISTS icp_parameters_pkey;
-ALTER TABLE public.icp_parameters ADD CONSTRAINT icp_parameters_pkey PRIMARY KEY (id);
--- public.inbound_reply_events
-ALTER TABLE public.inbound_reply_events DROP CONSTRAINT IF EXISTS inbound_reply_events_pkey;
-ALTER TABLE public.inbound_reply_events ADD CONSTRAINT inbound_reply_events_pkey PRIMARY KEY (id);
--- public.integration_autotest_jobs
-ALTER TABLE public.integration_autotest_jobs DROP CONSTRAINT IF EXISTS integration_autotest_jobs_pkey;
-ALTER TABLE public.integration_autotest_jobs ADD CONSTRAINT integration_autotest_jobs_pkey PRIMARY KEY (id);
--- public.integration_autotest_settings
-ALTER TABLE public.integration_autotest_settings DROP CONSTRAINT IF EXISTS integration_autotest_settings_pkey;
-ALTER TABLE public.integration_autotest_settings ADD CONSTRAINT integration_autotest_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.integration_autotest_settings DROP CONSTRAINT IF EXISTS integration_autotest_settings_singleton_key;
-ALTER TABLE public.integration_autotest_settings ADD CONSTRAINT integration_autotest_settings_singleton_key UNIQUE (singleton);
-ALTER TABLE public.integration_autotest_settings DROP CONSTRAINT IF EXISTS integration_autotest_settings_failure_window_minutes_check;
-ALTER TABLE public.integration_autotest_settings ADD CONSTRAINT integration_autotest_settings_failure_window_minutes_check CHECK (((failure_window_minutes >= 1) AND (failure_window_minutes <= 240)));
-ALTER TABLE public.integration_autotest_settings DROP CONSTRAINT IF EXISTS integration_autotest_settings_interval_minutes_check;
-ALTER TABLE public.integration_autotest_settings ADD CONSTRAINT integration_autotest_settings_interval_minutes_check CHECK (((interval_minutes >= 5) AND (interval_minutes <= 1440)));
--- public.integration_connections
-ALTER TABLE public.integration_connections DROP CONSTRAINT IF EXISTS integration_connections_pkey;
-ALTER TABLE public.integration_connections ADD CONSTRAINT integration_connections_pkey PRIMARY KEY (id);
--- public.integration_health_checks
-ALTER TABLE public.integration_health_checks DROP CONSTRAINT IF EXISTS integration_health_checks_pkey;
-ALTER TABLE public.integration_health_checks ADD CONSTRAINT integration_health_checks_pkey PRIMARY KEY (id);
--- public.integration_logs
-ALTER TABLE public.integration_logs DROP CONSTRAINT IF EXISTS integration_logs_pkey;
-ALTER TABLE public.integration_logs ADD CONSTRAINT integration_logs_pkey PRIMARY KEY (id);
--- public.integration_secret_refs
-ALTER TABLE public.integration_secret_refs DROP CONSTRAINT IF EXISTS integration_secret_refs_pkey;
-ALTER TABLE public.integration_secret_refs ADD CONSTRAINT integration_secret_refs_pkey PRIMARY KEY (id);
-ALTER TABLE public.integration_secret_refs DROP CONSTRAINT IF EXISTS integration_secret_refs_credential_id_key_key;
-ALTER TABLE public.integration_secret_refs ADD CONSTRAINT integration_secret_refs_credential_id_key_key UNIQUE (credential_id, key);
-ALTER TABLE public.integration_secret_refs DROP CONSTRAINT IF EXISTS integration_secret_refs_secret_ref_check;
-ALTER TABLE public.integration_secret_refs ADD CONSTRAINT integration_secret_refs_secret_ref_check CHECK ((secret_ref ~ '^(internal|env):[A-Za-z_][A-Za-z0-9_.-]*$'::text));
--- public.intent_audit_logs
-ALTER TABLE public.intent_audit_logs DROP CONSTRAINT IF EXISTS intent_audit_logs_pkey;
-ALTER TABLE public.intent_audit_logs ADD CONSTRAINT intent_audit_logs_pkey PRIMARY KEY (id);
--- public.inventory_levels
-ALTER TABLE public.inventory_levels DROP CONSTRAINT IF EXISTS inventory_levels_pkey;
-ALTER TABLE public.inventory_levels ADD CONSTRAINT inventory_levels_pkey PRIMARY KEY (id);
-ALTER TABLE public.inventory_levels DROP CONSTRAINT IF EXISTS inventory_levels_product_id_key;
-ALTER TABLE public.inventory_levels ADD CONSTRAINT inventory_levels_product_id_key UNIQUE (product_id);
--- public.ip_whitelist
-ALTER TABLE public.ip_whitelist DROP CONSTRAINT IF EXISTS ip_whitelist_pkey;
-ALTER TABLE public.ip_whitelist ADD CONSTRAINT ip_whitelist_pkey PRIMARY KEY (id);
-ALTER TABLE public.ip_whitelist DROP CONSTRAINT IF EXISTS ip_whitelist_ip_address_key;
-ALTER TABLE public.ip_whitelist ADD CONSTRAINT ip_whitelist_ip_address_key UNIQUE (ip_address);
--- public.known_devices
-ALTER TABLE public.known_devices DROP CONSTRAINT IF EXISTS known_devices_pkey;
-ALTER TABLE public.known_devices ADD CONSTRAINT known_devices_pkey PRIMARY KEY (id);
-ALTER TABLE public.known_devices DROP CONSTRAINT IF EXISTS known_devices_user_id_device_fingerprint_key;
-ALTER TABLE public.known_devices ADD CONSTRAINT known_devices_user_id_device_fingerprint_key UNIQUE (user_id, device_fingerprint);
--- public.kudos
-ALTER TABLE public.kudos DROP CONSTRAINT IF EXISTS kudos_pkey;
-ALTER TABLE public.kudos ADD CONSTRAINT kudos_pkey PRIMARY KEY (id);
--- public.lead_assignments
-ALTER TABLE public.lead_assignments DROP CONSTRAINT IF EXISTS lead_assignments_pkey;
-ALTER TABLE public.lead_assignments ADD CONSTRAINT lead_assignments_pkey PRIMARY KEY (id);
--- public.lead_churn_risk
-ALTER TABLE public.lead_churn_risk DROP CONSTRAINT IF EXISTS lead_churn_risk_pkey;
-ALTER TABLE public.lead_churn_risk ADD CONSTRAINT lead_churn_risk_pkey PRIMARY KEY (id);
-ALTER TABLE public.lead_churn_risk DROP CONSTRAINT IF EXISTS lead_churn_risk_sale_id_key;
-ALTER TABLE public.lead_churn_risk ADD CONSTRAINT lead_churn_risk_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.lead_churn_risk DROP CONSTRAINT IF EXISTS lead_churn_risk_risk_level_check;
-ALTER TABLE public.lead_churn_risk ADD CONSTRAINT lead_churn_risk_risk_level_check CHECK ((risk_level = ANY (ARRAY['critical'::text, 'high'::text, 'medium'::text, 'low'::text])));
-ALTER TABLE public.lead_churn_risk DROP CONSTRAINT IF EXISTS lead_churn_risk_status_check;
-ALTER TABLE public.lead_churn_risk ADD CONSTRAINT lead_churn_risk_status_check CHECK ((status = ANY (ARRAY['active'::text, 'resolved'::text, 'ignored'::text])));
--- public.lead_detailed_logs
-ALTER TABLE public.lead_detailed_logs DROP CONSTRAINT IF EXISTS lead_detailed_logs_pkey;
-ALTER TABLE public.lead_detailed_logs ADD CONSTRAINT lead_detailed_logs_pkey PRIMARY KEY (id);
--- public.lead_intelligence_metrics
-ALTER TABLE public.lead_intelligence_metrics DROP CONSTRAINT IF EXISTS lead_intelligence_metrics_pkey;
-ALTER TABLE public.lead_intelligence_metrics ADD CONSTRAINT lead_intelligence_metrics_pkey PRIMARY KEY (id);
--- public.lead_routing_log
-ALTER TABLE public.lead_routing_log DROP CONSTRAINT IF EXISTS lead_routing_log_pkey;
-ALTER TABLE public.lead_routing_log ADD CONSTRAINT lead_routing_log_pkey PRIMARY KEY (id);
--- public.lead_routing_rules
-ALTER TABLE public.lead_routing_rules DROP CONSTRAINT IF EXISTS lead_routing_rules_pkey;
-ALTER TABLE public.lead_routing_rules ADD CONSTRAINT lead_routing_rules_pkey PRIMARY KEY (id);
--- public.lead_score_explanations
-ALTER TABLE public.lead_score_explanations DROP CONSTRAINT IF EXISTS lead_score_explanations_pkey;
-ALTER TABLE public.lead_score_explanations ADD CONSTRAINT lead_score_explanations_pkey PRIMARY KEY (id);
-ALTER TABLE public.lead_score_explanations DROP CONSTRAINT IF EXISTS lead_score_explanations_sale_id_key;
-ALTER TABLE public.lead_score_explanations ADD CONSTRAINT lead_score_explanations_sale_id_key UNIQUE (sale_id);
--- public.lead_score_history
-ALTER TABLE public.lead_score_history DROP CONSTRAINT IF EXISTS lead_score_history_pkey;
-ALTER TABLE public.lead_score_history ADD CONSTRAINT lead_score_history_pkey PRIMARY KEY (id);
--- public.lead_score_trends
-ALTER TABLE public.lead_score_trends DROP CONSTRAINT IF EXISTS lead_score_trends_pkey;
-ALTER TABLE public.lead_score_trends ADD CONSTRAINT lead_score_trends_pkey PRIMARY KEY (id);
--- public.lead_scores
-ALTER TABLE public.lead_scores DROP CONSTRAINT IF EXISTS lead_scores_pkey;
-ALTER TABLE public.lead_scores ADD CONSTRAINT lead_scores_pkey PRIMARY KEY (id);
-ALTER TABLE public.lead_scores DROP CONSTRAINT IF EXISTS lead_scores_sale_id_key;
-ALTER TABLE public.lead_scores ADD CONSTRAINT lead_scores_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.lead_scores DROP CONSTRAINT IF EXISTS lead_scores_score_range;
-ALTER TABLE public.lead_scores ADD CONSTRAINT lead_scores_score_range CHECK (((score IS NULL) OR ((score >= 0) AND (score <= 100)))) NOT VALID;
--- public.lead_source_configs
-ALTER TABLE public.lead_source_configs DROP CONSTRAINT IF EXISTS lead_source_configs_pkey;
-ALTER TABLE public.lead_source_configs ADD CONSTRAINT lead_source_configs_pkey PRIMARY KEY (id);
-ALTER TABLE public.lead_source_configs DROP CONSTRAINT IF EXISTS lead_source_configs_source_name_key;
-ALTER TABLE public.lead_source_configs ADD CONSTRAINT lead_source_configs_source_name_key UNIQUE (source_name);
--- public.league_history
-ALTER TABLE public.league_history DROP CONSTRAINT IF EXISTS league_history_pkey;
-ALTER TABLE public.league_history ADD CONSTRAINT league_history_pkey PRIMARY KEY (id);
--- public.league_members
-ALTER TABLE public.league_members DROP CONSTRAINT IF EXISTS league_members_pkey;
-ALTER TABLE public.league_members ADD CONSTRAINT league_members_pkey PRIMARY KEY (id);
-ALTER TABLE public.league_members DROP CONSTRAINT IF EXISTS league_members_salesperson_id_key;
-ALTER TABLE public.league_members ADD CONSTRAINT league_members_salesperson_id_key UNIQUE (salesperson_id);
--- public.leagues
-ALTER TABLE public.leagues DROP CONSTRAINT IF EXISTS leagues_pkey;
-ALTER TABLE public.leagues ADD CONSTRAINT leagues_pkey PRIMARY KEY (id);
--- public.login_alerts
-ALTER TABLE public.login_alerts DROP CONSTRAINT IF EXISTS login_alerts_pkey;
-ALTER TABLE public.login_alerts ADD CONSTRAINT login_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.login_alerts DROP CONSTRAINT IF EXISTS login_alerts_alert_type_check;
-ALTER TABLE public.login_alerts ADD CONSTRAINT login_alerts_alert_type_check CHECK ((alert_type = ANY (ARRAY['new_device'::text, 'new_ip'::text, 'new_location'::text, 'suspicious'::text])));
--- public.login_attempts
-ALTER TABLE public.login_attempts DROP CONSTRAINT IF EXISTS login_attempts_pkey;
-ALTER TABLE public.login_attempts ADD CONSTRAINT login_attempts_pkey PRIMARY KEY (id);
--- public.maintenance_log
-ALTER TABLE public.maintenance_log DROP CONSTRAINT IF EXISTS maintenance_log_pkey;
-ALTER TABLE public.maintenance_log ADD CONSTRAINT maintenance_log_pkey PRIMARY KEY (id);
-ALTER TABLE public.maintenance_log DROP CONSTRAINT IF EXISTS chk_maintenance_log_completed_after_started;
-ALTER TABLE public.maintenance_log ADD CONSTRAINT chk_maintenance_log_completed_after_started CHECK (((completed_at IS NULL) OR (completed_at >= started_at)));
-ALTER TABLE public.maintenance_log DROP CONSTRAINT IF EXISTS chk_maintenance_log_rows_affected_non_negative;
-ALTER TABLE public.maintenance_log ADD CONSTRAINT chk_maintenance_log_rows_affected_non_negative CHECK (((rows_affected IS NULL) OR (rows_affected >= 0)));
-ALTER TABLE public.maintenance_log DROP CONSTRAINT IF EXISTS chk_maintenance_log_status_allowed;
-ALTER TABLE public.maintenance_log ADD CONSTRAINT chk_maintenance_log_status_allowed CHECK ((status = ANY (ARRAY['running'::text, 'completed'::text, 'failed'::text, 'skipped'::text])));
--- public.message_templates
-ALTER TABLE public.message_templates DROP CONSTRAINT IF EXISTS message_templates_pkey;
-ALTER TABLE public.message_templates ADD CONSTRAINT message_templates_pkey PRIMARY KEY (id);
-ALTER TABLE public.message_templates DROP CONSTRAINT IF EXISTS message_templates_channel_check;
-ALTER TABLE public.message_templates ADD CONSTRAINT message_templates_channel_check CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text])));
--- public.mfa_verification_attempts
-ALTER TABLE public.mfa_verification_attempts DROP CONSTRAINT IF EXISTS mfa_verification_attempts_pkey;
-ALTER TABLE public.mfa_verification_attempts ADD CONSTRAINT mfa_verification_attempts_pkey PRIMARY KEY (id);
-ALTER TABLE public.mfa_verification_attempts DROP CONSTRAINT IF EXISTS mfa_verification_attempts_method_check;
-ALTER TABLE public.mfa_verification_attempts ADD CONSTRAINT mfa_verification_attempts_method_check CHECK ((method = ANY (ARRAY['totp'::text, 'sms'::text, 'backup_code'::text])));
--- public.migration_log
-ALTER TABLE public.migration_log DROP CONSTRAINT IF EXISTS migration_log_pkey;
-ALTER TABLE public.migration_log ADD CONSTRAINT migration_log_pkey PRIMARY KEY (id);
--- public.monthly_sales_summary
-ALTER TABLE public.monthly_sales_summary DROP CONSTRAINT IF EXISTS monthly_sales_summary_pkey;
-ALTER TABLE public.monthly_sales_summary ADD CONSTRAINT monthly_sales_summary_pkey PRIMARY KEY (month);
--- public.mood_entries
-ALTER TABLE public.mood_entries DROP CONSTRAINT IF EXISTS mood_entries_pkey;
-ALTER TABLE public.mood_entries ADD CONSTRAINT mood_entries_pkey PRIMARY KEY (id);
-ALTER TABLE public.mood_entries DROP CONSTRAINT IF EXISTS mood_entries_salesperson_id_entry_date_key;
-ALTER TABLE public.mood_entries ADD CONSTRAINT mood_entries_salesperson_id_entry_date_key UNIQUE (salesperson_id, entry_date);
--- public.mql_qualifications
-ALTER TABLE public.mql_qualifications DROP CONSTRAINT IF EXISTS mql_qualifications_pkey;
-ALTER TABLE public.mql_qualifications ADD CONSTRAINT mql_qualifications_pkey PRIMARY KEY (id);
--- public.notification_preferences
-ALTER TABLE public.notification_preferences DROP CONSTRAINT IF EXISTS notification_preferences_pkey;
-ALTER TABLE public.notification_preferences ADD CONSTRAINT notification_preferences_pkey PRIMARY KEY (id);
-ALTER TABLE public.notification_preferences DROP CONSTRAINT IF EXISTS valid_frequency;
-ALTER TABLE public.notification_preferences ADD CONSTRAINT valid_frequency CHECK ((frequency = ANY (ARRAY['realtime'::text, 'daily'::text, 'weekly'::text])));
--- public.notifications
-ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_pkey;
-ALTER TABLE public.notifications ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
-ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_category_check;
-ALTER TABLE public.notifications ADD CONSTRAINT notifications_category_check CHECK ((category = ANY (ARRAY['general'::text, 'sales'::text, 'goals'::text, 'gamification'::text, 'security'::text, 'system'::text, 'team'::text, 'ai'::text, 'approval'::text])));
-ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_priority_check;
-ALTER TABLE public.notifications ADD CONSTRAINT notifications_priority_check CHECK ((priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.nps_surveys
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_pkey;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_pkey PRIMARY KEY (id);
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_score_check;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_score_check CHECK (((score >= 0) AND (score <= 10)));
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_status_check;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'sent'::text, 'responded'::text])));
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_survey_type_check;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_survey_type_check CHECK ((survey_type = ANY (ARRAY['nps'::text, 'csat'::text])));
--- public.objection_library
-ALTER TABLE public.objection_library DROP CONSTRAINT IF EXISTS objection_library_pkey;
-ALTER TABLE public.objection_library ADD CONSTRAINT objection_library_pkey PRIMARY KEY (id);
-ALTER TABLE public.objection_library DROP CONSTRAINT IF EXISTS objection_library_objection_type_pattern_text_key;
-ALTER TABLE public.objection_library ADD CONSTRAINT objection_library_objection_type_pattern_text_key UNIQUE (objection_type, pattern_text);
--- public.objections_library
-ALTER TABLE public.objections_library DROP CONSTRAINT IF EXISTS objections_library_pkey;
-ALTER TABLE public.objections_library ADD CONSTRAINT objections_library_pkey PRIMARY KEY (id);
--- public.onboarding_journeys
-ALTER TABLE public.onboarding_journeys DROP CONSTRAINT IF EXISTS onboarding_journeys_pkey;
-ALTER TABLE public.onboarding_journeys ADD CONSTRAINT onboarding_journeys_pkey PRIMARY KEY (id);
--- public.onboarding_steps
-ALTER TABLE public.onboarding_steps DROP CONSTRAINT IF EXISTS onboarding_steps_pkey;
-ALTER TABLE public.onboarding_steps ADD CONSTRAINT onboarding_steps_pkey PRIMARY KEY (id);
--- public.order_items
-ALTER TABLE public.order_items DROP CONSTRAINT IF EXISTS order_items_pkey;
-ALTER TABLE public.order_items ADD CONSTRAINT order_items_pkey PRIMARY KEY (id);
--- public.order_status_events
-ALTER TABLE public.order_status_events DROP CONSTRAINT IF EXISTS order_status_events_pkey;
-ALTER TABLE public.order_status_events ADD CONSTRAINT order_status_events_pkey PRIMARY KEY (id);
--- public.orders
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_pkey;
-ALTER TABLE public.orders ADD CONSTRAINT orders_pkey PRIMARY KEY (id);
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_order_number_key;
-ALTER TABLE public.orders ADD CONSTRAINT orders_order_number_key UNIQUE (order_number);
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_status_check;
-ALTER TABLE public.orders ADD CONSTRAINT orders_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'preparing'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text])));
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_total_non_negative;
-ALTER TABLE public.orders ADD CONSTRAINT orders_total_non_negative CHECK (((total IS NULL) OR (total >= (0)::numeric))) NOT VALID;
--- public.outbound_messages
-ALTER TABLE public.outbound_messages DROP CONSTRAINT IF EXISTS outbound_messages_pkey;
-ALTER TABLE public.outbound_messages ADD CONSTRAINT outbound_messages_pkey PRIMARY KEY (id);
-ALTER TABLE public.outbound_messages DROP CONSTRAINT IF EXISTS outbound_messages_channel_check;
-ALTER TABLE public.outbound_messages ADD CONSTRAINT outbound_messages_channel_check CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])));
-ALTER TABLE public.outbound_messages DROP CONSTRAINT IF EXISTS outbound_messages_status_check;
-ALTER TABLE public.outbound_messages ADD CONSTRAINT outbound_messages_status_check CHECK ((status = ANY (ARRAY['queued'::text, 'sent'::text, 'delivered'::text, 'read'::text, 'failed'::text])));
--- public.page_analytics
-ALTER TABLE public.page_analytics DROP CONSTRAINT IF EXISTS page_analytics_pkey;
-ALTER TABLE public.page_analytics ADD CONSTRAINT page_analytics_pkey PRIMARY KEY (id);
--- public.password_history
-ALTER TABLE public.password_history DROP CONSTRAINT IF EXISTS password_history_pkey;
-ALTER TABLE public.password_history ADD CONSTRAINT password_history_pkey PRIMARY KEY (id);
--- public.password_reset_requests
-ALTER TABLE public.password_reset_requests DROP CONSTRAINT IF EXISTS password_reset_requests_pkey;
-ALTER TABLE public.password_reset_requests ADD CONSTRAINT password_reset_requests_pkey PRIMARY KEY (id);
-ALTER TABLE public.password_reset_requests DROP CONSTRAINT IF EXISTS password_reset_requests_status_check;
-ALTER TABLE public.password_reset_requests ADD CONSTRAINT password_reset_requests_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'completed'::text, 'expired'::text])));
--- public.performance_bets
-ALTER TABLE public.performance_bets DROP CONSTRAINT IF EXISTS performance_bets_pkey;
-ALTER TABLE public.performance_bets ADD CONSTRAINT performance_bets_pkey PRIMARY KEY (id);
-ALTER TABLE public.performance_bets DROP CONSTRAINT IF EXISTS performance_bets_bet_type_check;
-ALTER TABLE public.performance_bets ADD CONSTRAINT performance_bets_bet_type_check CHECK ((bet_type = ANY (ARRAY['deals'::text, 'revenue'::text, 'calls'::text, 'meetings'::text, 'activities'::text])));
-ALTER TABLE public.performance_bets DROP CONSTRAINT IF EXISTS performance_bets_status_check;
-ALTER TABLE public.performance_bets ADD CONSTRAINT performance_bets_status_check CHECK ((status = ANY (ARRAY['active'::text, 'won'::text, 'lost'::text, 'cancelled'::text])));
--- public.performance_impact_factors
-ALTER TABLE public.performance_impact_factors DROP CONSTRAINT IF EXISTS performance_impact_factors_pkey;
-ALTER TABLE public.performance_impact_factors ADD CONSTRAINT performance_impact_factors_pkey PRIMARY KEY (id);
--- public.permissions
-ALTER TABLE public.permissions DROP CONSTRAINT IF EXISTS permissions_pkey;
-ALTER TABLE public.permissions ADD CONSTRAINT permissions_pkey PRIMARY KEY (id);
-ALTER TABLE public.permissions DROP CONSTRAINT IF EXISTS permissions_name_key;
-ALTER TABLE public.permissions ADD CONSTRAINT permissions_name_key UNIQUE (name);
-ALTER TABLE public.permissions DROP CONSTRAINT IF EXISTS permissions_resource_action_key;
-ALTER TABLE public.permissions ADD CONSTRAINT permissions_resource_action_key UNIQUE (resource, action);
--- public.person_intelligence
-ALTER TABLE public.person_intelligence DROP CONSTRAINT IF EXISTS person_intelligence_pkey;
-ALTER TABLE public.person_intelligence ADD CONSTRAINT person_intelligence_pkey PRIMARY KEY (id);
-ALTER TABLE public.person_intelligence DROP CONSTRAINT IF EXISTS person_intelligence_email_key;
-ALTER TABLE public.person_intelligence ADD CONSTRAINT person_intelligence_email_key UNIQUE (email);
--- public.personal_assistant_briefings
-ALTER TABLE public.personal_assistant_briefings DROP CONSTRAINT IF EXISTS personal_assistant_briefings_pkey;
-ALTER TABLE public.personal_assistant_briefings ADD CONSTRAINT personal_assistant_briefings_pkey PRIMARY KEY (id);
--- public.personal_assistant_nudges
-ALTER TABLE public.personal_assistant_nudges DROP CONSTRAINT IF EXISTS personal_assistant_nudges_pkey;
-ALTER TABLE public.personal_assistant_nudges ADD CONSTRAINT personal_assistant_nudges_pkey PRIMARY KEY (id);
-ALTER TABLE public.personal_assistant_nudges DROP CONSTRAINT IF EXISTS personal_assistant_nudges_feedback_check;
-ALTER TABLE public.personal_assistant_nudges ADD CONSTRAINT personal_assistant_nudges_feedback_check CHECK ((feedback = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text])));
--- public.pipeline_coverage_recommendations
-ALTER TABLE public.pipeline_coverage_recommendations DROP CONSTRAINT IF EXISTS pipeline_coverage_recommendations_pkey;
-ALTER TABLE public.pipeline_coverage_recommendations ADD CONSTRAINT pipeline_coverage_recommendations_pkey PRIMARY KEY (id);
-ALTER TABLE public.pipeline_coverage_recommendations DROP CONSTRAINT IF EXISTS pipeline_coverage_recommendations_priority_check;
-ALTER TABLE public.pipeline_coverage_recommendations ADD CONSTRAINT pipeline_coverage_recommendations_priority_check CHECK ((priority = ANY (ARRAY['high'::text, 'medium'::text, 'low'::text])));
--- public.pipeline_coverage_snapshots
-ALTER TABLE public.pipeline_coverage_snapshots DROP CONSTRAINT IF EXISTS pipeline_coverage_snapshots_pkey;
-ALTER TABLE public.pipeline_coverage_snapshots ADD CONSTRAINT pipeline_coverage_snapshots_pkey PRIMARY KEY (id);
-ALTER TABLE public.pipeline_coverage_snapshots DROP CONSTRAINT IF EXISTS pipeline_coverage_snapshots_health_check;
-ALTER TABLE public.pipeline_coverage_snapshots ADD CONSTRAINT pipeline_coverage_snapshots_health_check CHECK ((health = ANY (ARRAY['critical'::text, 'weak'::text, 'healthy'::text, 'strong'::text])));
--- public.pipeline_inspection_snapshots
-ALTER TABLE public.pipeline_inspection_snapshots DROP CONSTRAINT IF EXISTS pipeline_inspection_snapshots_pkey;
-ALTER TABLE public.pipeline_inspection_snapshots ADD CONSTRAINT pipeline_inspection_snapshots_pkey PRIMARY KEY (id);
--- public.pipeline_inspections
-ALTER TABLE public.pipeline_inspections DROP CONSTRAINT IF EXISTS pipeline_inspections_pkey;
-ALTER TABLE public.pipeline_inspections ADD CONSTRAINT pipeline_inspections_pkey PRIMARY KEY (id);
--- public.pipeline_stages
-ALTER TABLE public.pipeline_stages DROP CONSTRAINT IF EXISTS pipeline_stages_pkey;
-ALTER TABLE public.pipeline_stages ADD CONSTRAINT pipeline_stages_pkey PRIMARY KEY (id);
-ALTER TABLE public.pipeline_stages DROP CONSTRAINT IF EXISTS pipeline_stage_order_positive;
-ALTER TABLE public.pipeline_stages ADD CONSTRAINT pipeline_stage_order_positive CHECK (((stage_order IS NULL) OR (stage_order >= 0)));
--- public.pipelines
-ALTER TABLE public.pipelines DROP CONSTRAINT IF EXISTS pipelines_pkey;
-ALTER TABLE public.pipelines ADD CONSTRAINT pipelines_pkey PRIMARY KEY (id);
--- public.plan_rollback_ddl
-ALTER TABLE public.plan_rollback_ddl DROP CONSTRAINT IF EXISTS plan_rollback_ddl_pkey;
-ALTER TABLE public.plan_rollback_ddl ADD CONSTRAINT plan_rollback_ddl_pkey PRIMARY KEY (id);
--- public.playbook_items
-ALTER TABLE public.playbook_items DROP CONSTRAINT IF EXISTS playbook_items_pkey;
-ALTER TABLE public.playbook_items ADD CONSTRAINT playbook_items_pkey PRIMARY KEY (id);
--- public.playbook_progress
-ALTER TABLE public.playbook_progress DROP CONSTRAINT IF EXISTS playbook_progress_pkey;
-ALTER TABLE public.playbook_progress ADD CONSTRAINT playbook_progress_pkey PRIMARY KEY (id);
-ALTER TABLE public.playbook_progress DROP CONSTRAINT IF EXISTS playbook_progress_playbook_item_id_sale_id_key;
-ALTER TABLE public.playbook_progress ADD CONSTRAINT playbook_progress_playbook_item_id_sale_id_key UNIQUE (playbook_item_id, sale_id);
--- public.playbooks
-ALTER TABLE public.playbooks DROP CONSTRAINT IF EXISTS playbooks_pkey;
-ALTER TABLE public.playbooks ADD CONSTRAINT playbooks_pkey PRIMARY KEY (id);
--- public.portfolio_settings
-ALTER TABLE public.portfolio_settings DROP CONSTRAINT IF EXISTS portfolio_settings_pkey;
-ALTER TABLE public.portfolio_settings ADD CONSTRAINT portfolio_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.portfolio_settings DROP CONSTRAINT IF EXISTS portfolio_settings_setting_key_key;
-ALTER TABLE public.portfolio_settings ADD CONSTRAINT portfolio_settings_setting_key_key UNIQUE (setting_key);
--- public.price_alerts
-ALTER TABLE public.price_alerts DROP CONSTRAINT IF EXISTS price_alerts_pkey;
-ALTER TABLE public.price_alerts ADD CONSTRAINT price_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.price_alerts DROP CONSTRAINT IF EXISTS price_alerts_alert_type_check;
-ALTER TABLE public.price_alerts ADD CONSTRAINT price_alerts_alert_type_check CHECK ((alert_type = ANY (ARRAY['price_drop'::text, 'price_increase'::text, 'new_best_price'::text])));
--- public.price_history
-ALTER TABLE public.price_history DROP CONSTRAINT IF EXISTS price_history_pkey;
-ALTER TABLE public.price_history ADD CONSTRAINT price_history_pkey PRIMARY KEY (id);
--- public.price_protection_rules
-ALTER TABLE public.price_protection_rules DROP CONSTRAINT IF EXISTS price_protection_rules_pkey;
-ALTER TABLE public.price_protection_rules ADD CONSTRAINT price_protection_rules_pkey PRIMARY KEY (id);
--- public.pricing_rules
-ALTER TABLE public.pricing_rules DROP CONSTRAINT IF EXISTS pricing_rules_pkey;
-ALTER TABLE public.pricing_rules ADD CONSTRAINT pricing_rules_pkey PRIMARY KEY (id);
--- public.prize_wheel_spins
-ALTER TABLE public.prize_wheel_spins DROP CONSTRAINT IF EXISTS prize_wheel_spins_pkey;
-ALTER TABLE public.prize_wheel_spins ADD CONSTRAINT prize_wheel_spins_pkey PRIMARY KEY (id);
--- public.product_stock_log
-ALTER TABLE public.product_stock_log DROP CONSTRAINT IF EXISTS product_stock_log_pkey;
-ALTER TABLE public.product_stock_log ADD CONSTRAINT product_stock_log_pkey PRIMARY KEY (id);
--- public.product_usage
-ALTER TABLE public.product_usage DROP CONSTRAINT IF EXISTS product_usage_pkey;
-ALTER TABLE public.product_usage ADD CONSTRAINT product_usage_pkey PRIMARY KEY (id);
--- public.product_usage_events
-ALTER TABLE public.product_usage_events DROP CONSTRAINT IF EXISTS product_usage_events_pkey;
-ALTER TABLE public.product_usage_events ADD CONSTRAINT product_usage_events_pkey PRIMARY KEY (id);
--- public.product_usage_summary
-ALTER TABLE public.product_usage_summary DROP CONSTRAINT IF EXISTS product_usage_summary_pkey;
-ALTER TABLE public.product_usage_summary ADD CONSTRAINT product_usage_summary_pkey PRIMARY KEY (account_id);
--- public.products
-ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_pkey;
-ALTER TABLE public.products ADD CONSTRAINT products_pkey PRIMARY KEY (id);
-ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_sku_key;
-ALTER TABLE public.products ADD CONSTRAINT products_sku_key UNIQUE (sku);
-ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_price_positive;
-ALTER TABLE public.products ADD CONSTRAINT products_price_positive CHECK ((price >= (0)::numeric));
-ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_stock_positive;
-ALTER TABLE public.products ADD CONSTRAINT products_stock_positive CHECK ((stock_quantity >= 0));
--- public.progressive_goals
-ALTER TABLE public.progressive_goals DROP CONSTRAINT IF EXISTS progressive_goals_pkey;
-ALTER TABLE public.progressive_goals ADD CONSTRAINT progressive_goals_pkey PRIMARY KEY (id);
-ALTER TABLE public.progressive_goals DROP CONSTRAINT IF EXISTS progressive_goals_salesperson_id_goal_type_key;
-ALTER TABLE public.progressive_goals ADD CONSTRAINT progressive_goals_salesperson_id_goal_type_key UNIQUE (salesperson_id, goal_type);
--- public.prospect_cadences
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_pkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_pkey PRIMARY KEY (id);
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_sale_id_cadence_id_key;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_sale_id_cadence_id_key UNIQUE (sale_id, cadence_id);
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_funnel_stage_check;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_funnel_stage_check CHECK ((funnel_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])));
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_status_check;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_status_check CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'completed'::text, 'cancelled'::text])));
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_target_check;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_target_check CHECK (((sale_id IS NOT NULL) OR (quote_id IS NOT NULL)));
--- public.push_subscriptions
-ALTER TABLE public.push_subscriptions DROP CONSTRAINT IF EXISTS push_subscriptions_pkey;
-ALTER TABLE public.push_subscriptions ADD CONSTRAINT push_subscriptions_pkey PRIMARY KEY (id);
-ALTER TABLE public.push_subscriptions DROP CONSTRAINT IF EXISTS push_subscriptions_user_id_key;
-ALTER TABLE public.push_subscriptions ADD CONSTRAINT push_subscriptions_user_id_key UNIQUE (user_id);
--- public.qbr_reports
-ALTER TABLE public.qbr_reports DROP CONSTRAINT IF EXISTS qbr_reports_pkey;
-ALTER TABLE public.qbr_reports ADD CONSTRAINT qbr_reports_pkey PRIMARY KEY (id);
--- public.qbr_schedule
-ALTER TABLE public.qbr_schedule DROP CONSTRAINT IF EXISTS qbr_schedule_pkey;
-ALTER TABLE public.qbr_schedule ADD CONSTRAINT qbr_schedule_pkey PRIMARY KEY (id);
--- public.query_telemetry
-ALTER TABLE public.query_telemetry DROP CONSTRAINT IF EXISTS query_telemetry_pkey;
-ALTER TABLE public.query_telemetry ADD CONSTRAINT query_telemetry_pkey PRIMARY KEY (id);
--- public.quota_attainment_actions
-ALTER TABLE public.quota_attainment_actions DROP CONSTRAINT IF EXISTS quota_attainment_actions_pkey;
-ALTER TABLE public.quota_attainment_actions ADD CONSTRAINT quota_attainment_actions_pkey PRIMARY KEY (id);
-ALTER TABLE public.quota_attainment_actions DROP CONSTRAINT IF EXISTS quota_attainment_actions_action_type_check;
-ALTER TABLE public.quota_attainment_actions ADD CONSTRAINT quota_attainment_actions_action_type_check CHECK ((action_type = ANY (ARRAY['close_deal'::text, 'generate_pipeline'::text, 'increase_ticket'::text, 'accelerate_stage'::text])));
--- public.quota_attainment_alerts
-ALTER TABLE public.quota_attainment_alerts DROP CONSTRAINT IF EXISTS quota_attainment_alerts_pkey;
-ALTER TABLE public.quota_attainment_alerts ADD CONSTRAINT quota_attainment_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.quota_attainment_alerts DROP CONSTRAINT IF EXISTS quota_attainment_alerts_severity_check;
-ALTER TABLE public.quota_attainment_alerts ADD CONSTRAINT quota_attainment_alerts_severity_check CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])));
--- public.quota_attainment_forecasts
-ALTER TABLE public.quota_attainment_forecasts DROP CONSTRAINT IF EXISTS quota_attainment_forecasts_pkey;
-ALTER TABLE public.quota_attainment_forecasts ADD CONSTRAINT quota_attainment_forecasts_pkey PRIMARY KEY (id);
-ALTER TABLE public.quota_attainment_forecasts DROP CONSTRAINT IF EXISTS quota_forecasts_unique_period;
-ALTER TABLE public.quota_attainment_forecasts ADD CONSTRAINT quota_forecasts_unique_period UNIQUE (salesperson_id, period_start);
-ALTER TABLE public.quota_attainment_forecasts DROP CONSTRAINT IF EXISTS quota_attainment_forecasts_risk_level_check;
-ALTER TABLE public.quota_attainment_forecasts ADD CONSTRAINT quota_attainment_forecasts_risk_level_check CHECK ((risk_level = ANY (ARRAY['safe'::text, 'on_track'::text, 'at_risk'::text, 'critical'::text])));
--- public.quota_attainment_predictions
-ALTER TABLE public.quota_attainment_predictions DROP CONSTRAINT IF EXISTS quota_attainment_predictions_pkey;
-ALTER TABLE public.quota_attainment_predictions ADD CONSTRAINT quota_attainment_predictions_pkey PRIMARY KEY (id);
-ALTER TABLE public.quota_attainment_predictions DROP CONSTRAINT IF EXISTS quota_attainment_predictions_risk_level_check;
-ALTER TABLE public.quota_attainment_predictions ADD CONSTRAINT quota_attainment_predictions_risk_level_check CHECK ((risk_level = ANY (ARRAY['safe'::text, 'on_track'::text, 'at_risk'::text, 'critical'::text])));
--- public.quote_conversion_audit
-ALTER TABLE public.quote_conversion_audit DROP CONSTRAINT IF EXISTS quote_conversion_audit_pkey;
-ALTER TABLE public.quote_conversion_audit ADD CONSTRAINT quote_conversion_audit_pkey PRIMARY KEY (id);
--- public.quote_items
-ALTER TABLE public.quote_items DROP CONSTRAINT IF EXISTS quote_items_pkey;
-ALTER TABLE public.quote_items ADD CONSTRAINT quote_items_pkey PRIMARY KEY (id);
--- public.quote_sync_inbound_log
-ALTER TABLE public.quote_sync_inbound_log DROP CONSTRAINT IF EXISTS quote_sync_inbound_log_pkey;
-ALTER TABLE public.quote_sync_inbound_log ADD CONSTRAINT quote_sync_inbound_log_pkey PRIMARY KEY (id);
-ALTER TABLE public.quote_sync_inbound_log DROP CONSTRAINT IF EXISTS chk_qs_inbound_log_http_status_range;
-ALTER TABLE public.quote_sync_inbound_log ADD CONSTRAINT chk_qs_inbound_log_http_status_range CHECK (((http_status >= 100) AND (http_status <= 599)));
-ALTER TABLE public.quote_sync_inbound_log DROP CONSTRAINT IF EXISTS chk_qs_inbound_log_payload_size;
-ALTER TABLE public.quote_sync_inbound_log ADD CONSTRAINT chk_qs_inbound_log_payload_size CHECK ((pg_column_size(payload) <= 262144));
-ALTER TABLE public.quote_sync_inbound_log DROP CONSTRAINT IF EXISTS chk_qs_inbound_log_source_allowed;
-ALTER TABLE public.quote_sync_inbound_log ADD CONSTRAINT chk_qs_inbound_log_source_allowed CHECK ((source = ANY (ARRAY['gift_store'::text, 'promogifts'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'n8n'::text, 'v4'::text])));
-ALTER TABLE public.quote_sync_inbound_log DROP CONSTRAINT IF EXISTS chk_qs_inbound_log_status_allowed;
-ALTER TABLE public.quote_sync_inbound_log ADD CONSTRAINT chk_qs_inbound_log_status_allowed CHECK ((status = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text, 'processed'::text, 'method_not_allowed'::text, 'unauthorized'::text, 'not_found'::text, 'bad_request'::text])));
--- public.quote_sync_logs
-ALTER TABLE public.quote_sync_logs DROP CONSTRAINT IF EXISTS quote_sync_logs_pkey;
-ALTER TABLE public.quote_sync_logs ADD CONSTRAINT quote_sync_logs_pkey PRIMARY KEY (id);
--- public.quotes
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_pkey;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_pkey PRIMARY KEY (id);
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_subtotal_non_negative;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_subtotal_non_negative CHECK (((subtotal IS NULL) OR (subtotal >= (0)::numeric)));
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_total_value_non_negative;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_total_value_non_negative CHECK (((total_value IS NULL) OR (total_value >= (0)::numeric))) NOT VALID;
--- public.quotes_inbound
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS quotes_inbound_pkey;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT quotes_inbound_pkey PRIMARY KEY (id);
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS quotes_inbound_quote_id_key;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT quotes_inbound_quote_id_key UNIQUE (quote_id);
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_client_name_len;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_client_name_len CHECK (((client_name IS NULL) OR (char_length(client_name) <= 512)));
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_quote_number_len;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_quote_number_len CHECK (((quote_number IS NULL) OR (char_length(quote_number) <= 128)));
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_raw_payload_size;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_raw_payload_size CHECK ((pg_column_size(raw_payload) <= 262144));
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_seller_email_format;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_seller_email_format CHECK (((seller_email IS NULL) OR (seller_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text)));
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_source_allowed;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_source_allowed CHECK ((source = ANY (ARRAY['gift_store'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'promogifts'::text])));
-ALTER TABLE public.quotes_inbound DROP CONSTRAINT IF EXISTS chk_quotes_inbound_status_allowed;
-ALTER TABLE public.quotes_inbound ADD CONSTRAINT chk_quotes_inbound_status_allowed CHECK (((status IS NULL) OR (status = ANY (ARRAY['draft'::text, 'pending'::text, 'sent'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'converted'::text, 'cancelled'::text, 'won'::text, 'lost'::text, 'open'::text, 'created'::text, 'updated'::text]))));
--- public.race_badges
-ALTER TABLE public.race_badges DROP CONSTRAINT IF EXISTS race_badges_pkey;
-ALTER TABLE public.race_badges ADD CONSTRAINT race_badges_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_badges DROP CONSTRAINT IF EXISTS race_badges_salesperson_id_badge_code_season_id_key;
-ALTER TABLE public.race_badges ADD CONSTRAINT race_badges_salesperson_id_badge_code_season_id_key UNIQUE (salesperson_id, badge_code, season_id);
-ALTER TABLE public.race_badges DROP CONSTRAINT IF EXISTS race_badges_unique_per_season;
-ALTER TABLE public.race_badges ADD CONSTRAINT race_badges_unique_per_season UNIQUE (salesperson_id, badge_code, season_id);
--- public.race_cars
-ALTER TABLE public.race_cars DROP CONSTRAINT IF EXISTS race_cars_pkey;
-ALTER TABLE public.race_cars ADD CONSTRAINT race_cars_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_cars DROP CONSTRAINT IF EXISTS race_cars_salesperson_id_key;
-ALTER TABLE public.race_cars ADD CONSTRAINT race_cars_salesperson_id_key UNIQUE (salesperson_id);
-ALTER TABLE public.race_cars DROP CONSTRAINT IF EXISTS race_cars_car_number_check;
-ALTER TABLE public.race_cars ADD CONSTRAINT race_cars_car_number_check CHECK (((car_number >= 1) AND (car_number <= 99)));
-ALTER TABLE public.race_cars DROP CONSTRAINT IF EXISTS race_cars_car_style_check;
-ALTER TABLE public.race_cars ADD CONSTRAINT race_cars_car_style_check CHECK ((car_style = ANY (ARRAY['f1'::text, 'stock'::text, 'kart'::text])));
--- public.race_daily_snapshots
-ALTER TABLE public.race_daily_snapshots DROP CONSTRAINT IF EXISTS race_daily_snapshots_pkey;
-ALTER TABLE public.race_daily_snapshots ADD CONSTRAINT race_daily_snapshots_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_daily_snapshots DROP CONSTRAINT IF EXISTS race_daily_snapshots_season_id_salesperson_id_snapshot_date_key;
-ALTER TABLE public.race_daily_snapshots ADD CONSTRAINT race_daily_snapshots_season_id_salesperson_id_snapshot_date_key UNIQUE (season_id, salesperson_id, snapshot_date);
--- public.race_events
-ALTER TABLE public.race_events DROP CONSTRAINT IF EXISTS race_events_pkey;
-ALTER TABLE public.race_events ADD CONSTRAINT race_events_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_events DROP CONSTRAINT IF EXISTS race_events_event_type_check;
-ALTER TABLE public.race_events ADD CONSTRAINT race_events_event_type_check CHECK ((event_type = ANY (ARRAY['boost'::text, 'overtake'::text, 'checkpoint'::text, 'powerup'::text, 'victory'::text, 'pitstop'::text, 'powerup_unlocked'::text, 'monthly_champion'::text])));
--- public.race_overlay_telemetry
-ALTER TABLE public.race_overlay_telemetry DROP CONSTRAINT IF EXISTS race_overlay_telemetry_pkey;
-ALTER TABLE public.race_overlay_telemetry ADD CONSTRAINT race_overlay_telemetry_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_overlay_telemetry DROP CONSTRAINT IF EXISTS race_overlay_telemetry_user_id_overlay_name_key;
-ALTER TABLE public.race_overlay_telemetry ADD CONSTRAINT race_overlay_telemetry_user_id_overlay_name_key UNIQUE (user_id, overlay_name);
--- public.race_powerups
-ALTER TABLE public.race_powerups DROP CONSTRAINT IF EXISTS race_powerups_pkey;
-ALTER TABLE public.race_powerups ADD CONSTRAINT race_powerups_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_powerups DROP CONSTRAINT IF EXISTS race_powerups_powerup_type_check;
-ALTER TABLE public.race_powerups ADD CONSTRAINT race_powerups_powerup_type_check CHECK ((powerup_type = ANY (ARRAY['turbo'::text, 'shield'::text, 'lightning'::text, 'xp_boost'::text, 'mega_boost'::text])));
--- public.race_reactions
-ALTER TABLE public.race_reactions DROP CONSTRAINT IF EXISTS race_reactions_pkey;
-ALTER TABLE public.race_reactions ADD CONSTRAINT race_reactions_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_reactions DROP CONSTRAINT IF EXISTS race_reactions_emoji_check;
-ALTER TABLE public.race_reactions ADD CONSTRAINT race_reactions_emoji_check CHECK (((char_length(emoji) >= 1) AND (char_length(emoji) <= 8)));
--- public.race_rivalries_persistent
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_pkey;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_season_id_car_id_key;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_season_id_car_id_key UNIQUE (season_id, car_id);
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_check;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_check CHECK ((car_id <> rival_car_id));
--- public.race_scoring_rules
-ALTER TABLE public.race_scoring_rules DROP CONSTRAINT IF EXISTS race_scoring_rules_pkey;
-ALTER TABLE public.race_scoring_rules ADD CONSTRAINT race_scoring_rules_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_scoring_rules DROP CONSTRAINT IF EXISTS race_scoring_rules_season_id_metric_code_key;
-ALTER TABLE public.race_scoring_rules ADD CONSTRAINT race_scoring_rules_season_id_metric_code_key UNIQUE (season_id, metric_code);
-ALTER TABLE public.race_scoring_rules DROP CONSTRAINT IF EXISTS race_scoring_rules_metric_code_check;
-ALTER TABLE public.race_scoring_rules ADD CONSTRAINT race_scoring_rules_metric_code_check CHECK ((metric_code = ANY (ARRAY['sales_value'::text, 'markup_pct'::text, 'new_clients_activated'::text, 'routine_compliance'::text, 'stakeholders_captured'::text, 'conversations_initiated'::text, 'sales_value_originated'::text])));
-ALTER TABLE public.race_scoring_rules DROP CONSTRAINT IF EXISTS race_scoring_rules_weight_check;
-ALTER TABLE public.race_scoring_rules ADD CONSTRAINT race_scoring_rules_weight_check CHECK ((weight >= (0)::numeric));
--- public.race_seasons
-ALTER TABLE public.race_seasons DROP CONSTRAINT IF EXISTS race_seasons_pkey;
-ALTER TABLE public.race_seasons ADD CONSTRAINT race_seasons_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_seasons DROP CONSTRAINT IF EXISTS race_seasons_role_type_check;
-ALTER TABLE public.race_seasons ADD CONSTRAINT race_seasons_role_type_check CHECK ((role_type = ANY (ARRAY['closer'::text, 'sdr'::text])));
-ALTER TABLE public.race_seasons DROP CONSTRAINT IF EXISTS race_seasons_status_check;
-ALTER TABLE public.race_seasons ADD CONSTRAINT race_seasons_status_check CHECK ((status = ANY (ARRAY['upcoming'::text, 'active'::text, 'finished'::text])));
-ALTER TABLE public.race_seasons DROP CONSTRAINT IF EXISTS race_seasons_track_type_check;
-ALTER TABLE public.race_seasons ADD CONSTRAINT race_seasons_track_type_check CHECK ((track_type = ANY (ARRAY['oval'::text, 'circuit'::text, 'street'::text])));
--- public.race_team_members
-ALTER TABLE public.race_team_members DROP CONSTRAINT IF EXISTS race_team_members_pkey;
-ALTER TABLE public.race_team_members ADD CONSTRAINT race_team_members_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_team_members DROP CONSTRAINT IF EXISTS race_team_members_team_id_car_id_key;
-ALTER TABLE public.race_team_members ADD CONSTRAINT race_team_members_team_id_car_id_key UNIQUE (team_id, car_id);
--- public.race_teams
-ALTER TABLE public.race_teams DROP CONSTRAINT IF EXISTS race_teams_pkey;
-ALTER TABLE public.race_teams ADD CONSTRAINT race_teams_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_teams DROP CONSTRAINT IF EXISTS race_teams_season_id_name_key;
-ALTER TABLE public.race_teams ADD CONSTRAINT race_teams_season_id_name_key UNIQUE (season_id, name);
--- public.race_unlocks
-ALTER TABLE public.race_unlocks DROP CONSTRAINT IF EXISTS race_unlocks_pkey;
-ALTER TABLE public.race_unlocks ADD CONSTRAINT race_unlocks_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_unlocks DROP CONSTRAINT IF EXISTS race_unlocks_user_key_unique;
-ALTER TABLE public.race_unlocks ADD CONSTRAINT race_unlocks_user_key_unique UNIQUE (user_id, unlock_key);
--- public.race_user_daily_checkins
-ALTER TABLE public.race_user_daily_checkins DROP CONSTRAINT IF EXISTS race_user_daily_checkins_pkey;
-ALTER TABLE public.race_user_daily_checkins ADD CONSTRAINT race_user_daily_checkins_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_user_daily_checkins DROP CONSTRAINT IF EXISTS race_user_daily_checkins_user_id_season_id_checkin_date_key;
-ALTER TABLE public.race_user_daily_checkins ADD CONSTRAINT race_user_daily_checkins_user_id_season_id_checkin_date_key UNIQUE (user_id, season_id, checkin_date);
--- public.race_user_preferences
-ALTER TABLE public.race_user_preferences DROP CONSTRAINT IF EXISTS race_user_preferences_pkey;
-ALTER TABLE public.race_user_preferences ADD CONSTRAINT race_user_preferences_pkey PRIMARY KEY (id);
-ALTER TABLE public.race_user_preferences DROP CONSTRAINT IF EXISTS race_user_preferences_user_id_key;
-ALTER TABLE public.race_user_preferences ADD CONSTRAINT race_user_preferences_user_id_key UNIQUE (user_id);
-ALTER TABLE public.race_user_preferences DROP CONSTRAINT IF EXISTS race_user_preferences_view_mode_check;
-ALTER TABLE public.race_user_preferences ADD CONSTRAINT race_user_preferences_view_mode_check CHECK ((view_mode = ANY (ARRAY['focus'::text, 'immersive'::text, 'competitive'::text, 'analysis'::text])));
--- public.rank_change_notifications
-ALTER TABLE public.rank_change_notifications DROP CONSTRAINT IF EXISTS rank_change_notifications_pkey;
-ALTER TABLE public.rank_change_notifications ADD CONSTRAINT rank_change_notifications_pkey PRIMARY KEY (id);
--- public.ranking_notifications
-ALTER TABLE public.ranking_notifications DROP CONSTRAINT IF EXISTS ranking_notifications_pkey;
-ALTER TABLE public.ranking_notifications ADD CONSTRAINT ranking_notifications_pkey PRIMARY KEY (id);
-ALTER TABLE public.ranking_notifications DROP CONSTRAINT IF EXISTS ranking_notifications_salesperson_id_period_start_key;
-ALTER TABLE public.ranking_notifications ADD CONSTRAINT ranking_notifications_salesperson_id_period_start_key UNIQUE (salesperson_id, period_start);
--- public.rate_limit_logs
-ALTER TABLE public.rate_limit_logs DROP CONSTRAINT IF EXISTS rate_limit_logs_pkey;
-ALTER TABLE public.rate_limit_logs ADD CONSTRAINT rate_limit_logs_pkey PRIMARY KEY (id);
--- public.rate_limit_settings
-ALTER TABLE public.rate_limit_settings DROP CONSTRAINT IF EXISTS rate_limit_settings_pkey;
-ALTER TABLE public.rate_limit_settings ADD CONSTRAINT rate_limit_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.rate_limit_settings DROP CONSTRAINT IF EXISTS rate_limit_settings_action_key;
-ALTER TABLE public.rate_limit_settings ADD CONSTRAINT rate_limit_settings_action_key UNIQUE (action);
--- public.reauthentication_requests
-ALTER TABLE public.reauthentication_requests DROP CONSTRAINT IF EXISTS reauthentication_requests_pkey;
-ALTER TABLE public.reauthentication_requests ADD CONSTRAINT reauthentication_requests_pkey PRIMARY KEY (id);
-ALTER TABLE public.reauthentication_requests DROP CONSTRAINT IF EXISTS reauthentication_requests_action_type_check;
-ALTER TABLE public.reauthentication_requests ADD CONSTRAINT reauthentication_requests_action_type_check CHECK ((action_type = ANY (ARRAY['password_change'::text, 'email_change'::text, 'mfa_config'::text, 'admin_action'::text, 'delete_account'::text])));
--- public.renewals
-ALTER TABLE public.renewals DROP CONSTRAINT IF EXISTS renewals_pkey;
-ALTER TABLE public.renewals ADD CONSTRAINT renewals_pkey PRIMARY KEY (id);
--- public.report_embed_tokens
-ALTER TABLE public.report_embed_tokens DROP CONSTRAINT IF EXISTS report_embed_tokens_pkey;
-ALTER TABLE public.report_embed_tokens ADD CONSTRAINT report_embed_tokens_pkey PRIMARY KEY (id);
-ALTER TABLE public.report_embed_tokens DROP CONSTRAINT IF EXISTS report_embed_tokens_token_key;
-ALTER TABLE public.report_embed_tokens ADD CONSTRAINT report_embed_tokens_token_key UNIQUE (token);
--- public.report_executions
-ALTER TABLE public.report_executions DROP CONSTRAINT IF EXISTS report_executions_pkey;
-ALTER TABLE public.report_executions ADD CONSTRAINT report_executions_pkey PRIMARY KEY (id);
-ALTER TABLE public.report_executions DROP CONSTRAINT IF EXISTS report_executions_status_check;
-ALTER TABLE public.report_executions ADD CONSTRAINT report_executions_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'success'::text, 'failed'::text])));
--- public.report_schedules
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_pkey;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_pkey PRIMARY KEY (id);
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_day_of_month_check;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_day_of_month_check CHECK (((day_of_month >= 1) AND (day_of_month <= 31)));
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_day_of_week_check;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_day_of_week_check CHECK (((day_of_week >= 0) AND (day_of_week <= 6)));
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_format_check;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_format_check CHECK ((format = ANY (ARRAY['csv'::text, 'xlsx'::text, 'pdf'::text])));
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_frequency_check;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_frequency_check CHECK ((frequency = ANY (ARRAY['daily'::text, 'weekly'::text, 'monthly'::text])));
--- public.revenue_forecasts
-ALTER TABLE public.revenue_forecasts DROP CONSTRAINT IF EXISTS revenue_forecasts_pkey;
-ALTER TABLE public.revenue_forecasts ADD CONSTRAINT revenue_forecasts_pkey PRIMARY KEY (id);
-ALTER TABLE public.revenue_forecasts DROP CONSTRAINT IF EXISTS revenue_forecasts_confidence_score_check;
-ALTER TABLE public.revenue_forecasts ADD CONSTRAINT revenue_forecasts_confidence_score_check CHECK (((confidence_score >= 0) AND (confidence_score <= 100)));
-ALTER TABLE public.revenue_forecasts DROP CONSTRAINT IF EXISTS revenue_forecasts_period_type_check;
-ALTER TABLE public.revenue_forecasts ADD CONSTRAINT revenue_forecasts_period_type_check CHECK ((period_type = ANY (ARRAY['week'::text, 'month'::text, 'quarter'::text])));
--- public.role_permissions
-ALTER TABLE public.role_permissions DROP CONSTRAINT IF EXISTS role_permissions_pkey;
-ALTER TABLE public.role_permissions ADD CONSTRAINT role_permissions_pkey PRIMARY KEY (id);
-ALTER TABLE public.role_permissions DROP CONSTRAINT IF EXISTS role_permissions_role_permission_id_key;
-ALTER TABLE public.role_permissions ADD CONSTRAINT role_permissions_role_permission_id_key UNIQUE (role, permission_id);
--- public.sale_notifications_audit
-ALTER TABLE public.sale_notifications_audit DROP CONSTRAINT IF EXISTS sale_notifications_audit_pkey;
-ALTER TABLE public.sale_notifications_audit ADD CONSTRAINT sale_notifications_audit_pkey PRIMARY KEY (id);
--- public.sales
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_pkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_pkey PRIMARY KEY (id);
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_amount_positive;
-ALTER TABLE public.sales ADD CONSTRAINT sales_amount_positive CHECK ((amount >= (0)::numeric));
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_category_check;
-ALTER TABLE public.sales ADD CONSTRAINT sales_category_check CHECK ((category = ANY (ARRAY['subscription'::text, 'service'::text, 'project'::text, 'other'::text, 'brindes'::text])));
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_cost_source_check;
-ALTER TABLE public.sales ADD CONSTRAINT sales_cost_source_check CHECK (((cost_source IS NULL) OR (cost_source = ANY (ARRAY['promo_gifts'::text, 'manual'::text, 'product_default'::text]))));
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_status_check;
-ALTER TABLE public.sales ADD CONSTRAINT sales_status_check CHECK ((status = ANY (ARRAY['completed'::text, 'pending'::text, 'cancelled'::text, 'lead'::text, 'qualified'::text, 'proposal'::text, 'negotiation'::text, 'closed'::text, 'prospecting'::text, 'won'::text, 'lost'::text])));
--- public.sales_battles
-ALTER TABLE public.sales_battles DROP CONSTRAINT IF EXISTS sales_battles_pkey;
-ALTER TABLE public.sales_battles ADD CONSTRAINT sales_battles_pkey PRIMARY KEY (id);
--- public.sales_enablement_assets
-ALTER TABLE public.sales_enablement_assets DROP CONSTRAINT IF EXISTS sales_enablement_assets_pkey;
-ALTER TABLE public.sales_enablement_assets ADD CONSTRAINT sales_enablement_assets_pkey PRIMARY KEY (id);
--- public.sales_goals
-ALTER TABLE public.sales_goals DROP CONSTRAINT IF EXISTS sales_goals_pkey;
-ALTER TABLE public.sales_goals ADD CONSTRAINT sales_goals_pkey PRIMARY KEY (id);
-ALTER TABLE public.sales_goals DROP CONSTRAINT IF EXISTS sales_goals_salesperson_id_month_key;
-ALTER TABLE public.sales_goals ADD CONSTRAINT sales_goals_salesperson_id_month_key UNIQUE (salesperson_id, month);
--- public.sales_streaks
-ALTER TABLE public.sales_streaks DROP CONSTRAINT IF EXISTS sales_streaks_pkey;
-ALTER TABLE public.sales_streaks ADD CONSTRAINT sales_streaks_pkey PRIMARY KEY (id);
-ALTER TABLE public.sales_streaks DROP CONSTRAINT IF EXISTS sales_streaks_salesperson_id_key;
-ALTER TABLE public.sales_streaks ADD CONSTRAINT sales_streaks_salesperson_id_key UNIQUE (salesperson_id);
--- public.sales_territories
-ALTER TABLE public.sales_territories DROP CONSTRAINT IF EXISTS sales_territories_pkey;
-ALTER TABLE public.sales_territories ADD CONSTRAINT sales_territories_pkey PRIMARY KEY (id);
-ALTER TABLE public.sales_territories DROP CONSTRAINT IF EXISTS sales_territories_territory_type_check;
-ALTER TABLE public.sales_territories ADD CONSTRAINT sales_territories_territory_type_check CHECK ((territory_type = ANY (ARRAY['segment'::text, 'region'::text, 'product'::text, 'niche'::text])));
--- public.salespeople
-ALTER TABLE public.salespeople DROP CONSTRAINT IF EXISTS salespeople_pkey;
-ALTER TABLE public.salespeople ADD CONSTRAINT salespeople_pkey PRIMARY KEY (id);
-ALTER TABLE public.salespeople DROP CONSTRAINT IF EXISTS salespeople_auth_user_id_key;
-ALTER TABLE public.salespeople ADD CONSTRAINT salespeople_auth_user_id_key UNIQUE (auth_user_id);
-ALTER TABLE public.salespeople DROP CONSTRAINT IF EXISTS salespeople_email_key;
-ALTER TABLE public.salespeople ADD CONSTRAINT salespeople_email_key UNIQUE (email);
--- public.salesperson_badges
-ALTER TABLE public.salesperson_badges DROP CONSTRAINT IF EXISTS salesperson_badges_pkey;
-ALTER TABLE public.salesperson_badges ADD CONSTRAINT salesperson_badges_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_badges DROP CONSTRAINT IF EXISTS salesperson_badges_salesperson_id_badge_id_key;
-ALTER TABLE public.salesperson_badges ADD CONSTRAINT salesperson_badges_salesperson_id_badge_id_key UNIQUE (salesperson_id, badge_id);
--- public.salesperson_coaching_aggregates
-ALTER TABLE public.salesperson_coaching_aggregates DROP CONSTRAINT IF EXISTS salesperson_coaching_aggregates_pkey;
-ALTER TABLE public.salesperson_coaching_aggregates ADD CONSTRAINT salesperson_coaching_aggregates_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_coaching_aggregates DROP CONSTRAINT IF EXISTS salesperson_coaching_aggregates_salesperson_id_key;
-ALTER TABLE public.salesperson_coaching_aggregates ADD CONSTRAINT salesperson_coaching_aggregates_salesperson_id_key UNIQUE (salesperson_id);
-ALTER TABLE public.salesperson_coaching_aggregates DROP CONSTRAINT IF EXISTS salesperson_coaching_aggregates_trend_direction_check;
-ALTER TABLE public.salesperson_coaching_aggregates ADD CONSTRAINT salesperson_coaching_aggregates_trend_direction_check CHECK ((trend_direction = ANY (ARRAY['up'::text, 'flat'::text, 'down'::text])));
--- public.salesperson_commission_configs
-ALTER TABLE public.salesperson_commission_configs DROP CONSTRAINT IF EXISTS salesperson_commission_configs_pkey;
-ALTER TABLE public.salesperson_commission_configs ADD CONSTRAINT salesperson_commission_configs_pkey PRIMARY KEY (salesperson_id, month);
--- public.salesperson_custom_field_values
-ALTER TABLE public.salesperson_custom_field_values DROP CONSTRAINT IF EXISTS salesperson_custom_field_values_pkey;
-ALTER TABLE public.salesperson_custom_field_values ADD CONSTRAINT salesperson_custom_field_values_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_custom_field_values DROP CONSTRAINT IF EXISTS salesperson_custom_field_values_salesperson_id_field_id_key;
-ALTER TABLE public.salesperson_custom_field_values ADD CONSTRAINT salesperson_custom_field_values_salesperson_id_field_id_key UNIQUE (salesperson_id, field_id);
--- public.salesperson_leagues
-ALTER TABLE public.salesperson_leagues DROP CONSTRAINT IF EXISTS salesperson_leagues_pkey;
-ALTER TABLE public.salesperson_leagues ADD CONSTRAINT salesperson_leagues_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_leagues DROP CONSTRAINT IF EXISTS salesperson_leagues_salesperson_id_season_number_key;
-ALTER TABLE public.salesperson_leagues ADD CONSTRAINT salesperson_leagues_salesperson_id_season_number_key UNIQUE (salesperson_id, season_number);
--- public.salesperson_performance_telemetry
-ALTER TABLE public.salesperson_performance_telemetry DROP CONSTRAINT IF EXISTS salesperson_performance_telemetry_pkey;
-ALTER TABLE public.salesperson_performance_telemetry ADD CONSTRAINT salesperson_performance_telemetry_pkey PRIMARY KEY (id);
--- public.salesperson_preferences
-ALTER TABLE public.salesperson_preferences DROP CONSTRAINT IF EXISTS salesperson_preferences_pkey;
-ALTER TABLE public.salesperson_preferences ADD CONSTRAINT salesperson_preferences_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_preferences DROP CONSTRAINT IF EXISTS salesperson_preferences_salesperson_id_key;
-ALTER TABLE public.salesperson_preferences ADD CONSTRAINT salesperson_preferences_salesperson_id_key UNIQUE (salesperson_id);
-ALTER TABLE public.salesperson_preferences DROP CONSTRAINT IF EXISTS salesperson_preferences_response_mode_check;
-ALTER TABLE public.salesperson_preferences ADD CONSTRAINT salesperson_preferences_response_mode_check CHECK ((response_mode = ANY (ARRAY['text'::text, 'audio'::text, 'both'::text])));
--- public.salesperson_xp
-ALTER TABLE public.salesperson_xp DROP CONSTRAINT IF EXISTS salesperson_xp_pkey;
-ALTER TABLE public.salesperson_xp ADD CONSTRAINT salesperson_xp_pkey PRIMARY KEY (id);
-ALTER TABLE public.salesperson_xp DROP CONSTRAINT IF EXISTS salesperson_xp_salesperson_id_key;
-ALTER TABLE public.salesperson_xp ADD CONSTRAINT salesperson_xp_salesperson_id_key UNIQUE (salesperson_id);
--- public.saved_filters
-ALTER TABLE public.saved_filters DROP CONSTRAINT IF EXISTS saved_filters_pkey;
-ALTER TABLE public.saved_filters ADD CONSTRAINT saved_filters_pkey PRIMARY KEY (id);
-ALTER TABLE public.saved_filters DROP CONSTRAINT IF EXISTS unique_filter_name_per_user_entity;
-ALTER TABLE public.saved_filters ADD CONSTRAINT unique_filter_name_per_user_entity UNIQUE (user_id, entity_type, name);
--- public.scheduled_report_runs
-ALTER TABLE public.scheduled_report_runs DROP CONSTRAINT IF EXISTS scheduled_report_runs_pkey;
-ALTER TABLE public.scheduled_report_runs ADD CONSTRAINT scheduled_report_runs_pkey PRIMARY KEY (id);
-ALTER TABLE public.scheduled_report_runs DROP CONSTRAINT IF EXISTS scheduled_report_runs_status_check;
-ALTER TABLE public.scheduled_report_runs ADD CONSTRAINT scheduled_report_runs_status_check CHECK ((status = ANY (ARRAY['running'::text, 'success'::text, 'failed'::text])));
--- public.scheduled_reports
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_pkey;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_pkey PRIMARY KEY (id);
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_day_of_month_check;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_day_of_month_check CHECK (((day_of_month >= 1) AND (day_of_month <= 28)));
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_day_of_week_check;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_day_of_week_check CHECK (((day_of_week >= 0) AND (day_of_week <= 6)));
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_format_check;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_format_check CHECK ((format = ANY (ARRAY['csv'::text, 'json'::text])));
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_frequency_check;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_frequency_check CHECK ((frequency = ANY (ARRAY['daily'::text, 'weekly'::text, 'monthly'::text])));
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_hour_of_day_check;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_hour_of_day_check CHECK (((hour_of_day >= 0) AND (hour_of_day <= 23)));
--- public.scheduled_sends
-ALTER TABLE public.scheduled_sends DROP CONSTRAINT IF EXISTS scheduled_sends_pkey;
-ALTER TABLE public.scheduled_sends ADD CONSTRAINT scheduled_sends_pkey PRIMARY KEY (id);
-ALTER TABLE public.scheduled_sends DROP CONSTRAINT IF EXISTS scheduled_sends_channel_check;
-ALTER TABLE public.scheduled_sends ADD CONSTRAINT scheduled_sends_channel_check CHECK ((channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'linkedin'::text, 'sms'::text])));
-ALTER TABLE public.scheduled_sends DROP CONSTRAINT IF EXISTS scheduled_sends_optimization_source_check;
-ALTER TABLE public.scheduled_sends ADD CONSTRAINT scheduled_sends_optimization_source_check CHECK ((optimization_source = ANY (ARRAY['profile'::text, 'global'::text, 'manual'::text])));
-ALTER TABLE public.scheduled_sends DROP CONSTRAINT IF EXISTS scheduled_sends_status_check;
-ALTER TABLE public.scheduled_sends ADD CONSTRAINT scheduled_sends_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text, 'cancelled'::text])));
--- public.score_change_logs
-ALTER TABLE public.score_change_logs DROP CONSTRAINT IF EXISTS score_change_logs_pkey;
-ALTER TABLE public.score_change_logs ADD CONSTRAINT score_change_logs_pkey PRIMARY KEY (id);
-ALTER TABLE public.score_change_logs DROP CONSTRAINT IF EXISTS score_change_logs_operation_check;
-ALTER TABLE public.score_change_logs ADD CONSTRAINT score_change_logs_operation_check CHECK ((operation = ANY (ARRAY['ADD'::text, 'REM'::text, 'SET'::text])));
--- public.sdr_alert_configs
-ALTER TABLE public.sdr_alert_configs DROP CONSTRAINT IF EXISTS sdr_alert_configs_pkey;
-ALTER TABLE public.sdr_alert_configs ADD CONSTRAINT sdr_alert_configs_pkey PRIMARY KEY (id);
--- public.sdr_alert_history
-ALTER TABLE public.sdr_alert_history DROP CONSTRAINT IF EXISTS sdr_alert_history_pkey;
-ALTER TABLE public.sdr_alert_history ADD CONSTRAINT sdr_alert_history_pkey PRIMARY KEY (id);
--- public.sdr_performance_settings
-ALTER TABLE public.sdr_performance_settings DROP CONSTRAINT IF EXISTS sdr_performance_settings_pkey;
-ALTER TABLE public.sdr_performance_settings ADD CONSTRAINT sdr_performance_settings_pkey PRIMARY KEY (id);
--- public.security_alert_history
-ALTER TABLE public.security_alert_history DROP CONSTRAINT IF EXISTS security_alert_history_pkey;
-ALTER TABLE public.security_alert_history ADD CONSTRAINT security_alert_history_pkey PRIMARY KEY (id);
--- public.security_alert_settings
-ALTER TABLE public.security_alert_settings DROP CONSTRAINT IF EXISTS security_alert_settings_pkey;
-ALTER TABLE public.security_alert_settings ADD CONSTRAINT security_alert_settings_pkey PRIMARY KEY (id);
--- public.security_events
-ALTER TABLE public.security_events DROP CONSTRAINT IF EXISTS security_events_pkey;
-ALTER TABLE public.security_events ADD CONSTRAINT security_events_pkey PRIMARY KEY (id);
-ALTER TABLE public.security_events DROP CONSTRAINT IF EXISTS security_events_severity_check;
-ALTER TABLE public.security_events ADD CONSTRAINT security_events_severity_check CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.semantic_index
-ALTER TABLE public.semantic_index DROP CONSTRAINT IF EXISTS semantic_index_pkey;
-ALTER TABLE public.semantic_index ADD CONSTRAINT semantic_index_pkey PRIMARY KEY (id);
-ALTER TABLE public.semantic_index DROP CONSTRAINT IF EXISTS semantic_index_entity_type_entity_id_key;
-ALTER TABLE public.semantic_index ADD CONSTRAINT semantic_index_entity_type_entity_id_key UNIQUE (entity_type, entity_id);
-ALTER TABLE public.semantic_index DROP CONSTRAINT IF EXISTS semantic_index_entity_type_check;
-ALTER TABLE public.semantic_index ADD CONSTRAINT semantic_index_entity_type_check CHECK ((entity_type = ANY (ARRAY['client'::text, 'lead'::text, 'deal'::text, 'activity'::text, 'call_recording'::text, 'note'::text, 'email_message'::text, 'whatsapp_message'::text, 'proposal'::text, 'task'::text, 'playbook'::text])));
--- public.send_time_profiles
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_pkey;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_pkey PRIMARY KEY (id);
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_sale_id_key;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_best_dow_check;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_best_dow_check CHECK (((best_dow >= 0) AND (best_dow <= 6)));
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_best_hour_check;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_best_hour_check CHECK (((best_hour >= 0) AND (best_hour <= 23)));
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_confidence_check;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_confidence_check CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)));
--- public.sequence_enrollments
-ALTER TABLE public.sequence_enrollments DROP CONSTRAINT IF EXISTS sequence_enrollments_pkey;
-ALTER TABLE public.sequence_enrollments ADD CONSTRAINT sequence_enrollments_pkey PRIMARY KEY (id);
-ALTER TABLE public.sequence_enrollments DROP CONSTRAINT IF EXISTS sequence_enrollments_sequence_id_contact_id_contact_type_key;
-ALTER TABLE public.sequence_enrollments ADD CONSTRAINT sequence_enrollments_sequence_id_contact_id_contact_type_key UNIQUE (sequence_id, contact_id, contact_type);
-ALTER TABLE public.sequence_enrollments DROP CONSTRAINT IF EXISTS sequence_enrollments_contact_type_check;
-ALTER TABLE public.sequence_enrollments ADD CONSTRAINT sequence_enrollments_contact_type_check CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text, 'contact'::text])));
-ALTER TABLE public.sequence_enrollments DROP CONSTRAINT IF EXISTS sequence_enrollments_status_check;
-ALTER TABLE public.sequence_enrollments ADD CONSTRAINT sequence_enrollments_status_check CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'completed'::text, 'exited'::text, 'failed'::text])));
--- public.sequence_step_assignments
-ALTER TABLE public.sequence_step_assignments DROP CONSTRAINT IF EXISTS sequence_step_assignments_pkey;
-ALTER TABLE public.sequence_step_assignments ADD CONSTRAINT sequence_step_assignments_pkey PRIMARY KEY (id);
-ALTER TABLE public.sequence_step_assignments DROP CONSTRAINT IF EXISTS sequence_step_assignments_enrollment_id_step_id_key;
-ALTER TABLE public.sequence_step_assignments ADD CONSTRAINT sequence_step_assignments_enrollment_id_step_id_key UNIQUE (enrollment_id, step_id);
--- public.sequence_step_executions
-ALTER TABLE public.sequence_step_executions DROP CONSTRAINT IF EXISTS sequence_step_executions_pkey;
-ALTER TABLE public.sequence_step_executions ADD CONSTRAINT sequence_step_executions_pkey PRIMARY KEY (id);
-ALTER TABLE public.sequence_step_executions DROP CONSTRAINT IF EXISTS sequence_step_executions_status_check;
-ALTER TABLE public.sequence_step_executions ADD CONSTRAINT sequence_step_executions_status_check CHECK ((status = ANY (ARRAY['sent'::text, 'failed'::text, 'skipped'::text, 'queued'::text])));
--- public.sequence_step_variants
-ALTER TABLE public.sequence_step_variants DROP CONSTRAINT IF EXISTS sequence_step_variants_pkey;
-ALTER TABLE public.sequence_step_variants ADD CONSTRAINT sequence_step_variants_pkey PRIMARY KEY (id);
-ALTER TABLE public.sequence_step_variants DROP CONSTRAINT IF EXISTS sequence_step_variants_step_id_label_key;
-ALTER TABLE public.sequence_step_variants ADD CONSTRAINT sequence_step_variants_step_id_label_key UNIQUE (step_id, label);
-ALTER TABLE public.sequence_step_variants DROP CONSTRAINT IF EXISTS sequence_step_variants_label_check;
-ALTER TABLE public.sequence_step_variants ADD CONSTRAINT sequence_step_variants_label_check CHECK ((label = ANY (ARRAY['A'::text, 'B'::text])));
-ALTER TABLE public.sequence_step_variants DROP CONSTRAINT IF EXISTS sequence_step_variants_traffic_weight_check;
-ALTER TABLE public.sequence_step_variants ADD CONSTRAINT sequence_step_variants_traffic_weight_check CHECK (((traffic_weight >= 0) AND (traffic_weight <= 100)));
--- public.sequence_steps
-ALTER TABLE public.sequence_steps DROP CONSTRAINT IF EXISTS sequence_steps_pkey;
-ALTER TABLE public.sequence_steps ADD CONSTRAINT sequence_steps_pkey PRIMARY KEY (id);
-ALTER TABLE public.sequence_steps DROP CONSTRAINT IF EXISTS sequence_steps_sequence_id_step_order_key;
-ALTER TABLE public.sequence_steps ADD CONSTRAINT sequence_steps_sequence_id_step_order_key UNIQUE (sequence_id, step_order);
-ALTER TABLE public.sequence_steps DROP CONSTRAINT IF EXISTS sequence_steps_channel_check;
-ALTER TABLE public.sequence_steps ADD CONSTRAINT sequence_steps_channel_check CHECK ((channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'call'::text, 'linkedin'::text, 'task'::text])));
--- public.sequences
-ALTER TABLE public.sequences DROP CONSTRAINT IF EXISTS sequences_pkey;
-ALTER TABLE public.sequences ADD CONSTRAINT sequences_pkey PRIMARY KEY (id);
--- public.session_activity
-ALTER TABLE public.session_activity DROP CONSTRAINT IF EXISTS session_activity_pkey;
-ALTER TABLE public.session_activity ADD CONSTRAINT session_activity_pkey PRIMARY KEY (id);
--- public.skill_assessments
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_pkey;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_pkey PRIMARY KEY (id);
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_salesperson_id_skill_key;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_salesperson_id_skill_key UNIQUE (salesperson_id, skill);
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_current_level_check;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_current_level_check CHECK ((current_level = ANY (ARRAY['beginner'::text, 'intermediate'::text, 'advanced'::text, 'expert'::text])));
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_score_check;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_score_check CHECK (((score >= (0)::numeric) AND (score <= (100)::numeric)));
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_skill_check;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_skill_check CHECK ((skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])));
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_trend_check;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_trend_check CHECK ((trend = ANY (ARRAY['improving'::text, 'stable'::text, 'declining'::text])));
--- public.skill_development_tracks
-ALTER TABLE public.skill_development_tracks DROP CONSTRAINT IF EXISTS skill_development_tracks_pkey;
-ALTER TABLE public.skill_development_tracks ADD CONSTRAINT skill_development_tracks_pkey PRIMARY KEY (id);
-ALTER TABLE public.skill_development_tracks DROP CONSTRAINT IF EXISTS skill_development_tracks_salesperson_id_skill_key;
-ALTER TABLE public.skill_development_tracks ADD CONSTRAINT skill_development_tracks_salesperson_id_skill_key UNIQUE (salesperson_id, skill);
-ALTER TABLE public.skill_development_tracks DROP CONSTRAINT IF EXISTS skill_development_tracks_skill_check;
-ALTER TABLE public.skill_development_tracks ADD CONSTRAINT skill_development_tracks_skill_check CHECK ((skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])));
--- public.sla_policies
-ALTER TABLE public.sla_policies DROP CONSTRAINT IF EXISTS sla_policies_pkey;
-ALTER TABLE public.sla_policies ADD CONSTRAINT sla_policies_pkey PRIMARY KEY (id);
-ALTER TABLE public.sla_policies DROP CONSTRAINT IF EXISTS sla_policies_stage_key;
-ALTER TABLE public.sla_policies ADD CONSTRAINT sla_policies_stage_key UNIQUE (stage);
--- public.sla_violations
-ALTER TABLE public.sla_violations DROP CONSTRAINT IF EXISTS sla_violations_pkey;
-ALTER TABLE public.sla_violations ADD CONSTRAINT sla_violations_pkey PRIMARY KEY (id);
--- public.slow_query_alerts
-ALTER TABLE public.slow_query_alerts DROP CONSTRAINT IF EXISTS slow_query_alerts_pkey;
-ALTER TABLE public.slow_query_alerts ADD CONSTRAINT slow_query_alerts_pkey PRIMARY KEY (id);
--- public.sms_verification_codes
-ALTER TABLE public.sms_verification_codes DROP CONSTRAINT IF EXISTS sms_verification_codes_pkey;
-ALTER TABLE public.sms_verification_codes ADD CONSTRAINT sms_verification_codes_pkey PRIMARY KEY (id);
--- public.squad_members
-ALTER TABLE public.squad_members DROP CONSTRAINT IF EXISTS squad_members_pkey;
-ALTER TABLE public.squad_members ADD CONSTRAINT squad_members_pkey PRIMARY KEY (squad_id, user_id);
--- public.squads
-ALTER TABLE public.squads DROP CONSTRAINT IF EXISTS squads_pkey;
-ALTER TABLE public.squads ADD CONSTRAINT squads_pkey PRIMARY KEY (id);
--- public.stage_bottleneck_insights
-ALTER TABLE public.stage_bottleneck_insights DROP CONSTRAINT IF EXISTS stage_bottleneck_insights_pkey;
-ALTER TABLE public.stage_bottleneck_insights ADD CONSTRAINT stage_bottleneck_insights_pkey PRIMARY KEY (id);
-ALTER TABLE public.stage_bottleneck_insights DROP CONSTRAINT IF EXISTS stage_bottleneck_insights_severity_check;
-ALTER TABLE public.stage_bottleneck_insights ADD CONSTRAINT stage_bottleneck_insights_severity_check CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.stage_conversion_metrics
-ALTER TABLE public.stage_conversion_metrics DROP CONSTRAINT IF EXISTS stage_conversion_metrics_pkey;
-ALTER TABLE public.stage_conversion_metrics ADD CONSTRAINT stage_conversion_metrics_pkey PRIMARY KEY (id);
--- public.stage_inactivity_rules
-ALTER TABLE public.stage_inactivity_rules DROP CONSTRAINT IF EXISTS stage_inactivity_rules_pkey;
-ALTER TABLE public.stage_inactivity_rules ADD CONSTRAINT stage_inactivity_rules_pkey PRIMARY KEY (id);
-ALTER TABLE public.stage_inactivity_rules DROP CONSTRAINT IF EXISTS stage_inactivity_rules_stage_key;
-ALTER TABLE public.stage_inactivity_rules ADD CONSTRAINT stage_inactivity_rules_stage_key UNIQUE (stage);
-ALTER TABLE public.stage_inactivity_rules DROP CONSTRAINT IF EXISTS stage_inactivity_rules_check;
-ALTER TABLE public.stage_inactivity_rules ADD CONSTRAINT stage_inactivity_rules_check CHECK ((moderate_days > mild_days));
-ALTER TABLE public.stage_inactivity_rules DROP CONSTRAINT IF EXISTS stage_inactivity_rules_check1;
-ALTER TABLE public.stage_inactivity_rules ADD CONSTRAINT stage_inactivity_rules_check1 CHECK ((critical_days > moderate_days));
-ALTER TABLE public.stage_inactivity_rules DROP CONSTRAINT IF EXISTS stage_inactivity_rules_mild_days_check;
-ALTER TABLE public.stage_inactivity_rules ADD CONSTRAINT stage_inactivity_rules_mild_days_check CHECK ((mild_days > 0));
--- public.stage_probabilities
-ALTER TABLE public.stage_probabilities DROP CONSTRAINT IF EXISTS stage_probabilities_pkey;
-ALTER TABLE public.stage_probabilities ADD CONSTRAINT stage_probabilities_pkey PRIMARY KEY (stage);
-ALTER TABLE public.stage_probabilities DROP CONSTRAINT IF EXISTS stage_probabilities_probability_check;
-ALTER TABLE public.stage_probabilities ADD CONSTRAINT stage_probabilities_probability_check CHECK (((probability >= (0)::numeric) AND (probability <= (1)::numeric)));
--- public.stage_velocity_baselines
-ALTER TABLE public.stage_velocity_baselines DROP CONSTRAINT IF EXISTS stage_velocity_baselines_pkey;
-ALTER TABLE public.stage_velocity_baselines ADD CONSTRAINT stage_velocity_baselines_pkey PRIMARY KEY (id);
-ALTER TABLE public.stage_velocity_baselines DROP CONSTRAINT IF EXISTS stage_velocity_baselines_stage_segment_key;
-ALTER TABLE public.stage_velocity_baselines ADD CONSTRAINT stage_velocity_baselines_stage_segment_key UNIQUE (stage, segment);
--- public.status_transitions
-ALTER TABLE public.status_transitions DROP CONSTRAINT IF EXISTS status_transitions_pkey;
-ALTER TABLE public.status_transitions ADD CONSTRAINT status_transitions_pkey PRIMARY KEY (entity, status_origem, status_destino);
--- public.stock_movements
-ALTER TABLE public.stock_movements DROP CONSTRAINT IF EXISTS stock_movements_pkey;
-ALTER TABLE public.stock_movements ADD CONSTRAINT stock_movements_pkey PRIMARY KEY (id);
-ALTER TABLE public.stock_movements DROP CONSTRAINT IF EXISTS stock_movements_movement_type_check;
-ALTER TABLE public.stock_movements ADD CONSTRAINT stock_movements_movement_type_check CHECK ((movement_type = ANY (ARRAY['entry'::text, 'exit'::text, 'adjustment'::text])));
--- public.supplier_order_items
-ALTER TABLE public.supplier_order_items DROP CONSTRAINT IF EXISTS supplier_order_items_pkey;
-ALTER TABLE public.supplier_order_items ADD CONSTRAINT supplier_order_items_pkey PRIMARY KEY (id);
--- public.supplier_orders
-ALTER TABLE public.supplier_orders DROP CONSTRAINT IF EXISTS supplier_orders_pkey;
-ALTER TABLE public.supplier_orders ADD CONSTRAINT supplier_orders_pkey PRIMARY KEY (id);
-ALTER TABLE public.supplier_orders DROP CONSTRAINT IF EXISTS supplier_orders_status_check;
-ALTER TABLE public.supplier_orders ADD CONSTRAINT supplier_orders_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text])));
--- public.supplier_products
-ALTER TABLE public.supplier_products DROP CONSTRAINT IF EXISTS supplier_products_pkey;
-ALTER TABLE public.supplier_products ADD CONSTRAINT supplier_products_pkey PRIMARY KEY (id);
-ALTER TABLE public.supplier_products DROP CONSTRAINT IF EXISTS supplier_products_supplier_id_product_id_key;
-ALTER TABLE public.supplier_products ADD CONSTRAINT supplier_products_supplier_id_product_id_key UNIQUE (supplier_id, product_id);
--- public.supplier_risk_assessments
-ALTER TABLE public.supplier_risk_assessments DROP CONSTRAINT IF EXISTS supplier_risk_assessments_pkey;
-ALTER TABLE public.supplier_risk_assessments ADD CONSTRAINT supplier_risk_assessments_pkey PRIMARY KEY (id);
-ALTER TABLE public.supplier_risk_assessments DROP CONSTRAINT IF EXISTS supplier_risk_assessments_risk_level_check;
-ALTER TABLE public.supplier_risk_assessments ADD CONSTRAINT supplier_risk_assessments_risk_level_check CHECK ((risk_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])));
--- public.suppliers
-ALTER TABLE public.suppliers DROP CONSTRAINT IF EXISTS suppliers_pkey;
-ALTER TABLE public.suppliers ADD CONSTRAINT suppliers_pkey PRIMARY KEY (id);
--- public.support_tickets
-ALTER TABLE public.support_tickets DROP CONSTRAINT IF EXISTS support_tickets_pkey;
-ALTER TABLE public.support_tickets ADD CONSTRAINT support_tickets_pkey PRIMARY KEY (id);
--- public.task_assignments
-ALTER TABLE public.task_assignments DROP CONSTRAINT IF EXISTS task_assignments_pkey;
-ALTER TABLE public.task_assignments ADD CONSTRAINT task_assignments_pkey PRIMARY KEY (id);
--- public.task_catalog
-ALTER TABLE public.task_catalog DROP CONSTRAINT IF EXISTS task_catalog_pkey;
-ALTER TABLE public.task_catalog ADD CONSTRAINT task_catalog_pkey PRIMARY KEY (id);
-ALTER TABLE public.task_catalog DROP CONSTRAINT IF EXISTS task_catalog_xp_reward_check;
-ALTER TABLE public.task_catalog ADD CONSTRAINT task_catalog_xp_reward_check CHECK ((xp_reward >= 0));
--- public.tasks
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_pkey;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_pkey PRIMARY KEY (id);
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_due_date_check;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_due_date_check CHECK ((due_date >= '2020-01-01'::date));
--- public.team_closers
-ALTER TABLE public.team_closers DROP CONSTRAINT IF EXISTS team_closers_pkey;
-ALTER TABLE public.team_closers ADD CONSTRAINT team_closers_pkey PRIMARY KEY (id);
-ALTER TABLE public.team_closers DROP CONSTRAINT IF EXISTS team_closers_team_id_closer_id_key;
-ALTER TABLE public.team_closers ADD CONSTRAINT team_closers_team_id_closer_id_key UNIQUE (team_id, closer_id);
--- public.team_custom_fields
-ALTER TABLE public.team_custom_fields DROP CONSTRAINT IF EXISTS team_custom_fields_pkey;
-ALTER TABLE public.team_custom_fields ADD CONSTRAINT team_custom_fields_pkey PRIMARY KEY (id);
-ALTER TABLE public.team_custom_fields DROP CONSTRAINT IF EXISTS team_custom_fields_team_id_field_key_key;
-ALTER TABLE public.team_custom_fields ADD CONSTRAINT team_custom_fields_team_id_field_key_key UNIQUE (team_id, field_key);
-ALTER TABLE public.team_custom_fields DROP CONSTRAINT IF EXISTS team_custom_fields_field_type_check;
-ALTER TABLE public.team_custom_fields ADD CONSTRAINT team_custom_fields_field_type_check CHECK ((field_type = ANY (ARRAY['number'::text, 'text'::text, 'boolean'::text])));
--- public.teams
-ALTER TABLE public.teams DROP CONSTRAINT IF EXISTS teams_pkey;
-ALTER TABLE public.teams ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
--- public.territories
-ALTER TABLE public.territories DROP CONSTRAINT IF EXISTS territories_pkey;
-ALTER TABLE public.territories ADD CONSTRAINT territories_pkey PRIMARY KEY (id);
-ALTER TABLE public.territories DROP CONSTRAINT IF EXISTS territories_name_key;
-ALTER TABLE public.territories ADD CONSTRAINT territories_name_key UNIQUE (name);
--- public.territory_history
-ALTER TABLE public.territory_history DROP CONSTRAINT IF EXISTS territory_history_pkey;
-ALTER TABLE public.territory_history ADD CONSTRAINT territory_history_pkey PRIMARY KEY (id);
--- public.tournament_matches
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_pkey;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_pkey PRIMARY KEY (id);
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_status_check;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'active'::text, 'completed'::text])));
--- public.tournament_participants
-ALTER TABLE public.tournament_participants DROP CONSTRAINT IF EXISTS tournament_participants_pkey;
-ALTER TABLE public.tournament_participants ADD CONSTRAINT tournament_participants_pkey PRIMARY KEY (id);
-ALTER TABLE public.tournament_participants DROP CONSTRAINT IF EXISTS tournament_participants_tournament_id_salesperson_id_key;
-ALTER TABLE public.tournament_participants ADD CONSTRAINT tournament_participants_tournament_id_salesperson_id_key UNIQUE (tournament_id, salesperson_id);
--- public.tournaments
-ALTER TABLE public.tournaments DROP CONSTRAINT IF EXISTS tournaments_pkey;
-ALTER TABLE public.tournaments ADD CONSTRAINT tournaments_pkey PRIMARY KEY (id);
-ALTER TABLE public.tournaments DROP CONSTRAINT IF EXISTS tournaments_bracket_type_check;
-ALTER TABLE public.tournaments ADD CONSTRAINT tournaments_bracket_type_check CHECK ((bracket_type = ANY (ARRAY['single_elimination'::text, 'double_elimination'::text])));
-ALTER TABLE public.tournaments DROP CONSTRAINT IF EXISTS tournaments_metric_type_check;
-ALTER TABLE public.tournaments ADD CONSTRAINT tournaments_metric_type_check CHECK ((metric_type = ANY (ARRAY['revenue'::text, 'deals'::text, 'activities'::text, 'conversion'::text])));
-ALTER TABLE public.tournaments DROP CONSTRAINT IF EXISTS tournaments_status_check;
-ALTER TABLE public.tournaments ADD CONSTRAINT tournaments_status_check CHECK ((status = ANY (ARRAY['upcoming'::text, 'active'::text, 'completed'::text])));
--- public.twilio_call_sessions
-ALTER TABLE public.twilio_call_sessions DROP CONSTRAINT IF EXISTS twilio_call_sessions_pkey;
-ALTER TABLE public.twilio_call_sessions ADD CONSTRAINT twilio_call_sessions_pkey PRIMARY KEY (id);
-ALTER TABLE public.twilio_call_sessions DROP CONSTRAINT IF EXISTS twilio_call_sessions_call_sid_key;
-ALTER TABLE public.twilio_call_sessions ADD CONSTRAINT twilio_call_sessions_call_sid_key UNIQUE (call_sid);
--- public.user_2fa
-ALTER TABLE public.user_2fa DROP CONSTRAINT IF EXISTS user_2fa_pkey;
-ALTER TABLE public.user_2fa ADD CONSTRAINT user_2fa_pkey PRIMARY KEY (id);
-ALTER TABLE public.user_2fa DROP CONSTRAINT IF EXISTS user_2fa_user_id_key;
-ALTER TABLE public.user_2fa ADD CONSTRAINT user_2fa_user_id_key UNIQUE (user_id);
--- public.user_2fa_backup_codes
-ALTER TABLE public.user_2fa_backup_codes DROP CONSTRAINT IF EXISTS user_2fa_backup_codes_pkey;
-ALTER TABLE public.user_2fa_backup_codes ADD CONSTRAINT user_2fa_backup_codes_pkey PRIMARY KEY (id);
--- public.user_2fa_log
-ALTER TABLE public.user_2fa_log DROP CONSTRAINT IF EXISTS user_2fa_log_pkey;
-ALTER TABLE public.user_2fa_log ADD CONSTRAINT user_2fa_log_pkey PRIMARY KEY (id);
--- public.user_app_settings
-ALTER TABLE public.user_app_settings DROP CONSTRAINT IF EXISTS user_app_settings_pkey;
-ALTER TABLE public.user_app_settings ADD CONSTRAINT user_app_settings_pkey PRIMARY KEY (user_id, key);
--- public.user_mfa_settings
-ALTER TABLE public.user_mfa_settings DROP CONSTRAINT IF EXISTS user_mfa_settings_pkey;
-ALTER TABLE public.user_mfa_settings ADD CONSTRAINT user_mfa_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.user_mfa_settings DROP CONSTRAINT IF EXISTS user_mfa_settings_user_id_key;
-ALTER TABLE public.user_mfa_settings ADD CONSTRAINT user_mfa_settings_user_id_key UNIQUE (user_id);
-ALTER TABLE public.user_mfa_settings DROP CONSTRAINT IF EXISTS user_mfa_settings_preferred_method_check;
-ALTER TABLE public.user_mfa_settings ADD CONSTRAINT user_mfa_settings_preferred_method_check CHECK ((preferred_method = ANY (ARRAY['totp'::text, 'sms'::text])));
--- public.user_roles
-ALTER TABLE public.user_roles DROP CONSTRAINT IF EXISTS user_roles_pkey;
-ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_pkey PRIMARY KEY (id);
-ALTER TABLE public.user_roles DROP CONSTRAINT IF EXISTS user_roles_user_id_role_key;
-ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_user_id_role_key UNIQUE (user_id, role);
--- public.user_winloss_preferences
-ALTER TABLE public.user_winloss_preferences DROP CONSTRAINT IF EXISTS user_winloss_preferences_pkey;
-ALTER TABLE public.user_winloss_preferences ADD CONSTRAINT user_winloss_preferences_pkey PRIMARY KEY (user_id);
--- public.v4_callback_alert_settings
-ALTER TABLE public.v4_callback_alert_settings DROP CONSTRAINT IF EXISTS v4_callback_alert_settings_pkey;
-ALTER TABLE public.v4_callback_alert_settings ADD CONSTRAINT v4_callback_alert_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.v4_callback_alert_settings DROP CONSTRAINT IF EXISTS v4_callback_alert_settings_singleton_key;
-ALTER TABLE public.v4_callback_alert_settings ADD CONSTRAINT v4_callback_alert_settings_singleton_key UNIQUE (singleton);
--- public.v4_callback_alerts
-ALTER TABLE public.v4_callback_alerts DROP CONSTRAINT IF EXISTS v4_callback_alerts_pkey;
-ALTER TABLE public.v4_callback_alerts ADD CONSTRAINT v4_callback_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.v4_callback_alerts DROP CONSTRAINT IF EXISTS v4_callback_alerts_kind_check;
-ALTER TABLE public.v4_callback_alerts ADD CONSTRAINT v4_callback_alerts_kind_check CHECK ((kind = ANY (ARRAY['high_failure_rate'::text, 'exhausted_spike'::text, 'pending_backlog'::text])));
--- public.v4_callback_dead_letters
-ALTER TABLE public.v4_callback_dead_letters DROP CONSTRAINT IF EXISTS v4_callback_dead_letters_pkey;
-ALTER TABLE public.v4_callback_dead_letters ADD CONSTRAINT v4_callback_dead_letters_pkey PRIMARY KEY (id);
--- public.v4_callback_metrics
-ALTER TABLE public.v4_callback_metrics DROP CONSTRAINT IF EXISTS v4_callback_metrics_pkey;
-ALTER TABLE public.v4_callback_metrics ADD CONSTRAINT v4_callback_metrics_pkey PRIMARY KEY (id);
-ALTER TABLE public.v4_callback_metrics DROP CONSTRAINT IF EXISTS v4_callback_metrics_day_key;
-ALTER TABLE public.v4_callback_metrics ADD CONSTRAINT v4_callback_metrics_day_key UNIQUE (day);
--- public.victory_feed
-ALTER TABLE public.victory_feed DROP CONSTRAINT IF EXISTS victory_feed_pkey;
-ALTER TABLE public.victory_feed ADD CONSTRAINT victory_feed_pkey PRIMARY KEY (id);
--- public.web_vitals_samples
-ALTER TABLE public.web_vitals_samples DROP CONSTRAINT IF EXISTS web_vitals_samples_pkey;
-ALTER TABLE public.web_vitals_samples ADD CONSTRAINT web_vitals_samples_pkey PRIMARY KEY (id);
-ALTER TABLE public.web_vitals_samples DROP CONSTRAINT IF EXISTS web_vitals_samples_metric_check;
-ALTER TABLE public.web_vitals_samples ADD CONSTRAINT web_vitals_samples_metric_check CHECK ((metric = ANY (ARRAY['LCP'::text, 'INP'::text, 'CLS'::text, 'FCP'::text, 'TTFB'::text])));
-ALTER TABLE public.web_vitals_samples DROP CONSTRAINT IF EXISTS web_vitals_samples_rating_check;
-ALTER TABLE public.web_vitals_samples ADD CONSTRAINT web_vitals_samples_rating_check CHECK ((rating = ANY (ARRAY['good'::text, 'needs-improvement'::text, 'poor'::text])));
--- public.webauthn_challenges
-ALTER TABLE public.webauthn_challenges DROP CONSTRAINT IF EXISTS webauthn_challenges_pkey;
-ALTER TABLE public.webauthn_challenges ADD CONSTRAINT webauthn_challenges_pkey PRIMARY KEY (id);
-ALTER TABLE public.webauthn_challenges DROP CONSTRAINT IF EXISTS webauthn_challenges_type_check;
-ALTER TABLE public.webauthn_challenges ADD CONSTRAINT webauthn_challenges_type_check CHECK ((type = ANY (ARRAY['registration'::text, 'authentication'::text])));
--- public.webauthn_credentials
-ALTER TABLE public.webauthn_credentials DROP CONSTRAINT IF EXISTS webauthn_credentials_pkey;
-ALTER TABLE public.webauthn_credentials ADD CONSTRAINT webauthn_credentials_pkey PRIMARY KEY (id);
-ALTER TABLE public.webauthn_credentials DROP CONSTRAINT IF EXISTS webauthn_credentials_credential_id_key;
-ALTER TABLE public.webauthn_credentials ADD CONSTRAINT webauthn_credentials_credential_id_key UNIQUE (credential_id);
--- public.webhook_allowed_domains
-ALTER TABLE public.webhook_allowed_domains DROP CONSTRAINT IF EXISTS webhook_allowed_domains_pkey;
-ALTER TABLE public.webhook_allowed_domains ADD CONSTRAINT webhook_allowed_domains_pkey PRIMARY KEY (id);
-ALTER TABLE public.webhook_allowed_domains DROP CONSTRAINT IF EXISTS webhook_allowed_domains_pattern_formato;
-ALTER TABLE public.webhook_allowed_domains ADD CONSTRAINT webhook_allowed_domains_pattern_formato CHECK (((pattern = lower(pattern)) AND (pattern !~ '\s'::text) AND (pattern <> ''::text) AND ((pattern ~ '^[a-z0-9.-]+$'::text) OR (pattern ~ '^\*\.[a-z0-9.-]+$'::text))));
--- public.webhook_deliveries
-ALTER TABLE public.webhook_deliveries DROP CONSTRAINT IF EXISTS webhook_deliveries_pkey;
-ALTER TABLE public.webhook_deliveries ADD CONSTRAINT webhook_deliveries_pkey PRIMARY KEY (id);
--- public.webhook_dispatch_rate
-ALTER TABLE public.webhook_dispatch_rate DROP CONSTRAINT IF EXISTS webhook_dispatch_rate_pkey;
-ALTER TABLE public.webhook_dispatch_rate ADD CONSTRAINT webhook_dispatch_rate_pkey PRIMARY KEY (id);
--- public.webhook_events
-ALTER TABLE public.webhook_events DROP CONSTRAINT IF EXISTS webhook_events_pkey;
-ALTER TABLE public.webhook_events ADD CONSTRAINT webhook_events_pkey PRIMARY KEY (id);
-ALTER TABLE public.webhook_events DROP CONSTRAINT IF EXISTS webhook_events_status_check;
-ALTER TABLE public.webhook_events ADD CONSTRAINT webhook_events_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'success'::text, 'failed'::text])));
--- public.webhook_inbound_dedupe
-ALTER TABLE public.webhook_inbound_dedupe DROP CONSTRAINT IF EXISTS webhook_inbound_dedupe_pkey;
-ALTER TABLE public.webhook_inbound_dedupe ADD CONSTRAINT webhook_inbound_dedupe_pkey PRIMARY KEY (id);
-ALTER TABLE public.webhook_inbound_dedupe DROP CONSTRAINT IF EXISTS chk_webhook_inbound_dedupe_hit_count_non_negative;
-ALTER TABLE public.webhook_inbound_dedupe ADD CONSTRAINT chk_webhook_inbound_dedupe_hit_count_non_negative CHECK ((hit_count >= 0));
-ALTER TABLE public.webhook_inbound_dedupe DROP CONSTRAINT IF EXISTS chk_webhook_inbound_dedupe_payload_size;
-ALTER TABLE public.webhook_inbound_dedupe ADD CONSTRAINT chk_webhook_inbound_dedupe_payload_size CHECK ((pg_column_size(payload) <= 262144));
--- public.webhook_inbound_log
-ALTER TABLE public.webhook_inbound_log DROP CONSTRAINT IF EXISTS webhook_inbound_log_pkey;
-ALTER TABLE public.webhook_inbound_log ADD CONSTRAINT webhook_inbound_log_pkey PRIMARY KEY (id);
-ALTER TABLE public.webhook_inbound_log DROP CONSTRAINT IF EXISTS chk_webhook_inbound_log_http_status_range;
-ALTER TABLE public.webhook_inbound_log ADD CONSTRAINT chk_webhook_inbound_log_http_status_range CHECK (((http_status >= 100) AND (http_status <= 599)));
-ALTER TABLE public.webhook_inbound_log DROP CONSTRAINT IF EXISTS chk_webhook_inbound_log_outcome_allowed;
-ALTER TABLE public.webhook_inbound_log ADD CONSTRAINT chk_webhook_inbound_log_outcome_allowed CHECK ((outcome = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text])));
-ALTER TABLE public.webhook_inbound_log DROP CONSTRAINT IF EXISTS chk_webhook_inbound_log_payload_size_non_negative;
-ALTER TABLE public.webhook_inbound_log ADD CONSTRAINT chk_webhook_inbound_log_payload_size_non_negative CHECK (((payload_size IS NULL) OR (payload_size >= 0)));
--- public.webhook_logs
-ALTER TABLE public.webhook_logs DROP CONSTRAINT IF EXISTS webhook_logs_pkey;
-ALTER TABLE public.webhook_logs ADD CONSTRAINT webhook_logs_pkey PRIMARY KEY (id);
--- public.webhooks
-ALTER TABLE public.webhooks DROP CONSTRAINT IF EXISTS webhooks_pkey;
-ALTER TABLE public.webhooks ADD CONSTRAINT webhooks_pkey PRIMARY KEY (id);
--- public.website_visitor_logs
-ALTER TABLE public.website_visitor_logs DROP CONSTRAINT IF EXISTS website_visitor_logs_pkey;
-ALTER TABLE public.website_visitor_logs ADD CONSTRAINT website_visitor_logs_pkey PRIMARY KEY (id);
--- public.weekly_challenges
-ALTER TABLE public.weekly_challenges DROP CONSTRAINT IF EXISTS weekly_challenges_pkey;
-ALTER TABLE public.weekly_challenges ADD CONSTRAINT weekly_challenges_pkey PRIMARY KEY (id);
--- public.weekly_matchups
-ALTER TABLE public.weekly_matchups DROP CONSTRAINT IF EXISTS weekly_matchups_pkey;
-ALTER TABLE public.weekly_matchups ADD CONSTRAINT weekly_matchups_pkey PRIMARY KEY (id);
--- public.whatsapp_conversations
-ALTER TABLE public.whatsapp_conversations DROP CONSTRAINT IF EXISTS whatsapp_conversations_pkey;
-ALTER TABLE public.whatsapp_conversations ADD CONSTRAINT whatsapp_conversations_pkey PRIMARY KEY (id);
-ALTER TABLE public.whatsapp_conversations DROP CONSTRAINT IF EXISTS whatsapp_conversations_external_message_id_key;
-ALTER TABLE public.whatsapp_conversations ADD CONSTRAINT whatsapp_conversations_external_message_id_key UNIQUE (external_message_id);
-ALTER TABLE public.whatsapp_conversations DROP CONSTRAINT IF EXISTS whatsapp_conversations_direction_check;
-ALTER TABLE public.whatsapp_conversations ADD CONSTRAINT whatsapp_conversations_direction_check CHECK ((direction = ANY (ARRAY['inbound'::text, 'outbound'::text])));
--- public.whatsapp_template_versions
-ALTER TABLE public.whatsapp_template_versions DROP CONSTRAINT IF EXISTS whatsapp_template_versions_pkey;
-ALTER TABLE public.whatsapp_template_versions ADD CONSTRAINT whatsapp_template_versions_pkey PRIMARY KEY (id);
--- public.win_calibration_buckets
-ALTER TABLE public.win_calibration_buckets DROP CONSTRAINT IF EXISTS win_calibration_buckets_pkey;
-ALTER TABLE public.win_calibration_buckets ADD CONSTRAINT win_calibration_buckets_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_calibration_buckets DROP CONSTRAINT IF EXISTS win_calibration_buckets_stage_segment_bucket_min_key;
-ALTER TABLE public.win_calibration_buckets ADD CONSTRAINT win_calibration_buckets_stage_segment_bucket_min_key UNIQUE (stage, segment, bucket_min);
--- public.win_loss_analyses
-ALTER TABLE public.win_loss_analyses DROP CONSTRAINT IF EXISTS win_loss_analyses_pkey;
-ALTER TABLE public.win_loss_analyses ADD CONSTRAINT win_loss_analyses_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_loss_analyses DROP CONSTRAINT IF EXISTS win_loss_analyses_sale_id_key;
-ALTER TABLE public.win_loss_analyses ADD CONSTRAINT win_loss_analyses_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.win_loss_analyses DROP CONSTRAINT IF EXISTS win_loss_analyses_outcome_check;
-ALTER TABLE public.win_loss_analyses ADD CONSTRAINT win_loss_analyses_outcome_check CHECK ((outcome = ANY (ARRAY['won'::text, 'lost'::text])));
--- public.win_loss_insight_comments
-ALTER TABLE public.win_loss_insight_comments DROP CONSTRAINT IF EXISTS win_loss_insight_comments_pkey;
-ALTER TABLE public.win_loss_insight_comments ADD CONSTRAINT win_loss_insight_comments_pkey PRIMARY KEY (id);
--- public.win_loss_insights
-ALTER TABLE public.win_loss_insights DROP CONSTRAINT IF EXISTS win_loss_insights_pkey;
-ALTER TABLE public.win_loss_insights ADD CONSTRAINT win_loss_insights_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_loss_insights DROP CONSTRAINT IF EXISTS win_loss_insights_severity_check;
-ALTER TABLE public.win_loss_insights ADD CONSTRAINT win_loss_insights_severity_check CHECK ((severity = ANY (ARRAY['info'::text, 'opportunity'::text, 'risk'::text])));
--- public.win_loss_patterns
-ALTER TABLE public.win_loss_patterns DROP CONSTRAINT IF EXISTS win_loss_patterns_pkey;
-ALTER TABLE public.win_loss_patterns ADD CONSTRAINT win_loss_patterns_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_loss_patterns DROP CONSTRAINT IF EXISTS win_loss_patterns_pattern_type_check;
-ALTER TABLE public.win_loss_patterns ADD CONSTRAINT win_loss_patterns_pattern_type_check CHECK ((pattern_type = ANY (ARRAY['win_factor'::text, 'loss_factor'::text, 'stuck_stage'::text, 'competitor'::text, 'icp_match'::text])));
--- public.win_probability_calibrations
-ALTER TABLE public.win_probability_calibrations DROP CONSTRAINT IF EXISTS win_probability_calibrations_pkey;
-ALTER TABLE public.win_probability_calibrations ADD CONSTRAINT win_probability_calibrations_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_probability_calibrations DROP CONSTRAINT IF EXISTS win_probability_calibrations_scope_scope_value_stage_key;
-ALTER TABLE public.win_probability_calibrations ADD CONSTRAINT win_probability_calibrations_scope_scope_value_stage_key UNIQUE (scope, scope_value, stage);
-ALTER TABLE public.win_probability_calibrations DROP CONSTRAINT IF EXISTS win_probability_calibrations_confidence_check;
-ALTER TABLE public.win_probability_calibrations ADD CONSTRAINT win_probability_calibrations_confidence_check CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)));
-ALTER TABLE public.win_probability_calibrations DROP CONSTRAINT IF EXISTS win_probability_calibrations_scope_check;
-ALTER TABLE public.win_probability_calibrations ADD CONSTRAINT win_probability_calibrations_scope_check CHECK ((scope = ANY (ARRAY['global'::text, 'owner'::text, 'segment'::text, 'source'::text])));
--- public.win_probability_deal_calibrations
-ALTER TABLE public.win_probability_deal_calibrations DROP CONSTRAINT IF EXISTS win_probability_deal_calibrations_pkey;
-ALTER TABLE public.win_probability_deal_calibrations ADD CONSTRAINT win_probability_deal_calibrations_pkey PRIMARY KEY (id);
-ALTER TABLE public.win_probability_deal_calibrations DROP CONSTRAINT IF EXISTS win_probability_deal_calibrations_sale_id_key;
-ALTER TABLE public.win_probability_deal_calibrations ADD CONSTRAINT win_probability_deal_calibrations_sale_id_key UNIQUE (sale_id);
-ALTER TABLE public.win_probability_deal_calibrations DROP CONSTRAINT IF EXISTS win_probability_deal_calibrations_confidence_check;
-ALTER TABLE public.win_probability_deal_calibrations ADD CONSTRAINT win_probability_deal_calibrations_confidence_check CHECK ((confidence = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])));
-ALTER TABLE public.win_probability_deal_calibrations DROP CONSTRAINT IF EXISTS win_probability_deal_calibrations_flag_check;
-ALTER TABLE public.win_probability_deal_calibrations ADD CONSTRAINT win_probability_deal_calibrations_flag_check CHECK ((flag = ANY (ARRAY['overconfident'::text, 'underconfident'::text, 'aligned'::text])));
--- public.winloss_alert_settings
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_pkey;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_singleton_key;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_singleton_key UNIQUE (singleton);
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_consecutive_failures_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_consecutive_failures_check CHECK (((consecutive_failures >= 1) AND (consecutive_failures <= 100)));
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_max_attempts_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_max_attempts_check CHECK (((max_attempts >= 1) AND (max_attempts <= 20)));
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_min_deliveries_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_min_deliveries_check CHECK (((min_deliveries >= 1) AND (min_deliveries <= 10000)));
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_retry_rate_threshold_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_retry_rate_threshold_check CHECK (((retry_rate_threshold >= (0)::numeric) AND (retry_rate_threshold <= (1)::numeric)));
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_suppress_minutes_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_suppress_minutes_check CHECK (((suppress_minutes >= 1) AND (suppress_minutes <= 1440)));
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_window_minutes_check;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_window_minutes_check CHECK (((window_minutes >= 5) AND (window_minutes <= 1440)));
--- public.winloss_webhook_alerts
-ALTER TABLE public.winloss_webhook_alerts DROP CONSTRAINT IF EXISTS winloss_webhook_alerts_pkey;
-ALTER TABLE public.winloss_webhook_alerts ADD CONSTRAINT winloss_webhook_alerts_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_webhook_alerts DROP CONSTRAINT IF EXISTS winloss_webhook_alerts_kind_check;
-ALTER TABLE public.winloss_webhook_alerts ADD CONSTRAINT winloss_webhook_alerts_kind_check CHECK ((kind = ANY (ARRAY['consecutive_failures'::text, 'high_retry_rate'::text, 'attempts_exhausted'::text])));
--- public.winloss_webhook_dead_letters
-ALTER TABLE public.winloss_webhook_dead_letters DROP CONSTRAINT IF EXISTS winloss_webhook_dead_letters_pkey;
-ALTER TABLE public.winloss_webhook_dead_letters ADD CONSTRAINT winloss_webhook_dead_letters_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_webhook_dead_letters DROP CONSTRAINT IF EXISTS winloss_webhook_dead_letters_status_check;
-ALTER TABLE public.winloss_webhook_dead_letters ADD CONSTRAINT winloss_webhook_dead_letters_status_check CHECK ((status = ANY (ARRAY['pending'::text, 'replaying'::text, 'replayed'::text, 'archived'::text])));
--- public.winloss_webhook_deliveries
-ALTER TABLE public.winloss_webhook_deliveries DROP CONSTRAINT IF EXISTS winloss_webhook_deliveries_pkey;
-ALTER TABLE public.winloss_webhook_deliveries ADD CONSTRAINT winloss_webhook_deliveries_pkey PRIMARY KEY (id);
--- public.winloss_webhook_dispatch_metrics
-ALTER TABLE public.winloss_webhook_dispatch_metrics DROP CONSTRAINT IF EXISTS winloss_webhook_dispatch_metrics_pkey;
-ALTER TABLE public.winloss_webhook_dispatch_metrics ADD CONSTRAINT winloss_webhook_dispatch_metrics_pkey PRIMARY KEY (id);
--- public.winloss_webhook_replay_audit
-ALTER TABLE public.winloss_webhook_replay_audit DROP CONSTRAINT IF EXISTS winloss_webhook_replay_audit_pkey;
-ALTER TABLE public.winloss_webhook_replay_audit ADD CONSTRAINT winloss_webhook_replay_audit_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_webhook_replay_audit DROP CONSTRAINT IF EXISTS winloss_webhook_replay_audit_source_check;
-ALTER TABLE public.winloss_webhook_replay_audit ADD CONSTRAINT winloss_webhook_replay_audit_source_check CHECK ((source = ANY (ARRAY['dlq'::text, 'delivery'::text])));
-ALTER TABLE public.winloss_webhook_replay_audit DROP CONSTRAINT IF EXISTS winloss_webhook_replay_audit_status_label_check;
-ALTER TABLE public.winloss_webhook_replay_audit ADD CONSTRAINT winloss_webhook_replay_audit_status_label_check CHECK ((status_label = ANY (ARRAY['succeeded'::text, 'failed'::text, 'skipped'::text])));
--- public.winloss_webhook_replay_invocations
-ALTER TABLE public.winloss_webhook_replay_invocations DROP CONSTRAINT IF EXISTS winloss_webhook_replay_invocations_pkey;
-ALTER TABLE public.winloss_webhook_replay_invocations ADD CONSTRAINT winloss_webhook_replay_invocations_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_webhook_replay_invocations DROP CONSTRAINT IF EXISTS winloss_webhook_replay_invocations_source_check;
-ALTER TABLE public.winloss_webhook_replay_invocations ADD CONSTRAINT winloss_webhook_replay_invocations_source_check CHECK ((source = ANY (ARRAY['dlq'::text, 'delivery'::text])));
--- public.winloss_webhook_subscriptions
-ALTER TABLE public.winloss_webhook_subscriptions DROP CONSTRAINT IF EXISTS winloss_webhook_subscriptions_pkey;
-ALTER TABLE public.winloss_webhook_subscriptions ADD CONSTRAINT winloss_webhook_subscriptions_pkey PRIMARY KEY (id);
-ALTER TABLE public.winloss_webhook_subscriptions DROP CONSTRAINT IF EXISTS winloss_webhook_subscriptions_rate_limit_valido;
-ALTER TABLE public.winloss_webhook_subscriptions ADD CONSTRAINT winloss_webhook_subscriptions_rate_limit_valido CHECK (((rate_limit_per_minute > 0) AND (rate_limit_window_seconds > 0)));
--- public.workflow_executions
-ALTER TABLE public.workflow_executions DROP CONSTRAINT IF EXISTS workflow_executions_pkey;
-ALTER TABLE public.workflow_executions ADD CONSTRAINT workflow_executions_pkey PRIMARY KEY (id);
--- public.workflow_rules
-ALTER TABLE public.workflow_rules DROP CONSTRAINT IF EXISTS workflow_rules_pkey;
-ALTER TABLE public.workflow_rules ADD CONSTRAINT workflow_rules_pkey PRIMARY KEY (id);
--- public.workflows
-ALTER TABLE public.workflows DROP CONSTRAINT IF EXISTS workflows_pkey;
-ALTER TABLE public.workflows ADD CONSTRAINT workflows_pkey PRIMARY KEY (id);
--- public.xp_adjustments
-ALTER TABLE public.xp_adjustments DROP CONSTRAINT IF EXISTS xp_adjustments_pkey;
-ALTER TABLE public.xp_adjustments ADD CONSTRAINT xp_adjustments_pkey PRIMARY KEY (id);
--- public.xp_history
-ALTER TABLE public.xp_history DROP CONSTRAINT IF EXISTS xp_history_pkey;
-ALTER TABLE public.xp_history ADD CONSTRAINT xp_history_pkey PRIMARY KEY (id);
+DO $do$
+DECLARE
+  r        record;
+  alvo     oid;
+  atual    text;
+  erro     boolean;
+  sp_ant   text;
+  criadas  int := 0;
+  iguais   int := 0;
+  difere   int := 0;
+  pulou    int := 0;
+BEGIN
+  sp_ant := current_setting('search_path');
+  PERFORM set_config('search_path', '', true);
+  FOR r IN SELECT * FROM (VALUES
+    -- public._internal_secrets
+    ($q$public$q$, $q$_internal_secrets$q$, $q$_internal_secrets_pkey$q$, $q$PRIMARY KEY (key)$q$),
+    -- public.ab_tests
+    ($q$public$q$, $q$ab_tests$q$, $q$ab_tests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.access_denied_logs
+    ($q$public$q$, $q$access_denied_logs$q$, $q$access_denied_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.account_activities
+    ($q$public$q$, $q$account_activities$q$, $q$account_activities_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.account_contacts
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_buying_role_check$q$, $q$CHECK ((buying_role = ANY (ARRAY['decision_maker'::text, 'champion'::text, 'influencer'::text, 'blocker'::text, 'user'::text, 'technical'::text])))$q$),
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_influence_level_check$q$, $q$CHECK (((influence_level >= 1) AND (influence_level <= 5)))$q$),
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_seniority_check$q$, $q$CHECK ((seniority = ANY (ARRAY['c_level'::text, 'vp'::text, 'director'::text, 'manager'::text, 'ic'::text])))$q$),
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_sentiment_check$q$, $q$CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text])))$q$),
+    -- public.account_plans
+    ($q$public$q$, $q$account_plans$q$, $q$account_plans_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.accounts
+    ($q$public$q$, $q$accounts$q$, $q$accounts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$accounts$q$, $q$accounts_account_score_check$q$, $q$CHECK (((account_score >= 0) AND (account_score <= 100)))$q$),
+    ($q$public$q$, $q$accounts$q$, $q$accounts_health_status_check$q$, $q$CHECK ((health_status = ANY (ARRAY['healthy'::text, 'at_risk'::text, 'critical'::text, 'unknown'::text])))$q$),
+    ($q$public$q$, $q$accounts$q$, $q$accounts_size_bucket_check$q$, $q$CHECK ((size_bucket = ANY (ARRAY['smb'::text, 'mid'::text, 'enterprise'::text])))$q$),
+    ($q$public$q$, $q$accounts$q$, $q$accounts_tier_check$q$, $q$CHECK ((tier = ANY (ARRAY['strategic'::text, 'enterprise'::text, 'mid_market'::text, 'smb'::text])))$q$),
+    -- public.achievements
+    ($q$public$q$, $q$achievements$q$, $q$achievements_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.active_power_ups
+    ($q$public$q$, $q$active_power_ups$q$, $q$active_power_ups_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.active_sessions
+    ($q$public$q$, $q$active_sessions$q$, $q$active_sessions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.activities
+    ($q$public$q$, $q$activities$q$, $q$activities_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$activities$q$, $q$activities_duration_positive$q$, $q$CHECK (((duration_minutes IS NULL) OR (duration_minutes >= 0)))$q$),
+    -- public.activity_audit_logs
+    ($q$public$q$, $q$activity_audit_logs$q$, $q$activity_audit_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.activity_goals
+    ($q$public$q$, $q$activity_goals$q$, $q$activity_goals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$activity_goals$q$, $q$activity_goals_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.agenda_events
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_event_type_check$q$, $q$CHECK ((event_type = ANY (ARRAY['reminder'::text, 'follow_up'::text, 'meeting'::text, 'call'::text, 'task'::text])))$q$),
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_priority_check$q$, $q$CHECK ((priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])))$q$),
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])))$q$),
+    -- public.ai_agent_actions
+    ($q$public$q$, $q$ai_agent_actions$q$, $q$ai_agent_actions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$ai_agent_actions$q$, $q$ai_agent_actions_executed_by_check$q$, $q$CHECK ((executed_by = ANY (ARRAY['ai'::text, 'user'::text, 'system'::text])))$q$),
+    ($q$public$q$, $q$ai_agent_actions$q$, $q$ai_agent_actions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text, 'executing'::text])))$q$),
+    -- public.ai_agent_runs
+    ($q$public$q$, $q$ai_agent_runs$q$, $q$ai_agent_runs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$ai_agent_runs$q$, $q$ai_agent_runs_agent_type_check$q$, $q$CHECK ((agent_type = ANY (ARRAY['qualify_lead'::text, 'build_proposal'::text, 'schedule_followup'::text, 'enrich_client'::text, 'recover_cold_lead'::text])))$q$),
+    ($q$public$q$, $q$ai_agent_runs$q$, $q$ai_agent_runs_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'awaiting_approval'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])))$q$),
+    ($q$public$q$, $q$ai_agent_runs$q$, $q$ai_agent_runs_target_entity_type_check$q$, $q$CHECK ((target_entity_type = ANY (ARRAY['lead'::text, 'client'::text, 'deal'::text, 'activity'::text])))$q$),
+    -- public.ai_narrative_cache
+    ($q$public$q$, $q$ai_narrative_cache$q$, $q$ai_narrative_cache_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$ai_narrative_cache$q$, $q$ai_narrative_cache_cache_key_key$q$, $q$UNIQUE (cache_key)$q$),
+    -- public.ai_sales_insights
+    ($q$public$q$, $q$ai_sales_insights$q$, $q$ai_sales_insights_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.api_tokens
+    ($q$public$q$, $q$api_tokens$q$, $q$api_tokens_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$api_tokens$q$, $q$api_tokens_token_key$q$, $q$UNIQUE (token)$q$),
+    -- public.app_config
+    ($q$public$q$, $q$app_config$q$, $q$app_config_pkey$q$, $q$PRIMARY KEY (key)$q$),
+    -- public.approval_decisions
+    ($q$public$q$, $q$approval_decisions$q$, $q$approval_decisions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$approval_decisions$q$, $q$approval_decisions_decision_check$q$, $q$CHECK ((decision = ANY (ARRAY['approved'::text, 'rejected'::text])))$q$),
+    -- public.approval_requests
+    ($q$public$q$, $q$approval_requests$q$, $q$approval_requests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$approval_requests$q$, $q$approval_requests_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'cancelled'::text])))$q$),
+    -- public.approval_workflows
+    ($q$public$q$, $q$approval_workflows$q$, $q$approval_workflows_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$approval_workflows$q$, $q$approval_workflows_workflow_type_check$q$, $q$CHECK ((workflow_type = ANY (ARRAY['discount'::text, 'proposal'::text, 'exception'::text, 'refund'::text])))$q$),
+    -- public.asset_usage_logs
+    ($q$public$q$, $q$asset_usage_logs$q$, $q$asset_usage_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.audit_log
+    ($q$public$q$, $q$audit_log$q$, $q$audit_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$audit_log$q$, $q$audit_log_action_check$q$, $q$CHECK ((action = ANY (ARRAY['INSERT'::text, 'UPDATE'::text, 'DELETE'::text])))$q$),
+    -- public.audit_logs
+    ($q$public$q$, $q$audit_logs$q$, $q$audit_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.auto_task_queue_settings
+    ($q$public$q$, $q$auto_task_queue_settings$q$, $q$auto_task_queue_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$auto_task_queue_settings$q$, $q$auto_task_queue_settings_singleton_key$q$, $q$UNIQUE (singleton)$q$),
+    ($q$public$q$, $q$auto_task_queue_settings$q$, $q$auto_task_queue_settings_max_tasks_per_salesperson_check$q$, $q$CHECK (((max_tasks_per_salesperson >= 1) AND (max_tasks_per_salesperson <= 50)))$q$),
+    ($q$public$q$, $q$auto_task_queue_settings$q$, $q$auto_task_queue_settings_min_urgency_check$q$, $q$CHECK ((min_urgency = ANY (ARRAY['critical'::text, 'high'::text, 'medium'::text])))$q$),
+    -- public.automation_runs
+    ($q$public$q$, $q$automation_runs$q$, $q$automation_runs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$automation_runs$q$, $q$automation_runs_status_check$q$, $q$CHECK ((status = ANY (ARRAY['success'::text, 'failed'::text, 'skipped'::text, 'partial'::text])))$q$),
+    -- public.automation_workflows
+    ($q$public$q$, $q$automation_workflows$q$, $q$automation_workflows_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$automation_workflows$q$, $q$automation_workflows_trigger_type_check$q$, $q$CHECK ((trigger_type = ANY (ARRAY['deal_created'::text, 'stage_changed'::text, 'activity_logged'::text, 'scheduled'::text, 'manual'::text, 'no_activity_days'::text, 'proposal_opened'::text, 'price_clicked'::text])))$q$),
+    -- public.available_spins
+    ($q$public$q$, $q$available_spins$q$, $q$available_spins_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$available_spins$q$, $q$available_spins_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.battle_participants
+    ($q$public$q$, $q$battle_participants$q$, $q$battle_participants_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$battle_participants$q$, $q$battle_participants_battle_id_salesperson_id_key$q$, $q$UNIQUE (battle_id, salesperson_id)$q$),
+    -- public.bitrix24_sync_logs
+    ($q$public$q$, $q$bitrix24_sync_logs$q$, $q$bitrix24_sync_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.blocked_ips
+    ($q$public$q$, $q$blocked_ips$q$, $q$blocked_ips_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$blocked_ips$q$, $q$blocked_ips_ip_address_key$q$, $q$UNIQUE (ip_address)$q$),
+    -- public.buying_committee
+    ($q$public$q$, $q$buying_committee$q$, $q$buying_committee_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.buying_committee_members
+    ($q$public$q$, $q$buying_committee_members$q$, $q$buying_committee_members_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$buying_committee_members$q$, $q$buying_committee_members_influence_level_check$q$, $q$CHECK (((influence_level >= 1) AND (influence_level <= 5)))$q$),
+    -- public.buying_signals
+    ($q$public$q$, $q$buying_signals$q$, $q$buying_signals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$buying_signals$q$, $q$buying_signals_significance_score_check$q$, $q$CHECK (((significance_score >= 1) AND (significance_score <= 100)))$q$),
+    -- public.cadence_ab_assignments
+    ($q$public$q$, $q$cadence_ab_assignments$q$, $q$cadence_ab_assignments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_ab_assignments$q$, $q$cadence_ab_assignments_ab_test_id_prospect_cadence_id_key$q$, $q$UNIQUE (ab_test_id, prospect_cadence_id)$q$),
+    ($q$public$q$, $q$cadence_ab_assignments$q$, $q$cadence_ab_assignments_variant_check$q$, $q$CHECK ((variant = ANY (ARRAY['a'::text, 'b'::text])))$q$),
+    -- public.cadence_ab_tests
+    ($q$public$q$, $q$cadence_ab_tests$q$, $q$cadence_ab_tests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_ab_tests$q$, $q$chk_distinct_variants$q$, $q$CHECK ((variant_a_id <> variant_b_id))$q$),
+    ($q$public$q$, $q$cadence_ab_tests$q$, $q$chk_split_range$q$, $q$CHECK (((traffic_split >= 1) AND (traffic_split <= 99)))$q$),
+    -- public.cadence_advanced_stats
+    ($q$public$q$, $q$cadence_advanced_stats$q$, $q$cadence_advanced_stats_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.cadence_alert_templates
+    ($q$public$q$, $q$cadence_alert_templates$q$, $q$cadence_alert_templates_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_alert_templates$q$, $q$cadence_alert_templates_type_check$q$, $q$CHECK ((type = ANY (ARRAY['push'::text, 'email'::text])))$q$),
+    -- public.cadence_enrollment_rules
+    ($q$public$q$, $q$cadence_enrollment_rules$q$, $q$cadence_enrollment_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.cadence_funnel_rules
+    ($q$public$q$, $q$cadence_funnel_rules$q$, $q$cadence_funnel_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_funnel_rules$q$, $q$cadence_funnel_rules_condition_type_check$q$, $q$CHECK ((condition_type = ANY (ARRAY['email_open'::text, 'quote_open'::text, 'price_click'::text, 'reply'::text, 'manual'::text])))$q$),
+    ($q$public$q$, $q$cadence_funnel_rules$q$, $q$cadence_funnel_rules_from_stage_check$q$, $q$CHECK ((from_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])))$q$),
+    ($q$public$q$, $q$cadence_funnel_rules$q$, $q$cadence_funnel_rules_to_stage_check$q$, $q$CHECK ((to_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])))$q$),
+    -- public.cadence_outcome_rules
+    ($q$public$q$, $q$cadence_outcome_rules$q$, $q$cadence_outcome_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.cadence_steps
+    ($q$public$q$, $q$cadence_steps$q$, $q$cadence_steps_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_steps$q$, $q$cadence_steps_action_type_check$q$, $q$CHECK ((action_type = ANY (ARRAY['email'::text, 'call'::text, 'linkedin'::text, 'whatsapp'::text, 'meeting'::text, 'other'::text])))$q$),
+    -- public.cadence_tasks
+    ($q$public$q$, $q$cadence_tasks$q$, $q$cadence_tasks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cadence_tasks$q$, $q$cadence_tasks_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'completed'::text, 'skipped'::text])))$q$),
+    -- public.cadences
+    ($q$public$q$, $q$cadences$q$, $q$cadences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.call_coaching_scorecards
+    ($q$public$q$, $q$call_coaching_scorecards$q$, $q$call_coaching_scorecards_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_coaching_scorecards$q$, $q$call_coaching_scorecards_recording_id_key$q$, $q$UNIQUE (recording_id)$q$),
+    ($q$public$q$, $q$call_coaching_scorecards$q$, $q$call_coaching_scorecards_health_check$q$, $q$CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])))$q$),
+    -- public.call_conversation_metrics
+    ($q$public$q$, $q$call_conversation_metrics$q$, $q$call_conversation_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_conversation_metrics$q$, $q$call_conversation_metrics_recording_id_key$q$, $q$UNIQUE (recording_id)$q$),
+    ($q$public$q$, $q$call_conversation_metrics$q$, $q$call_conversation_metrics_health_check$q$, $q$CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])))$q$),
+    -- public.call_critical_moments
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_moment_type_check$q$, $q$CHECK ((moment_type = ANY (ARRAY['objection'::text, 'buying_signal'::text, 'price_mention'::text, 'discount_request'::text, 'churn_signal'::text, 'competitor'::text, 'commitment'::text, 'next_step'::text])))$q$),
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_status_check$q$, $q$CHECK ((status = ANY (ARRAY['new'::text, 'acknowledged'::text, 'actioned'::text, 'dismissed'::text])))$q$),
+    -- public.call_insights
+    ($q$public$q$, $q$call_insights$q$, $q$call_insights_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_insights$q$, $q$call_insights_sentiment_label_check$q$, $q$CHECK ((sentiment_label = ANY (ARRAY['very_negative'::text, 'negative'::text, 'neutral'::text, 'positive'::text, 'very_positive'::text])))$q$),
+    -- public.call_intelligence_triggers
+    ($q$public$q$, $q$call_intelligence_triggers$q$, $q$call_intelligence_triggers_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.call_logs
+    ($q$public$q$, $q$call_logs$q$, $q$call_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_logs$q$, $q$call_logs_disposition_check$q$, $q$CHECK ((disposition = ANY (ARRAY['connected'::text, 'voicemail'::text, 'no_answer'::text, 'busy'::text, 'wrong_number'::text, 'do_not_call'::text])))$q$),
+    ($q$public$q$, $q$call_logs$q$, $q$call_logs_outcome_check$q$, $q$CHECK ((outcome = ANY (ARRAY['meeting_set'::text, 'interested'::text, 'not_interested'::text, 'callback'::text, 'nurture'::text])))$q$),
+    -- public.call_metric_benchmarks
+    ($q$public$q$, $q$call_metric_benchmarks$q$, $q$call_metric_benchmarks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_metric_benchmarks$q$, $q$call_metric_benchmarks_metric_key$q$, $q$UNIQUE (metric)$q$),
+    -- public.call_objection_analysis
+    ($q$public$q$, $q$call_objection_analysis$q$, $q$call_objection_analysis_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_objection_analysis$q$, $q$call_objection_analysis_recording_id_key$q$, $q$UNIQUE (recording_id)$q$),
+    -- public.call_objections
+    ($q$public$q$, $q$call_objections$q$, $q$call_objections_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.call_question_analysis
+    ($q$public$q$, $q$call_question_analysis$q$, $q$call_question_analysis_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_question_analysis$q$, $q$call_question_analysis_recording_id_key$q$, $q$UNIQUE (recording_id)$q$),
+    ($q$public$q$, $q$call_question_analysis$q$, $q$call_question_analysis_health_check$q$, $q$CHECK ((health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])))$q$),
+    -- public.call_questions
+    ($q$public$q$, $q$call_questions$q$, $q$call_questions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_questions$q$, $q$call_questions_category_check$q$, $q$CHECK ((category = ANY (ARRAY['open'::text, 'closed'::text, 'discovery'::text, 'impact'::text, 'leading'::text, 'other'::text])))$q$),
+    -- public.call_recording_ingest_jobs
+    ($q$public$q$, $q$call_recording_ingest_jobs$q$, $q$call_recording_ingest_jobs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_recording_ingest_jobs$q$, $q$call_recording_ingest_jobs_idempotency_key_key$q$, $q$UNIQUE (idempotency_key)$q$),
+    ($q$public$q$, $q$call_recording_ingest_jobs$q$, $q$call_recording_ingest_jobs_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'processing'::text, 'succeeded'::text, 'failed'::text, 'dead_letter'::text])))$q$),
+    -- public.call_recordings
+    ($q$public$q$, $q$call_recordings$q$, $q$call_recordings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_recordings$q$, $q$call_recordings_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'transcribing'::text, 'analyzing'::text, 'ready'::text, 'failed'::text])))$q$),
+    -- public.call_sentiment_timeline
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_confidence_check$q$, $q$CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)))$q$),
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_score_check$q$, $q$CHECK (((score >= ('-1'::integer)::numeric) AND (score <= (1)::numeric)))$q$),
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_sentiment_check$q$, $q$CHECK ((sentiment = ANY (ARRAY['very_negative'::text, 'negative'::text, 'neutral'::text, 'positive'::text, 'very_positive'::text])))$q$),
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_speaker_check$q$, $q$CHECK ((speaker = ANY (ARRAY['salesperson'::text, 'client'::text, 'unknown'::text, 'mixed'::text])))$q$),
+    -- public.call_transcripts
+    ($q$public$q$, $q$call_transcripts$q$, $q$call_transcripts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.campaign_health_alerts
+    ($q$public$q$, $q$campaign_health_alerts$q$, $q$campaign_health_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$campaign_health_alerts$q$, $q$campaign_health_alerts_alert_type_check$q$, $q$CHECK ((alert_type = ANY (ARRAY['opt_out_rate'::text, 'stalled'::text, 'failure_rate'::text])))$q$),
+    ($q$public$q$, $q$campaign_health_alerts$q$, $q$campaign_health_alerts_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])))$q$),
+    -- public.category_metrics
+    ($q$public$q$, $q$category_metrics$q$, $q$category_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$category_metrics$q$, $q$category_metrics_date_category_key$q$, $q$UNIQUE (date, category)$q$),
+    -- public.challenge_progress
+    ($q$public$q$, $q$challenge_progress$q$, $q$challenge_progress_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$challenge_progress$q$, $q$challenge_progress_challenge_id_salesperson_id_key$q$, $q$UNIQUE (challenge_id, salesperson_id)$q$),
+    -- public.channel_credentials
+    ($q$public$q$, $q$channel_credentials$q$, $q$channel_credentials_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$channel_credentials$q$, $q$channel_credentials_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])))$q$),
+    ($q$public$q$, $q$channel_credentials$q$, $q$channel_credentials_provider_check$q$, $q$CHECK ((provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text, 'evolution'::text])))$q$),
+    -- public.channel_interactions
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text, 'phone'::text])))$q$),
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_direction_check$q$, $q$CHECK ((direction = ANY (ARRAY['inbound'::text, 'outbound'::text])))$q$),
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['sent'::text, 'delivered'::text, 'read'::text, 'replied'::text, 'failed'::text, 'scheduled'::text])))$q$),
+    -- public.chat_conversations
+    ($q$public$q$, $q$chat_conversations$q$, $q$chat_conversations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.chat_messages
+    ($q$public$q$, $q$chat_messages$q$, $q$chat_messages_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$chat_messages$q$, $q$chat_messages_role_check$q$, $q$CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))$q$),
+    -- public.churn_alert_settings
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_auto_task_cooldown_hours_check$q$, $q$CHECK (((auto_task_cooldown_hours >= 1) AND (auto_task_cooldown_hours <= 720)))$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_auto_task_due_in_days_check$q$, $q$CHECK (((auto_task_due_in_days >= 0) AND (auto_task_due_in_days <= 30)))$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_auto_task_min_level_check$q$, $q$CHECK ((auto_task_min_level = ANY (ARRAY['medium'::text, 'high'::text, 'critical'::text])))$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_auto_task_priority_check$q$, $q$CHECK ((auto_task_priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])))$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_cooldown_hours_check$q$, $q$CHECK ((cooldown_hours >= 1))$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_id_check$q$, $q$CHECK (id)$q$),
+    ($q$public$q$, $q$churn_alert_settings$q$, $q$churn_alert_settings_min_level_check$q$, $q$CHECK ((min_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.circuit_breaker_events
+    ($q$public$q$, $q$circuit_breaker_events$q$, $q$circuit_breaker_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.client_churn_alerts_state
+    ($q$public$q$, $q$client_churn_alerts_state$q$, $q$client_churn_alerts_state_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$client_churn_alerts_state$q$, $q$client_churn_alerts_state_salesperson_id_client_name_key$q$, $q$UNIQUE (salesperson_id, client_name)$q$),
+    ($q$public$q$, $q$client_churn_alerts_state$q$, $q$client_churn_alerts_state_last_level_check$q$, $q$CHECK ((last_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.client_interactions
+    ($q$public$q$, $q$client_interactions$q$, $q$client_interactions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.client_portfolio
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_client_id_salesperson_id_key$q$, $q$UNIQUE (client_id, salesperson_id)$q$),
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_status_check$q$, $q$CHECK ((status = ANY (ARRAY['active'::text, 'nurturing'::text, 'at_risk'::text, 'inactive'::text, 'churned'::text])))$q$),
+    -- public.client_renewals
+    ($q$public$q$, $q$client_renewals$q$, $q$client_renewals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.clients
+    ($q$public$q$, $q$clients$q$, $q$clients_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.coaching_actions
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_category_chk$q$, $q$CHECK ((category = ANY (ARRAY['opening'::text, 'discovery'::text, 'objection'::text, 'closing'::text, 'talk_ratio'::text, 'pace'::text, 'empathy'::text, 'other'::text])))$q$),
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_severity_chk$q$, $q$CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])))$q$),
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_status_chk$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text, 'practiced'::text])))$q$),
+    -- public.coaching_opportunities
+    ($q$public$q$, $q$coaching_opportunities$q$, $q$coaching_opportunities_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$coaching_opportunities$q$, $q$coaching_opportunities_metric_key_check$q$, $q$CHECK ((metric_key = ANY (ARRAY['conversion_rate'::text, 'stage_duration'::text, 'win_rate'::text, 'avg_ticket'::text, 'activities_per_day'::text])))$q$),
+    ($q$public$q$, $q$coaching_opportunities$q$, $q$coaching_opportunities_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    ($q$public$q$, $q$coaching_opportunities$q$, $q$coaching_opportunities_skill_focus_check$q$, $q$CHECK ((skill_focus = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])))$q$),
+    -- public.coaching_scorecard_config
+    ($q$public$q$, $q$coaching_scorecard_config$q$, $q$coaching_scorecard_config_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.coaching_sessions
+    ($q$public$q$, $q$coaching_sessions$q$, $q$coaching_sessions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$coaching_sessions$q$, $q$coaching_sessions_duration_min_check$q$, $q$CHECK (((duration_min > 0) AND (duration_min <= 240)))$q$),
+    ($q$public$q$, $q$coaching_sessions$q$, $q$coaching_sessions_outcome_rating_check$q$, $q$CHECK (((outcome_rating >= 1) AND (outcome_rating <= 5)))$q$),
+    ($q$public$q$, $q$coaching_sessions$q$, $q$coaching_sessions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['scheduled'::text, 'completed'::text, 'canceled'::text])))$q$),
+    -- public.coaching_skill_benchmarks
+    ($q$public$q$, $q$coaching_skill_benchmarks$q$, $q$coaching_skill_benchmarks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$coaching_skill_benchmarks$q$, $q$coaching_skill_benchmarks_metric_key_key$q$, $q$UNIQUE (metric_key)$q$),
+    ($q$public$q$, $q$coaching_skill_benchmarks$q$, $q$coaching_skill_benchmarks_metric_key_check$q$, $q$CHECK ((metric_key = ANY (ARRAY['conversion_rate'::text, 'stage_duration'::text, 'win_rate'::text, 'avg_ticket'::text, 'activities_per_day'::text])))$q$),
+    -- public.cohort_analyses
+    ($q$public$q$, $q$cohort_analyses$q$, $q$cohort_analyses_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cohort_analyses$q$, $q$cohort_analyses_period_type_check$q$, $q$CHECK ((period_type = ANY (ARRAY['week'::text, 'month'::text, 'quarter'::text])))$q$),
+    -- public.collectible_badges
+    ($q$public$q$, $q$collectible_badges$q$, $q$collectible_badges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.combo_tracking
+    ($q$public$q$, $q$combo_tracking$q$, $q$combo_tracking_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$combo_tracking$q$, $q$combo_tracking_salesperson_id_combo_date_key$q$, $q$UNIQUE (salesperson_id, combo_date)$q$),
+    -- public.commercial_approval_requests
+    ($q$public$q$, $q$commercial_approval_requests$q$, $q$commercial_approval_requests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$commercial_approval_requests$q$, $q$commercial_approval_requests_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])))$q$),
+    ($q$public$q$, $q$commercial_approval_requests$q$, $q$commercial_approval_requests_type_check$q$, $q$CHECK ((type = ANY (ARRAY['goal'::text, 'scoring_rule'::text, 'commission'::text])))$q$),
+    -- public.commission_bonus_awards
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_bonus_id_salesperson_id_period_mont_key$q$, $q$UNIQUE (bonus_id, salesperson_id, period_month)$q$),
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_bonus_kind_check$q$, $q$CHECK ((bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])))$q$),
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text])))$q$),
+    -- public.commission_bonuses
+    ($q$public$q$, $q$commission_bonuses$q$, $q$commission_bonuses_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$commission_bonuses$q$, $q$commission_bonuses_bonus_amount_check$q$, $q$CHECK ((bonus_amount >= (0)::numeric))$q$),
+    ($q$public$q$, $q$commission_bonuses$q$, $q$commission_bonuses_bonus_kind_check$q$, $q$CHECK ((bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])))$q$),
+    ($q$public$q$, $q$commission_bonuses$q$, $q$commission_bonuses_bonus_type_check$q$, $q$CHECK ((bonus_type = ANY (ARRAY['first_sale'::text, 'milestone'::text, 'ranking'::text, 'streak'::text, 'other'::text])))$q$),
+    -- public.commission_rules
+    ($q$public$q$, $q$commission_rules$q$, $q$commission_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$commission_rules$q$, $q$commission_rules_percentage_check$q$, $q$CHECK (((percentage >= (0)::numeric) AND (percentage <= (100)::numeric)))$q$),
+    -- public.commissions
+    ($q$public$q$, $q$commissions$q$, $q$commissions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$commissions$q$, $q$commissions_sale_salesperson_key$q$, $q$UNIQUE (sale_id, salesperson_id)$q$),
+    ($q$public$q$, $q$commissions$q$, $q$commissions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'paid'::text, 'cancelled'::text])))$q$),
+    -- public.committee_coverage_history
+    ($q$public$q$, $q$committee_coverage_history$q$, $q$committee_coverage_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.committee_extraction_runs
+    ($q$public$q$, $q$committee_extraction_runs$q$, $q$committee_extraction_runs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.competitive_chat_messages
+    ($q$public$q$, $q$competitive_chat_messages$q$, $q$competitive_chat_messages_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.competitive_seasons
+    ($q$public$q$, $q$competitive_seasons$q$, $q$competitive_seasons_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.competitor_mentions
+    ($q$public$q$, $q$competitor_mentions$q$, $q$competitor_mentions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.competitors_pricing
+    ($q$public$q$, $q$competitors_pricing$q$, $q$competitors_pricing_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.competitors_registry
+    ($q$public$q$, $q$competitors_registry$q$, $q$competitors_registry_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.consent_records
+    ($q$public$q$, $q$consent_records$q$, $q$consent_records_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$consent_records$q$, $q$consent_records_legal_basis_check$q$, $q$CHECK ((legal_basis = ANY (ARRAY['consent'::text, 'legitimate_interest'::text, 'contract'::text, 'legal_obligation'::text])))$q$),
+    ($q$public$q$, $q$consent_records$q$, $q$consent_records_subject_required$q$, $q$CHECK (((subject_id IS NOT NULL) OR (subject_email IS NOT NULL) OR (subject_client_id IS NOT NULL)))$q$),
+    -- public.contact_engagement_score
+    ($q$public$q$, $q$contact_engagement_score$q$, $q$contact_engagement_score_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$contact_engagement_score$q$, $q$contact_engagement_score_contact_id_contact_type_key$q$, $q$UNIQUE (contact_id, contact_type)$q$),
+    ($q$public$q$, $q$contact_engagement_score$q$, $q$contact_engagement_score_contact_type_check$q$, $q$CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])))$q$),
+    ($q$public$q$, $q$contact_engagement_score$q$, $q$contact_engagement_score_tier_check$q$, $q$CHECK ((tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'on_fire'::text])))$q$),
+    -- public.contact_send_time_profile
+    ($q$public$q$, $q$contact_send_time_profile$q$, $q$contact_send_time_profile_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$contact_send_time_profile$q$, $q$contact_send_time_profile_contact_id_contact_type_hour_of_d_key$q$, $q$UNIQUE (contact_id, contact_type, hour_of_day, day_of_week)$q$),
+    ($q$public$q$, $q$contact_send_time_profile$q$, $q$contact_send_time_profile_contact_type_check$q$, $q$CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])))$q$),
+    ($q$public$q$, $q$contact_send_time_profile$q$, $q$contact_send_time_profile_day_of_week_check$q$, $q$CHECK (((day_of_week >= 0) AND (day_of_week <= 6)))$q$),
+    ($q$public$q$, $q$contact_send_time_profile$q$, $q$contact_send_time_profile_hour_of_day_check$q$, $q$CHECK (((hour_of_day >= 0) AND (hour_of_day <= 23)))$q$),
+    -- public.conversation_analyses
+    ($q$public$q$, $q$conversation_analyses$q$, $q$conversation_analyses_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$conversation_analyses$q$, $q$conversation_analyses_sentiment_check$q$, $q$CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text, 'mixed'::text])))$q$),
+    ($q$public$q$, $q$conversation_analyses$q$, $q$conversation_analyses_source_check$q$, $q$CHECK ((source = ANY (ARRAY['call'::text, 'email'::text, 'meeting'::text, 'whatsapp'::text])))$q$),
+    -- public.critical_moment_notifications
+    ($q$public$q$, $q$critical_moment_notifications$q$, $q$critical_moment_notifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.cron_failure_alerts
+    ($q$public$q$, $q$cron_failure_alerts$q$, $q$cron_failure_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$cron_failure_alerts$q$, $q$cron_failure_alerts_unique$q$, $q$UNIQUE (jobid, start_time)$q$),
+    -- public.cs_tickets
+    ($q$public$q$, $q$cs_tickets$q$, $q$cs_tickets_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.csat_ces_surveys
+    ($q$public$q$, $q$csat_ces_surveys$q$, $q$csat_ces_surveys_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.custom_reports
+    ($q$public$q$, $q$custom_reports$q$, $q$custom_reports_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$custom_reports$q$, $q$custom_reports_entity_check$q$, $q$CHECK ((entity = ANY (ARRAY['sales'::text, 'accounts'::text, 'activities'::text, 'leads'::text, 'salespeople'::text, 'clients'::text, 'cross'::text])))$q$),
+    -- public.daily_challenge_progress
+    ($q$public$q$, $q$daily_challenge_progress$q$, $q$daily_challenge_progress_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$daily_challenge_progress$q$, $q$daily_challenge_progress_challenge_id_salesperson_id_key$q$, $q$UNIQUE (challenge_id, salesperson_id)$q$),
+    -- public.daily_challenge_rotations
+    ($q$public$q$, $q$daily_challenge_rotations$q$, $q$daily_challenge_rotations_pkey$q$, $q$PRIMARY KEY (challenge_date)$q$),
+    -- public.daily_challenges
+    ($q$public$q$, $q$daily_challenges$q$, $q$daily_challenges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.daily_metrics
+    ($q$public$q$, $q$daily_metrics$q$, $q$daily_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$daily_metrics$q$, $q$daily_metrics_date_key$q$, $q$UNIQUE (date)$q$),
+    -- public.daily_streak_achievements
+    ($q$public$q$, $q$daily_streak_achievements$q$, $q$daily_streak_achievements_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$daily_streak_achievements$q$, $q$daily_streak_achievements_salesperson_id_streak_type_key$q$, $q$UNIQUE (salesperson_id, streak_type)$q$),
+    -- public.dashboard_layouts
+    ($q$public$q$, $q$dashboard_layouts$q$, $q$dashboard_layouts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$dashboard_layouts$q$, $q$dashboard_layouts_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.data_access_log
+    ($q$public$q$, $q$data_access_log$q$, $q$data_access_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$data_access_log$q$, $q$data_access_log_action_check$q$, $q$CHECK ((action = ANY (ARRAY['SELECT'::text, 'INSERT'::text, 'UPDATE'::text, 'DELETE'::text])))$q$),
+    -- public.data_retention_policies
+    ($q$public$q$, $q$data_retention_policies$q$, $q$data_retention_policies_pkey$q$, $q$PRIMARY KEY (table_name)$q$),
+    ($q$public$q$, $q$data_retention_policies$q$, $q$data_retention_policies_retention_days_check$q$, $q$CHECK ((retention_days > 0))$q$),
+    -- public.data_subject_requests
+    ($q$public$q$, $q$data_subject_requests$q$, $q$data_subject_requests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$data_subject_requests$q$, $q$data_subject_requests_request_type_check$q$, $q$CHECK ((request_type = ANY (ARRAY['access'::text, 'rectification'::text, 'erasure'::text, 'portability'::text, 'consent_revocation'::text, 'information'::text])))$q$),
+    ($q$public$q$, $q$data_subject_requests$q$, $q$data_subject_requests_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'rejected'::text])))$q$),
+    -- public.db_rollback_snapshots
+    ($q$public$q$, $q$db_rollback_snapshots$q$, $q$db_rollback_snapshots_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.dead_letter_replay_audit
+    ($q$public$q$, $q$dead_letter_replay_audit$q$, $q$dead_letter_replay_audit_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$dead_letter_replay_audit$q$, $q$dead_letter_replay_audit_outcome_check$q$, $q$CHECK ((outcome = ANY (ARRAY['replayed'::text, 'skipped_locked'::text, 'not_found_or_not_dead_letter'::text])))$q$),
+    -- public.deal_chat_history
+    ($q$public$q$, $q$deal_chat_history$q$, $q$deal_chat_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.deal_committee_coverage
+    ($q$public$q$, $q$deal_committee_coverage$q$, $q$deal_committee_coverage_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_committee_coverage$q$, $q$deal_committee_coverage_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$deal_committee_coverage$q$, $q$deal_committee_coverage_coverage_score_check$q$, $q$CHECK (((coverage_score >= 0) AND (coverage_score <= 100)))$q$),
+    ($q$public$q$, $q$deal_committee_coverage$q$, $q$deal_committee_coverage_tier_check$q$, $q$CHECK ((tier = ANY (ARRAY['weak'::text, 'partial'::text, 'strong'::text, 'complete'::text])))$q$),
+    -- public.deal_health_history
+    ($q$public$q$, $q$deal_health_history$q$, $q$deal_health_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.deal_health_scores
+    ($q$public$q$, $q$deal_health_scores$q$, $q$deal_health_scores_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_health_scores$q$, $q$deal_health_scores_health_label_check$q$, $q$CHECK ((health_label = ANY (ARRAY['critical'::text, 'at_risk'::text, 'healthy'::text, 'excellent'::text])))$q$),
+    ($q$public$q$, $q$deal_health_scores$q$, $q$deal_health_scores_health_score_check$q$, $q$CHECK (((health_score >= 0) AND (health_score <= 100)))$q$),
+    ($q$public$q$, $q$deal_health_scores$q$, $q$deal_health_scores_tier_check$q$, $q$CHECK ((tier = ANY (ARRAY['healthy'::text, 'watch'::text, 'at_risk'::text, 'critical'::text])))$q$),
+    -- public.deal_outcomes
+    ($q$public$q$, $q$deal_outcomes$q$, $q$deal_outcomes_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_outcomes$q$, $q$deal_outcomes_outcome_check$q$, $q$CHECK ((outcome = ANY (ARRAY['won'::text, 'lost'::text])))$q$),
+    -- public.deal_probability_scores
+    ($q$public$q$, $q$deal_probability_scores$q$, $q$deal_probability_scores_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_probability_scores$q$, $q$deal_probability_scores_confidence_check$q$, $q$CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)))$q$),
+    -- public.deal_risk_signals
+    ($q$public$q$, $q$deal_risk_signals$q$, $q$deal_risk_signals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_risk_signals$q$, $q$deal_risk_signals_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    ($q$public$q$, $q$deal_risk_signals$q$, $q$deal_risk_signals_signal_type_check$q$, $q$CHECK ((signal_type = ANY (ARRAY['stagnation'::text, 'no_contact'::text, 'engagement_drop'::text, 'price_resistance'::text, 'competitor_mentioned'::text, 'single_threaded'::text, 'overdue_followup'::text])))$q$),
+    -- public.deal_stage_history
+    ($q$public$q$, $q$deal_stage_history$q$, $q$deal_stage_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.deal_stage_transitions
+    ($q$public$q$, $q$deal_stage_transitions$q$, $q$deal_stage_transitions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.deal_stakeholders
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_dmu_role_check$q$, $q$CHECK ((dmu_role = ANY (ARRAY['decision_maker'::text, 'economic_buyer'::text, 'champion'::text, 'influencer'::text, 'user'::text, 'blocker'::text, 'unknown'::text])))$q$),
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_engagement_score_check$q$, $q$CHECK (((engagement_score >= 0) AND (engagement_score <= 100)))$q$),
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_influence_level_check$q$, $q$CHECK ((influence_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])))$q$),
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_sentiment_check$q$, $q$CHECK ((sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text])))$q$),
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_source_check$q$, $q$CHECK ((source = ANY (ARRAY['manual'::text, 'ai_extracted'::text, 'email'::text, 'call'::text])))$q$),
+    -- public.deal_velocity_alerts
+    ($q$public$q$, $q$deal_velocity_alerts$q$, $q$deal_velocity_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_velocity_alerts$q$, $q$deal_velocity_alerts_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$deal_velocity_alerts$q$, $q$severity_chk$q$, $q$CHECK ((severity = ANY (ARRAY['watch'::text, 'stuck'::text, 'critical'::text])))$q$),
+    -- public.deal_velocity_predictions
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_confidence_score_check$q$, $q$CHECK (((confidence_score >= 0) AND (confidence_score <= 100)))$q$),
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_confidence_tier_check$q$, $q$CHECK ((confidence_tier = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])))$q$),
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_velocity_status_check$q$, $q$CHECK ((velocity_status = ANY (ARRAY['ahead'::text, 'on_track'::text, 'slow'::text, 'stalled'::text])))$q$),
+    -- public.demand_forecasts
+    ($q$public$q$, $q$demand_forecasts$q$, $q$demand_forecasts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.dialer_queue_items
+    ($q$public$q$, $q$dialer_queue_items$q$, $q$dialer_queue_items_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$dialer_queue_items$q$, $q$dialer_queue_items_queue_id_sale_id_key$q$, $q$UNIQUE (queue_id, sale_id)$q$),
+    ($q$public$q$, $q$dialer_queue_items$q$, $q$dialer_queue_items_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'calling'::text, 'done'::text, 'skipped'::text, 'snoozed'::text])))$q$),
+    -- public.dialer_queues
+    ($q$public$q$, $q$dialer_queues$q$, $q$dialer_queues_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$dialer_queues$q$, $q$dialer_queues_priority_strategy_check$q$, $q$CHECK ((priority_strategy = ANY (ARRAY['score'::text, 'recency'::text, 'send_time'::text, 'hybrid'::text])))$q$),
+    -- public.digital_signatures
+    ($q$public$q$, $q$digital_signatures$q$, $q$digital_signatures_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$digital_signatures$q$, $q$digital_signatures_status_check$q$, $q$CHECK ((status = ANY (ARRAY['draft'::text, 'pending'::text, 'signed'::text, 'rejected'::text, 'expired'::text])))$q$),
+    -- public.document_signers
+    ($q$public$q$, $q$document_signers$q$, $q$document_signers_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$document_signers$q$, $q$document_signers_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'signed'::text, 'rejected'::text])))$q$),
+    -- public.duplicate_block_logs
+    ($q$public$q$, $q$duplicate_block_logs$q$, $q$duplicate_block_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.edge_call_failures
+    ($q$public$q$, $q$edge_call_failures$q$, $q$edge_call_failures_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.edge_job_locks
+    ($q$public$q$, $q$edge_job_locks$q$, $q$edge_job_locks_pkey$q$, $q$PRIMARY KEY (job_name)$q$),
+    -- public.edge_retry_events
+    ($q$public$q$, $q$edge_retry_events$q$, $q$edge_retry_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$edge_retry_events$q$, $q$edge_retry_events_attempt_check$q$, $q$CHECK ((attempt >= 1))$q$),
+    ($q$public$q$, $q$edge_retry_events$q$, $q$edge_retry_events_outcome_check$q$, $q$CHECK ((outcome = ANY (ARRAY['retry'::text, 'success_after_retry'::text, 'exhausted'::text, 'non_retryable'::text])))$q$),
+    -- public.email_bulk_drafts
+    ($q$public$q$, $q$email_bulk_drafts$q$, $q$email_bulk_drafts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.email_bulk_jobs
+    ($q$public$q$, $q$email_bulk_jobs$q$, $q$email_bulk_jobs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.email_engagement_score_history
+    ($q$public$q$, $q$email_engagement_score_history$q$, $q$email_engagement_score_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.email_engagement_scores
+    ($q$public$q$, $q$email_engagement_scores$q$, $q$email_engagement_scores_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$email_engagement_scores$q$, $q$email_engagement_scores_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$email_engagement_scores$q$, $q$email_engagement_scores_score_check$q$, $q$CHECK (((score >= 0) AND (score <= 100)))$q$),
+    ($q$public$q$, $q$email_engagement_scores$q$, $q$email_engagement_scores_tier_check$q$, $q$CHECK ((tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'champion'::text])))$q$),
+    -- public.email_logs
+    ($q$public$q$, $q$email_logs$q$, $q$email_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.email_opt_outs
+    ($q$public$q$, $q$email_opt_outs$q$, $q$email_opt_outs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.email_tracking_events
+    ($q$public$q$, $q$email_tracking_events$q$, $q$email_tracking_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.embedded_report_tokens
+    ($q$public$q$, $q$embedded_report_tokens$q$, $q$embedded_report_tokens_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$embedded_report_tokens$q$, $q$embedded_report_tokens_public_token_key$q$, $q$UNIQUE (public_token)$q$),
+    -- public.engagement_score_history
+    ($q$public$q$, $q$engagement_score_history$q$, $q$engagement_score_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$engagement_score_history$q$, $q$engagement_score_history_contact_id_contact_type_captured_a_key$q$, $q$UNIQUE (contact_id, contact_type, captured_at)$q$),
+    ($q$public$q$, $q$engagement_score_history$q$, $q$engagement_score_history_contact_type_check$q$, $q$CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text])))$q$),
+    -- public.enriched_company_intelligence
+    ($q$public$q$, $q$enriched_company_intelligence$q$, $q$enriched_company_intelligence_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$enriched_company_intelligence$q$, $q$enriched_company_intelligence_company_name_key$q$, $q$UNIQUE (company_name)$q$),
+    -- public.entity_versions
+    ($q$public$q$, $q$entity_versions$q$, $q$entity_versions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$entity_versions$q$, $q$unique_entity_version$q$, $q$UNIQUE (entity_type, entity_id, version_number)$q$),
+    -- public.error_logs
+    ($q$public$q$, $q$error_logs$q$, $q$error_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.executive_briefings
+    ($q$public$q$, $q$executive_briefings$q$, $q$executive_briefings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$executive_briefings$q$, $q$executive_briefings_briefing_date_key$q$, $q$UNIQUE (briefing_date)$q$),
+    ($q$public$q$, $q$executive_briefings$q$, $q$executive_briefings_generated_by_check$q$, $q$CHECK ((generated_by = ANY (ARRAY['auto'::text, 'manual'::text])))$q$),
+    -- public.expansion_opportunities
+    ($q$public$q$, $q$expansion_opportunities$q$, $q$expansion_opportunities_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.expansion_playbooks
+    ($q$public$q$, $q$expansion_playbooks$q$, $q$expansion_playbooks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.experiment_assignments
+    ($q$public$q$, $q$experiment_assignments$q$, $q$experiment_assignments_pkey$q$, $q$PRIMARY KEY (user_id, experiment_id)$q$),
+    -- public.experiment_variants
+    ($q$public$q$, $q$experiment_variants$q$, $q$experiment_variants_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.experiments
+    ($q$public$q$, $q$experiments$q$, $q$experiments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.external_seller_map
+    ($q$public$q$, $q$external_seller_map$q$, $q$external_seller_map_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$external_seller_map$q$, $q$external_seller_map_external_source_external_id_key$q$, $q$UNIQUE (external_source, external_id)$q$),
+    ($q$public$q$, $q$external_seller_map$q$, $q$chk_external_seller_map_email_format$q$, $q$CHECK (((external_email IS NULL) OR (external_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text)))$q$),
+    ($q$public$q$, $q$external_seller_map$q$, $q$chk_external_seller_map_external_id_len$q$, $q$CHECK (((char_length(external_id) >= 1) AND (char_length(external_id) <= 128)))$q$),
+    ($q$public$q$, $q$external_seller_map$q$, $q$chk_external_seller_map_source_allowed$q$, $q$CHECK ((external_source = ANY (ARRAY['bitrix24'::text, 'gift_store'::text, 'promogifts'::text, 'n8n'::text, 'manual'::text, 'api'::text])))$q$),
+    -- public.feature_flags
+    ($q$public$q$, $q$feature_flags$q$, $q$feature_flags_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$feature_flags$q$, $q$feature_flags_key_key$q$, $q$UNIQUE (key)$q$),
+    ($q$public$q$, $q$feature_flags$q$, $q$feature_flags_rollout_percentage_check$q$, $q$CHECK (((rollout_percentage >= 0) AND (rollout_percentage <= 100)))$q$),
+    -- public.feed_comments
+    ($q$public$q$, $q$feed_comments$q$, $q$feed_comments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.feed_reactions
+    ($q$public$q$, $q$feed_reactions$q$, $q$feed_reactions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$feed_reactions$q$, $q$feed_reactions_feed_item_id_salesperson_id_key$q$, $q$UNIQUE (feed_item_id, salesperson_id)$q$),
+    -- public.follow_up_audit_logs
+    ($q$public$q$, $q$follow_up_audit_logs$q$, $q$follow_up_audit_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.follow_up_notifications
+    ($q$public$q$, $q$follow_up_notifications$q$, $q$follow_up_notifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.follow_up_settings
+    ($q$public$q$, $q$follow_up_settings$q$, $q$follow_up_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.follow_up_templates
+    ($q$public$q$, $q$follow_up_templates$q$, $q$follow_up_templates_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.follow_up_territory_rules
+    ($q$public$q$, $q$follow_up_territory_rules$q$, $q$follow_up_territory_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.forecast_accuracy
+    ($q$public$q$, $q$forecast_accuracy$q$, $q$forecast_accuracy_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$forecast_accuracy$q$, $q$forecast_accuracy_snapshot_id_key$q$, $q$UNIQUE (snapshot_id)$q$),
+    ($q$public$q$, $q$forecast_accuracy$q$, $q$forecast_accuracy_bias_check$q$, $q$CHECK ((bias = ANY (ARRAY['optimistic'::text, 'pessimistic'::text, 'accurate'::text])))$q$),
+    -- public.forecast_confidence_scores
+    ($q$public$q$, $q$forecast_confidence_scores$q$, $q$forecast_confidence_scores_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$forecast_confidence_scores$q$, $q$forecast_confidence_scores_owner_id_source_key$q$, $q$UNIQUE (owner_id, source)$q$),
+    -- public.forecast_deal_contributions
+    ($q$public$q$, $q$forecast_deal_contributions$q$, $q$forecast_deal_contributions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$forecast_deal_contributions$q$, $q$forecast_deal_contributions_category_check$q$, $q$CHECK ((category = ANY (ARRAY['commit'::text, 'best'::text, 'upside'::text, 'omitted'::text])))$q$),
+    ($q$public$q$, $q$forecast_deal_contributions$q$, $q$forecast_deal_contributions_probability_check$q$, $q$CHECK (((probability >= (0)::numeric) AND (probability <= (1)::numeric)))$q$),
+    -- public.forecast_narrative_dead_letters
+    ($q$public$q$, $q$forecast_narrative_dead_letters$q$, $q$forecast_narrative_dead_letters_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.forecast_snapshots
+    ($q$public$q$, $q$forecast_snapshots$q$, $q$forecast_snapshots_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$forecast_snapshots$q$, $q$forecast_snapshots_source_check$q$, $q$CHECK ((source = ANY (ARRAY['manual'::text, 'weighted'::text, 'ai'::text])))$q$),
+    -- public.geo_access_logs
+    ($q$public$q$, $q$geo_access_logs$q$, $q$geo_access_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.geo_blocked_regions
+    ($q$public$q$, $q$geo_blocked_regions$q$, $q$geo_blocked_regions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$geo_blocked_regions$q$, $q$geo_blocked_regions_country_code_key$q$, $q$UNIQUE (country_code)$q$),
+    -- public.geocode_cache
+    ($q$public$q$, $q$geocode_cache$q$, $q$geocode_cache_pkey$q$, $q$PRIMARY KEY (query_key)$q$),
+    -- public.icp_data
+    ($q$public$q$, $q$icp_data$q$, $q$icp_data_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$icp_data$q$, $q$icp_data_client_id_key$q$, $q$UNIQUE (client_id)$q$),
+    -- public.icp_parameters
+    ($q$public$q$, $q$icp_parameters$q$, $q$icp_parameters_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.inbound_reply_events
+    ($q$public$q$, $q$inbound_reply_events$q$, $q$inbound_reply_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.integration_autotest_jobs
+    ($q$public$q$, $q$integration_autotest_jobs$q$, $q$integration_autotest_jobs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.integration_autotest_settings
+    ($q$public$q$, $q$integration_autotest_settings$q$, $q$integration_autotest_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$integration_autotest_settings$q$, $q$integration_autotest_settings_singleton_key$q$, $q$UNIQUE (singleton)$q$),
+    ($q$public$q$, $q$integration_autotest_settings$q$, $q$integration_autotest_settings_failure_window_minutes_check$q$, $q$CHECK (((failure_window_minutes >= 1) AND (failure_window_minutes <= 240)))$q$),
+    ($q$public$q$, $q$integration_autotest_settings$q$, $q$integration_autotest_settings_interval_minutes_check$q$, $q$CHECK (((interval_minutes >= 5) AND (interval_minutes <= 1440)))$q$),
+    -- public.integration_connections
+    ($q$public$q$, $q$integration_connections$q$, $q$integration_connections_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.integration_health_checks
+    ($q$public$q$, $q$integration_health_checks$q$, $q$integration_health_checks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.integration_logs
+    ($q$public$q$, $q$integration_logs$q$, $q$integration_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.integration_secret_refs
+    ($q$public$q$, $q$integration_secret_refs$q$, $q$integration_secret_refs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$integration_secret_refs$q$, $q$integration_secret_refs_credential_id_key_key$q$, $q$UNIQUE (credential_id, key)$q$),
+    ($q$public$q$, $q$integration_secret_refs$q$, $q$integration_secret_refs_secret_ref_check$q$, $q$CHECK ((secret_ref ~ '^(internal|env):[A-Za-z_][A-Za-z0-9_.-]*$'::text))$q$),
+    -- public.intent_audit_logs
+    ($q$public$q$, $q$intent_audit_logs$q$, $q$intent_audit_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.inventory_levels
+    ($q$public$q$, $q$inventory_levels$q$, $q$inventory_levels_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$inventory_levels$q$, $q$inventory_levels_product_id_key$q$, $q$UNIQUE (product_id)$q$),
+    -- public.ip_whitelist
+    ($q$public$q$, $q$ip_whitelist$q$, $q$ip_whitelist_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$ip_whitelist$q$, $q$ip_whitelist_ip_address_key$q$, $q$UNIQUE (ip_address)$q$),
+    -- public.known_devices
+    ($q$public$q$, $q$known_devices$q$, $q$known_devices_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$known_devices$q$, $q$known_devices_user_id_device_fingerprint_key$q$, $q$UNIQUE (user_id, device_fingerprint)$q$),
+    -- public.kudos
+    ($q$public$q$, $q$kudos$q$, $q$kudos_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_assignments
+    ($q$public$q$, $q$lead_assignments$q$, $q$lead_assignments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_churn_risk
+    ($q$public$q$, $q$lead_churn_risk$q$, $q$lead_churn_risk_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$lead_churn_risk$q$, $q$lead_churn_risk_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$lead_churn_risk$q$, $q$lead_churn_risk_risk_level_check$q$, $q$CHECK ((risk_level = ANY (ARRAY['critical'::text, 'high'::text, 'medium'::text, 'low'::text])))$q$),
+    ($q$public$q$, $q$lead_churn_risk$q$, $q$lead_churn_risk_status_check$q$, $q$CHECK ((status = ANY (ARRAY['active'::text, 'resolved'::text, 'ignored'::text])))$q$),
+    -- public.lead_detailed_logs
+    ($q$public$q$, $q$lead_detailed_logs$q$, $q$lead_detailed_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_intelligence_metrics
+    ($q$public$q$, $q$lead_intelligence_metrics$q$, $q$lead_intelligence_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_routing_log
+    ($q$public$q$, $q$lead_routing_log$q$, $q$lead_routing_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_routing_rules
+    ($q$public$q$, $q$lead_routing_rules$q$, $q$lead_routing_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_score_explanations
+    ($q$public$q$, $q$lead_score_explanations$q$, $q$lead_score_explanations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$lead_score_explanations$q$, $q$lead_score_explanations_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    -- public.lead_score_history
+    ($q$public$q$, $q$lead_score_history$q$, $q$lead_score_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_score_trends
+    ($q$public$q$, $q$lead_score_trends$q$, $q$lead_score_trends_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.lead_scores
+    ($q$public$q$, $q$lead_scores$q$, $q$lead_scores_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$lead_scores$q$, $q$lead_scores_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$lead_scores$q$, $q$lead_scores_score_range$q$, $q$CHECK (((score IS NULL) OR ((score >= 0) AND (score <= 100)))) NOT VALID$q$),
+    -- public.lead_source_configs
+    ($q$public$q$, $q$lead_source_configs$q$, $q$lead_source_configs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$lead_source_configs$q$, $q$lead_source_configs_source_name_key$q$, $q$UNIQUE (source_name)$q$),
+    -- public.league_history
+    ($q$public$q$, $q$league_history$q$, $q$league_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.league_members
+    ($q$public$q$, $q$league_members$q$, $q$league_members_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$league_members$q$, $q$league_members_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.leagues
+    ($q$public$q$, $q$leagues$q$, $q$leagues_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.login_alerts
+    ($q$public$q$, $q$login_alerts$q$, $q$login_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$login_alerts$q$, $q$login_alerts_alert_type_check$q$, $q$CHECK ((alert_type = ANY (ARRAY['new_device'::text, 'new_ip'::text, 'new_location'::text, 'suspicious'::text])))$q$),
+    -- public.login_attempts
+    ($q$public$q$, $q$login_attempts$q$, $q$login_attempts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.maintenance_log
+    ($q$public$q$, $q$maintenance_log$q$, $q$maintenance_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$maintenance_log$q$, $q$chk_maintenance_log_completed_after_started$q$, $q$CHECK (((completed_at IS NULL) OR (completed_at >= started_at)))$q$),
+    ($q$public$q$, $q$maintenance_log$q$, $q$chk_maintenance_log_rows_affected_non_negative$q$, $q$CHECK (((rows_affected IS NULL) OR (rows_affected >= 0)))$q$),
+    ($q$public$q$, $q$maintenance_log$q$, $q$chk_maintenance_log_status_allowed$q$, $q$CHECK ((status = ANY (ARRAY['running'::text, 'completed'::text, 'failed'::text, 'skipped'::text])))$q$),
+    -- public.message_templates
+    ($q$public$q$, $q$message_templates$q$, $q$message_templates_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$message_templates$q$, $q$message_templates_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text])))$q$),
+    -- public.mfa_verification_attempts
+    ($q$public$q$, $q$mfa_verification_attempts$q$, $q$mfa_verification_attempts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$mfa_verification_attempts$q$, $q$mfa_verification_attempts_method_check$q$, $q$CHECK ((method = ANY (ARRAY['totp'::text, 'sms'::text, 'backup_code'::text])))$q$),
+    -- public.migration_log
+    ($q$public$q$, $q$migration_log$q$, $q$migration_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.monthly_sales_summary
+    ($q$public$q$, $q$monthly_sales_summary$q$, $q$monthly_sales_summary_pkey$q$, $q$PRIMARY KEY (month)$q$),
+    -- public.mood_entries
+    ($q$public$q$, $q$mood_entries$q$, $q$mood_entries_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$mood_entries$q$, $q$mood_entries_salesperson_id_entry_date_key$q$, $q$UNIQUE (salesperson_id, entry_date)$q$),
+    -- public.mql_qualifications
+    ($q$public$q$, $q$mql_qualifications$q$, $q$mql_qualifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.notification_preferences
+    ($q$public$q$, $q$notification_preferences$q$, $q$notification_preferences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$notification_preferences$q$, $q$valid_frequency$q$, $q$CHECK ((frequency = ANY (ARRAY['realtime'::text, 'daily'::text, 'weekly'::text])))$q$),
+    -- public.notifications
+    ($q$public$q$, $q$notifications$q$, $q$notifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$notifications$q$, $q$notifications_category_check$q$, $q$CHECK ((category = ANY (ARRAY['general'::text, 'sales'::text, 'goals'::text, 'gamification'::text, 'security'::text, 'system'::text, 'team'::text, 'ai'::text, 'approval'::text])))$q$),
+    ($q$public$q$, $q$notifications$q$, $q$notifications_priority_check$q$, $q$CHECK ((priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.nps_surveys
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_score_check$q$, $q$CHECK (((score >= 0) AND (score <= 10)))$q$),
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'sent'::text, 'responded'::text])))$q$),
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_survey_type_check$q$, $q$CHECK ((survey_type = ANY (ARRAY['nps'::text, 'csat'::text])))$q$),
+    -- public.objection_library
+    ($q$public$q$, $q$objection_library$q$, $q$objection_library_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$objection_library$q$, $q$objection_library_objection_type_pattern_text_key$q$, $q$UNIQUE (objection_type, pattern_text)$q$),
+    -- public.objections_library
+    ($q$public$q$, $q$objections_library$q$, $q$objections_library_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.onboarding_journeys
+    ($q$public$q$, $q$onboarding_journeys$q$, $q$onboarding_journeys_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.onboarding_steps
+    ($q$public$q$, $q$onboarding_steps$q$, $q$onboarding_steps_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.order_items
+    ($q$public$q$, $q$order_items$q$, $q$order_items_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.order_status_events
+    ($q$public$q$, $q$order_status_events$q$, $q$order_status_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.orders
+    ($q$public$q$, $q$orders$q$, $q$orders_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$orders$q$, $q$orders_order_number_key$q$, $q$UNIQUE (order_number)$q$),
+    ($q$public$q$, $q$orders$q$, $q$orders_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'preparing'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text])))$q$),
+    ($q$public$q$, $q$orders$q$, $q$orders_total_non_negative$q$, $q$CHECK (((total IS NULL) OR (total >= (0)::numeric))) NOT VALID$q$),
+    -- public.outbound_messages
+    ($q$public$q$, $q$outbound_messages$q$, $q$outbound_messages_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$outbound_messages$q$, $q$outbound_messages_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])))$q$),
+    ($q$public$q$, $q$outbound_messages$q$, $q$outbound_messages_status_check$q$, $q$CHECK ((status = ANY (ARRAY['queued'::text, 'sent'::text, 'delivered'::text, 'read'::text, 'failed'::text])))$q$),
+    -- public.page_analytics
+    ($q$public$q$, $q$page_analytics$q$, $q$page_analytics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.password_history
+    ($q$public$q$, $q$password_history$q$, $q$password_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.password_reset_requests
+    ($q$public$q$, $q$password_reset_requests$q$, $q$password_reset_requests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$password_reset_requests$q$, $q$password_reset_requests_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'completed'::text, 'expired'::text])))$q$),
+    -- public.performance_bets
+    ($q$public$q$, $q$performance_bets$q$, $q$performance_bets_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$performance_bets$q$, $q$performance_bets_bet_type_check$q$, $q$CHECK ((bet_type = ANY (ARRAY['deals'::text, 'revenue'::text, 'calls'::text, 'meetings'::text, 'activities'::text])))$q$),
+    ($q$public$q$, $q$performance_bets$q$, $q$performance_bets_status_check$q$, $q$CHECK ((status = ANY (ARRAY['active'::text, 'won'::text, 'lost'::text, 'cancelled'::text])))$q$),
+    -- public.performance_impact_factors
+    ($q$public$q$, $q$performance_impact_factors$q$, $q$performance_impact_factors_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.permissions
+    ($q$public$q$, $q$permissions$q$, $q$permissions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$permissions$q$, $q$permissions_name_key$q$, $q$UNIQUE (name)$q$),
+    ($q$public$q$, $q$permissions$q$, $q$permissions_resource_action_key$q$, $q$UNIQUE (resource, action)$q$),
+    -- public.person_intelligence
+    ($q$public$q$, $q$person_intelligence$q$, $q$person_intelligence_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$person_intelligence$q$, $q$person_intelligence_email_key$q$, $q$UNIQUE (email)$q$),
+    -- public.personal_assistant_briefings
+    ($q$public$q$, $q$personal_assistant_briefings$q$, $q$personal_assistant_briefings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.personal_assistant_nudges
+    ($q$public$q$, $q$personal_assistant_nudges$q$, $q$personal_assistant_nudges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$personal_assistant_nudges$q$, $q$personal_assistant_nudges_feedback_check$q$, $q$CHECK ((feedback = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text])))$q$),
+    -- public.pipeline_coverage_recommendations
+    ($q$public$q$, $q$pipeline_coverage_recommendations$q$, $q$pipeline_coverage_recommendations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$pipeline_coverage_recommendations$q$, $q$pipeline_coverage_recommendations_priority_check$q$, $q$CHECK ((priority = ANY (ARRAY['high'::text, 'medium'::text, 'low'::text])))$q$),
+    -- public.pipeline_coverage_snapshots
+    ($q$public$q$, $q$pipeline_coverage_snapshots$q$, $q$pipeline_coverage_snapshots_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$pipeline_coverage_snapshots$q$, $q$pipeline_coverage_snapshots_health_check$q$, $q$CHECK ((health = ANY (ARRAY['critical'::text, 'weak'::text, 'healthy'::text, 'strong'::text])))$q$),
+    -- public.pipeline_inspection_snapshots
+    ($q$public$q$, $q$pipeline_inspection_snapshots$q$, $q$pipeline_inspection_snapshots_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.pipeline_inspections
+    ($q$public$q$, $q$pipeline_inspections$q$, $q$pipeline_inspections_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.pipeline_stages
+    ($q$public$q$, $q$pipeline_stages$q$, $q$pipeline_stages_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$pipeline_stages$q$, $q$pipeline_stage_order_positive$q$, $q$CHECK (((stage_order IS NULL) OR (stage_order >= 0)))$q$),
+    -- public.pipelines
+    ($q$public$q$, $q$pipelines$q$, $q$pipelines_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.plan_rollback_ddl
+    ($q$public$q$, $q$plan_rollback_ddl$q$, $q$plan_rollback_ddl_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.playbook_items
+    ($q$public$q$, $q$playbook_items$q$, $q$playbook_items_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.playbook_progress
+    ($q$public$q$, $q$playbook_progress$q$, $q$playbook_progress_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$playbook_progress$q$, $q$playbook_progress_playbook_item_id_sale_id_key$q$, $q$UNIQUE (playbook_item_id, sale_id)$q$),
+    -- public.playbooks
+    ($q$public$q$, $q$playbooks$q$, $q$playbooks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.portfolio_settings
+    ($q$public$q$, $q$portfolio_settings$q$, $q$portfolio_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$portfolio_settings$q$, $q$portfolio_settings_setting_key_key$q$, $q$UNIQUE (setting_key)$q$),
+    -- public.price_alerts
+    ($q$public$q$, $q$price_alerts$q$, $q$price_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$price_alerts$q$, $q$price_alerts_alert_type_check$q$, $q$CHECK ((alert_type = ANY (ARRAY['price_drop'::text, 'price_increase'::text, 'new_best_price'::text])))$q$),
+    -- public.price_history
+    ($q$public$q$, $q$price_history$q$, $q$price_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.price_protection_rules
+    ($q$public$q$, $q$price_protection_rules$q$, $q$price_protection_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.pricing_rules
+    ($q$public$q$, $q$pricing_rules$q$, $q$pricing_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.prize_wheel_spins
+    ($q$public$q$, $q$prize_wheel_spins$q$, $q$prize_wheel_spins_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.product_stock_log
+    ($q$public$q$, $q$product_stock_log$q$, $q$product_stock_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.product_usage
+    ($q$public$q$, $q$product_usage$q$, $q$product_usage_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.product_usage_events
+    ($q$public$q$, $q$product_usage_events$q$, $q$product_usage_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.product_usage_summary
+    ($q$public$q$, $q$product_usage_summary$q$, $q$product_usage_summary_pkey$q$, $q$PRIMARY KEY (account_id)$q$),
+    -- public.products
+    ($q$public$q$, $q$products$q$, $q$products_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$products$q$, $q$products_sku_key$q$, $q$UNIQUE (sku)$q$),
+    ($q$public$q$, $q$products$q$, $q$products_price_positive$q$, $q$CHECK ((price >= (0)::numeric))$q$),
+    ($q$public$q$, $q$products$q$, $q$products_stock_positive$q$, $q$CHECK ((stock_quantity >= 0))$q$),
+    -- public.progressive_goals
+    ($q$public$q$, $q$progressive_goals$q$, $q$progressive_goals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$progressive_goals$q$, $q$progressive_goals_salesperson_id_goal_type_key$q$, $q$UNIQUE (salesperson_id, goal_type)$q$),
+    -- public.prospect_cadences
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_sale_id_cadence_id_key$q$, $q$UNIQUE (sale_id, cadence_id)$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_funnel_stage_check$q$, $q$CHECK ((funnel_stage = ANY (ARRAY['new'::text, 'high_interest'::text, 'waiting_approval'::text, 'scheduled'::text])))$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_status_check$q$, $q$CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'completed'::text, 'cancelled'::text])))$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_target_check$q$, $q$CHECK (((sale_id IS NOT NULL) OR (quote_id IS NOT NULL)))$q$),
+    -- public.push_subscriptions
+    ($q$public$q$, $q$push_subscriptions$q$, $q$push_subscriptions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$push_subscriptions$q$, $q$push_subscriptions_user_id_key$q$, $q$UNIQUE (user_id)$q$),
+    -- public.qbr_reports
+    ($q$public$q$, $q$qbr_reports$q$, $q$qbr_reports_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.qbr_schedule
+    ($q$public$q$, $q$qbr_schedule$q$, $q$qbr_schedule_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.query_telemetry
+    ($q$public$q$, $q$query_telemetry$q$, $q$query_telemetry_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.quota_attainment_actions
+    ($q$public$q$, $q$quota_attainment_actions$q$, $q$quota_attainment_actions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quota_attainment_actions$q$, $q$quota_attainment_actions_action_type_check$q$, $q$CHECK ((action_type = ANY (ARRAY['close_deal'::text, 'generate_pipeline'::text, 'increase_ticket'::text, 'accelerate_stage'::text])))$q$),
+    -- public.quota_attainment_alerts
+    ($q$public$q$, $q$quota_attainment_alerts$q$, $q$quota_attainment_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quota_attainment_alerts$q$, $q$quota_attainment_alerts_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])))$q$),
+    -- public.quota_attainment_forecasts
+    ($q$public$q$, $q$quota_attainment_forecasts$q$, $q$quota_attainment_forecasts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quota_attainment_forecasts$q$, $q$quota_forecasts_unique_period$q$, $q$UNIQUE (salesperson_id, period_start)$q$),
+    ($q$public$q$, $q$quota_attainment_forecasts$q$, $q$quota_attainment_forecasts_risk_level_check$q$, $q$CHECK ((risk_level = ANY (ARRAY['safe'::text, 'on_track'::text, 'at_risk'::text, 'critical'::text])))$q$),
+    -- public.quota_attainment_predictions
+    ($q$public$q$, $q$quota_attainment_predictions$q$, $q$quota_attainment_predictions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quota_attainment_predictions$q$, $q$quota_attainment_predictions_risk_level_check$q$, $q$CHECK ((risk_level = ANY (ARRAY['safe'::text, 'on_track'::text, 'at_risk'::text, 'critical'::text])))$q$),
+    -- public.quote_conversion_audit
+    ($q$public$q$, $q$quote_conversion_audit$q$, $q$quote_conversion_audit_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.quote_items
+    ($q$public$q$, $q$quote_items$q$, $q$quote_items_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.quote_sync_inbound_log
+    ($q$public$q$, $q$quote_sync_inbound_log$q$, $q$quote_sync_inbound_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quote_sync_inbound_log$q$, $q$chk_qs_inbound_log_http_status_range$q$, $q$CHECK (((http_status >= 100) AND (http_status <= 599)))$q$),
+    ($q$public$q$, $q$quote_sync_inbound_log$q$, $q$chk_qs_inbound_log_payload_size$q$, $q$CHECK ((pg_column_size(payload) <= 262144))$q$),
+    ($q$public$q$, $q$quote_sync_inbound_log$q$, $q$chk_qs_inbound_log_source_allowed$q$, $q$CHECK ((source = ANY (ARRAY['gift_store'::text, 'promogifts'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'n8n'::text, 'v4'::text])))$q$),
+    ($q$public$q$, $q$quote_sync_inbound_log$q$, $q$chk_qs_inbound_log_status_allowed$q$, $q$CHECK ((status = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text, 'processed'::text, 'method_not_allowed'::text, 'unauthorized'::text, 'not_found'::text, 'bad_request'::text])))$q$),
+    -- public.quote_sync_logs
+    ($q$public$q$, $q$quote_sync_logs$q$, $q$quote_sync_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.quotes
+    ($q$public$q$, $q$quotes$q$, $q$quotes_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quotes$q$, $q$quotes_subtotal_non_negative$q$, $q$CHECK (((subtotal IS NULL) OR (subtotal >= (0)::numeric)))$q$),
+    ($q$public$q$, $q$quotes$q$, $q$quotes_total_value_non_negative$q$, $q$CHECK (((total_value IS NULL) OR (total_value >= (0)::numeric))) NOT VALID$q$),
+    -- public.quotes_inbound
+    ($q$public$q$, $q$quotes_inbound$q$, $q$quotes_inbound_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$quotes_inbound_quote_id_key$q$, $q$UNIQUE (quote_id)$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_client_name_len$q$, $q$CHECK (((client_name IS NULL) OR (char_length(client_name) <= 512)))$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_quote_number_len$q$, $q$CHECK (((quote_number IS NULL) OR (char_length(quote_number) <= 128)))$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_raw_payload_size$q$, $q$CHECK ((pg_column_size(raw_payload) <= 262144))$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_seller_email_format$q$, $q$CHECK (((seller_email IS NULL) OR (seller_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text)))$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_source_allowed$q$, $q$CHECK ((source = ANY (ARRAY['gift_store'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'promogifts'::text])))$q$),
+    ($q$public$q$, $q$quotes_inbound$q$, $q$chk_quotes_inbound_status_allowed$q$, $q$CHECK (((status IS NULL) OR (status = ANY (ARRAY['draft'::text, 'pending'::text, 'sent'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'converted'::text, 'cancelled'::text, 'won'::text, 'lost'::text, 'open'::text, 'created'::text, 'updated'::text]))))$q$),
+    -- public.race_badges
+    ($q$public$q$, $q$race_badges$q$, $q$race_badges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_badges$q$, $q$race_badges_salesperson_id_badge_code_season_id_key$q$, $q$UNIQUE (salesperson_id, badge_code, season_id)$q$),
+    ($q$public$q$, $q$race_badges$q$, $q$race_badges_unique_per_season$q$, $q$UNIQUE (salesperson_id, badge_code, season_id)$q$),
+    -- public.race_cars
+    ($q$public$q$, $q$race_cars$q$, $q$race_cars_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_cars$q$, $q$race_cars_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    ($q$public$q$, $q$race_cars$q$, $q$race_cars_car_number_check$q$, $q$CHECK (((car_number >= 1) AND (car_number <= 99)))$q$),
+    ($q$public$q$, $q$race_cars$q$, $q$race_cars_car_style_check$q$, $q$CHECK ((car_style = ANY (ARRAY['f1'::text, 'stock'::text, 'kart'::text])))$q$),
+    -- public.race_daily_snapshots
+    ($q$public$q$, $q$race_daily_snapshots$q$, $q$race_daily_snapshots_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_daily_snapshots$q$, $q$race_daily_snapshots_season_id_salesperson_id_snapshot_date_key$q$, $q$UNIQUE (season_id, salesperson_id, snapshot_date)$q$),
+    -- public.race_events
+    ($q$public$q$, $q$race_events$q$, $q$race_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_events$q$, $q$race_events_event_type_check$q$, $q$CHECK ((event_type = ANY (ARRAY['boost'::text, 'overtake'::text, 'checkpoint'::text, 'powerup'::text, 'victory'::text, 'pitstop'::text, 'powerup_unlocked'::text, 'monthly_champion'::text])))$q$),
+    -- public.race_overlay_telemetry
+    ($q$public$q$, $q$race_overlay_telemetry$q$, $q$race_overlay_telemetry_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_overlay_telemetry$q$, $q$race_overlay_telemetry_user_id_overlay_name_key$q$, $q$UNIQUE (user_id, overlay_name)$q$),
+    -- public.race_powerups
+    ($q$public$q$, $q$race_powerups$q$, $q$race_powerups_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_powerups$q$, $q$race_powerups_powerup_type_check$q$, $q$CHECK ((powerup_type = ANY (ARRAY['turbo'::text, 'shield'::text, 'lightning'::text, 'xp_boost'::text, 'mega_boost'::text])))$q$),
+    -- public.race_reactions
+    ($q$public$q$, $q$race_reactions$q$, $q$race_reactions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_reactions$q$, $q$race_reactions_emoji_check$q$, $q$CHECK (((char_length(emoji) >= 1) AND (char_length(emoji) <= 8)))$q$),
+    -- public.race_rivalries_persistent
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_season_id_car_id_key$q$, $q$UNIQUE (season_id, car_id)$q$),
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_check$q$, $q$CHECK ((car_id <> rival_car_id))$q$),
+    -- public.race_scoring_rules
+    ($q$public$q$, $q$race_scoring_rules$q$, $q$race_scoring_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_scoring_rules$q$, $q$race_scoring_rules_season_id_metric_code_key$q$, $q$UNIQUE (season_id, metric_code)$q$),
+    ($q$public$q$, $q$race_scoring_rules$q$, $q$race_scoring_rules_metric_code_check$q$, $q$CHECK ((metric_code = ANY (ARRAY['sales_value'::text, 'markup_pct'::text, 'new_clients_activated'::text, 'routine_compliance'::text, 'stakeholders_captured'::text, 'conversations_initiated'::text, 'sales_value_originated'::text])))$q$),
+    ($q$public$q$, $q$race_scoring_rules$q$, $q$race_scoring_rules_weight_check$q$, $q$CHECK ((weight >= (0)::numeric))$q$),
+    -- public.race_seasons
+    ($q$public$q$, $q$race_seasons$q$, $q$race_seasons_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_seasons$q$, $q$race_seasons_role_type_check$q$, $q$CHECK ((role_type = ANY (ARRAY['closer'::text, 'sdr'::text])))$q$),
+    ($q$public$q$, $q$race_seasons$q$, $q$race_seasons_status_check$q$, $q$CHECK ((status = ANY (ARRAY['upcoming'::text, 'active'::text, 'finished'::text])))$q$),
+    ($q$public$q$, $q$race_seasons$q$, $q$race_seasons_track_type_check$q$, $q$CHECK ((track_type = ANY (ARRAY['oval'::text, 'circuit'::text, 'street'::text])))$q$),
+    -- public.race_team_members
+    ($q$public$q$, $q$race_team_members$q$, $q$race_team_members_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_team_members$q$, $q$race_team_members_team_id_car_id_key$q$, $q$UNIQUE (team_id, car_id)$q$),
+    -- public.race_teams
+    ($q$public$q$, $q$race_teams$q$, $q$race_teams_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_teams$q$, $q$race_teams_season_id_name_key$q$, $q$UNIQUE (season_id, name)$q$),
+    -- public.race_unlocks
+    ($q$public$q$, $q$race_unlocks$q$, $q$race_unlocks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_unlocks$q$, $q$race_unlocks_user_key_unique$q$, $q$UNIQUE (user_id, unlock_key)$q$),
+    -- public.race_user_daily_checkins
+    ($q$public$q$, $q$race_user_daily_checkins$q$, $q$race_user_daily_checkins_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_user_daily_checkins$q$, $q$race_user_daily_checkins_user_id_season_id_checkin_date_key$q$, $q$UNIQUE (user_id, season_id, checkin_date)$q$),
+    -- public.race_user_preferences
+    ($q$public$q$, $q$race_user_preferences$q$, $q$race_user_preferences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$race_user_preferences$q$, $q$race_user_preferences_user_id_key$q$, $q$UNIQUE (user_id)$q$),
+    ($q$public$q$, $q$race_user_preferences$q$, $q$race_user_preferences_view_mode_check$q$, $q$CHECK ((view_mode = ANY (ARRAY['focus'::text, 'immersive'::text, 'competitive'::text, 'analysis'::text])))$q$),
+    -- public.rank_change_notifications
+    ($q$public$q$, $q$rank_change_notifications$q$, $q$rank_change_notifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.ranking_notifications
+    ($q$public$q$, $q$ranking_notifications$q$, $q$ranking_notifications_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$ranking_notifications$q$, $q$ranking_notifications_salesperson_id_period_start_key$q$, $q$UNIQUE (salesperson_id, period_start)$q$),
+    -- public.rate_limit_logs
+    ($q$public$q$, $q$rate_limit_logs$q$, $q$rate_limit_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.rate_limit_settings
+    ($q$public$q$, $q$rate_limit_settings$q$, $q$rate_limit_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$rate_limit_settings$q$, $q$rate_limit_settings_action_key$q$, $q$UNIQUE (action)$q$),
+    -- public.reauthentication_requests
+    ($q$public$q$, $q$reauthentication_requests$q$, $q$reauthentication_requests_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$reauthentication_requests$q$, $q$reauthentication_requests_action_type_check$q$, $q$CHECK ((action_type = ANY (ARRAY['password_change'::text, 'email_change'::text, 'mfa_config'::text, 'admin_action'::text, 'delete_account'::text])))$q$),
+    -- public.renewals
+    ($q$public$q$, $q$renewals$q$, $q$renewals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.report_embed_tokens
+    ($q$public$q$, $q$report_embed_tokens$q$, $q$report_embed_tokens_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$report_embed_tokens$q$, $q$report_embed_tokens_token_key$q$, $q$UNIQUE (token)$q$),
+    -- public.report_executions
+    ($q$public$q$, $q$report_executions$q$, $q$report_executions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$report_executions$q$, $q$report_executions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'success'::text, 'failed'::text])))$q$),
+    -- public.report_schedules
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_day_of_month_check$q$, $q$CHECK (((day_of_month >= 1) AND (day_of_month <= 31)))$q$),
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_day_of_week_check$q$, $q$CHECK (((day_of_week >= 0) AND (day_of_week <= 6)))$q$),
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_format_check$q$, $q$CHECK ((format = ANY (ARRAY['csv'::text, 'xlsx'::text, 'pdf'::text])))$q$),
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_frequency_check$q$, $q$CHECK ((frequency = ANY (ARRAY['daily'::text, 'weekly'::text, 'monthly'::text])))$q$),
+    -- public.revenue_forecasts
+    ($q$public$q$, $q$revenue_forecasts$q$, $q$revenue_forecasts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$revenue_forecasts$q$, $q$revenue_forecasts_confidence_score_check$q$, $q$CHECK (((confidence_score >= 0) AND (confidence_score <= 100)))$q$),
+    ($q$public$q$, $q$revenue_forecasts$q$, $q$revenue_forecasts_period_type_check$q$, $q$CHECK ((period_type = ANY (ARRAY['week'::text, 'month'::text, 'quarter'::text])))$q$),
+    -- public.role_permissions
+    ($q$public$q$, $q$role_permissions$q$, $q$role_permissions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$role_permissions$q$, $q$role_permissions_role_permission_id_key$q$, $q$UNIQUE (role, permission_id)$q$),
+    -- public.sale_notifications_audit
+    ($q$public$q$, $q$sale_notifications_audit$q$, $q$sale_notifications_audit_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sales
+    ($q$public$q$, $q$sales$q$, $q$sales_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_amount_positive$q$, $q$CHECK ((amount >= (0)::numeric))$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_category_check$q$, $q$CHECK ((category = ANY (ARRAY['subscription'::text, 'service'::text, 'project'::text, 'other'::text, 'brindes'::text])))$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_cost_source_check$q$, $q$CHECK (((cost_source IS NULL) OR (cost_source = ANY (ARRAY['promo_gifts'::text, 'manual'::text, 'product_default'::text]))))$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_status_check$q$, $q$CHECK ((status = ANY (ARRAY['completed'::text, 'pending'::text, 'cancelled'::text, 'lead'::text, 'qualified'::text, 'proposal'::text, 'negotiation'::text, 'closed'::text, 'prospecting'::text, 'won'::text, 'lost'::text])))$q$),
+    -- public.sales_battles
+    ($q$public$q$, $q$sales_battles$q$, $q$sales_battles_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sales_enablement_assets
+    ($q$public$q$, $q$sales_enablement_assets$q$, $q$sales_enablement_assets_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sales_goals
+    ($q$public$q$, $q$sales_goals$q$, $q$sales_goals_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sales_goals$q$, $q$sales_goals_salesperson_id_month_key$q$, $q$UNIQUE (salesperson_id, month)$q$),
+    -- public.sales_streaks
+    ($q$public$q$, $q$sales_streaks$q$, $q$sales_streaks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sales_streaks$q$, $q$sales_streaks_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.sales_territories
+    ($q$public$q$, $q$sales_territories$q$, $q$sales_territories_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sales_territories$q$, $q$sales_territories_territory_type_check$q$, $q$CHECK ((territory_type = ANY (ARRAY['segment'::text, 'region'::text, 'product'::text, 'niche'::text])))$q$),
+    -- public.salespeople
+    ($q$public$q$, $q$salespeople$q$, $q$salespeople_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salespeople$q$, $q$salespeople_auth_user_id_key$q$, $q$UNIQUE (auth_user_id)$q$),
+    ($q$public$q$, $q$salespeople$q$, $q$salespeople_email_key$q$, $q$UNIQUE (email)$q$),
+    -- public.salesperson_badges
+    ($q$public$q$, $q$salesperson_badges$q$, $q$salesperson_badges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_badges$q$, $q$salesperson_badges_salesperson_id_badge_id_key$q$, $q$UNIQUE (salesperson_id, badge_id)$q$),
+    -- public.salesperson_coaching_aggregates
+    ($q$public$q$, $q$salesperson_coaching_aggregates$q$, $q$salesperson_coaching_aggregates_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_coaching_aggregates$q$, $q$salesperson_coaching_aggregates_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    ($q$public$q$, $q$salesperson_coaching_aggregates$q$, $q$salesperson_coaching_aggregates_trend_direction_check$q$, $q$CHECK ((trend_direction = ANY (ARRAY['up'::text, 'flat'::text, 'down'::text])))$q$),
+    -- public.salesperson_commission_configs
+    ($q$public$q$, $q$salesperson_commission_configs$q$, $q$salesperson_commission_configs_pkey$q$, $q$PRIMARY KEY (salesperson_id, month)$q$),
+    -- public.salesperson_custom_field_values
+    ($q$public$q$, $q$salesperson_custom_field_values$q$, $q$salesperson_custom_field_values_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_custom_field_values$q$, $q$salesperson_custom_field_values_salesperson_id_field_id_key$q$, $q$UNIQUE (salesperson_id, field_id)$q$),
+    -- public.salesperson_leagues
+    ($q$public$q$, $q$salesperson_leagues$q$, $q$salesperson_leagues_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_leagues$q$, $q$salesperson_leagues_salesperson_id_season_number_key$q$, $q$UNIQUE (salesperson_id, season_number)$q$),
+    -- public.salesperson_performance_telemetry
+    ($q$public$q$, $q$salesperson_performance_telemetry$q$, $q$salesperson_performance_telemetry_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.salesperson_preferences
+    ($q$public$q$, $q$salesperson_preferences$q$, $q$salesperson_preferences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_preferences$q$, $q$salesperson_preferences_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    ($q$public$q$, $q$salesperson_preferences$q$, $q$salesperson_preferences_response_mode_check$q$, $q$CHECK ((response_mode = ANY (ARRAY['text'::text, 'audio'::text, 'both'::text])))$q$),
+    -- public.salesperson_xp
+    ($q$public$q$, $q$salesperson_xp$q$, $q$salesperson_xp_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$salesperson_xp$q$, $q$salesperson_xp_salesperson_id_key$q$, $q$UNIQUE (salesperson_id)$q$),
+    -- public.saved_filters
+    ($q$public$q$, $q$saved_filters$q$, $q$saved_filters_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$saved_filters$q$, $q$unique_filter_name_per_user_entity$q$, $q$UNIQUE (user_id, entity_type, name)$q$),
+    -- public.scheduled_report_runs
+    ($q$public$q$, $q$scheduled_report_runs$q$, $q$scheduled_report_runs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$scheduled_report_runs$q$, $q$scheduled_report_runs_status_check$q$, $q$CHECK ((status = ANY (ARRAY['running'::text, 'success'::text, 'failed'::text])))$q$),
+    -- public.scheduled_reports
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_day_of_month_check$q$, $q$CHECK (((day_of_month >= 1) AND (day_of_month <= 28)))$q$),
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_day_of_week_check$q$, $q$CHECK (((day_of_week >= 0) AND (day_of_week <= 6)))$q$),
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_format_check$q$, $q$CHECK ((format = ANY (ARRAY['csv'::text, 'json'::text])))$q$),
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_frequency_check$q$, $q$CHECK ((frequency = ANY (ARRAY['daily'::text, 'weekly'::text, 'monthly'::text])))$q$),
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_hour_of_day_check$q$, $q$CHECK (((hour_of_day >= 0) AND (hour_of_day <= 23)))$q$),
+    -- public.scheduled_sends
+    ($q$public$q$, $q$scheduled_sends$q$, $q$scheduled_sends_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$scheduled_sends$q$, $q$scheduled_sends_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'linkedin'::text, 'sms'::text])))$q$),
+    ($q$public$q$, $q$scheduled_sends$q$, $q$scheduled_sends_optimization_source_check$q$, $q$CHECK ((optimization_source = ANY (ARRAY['profile'::text, 'global'::text, 'manual'::text])))$q$),
+    ($q$public$q$, $q$scheduled_sends$q$, $q$scheduled_sends_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text, 'cancelled'::text])))$q$),
+    -- public.score_change_logs
+    ($q$public$q$, $q$score_change_logs$q$, $q$score_change_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$score_change_logs$q$, $q$score_change_logs_operation_check$q$, $q$CHECK ((operation = ANY (ARRAY['ADD'::text, 'REM'::text, 'SET'::text])))$q$),
+    -- public.sdr_alert_configs
+    ($q$public$q$, $q$sdr_alert_configs$q$, $q$sdr_alert_configs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sdr_alert_history
+    ($q$public$q$, $q$sdr_alert_history$q$, $q$sdr_alert_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sdr_performance_settings
+    ($q$public$q$, $q$sdr_performance_settings$q$, $q$sdr_performance_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.security_alert_history
+    ($q$public$q$, $q$security_alert_history$q$, $q$security_alert_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.security_alert_settings
+    ($q$public$q$, $q$security_alert_settings$q$, $q$security_alert_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.security_events
+    ($q$public$q$, $q$security_events$q$, $q$security_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$security_events$q$, $q$security_events_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.semantic_index
+    ($q$public$q$, $q$semantic_index$q$, $q$semantic_index_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$semantic_index$q$, $q$semantic_index_entity_type_entity_id_key$q$, $q$UNIQUE (entity_type, entity_id)$q$),
+    ($q$public$q$, $q$semantic_index$q$, $q$semantic_index_entity_type_check$q$, $q$CHECK ((entity_type = ANY (ARRAY['client'::text, 'lead'::text, 'deal'::text, 'activity'::text, 'call_recording'::text, 'note'::text, 'email_message'::text, 'whatsapp_message'::text, 'proposal'::text, 'task'::text, 'playbook'::text])))$q$),
+    -- public.send_time_profiles
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_best_dow_check$q$, $q$CHECK (((best_dow >= 0) AND (best_dow <= 6)))$q$),
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_best_hour_check$q$, $q$CHECK (((best_hour >= 0) AND (best_hour <= 23)))$q$),
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_confidence_check$q$, $q$CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)))$q$),
+    -- public.sequence_enrollments
+    ($q$public$q$, $q$sequence_enrollments$q$, $q$sequence_enrollments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sequence_enrollments$q$, $q$sequence_enrollments_sequence_id_contact_id_contact_type_key$q$, $q$UNIQUE (sequence_id, contact_id, contact_type)$q$),
+    ($q$public$q$, $q$sequence_enrollments$q$, $q$sequence_enrollments_contact_type_check$q$, $q$CHECK ((contact_type = ANY (ARRAY['lead'::text, 'client'::text, 'contact'::text])))$q$),
+    ($q$public$q$, $q$sequence_enrollments$q$, $q$sequence_enrollments_status_check$q$, $q$CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'completed'::text, 'exited'::text, 'failed'::text])))$q$),
+    -- public.sequence_step_assignments
+    ($q$public$q$, $q$sequence_step_assignments$q$, $q$sequence_step_assignments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sequence_step_assignments$q$, $q$sequence_step_assignments_enrollment_id_step_id_key$q$, $q$UNIQUE (enrollment_id, step_id)$q$),
+    -- public.sequence_step_executions
+    ($q$public$q$, $q$sequence_step_executions$q$, $q$sequence_step_executions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sequence_step_executions$q$, $q$sequence_step_executions_status_check$q$, $q$CHECK ((status = ANY (ARRAY['sent'::text, 'failed'::text, 'skipped'::text, 'queued'::text])))$q$),
+    -- public.sequence_step_variants
+    ($q$public$q$, $q$sequence_step_variants$q$, $q$sequence_step_variants_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sequence_step_variants$q$, $q$sequence_step_variants_step_id_label_key$q$, $q$UNIQUE (step_id, label)$q$),
+    ($q$public$q$, $q$sequence_step_variants$q$, $q$sequence_step_variants_label_check$q$, $q$CHECK ((label = ANY (ARRAY['A'::text, 'B'::text])))$q$),
+    ($q$public$q$, $q$sequence_step_variants$q$, $q$sequence_step_variants_traffic_weight_check$q$, $q$CHECK (((traffic_weight >= 0) AND (traffic_weight <= 100)))$q$),
+    -- public.sequence_steps
+    ($q$public$q$, $q$sequence_steps$q$, $q$sequence_steps_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sequence_steps$q$, $q$sequence_steps_sequence_id_step_order_key$q$, $q$UNIQUE (sequence_id, step_order)$q$),
+    ($q$public$q$, $q$sequence_steps$q$, $q$sequence_steps_channel_check$q$, $q$CHECK ((channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'call'::text, 'linkedin'::text, 'task'::text])))$q$),
+    -- public.sequences
+    ($q$public$q$, $q$sequences$q$, $q$sequences_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.session_activity
+    ($q$public$q$, $q$session_activity$q$, $q$session_activity_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.skill_assessments
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_salesperson_id_skill_key$q$, $q$UNIQUE (salesperson_id, skill)$q$),
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_current_level_check$q$, $q$CHECK ((current_level = ANY (ARRAY['beginner'::text, 'intermediate'::text, 'advanced'::text, 'expert'::text])))$q$),
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_score_check$q$, $q$CHECK (((score >= (0)::numeric) AND (score <= (100)::numeric)))$q$),
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_skill_check$q$, $q$CHECK ((skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])))$q$),
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_trend_check$q$, $q$CHECK ((trend = ANY (ARRAY['improving'::text, 'stable'::text, 'declining'::text])))$q$),
+    -- public.skill_development_tracks
+    ($q$public$q$, $q$skill_development_tracks$q$, $q$skill_development_tracks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$skill_development_tracks$q$, $q$skill_development_tracks_salesperson_id_skill_key$q$, $q$UNIQUE (salesperson_id, skill)$q$),
+    ($q$public$q$, $q$skill_development_tracks$q$, $q$skill_development_tracks_skill_check$q$, $q$CHECK ((skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])))$q$),
+    -- public.sla_policies
+    ($q$public$q$, $q$sla_policies$q$, $q$sla_policies_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$sla_policies$q$, $q$sla_policies_stage_key$q$, $q$UNIQUE (stage)$q$),
+    -- public.sla_violations
+    ($q$public$q$, $q$sla_violations$q$, $q$sla_violations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.slow_query_alerts
+    ($q$public$q$, $q$slow_query_alerts$q$, $q$slow_query_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.sms_verification_codes
+    ($q$public$q$, $q$sms_verification_codes$q$, $q$sms_verification_codes_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.squad_members
+    ($q$public$q$, $q$squad_members$q$, $q$squad_members_pkey$q$, $q$PRIMARY KEY (squad_id, user_id)$q$),
+    -- public.squads
+    ($q$public$q$, $q$squads$q$, $q$squads_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.stage_bottleneck_insights
+    ($q$public$q$, $q$stage_bottleneck_insights$q$, $q$stage_bottleneck_insights_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$stage_bottleneck_insights$q$, $q$stage_bottleneck_insights_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.stage_conversion_metrics
+    ($q$public$q$, $q$stage_conversion_metrics$q$, $q$stage_conversion_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.stage_inactivity_rules
+    ($q$public$q$, $q$stage_inactivity_rules$q$, $q$stage_inactivity_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$stage_inactivity_rules$q$, $q$stage_inactivity_rules_stage_key$q$, $q$UNIQUE (stage)$q$),
+    ($q$public$q$, $q$stage_inactivity_rules$q$, $q$stage_inactivity_rules_check$q$, $q$CHECK ((moderate_days > mild_days))$q$),
+    ($q$public$q$, $q$stage_inactivity_rules$q$, $q$stage_inactivity_rules_check1$q$, $q$CHECK ((critical_days > moderate_days))$q$),
+    ($q$public$q$, $q$stage_inactivity_rules$q$, $q$stage_inactivity_rules_mild_days_check$q$, $q$CHECK ((mild_days > 0))$q$),
+    -- public.stage_probabilities
+    ($q$public$q$, $q$stage_probabilities$q$, $q$stage_probabilities_pkey$q$, $q$PRIMARY KEY (stage)$q$),
+    ($q$public$q$, $q$stage_probabilities$q$, $q$stage_probabilities_probability_check$q$, $q$CHECK (((probability >= (0)::numeric) AND (probability <= (1)::numeric)))$q$),
+    -- public.stage_velocity_baselines
+    ($q$public$q$, $q$stage_velocity_baselines$q$, $q$stage_velocity_baselines_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$stage_velocity_baselines$q$, $q$stage_velocity_baselines_stage_segment_key$q$, $q$UNIQUE (stage, segment)$q$),
+    -- public.status_transitions
+    ($q$public$q$, $q$status_transitions$q$, $q$status_transitions_pkey$q$, $q$PRIMARY KEY (entity, status_origem, status_destino)$q$),
+    -- public.stock_movements
+    ($q$public$q$, $q$stock_movements$q$, $q$stock_movements_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$stock_movements$q$, $q$stock_movements_movement_type_check$q$, $q$CHECK ((movement_type = ANY (ARRAY['entry'::text, 'exit'::text, 'adjustment'::text])))$q$),
+    -- public.supplier_order_items
+    ($q$public$q$, $q$supplier_order_items$q$, $q$supplier_order_items_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.supplier_orders
+    ($q$public$q$, $q$supplier_orders$q$, $q$supplier_orders_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$supplier_orders$q$, $q$supplier_orders_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text])))$q$),
+    -- public.supplier_products
+    ($q$public$q$, $q$supplier_products$q$, $q$supplier_products_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$supplier_products$q$, $q$supplier_products_supplier_id_product_id_key$q$, $q$UNIQUE (supplier_id, product_id)$q$),
+    -- public.supplier_risk_assessments
+    ($q$public$q$, $q$supplier_risk_assessments$q$, $q$supplier_risk_assessments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$supplier_risk_assessments$q$, $q$supplier_risk_assessments_risk_level_check$q$, $q$CHECK ((risk_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))$q$),
+    -- public.suppliers
+    ($q$public$q$, $q$suppliers$q$, $q$suppliers_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.support_tickets
+    ($q$public$q$, $q$support_tickets$q$, $q$support_tickets_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.task_assignments
+    ($q$public$q$, $q$task_assignments$q$, $q$task_assignments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.task_catalog
+    ($q$public$q$, $q$task_catalog$q$, $q$task_catalog_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$task_catalog$q$, $q$task_catalog_xp_reward_check$q$, $q$CHECK ((xp_reward >= 0))$q$),
+    -- public.tasks
+    ($q$public$q$, $q$tasks$q$, $q$tasks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$tasks$q$, $q$tasks_due_date_check$q$, $q$CHECK ((due_date >= '2020-01-01'::date))$q$),
+    -- public.team_closers
+    ($q$public$q$, $q$team_closers$q$, $q$team_closers_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$team_closers$q$, $q$team_closers_team_id_closer_id_key$q$, $q$UNIQUE (team_id, closer_id)$q$),
+    -- public.team_custom_fields
+    ($q$public$q$, $q$team_custom_fields$q$, $q$team_custom_fields_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$team_custom_fields$q$, $q$team_custom_fields_team_id_field_key_key$q$, $q$UNIQUE (team_id, field_key)$q$),
+    ($q$public$q$, $q$team_custom_fields$q$, $q$team_custom_fields_field_type_check$q$, $q$CHECK ((field_type = ANY (ARRAY['number'::text, 'text'::text, 'boolean'::text])))$q$),
+    -- public.teams
+    ($q$public$q$, $q$teams$q$, $q$teams_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.territories
+    ($q$public$q$, $q$territories$q$, $q$territories_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$territories$q$, $q$territories_name_key$q$, $q$UNIQUE (name)$q$),
+    -- public.territory_history
+    ($q$public$q$, $q$territory_history$q$, $q$territory_history_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.tournament_matches
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'active'::text, 'completed'::text])))$q$),
+    -- public.tournament_participants
+    ($q$public$q$, $q$tournament_participants$q$, $q$tournament_participants_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$tournament_participants$q$, $q$tournament_participants_tournament_id_salesperson_id_key$q$, $q$UNIQUE (tournament_id, salesperson_id)$q$),
+    -- public.tournaments
+    ($q$public$q$, $q$tournaments$q$, $q$tournaments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$tournaments$q$, $q$tournaments_bracket_type_check$q$, $q$CHECK ((bracket_type = ANY (ARRAY['single_elimination'::text, 'double_elimination'::text])))$q$),
+    ($q$public$q$, $q$tournaments$q$, $q$tournaments_metric_type_check$q$, $q$CHECK ((metric_type = ANY (ARRAY['revenue'::text, 'deals'::text, 'activities'::text, 'conversion'::text])))$q$),
+    ($q$public$q$, $q$tournaments$q$, $q$tournaments_status_check$q$, $q$CHECK ((status = ANY (ARRAY['upcoming'::text, 'active'::text, 'completed'::text])))$q$),
+    -- public.twilio_call_sessions
+    ($q$public$q$, $q$twilio_call_sessions$q$, $q$twilio_call_sessions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$twilio_call_sessions$q$, $q$twilio_call_sessions_call_sid_key$q$, $q$UNIQUE (call_sid)$q$),
+    -- public.user_2fa
+    ($q$public$q$, $q$user_2fa$q$, $q$user_2fa_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$user_2fa$q$, $q$user_2fa_user_id_key$q$, $q$UNIQUE (user_id)$q$),
+    -- public.user_2fa_backup_codes
+    ($q$public$q$, $q$user_2fa_backup_codes$q$, $q$user_2fa_backup_codes_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.user_2fa_log
+    ($q$public$q$, $q$user_2fa_log$q$, $q$user_2fa_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.user_app_settings
+    ($q$public$q$, $q$user_app_settings$q$, $q$user_app_settings_pkey$q$, $q$PRIMARY KEY (user_id, key)$q$),
+    -- public.user_mfa_settings
+    ($q$public$q$, $q$user_mfa_settings$q$, $q$user_mfa_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$user_mfa_settings$q$, $q$user_mfa_settings_user_id_key$q$, $q$UNIQUE (user_id)$q$),
+    ($q$public$q$, $q$user_mfa_settings$q$, $q$user_mfa_settings_preferred_method_check$q$, $q$CHECK ((preferred_method = ANY (ARRAY['totp'::text, 'sms'::text])))$q$),
+    -- public.user_roles
+    ($q$public$q$, $q$user_roles$q$, $q$user_roles_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$user_roles$q$, $q$user_roles_user_id_role_key$q$, $q$UNIQUE (user_id, role)$q$),
+    -- public.user_winloss_preferences
+    ($q$public$q$, $q$user_winloss_preferences$q$, $q$user_winloss_preferences_pkey$q$, $q$PRIMARY KEY (user_id)$q$),
+    -- public.v4_callback_alert_settings
+    ($q$public$q$, $q$v4_callback_alert_settings$q$, $q$v4_callback_alert_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$v4_callback_alert_settings$q$, $q$v4_callback_alert_settings_singleton_key$q$, $q$UNIQUE (singleton)$q$),
+    -- public.v4_callback_alerts
+    ($q$public$q$, $q$v4_callback_alerts$q$, $q$v4_callback_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$v4_callback_alerts$q$, $q$v4_callback_alerts_kind_check$q$, $q$CHECK ((kind = ANY (ARRAY['high_failure_rate'::text, 'exhausted_spike'::text, 'pending_backlog'::text])))$q$),
+    -- public.v4_callback_dead_letters
+    ($q$public$q$, $q$v4_callback_dead_letters$q$, $q$v4_callback_dead_letters_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.v4_callback_metrics
+    ($q$public$q$, $q$v4_callback_metrics$q$, $q$v4_callback_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$v4_callback_metrics$q$, $q$v4_callback_metrics_day_key$q$, $q$UNIQUE (day)$q$),
+    -- public.victory_feed
+    ($q$public$q$, $q$victory_feed$q$, $q$victory_feed_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.web_vitals_samples
+    ($q$public$q$, $q$web_vitals_samples$q$, $q$web_vitals_samples_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$web_vitals_samples$q$, $q$web_vitals_samples_metric_check$q$, $q$CHECK ((metric = ANY (ARRAY['LCP'::text, 'INP'::text, 'CLS'::text, 'FCP'::text, 'TTFB'::text])))$q$),
+    ($q$public$q$, $q$web_vitals_samples$q$, $q$web_vitals_samples_rating_check$q$, $q$CHECK ((rating = ANY (ARRAY['good'::text, 'needs-improvement'::text, 'poor'::text])))$q$),
+    -- public.webauthn_challenges
+    ($q$public$q$, $q$webauthn_challenges$q$, $q$webauthn_challenges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webauthn_challenges$q$, $q$webauthn_challenges_type_check$q$, $q$CHECK ((type = ANY (ARRAY['registration'::text, 'authentication'::text])))$q$),
+    -- public.webauthn_credentials
+    ($q$public$q$, $q$webauthn_credentials$q$, $q$webauthn_credentials_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webauthn_credentials$q$, $q$webauthn_credentials_credential_id_key$q$, $q$UNIQUE (credential_id)$q$),
+    -- public.webhook_allowed_domains
+    ($q$public$q$, $q$webhook_allowed_domains$q$, $q$webhook_allowed_domains_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webhook_allowed_domains$q$, $q$webhook_allowed_domains_pattern_formato$q$, $q$CHECK (((pattern = lower(pattern)) AND (pattern !~ '\s'::text) AND (pattern <> ''::text) AND ((pattern ~ '^[a-z0-9.-]+$'::text) OR (pattern ~ '^\*\.[a-z0-9.-]+$'::text))))$q$),
+    -- public.webhook_deliveries
+    ($q$public$q$, $q$webhook_deliveries$q$, $q$webhook_deliveries_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.webhook_dispatch_rate
+    ($q$public$q$, $q$webhook_dispatch_rate$q$, $q$webhook_dispatch_rate_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.webhook_events
+    ($q$public$q$, $q$webhook_events$q$, $q$webhook_events_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webhook_events$q$, $q$webhook_events_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'success'::text, 'failed'::text])))$q$),
+    -- public.webhook_inbound_dedupe
+    ($q$public$q$, $q$webhook_inbound_dedupe$q$, $q$webhook_inbound_dedupe_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webhook_inbound_dedupe$q$, $q$chk_webhook_inbound_dedupe_hit_count_non_negative$q$, $q$CHECK ((hit_count >= 0))$q$),
+    ($q$public$q$, $q$webhook_inbound_dedupe$q$, $q$chk_webhook_inbound_dedupe_payload_size$q$, $q$CHECK ((pg_column_size(payload) <= 262144))$q$),
+    -- public.webhook_inbound_log
+    ($q$public$q$, $q$webhook_inbound_log$q$, $q$webhook_inbound_log_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$webhook_inbound_log$q$, $q$chk_webhook_inbound_log_http_status_range$q$, $q$CHECK (((http_status >= 100) AND (http_status <= 599)))$q$),
+    ($q$public$q$, $q$webhook_inbound_log$q$, $q$chk_webhook_inbound_log_outcome_allowed$q$, $q$CHECK ((outcome = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text])))$q$),
+    ($q$public$q$, $q$webhook_inbound_log$q$, $q$chk_webhook_inbound_log_payload_size_non_negative$q$, $q$CHECK (((payload_size IS NULL) OR (payload_size >= 0)))$q$),
+    -- public.webhook_logs
+    ($q$public$q$, $q$webhook_logs$q$, $q$webhook_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.webhooks
+    ($q$public$q$, $q$webhooks$q$, $q$webhooks_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.website_visitor_logs
+    ($q$public$q$, $q$website_visitor_logs$q$, $q$website_visitor_logs_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.weekly_challenges
+    ($q$public$q$, $q$weekly_challenges$q$, $q$weekly_challenges_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.weekly_matchups
+    ($q$public$q$, $q$weekly_matchups$q$, $q$weekly_matchups_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.whatsapp_conversations
+    ($q$public$q$, $q$whatsapp_conversations$q$, $q$whatsapp_conversations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$whatsapp_conversations$q$, $q$whatsapp_conversations_external_message_id_key$q$, $q$UNIQUE (external_message_id)$q$),
+    ($q$public$q$, $q$whatsapp_conversations$q$, $q$whatsapp_conversations_direction_check$q$, $q$CHECK ((direction = ANY (ARRAY['inbound'::text, 'outbound'::text])))$q$),
+    -- public.whatsapp_template_versions
+    ($q$public$q$, $q$whatsapp_template_versions$q$, $q$whatsapp_template_versions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.win_calibration_buckets
+    ($q$public$q$, $q$win_calibration_buckets$q$, $q$win_calibration_buckets_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_calibration_buckets$q$, $q$win_calibration_buckets_stage_segment_bucket_min_key$q$, $q$UNIQUE (stage, segment, bucket_min)$q$),
+    -- public.win_loss_analyses
+    ($q$public$q$, $q$win_loss_analyses$q$, $q$win_loss_analyses_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_loss_analyses$q$, $q$win_loss_analyses_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$win_loss_analyses$q$, $q$win_loss_analyses_outcome_check$q$, $q$CHECK ((outcome = ANY (ARRAY['won'::text, 'lost'::text])))$q$),
+    -- public.win_loss_insight_comments
+    ($q$public$q$, $q$win_loss_insight_comments$q$, $q$win_loss_insight_comments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.win_loss_insights
+    ($q$public$q$, $q$win_loss_insights$q$, $q$win_loss_insights_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_loss_insights$q$, $q$win_loss_insights_severity_check$q$, $q$CHECK ((severity = ANY (ARRAY['info'::text, 'opportunity'::text, 'risk'::text])))$q$),
+    -- public.win_loss_patterns
+    ($q$public$q$, $q$win_loss_patterns$q$, $q$win_loss_patterns_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_loss_patterns$q$, $q$win_loss_patterns_pattern_type_check$q$, $q$CHECK ((pattern_type = ANY (ARRAY['win_factor'::text, 'loss_factor'::text, 'stuck_stage'::text, 'competitor'::text, 'icp_match'::text])))$q$),
+    -- public.win_probability_calibrations
+    ($q$public$q$, $q$win_probability_calibrations$q$, $q$win_probability_calibrations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_probability_calibrations$q$, $q$win_probability_calibrations_scope_scope_value_stage_key$q$, $q$UNIQUE (scope, scope_value, stage)$q$),
+    ($q$public$q$, $q$win_probability_calibrations$q$, $q$win_probability_calibrations_confidence_check$q$, $q$CHECK (((confidence >= (0)::numeric) AND (confidence <= (1)::numeric)))$q$),
+    ($q$public$q$, $q$win_probability_calibrations$q$, $q$win_probability_calibrations_scope_check$q$, $q$CHECK ((scope = ANY (ARRAY['global'::text, 'owner'::text, 'segment'::text, 'source'::text])))$q$),
+    -- public.win_probability_deal_calibrations
+    ($q$public$q$, $q$win_probability_deal_calibrations$q$, $q$win_probability_deal_calibrations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$win_probability_deal_calibrations$q$, $q$win_probability_deal_calibrations_sale_id_key$q$, $q$UNIQUE (sale_id)$q$),
+    ($q$public$q$, $q$win_probability_deal_calibrations$q$, $q$win_probability_deal_calibrations_confidence_check$q$, $q$CHECK ((confidence = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])))$q$),
+    ($q$public$q$, $q$win_probability_deal_calibrations$q$, $q$win_probability_deal_calibrations_flag_check$q$, $q$CHECK ((flag = ANY (ARRAY['overconfident'::text, 'underconfident'::text, 'aligned'::text])))$q$),
+    -- public.winloss_alert_settings
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_singleton_key$q$, $q$UNIQUE (singleton)$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_consecutive_failures_check$q$, $q$CHECK (((consecutive_failures >= 1) AND (consecutive_failures <= 100)))$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_max_attempts_check$q$, $q$CHECK (((max_attempts >= 1) AND (max_attempts <= 20)))$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_min_deliveries_check$q$, $q$CHECK (((min_deliveries >= 1) AND (min_deliveries <= 10000)))$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_retry_rate_threshold_check$q$, $q$CHECK (((retry_rate_threshold >= (0)::numeric) AND (retry_rate_threshold <= (1)::numeric)))$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_suppress_minutes_check$q$, $q$CHECK (((suppress_minutes >= 1) AND (suppress_minutes <= 1440)))$q$),
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_window_minutes_check$q$, $q$CHECK (((window_minutes >= 5) AND (window_minutes <= 1440)))$q$),
+    -- public.winloss_webhook_alerts
+    ($q$public$q$, $q$winloss_webhook_alerts$q$, $q$winloss_webhook_alerts_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_webhook_alerts$q$, $q$winloss_webhook_alerts_kind_check$q$, $q$CHECK ((kind = ANY (ARRAY['consecutive_failures'::text, 'high_retry_rate'::text, 'attempts_exhausted'::text])))$q$),
+    -- public.winloss_webhook_dead_letters
+    ($q$public$q$, $q$winloss_webhook_dead_letters$q$, $q$winloss_webhook_dead_letters_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_webhook_dead_letters$q$, $q$winloss_webhook_dead_letters_status_check$q$, $q$CHECK ((status = ANY (ARRAY['pending'::text, 'replaying'::text, 'replayed'::text, 'archived'::text])))$q$),
+    -- public.winloss_webhook_deliveries
+    ($q$public$q$, $q$winloss_webhook_deliveries$q$, $q$winloss_webhook_deliveries_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.winloss_webhook_dispatch_metrics
+    ($q$public$q$, $q$winloss_webhook_dispatch_metrics$q$, $q$winloss_webhook_dispatch_metrics_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.winloss_webhook_replay_audit
+    ($q$public$q$, $q$winloss_webhook_replay_audit$q$, $q$winloss_webhook_replay_audit_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_webhook_replay_audit$q$, $q$winloss_webhook_replay_audit_source_check$q$, $q$CHECK ((source = ANY (ARRAY['dlq'::text, 'delivery'::text])))$q$),
+    ($q$public$q$, $q$winloss_webhook_replay_audit$q$, $q$winloss_webhook_replay_audit_status_label_check$q$, $q$CHECK ((status_label = ANY (ARRAY['succeeded'::text, 'failed'::text, 'skipped'::text])))$q$),
+    -- public.winloss_webhook_replay_invocations
+    ($q$public$q$, $q$winloss_webhook_replay_invocations$q$, $q$winloss_webhook_replay_invocations_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_webhook_replay_invocations$q$, $q$winloss_webhook_replay_invocations_source_check$q$, $q$CHECK ((source = ANY (ARRAY['dlq'::text, 'delivery'::text])))$q$),
+    -- public.winloss_webhook_subscriptions
+    ($q$public$q$, $q$winloss_webhook_subscriptions$q$, $q$winloss_webhook_subscriptions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    ($q$public$q$, $q$winloss_webhook_subscriptions$q$, $q$winloss_webhook_subscriptions_rate_limit_valido$q$, $q$CHECK (((rate_limit_per_minute > 0) AND (rate_limit_window_seconds > 0)))$q$),
+    -- public.workflow_executions
+    ($q$public$q$, $q$workflow_executions$q$, $q$workflow_executions_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.workflow_rules
+    ($q$public$q$, $q$workflow_rules$q$, $q$workflow_rules_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.workflows
+    ($q$public$q$, $q$workflows$q$, $q$workflows_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.xp_adjustments
+    ($q$public$q$, $q$xp_adjustments$q$, $q$xp_adjustments_pkey$q$, $q$PRIMARY KEY (id)$q$),
+    -- public.xp_history
+    ($q$public$q$, $q$xp_history$q$, $q$xp_history_pkey$q$, $q$PRIMARY KEY (id)$q$)
+  ) AS t(sch, tab, con, def) LOOP
+    alvo := NULL; atual := NULL; erro := false;
+    BEGIN
+      alvo := to_regclass(format('%I.%I', r.sch, r.tab));
+      IF alvo IS NOT NULL THEN
+        SELECT pg_catalog.pg_get_constraintdef(k.oid) INTO atual
+          FROM pg_catalog.pg_constraint k
+         WHERE k.conrelid = alvo AND k.conname = r.con;
+      END IF;
+    EXCEPTION WHEN OTHERS THEN
+      erro := true;
+      RAISE WARNING 'constraint "%" em %.%: catalogo ilegivel (%) -- nada feito',
+        r.con, r.sch, r.tab, SQLERRM;
+    END;
+    IF erro THEN
+      pulou := pulou + 1;
+    ELSIF alvo IS NULL THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'constraint "%" NAO criada: tabela %.% ausente no alvo', r.con, r.sch, r.tab;
+    ELSIF atual IS NULL THEN
+      BEGIN
+        EXECUTE format('ALTER TABLE %I.%I ADD CONSTRAINT %I %s', r.sch, r.tab, r.con, r.def);
+        criadas := criadas + 1;
+      EXCEPTION WHEN OTHERS THEN
+        pulou := pulou + 1;
+        RAISE WARNING 'constraint "%" em %.% NAO criada: %', r.con, r.sch, r.tab, SQLERRM;
+      END;
+    ELSIF atual = r.def THEN
+      iguais := iguais + 1;
+    ELSE
+      difere := difere + 1;
+      RAISE WARNING 'constraint "%" em %.% JA EXISTE com definicao diferente e NAO foi tocada. producao: % | alvo: %',
+        r.con, r.sch, r.tab, r.def, atual;
+    END IF;
+  END LOOP;
+  PERFORM set_config('search_path', sp_ant, true);
+  RAISE NOTICE 'constraints nao-FK: % criadas, % ja iguais, % divergentes (nao tocadas), % puladas',
+    criadas, iguais, difere, pulou;
+  IF difere > 0 THEN
+    RAISE WARNING '% constraint(s) com definicao diferente da producao continuam como estavam; revise os WARNINGs acima antes de liberar o banco.', difere;
+  END IF;
+  IF pulou > 0 THEN
+    RAISE WARNING '% constraint(s) pulada(s). Reexecute supabase/schema.sql com o dono das tabelas.', pulou;
+  END IF;
+END
+$do$;
 
 -- ==========================================================
 -- INDICES
@@ -32800,7 +32064,8 @@ $$;
 -- GRANT: 2045  (schemas 5 | tabelas/views/matview/sequences 1300 | funcoes 740)
 -- REVOKE: 343  (EXECUTE ... FROM PUBLIC, ver nota 4)
 -- COMMENT: 82  (schema 1 | tabela 7 | coluna 35 | view 6 | indice 3 | funcao 30)
--- ALTER DEFAULT PRIVILEGES: 8 aplicaveis + 9 documentadas comentadas (ver nota 10)
+-- ALTER DEFAULT PRIVILEGES: 12 REVOKE de normalizacao + 8 GRANT aplicaveis
+--   + 9 documentadas comentadas (ver nota 10)
 --
 -- Fonte: aclexplode(nspacl/relacl/proacl) e obj_description/col_description em pg_catalog,
 -- schemas public e private. Producao: PostgreSQL 17.6 (ref usyxfpqlsspldubptrdl).
@@ -32848,6 +32113,53 @@ $$;
 --    Nenhum outro arquivo do dump cobre esta classe -- sem a secao 8, objetos
 --    criados APOS a restauracao nasceriam sem grant para anon/authenticated/
 --    service_role, divergindo da producao.
+--    A secao 8 comeca com 12 REVOKE de normalizacao (4 grantees x 3 classes) porque
+--    so GRANT nao reproduz producao: ver a nota 11.
+-- 11. POR QUE OS 12 REVOKE DA SECAO 8 (corrige P2 da PR 548). A secao 8 so concedia.
+--    Num projeto Supabase novo o default ACL de fabrica de (postgres, schema public)
+--    e mais permissivo que o de producao em dois pontos, e um GRANT nao desfaz
+--    nenhum deles:
+--      a) TABLES: de fabrica anon e authenticated tem TRUNCATE. Em producao nao tem
+--         -- medido em pg_default_acl, linha (postgres, public, r):
+--         {postgres=arwdDxtm/postgres, anon=arwdxtm/postgres,
+--          authenticated=arwdxtm/postgres, service_role=arwdDxtm/postgres}
+--         anon e authenticated sem o 'D' (D = TRUNCATE); postgres e service_role com.
+--         Esse e o endurecimento de
+--         supabase/migrations/20260902121000_fix_default_privileges_truncate_and_battle_score_search_path.sql
+--         ("ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE TRUNCATE ON TABLES FROM
+--         anon, authenticated"). Restaurar so com GRANT mantinha o TRUNCATE de
+--         fabrica e desfazia essa migration.
+--      b) FUNCTIONS: a linha (postgres, public, f) de producao e
+--         {postgres=X/postgres, authenticated=X/postgres, service_role=X/postgres}
+--         -- sem anon e sem PUBLIC, resultado dos REVOKE EXECUTE ON FUNCTIONS FROM
+--         PUBLIC/anon das migrations 20260515122234, 20260515143053, 20260517113636,
+--         20260522142405 e 20260529192650 deste repo. Sem row em pg_default_acl o
+--         padrao embutido do Postgres concede EXECUTE a PUBLIC, e anon herda de
+--         PUBLIC; so GRANT nunca remove isso.
+--    Os 12 REVOKE (ALL em FUNCTIONS, TABLES e SEQUENCES, para PUBLIC, anon,
+--    authenticated e service_role) zeram os grantees nao-donos antes dos 8 GRANT, do
+--    mesmo jeito que 96-acl-normalize.sql faz para ACL de objeto (relacl/proacl/
+--    nspacl). Depois deles, a ausencia de uma linha de GRANT aqui passa a significar
+--    revogacao -- que e o comportamento esperado de um dump fiel.
+--    ESCOPO: so (FOR ROLE postgres, IN SCHEMA public). Nao se mexe nas outras 24
+--    linhas de pg_default_acl de producao (27 no total): sao de plataforma --
+--    (postgres, storage), (supabase_admin, {public, cron, extensions, graphql,
+--    graphql_public, realtime}) e (supabase_auth_admin, auth). Criterio de origem,
+--    o mesmo do resto do dump: e criado por migration DESTE repo? Conferido com grep
+--    em supabase/migrations/ -- as 6 migrations que usam ALTER DEFAULT PRIVILEGES
+--    citam apenas 'IN SCHEMA public' e nenhuma usa FOR ROLE, logo todas valem para
+--    (postgres, public). Zero migration toca storage, cron, extensions, graphql,
+--    graphql_public, realtime ou auth. Mexer no default desses schemas poderia
+--    quebrar o proprio Supabase, e o papel que restaura nem tem privilegio para
+--    tanto. O schema private nao tem linha em pg_default_acl em producao e tambem
+--    nao e tocado aqui: criar uma linha para private seria divergir de producao.
+--    O objtype 'T' (TYPES) nao aparece em producao para (postgres, public) -- fica no
+--    padrao embutido e nao e tocado.
+--    EM PostgreSQL < 17 (ver nota 5): os 3 GRANT ... ON TABLES falham por causa de
+--    MAINTAIN. Com os REVOKE antes, o efeito de aplicar sem remover MAINTAIN passa a
+--    ser 'alvo sem default privilege de TABLES' (fecha acesso) em vez de 'alvo com o
+--    default de fabrica' (abre). Falha segura, mas remova MAINTAIN da lista para
+--    restaurar fiel em PG < 17. Producao e PG 17.6.
 
 -- ==========================================================================
 -- 1. GRANT em SCHEMA -- 5 statements
@@ -36208,7 +35520,7 @@ COMMENT ON FUNCTION public.sync_quote_from_webhook(p_external_quote_id text, p_q
 COMMENT ON FUNCTION public.transition_sale_status(p_sale_id uuid, p_new_status text, p_pipeline_id uuid, p_expected_version integer) IS 'Transição de status via máquina de estados; p_expected_version aplica optimistic locking (conflito → optimistic_lock_conflict). Autoriza dono, closer ou admin/manager.';
 
 -- ==========================================================================
--- 8. ALTER DEFAULT PRIVILEGES -- 8 statements aplicaveis (ver nota 10)
+-- 8. ALTER DEFAULT PRIVILEGES -- 12 REVOKE de normalizacao + 8 GRANT (notas 10 e 11)
 --    Fonte: aclexplode(pg_default_acl.defaclacl), schemas public e private.
 --    Producao tem 2 donos de default ACL no schema public (postgres e
 --    supabase_admin) e nenhum no schema private. Nos 4 roles do escopo sao
@@ -36216,7 +35528,67 @@ COMMENT ON FUNCTION public.transition_sale_status(p_sale_id uuid, p_new_status t
 --    (apenas documentadas, ver nota 10). Sem elas, toda tabela/sequence/funcao
 --    criada DEPOIS da restauracao nasceria sem grant para anon/authenticated/
 --    service_role, ao contrario da producao.
+--    Os 12 REVOKE vem PRIMEIRO e sao obrigatorios: so GRANT mantinha o TRUNCATE de
+--    fabrica para anon/authenticated e o EXECUTE de PUBLIC/anon em funcoes, desfazendo
+--    o endurecimento feito por migration deste repo. Detalhe e medicao na nota 11.
+--    Escopo deliberado: apenas (FOR ROLE postgres, IN SCHEMA public). As outras 24
+--    linhas de pg_default_acl de producao sao de plataforma e ficam intactas (nota 11).
 -- ==========================================================================
+
+-- Normalizacao: zera os 4 grantees nao-donos nas 3 classes antes dos GRANT.
+-- Um unico bloco DO com laco sobre VALUES, no padrao de 92-objetos-app-plataforma.sql.
+-- Cada REVOKE no seu BEGIN ... EXCEPTION: ALTER DEFAULT PRIVILEGES FOR ROLE postgres
+-- exige ser postgres ou membro dele, e num Postgres avulso anon/authenticated/
+-- service_role podem nao existir. Falta de privilegio ou papel ausente sai como
+-- WARNING/NOTICE nominal e a restauracao SEGUE.
+-- O dono (postgres) nunca e revogado: revogar dele quebraria a propria restauracao.
+-- PUBLIC e pseudo-papel e dispensa checagem em pg_roles.
+DO $do$
+DECLARE
+  r      record;
+  ok     int := 0;
+  pulou  int := 0;
+  faltou int := 0;
+BEGIN
+  FOR r IN SELECT * FROM (VALUES
+    ($q$PUBLIC$q$,        $q$FUNCTIONS$q$),
+    ($q$PUBLIC$q$,        $q$TABLES$q$),
+    ($q$PUBLIC$q$,        $q$SEQUENCES$q$),
+    ($q$anon$q$,          $q$FUNCTIONS$q$),
+    ($q$anon$q$,          $q$TABLES$q$),
+    ($q$anon$q$,          $q$SEQUENCES$q$),
+    ($q$authenticated$q$, $q$FUNCTIONS$q$),
+    ($q$authenticated$q$, $q$TABLES$q$),
+    ($q$authenticated$q$, $q$SEQUENCES$q$),
+    ($q$service_role$q$,  $q$FUNCTIONS$q$),
+    ($q$service_role$q$,  $q$TABLES$q$),
+    ($q$service_role$q$,  $q$SEQUENCES$q$)
+  ) AS t(papel, classe) LOOP
+    IF r.papel <> 'PUBLIC'
+       AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = r.papel) THEN
+      faltou := faltou + 1;
+      RAISE NOTICE 'default privileges: papel % nao existe neste servidor -- nada a revogar em %',
+        r.papel, r.classe;
+    ELSE
+      BEGIN
+        EXECUTE format(
+          'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON %s FROM %s',
+          r.classe, r.papel);
+        ok := ok + 1;
+      EXCEPTION WHEN OTHERS THEN
+        pulou := pulou + 1;
+        RAISE WARNING 'default privileges: REVOKE ALL ON % FROM % NAO aplicado (%)',
+          r.classe, r.papel, SQLERRM;
+      END;
+    END IF;
+  END LOOP;
+  RAISE NOTICE 'default privileges (postgres/public): % revogacoes aplicadas, % puladas por erro, % por papel ausente',
+    ok, pulou, faltou;
+  IF pulou > 0 THEN
+    RAISE WARNING '% revogacao(oes) de default privilege nao aplicada(s): o alvo pode ficar MAIS permissivo que producao (TRUNCATE para anon/authenticated, EXECUTE para PUBLIC/anon). Reexecute supabase/schema.sql como postgres.', pulou;
+  END IF;
+END
+$do$;
 
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO authenticated;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO service_role;
@@ -36259,1417 +35631,793 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT, INSERT
 --
 -- DEPENDENCIA EXTERNA: 59 destas FKs referenciam auth.users, que pertence a plataforma
 -- Supabase e por isso NAO e criada por este dump. Em projeto Supabase a tabela ja existe e
--- estas FKs aplicam normalmente; numa base Postgres vazia sem o schema auth elas falham.
--- Mantidas ativas por fidelidade ao schema real de public.
-
-
--- public.account_activities
-ALTER TABLE public.account_activities DROP CONSTRAINT IF EXISTS account_activities_account_id_fkey;
-ALTER TABLE public.account_activities ADD CONSTRAINT account_activities_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.account_activities DROP CONSTRAINT IF EXISTS account_activities_contact_id_fkey;
-ALTER TABLE public.account_activities ADD CONSTRAINT account_activities_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES public.account_contacts(id) ON DELETE SET NULL;
-ALTER TABLE public.account_activities DROP CONSTRAINT IF EXISTS account_activities_salesperson_id_fkey;
-ALTER TABLE public.account_activities ADD CONSTRAINT account_activities_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.account_contacts
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_account_id_fkey;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.account_contacts DROP CONSTRAINT IF EXISTS account_contacts_sale_id_fkey;
-ALTER TABLE public.account_contacts ADD CONSTRAINT account_contacts_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-
--- public.account_plans
-ALTER TABLE public.account_plans DROP CONSTRAINT IF EXISTS account_plans_account_id_fkey;
-ALTER TABLE public.account_plans ADD CONSTRAINT account_plans_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.account_plans DROP CONSTRAINT IF EXISTS account_plans_created_by_fkey;
-ALTER TABLE public.account_plans ADD CONSTRAINT account_plans_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.accounts
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_owner_id_fkey;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.accounts DROP CONSTRAINT IF EXISTS accounts_parent_account_id_fkey;
-ALTER TABLE public.accounts ADD CONSTRAINT accounts_parent_account_id_fkey FOREIGN KEY (parent_account_id) REFERENCES public.accounts(id) ON DELETE SET NULL;
-
--- public.achievements
-ALTER TABLE public.achievements DROP CONSTRAINT IF EXISTS achievements_salesperson_id_fkey;
-ALTER TABLE public.achievements ADD CONSTRAINT achievements_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT;
-
--- public.active_power_ups
-ALTER TABLE public.active_power_ups DROP CONSTRAINT IF EXISTS active_power_ups_salesperson_id_fkey;
-ALTER TABLE public.active_power_ups ADD CONSTRAINT active_power_ups_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.active_sessions
-ALTER TABLE public.active_sessions DROP CONSTRAINT IF EXISTS active_sessions_user_id_fkey;
-ALTER TABLE public.active_sessions ADD CONSTRAINT active_sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.activities
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_client_id_fkey;
-ALTER TABLE public.activities ADD CONSTRAINT activities_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_deleted_by_fkey;
-ALTER TABLE public.activities ADD CONSTRAINT activities_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES auth.users(id);
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_sale_id_fkey;
-ALTER TABLE public.activities ADD CONSTRAINT activities_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.activities DROP CONSTRAINT IF EXISTS activities_salesperson_id_fkey;
-ALTER TABLE public.activities ADD CONSTRAINT activities_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.activity_audit_logs
-ALTER TABLE public.activity_audit_logs DROP CONSTRAINT IF EXISTS activity_audit_logs_activity_id_fkey;
-ALTER TABLE public.activity_audit_logs ADD CONSTRAINT activity_audit_logs_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activities(id) ON DELETE CASCADE;
-ALTER TABLE public.activity_audit_logs DROP CONSTRAINT IF EXISTS activity_audit_logs_changed_by_fkey;
-ALTER TABLE public.activity_audit_logs ADD CONSTRAINT activity_audit_logs_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.activity_goals
-ALTER TABLE public.activity_goals DROP CONSTRAINT IF EXISTS activity_goals_salesperson_id_fkey;
-ALTER TABLE public.activity_goals ADD CONSTRAINT activity_goals_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT;
-
--- public.agenda_events
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_client_id_fkey;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_sale_id_fkey;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.agenda_events DROP CONSTRAINT IF EXISTS agenda_events_salesperson_id_fkey;
-ALTER TABLE public.agenda_events ADD CONSTRAINT agenda_events_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.ai_agent_actions
-ALTER TABLE public.ai_agent_actions DROP CONSTRAINT IF EXISTS ai_agent_actions_run_id_fkey;
-ALTER TABLE public.ai_agent_actions ADD CONSTRAINT ai_agent_actions_run_id_fkey FOREIGN KEY (run_id) REFERENCES public.ai_agent_runs(id) ON DELETE CASCADE;
-
--- public.ai_sales_insights
-ALTER TABLE public.ai_sales_insights DROP CONSTRAINT IF EXISTS ai_sales_insights_sale_id_fkey;
-ALTER TABLE public.ai_sales_insights ADD CONSTRAINT ai_sales_insights_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.api_tokens
-ALTER TABLE public.api_tokens DROP CONSTRAINT IF EXISTS api_tokens_team_id_fkey;
-ALTER TABLE public.api_tokens ADD CONSTRAINT api_tokens_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE SET NULL;
-
--- public.approval_decisions
-ALTER TABLE public.approval_decisions DROP CONSTRAINT IF EXISTS approval_decisions_approver_id_fkey;
-ALTER TABLE public.approval_decisions ADD CONSTRAINT approval_decisions_approver_id_fkey FOREIGN KEY (approver_id) REFERENCES auth.users(id) ON DELETE RESTRICT;
-ALTER TABLE public.approval_decisions DROP CONSTRAINT IF EXISTS approval_decisions_request_id_fkey;
-ALTER TABLE public.approval_decisions ADD CONSTRAINT approval_decisions_request_id_fkey FOREIGN KEY (request_id) REFERENCES public.approval_requests(id) ON DELETE CASCADE;
-
--- public.approval_requests
-ALTER TABLE public.approval_requests DROP CONSTRAINT IF EXISTS approval_requests_deal_id_fkey;
-ALTER TABLE public.approval_requests ADD CONSTRAINT approval_requests_deal_id_fkey FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.approval_requests DROP CONSTRAINT IF EXISTS approval_requests_requester_id_fkey;
-ALTER TABLE public.approval_requests ADD CONSTRAINT approval_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES auth.users(id);
-ALTER TABLE public.approval_requests DROP CONSTRAINT IF EXISTS approval_requests_workflow_id_fkey;
-ALTER TABLE public.approval_requests ADD CONSTRAINT approval_requests_workflow_id_fkey FOREIGN KEY (workflow_id) REFERENCES public.approval_workflows(id) ON DELETE CASCADE;
-
--- public.approval_workflows
-ALTER TABLE public.approval_workflows DROP CONSTRAINT IF EXISTS approval_workflows_created_by_fkey;
-ALTER TABLE public.approval_workflows ADD CONSTRAINT approval_workflows_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.asset_usage_logs
-ALTER TABLE public.asset_usage_logs DROP CONSTRAINT IF EXISTS asset_usage_logs_asset_id_fkey;
-ALTER TABLE public.asset_usage_logs ADD CONSTRAINT asset_usage_logs_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE CASCADE;
-
--- public.audit_log
-ALTER TABLE public.audit_log DROP CONSTRAINT IF EXISTS audit_log_user_id_fkey;
-ALTER TABLE public.audit_log ADD CONSTRAINT audit_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.automation_runs
-ALTER TABLE public.automation_runs DROP CONSTRAINT IF EXISTS automation_runs_workflow_id_fkey;
-ALTER TABLE public.automation_runs ADD CONSTRAINT automation_runs_workflow_id_fkey FOREIGN KEY (workflow_id) REFERENCES public.automation_workflows(id) ON DELETE CASCADE;
-
--- public.automation_workflows
-ALTER TABLE public.automation_workflows DROP CONSTRAINT IF EXISTS automation_workflows_created_by_fkey;
-ALTER TABLE public.automation_workflows ADD CONSTRAINT automation_workflows_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.available_spins
-ALTER TABLE public.available_spins DROP CONSTRAINT IF EXISTS available_spins_salesperson_id_fkey;
-ALTER TABLE public.available_spins ADD CONSTRAINT available_spins_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.battle_participants
-ALTER TABLE public.battle_participants DROP CONSTRAINT IF EXISTS battle_participants_battle_id_fkey;
-ALTER TABLE public.battle_participants ADD CONSTRAINT battle_participants_battle_id_fkey FOREIGN KEY (battle_id) REFERENCES public.sales_battles(id) ON DELETE CASCADE;
-ALTER TABLE public.battle_participants DROP CONSTRAINT IF EXISTS battle_participants_salesperson_id_fkey;
-ALTER TABLE public.battle_participants ADD CONSTRAINT battle_participants_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.blocked_ips
-ALTER TABLE public.blocked_ips DROP CONSTRAINT IF EXISTS blocked_ips_blocked_by_fkey;
-ALTER TABLE public.blocked_ips ADD CONSTRAINT blocked_ips_blocked_by_fkey FOREIGN KEY (blocked_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.buying_committee
-ALTER TABLE public.buying_committee DROP CONSTRAINT IF EXISTS buying_committee_sale_id_fkey;
-ALTER TABLE public.buying_committee ADD CONSTRAINT buying_committee_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.buying_committee_members
-ALTER TABLE public.buying_committee_members DROP CONSTRAINT IF EXISTS buying_committee_members_sale_id_fkey;
-ALTER TABLE public.buying_committee_members ADD CONSTRAINT buying_committee_members_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.buying_signals
-ALTER TABLE public.buying_signals DROP CONSTRAINT IF EXISTS buying_signals_company_id_fkey;
-ALTER TABLE public.buying_signals ADD CONSTRAINT buying_signals_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.enriched_company_intelligence(id) ON DELETE CASCADE;
-
--- public.cadence_ab_assignments
-ALTER TABLE public.cadence_ab_assignments DROP CONSTRAINT IF EXISTS cadence_ab_assignments_ab_test_id_fkey;
-ALTER TABLE public.cadence_ab_assignments ADD CONSTRAINT cadence_ab_assignments_ab_test_id_fkey FOREIGN KEY (ab_test_id) REFERENCES public.cadence_ab_tests(id) ON DELETE CASCADE;
-ALTER TABLE public.cadence_ab_assignments DROP CONSTRAINT IF EXISTS cadence_ab_assignments_prospect_cadence_id_fkey;
-ALTER TABLE public.cadence_ab_assignments ADD CONSTRAINT cadence_ab_assignments_prospect_cadence_id_fkey FOREIGN KEY (prospect_cadence_id) REFERENCES public.prospect_cadences(id) ON DELETE CASCADE;
-
--- public.cadence_ab_tests
-ALTER TABLE public.cadence_ab_tests DROP CONSTRAINT IF EXISTS cadence_ab_tests_variant_a_id_fkey;
-ALTER TABLE public.cadence_ab_tests ADD CONSTRAINT cadence_ab_tests_variant_a_id_fkey FOREIGN KEY (variant_a_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-ALTER TABLE public.cadence_ab_tests DROP CONSTRAINT IF EXISTS cadence_ab_tests_variant_b_id_fkey;
-ALTER TABLE public.cadence_ab_tests ADD CONSTRAINT cadence_ab_tests_variant_b_id_fkey FOREIGN KEY (variant_b_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-
--- public.cadence_advanced_stats
-ALTER TABLE public.cadence_advanced_stats DROP CONSTRAINT IF EXISTS cadence_advanced_stats_cadence_id_fkey;
-ALTER TABLE public.cadence_advanced_stats ADD CONSTRAINT cadence_advanced_stats_cadence_id_fkey FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-
--- public.cadence_enrollment_rules
-ALTER TABLE public.cadence_enrollment_rules DROP CONSTRAINT IF EXISTS cadence_enrollment_rules_cadence_id_fkey;
-ALTER TABLE public.cadence_enrollment_rules ADD CONSTRAINT cadence_enrollment_rules_cadence_id_fkey FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-
--- public.cadence_funnel_rules
-ALTER TABLE public.cadence_funnel_rules DROP CONSTRAINT IF EXISTS cadence_funnel_rules_cadence_id_fkey;
-ALTER TABLE public.cadence_funnel_rules ADD CONSTRAINT cadence_funnel_rules_cadence_id_fkey FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-
--- public.cadence_outcome_rules
-ALTER TABLE public.cadence_outcome_rules DROP CONSTRAINT IF EXISTS cadence_outcome_rules_email_template_id_fkey;
-ALTER TABLE public.cadence_outcome_rules ADD CONSTRAINT cadence_outcome_rules_email_template_id_fkey FOREIGN KEY (email_template_id) REFERENCES public.cadence_alert_templates(id) ON DELETE SET NULL;
-ALTER TABLE public.cadence_outcome_rules DROP CONSTRAINT IF EXISTS cadence_outcome_rules_push_template_id_fkey;
-ALTER TABLE public.cadence_outcome_rules ADD CONSTRAINT cadence_outcome_rules_push_template_id_fkey FOREIGN KEY (push_template_id) REFERENCES public.cadence_alert_templates(id) ON DELETE SET NULL;
-
--- public.cadence_steps
-ALTER TABLE public.cadence_steps DROP CONSTRAINT IF EXISTS cadence_steps_cadence_id_fkey;
-ALTER TABLE public.cadence_steps ADD CONSTRAINT cadence_steps_cadence_id_fkey FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-
--- public.cadence_tasks
-ALTER TABLE public.cadence_tasks DROP CONSTRAINT IF EXISTS cadence_tasks_cadence_step_id_fkey;
-ALTER TABLE public.cadence_tasks ADD CONSTRAINT cadence_tasks_cadence_step_id_fkey FOREIGN KEY (cadence_step_id) REFERENCES public.cadence_steps(id) ON DELETE CASCADE;
-ALTER TABLE public.cadence_tasks DROP CONSTRAINT IF EXISTS cadence_tasks_prospect_cadence_id_fkey;
-ALTER TABLE public.cadence_tasks ADD CONSTRAINT cadence_tasks_prospect_cadence_id_fkey FOREIGN KEY (prospect_cadence_id) REFERENCES public.prospect_cadences(id) ON DELETE CASCADE;
-
--- public.call_coaching_scorecards
-ALTER TABLE public.call_coaching_scorecards DROP CONSTRAINT IF EXISTS call_coaching_scorecards_recording_id_fkey;
-ALTER TABLE public.call_coaching_scorecards ADD CONSTRAINT call_coaching_scorecards_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_conversation_metrics
-ALTER TABLE public.call_conversation_metrics DROP CONSTRAINT IF EXISTS call_conversation_metrics_recording_id_fkey;
-ALTER TABLE public.call_conversation_metrics ADD CONSTRAINT call_conversation_metrics_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_critical_moments
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_recording_id_fkey;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-ALTER TABLE public.call_critical_moments DROP CONSTRAINT IF EXISTS call_critical_moments_salesperson_id_fkey;
-ALTER TABLE public.call_critical_moments ADD CONSTRAINT call_critical_moments_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.call_insights
-ALTER TABLE public.call_insights DROP CONSTRAINT IF EXISTS call_insights_recording_id_fkey;
-ALTER TABLE public.call_insights ADD CONSTRAINT call_insights_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_intelligence_triggers
-ALTER TABLE public.call_intelligence_triggers DROP CONSTRAINT IF EXISTS call_intelligence_triggers_target_asset_id_fkey;
-ALTER TABLE public.call_intelligence_triggers ADD CONSTRAINT call_intelligence_triggers_target_asset_id_fkey FOREIGN KEY (target_asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE SET NULL;
-
--- public.call_logs
-ALTER TABLE public.call_logs DROP CONSTRAINT IF EXISTS call_logs_queue_item_id_fkey;
-ALTER TABLE public.call_logs ADD CONSTRAINT call_logs_queue_item_id_fkey FOREIGN KEY (queue_item_id) REFERENCES public.dialer_queue_items(id) ON DELETE SET NULL;
-ALTER TABLE public.call_logs DROP CONSTRAINT IF EXISTS call_logs_sale_id_fkey;
-ALTER TABLE public.call_logs ADD CONSTRAINT call_logs_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-
--- public.call_objection_analysis
-ALTER TABLE public.call_objection_analysis DROP CONSTRAINT IF EXISTS call_objection_analysis_recording_id_fkey;
-ALTER TABLE public.call_objection_analysis ADD CONSTRAINT call_objection_analysis_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_objections
-ALTER TABLE public.call_objections DROP CONSTRAINT IF EXISTS call_objections_recording_id_fkey;
-ALTER TABLE public.call_objections ADD CONSTRAINT call_objections_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_question_analysis
-ALTER TABLE public.call_question_analysis DROP CONSTRAINT IF EXISTS call_question_analysis_recording_id_fkey;
-ALTER TABLE public.call_question_analysis ADD CONSTRAINT call_question_analysis_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_questions
-ALTER TABLE public.call_questions DROP CONSTRAINT IF EXISTS call_questions_recording_id_fkey;
-ALTER TABLE public.call_questions ADD CONSTRAINT call_questions_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_recordings
-ALTER TABLE public.call_recordings DROP CONSTRAINT IF EXISTS call_recordings_client_id_fkey;
-ALTER TABLE public.call_recordings ADD CONSTRAINT call_recordings_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.call_recordings DROP CONSTRAINT IF EXISTS call_recordings_sale_id_fkey;
-ALTER TABLE public.call_recordings ADD CONSTRAINT call_recordings_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.call_recordings DROP CONSTRAINT IF EXISTS call_recordings_salesperson_id_fkey;
-ALTER TABLE public.call_recordings ADD CONSTRAINT call_recordings_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.call_sentiment_timeline
-ALTER TABLE public.call_sentiment_timeline DROP CONSTRAINT IF EXISTS call_sentiment_timeline_recording_id_fkey;
-ALTER TABLE public.call_sentiment_timeline ADD CONSTRAINT call_sentiment_timeline_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.call_transcripts
-ALTER TABLE public.call_transcripts DROP CONSTRAINT IF EXISTS call_transcripts_recording_id_fkey;
-ALTER TABLE public.call_transcripts ADD CONSTRAINT call_transcripts_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.campaign_health_alerts
-ALTER TABLE public.campaign_health_alerts DROP CONSTRAINT IF EXISTS campaign_health_alerts_job_id_fkey;
-ALTER TABLE public.campaign_health_alerts ADD CONSTRAINT campaign_health_alerts_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.email_bulk_jobs(id) ON DELETE CASCADE;
-
--- public.challenge_progress
-ALTER TABLE public.challenge_progress DROP CONSTRAINT IF EXISTS challenge_progress_challenge_id_fkey;
-ALTER TABLE public.challenge_progress ADD CONSTRAINT challenge_progress_challenge_id_fkey FOREIGN KEY (challenge_id) REFERENCES public.weekly_challenges(id) ON DELETE CASCADE;
-ALTER TABLE public.challenge_progress DROP CONSTRAINT IF EXISTS challenge_progress_salesperson_id_fkey;
-ALTER TABLE public.challenge_progress ADD CONSTRAINT challenge_progress_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.channel_interactions
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_deal_id_fkey;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_deal_id_fkey FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_salesperson_id_fkey;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.channel_interactions DROP CONSTRAINT IF EXISTS channel_interactions_template_id_fkey;
-ALTER TABLE public.channel_interactions ADD CONSTRAINT channel_interactions_template_id_fkey FOREIGN KEY (template_id) REFERENCES public.message_templates(id) ON DELETE SET NULL;
-
--- public.chat_conversations
-ALTER TABLE public.chat_conversations DROP CONSTRAINT IF EXISTS chat_conversations_salesperson_id_fkey;
-ALTER TABLE public.chat_conversations ADD CONSTRAINT chat_conversations_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.chat_messages
-ALTER TABLE public.chat_messages DROP CONSTRAINT IF EXISTS chat_messages_conversation_id_fkey;
-ALTER TABLE public.chat_messages ADD CONSTRAINT chat_messages_conversation_id_fkey FOREIGN KEY (conversation_id) REFERENCES public.chat_conversations(id) ON DELETE CASCADE;
-
--- public.client_churn_alerts_state
-ALTER TABLE public.client_churn_alerts_state DROP CONSTRAINT IF EXISTS client_churn_alerts_state_last_task_id_fkey;
-ALTER TABLE public.client_churn_alerts_state ADD CONSTRAINT client_churn_alerts_state_last_task_id_fkey FOREIGN KEY (last_task_id) REFERENCES public.tasks(id) ON DELETE SET NULL;
-
--- public.client_interactions
-ALTER TABLE public.client_interactions DROP CONSTRAINT IF EXISTS client_interactions_client_id_fkey;
-ALTER TABLE public.client_interactions ADD CONSTRAINT client_interactions_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-ALTER TABLE public.client_interactions DROP CONSTRAINT IF EXISTS client_interactions_user_id_fkey;
-ALTER TABLE public.client_interactions ADD CONSTRAINT client_interactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.client_portfolio
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_assigned_by_fkey;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_assigned_by_fkey FOREIGN KEY (assigned_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_client_id_fkey;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-ALTER TABLE public.client_portfolio DROP CONSTRAINT IF EXISTS client_portfolio_salesperson_id_fkey;
-ALTER TABLE public.client_portfolio ADD CONSTRAINT client_portfolio_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.client_renewals
-ALTER TABLE public.client_renewals DROP CONSTRAINT IF EXISTS client_renewals_client_id_fkey;
-ALTER TABLE public.client_renewals ADD CONSTRAINT client_renewals_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-
--- public.clients
-ALTER TABLE public.clients DROP CONSTRAINT IF EXISTS clients_deleted_by_fkey;
-ALTER TABLE public.clients ADD CONSTRAINT clients_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES auth.users(id);
-ALTER TABLE public.clients DROP CONSTRAINT IF EXISTS clients_user_id_fkey;
-ALTER TABLE public.clients ADD CONSTRAINT clients_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.coaching_actions
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_recording_id_fkey;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-ALTER TABLE public.coaching_actions DROP CONSTRAINT IF EXISTS coaching_actions_salesperson_id_fkey;
-ALTER TABLE public.coaching_actions ADD CONSTRAINT coaching_actions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.coaching_opportunities
-ALTER TABLE public.coaching_opportunities DROP CONSTRAINT IF EXISTS coaching_opportunities_salesperson_id_fkey;
-ALTER TABLE public.coaching_opportunities ADD CONSTRAINT coaching_opportunities_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.coaching_sessions
-ALTER TABLE public.coaching_sessions DROP CONSTRAINT IF EXISTS coaching_sessions_salesperson_id_fkey;
-ALTER TABLE public.coaching_sessions ADD CONSTRAINT coaching_sessions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.combo_tracking
-ALTER TABLE public.combo_tracking DROP CONSTRAINT IF EXISTS combo_tracking_salesperson_id_fkey;
-ALTER TABLE public.combo_tracking ADD CONSTRAINT combo_tracking_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.commercial_approval_requests
-ALTER TABLE public.commercial_approval_requests DROP CONSTRAINT IF EXISTS commercial_approval_requests_approver_id_fkey;
-ALTER TABLE public.commercial_approval_requests ADD CONSTRAINT commercial_approval_requests_approver_id_fkey FOREIGN KEY (approver_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-ALTER TABLE public.commercial_approval_requests DROP CONSTRAINT IF EXISTS commercial_approval_requests_requester_id_fkey;
-ALTER TABLE public.commercial_approval_requests ADD CONSTRAINT commercial_approval_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.commission_bonus_awards
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_bonus_id_fkey;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_bonus_id_fkey FOREIGN KEY (bonus_id) REFERENCES public.commission_bonuses(id) ON DELETE CASCADE;
-ALTER TABLE public.commission_bonus_awards DROP CONSTRAINT IF EXISTS commission_bonus_awards_salesperson_id_fkey;
-ALTER TABLE public.commission_bonus_awards ADD CONSTRAINT commission_bonus_awards_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.commission_bonuses
-ALTER TABLE public.commission_bonuses DROP CONSTRAINT IF EXISTS commission_bonuses_salesperson_id_fkey;
-ALTER TABLE public.commission_bonuses ADD CONSTRAINT commission_bonuses_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.commission_rules
-ALTER TABLE public.commission_rules DROP CONSTRAINT IF EXISTS commission_rules_salesperson_id_fkey;
-ALTER TABLE public.commission_rules ADD CONSTRAINT commission_rules_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.commissions
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_rule_id_fkey;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_rule_id_fkey FOREIGN KEY (rule_id) REFERENCES public.commission_rules(id) ON DELETE SET NULL;
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_sale_id_fkey;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.commissions DROP CONSTRAINT IF EXISTS commissions_salesperson_id_fkey;
-ALTER TABLE public.commissions ADD CONSTRAINT commissions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.committee_coverage_history
-ALTER TABLE public.committee_coverage_history DROP CONSTRAINT IF EXISTS committee_coverage_history_sale_id_fkey;
-ALTER TABLE public.committee_coverage_history ADD CONSTRAINT committee_coverage_history_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.committee_extraction_runs
-ALTER TABLE public.committee_extraction_runs DROP CONSTRAINT IF EXISTS committee_extraction_runs_recording_id_fkey;
-ALTER TABLE public.committee_extraction_runs ADD CONSTRAINT committee_extraction_runs_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-ALTER TABLE public.committee_extraction_runs DROP CONSTRAINT IF EXISTS committee_extraction_runs_sale_id_fkey;
-ALTER TABLE public.committee_extraction_runs ADD CONSTRAINT committee_extraction_runs_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.competitive_chat_messages
-ALTER TABLE public.competitive_chat_messages DROP CONSTRAINT IF EXISTS competitive_chat_messages_matchup_id_fkey;
-ALTER TABLE public.competitive_chat_messages ADD CONSTRAINT competitive_chat_messages_matchup_id_fkey FOREIGN KEY (matchup_id) REFERENCES public.weekly_matchups(id) ON DELETE CASCADE;
-ALTER TABLE public.competitive_chat_messages DROP CONSTRAINT IF EXISTS competitive_chat_messages_salesperson_id_fkey;
-ALTER TABLE public.competitive_chat_messages ADD CONSTRAINT competitive_chat_messages_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.competitive_chat_messages DROP CONSTRAINT IF EXISTS competitive_chat_messages_target_salesperson_id_fkey;
-ALTER TABLE public.competitive_chat_messages ADD CONSTRAINT competitive_chat_messages_target_salesperson_id_fkey FOREIGN KEY (target_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.competitor_mentions
-ALTER TABLE public.competitor_mentions DROP CONSTRAINT IF EXISTS competitor_mentions_competitor_id_fkey;
-ALTER TABLE public.competitor_mentions ADD CONSTRAINT competitor_mentions_competitor_id_fkey FOREIGN KEY (competitor_id) REFERENCES public.competitors_registry(id) ON DELETE SET NULL;
-ALTER TABLE public.competitor_mentions DROP CONSTRAINT IF EXISTS competitor_mentions_recording_id_fkey;
-ALTER TABLE public.competitor_mentions ADD CONSTRAINT competitor_mentions_recording_id_fkey FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE;
-
--- public.competitors_pricing
-ALTER TABLE public.competitors_pricing DROP CONSTRAINT IF EXISTS competitors_pricing_competitor_id_fkey;
-ALTER TABLE public.competitors_pricing ADD CONSTRAINT competitors_pricing_competitor_id_fkey FOREIGN KEY (competitor_id) REFERENCES public.competitors_registry(id) ON DELETE CASCADE;
-ALTER TABLE public.competitors_pricing DROP CONSTRAINT IF EXISTS competitors_pricing_product_id_fkey;
-ALTER TABLE public.competitors_pricing ADD CONSTRAINT competitors_pricing_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.consent_records
-ALTER TABLE public.consent_records DROP CONSTRAINT IF EXISTS consent_records_subject_client_id_fkey;
-ALTER TABLE public.consent_records ADD CONSTRAINT consent_records_subject_client_id_fkey FOREIGN KEY (subject_client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.consent_records DROP CONSTRAINT IF EXISTS consent_records_subject_id_fkey;
-ALTER TABLE public.consent_records ADD CONSTRAINT consent_records_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.conversation_analyses
-ALTER TABLE public.conversation_analyses DROP CONSTRAINT IF EXISTS conversation_analyses_sale_id_fkey;
-ALTER TABLE public.conversation_analyses ADD CONSTRAINT conversation_analyses_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.critical_moment_notifications
-ALTER TABLE public.critical_moment_notifications DROP CONSTRAINT IF EXISTS critical_moment_notifications_moment_id_fkey;
-ALTER TABLE public.critical_moment_notifications ADD CONSTRAINT critical_moment_notifications_moment_id_fkey FOREIGN KEY (moment_id) REFERENCES public.call_critical_moments(id) ON DELETE CASCADE;
-
--- public.cs_tickets
-ALTER TABLE public.cs_tickets DROP CONSTRAINT IF EXISTS cs_tickets_assigned_to_fkey;
-ALTER TABLE public.cs_tickets ADD CONSTRAINT cs_tickets_assigned_to_fkey FOREIGN KEY (assigned_to) REFERENCES auth.users(id) ON DELETE SET NULL;
-ALTER TABLE public.cs_tickets DROP CONSTRAINT IF EXISTS cs_tickets_client_id_fkey;
-ALTER TABLE public.cs_tickets ADD CONSTRAINT cs_tickets_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-
--- public.csat_ces_surveys
-ALTER TABLE public.csat_ces_surveys DROP CONSTRAINT IF EXISTS csat_ces_surveys_account_id_fkey;
-ALTER TABLE public.csat_ces_surveys ADD CONSTRAINT csat_ces_surveys_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-
--- public.daily_challenge_progress
-ALTER TABLE public.daily_challenge_progress DROP CONSTRAINT IF EXISTS daily_challenge_progress_challenge_id_fkey;
-ALTER TABLE public.daily_challenge_progress ADD CONSTRAINT daily_challenge_progress_challenge_id_fkey FOREIGN KEY (challenge_id) REFERENCES public.daily_challenges(id) ON DELETE CASCADE;
-ALTER TABLE public.daily_challenge_progress DROP CONSTRAINT IF EXISTS daily_challenge_progress_salesperson_id_fkey;
-ALTER TABLE public.daily_challenge_progress ADD CONSTRAINT daily_challenge_progress_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.daily_streak_achievements
-ALTER TABLE public.daily_streak_achievements DROP CONSTRAINT IF EXISTS daily_streak_achievements_salesperson_id_fkey;
-ALTER TABLE public.daily_streak_achievements ADD CONSTRAINT daily_streak_achievements_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.dashboard_layouts
-ALTER TABLE public.dashboard_layouts DROP CONSTRAINT IF EXISTS dashboard_layouts_salesperson_id_fkey;
-ALTER TABLE public.dashboard_layouts ADD CONSTRAINT dashboard_layouts_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.data_access_log
-ALTER TABLE public.data_access_log DROP CONSTRAINT IF EXISTS data_access_log_user_id_fkey;
-ALTER TABLE public.data_access_log ADD CONSTRAINT data_access_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.data_subject_requests
-ALTER TABLE public.data_subject_requests DROP CONSTRAINT IF EXISTS data_subject_requests_subject_client_id_fkey;
-ALTER TABLE public.data_subject_requests ADD CONSTRAINT data_subject_requests_subject_client_id_fkey FOREIGN KEY (subject_client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.data_subject_requests DROP CONSTRAINT IF EXISTS data_subject_requests_subject_id_fkey;
-ALTER TABLE public.data_subject_requests ADD CONSTRAINT data_subject_requests_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.deal_chat_history
-ALTER TABLE public.deal_chat_history DROP CONSTRAINT IF EXISTS deal_chat_history_deal_id_fkey;
-ALTER TABLE public.deal_chat_history ADD CONSTRAINT deal_chat_history_deal_id_fkey FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.deal_chat_history DROP CONSTRAINT IF EXISTS deal_chat_history_salesperson_id_fkey;
-ALTER TABLE public.deal_chat_history ADD CONSTRAINT deal_chat_history_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.deal_committee_coverage
-ALTER TABLE public.deal_committee_coverage DROP CONSTRAINT IF EXISTS deal_committee_coverage_sale_id_fkey;
-ALTER TABLE public.deal_committee_coverage ADD CONSTRAINT deal_committee_coverage_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_health_history
-ALTER TABLE public.deal_health_history DROP CONSTRAINT IF EXISTS deal_health_history_sale_id_fkey;
-ALTER TABLE public.deal_health_history ADD CONSTRAINT deal_health_history_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_health_scores
-ALTER TABLE public.deal_health_scores DROP CONSTRAINT IF EXISTS deal_health_scores_sale_id_fkey;
-ALTER TABLE public.deal_health_scores ADD CONSTRAINT deal_health_scores_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_outcomes
-ALTER TABLE public.deal_outcomes DROP CONSTRAINT IF EXISTS deal_outcomes_sale_id_fkey;
-ALTER TABLE public.deal_outcomes ADD CONSTRAINT deal_outcomes_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.deal_outcomes DROP CONSTRAINT IF EXISTS deal_outcomes_salesperson_id_fkey;
-ALTER TABLE public.deal_outcomes ADD CONSTRAINT deal_outcomes_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.deal_probability_scores
-ALTER TABLE public.deal_probability_scores DROP CONSTRAINT IF EXISTS deal_probability_scores_sale_id_fkey;
-ALTER TABLE public.deal_probability_scores ADD CONSTRAINT deal_probability_scores_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_risk_signals
-ALTER TABLE public.deal_risk_signals DROP CONSTRAINT IF EXISTS deal_risk_signals_resolved_by_fkey;
-ALTER TABLE public.deal_risk_signals ADD CONSTRAINT deal_risk_signals_resolved_by_fkey FOREIGN KEY (resolved_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.deal_risk_signals DROP CONSTRAINT IF EXISTS deal_risk_signals_sale_id_fkey;
-ALTER TABLE public.deal_risk_signals ADD CONSTRAINT deal_risk_signals_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_stage_history
-ALTER TABLE public.deal_stage_history DROP CONSTRAINT IF EXISTS deal_stage_history_sale_id_fkey;
-ALTER TABLE public.deal_stage_history ADD CONSTRAINT deal_stage_history_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_stage_transitions
-ALTER TABLE public.deal_stage_transitions DROP CONSTRAINT IF EXISTS deal_stage_transitions_sale_id_fkey;
-ALTER TABLE public.deal_stage_transitions ADD CONSTRAINT deal_stage_transitions_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_stakeholders
-ALTER TABLE public.deal_stakeholders DROP CONSTRAINT IF EXISTS deal_stakeholders_sale_id_fkey;
-ALTER TABLE public.deal_stakeholders ADD CONSTRAINT deal_stakeholders_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_velocity_alerts
-ALTER TABLE public.deal_velocity_alerts DROP CONSTRAINT IF EXISTS deal_velocity_alerts_sale_id_fkey;
-ALTER TABLE public.deal_velocity_alerts ADD CONSTRAINT deal_velocity_alerts_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.deal_velocity_predictions
-ALTER TABLE public.deal_velocity_predictions DROP CONSTRAINT IF EXISTS deal_velocity_predictions_sale_id_fkey;
-ALTER TABLE public.deal_velocity_predictions ADD CONSTRAINT deal_velocity_predictions_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.demand_forecasts
-ALTER TABLE public.demand_forecasts DROP CONSTRAINT IF EXISTS demand_forecasts_product_id_fkey;
-ALTER TABLE public.demand_forecasts ADD CONSTRAINT demand_forecasts_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.dialer_queue_items
-ALTER TABLE public.dialer_queue_items DROP CONSTRAINT IF EXISTS dialer_queue_items_queue_id_fkey;
-ALTER TABLE public.dialer_queue_items ADD CONSTRAINT dialer_queue_items_queue_id_fkey FOREIGN KEY (queue_id) REFERENCES public.dialer_queues(id) ON DELETE CASCADE;
-ALTER TABLE public.dialer_queue_items DROP CONSTRAINT IF EXISTS dialer_queue_items_sale_id_fkey;
-ALTER TABLE public.dialer_queue_items ADD CONSTRAINT dialer_queue_items_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.digital_signatures
-ALTER TABLE public.digital_signatures DROP CONSTRAINT IF EXISTS digital_signatures_created_by_fkey;
-ALTER TABLE public.digital_signatures ADD CONSTRAINT digital_signatures_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.document_signers
-ALTER TABLE public.document_signers DROP CONSTRAINT IF EXISTS document_signers_document_id_fkey;
-ALTER TABLE public.document_signers ADD CONSTRAINT document_signers_document_id_fkey FOREIGN KEY (document_id) REFERENCES public.digital_signatures(id) ON DELETE CASCADE;
-
--- public.email_bulk_drafts
-ALTER TABLE public.email_bulk_drafts DROP CONSTRAINT IF EXISTS email_bulk_drafts_job_id_fkey;
-ALTER TABLE public.email_bulk_drafts ADD CONSTRAINT email_bulk_drafts_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.email_bulk_jobs(id) ON DELETE CASCADE;
-
--- public.email_engagement_score_history
-ALTER TABLE public.email_engagement_score_history DROP CONSTRAINT IF EXISTS email_engagement_score_history_sale_id_fkey;
-ALTER TABLE public.email_engagement_score_history ADD CONSTRAINT email_engagement_score_history_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.email_engagement_scores
-ALTER TABLE public.email_engagement_scores DROP CONSTRAINT IF EXISTS email_engagement_scores_sale_id_fkey;
-ALTER TABLE public.email_engagement_scores ADD CONSTRAINT email_engagement_scores_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.email_tracking_events
-ALTER TABLE public.email_tracking_events DROP CONSTRAINT IF EXISTS email_tracking_events_sale_id_fkey;
-ALTER TABLE public.email_tracking_events ADD CONSTRAINT email_tracking_events_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.email_tracking_events DROP CONSTRAINT IF EXISTS email_tracking_events_salesperson_id_fkey;
-ALTER TABLE public.email_tracking_events ADD CONSTRAINT email_tracking_events_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.embedded_report_tokens
-ALTER TABLE public.embedded_report_tokens DROP CONSTRAINT IF EXISTS embedded_report_tokens_report_id_fkey;
-ALTER TABLE public.embedded_report_tokens ADD CONSTRAINT embedded_report_tokens_report_id_fkey FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE;
-
--- public.entity_versions
-ALTER TABLE public.entity_versions DROP CONSTRAINT IF EXISTS entity_versions_changed_by_fkey;
-ALTER TABLE public.entity_versions ADD CONSTRAINT entity_versions_changed_by_fkey FOREIGN KEY (changed_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.expansion_opportunities
-ALTER TABLE public.expansion_opportunities DROP CONSTRAINT IF EXISTS expansion_opportunities_account_id_fkey;
-ALTER TABLE public.expansion_opportunities ADD CONSTRAINT expansion_opportunities_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.expansion_opportunities DROP CONSTRAINT IF EXISTS expansion_opportunities_owner_salesperson_id_fkey;
-ALTER TABLE public.expansion_opportunities ADD CONSTRAINT expansion_opportunities_owner_salesperson_id_fkey FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.expansion_opportunities DROP CONSTRAINT IF EXISTS expansion_opportunities_playbook_id_fkey;
-ALTER TABLE public.expansion_opportunities ADD CONSTRAINT expansion_opportunities_playbook_id_fkey FOREIGN KEY (playbook_id) REFERENCES public.expansion_playbooks(id) ON DELETE SET NULL;
-
--- public.experiment_assignments
-ALTER TABLE public.experiment_assignments DROP CONSTRAINT IF EXISTS experiment_assignments_experiment_id_fkey;
-ALTER TABLE public.experiment_assignments ADD CONSTRAINT experiment_assignments_experiment_id_fkey FOREIGN KEY (experiment_id) REFERENCES public.experiments(id) ON DELETE CASCADE;
-ALTER TABLE public.experiment_assignments DROP CONSTRAINT IF EXISTS experiment_assignments_user_id_fkey;
-ALTER TABLE public.experiment_assignments ADD CONSTRAINT experiment_assignments_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-ALTER TABLE public.experiment_assignments DROP CONSTRAINT IF EXISTS experiment_assignments_variant_id_fkey;
-ALTER TABLE public.experiment_assignments ADD CONSTRAINT experiment_assignments_variant_id_fkey FOREIGN KEY (variant_id) REFERENCES public.experiment_variants(id) ON DELETE CASCADE;
-
--- public.experiment_variants
-ALTER TABLE public.experiment_variants DROP CONSTRAINT IF EXISTS experiment_variants_experiment_id_fkey;
-ALTER TABLE public.experiment_variants ADD CONSTRAINT experiment_variants_experiment_id_fkey FOREIGN KEY (experiment_id) REFERENCES public.experiments(id) ON DELETE CASCADE;
-
--- public.external_seller_map
-ALTER TABLE public.external_seller_map DROP CONSTRAINT IF EXISTS external_seller_map_salesperson_id_fkey;
-ALTER TABLE public.external_seller_map ADD CONSTRAINT external_seller_map_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.feed_comments
-ALTER TABLE public.feed_comments DROP CONSTRAINT IF EXISTS feed_comments_feed_item_id_fkey;
-ALTER TABLE public.feed_comments ADD CONSTRAINT feed_comments_feed_item_id_fkey FOREIGN KEY (feed_item_id) REFERENCES public.victory_feed(id) ON DELETE CASCADE;
-ALTER TABLE public.feed_comments DROP CONSTRAINT IF EXISTS feed_comments_salesperson_id_fkey;
-ALTER TABLE public.feed_comments ADD CONSTRAINT feed_comments_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.feed_reactions
-ALTER TABLE public.feed_reactions DROP CONSTRAINT IF EXISTS feed_reactions_feed_item_id_fkey;
-ALTER TABLE public.feed_reactions ADD CONSTRAINT feed_reactions_feed_item_id_fkey FOREIGN KEY (feed_item_id) REFERENCES public.victory_feed(id) ON DELETE CASCADE;
-ALTER TABLE public.feed_reactions DROP CONSTRAINT IF EXISTS feed_reactions_salesperson_id_fkey;
-ALTER TABLE public.feed_reactions ADD CONSTRAINT feed_reactions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.follow_up_audit_logs
-ALTER TABLE public.follow_up_audit_logs DROP CONSTRAINT IF EXISTS follow_up_audit_logs_sale_id_fkey;
-ALTER TABLE public.follow_up_audit_logs ADD CONSTRAINT follow_up_audit_logs_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.follow_up_audit_logs DROP CONSTRAINT IF EXISTS follow_up_audit_logs_user_id_fkey;
-ALTER TABLE public.follow_up_audit_logs ADD CONSTRAINT follow_up_audit_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.follow_up_notifications
-ALTER TABLE public.follow_up_notifications DROP CONSTRAINT IF EXISTS follow_up_notifications_audit_log_id_fkey;
-ALTER TABLE public.follow_up_notifications ADD CONSTRAINT follow_up_notifications_audit_log_id_fkey FOREIGN KEY (audit_log_id) REFERENCES public.follow_up_audit_logs(id) ON DELETE SET NULL;
-ALTER TABLE public.follow_up_notifications DROP CONSTRAINT IF EXISTS follow_up_notifications_sale_id_fkey;
-ALTER TABLE public.follow_up_notifications ADD CONSTRAINT follow_up_notifications_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.follow_up_notifications DROP CONSTRAINT IF EXISTS follow_up_notifications_user_id_fkey;
-ALTER TABLE public.follow_up_notifications ADD CONSTRAINT follow_up_notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.follow_up_settings
-ALTER TABLE public.follow_up_settings DROP CONSTRAINT IF EXISTS follow_up_settings_current_whatsapp_version_id_fkey;
-ALTER TABLE public.follow_up_settings ADD CONSTRAINT follow_up_settings_current_whatsapp_version_id_fkey FOREIGN KEY (current_whatsapp_version_id) REFERENCES public.whatsapp_template_versions(id) ON DELETE SET NULL;
-
--- public.follow_up_templates
-ALTER TABLE public.follow_up_templates DROP CONSTRAINT IF EXISTS follow_up_templates_created_by_fkey;
-ALTER TABLE public.follow_up_templates ADD CONSTRAINT follow_up_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.follow_up_territory_rules
-ALTER TABLE public.follow_up_territory_rules DROP CONSTRAINT IF EXISTS follow_up_territory_rules_salesperson_id_fkey;
-ALTER TABLE public.follow_up_territory_rules ADD CONSTRAINT follow_up_territory_rules_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-ALTER TABLE public.follow_up_territory_rules DROP CONSTRAINT IF EXISTS follow_up_territory_rules_whatsapp_template_id_fkey;
-ALTER TABLE public.follow_up_territory_rules ADD CONSTRAINT follow_up_territory_rules_whatsapp_template_id_fkey FOREIGN KEY (whatsapp_template_id) REFERENCES public.follow_up_templates(id) ON DELETE SET NULL;
-
--- public.forecast_accuracy
-ALTER TABLE public.forecast_accuracy DROP CONSTRAINT IF EXISTS forecast_accuracy_snapshot_id_fkey;
-ALTER TABLE public.forecast_accuracy ADD CONSTRAINT forecast_accuracy_snapshot_id_fkey FOREIGN KEY (snapshot_id) REFERENCES public.forecast_snapshots(id) ON DELETE CASCADE;
-
--- public.forecast_deal_contributions
-ALTER TABLE public.forecast_deal_contributions DROP CONSTRAINT IF EXISTS forecast_deal_contributions_forecast_id_fkey;
-ALTER TABLE public.forecast_deal_contributions ADD CONSTRAINT forecast_deal_contributions_forecast_id_fkey FOREIGN KEY (forecast_id) REFERENCES public.revenue_forecasts(id) ON DELETE CASCADE;
-ALTER TABLE public.forecast_deal_contributions DROP CONSTRAINT IF EXISTS forecast_deal_contributions_sale_id_fkey;
-ALTER TABLE public.forecast_deal_contributions ADD CONSTRAINT forecast_deal_contributions_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.geo_blocked_regions
-ALTER TABLE public.geo_blocked_regions DROP CONSTRAINT IF EXISTS geo_blocked_regions_blocked_by_fkey;
-ALTER TABLE public.geo_blocked_regions ADD CONSTRAINT geo_blocked_regions_blocked_by_fkey FOREIGN KEY (blocked_by) REFERENCES auth.users(id);
-
--- public.icp_data
-ALTER TABLE public.icp_data DROP CONSTRAINT IF EXISTS icp_data_client_id_fkey;
-ALTER TABLE public.icp_data ADD CONSTRAINT icp_data_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-
--- public.inbound_reply_events
-ALTER TABLE public.inbound_reply_events DROP CONSTRAINT IF EXISTS inbound_reply_events_matched_enrollment_id_fkey;
-ALTER TABLE public.inbound_reply_events ADD CONSTRAINT inbound_reply_events_matched_enrollment_id_fkey FOREIGN KEY (matched_enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE SET NULL;
-
--- public.integration_health_checks
-ALTER TABLE public.integration_health_checks DROP CONSTRAINT IF EXISTS integration_health_checks_connection_id_fkey;
-ALTER TABLE public.integration_health_checks ADD CONSTRAINT integration_health_checks_connection_id_fkey FOREIGN KEY (connection_id) REFERENCES public.integration_connections(id) ON DELETE CASCADE;
-
--- public.integration_secret_refs
-ALTER TABLE public.integration_secret_refs DROP CONSTRAINT IF EXISTS integration_secret_refs_credential_id_fkey;
-ALTER TABLE public.integration_secret_refs ADD CONSTRAINT integration_secret_refs_credential_id_fkey FOREIGN KEY (credential_id) REFERENCES public.channel_credentials(id) ON DELETE CASCADE;
-
--- public.inventory_levels
-ALTER TABLE public.inventory_levels DROP CONSTRAINT IF EXISTS inventory_levels_product_id_fkey;
-ALTER TABLE public.inventory_levels ADD CONSTRAINT inventory_levels_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.ip_whitelist
-ALTER TABLE public.ip_whitelist DROP CONSTRAINT IF EXISTS ip_whitelist_added_by_fkey;
-ALTER TABLE public.ip_whitelist ADD CONSTRAINT ip_whitelist_added_by_fkey FOREIGN KEY (added_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.known_devices
-ALTER TABLE public.known_devices DROP CONSTRAINT IF EXISTS known_devices_user_id_fkey;
-ALTER TABLE public.known_devices ADD CONSTRAINT known_devices_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.kudos
-ALTER TABLE public.kudos DROP CONSTRAINT IF EXISTS kudos_from_salesperson_id_fkey;
-ALTER TABLE public.kudos ADD CONSTRAINT kudos_from_salesperson_id_fkey FOREIGN KEY (from_salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.kudos DROP CONSTRAINT IF EXISTS kudos_to_salesperson_id_fkey;
-ALTER TABLE public.kudos ADD CONSTRAINT kudos_to_salesperson_id_fkey FOREIGN KEY (to_salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.lead_assignments
-ALTER TABLE public.lead_assignments DROP CONSTRAINT IF EXISTS lead_assignments_rule_id_fkey;
-ALTER TABLE public.lead_assignments ADD CONSTRAINT lead_assignments_rule_id_fkey FOREIGN KEY (rule_id) REFERENCES public.lead_routing_rules(id) ON DELETE SET NULL;
-ALTER TABLE public.lead_assignments DROP CONSTRAINT IF EXISTS lead_assignments_sale_id_fkey;
-ALTER TABLE public.lead_assignments ADD CONSTRAINT lead_assignments_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.lead_assignments DROP CONSTRAINT IF EXISTS lead_assignments_salesperson_id_fkey;
-ALTER TABLE public.lead_assignments ADD CONSTRAINT lead_assignments_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.lead_churn_risk
-ALTER TABLE public.lead_churn_risk DROP CONSTRAINT IF EXISTS lead_churn_risk_sale_id_fkey;
-ALTER TABLE public.lead_churn_risk ADD CONSTRAINT lead_churn_risk_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.lead_detailed_logs
-ALTER TABLE public.lead_detailed_logs DROP CONSTRAINT IF EXISTS lead_detailed_logs_client_id_fkey;
-ALTER TABLE public.lead_detailed_logs ADD CONSTRAINT lead_detailed_logs_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-ALTER TABLE public.lead_detailed_logs DROP CONSTRAINT IF EXISTS lead_detailed_logs_created_by_fkey;
-ALTER TABLE public.lead_detailed_logs ADD CONSTRAINT lead_detailed_logs_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.lead_routing_log
-ALTER TABLE public.lead_routing_log DROP CONSTRAINT IF EXISTS lead_routing_log_client_id_fkey;
-ALTER TABLE public.lead_routing_log ADD CONSTRAINT lead_routing_log_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.lead_routing_log DROP CONSTRAINT IF EXISTS lead_routing_log_from_salesperson_id_fkey;
-ALTER TABLE public.lead_routing_log ADD CONSTRAINT lead_routing_log_from_salesperson_id_fkey FOREIGN KEY (from_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.lead_routing_log DROP CONSTRAINT IF EXISTS lead_routing_log_to_salesperson_id_fkey;
-ALTER TABLE public.lead_routing_log ADD CONSTRAINT lead_routing_log_to_salesperson_id_fkey FOREIGN KEY (to_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.lead_score_explanations
-ALTER TABLE public.lead_score_explanations DROP CONSTRAINT IF EXISTS lead_score_explanations_sale_id_fkey;
-ALTER TABLE public.lead_score_explanations ADD CONSTRAINT lead_score_explanations_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.lead_score_history
-ALTER TABLE public.lead_score_history DROP CONSTRAINT IF EXISTS lead_score_history_sale_id_fkey;
-ALTER TABLE public.lead_score_history ADD CONSTRAINT lead_score_history_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.lead_scores
-ALTER TABLE public.lead_scores DROP CONSTRAINT IF EXISTS lead_scores_sale_id_fkey;
-ALTER TABLE public.lead_scores ADD CONSTRAINT lead_scores_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.league_history
-ALTER TABLE public.league_history DROP CONSTRAINT IF EXISTS league_history_league_id_fkey;
-ALTER TABLE public.league_history ADD CONSTRAINT league_history_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id) ON DELETE CASCADE;
-ALTER TABLE public.league_history DROP CONSTRAINT IF EXISTS league_history_salesperson_id_fkey;
-ALTER TABLE public.league_history ADD CONSTRAINT league_history_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.league_members
-ALTER TABLE public.league_members DROP CONSTRAINT IF EXISTS league_members_league_id_fkey;
-ALTER TABLE public.league_members ADD CONSTRAINT league_members_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.leagues(id) ON DELETE CASCADE;
-ALTER TABLE public.league_members DROP CONSTRAINT IF EXISTS league_members_salesperson_id_fkey;
-ALTER TABLE public.league_members ADD CONSTRAINT league_members_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.login_alerts
-ALTER TABLE public.login_alerts DROP CONSTRAINT IF EXISTS login_alerts_user_id_fkey;
-ALTER TABLE public.login_alerts ADD CONSTRAINT login_alerts_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.message_templates
-ALTER TABLE public.message_templates DROP CONSTRAINT IF EXISTS message_templates_salesperson_id_fkey;
-ALTER TABLE public.message_templates ADD CONSTRAINT message_templates_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.mfa_verification_attempts
-ALTER TABLE public.mfa_verification_attempts DROP CONSTRAINT IF EXISTS mfa_verification_attempts_user_id_fkey;
-ALTER TABLE public.mfa_verification_attempts ADD CONSTRAINT mfa_verification_attempts_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.mood_entries
-ALTER TABLE public.mood_entries DROP CONSTRAINT IF EXISTS mood_entries_salesperson_id_fkey;
-ALTER TABLE public.mood_entries ADD CONSTRAINT mood_entries_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.mql_qualifications
-ALTER TABLE public.mql_qualifications DROP CONSTRAINT IF EXISTS mql_qualifications_qualified_by_fkey;
-ALTER TABLE public.mql_qualifications ADD CONSTRAINT mql_qualifications_qualified_by_fkey FOREIGN KEY (qualified_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.mql_qualifications DROP CONSTRAINT IF EXISTS mql_qualifications_sale_id_fkey;
-ALTER TABLE public.mql_qualifications ADD CONSTRAINT mql_qualifications_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.nps_surveys
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_sale_id_fkey;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.nps_surveys DROP CONSTRAINT IF EXISTS nps_surveys_salesperson_id_fkey;
-ALTER TABLE public.nps_surveys ADD CONSTRAINT nps_surveys_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.objection_library
-ALTER TABLE public.objection_library DROP CONSTRAINT IF EXISTS objection_library_best_response_recording_id_fkey;
-ALTER TABLE public.objection_library ADD CONSTRAINT objection_library_best_response_recording_id_fkey FOREIGN KEY (best_response_recording_id) REFERENCES public.call_recordings(id) ON DELETE SET NULL;
-
--- public.objections_library
-ALTER TABLE public.objections_library DROP CONSTRAINT IF EXISTS objections_library_created_by_fkey;
-ALTER TABLE public.objections_library ADD CONSTRAINT objections_library_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.onboarding_journeys
-ALTER TABLE public.onboarding_journeys DROP CONSTRAINT IF EXISTS onboarding_journeys_account_id_fkey;
-ALTER TABLE public.onboarding_journeys ADD CONSTRAINT onboarding_journeys_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.onboarding_journeys DROP CONSTRAINT IF EXISTS onboarding_journeys_owner_salesperson_id_fkey;
-ALTER TABLE public.onboarding_journeys ADD CONSTRAINT onboarding_journeys_owner_salesperson_id_fkey FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.onboarding_steps
-ALTER TABLE public.onboarding_steps DROP CONSTRAINT IF EXISTS onboarding_steps_journey_id_fkey;
-ALTER TABLE public.onboarding_steps ADD CONSTRAINT onboarding_steps_journey_id_fkey FOREIGN KEY (journey_id) REFERENCES public.onboarding_journeys(id) ON DELETE CASCADE;
-
--- public.order_items
-ALTER TABLE public.order_items DROP CONSTRAINT IF EXISTS order_items_order_id_fkey;
-ALTER TABLE public.order_items ADD CONSTRAINT order_items_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE;
-
--- public.order_status_events
-ALTER TABLE public.order_status_events DROP CONSTRAINT IF EXISTS order_status_events_order_id_fkey;
-ALTER TABLE public.order_status_events ADD CONSTRAINT order_status_events_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE;
-
--- public.orders
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_client_id_fkey;
-ALTER TABLE public.orders ADD CONSTRAINT orders_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_quote_id_fkey;
-ALTER TABLE public.orders ADD CONSTRAINT orders_quote_id_fkey FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE SET NULL;
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_salesperson_id_fkey;
-ALTER TABLE public.orders ADD CONSTRAINT orders_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.outbound_messages
-ALTER TABLE public.outbound_messages DROP CONSTRAINT IF EXISTS outbound_messages_enrollment_id_fkey;
-ALTER TABLE public.outbound_messages ADD CONSTRAINT outbound_messages_enrollment_id_fkey FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE SET NULL;
-ALTER TABLE public.outbound_messages DROP CONSTRAINT IF EXISTS outbound_messages_step_id_fkey;
-ALTER TABLE public.outbound_messages ADD CONSTRAINT outbound_messages_step_id_fkey FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE SET NULL;
-
--- public.page_analytics
-ALTER TABLE public.page_analytics DROP CONSTRAINT IF EXISTS page_analytics_salesperson_id_fkey;
-ALTER TABLE public.page_analytics ADD CONSTRAINT page_analytics_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.password_history
-ALTER TABLE public.password_history DROP CONSTRAINT IF EXISTS password_history_user_id_fkey;
-ALTER TABLE public.password_history ADD CONSTRAINT password_history_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.password_reset_requests
-ALTER TABLE public.password_reset_requests DROP CONSTRAINT IF EXISTS password_reset_requests_user_id_fkey;
-ALTER TABLE public.password_reset_requests ADD CONSTRAINT password_reset_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.performance_bets
-ALTER TABLE public.performance_bets DROP CONSTRAINT IF EXISTS performance_bets_salesperson_id_fkey;
-ALTER TABLE public.performance_bets ADD CONSTRAINT performance_bets_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.personal_assistant_nudges
-ALTER TABLE public.personal_assistant_nudges DROP CONSTRAINT IF EXISTS personal_assistant_nudges_salesperson_id_fkey;
-ALTER TABLE public.personal_assistant_nudges ADD CONSTRAINT personal_assistant_nudges_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.pipeline_coverage_recommendations
-ALTER TABLE public.pipeline_coverage_recommendations DROP CONSTRAINT IF EXISTS pipeline_coverage_recommendations_snapshot_id_fkey;
-ALTER TABLE public.pipeline_coverage_recommendations ADD CONSTRAINT pipeline_coverage_recommendations_snapshot_id_fkey FOREIGN KEY (snapshot_id) REFERENCES public.pipeline_coverage_snapshots(id) ON DELETE CASCADE;
-
--- public.pipeline_inspection_snapshots
-ALTER TABLE public.pipeline_inspection_snapshots DROP CONSTRAINT IF EXISTS pipeline_inspection_snapshots_sale_id_fkey;
-ALTER TABLE public.pipeline_inspection_snapshots ADD CONSTRAINT pipeline_inspection_snapshots_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.pipeline_inspections
-ALTER TABLE public.pipeline_inspections DROP CONSTRAINT IF EXISTS pipeline_inspections_inspector_id_fkey;
-ALTER TABLE public.pipeline_inspections ADD CONSTRAINT pipeline_inspections_inspector_id_fkey FOREIGN KEY (inspector_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-ALTER TABLE public.pipeline_inspections DROP CONSTRAINT IF EXISTS pipeline_inspections_sale_id_fkey;
-ALTER TABLE public.pipeline_inspections ADD CONSTRAINT pipeline_inspections_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.pipeline_stages
-ALTER TABLE public.pipeline_stages DROP CONSTRAINT IF EXISTS pipeline_stages_pipeline_id_fkey;
-ALTER TABLE public.pipeline_stages ADD CONSTRAINT pipeline_stages_pipeline_id_fkey FOREIGN KEY (pipeline_id) REFERENCES public.pipelines(id) ON DELETE CASCADE;
-
--- public.playbook_items
-ALTER TABLE public.playbook_items DROP CONSTRAINT IF EXISTS playbook_items_asset_id_fkey;
-ALTER TABLE public.playbook_items ADD CONSTRAINT playbook_items_asset_id_fkey FOREIGN KEY (asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE SET NULL;
-ALTER TABLE public.playbook_items DROP CONSTRAINT IF EXISTS playbook_items_playbook_id_fkey;
-ALTER TABLE public.playbook_items ADD CONSTRAINT playbook_items_playbook_id_fkey FOREIGN KEY (playbook_id) REFERENCES public.playbooks(id) ON DELETE CASCADE;
-
--- public.playbook_progress
-ALTER TABLE public.playbook_progress DROP CONSTRAINT IF EXISTS playbook_progress_completed_by_fkey;
-ALTER TABLE public.playbook_progress ADD CONSTRAINT playbook_progress_completed_by_fkey FOREIGN KEY (completed_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.playbook_progress DROP CONSTRAINT IF EXISTS playbook_progress_playbook_item_id_fkey;
-ALTER TABLE public.playbook_progress ADD CONSTRAINT playbook_progress_playbook_item_id_fkey FOREIGN KEY (playbook_item_id) REFERENCES public.playbook_items(id) ON DELETE CASCADE;
-ALTER TABLE public.playbook_progress DROP CONSTRAINT IF EXISTS playbook_progress_sale_id_fkey;
-ALTER TABLE public.playbook_progress ADD CONSTRAINT playbook_progress_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.price_alerts
-ALTER TABLE public.price_alerts DROP CONSTRAINT IF EXISTS price_alerts_product_id_fkey;
-ALTER TABLE public.price_alerts ADD CONSTRAINT price_alerts_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-ALTER TABLE public.price_alerts DROP CONSTRAINT IF EXISTS price_alerts_supplier_id_fkey;
-ALTER TABLE public.price_alerts ADD CONSTRAINT price_alerts_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE;
-
--- public.price_history
-ALTER TABLE public.price_history DROP CONSTRAINT IF EXISTS price_history_product_id_fkey;
-ALTER TABLE public.price_history ADD CONSTRAINT price_history_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-ALTER TABLE public.price_history DROP CONSTRAINT IF EXISTS price_history_supplier_id_fkey;
-ALTER TABLE public.price_history ADD CONSTRAINT price_history_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE;
-ALTER TABLE public.price_history DROP CONSTRAINT IF EXISTS price_history_supplier_product_id_fkey;
-ALTER TABLE public.price_history ADD CONSTRAINT price_history_supplier_product_id_fkey FOREIGN KEY (supplier_product_id) REFERENCES public.supplier_products(id) ON DELETE CASCADE;
-
--- public.price_protection_rules
-ALTER TABLE public.price_protection_rules DROP CONSTRAINT IF EXISTS price_protection_rules_product_id_fkey;
-ALTER TABLE public.price_protection_rules ADD CONSTRAINT price_protection_rules_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.pricing_rules
-ALTER TABLE public.pricing_rules DROP CONSTRAINT IF EXISTS pricing_rules_product_id_fkey;
-ALTER TABLE public.pricing_rules ADD CONSTRAINT pricing_rules_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.prize_wheel_spins
-ALTER TABLE public.prize_wheel_spins DROP CONSTRAINT IF EXISTS prize_wheel_spins_salesperson_id_fkey;
-ALTER TABLE public.prize_wheel_spins ADD CONSTRAINT prize_wheel_spins_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.product_stock_log
-ALTER TABLE public.product_stock_log DROP CONSTRAINT IF EXISTS product_stock_log_product_id_fkey;
-ALTER TABLE public.product_stock_log ADD CONSTRAINT product_stock_log_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.product_usage
-ALTER TABLE public.product_usage DROP CONSTRAINT IF EXISTS product_usage_client_id_fkey;
-ALTER TABLE public.product_usage ADD CONSTRAINT product_usage_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-
--- public.product_usage_events
-ALTER TABLE public.product_usage_events DROP CONSTRAINT IF EXISTS product_usage_events_account_id_fkey;
-ALTER TABLE public.product_usage_events ADD CONSTRAINT product_usage_events_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-
--- public.product_usage_summary
-ALTER TABLE public.product_usage_summary DROP CONSTRAINT IF EXISTS product_usage_summary_account_id_fkey;
-ALTER TABLE public.product_usage_summary ADD CONSTRAINT product_usage_summary_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-
--- public.products
-ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_deleted_by_fkey;
-ALTER TABLE public.products ADD CONSTRAINT products_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES auth.users(id);
-
--- public.progressive_goals
-ALTER TABLE public.progressive_goals DROP CONSTRAINT IF EXISTS progressive_goals_salesperson_id_fkey;
-ALTER TABLE public.progressive_goals ADD CONSTRAINT progressive_goals_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.prospect_cadences
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_cadence_id_fkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_cadence_id_fkey FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE;
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_enrolled_via_rule_id_fkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_enrolled_via_rule_id_fkey FOREIGN KEY (enrolled_via_rule_id) REFERENCES public.cadence_enrollment_rules(id) ON DELETE SET NULL;
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_quote_id_fkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_quote_id_fkey FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE CASCADE;
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_sale_id_fkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.prospect_cadences DROP CONSTRAINT IF EXISTS prospect_cadences_salesperson_id_fkey;
-ALTER TABLE public.prospect_cadences ADD CONSTRAINT prospect_cadences_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.push_subscriptions
-ALTER TABLE public.push_subscriptions DROP CONSTRAINT IF EXISTS push_subscriptions_user_id_fkey;
-ALTER TABLE public.push_subscriptions ADD CONSTRAINT push_subscriptions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.qbr_reports
-ALTER TABLE public.qbr_reports DROP CONSTRAINT IF EXISTS qbr_reports_salesperson_id_fkey;
-ALTER TABLE public.qbr_reports ADD CONSTRAINT qbr_reports_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.qbr_schedule
-ALTER TABLE public.qbr_schedule DROP CONSTRAINT IF EXISTS qbr_schedule_account_id_fkey;
-ALTER TABLE public.qbr_schedule ADD CONSTRAINT qbr_schedule_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.qbr_schedule DROP CONSTRAINT IF EXISTS qbr_schedule_owner_salesperson_id_fkey;
-ALTER TABLE public.qbr_schedule ADD CONSTRAINT qbr_schedule_owner_salesperson_id_fkey FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.quota_attainment_actions
-ALTER TABLE public.quota_attainment_actions DROP CONSTRAINT IF EXISTS quota_attainment_actions_forecast_id_fkey;
-ALTER TABLE public.quota_attainment_actions ADD CONSTRAINT quota_attainment_actions_forecast_id_fkey FOREIGN KEY (forecast_id) REFERENCES public.quota_attainment_forecasts(id) ON DELETE CASCADE;
-
--- public.quota_attainment_alerts
-ALTER TABLE public.quota_attainment_alerts DROP CONSTRAINT IF EXISTS quota_attainment_alerts_prediction_id_fkey;
-ALTER TABLE public.quota_attainment_alerts ADD CONSTRAINT quota_attainment_alerts_prediction_id_fkey FOREIGN KEY (prediction_id) REFERENCES public.quota_attainment_predictions(id) ON DELETE CASCADE;
-ALTER TABLE public.quota_attainment_alerts DROP CONSTRAINT IF EXISTS quota_attainment_alerts_salesperson_id_fkey;
-ALTER TABLE public.quota_attainment_alerts ADD CONSTRAINT quota_attainment_alerts_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.quota_attainment_forecasts
-ALTER TABLE public.quota_attainment_forecasts DROP CONSTRAINT IF EXISTS quota_attainment_forecasts_salesperson_id_fkey;
-ALTER TABLE public.quota_attainment_forecasts ADD CONSTRAINT quota_attainment_forecasts_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.quota_attainment_predictions
-ALTER TABLE public.quota_attainment_predictions DROP CONSTRAINT IF EXISTS quota_attainment_predictions_salesperson_id_fkey;
-ALTER TABLE public.quota_attainment_predictions ADD CONSTRAINT quota_attainment_predictions_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.quote_items
-ALTER TABLE public.quote_items DROP CONSTRAINT IF EXISTS quote_items_product_id_fkey;
-ALTER TABLE public.quote_items ADD CONSTRAINT quote_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL;
-ALTER TABLE public.quote_items DROP CONSTRAINT IF EXISTS quote_items_quote_id_fkey;
-ALTER TABLE public.quote_items ADD CONSTRAINT quote_items_quote_id_fkey FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE CASCADE;
-
--- public.quotes
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_client_id_fkey;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_created_by_fkey;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.quotes DROP CONSTRAINT IF EXISTS quotes_sale_id_fkey;
-ALTER TABLE public.quotes ADD CONSTRAINT quotes_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-
--- public.race_badges
-ALTER TABLE public.race_badges DROP CONSTRAINT IF EXISTS race_badges_salesperson_id_fkey;
-ALTER TABLE public.race_badges ADD CONSTRAINT race_badges_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.race_badges DROP CONSTRAINT IF EXISTS race_badges_season_id_fkey;
-ALTER TABLE public.race_badges ADD CONSTRAINT race_badges_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE SET NULL;
-
--- public.race_cars
-ALTER TABLE public.race_cars DROP CONSTRAINT IF EXISTS race_cars_salesperson_id_fkey;
-ALTER TABLE public.race_cars ADD CONSTRAINT race_cars_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.race_daily_snapshots
-ALTER TABLE public.race_daily_snapshots DROP CONSTRAINT IF EXISTS race_daily_snapshots_season_id_fkey;
-ALTER TABLE public.race_daily_snapshots ADD CONSTRAINT race_daily_snapshots_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_events
-ALTER TABLE public.race_events DROP CONSTRAINT IF EXISTS race_events_salesperson_id_fkey;
-ALTER TABLE public.race_events ADD CONSTRAINT race_events_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.race_events DROP CONSTRAINT IF EXISTS race_events_season_id_fkey;
-ALTER TABLE public.race_events ADD CONSTRAINT race_events_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_powerups
-ALTER TABLE public.race_powerups DROP CONSTRAINT IF EXISTS race_powerups_salesperson_id_fkey;
-ALTER TABLE public.race_powerups ADD CONSTRAINT race_powerups_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.race_powerups DROP CONSTRAINT IF EXISTS race_powerups_season_id_fkey;
-ALTER TABLE public.race_powerups ADD CONSTRAINT race_powerups_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_rivalries_persistent
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_car_id_fkey;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_car_id_fkey FOREIGN KEY (car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE;
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_rival_car_id_fkey;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_rival_car_id_fkey FOREIGN KEY (rival_car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE;
-ALTER TABLE public.race_rivalries_persistent DROP CONSTRAINT IF EXISTS race_rivalries_persistent_season_id_fkey;
-ALTER TABLE public.race_rivalries_persistent ADD CONSTRAINT race_rivalries_persistent_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_scoring_rules
-ALTER TABLE public.race_scoring_rules DROP CONSTRAINT IF EXISTS race_scoring_rules_season_id_fkey;
-ALTER TABLE public.race_scoring_rules ADD CONSTRAINT race_scoring_rules_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_seasons
-ALTER TABLE public.race_seasons DROP CONSTRAINT IF EXISTS race_seasons_winner_id_fkey;
-ALTER TABLE public.race_seasons ADD CONSTRAINT race_seasons_winner_id_fkey FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.race_team_members
-ALTER TABLE public.race_team_members DROP CONSTRAINT IF EXISTS race_team_members_car_id_fkey;
-ALTER TABLE public.race_team_members ADD CONSTRAINT race_team_members_car_id_fkey FOREIGN KEY (car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE;
-ALTER TABLE public.race_team_members DROP CONSTRAINT IF EXISTS race_team_members_team_id_fkey;
-ALTER TABLE public.race_team_members ADD CONSTRAINT race_team_members_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.race_teams(id) ON DELETE CASCADE;
-
--- public.race_teams
-ALTER TABLE public.race_teams DROP CONSTRAINT IF EXISTS race_teams_season_id_fkey;
-ALTER TABLE public.race_teams ADD CONSTRAINT race_teams_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-
--- public.race_user_daily_checkins
-ALTER TABLE public.race_user_daily_checkins DROP CONSTRAINT IF EXISTS race_user_daily_checkins_season_id_fkey;
-ALTER TABLE public.race_user_daily_checkins ADD CONSTRAINT race_user_daily_checkins_season_id_fkey FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE;
-ALTER TABLE public.race_user_daily_checkins DROP CONSTRAINT IF EXISTS race_user_daily_checkins_user_id_fkey;
-ALTER TABLE public.race_user_daily_checkins ADD CONSTRAINT race_user_daily_checkins_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.rank_change_notifications
-ALTER TABLE public.rank_change_notifications DROP CONSTRAINT IF EXISTS rank_change_notifications_overtaken_by_id_fkey;
-ALTER TABLE public.rank_change_notifications ADD CONSTRAINT rank_change_notifications_overtaken_by_id_fkey FOREIGN KEY (overtaken_by_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.rank_change_notifications DROP CONSTRAINT IF EXISTS rank_change_notifications_salesperson_id_fkey;
-ALTER TABLE public.rank_change_notifications ADD CONSTRAINT rank_change_notifications_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.ranking_notifications
-ALTER TABLE public.ranking_notifications DROP CONSTRAINT IF EXISTS ranking_notifications_salesperson_id_fkey;
-ALTER TABLE public.ranking_notifications ADD CONSTRAINT ranking_notifications_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.reauthentication_requests
-ALTER TABLE public.reauthentication_requests DROP CONSTRAINT IF EXISTS reauthentication_requests_user_id_fkey;
-ALTER TABLE public.reauthentication_requests ADD CONSTRAINT reauthentication_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.renewals
-ALTER TABLE public.renewals DROP CONSTRAINT IF EXISTS renewals_account_id_fkey;
-ALTER TABLE public.renewals ADD CONSTRAINT renewals_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-ALTER TABLE public.renewals DROP CONSTRAINT IF EXISTS renewals_owner_salesperson_id_fkey;
-ALTER TABLE public.renewals ADD CONSTRAINT renewals_owner_salesperson_id_fkey FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.report_embed_tokens
-ALTER TABLE public.report_embed_tokens DROP CONSTRAINT IF EXISTS report_embed_tokens_report_id_fkey;
-ALTER TABLE public.report_embed_tokens ADD CONSTRAINT report_embed_tokens_report_id_fkey FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE;
-
--- public.report_executions
-ALTER TABLE public.report_executions DROP CONSTRAINT IF EXISTS report_executions_report_id_fkey;
-ALTER TABLE public.report_executions ADD CONSTRAINT report_executions_report_id_fkey FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE;
-ALTER TABLE public.report_executions DROP CONSTRAINT IF EXISTS report_executions_schedule_id_fkey;
-ALTER TABLE public.report_executions ADD CONSTRAINT report_executions_schedule_id_fkey FOREIGN KEY (schedule_id) REFERENCES public.report_schedules(id) ON DELETE SET NULL;
-
--- public.report_schedules
-ALTER TABLE public.report_schedules DROP CONSTRAINT IF EXISTS report_schedules_report_id_fkey;
-ALTER TABLE public.report_schedules ADD CONSTRAINT report_schedules_report_id_fkey FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE;
-
--- public.revenue_forecasts
-ALTER TABLE public.revenue_forecasts DROP CONSTRAINT IF EXISTS revenue_forecasts_owner_id_fkey;
-ALTER TABLE public.revenue_forecasts ADD CONSTRAINT revenue_forecasts_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.role_permissions
-ALTER TABLE public.role_permissions DROP CONSTRAINT IF EXISTS role_permissions_permission_id_fkey;
-ALTER TABLE public.role_permissions ADD CONSTRAINT role_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES public.permissions(id) ON DELETE CASCADE;
-
--- public.sale_notifications_audit
-ALTER TABLE public.sale_notifications_audit DROP CONSTRAINT IF EXISTS sale_notifications_audit_recipient_id_fkey;
-ALTER TABLE public.sale_notifications_audit ADD CONSTRAINT sale_notifications_audit_recipient_id_fkey FOREIGN KEY (recipient_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.sale_notifications_audit DROP CONSTRAINT IF EXISTS sale_notifications_audit_sale_id_fkey;
-ALTER TABLE public.sale_notifications_audit ADD CONSTRAINT sale_notifications_audit_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.sale_notifications_audit DROP CONSTRAINT IF EXISTS sale_notifications_audit_seller_id_fkey;
-ALTER TABLE public.sale_notifications_audit ADD CONSTRAINT sale_notifications_audit_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.sales
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_account_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_client_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_closer_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_closer_id_fkey FOREIGN KEY (closer_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_lost_to_competitor_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_lost_to_competitor_id_fkey FOREIGN KEY (lost_to_competitor_id) REFERENCES public.competitors_registry(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_pipeline_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_pipeline_id_fkey FOREIGN KEY (pipeline_id) REFERENCES public.pipelines(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_product_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_salesperson_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_sdr_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_sdr_id_fkey FOREIGN KEY (sdr_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.sales DROP CONSTRAINT IF EXISTS sales_territory_id_fkey;
-ALTER TABLE public.sales ADD CONSTRAINT sales_territory_id_fkey FOREIGN KEY (territory_id) REFERENCES public.territories(id) ON DELETE SET NULL;
-
--- public.sales_battles
-ALTER TABLE public.sales_battles DROP CONSTRAINT IF EXISTS sales_battles_created_by_fkey;
-ALTER TABLE public.sales_battles ADD CONSTRAINT sales_battles_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.sales_battles DROP CONSTRAINT IF EXISTS sales_battles_winner_id_fkey;
-ALTER TABLE public.sales_battles ADD CONSTRAINT sales_battles_winner_id_fkey FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.sales_goals
-ALTER TABLE public.sales_goals DROP CONSTRAINT IF EXISTS sales_goals_salesperson_id_fkey;
-ALTER TABLE public.sales_goals ADD CONSTRAINT sales_goals_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT;
-
--- public.sales_streaks
-ALTER TABLE public.sales_streaks DROP CONSTRAINT IF EXISTS sales_streaks_salesperson_id_fkey;
-ALTER TABLE public.sales_streaks ADD CONSTRAINT sales_streaks_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.sales_territories
-ALTER TABLE public.sales_territories DROP CONSTRAINT IF EXISTS sales_territories_current_owner_id_fkey;
-ALTER TABLE public.sales_territories ADD CONSTRAINT sales_territories_current_owner_id_fkey FOREIGN KEY (current_owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.salespeople
-ALTER TABLE public.salespeople DROP CONSTRAINT IF EXISTS salespeople_squad_id_fkey;
-ALTER TABLE public.salespeople ADD CONSTRAINT salespeople_squad_id_fkey FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE SET NULL;
-
--- public.salesperson_badges
-ALTER TABLE public.salesperson_badges DROP CONSTRAINT IF EXISTS salesperson_badges_badge_id_fkey;
-ALTER TABLE public.salesperson_badges ADD CONSTRAINT salesperson_badges_badge_id_fkey FOREIGN KEY (badge_id) REFERENCES public.collectible_badges(id) ON DELETE CASCADE;
-ALTER TABLE public.salesperson_badges DROP CONSTRAINT IF EXISTS salesperson_badges_salesperson_id_fkey;
-ALTER TABLE public.salesperson_badges ADD CONSTRAINT salesperson_badges_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.salesperson_commission_configs
-ALTER TABLE public.salesperson_commission_configs DROP CONSTRAINT IF EXISTS salesperson_commission_configs_salesperson_id_fkey;
-ALTER TABLE public.salesperson_commission_configs ADD CONSTRAINT salesperson_commission_configs_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.salesperson_custom_field_values
-ALTER TABLE public.salesperson_custom_field_values DROP CONSTRAINT IF EXISTS salesperson_custom_field_values_field_id_fkey;
-ALTER TABLE public.salesperson_custom_field_values ADD CONSTRAINT salesperson_custom_field_values_field_id_fkey FOREIGN KEY (field_id) REFERENCES public.team_custom_fields(id) ON DELETE CASCADE;
-ALTER TABLE public.salesperson_custom_field_values DROP CONSTRAINT IF EXISTS salesperson_custom_field_values_salesperson_id_fkey;
-ALTER TABLE public.salesperson_custom_field_values ADD CONSTRAINT salesperson_custom_field_values_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.salesperson_leagues
-ALTER TABLE public.salesperson_leagues DROP CONSTRAINT IF EXISTS salesperson_leagues_salesperson_id_fkey;
-ALTER TABLE public.salesperson_leagues ADD CONSTRAINT salesperson_leagues_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.salesperson_preferences
-ALTER TABLE public.salesperson_preferences DROP CONSTRAINT IF EXISTS salesperson_preferences_salesperson_id_fkey;
-ALTER TABLE public.salesperson_preferences ADD CONSTRAINT salesperson_preferences_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.salesperson_xp
-ALTER TABLE public.salesperson_xp DROP CONSTRAINT IF EXISTS salesperson_xp_salesperson_id_fkey;
-ALTER TABLE public.salesperson_xp ADD CONSTRAINT salesperson_xp_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.saved_filters
-ALTER TABLE public.saved_filters DROP CONSTRAINT IF EXISTS saved_filters_user_id_fkey;
-ALTER TABLE public.saved_filters ADD CONSTRAINT saved_filters_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.scheduled_report_runs
-ALTER TABLE public.scheduled_report_runs DROP CONSTRAINT IF EXISTS scheduled_report_runs_schedule_id_fkey;
-ALTER TABLE public.scheduled_report_runs ADD CONSTRAINT scheduled_report_runs_schedule_id_fkey FOREIGN KEY (schedule_id) REFERENCES public.scheduled_reports(id) ON DELETE CASCADE;
-
--- public.scheduled_reports
-ALTER TABLE public.scheduled_reports DROP CONSTRAINT IF EXISTS scheduled_reports_report_id_fkey;
-ALTER TABLE public.scheduled_reports ADD CONSTRAINT scheduled_reports_report_id_fkey FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE;
-
--- public.scheduled_sends
-ALTER TABLE public.scheduled_sends DROP CONSTRAINT IF EXISTS scheduled_sends_sale_id_fkey;
-ALTER TABLE public.scheduled_sends ADD CONSTRAINT scheduled_sends_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.score_change_logs
-ALTER TABLE public.score_change_logs DROP CONSTRAINT IF EXISTS score_change_logs_api_token_id_fkey;
-ALTER TABLE public.score_change_logs ADD CONSTRAINT score_change_logs_api_token_id_fkey FOREIGN KEY (api_token_id) REFERENCES public.api_tokens(id) ON DELETE SET NULL;
-ALTER TABLE public.score_change_logs DROP CONSTRAINT IF EXISTS score_change_logs_salesperson_id_fkey;
-ALTER TABLE public.score_change_logs ADD CONSTRAINT score_change_logs_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.sdr_alert_configs
-ALTER TABLE public.sdr_alert_configs DROP CONSTRAINT IF EXISTS sdr_alert_configs_user_id_fkey;
-ALTER TABLE public.sdr_alert_configs ADD CONSTRAINT sdr_alert_configs_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.sdr_performance_settings
-ALTER TABLE public.sdr_performance_settings DROP CONSTRAINT IF EXISTS sdr_performance_settings_user_id_fkey;
-ALTER TABLE public.sdr_performance_settings ADD CONSTRAINT sdr_performance_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.security_events
-ALTER TABLE public.security_events DROP CONSTRAINT IF EXISTS security_events_user_id_fkey;
-ALTER TABLE public.security_events ADD CONSTRAINT security_events_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.send_time_profiles
-ALTER TABLE public.send_time_profiles DROP CONSTRAINT IF EXISTS send_time_profiles_sale_id_fkey;
-ALTER TABLE public.send_time_profiles ADD CONSTRAINT send_time_profiles_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.sequence_enrollments
-ALTER TABLE public.sequence_enrollments DROP CONSTRAINT IF EXISTS sequence_enrollments_sequence_id_fkey;
-ALTER TABLE public.sequence_enrollments ADD CONSTRAINT sequence_enrollments_sequence_id_fkey FOREIGN KEY (sequence_id) REFERENCES public.sequences(id) ON DELETE CASCADE;
-
--- public.sequence_step_assignments
-ALTER TABLE public.sequence_step_assignments DROP CONSTRAINT IF EXISTS sequence_step_assignments_enrollment_id_fkey;
-ALTER TABLE public.sequence_step_assignments ADD CONSTRAINT sequence_step_assignments_enrollment_id_fkey FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE CASCADE;
-ALTER TABLE public.sequence_step_assignments DROP CONSTRAINT IF EXISTS sequence_step_assignments_step_id_fkey;
-ALTER TABLE public.sequence_step_assignments ADD CONSTRAINT sequence_step_assignments_step_id_fkey FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE;
-ALTER TABLE public.sequence_step_assignments DROP CONSTRAINT IF EXISTS sequence_step_assignments_variant_id_fkey;
-ALTER TABLE public.sequence_step_assignments ADD CONSTRAINT sequence_step_assignments_variant_id_fkey FOREIGN KEY (variant_id) REFERENCES public.sequence_step_variants(id) ON DELETE SET NULL;
-
--- public.sequence_step_executions
-ALTER TABLE public.sequence_step_executions DROP CONSTRAINT IF EXISTS sequence_step_executions_enrollment_id_fkey;
-ALTER TABLE public.sequence_step_executions ADD CONSTRAINT sequence_step_executions_enrollment_id_fkey FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE CASCADE;
-ALTER TABLE public.sequence_step_executions DROP CONSTRAINT IF EXISTS sequence_step_executions_step_id_fkey;
-ALTER TABLE public.sequence_step_executions ADD CONSTRAINT sequence_step_executions_step_id_fkey FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE;
-ALTER TABLE public.sequence_step_executions DROP CONSTRAINT IF EXISTS sequence_step_executions_variant_id_fkey;
-ALTER TABLE public.sequence_step_executions ADD CONSTRAINT sequence_step_executions_variant_id_fkey FOREIGN KEY (variant_id) REFERENCES public.sequence_step_variants(id) ON DELETE SET NULL;
-
--- public.sequence_step_variants
-ALTER TABLE public.sequence_step_variants DROP CONSTRAINT IF EXISTS sequence_step_variants_step_id_fkey;
-ALTER TABLE public.sequence_step_variants ADD CONSTRAINT sequence_step_variants_step_id_fkey FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE;
-
--- public.sequence_steps
-ALTER TABLE public.sequence_steps DROP CONSTRAINT IF EXISTS sequence_steps_sequence_id_fkey;
-ALTER TABLE public.sequence_steps ADD CONSTRAINT sequence_steps_sequence_id_fkey FOREIGN KEY (sequence_id) REFERENCES public.sequences(id) ON DELETE CASCADE;
-
--- public.session_activity
-ALTER TABLE public.session_activity DROP CONSTRAINT IF EXISTS session_activity_user_id_fkey;
-ALTER TABLE public.session_activity ADD CONSTRAINT session_activity_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.skill_assessments
-ALTER TABLE public.skill_assessments DROP CONSTRAINT IF EXISTS skill_assessments_salesperson_id_fkey;
-ALTER TABLE public.skill_assessments ADD CONSTRAINT skill_assessments_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.skill_development_tracks
-ALTER TABLE public.skill_development_tracks DROP CONSTRAINT IF EXISTS skill_development_tracks_salesperson_id_fkey;
-ALTER TABLE public.skill_development_tracks ADD CONSTRAINT skill_development_tracks_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.sla_violations
-ALTER TABLE public.sla_violations DROP CONSTRAINT IF EXISTS sla_violations_policy_id_fkey;
-ALTER TABLE public.sla_violations ADD CONSTRAINT sla_violations_policy_id_fkey FOREIGN KEY (policy_id) REFERENCES public.sla_policies(id) ON DELETE SET NULL;
-ALTER TABLE public.sla_violations DROP CONSTRAINT IF EXISTS sla_violations_sale_id_fkey;
-ALTER TABLE public.sla_violations ADD CONSTRAINT sla_violations_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.slow_query_alerts
-ALTER TABLE public.slow_query_alerts DROP CONSTRAINT IF EXISTS slow_query_alerts_acknowledged_by_fkey;
-ALTER TABLE public.slow_query_alerts ADD CONSTRAINT slow_query_alerts_acknowledged_by_fkey FOREIGN KEY (acknowledged_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.sms_verification_codes
-ALTER TABLE public.sms_verification_codes DROP CONSTRAINT IF EXISTS sms_verification_codes_user_id_fkey;
-ALTER TABLE public.sms_verification_codes ADD CONSTRAINT sms_verification_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.squad_members
-ALTER TABLE public.squad_members DROP CONSTRAINT IF EXISTS squad_members_squad_id_fkey;
-ALTER TABLE public.squad_members ADD CONSTRAINT squad_members_squad_id_fkey FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE CASCADE;
-
--- public.stock_movements
-ALTER TABLE public.stock_movements DROP CONSTRAINT IF EXISTS stock_movements_product_id_fkey;
-ALTER TABLE public.stock_movements ADD CONSTRAINT stock_movements_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-
--- public.supplier_order_items
-ALTER TABLE public.supplier_order_items DROP CONSTRAINT IF EXISTS supplier_order_items_order_id_fkey;
-ALTER TABLE public.supplier_order_items ADD CONSTRAINT supplier_order_items_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.supplier_orders(id) ON DELETE CASCADE;
-ALTER TABLE public.supplier_order_items DROP CONSTRAINT IF EXISTS supplier_order_items_product_id_fkey;
-ALTER TABLE public.supplier_order_items ADD CONSTRAINT supplier_order_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL;
-
--- public.supplier_orders
-ALTER TABLE public.supplier_orders DROP CONSTRAINT IF EXISTS supplier_orders_supplier_id_fkey;
-ALTER TABLE public.supplier_orders ADD CONSTRAINT supplier_orders_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE;
-
--- public.supplier_products
-ALTER TABLE public.supplier_products DROP CONSTRAINT IF EXISTS supplier_products_product_id_fkey;
-ALTER TABLE public.supplier_products ADD CONSTRAINT supplier_products_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE;
-ALTER TABLE public.supplier_products DROP CONSTRAINT IF EXISTS supplier_products_supplier_id_fkey;
-ALTER TABLE public.supplier_products ADD CONSTRAINT supplier_products_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE;
-
--- public.supplier_risk_assessments
-ALTER TABLE public.supplier_risk_assessments DROP CONSTRAINT IF EXISTS supplier_risk_assessments_supplier_id_fkey;
-ALTER TABLE public.supplier_risk_assessments ADD CONSTRAINT supplier_risk_assessments_supplier_id_fkey FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE;
-
--- public.suppliers
-ALTER TABLE public.suppliers DROP CONSTRAINT IF EXISTS suppliers_deleted_by_fkey;
-ALTER TABLE public.suppliers ADD CONSTRAINT suppliers_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES auth.users(id);
-
--- public.support_tickets
-ALTER TABLE public.support_tickets DROP CONSTRAINT IF EXISTS support_tickets_account_id_fkey;
-ALTER TABLE public.support_tickets ADD CONSTRAINT support_tickets_account_id_fkey FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-
--- public.task_assignments
-ALTER TABLE public.task_assignments DROP CONSTRAINT IF EXISTS task_assignments_catalog_id_fkey;
-ALTER TABLE public.task_assignments ADD CONSTRAINT task_assignments_catalog_id_fkey FOREIGN KEY (catalog_id) REFERENCES public.task_catalog(id) ON DELETE CASCADE;
-ALTER TABLE public.task_assignments DROP CONSTRAINT IF EXISTS task_assignments_squad_id_fkey;
-ALTER TABLE public.task_assignments ADD CONSTRAINT task_assignments_squad_id_fkey FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE SET NULL;
-
--- public.tasks
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_client_id_fkey;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE;
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_sale_id_fkey;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_salesperson_id_fkey;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_source_insight_id_fkey;
-ALTER TABLE public.tasks ADD CONSTRAINT tasks_source_insight_id_fkey FOREIGN KEY (source_insight_id) REFERENCES public.win_loss_insights(id) ON DELETE SET NULL;
-
--- public.team_closers
-ALTER TABLE public.team_closers DROP CONSTRAINT IF EXISTS team_closers_closer_id_fkey;
-ALTER TABLE public.team_closers ADD CONSTRAINT team_closers_closer_id_fkey FOREIGN KEY (closer_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.team_closers DROP CONSTRAINT IF EXISTS team_closers_team_id_fkey;
-ALTER TABLE public.team_closers ADD CONSTRAINT team_closers_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE CASCADE;
-
--- public.team_custom_fields
-ALTER TABLE public.team_custom_fields DROP CONSTRAINT IF EXISTS team_custom_fields_team_id_fkey;
-ALTER TABLE public.team_custom_fields ADD CONSTRAINT team_custom_fields_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE CASCADE;
-
--- public.teams
-ALTER TABLE public.teams DROP CONSTRAINT IF EXISTS teams_deleted_by_fkey;
-ALTER TABLE public.teams ADD CONSTRAINT teams_deleted_by_fkey FOREIGN KEY (deleted_by) REFERENCES auth.users(id);
-ALTER TABLE public.teams DROP CONSTRAINT IF EXISTS teams_sdr_id_fkey;
-ALTER TABLE public.teams ADD CONSTRAINT teams_sdr_id_fkey FOREIGN KEY (sdr_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.territories
-ALTER TABLE public.territories DROP CONSTRAINT IF EXISTS territories_current_owner_id_fkey;
-ALTER TABLE public.territories ADD CONSTRAINT territories_current_owner_id_fkey FOREIGN KEY (current_owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.territory_history
-ALTER TABLE public.territory_history DROP CONSTRAINT IF EXISTS territory_history_salesperson_id_fkey;
-ALTER TABLE public.territory_history ADD CONSTRAINT territory_history_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.territory_history DROP CONSTRAINT IF EXISTS territory_history_territory_id_fkey;
-ALTER TABLE public.territory_history ADD CONSTRAINT territory_history_territory_id_fkey FOREIGN KEY (territory_id) REFERENCES public.territories(id) ON DELETE CASCADE;
-
--- public.tournament_matches
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_player1_id_fkey;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_player1_id_fkey FOREIGN KEY (player1_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_player2_id_fkey;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_player2_id_fkey FOREIGN KEY (player2_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_tournament_id_fkey;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_tournament_id_fkey FOREIGN KEY (tournament_id) REFERENCES public.tournaments(id) ON DELETE CASCADE;
-ALTER TABLE public.tournament_matches DROP CONSTRAINT IF EXISTS tournament_matches_winner_id_fkey;
-ALTER TABLE public.tournament_matches ADD CONSTRAINT tournament_matches_winner_id_fkey FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.tournament_participants
-ALTER TABLE public.tournament_participants DROP CONSTRAINT IF EXISTS tournament_participants_salesperson_id_fkey;
-ALTER TABLE public.tournament_participants ADD CONSTRAINT tournament_participants_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.tournament_participants DROP CONSTRAINT IF EXISTS tournament_participants_tournament_id_fkey;
-ALTER TABLE public.tournament_participants ADD CONSTRAINT tournament_participants_tournament_id_fkey FOREIGN KEY (tournament_id) REFERENCES public.tournaments(id) ON DELETE CASCADE;
-
--- public.tournaments
-ALTER TABLE public.tournaments DROP CONSTRAINT IF EXISTS tournaments_created_by_fkey;
-ALTER TABLE public.tournaments ADD CONSTRAINT tournaments_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.twilio_call_sessions
-ALTER TABLE public.twilio_call_sessions DROP CONSTRAINT IF EXISTS twilio_call_sessions_queue_item_id_fkey;
-ALTER TABLE public.twilio_call_sessions ADD CONSTRAINT twilio_call_sessions_queue_item_id_fkey FOREIGN KEY (queue_item_id) REFERENCES public.dialer_queue_items(id) ON DELETE SET NULL;
-ALTER TABLE public.twilio_call_sessions DROP CONSTRAINT IF EXISTS twilio_call_sessions_sale_id_fkey;
-ALTER TABLE public.twilio_call_sessions ADD CONSTRAINT twilio_call_sessions_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL;
-
--- public.user_2fa
-ALTER TABLE public.user_2fa DROP CONSTRAINT IF EXISTS user_2fa_user_id_fkey;
-ALTER TABLE public.user_2fa ADD CONSTRAINT user_2fa_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.user_2fa_backup_codes
-ALTER TABLE public.user_2fa_backup_codes DROP CONSTRAINT IF EXISTS user_2fa_backup_codes_user_id_fkey;
-ALTER TABLE public.user_2fa_backup_codes ADD CONSTRAINT user_2fa_backup_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.user_2fa_log
-ALTER TABLE public.user_2fa_log DROP CONSTRAINT IF EXISTS user_2fa_log_user_id_fkey;
-ALTER TABLE public.user_2fa_log ADD CONSTRAINT user_2fa_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.user_app_settings
-ALTER TABLE public.user_app_settings DROP CONSTRAINT IF EXISTS user_app_settings_user_id_fkey;
-ALTER TABLE public.user_app_settings ADD CONSTRAINT user_app_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.user_mfa_settings
-ALTER TABLE public.user_mfa_settings DROP CONSTRAINT IF EXISTS user_mfa_settings_user_id_fkey;
-ALTER TABLE public.user_mfa_settings ADD CONSTRAINT user_mfa_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.user_roles
-ALTER TABLE public.user_roles DROP CONSTRAINT IF EXISTS user_roles_user_id_fkey;
-ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.v4_callback_dead_letters
-ALTER TABLE public.v4_callback_dead_letters DROP CONSTRAINT IF EXISTS v4_callback_dead_letters_quote_id_fkey;
-ALTER TABLE public.v4_callback_dead_letters ADD CONSTRAINT v4_callback_dead_letters_quote_id_fkey FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE SET NULL;
-
--- public.victory_feed
-ALTER TABLE public.victory_feed DROP CONSTRAINT IF EXISTS victory_feed_salesperson_id_fkey;
-ALTER TABLE public.victory_feed ADD CONSTRAINT victory_feed_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.webauthn_challenges
-ALTER TABLE public.webauthn_challenges DROP CONSTRAINT IF EXISTS fk_webauthn_challenges_user_id;
-ALTER TABLE public.webauthn_challenges ADD CONSTRAINT fk_webauthn_challenges_user_id FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.webauthn_credentials
-ALTER TABLE public.webauthn_credentials DROP CONSTRAINT IF EXISTS fk_webauthn_credentials_user_id;
-ALTER TABLE public.webauthn_credentials ADD CONSTRAINT fk_webauthn_credentials_user_id FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
--- public.webhook_allowed_domains
-ALTER TABLE public.webhook_allowed_domains DROP CONSTRAINT IF EXISTS webhook_allowed_domains_created_by_fkey;
-ALTER TABLE public.webhook_allowed_domains ADD CONSTRAINT webhook_allowed_domains_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.webhook_deliveries
-ALTER TABLE public.webhook_deliveries DROP CONSTRAINT IF EXISTS webhook_deliveries_webhook_id_fkey;
-ALTER TABLE public.webhook_deliveries ADD CONSTRAINT webhook_deliveries_webhook_id_fkey FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE;
-
--- public.webhook_dispatch_rate
-ALTER TABLE public.webhook_dispatch_rate DROP CONSTRAINT IF EXISTS webhook_dispatch_rate_subscription_id_fkey;
-ALTER TABLE public.webhook_dispatch_rate ADD CONSTRAINT webhook_dispatch_rate_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE;
-
--- public.webhook_events
-ALTER TABLE public.webhook_events DROP CONSTRAINT IF EXISTS webhook_events_webhook_id_fkey;
-ALTER TABLE public.webhook_events ADD CONSTRAINT webhook_events_webhook_id_fkey FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE;
-
--- public.webhook_logs
-ALTER TABLE public.webhook_logs DROP CONSTRAINT IF EXISTS webhook_logs_webhook_id_fkey;
-ALTER TABLE public.webhook_logs ADD CONSTRAINT webhook_logs_webhook_id_fkey FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE;
-
--- public.webhooks
-ALTER TABLE public.webhooks DROP CONSTRAINT IF EXISTS webhooks_created_by_fkey;
-ALTER TABLE public.webhooks ADD CONSTRAINT webhooks_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.website_visitor_logs
-ALTER TABLE public.website_visitor_logs DROP CONSTRAINT IF EXISTS website_visitor_logs_consent_record_id_fkey;
-ALTER TABLE public.website_visitor_logs ADD CONSTRAINT website_visitor_logs_consent_record_id_fkey FOREIGN KEY (consent_record_id) REFERENCES public.consent_records(id) ON DELETE SET NULL;
-
--- public.weekly_matchups
-ALTER TABLE public.weekly_matchups DROP CONSTRAINT IF EXISTS weekly_matchups_salesperson_a_id_fkey;
-ALTER TABLE public.weekly_matchups ADD CONSTRAINT weekly_matchups_salesperson_a_id_fkey FOREIGN KEY (salesperson_a_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.weekly_matchups DROP CONSTRAINT IF EXISTS weekly_matchups_salesperson_b_id_fkey;
-ALTER TABLE public.weekly_matchups ADD CONSTRAINT weekly_matchups_salesperson_b_id_fkey FOREIGN KEY (salesperson_b_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-ALTER TABLE public.weekly_matchups DROP CONSTRAINT IF EXISTS weekly_matchups_winner_id_fkey;
-ALTER TABLE public.weekly_matchups ADD CONSTRAINT weekly_matchups_winner_id_fkey FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL;
-
--- public.whatsapp_conversations
-ALTER TABLE public.whatsapp_conversations DROP CONSTRAINT IF EXISTS whatsapp_conversations_sale_id_fkey;
-ALTER TABLE public.whatsapp_conversations ADD CONSTRAINT whatsapp_conversations_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-ALTER TABLE public.whatsapp_conversations DROP CONSTRAINT IF EXISTS whatsapp_conversations_sender_id_fkey;
-ALTER TABLE public.whatsapp_conversations ADD CONSTRAINT whatsapp_conversations_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.win_loss_analyses
-ALTER TABLE public.win_loss_analyses DROP CONSTRAINT IF EXISTS win_loss_analyses_sale_id_fkey;
-ALTER TABLE public.win_loss_analyses ADD CONSTRAINT win_loss_analyses_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.win_loss_insight_comments
-ALTER TABLE public.win_loss_insight_comments DROP CONSTRAINT IF EXISTS win_loss_insight_comments_insight_id_fkey;
-ALTER TABLE public.win_loss_insight_comments ADD CONSTRAINT win_loss_insight_comments_insight_id_fkey FOREIGN KEY (insight_id) REFERENCES public.win_loss_insights(id) ON DELETE CASCADE;
-
--- public.win_probability_deal_calibrations
-ALTER TABLE public.win_probability_deal_calibrations DROP CONSTRAINT IF EXISTS win_probability_deal_calibrations_sale_id_fkey;
-ALTER TABLE public.win_probability_deal_calibrations ADD CONSTRAINT win_probability_deal_calibrations_sale_id_fkey FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE;
-
--- public.winloss_alert_settings
-ALTER TABLE public.winloss_alert_settings DROP CONSTRAINT IF EXISTS winloss_alert_settings_updated_by_fkey;
-ALTER TABLE public.winloss_alert_settings ADD CONSTRAINT winloss_alert_settings_updated_by_fkey FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- public.winloss_webhook_alerts
-ALTER TABLE public.winloss_webhook_alerts DROP CONSTRAINT IF EXISTS winloss_webhook_alerts_subscription_id_fkey;
-ALTER TABLE public.winloss_webhook_alerts ADD CONSTRAINT winloss_webhook_alerts_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE;
-
--- public.winloss_webhook_dead_letters
-ALTER TABLE public.winloss_webhook_dead_letters DROP CONSTRAINT IF EXISTS winloss_webhook_dead_letters_subscription_id_fkey;
-ALTER TABLE public.winloss_webhook_dead_letters ADD CONSTRAINT winloss_webhook_dead_letters_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE;
-
--- public.winloss_webhook_deliveries
-ALTER TABLE public.winloss_webhook_deliveries DROP CONSTRAINT IF EXISTS winloss_webhook_deliveries_subscription_id_fkey;
-ALTER TABLE public.winloss_webhook_deliveries ADD CONSTRAINT winloss_webhook_deliveries_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE;
-
--- public.winloss_webhook_replay_audit
-ALTER TABLE public.winloss_webhook_replay_audit DROP CONSTRAINT IF EXISTS winloss_webhook_replay_audit_dead_letter_id_fkey;
-ALTER TABLE public.winloss_webhook_replay_audit ADD CONSTRAINT winloss_webhook_replay_audit_dead_letter_id_fkey FOREIGN KEY (dead_letter_id) REFERENCES public.winloss_webhook_dead_letters(id) ON DELETE CASCADE;
-
--- public.workflow_executions
-ALTER TABLE public.workflow_executions DROP CONSTRAINT IF EXISTS workflow_executions_workflow_id_fkey;
-ALTER TABLE public.workflow_executions ADD CONSTRAINT workflow_executions_workflow_id_fkey FOREIGN KEY (workflow_id) REFERENCES public.workflows(id) ON DELETE CASCADE;
-
--- public.workflow_rules
-ALTER TABLE public.workflow_rules DROP CONSTRAINT IF EXISTS workflow_rules_salesperson_id_fkey;
-ALTER TABLE public.workflow_rules ADD CONSTRAINT workflow_rules_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
-
--- public.xp_adjustments
-ALTER TABLE public.xp_adjustments DROP CONSTRAINT IF EXISTS xp_adjustments_related_assignment_id_fkey;
-ALTER TABLE public.xp_adjustments ADD CONSTRAINT xp_adjustments_related_assignment_id_fkey FOREIGN KEY (related_assignment_id) REFERENCES public.task_assignments(id) ON DELETE SET NULL;
-
--- public.xp_history
-ALTER TABLE public.xp_history DROP CONSTRAINT IF EXISTS xp_history_salesperson_id_fkey;
-ALTER TABLE public.xp_history ADD CONSTRAINT xp_history_salesperson_id_fkey FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE;
+-- estas FKs aplicam normalmente; numa base Postgres vazia sem o schema auth elas falham --
+-- agora como WARNING nominal, nao como erro que aborta.
+--
+-- REEXECUTAVEL SEM DROP (corrige P2 da PR 548). A versao anterior emitia, por FK,
+--   ALTER TABLE ... DROP CONSTRAINT IF EXISTS c; ALTER TABLE ... ADD CONSTRAINT c ...;
+--   mesma classe de defeito do 40-constraints.sql: DROP+ADD nao e reexecutavel e, com
+--   ON_ERROR_STOP=1, uma 2a aplicacao morria antes das secoes finais do dump.
+-- Agora consulta o catalogo antes de agir, por (conrelid, conname):
+--   AUSENTE                                  -> ADD CONSTRAINT
+--   PRESENTE com pg_get_constraintdef igual  -> nao faz nada
+--   PRESENTE com definicao diferente         -> RAISE WARNING nomeando a constraint e as
+--     duas definicoes, e NAO TOCA.
+-- search_path fixado em '' (transacao) antes da leitura: OBRIGATORIO aqui. Com 'public' no
+--   path, pg_get_constraintdef devolve 'REFERENCES accounts(id)' em vez de
+--   'REFERENCES public.accounts(id)', e a comparacao acusaria as 420 FKs como divergentes
+--   (medido em producao). O texto de producao foi extraido com path vazio e e sempre
+--   qualificado, logo o ADD tambem roda com path vazio.
+-- Um unico bloco DO com laco sobre VALUES (mesmo padrao de 92-objetos-app-plataforma.sql e
+--   99-agendamentos-cron.sql); cada ADD e a leitura do catalogo em BEGIN ... EXCEPTION
+--   proprios, porque to_regclass ERRA (nao devolve NULL) sem USAGE no schema.
+-- Nao emite nenhum DROP: aplicar este arquivo nunca remove FK do alvo.
+
+DO $do$
+DECLARE
+  r        record;
+  alvo     oid;
+  atual    text;
+  erro     boolean;
+  sp_ant   text;
+  criadas  int := 0;
+  iguais   int := 0;
+  difere   int := 0;
+  pulou    int := 0;
+BEGIN
+  sp_ant := current_setting('search_path');
+  PERFORM set_config('search_path', '', true);
+  FOR r IN SELECT * FROM (VALUES
+    -- public.account_activities
+    ($q$public$q$, $q$account_activities$q$, $q$account_activities_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$account_activities$q$, $q$account_activities_contact_id_fkey$q$, $q$FOREIGN KEY (contact_id) REFERENCES public.account_contacts(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$account_activities$q$, $q$account_activities_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.account_contacts
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$account_contacts$q$, $q$account_contacts_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    -- public.account_plans
+    ($q$public$q$, $q$account_plans$q$, $q$account_plans_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$account_plans$q$, $q$account_plans_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.accounts
+    ($q$public$q$, $q$accounts$q$, $q$accounts_owner_id_fkey$q$, $q$FOREIGN KEY (owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$accounts$q$, $q$accounts_parent_account_id_fkey$q$, $q$FOREIGN KEY (parent_account_id) REFERENCES public.accounts(id) ON DELETE SET NULL$q$),
+    -- public.achievements
+    ($q$public$q$, $q$achievements$q$, $q$achievements_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT$q$),
+    -- public.active_power_ups
+    ($q$public$q$, $q$active_power_ups$q$, $q$active_power_ups_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.active_sessions
+    ($q$public$q$, $q$active_sessions$q$, $q$active_sessions_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.activities
+    ($q$public$q$, $q$activities$q$, $q$activities_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$activities$q$, $q$activities_deleted_by_fkey$q$, $q$FOREIGN KEY (deleted_by) REFERENCES auth.users(id)$q$),
+    ($q$public$q$, $q$activities$q$, $q$activities_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$activities$q$, $q$activities_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.activity_audit_logs
+    ($q$public$q$, $q$activity_audit_logs$q$, $q$activity_audit_logs_activity_id_fkey$q$, $q$FOREIGN KEY (activity_id) REFERENCES public.activities(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$activity_audit_logs$q$, $q$activity_audit_logs_changed_by_fkey$q$, $q$FOREIGN KEY (changed_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.activity_goals
+    ($q$public$q$, $q$activity_goals$q$, $q$activity_goals_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT$q$),
+    -- public.agenda_events
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$agenda_events$q$, $q$agenda_events_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.ai_agent_actions
+    ($q$public$q$, $q$ai_agent_actions$q$, $q$ai_agent_actions_run_id_fkey$q$, $q$FOREIGN KEY (run_id) REFERENCES public.ai_agent_runs(id) ON DELETE CASCADE$q$),
+    -- public.ai_sales_insights
+    ($q$public$q$, $q$ai_sales_insights$q$, $q$ai_sales_insights_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.api_tokens
+    ($q$public$q$, $q$api_tokens$q$, $q$api_tokens_team_id_fkey$q$, $q$FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE SET NULL$q$),
+    -- public.approval_decisions
+    ($q$public$q$, $q$approval_decisions$q$, $q$approval_decisions_approver_id_fkey$q$, $q$FOREIGN KEY (approver_id) REFERENCES auth.users(id) ON DELETE RESTRICT$q$),
+    ($q$public$q$, $q$approval_decisions$q$, $q$approval_decisions_request_id_fkey$q$, $q$FOREIGN KEY (request_id) REFERENCES public.approval_requests(id) ON DELETE CASCADE$q$),
+    -- public.approval_requests
+    ($q$public$q$, $q$approval_requests$q$, $q$approval_requests_deal_id_fkey$q$, $q$FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$approval_requests$q$, $q$approval_requests_requester_id_fkey$q$, $q$FOREIGN KEY (requester_id) REFERENCES auth.users(id)$q$),
+    ($q$public$q$, $q$approval_requests$q$, $q$approval_requests_workflow_id_fkey$q$, $q$FOREIGN KEY (workflow_id) REFERENCES public.approval_workflows(id) ON DELETE CASCADE$q$),
+    -- public.approval_workflows
+    ($q$public$q$, $q$approval_workflows$q$, $q$approval_workflows_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.asset_usage_logs
+    ($q$public$q$, $q$asset_usage_logs$q$, $q$asset_usage_logs_asset_id_fkey$q$, $q$FOREIGN KEY (asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE CASCADE$q$),
+    -- public.audit_log
+    ($q$public$q$, $q$audit_log$q$, $q$audit_log_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.automation_runs
+    ($q$public$q$, $q$automation_runs$q$, $q$automation_runs_workflow_id_fkey$q$, $q$FOREIGN KEY (workflow_id) REFERENCES public.automation_workflows(id) ON DELETE CASCADE$q$),
+    -- public.automation_workflows
+    ($q$public$q$, $q$automation_workflows$q$, $q$automation_workflows_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.available_spins
+    ($q$public$q$, $q$available_spins$q$, $q$available_spins_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.battle_participants
+    ($q$public$q$, $q$battle_participants$q$, $q$battle_participants_battle_id_fkey$q$, $q$FOREIGN KEY (battle_id) REFERENCES public.sales_battles(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$battle_participants$q$, $q$battle_participants_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.blocked_ips
+    ($q$public$q$, $q$blocked_ips$q$, $q$blocked_ips_blocked_by_fkey$q$, $q$FOREIGN KEY (blocked_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.buying_committee
+    ($q$public$q$, $q$buying_committee$q$, $q$buying_committee_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.buying_committee_members
+    ($q$public$q$, $q$buying_committee_members$q$, $q$buying_committee_members_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.buying_signals
+    ($q$public$q$, $q$buying_signals$q$, $q$buying_signals_company_id_fkey$q$, $q$FOREIGN KEY (company_id) REFERENCES public.enriched_company_intelligence(id) ON DELETE CASCADE$q$),
+    -- public.cadence_ab_assignments
+    ($q$public$q$, $q$cadence_ab_assignments$q$, $q$cadence_ab_assignments_ab_test_id_fkey$q$, $q$FOREIGN KEY (ab_test_id) REFERENCES public.cadence_ab_tests(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$cadence_ab_assignments$q$, $q$cadence_ab_assignments_prospect_cadence_id_fkey$q$, $q$FOREIGN KEY (prospect_cadence_id) REFERENCES public.prospect_cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_ab_tests
+    ($q$public$q$, $q$cadence_ab_tests$q$, $q$cadence_ab_tests_variant_a_id_fkey$q$, $q$FOREIGN KEY (variant_a_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$cadence_ab_tests$q$, $q$cadence_ab_tests_variant_b_id_fkey$q$, $q$FOREIGN KEY (variant_b_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_advanced_stats
+    ($q$public$q$, $q$cadence_advanced_stats$q$, $q$cadence_advanced_stats_cadence_id_fkey$q$, $q$FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_enrollment_rules
+    ($q$public$q$, $q$cadence_enrollment_rules$q$, $q$cadence_enrollment_rules_cadence_id_fkey$q$, $q$FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_funnel_rules
+    ($q$public$q$, $q$cadence_funnel_rules$q$, $q$cadence_funnel_rules_cadence_id_fkey$q$, $q$FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_outcome_rules
+    ($q$public$q$, $q$cadence_outcome_rules$q$, $q$cadence_outcome_rules_email_template_id_fkey$q$, $q$FOREIGN KEY (email_template_id) REFERENCES public.cadence_alert_templates(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$cadence_outcome_rules$q$, $q$cadence_outcome_rules_push_template_id_fkey$q$, $q$FOREIGN KEY (push_template_id) REFERENCES public.cadence_alert_templates(id) ON DELETE SET NULL$q$),
+    -- public.cadence_steps
+    ($q$public$q$, $q$cadence_steps$q$, $q$cadence_steps_cadence_id_fkey$q$, $q$FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    -- public.cadence_tasks
+    ($q$public$q$, $q$cadence_tasks$q$, $q$cadence_tasks_cadence_step_id_fkey$q$, $q$FOREIGN KEY (cadence_step_id) REFERENCES public.cadence_steps(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$cadence_tasks$q$, $q$cadence_tasks_prospect_cadence_id_fkey$q$, $q$FOREIGN KEY (prospect_cadence_id) REFERENCES public.prospect_cadences(id) ON DELETE CASCADE$q$),
+    -- public.call_coaching_scorecards
+    ($q$public$q$, $q$call_coaching_scorecards$q$, $q$call_coaching_scorecards_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_conversation_metrics
+    ($q$public$q$, $q$call_conversation_metrics$q$, $q$call_conversation_metrics_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_critical_moments
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$call_critical_moments$q$, $q$call_critical_moments_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.call_insights
+    ($q$public$q$, $q$call_insights$q$, $q$call_insights_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_intelligence_triggers
+    ($q$public$q$, $q$call_intelligence_triggers$q$, $q$call_intelligence_triggers_target_asset_id_fkey$q$, $q$FOREIGN KEY (target_asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE SET NULL$q$),
+    -- public.call_logs
+    ($q$public$q$, $q$call_logs$q$, $q$call_logs_queue_item_id_fkey$q$, $q$FOREIGN KEY (queue_item_id) REFERENCES public.dialer_queue_items(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$call_logs$q$, $q$call_logs_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    -- public.call_objection_analysis
+    ($q$public$q$, $q$call_objection_analysis$q$, $q$call_objection_analysis_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_objections
+    ($q$public$q$, $q$call_objections$q$, $q$call_objections_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_question_analysis
+    ($q$public$q$, $q$call_question_analysis$q$, $q$call_question_analysis_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_questions
+    ($q$public$q$, $q$call_questions$q$, $q$call_questions_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_recordings
+    ($q$public$q$, $q$call_recordings$q$, $q$call_recordings_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$call_recordings$q$, $q$call_recordings_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$call_recordings$q$, $q$call_recordings_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.call_sentiment_timeline
+    ($q$public$q$, $q$call_sentiment_timeline$q$, $q$call_sentiment_timeline_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.call_transcripts
+    ($q$public$q$, $q$call_transcripts$q$, $q$call_transcripts_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.campaign_health_alerts
+    ($q$public$q$, $q$campaign_health_alerts$q$, $q$campaign_health_alerts_job_id_fkey$q$, $q$FOREIGN KEY (job_id) REFERENCES public.email_bulk_jobs(id) ON DELETE CASCADE$q$),
+    -- public.challenge_progress
+    ($q$public$q$, $q$challenge_progress$q$, $q$challenge_progress_challenge_id_fkey$q$, $q$FOREIGN KEY (challenge_id) REFERENCES public.weekly_challenges(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$challenge_progress$q$, $q$challenge_progress_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.channel_interactions
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_deal_id_fkey$q$, $q$FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$channel_interactions$q$, $q$channel_interactions_template_id_fkey$q$, $q$FOREIGN KEY (template_id) REFERENCES public.message_templates(id) ON DELETE SET NULL$q$),
+    -- public.chat_conversations
+    ($q$public$q$, $q$chat_conversations$q$, $q$chat_conversations_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.chat_messages
+    ($q$public$q$, $q$chat_messages$q$, $q$chat_messages_conversation_id_fkey$q$, $q$FOREIGN KEY (conversation_id) REFERENCES public.chat_conversations(id) ON DELETE CASCADE$q$),
+    -- public.client_churn_alerts_state
+    ($q$public$q$, $q$client_churn_alerts_state$q$, $q$client_churn_alerts_state_last_task_id_fkey$q$, $q$FOREIGN KEY (last_task_id) REFERENCES public.tasks(id) ON DELETE SET NULL$q$),
+    -- public.client_interactions
+    ($q$public$q$, $q$client_interactions$q$, $q$client_interactions_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$client_interactions$q$, $q$client_interactions_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.client_portfolio
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_assigned_by_fkey$q$, $q$FOREIGN KEY (assigned_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$client_portfolio$q$, $q$client_portfolio_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.client_renewals
+    ($q$public$q$, $q$client_renewals$q$, $q$client_renewals_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    -- public.clients
+    ($q$public$q$, $q$clients$q$, $q$clients_deleted_by_fkey$q$, $q$FOREIGN KEY (deleted_by) REFERENCES auth.users(id)$q$),
+    ($q$public$q$, $q$clients$q$, $q$clients_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.coaching_actions
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$coaching_actions$q$, $q$coaching_actions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.coaching_opportunities
+    ($q$public$q$, $q$coaching_opportunities$q$, $q$coaching_opportunities_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.coaching_sessions
+    ($q$public$q$, $q$coaching_sessions$q$, $q$coaching_sessions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.combo_tracking
+    ($q$public$q$, $q$combo_tracking$q$, $q$combo_tracking_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.commercial_approval_requests
+    ($q$public$q$, $q$commercial_approval_requests$q$, $q$commercial_approval_requests_approver_id_fkey$q$, $q$FOREIGN KEY (approver_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$commercial_approval_requests$q$, $q$commercial_approval_requests_requester_id_fkey$q$, $q$FOREIGN KEY (requester_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.commission_bonus_awards
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_bonus_id_fkey$q$, $q$FOREIGN KEY (bonus_id) REFERENCES public.commission_bonuses(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$commission_bonus_awards$q$, $q$commission_bonus_awards_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.commission_bonuses
+    ($q$public$q$, $q$commission_bonuses$q$, $q$commission_bonuses_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.commission_rules
+    ($q$public$q$, $q$commission_rules$q$, $q$commission_rules_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.commissions
+    ($q$public$q$, $q$commissions$q$, $q$commissions_rule_id_fkey$q$, $q$FOREIGN KEY (rule_id) REFERENCES public.commission_rules(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$commissions$q$, $q$commissions_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$commissions$q$, $q$commissions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.committee_coverage_history
+    ($q$public$q$, $q$committee_coverage_history$q$, $q$committee_coverage_history_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.committee_extraction_runs
+    ($q$public$q$, $q$committee_extraction_runs$q$, $q$committee_extraction_runs_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$committee_extraction_runs$q$, $q$committee_extraction_runs_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.competitive_chat_messages
+    ($q$public$q$, $q$competitive_chat_messages$q$, $q$competitive_chat_messages_matchup_id_fkey$q$, $q$FOREIGN KEY (matchup_id) REFERENCES public.weekly_matchups(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$competitive_chat_messages$q$, $q$competitive_chat_messages_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$competitive_chat_messages$q$, $q$competitive_chat_messages_target_salesperson_id_fkey$q$, $q$FOREIGN KEY (target_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.competitor_mentions
+    ($q$public$q$, $q$competitor_mentions$q$, $q$competitor_mentions_competitor_id_fkey$q$, $q$FOREIGN KEY (competitor_id) REFERENCES public.competitors_registry(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$competitor_mentions$q$, $q$competitor_mentions_recording_id_fkey$q$, $q$FOREIGN KEY (recording_id) REFERENCES public.call_recordings(id) ON DELETE CASCADE$q$),
+    -- public.competitors_pricing
+    ($q$public$q$, $q$competitors_pricing$q$, $q$competitors_pricing_competitor_id_fkey$q$, $q$FOREIGN KEY (competitor_id) REFERENCES public.competitors_registry(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$competitors_pricing$q$, $q$competitors_pricing_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.consent_records
+    ($q$public$q$, $q$consent_records$q$, $q$consent_records_subject_client_id_fkey$q$, $q$FOREIGN KEY (subject_client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$consent_records$q$, $q$consent_records_subject_id_fkey$q$, $q$FOREIGN KEY (subject_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.conversation_analyses
+    ($q$public$q$, $q$conversation_analyses$q$, $q$conversation_analyses_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.critical_moment_notifications
+    ($q$public$q$, $q$critical_moment_notifications$q$, $q$critical_moment_notifications_moment_id_fkey$q$, $q$FOREIGN KEY (moment_id) REFERENCES public.call_critical_moments(id) ON DELETE CASCADE$q$),
+    -- public.cs_tickets
+    ($q$public$q$, $q$cs_tickets$q$, $q$cs_tickets_assigned_to_fkey$q$, $q$FOREIGN KEY (assigned_to) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$cs_tickets$q$, $q$cs_tickets_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    -- public.csat_ces_surveys
+    ($q$public$q$, $q$csat_ces_surveys$q$, $q$csat_ces_surveys_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    -- public.daily_challenge_progress
+    ($q$public$q$, $q$daily_challenge_progress$q$, $q$daily_challenge_progress_challenge_id_fkey$q$, $q$FOREIGN KEY (challenge_id) REFERENCES public.daily_challenges(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$daily_challenge_progress$q$, $q$daily_challenge_progress_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.daily_streak_achievements
+    ($q$public$q$, $q$daily_streak_achievements$q$, $q$daily_streak_achievements_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.dashboard_layouts
+    ($q$public$q$, $q$dashboard_layouts$q$, $q$dashboard_layouts_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.data_access_log
+    ($q$public$q$, $q$data_access_log$q$, $q$data_access_log_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.data_subject_requests
+    ($q$public$q$, $q$data_subject_requests$q$, $q$data_subject_requests_subject_client_id_fkey$q$, $q$FOREIGN KEY (subject_client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$data_subject_requests$q$, $q$data_subject_requests_subject_id_fkey$q$, $q$FOREIGN KEY (subject_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.deal_chat_history
+    ($q$public$q$, $q$deal_chat_history$q$, $q$deal_chat_history_deal_id_fkey$q$, $q$FOREIGN KEY (deal_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$deal_chat_history$q$, $q$deal_chat_history_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.deal_committee_coverage
+    ($q$public$q$, $q$deal_committee_coverage$q$, $q$deal_committee_coverage_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_health_history
+    ($q$public$q$, $q$deal_health_history$q$, $q$deal_health_history_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_health_scores
+    ($q$public$q$, $q$deal_health_scores$q$, $q$deal_health_scores_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_outcomes
+    ($q$public$q$, $q$deal_outcomes$q$, $q$deal_outcomes_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$deal_outcomes$q$, $q$deal_outcomes_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.deal_probability_scores
+    ($q$public$q$, $q$deal_probability_scores$q$, $q$deal_probability_scores_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_risk_signals
+    ($q$public$q$, $q$deal_risk_signals$q$, $q$deal_risk_signals_resolved_by_fkey$q$, $q$FOREIGN KEY (resolved_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$deal_risk_signals$q$, $q$deal_risk_signals_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_stage_history
+    ($q$public$q$, $q$deal_stage_history$q$, $q$deal_stage_history_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_stage_transitions
+    ($q$public$q$, $q$deal_stage_transitions$q$, $q$deal_stage_transitions_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_stakeholders
+    ($q$public$q$, $q$deal_stakeholders$q$, $q$deal_stakeholders_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_velocity_alerts
+    ($q$public$q$, $q$deal_velocity_alerts$q$, $q$deal_velocity_alerts_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.deal_velocity_predictions
+    ($q$public$q$, $q$deal_velocity_predictions$q$, $q$deal_velocity_predictions_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.demand_forecasts
+    ($q$public$q$, $q$demand_forecasts$q$, $q$demand_forecasts_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.dialer_queue_items
+    ($q$public$q$, $q$dialer_queue_items$q$, $q$dialer_queue_items_queue_id_fkey$q$, $q$FOREIGN KEY (queue_id) REFERENCES public.dialer_queues(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$dialer_queue_items$q$, $q$dialer_queue_items_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.digital_signatures
+    ($q$public$q$, $q$digital_signatures$q$, $q$digital_signatures_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.document_signers
+    ($q$public$q$, $q$document_signers$q$, $q$document_signers_document_id_fkey$q$, $q$FOREIGN KEY (document_id) REFERENCES public.digital_signatures(id) ON DELETE CASCADE$q$),
+    -- public.email_bulk_drafts
+    ($q$public$q$, $q$email_bulk_drafts$q$, $q$email_bulk_drafts_job_id_fkey$q$, $q$FOREIGN KEY (job_id) REFERENCES public.email_bulk_jobs(id) ON DELETE CASCADE$q$),
+    -- public.email_engagement_score_history
+    ($q$public$q$, $q$email_engagement_score_history$q$, $q$email_engagement_score_history_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.email_engagement_scores
+    ($q$public$q$, $q$email_engagement_scores$q$, $q$email_engagement_scores_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.email_tracking_events
+    ($q$public$q$, $q$email_tracking_events$q$, $q$email_tracking_events_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$email_tracking_events$q$, $q$email_tracking_events_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.embedded_report_tokens
+    ($q$public$q$, $q$embedded_report_tokens$q$, $q$embedded_report_tokens_report_id_fkey$q$, $q$FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE$q$),
+    -- public.entity_versions
+    ($q$public$q$, $q$entity_versions$q$, $q$entity_versions_changed_by_fkey$q$, $q$FOREIGN KEY (changed_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.expansion_opportunities
+    ($q$public$q$, $q$expansion_opportunities$q$, $q$expansion_opportunities_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$expansion_opportunities$q$, $q$expansion_opportunities_owner_salesperson_id_fkey$q$, $q$FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$expansion_opportunities$q$, $q$expansion_opportunities_playbook_id_fkey$q$, $q$FOREIGN KEY (playbook_id) REFERENCES public.expansion_playbooks(id) ON DELETE SET NULL$q$),
+    -- public.experiment_assignments
+    ($q$public$q$, $q$experiment_assignments$q$, $q$experiment_assignments_experiment_id_fkey$q$, $q$FOREIGN KEY (experiment_id) REFERENCES public.experiments(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$experiment_assignments$q$, $q$experiment_assignments_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$experiment_assignments$q$, $q$experiment_assignments_variant_id_fkey$q$, $q$FOREIGN KEY (variant_id) REFERENCES public.experiment_variants(id) ON DELETE CASCADE$q$),
+    -- public.experiment_variants
+    ($q$public$q$, $q$experiment_variants$q$, $q$experiment_variants_experiment_id_fkey$q$, $q$FOREIGN KEY (experiment_id) REFERENCES public.experiments(id) ON DELETE CASCADE$q$),
+    -- public.external_seller_map
+    ($q$public$q$, $q$external_seller_map$q$, $q$external_seller_map_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.feed_comments
+    ($q$public$q$, $q$feed_comments$q$, $q$feed_comments_feed_item_id_fkey$q$, $q$FOREIGN KEY (feed_item_id) REFERENCES public.victory_feed(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$feed_comments$q$, $q$feed_comments_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.feed_reactions
+    ($q$public$q$, $q$feed_reactions$q$, $q$feed_reactions_feed_item_id_fkey$q$, $q$FOREIGN KEY (feed_item_id) REFERENCES public.victory_feed(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$feed_reactions$q$, $q$feed_reactions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.follow_up_audit_logs
+    ($q$public$q$, $q$follow_up_audit_logs$q$, $q$follow_up_audit_logs_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$follow_up_audit_logs$q$, $q$follow_up_audit_logs_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.follow_up_notifications
+    ($q$public$q$, $q$follow_up_notifications$q$, $q$follow_up_notifications_audit_log_id_fkey$q$, $q$FOREIGN KEY (audit_log_id) REFERENCES public.follow_up_audit_logs(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$follow_up_notifications$q$, $q$follow_up_notifications_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$follow_up_notifications$q$, $q$follow_up_notifications_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.follow_up_settings
+    ($q$public$q$, $q$follow_up_settings$q$, $q$follow_up_settings_current_whatsapp_version_id_fkey$q$, $q$FOREIGN KEY (current_whatsapp_version_id) REFERENCES public.whatsapp_template_versions(id) ON DELETE SET NULL$q$),
+    -- public.follow_up_templates
+    ($q$public$q$, $q$follow_up_templates$q$, $q$follow_up_templates_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.follow_up_territory_rules
+    ($q$public$q$, $q$follow_up_territory_rules$q$, $q$follow_up_territory_rules_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$follow_up_territory_rules$q$, $q$follow_up_territory_rules_whatsapp_template_id_fkey$q$, $q$FOREIGN KEY (whatsapp_template_id) REFERENCES public.follow_up_templates(id) ON DELETE SET NULL$q$),
+    -- public.forecast_accuracy
+    ($q$public$q$, $q$forecast_accuracy$q$, $q$forecast_accuracy_snapshot_id_fkey$q$, $q$FOREIGN KEY (snapshot_id) REFERENCES public.forecast_snapshots(id) ON DELETE CASCADE$q$),
+    -- public.forecast_deal_contributions
+    ($q$public$q$, $q$forecast_deal_contributions$q$, $q$forecast_deal_contributions_forecast_id_fkey$q$, $q$FOREIGN KEY (forecast_id) REFERENCES public.revenue_forecasts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$forecast_deal_contributions$q$, $q$forecast_deal_contributions_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.geo_blocked_regions
+    ($q$public$q$, $q$geo_blocked_regions$q$, $q$geo_blocked_regions_blocked_by_fkey$q$, $q$FOREIGN KEY (blocked_by) REFERENCES auth.users(id)$q$),
+    -- public.icp_data
+    ($q$public$q$, $q$icp_data$q$, $q$icp_data_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    -- public.inbound_reply_events
+    ($q$public$q$, $q$inbound_reply_events$q$, $q$inbound_reply_events_matched_enrollment_id_fkey$q$, $q$FOREIGN KEY (matched_enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE SET NULL$q$),
+    -- public.integration_health_checks
+    ($q$public$q$, $q$integration_health_checks$q$, $q$integration_health_checks_connection_id_fkey$q$, $q$FOREIGN KEY (connection_id) REFERENCES public.integration_connections(id) ON DELETE CASCADE$q$),
+    -- public.integration_secret_refs
+    ($q$public$q$, $q$integration_secret_refs$q$, $q$integration_secret_refs_credential_id_fkey$q$, $q$FOREIGN KEY (credential_id) REFERENCES public.channel_credentials(id) ON DELETE CASCADE$q$),
+    -- public.inventory_levels
+    ($q$public$q$, $q$inventory_levels$q$, $q$inventory_levels_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.ip_whitelist
+    ($q$public$q$, $q$ip_whitelist$q$, $q$ip_whitelist_added_by_fkey$q$, $q$FOREIGN KEY (added_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.known_devices
+    ($q$public$q$, $q$known_devices$q$, $q$known_devices_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.kudos
+    ($q$public$q$, $q$kudos$q$, $q$kudos_from_salesperson_id_fkey$q$, $q$FOREIGN KEY (from_salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$kudos$q$, $q$kudos_to_salesperson_id_fkey$q$, $q$FOREIGN KEY (to_salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.lead_assignments
+    ($q$public$q$, $q$lead_assignments$q$, $q$lead_assignments_rule_id_fkey$q$, $q$FOREIGN KEY (rule_id) REFERENCES public.lead_routing_rules(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$lead_assignments$q$, $q$lead_assignments_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$lead_assignments$q$, $q$lead_assignments_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.lead_churn_risk
+    ($q$public$q$, $q$lead_churn_risk$q$, $q$lead_churn_risk_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.lead_detailed_logs
+    ($q$public$q$, $q$lead_detailed_logs$q$, $q$lead_detailed_logs_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$lead_detailed_logs$q$, $q$lead_detailed_logs_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.lead_routing_log
+    ($q$public$q$, $q$lead_routing_log$q$, $q$lead_routing_log_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$lead_routing_log$q$, $q$lead_routing_log_from_salesperson_id_fkey$q$, $q$FOREIGN KEY (from_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$lead_routing_log$q$, $q$lead_routing_log_to_salesperson_id_fkey$q$, $q$FOREIGN KEY (to_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.lead_score_explanations
+    ($q$public$q$, $q$lead_score_explanations$q$, $q$lead_score_explanations_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.lead_score_history
+    ($q$public$q$, $q$lead_score_history$q$, $q$lead_score_history_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.lead_scores
+    ($q$public$q$, $q$lead_scores$q$, $q$lead_scores_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.league_history
+    ($q$public$q$, $q$league_history$q$, $q$league_history_league_id_fkey$q$, $q$FOREIGN KEY (league_id) REFERENCES public.leagues(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$league_history$q$, $q$league_history_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.league_members
+    ($q$public$q$, $q$league_members$q$, $q$league_members_league_id_fkey$q$, $q$FOREIGN KEY (league_id) REFERENCES public.leagues(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$league_members$q$, $q$league_members_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.login_alerts
+    ($q$public$q$, $q$login_alerts$q$, $q$login_alerts_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.message_templates
+    ($q$public$q$, $q$message_templates$q$, $q$message_templates_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.mfa_verification_attempts
+    ($q$public$q$, $q$mfa_verification_attempts$q$, $q$mfa_verification_attempts_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.mood_entries
+    ($q$public$q$, $q$mood_entries$q$, $q$mood_entries_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.mql_qualifications
+    ($q$public$q$, $q$mql_qualifications$q$, $q$mql_qualifications_qualified_by_fkey$q$, $q$FOREIGN KEY (qualified_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$mql_qualifications$q$, $q$mql_qualifications_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.nps_surveys
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$nps_surveys$q$, $q$nps_surveys_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.objection_library
+    ($q$public$q$, $q$objection_library$q$, $q$objection_library_best_response_recording_id_fkey$q$, $q$FOREIGN KEY (best_response_recording_id) REFERENCES public.call_recordings(id) ON DELETE SET NULL$q$),
+    -- public.objections_library
+    ($q$public$q$, $q$objections_library$q$, $q$objections_library_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.onboarding_journeys
+    ($q$public$q$, $q$onboarding_journeys$q$, $q$onboarding_journeys_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$onboarding_journeys$q$, $q$onboarding_journeys_owner_salesperson_id_fkey$q$, $q$FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.onboarding_steps
+    ($q$public$q$, $q$onboarding_steps$q$, $q$onboarding_steps_journey_id_fkey$q$, $q$FOREIGN KEY (journey_id) REFERENCES public.onboarding_journeys(id) ON DELETE CASCADE$q$),
+    -- public.order_items
+    ($q$public$q$, $q$order_items$q$, $q$order_items_order_id_fkey$q$, $q$FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE$q$),
+    -- public.order_status_events
+    ($q$public$q$, $q$order_status_events$q$, $q$order_status_events_order_id_fkey$q$, $q$FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE$q$),
+    -- public.orders
+    ($q$public$q$, $q$orders$q$, $q$orders_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$orders$q$, $q$orders_quote_id_fkey$q$, $q$FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$orders$q$, $q$orders_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.outbound_messages
+    ($q$public$q$, $q$outbound_messages$q$, $q$outbound_messages_enrollment_id_fkey$q$, $q$FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$outbound_messages$q$, $q$outbound_messages_step_id_fkey$q$, $q$FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE SET NULL$q$),
+    -- public.page_analytics
+    ($q$public$q$, $q$page_analytics$q$, $q$page_analytics_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.password_history
+    ($q$public$q$, $q$password_history$q$, $q$password_history_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.password_reset_requests
+    ($q$public$q$, $q$password_reset_requests$q$, $q$password_reset_requests_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.performance_bets
+    ($q$public$q$, $q$performance_bets$q$, $q$performance_bets_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.personal_assistant_nudges
+    ($q$public$q$, $q$personal_assistant_nudges$q$, $q$personal_assistant_nudges_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.pipeline_coverage_recommendations
+    ($q$public$q$, $q$pipeline_coverage_recommendations$q$, $q$pipeline_coverage_recommendations_snapshot_id_fkey$q$, $q$FOREIGN KEY (snapshot_id) REFERENCES public.pipeline_coverage_snapshots(id) ON DELETE CASCADE$q$),
+    -- public.pipeline_inspection_snapshots
+    ($q$public$q$, $q$pipeline_inspection_snapshots$q$, $q$pipeline_inspection_snapshots_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.pipeline_inspections
+    ($q$public$q$, $q$pipeline_inspections$q$, $q$pipeline_inspections_inspector_id_fkey$q$, $q$FOREIGN KEY (inspector_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$pipeline_inspections$q$, $q$pipeline_inspections_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.pipeline_stages
+    ($q$public$q$, $q$pipeline_stages$q$, $q$pipeline_stages_pipeline_id_fkey$q$, $q$FOREIGN KEY (pipeline_id) REFERENCES public.pipelines(id) ON DELETE CASCADE$q$),
+    -- public.playbook_items
+    ($q$public$q$, $q$playbook_items$q$, $q$playbook_items_asset_id_fkey$q$, $q$FOREIGN KEY (asset_id) REFERENCES public.sales_enablement_assets(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$playbook_items$q$, $q$playbook_items_playbook_id_fkey$q$, $q$FOREIGN KEY (playbook_id) REFERENCES public.playbooks(id) ON DELETE CASCADE$q$),
+    -- public.playbook_progress
+    ($q$public$q$, $q$playbook_progress$q$, $q$playbook_progress_completed_by_fkey$q$, $q$FOREIGN KEY (completed_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$playbook_progress$q$, $q$playbook_progress_playbook_item_id_fkey$q$, $q$FOREIGN KEY (playbook_item_id) REFERENCES public.playbook_items(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$playbook_progress$q$, $q$playbook_progress_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.price_alerts
+    ($q$public$q$, $q$price_alerts$q$, $q$price_alerts_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$price_alerts$q$, $q$price_alerts_supplier_id_fkey$q$, $q$FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE$q$),
+    -- public.price_history
+    ($q$public$q$, $q$price_history$q$, $q$price_history_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$price_history$q$, $q$price_history_supplier_id_fkey$q$, $q$FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$price_history$q$, $q$price_history_supplier_product_id_fkey$q$, $q$FOREIGN KEY (supplier_product_id) REFERENCES public.supplier_products(id) ON DELETE CASCADE$q$),
+    -- public.price_protection_rules
+    ($q$public$q$, $q$price_protection_rules$q$, $q$price_protection_rules_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.pricing_rules
+    ($q$public$q$, $q$pricing_rules$q$, $q$pricing_rules_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.prize_wheel_spins
+    ($q$public$q$, $q$prize_wheel_spins$q$, $q$prize_wheel_spins_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.product_stock_log
+    ($q$public$q$, $q$product_stock_log$q$, $q$product_stock_log_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.product_usage
+    ($q$public$q$, $q$product_usage$q$, $q$product_usage_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    -- public.product_usage_events
+    ($q$public$q$, $q$product_usage_events$q$, $q$product_usage_events_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    -- public.product_usage_summary
+    ($q$public$q$, $q$product_usage_summary$q$, $q$product_usage_summary_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    -- public.products
+    ($q$public$q$, $q$products$q$, $q$products_deleted_by_fkey$q$, $q$FOREIGN KEY (deleted_by) REFERENCES auth.users(id)$q$),
+    -- public.progressive_goals
+    ($q$public$q$, $q$progressive_goals$q$, $q$progressive_goals_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.prospect_cadences
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_cadence_id_fkey$q$, $q$FOREIGN KEY (cadence_id) REFERENCES public.cadences(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_enrolled_via_rule_id_fkey$q$, $q$FOREIGN KEY (enrolled_via_rule_id) REFERENCES public.cadence_enrollment_rules(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_quote_id_fkey$q$, $q$FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$prospect_cadences$q$, $q$prospect_cadences_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.push_subscriptions
+    ($q$public$q$, $q$push_subscriptions$q$, $q$push_subscriptions_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.qbr_reports
+    ($q$public$q$, $q$qbr_reports$q$, $q$qbr_reports_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.qbr_schedule
+    ($q$public$q$, $q$qbr_schedule$q$, $q$qbr_schedule_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$qbr_schedule$q$, $q$qbr_schedule_owner_salesperson_id_fkey$q$, $q$FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.quota_attainment_actions
+    ($q$public$q$, $q$quota_attainment_actions$q$, $q$quota_attainment_actions_forecast_id_fkey$q$, $q$FOREIGN KEY (forecast_id) REFERENCES public.quota_attainment_forecasts(id) ON DELETE CASCADE$q$),
+    -- public.quota_attainment_alerts
+    ($q$public$q$, $q$quota_attainment_alerts$q$, $q$quota_attainment_alerts_prediction_id_fkey$q$, $q$FOREIGN KEY (prediction_id) REFERENCES public.quota_attainment_predictions(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$quota_attainment_alerts$q$, $q$quota_attainment_alerts_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.quota_attainment_forecasts
+    ($q$public$q$, $q$quota_attainment_forecasts$q$, $q$quota_attainment_forecasts_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.quota_attainment_predictions
+    ($q$public$q$, $q$quota_attainment_predictions$q$, $q$quota_attainment_predictions_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.quote_items
+    ($q$public$q$, $q$quote_items$q$, $q$quote_items_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$quote_items$q$, $q$quote_items_quote_id_fkey$q$, $q$FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE CASCADE$q$),
+    -- public.quotes
+    ($q$public$q$, $q$quotes$q$, $q$quotes_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$quotes$q$, $q$quotes_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$quotes$q$, $q$quotes_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    -- public.race_badges
+    ($q$public$q$, $q$race_badges$q$, $q$race_badges_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_badges$q$, $q$race_badges_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE SET NULL$q$),
+    -- public.race_cars
+    ($q$public$q$, $q$race_cars$q$, $q$race_cars_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.race_daily_snapshots
+    ($q$public$q$, $q$race_daily_snapshots$q$, $q$race_daily_snapshots_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_events
+    ($q$public$q$, $q$race_events$q$, $q$race_events_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_events$q$, $q$race_events_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_powerups
+    ($q$public$q$, $q$race_powerups$q$, $q$race_powerups_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_powerups$q$, $q$race_powerups_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_rivalries_persistent
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_car_id_fkey$q$, $q$FOREIGN KEY (car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_rival_car_id_fkey$q$, $q$FOREIGN KEY (rival_car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_rivalries_persistent$q$, $q$race_rivalries_persistent_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_scoring_rules
+    ($q$public$q$, $q$race_scoring_rules$q$, $q$race_scoring_rules_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_seasons
+    ($q$public$q$, $q$race_seasons$q$, $q$race_seasons_winner_id_fkey$q$, $q$FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.race_team_members
+    ($q$public$q$, $q$race_team_members$q$, $q$race_team_members_car_id_fkey$q$, $q$FOREIGN KEY (car_id) REFERENCES public.race_cars(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_team_members$q$, $q$race_team_members_team_id_fkey$q$, $q$FOREIGN KEY (team_id) REFERENCES public.race_teams(id) ON DELETE CASCADE$q$),
+    -- public.race_teams
+    ($q$public$q$, $q$race_teams$q$, $q$race_teams_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    -- public.race_user_daily_checkins
+    ($q$public$q$, $q$race_user_daily_checkins$q$, $q$race_user_daily_checkins_season_id_fkey$q$, $q$FOREIGN KEY (season_id) REFERENCES public.race_seasons(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$race_user_daily_checkins$q$, $q$race_user_daily_checkins_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.rank_change_notifications
+    ($q$public$q$, $q$rank_change_notifications$q$, $q$rank_change_notifications_overtaken_by_id_fkey$q$, $q$FOREIGN KEY (overtaken_by_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$rank_change_notifications$q$, $q$rank_change_notifications_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.ranking_notifications
+    ($q$public$q$, $q$ranking_notifications$q$, $q$ranking_notifications_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.reauthentication_requests
+    ($q$public$q$, $q$reauthentication_requests$q$, $q$reauthentication_requests_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.renewals
+    ($q$public$q$, $q$renewals$q$, $q$renewals_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$renewals$q$, $q$renewals_owner_salesperson_id_fkey$q$, $q$FOREIGN KEY (owner_salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.report_embed_tokens
+    ($q$public$q$, $q$report_embed_tokens$q$, $q$report_embed_tokens_report_id_fkey$q$, $q$FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE$q$),
+    -- public.report_executions
+    ($q$public$q$, $q$report_executions$q$, $q$report_executions_report_id_fkey$q$, $q$FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$report_executions$q$, $q$report_executions_schedule_id_fkey$q$, $q$FOREIGN KEY (schedule_id) REFERENCES public.report_schedules(id) ON DELETE SET NULL$q$),
+    -- public.report_schedules
+    ($q$public$q$, $q$report_schedules$q$, $q$report_schedules_report_id_fkey$q$, $q$FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE$q$),
+    -- public.revenue_forecasts
+    ($q$public$q$, $q$revenue_forecasts$q$, $q$revenue_forecasts_owner_id_fkey$q$, $q$FOREIGN KEY (owner_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.role_permissions
+    ($q$public$q$, $q$role_permissions$q$, $q$role_permissions_permission_id_fkey$q$, $q$FOREIGN KEY (permission_id) REFERENCES public.permissions(id) ON DELETE CASCADE$q$),
+    -- public.sale_notifications_audit
+    ($q$public$q$, $q$sale_notifications_audit$q$, $q$sale_notifications_audit_recipient_id_fkey$q$, $q$FOREIGN KEY (recipient_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sale_notifications_audit$q$, $q$sale_notifications_audit_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sale_notifications_audit$q$, $q$sale_notifications_audit_seller_id_fkey$q$, $q$FOREIGN KEY (seller_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.sales
+    ($q$public$q$, $q$sales$q$, $q$sales_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_closer_id_fkey$q$, $q$FOREIGN KEY (closer_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_lost_to_competitor_id_fkey$q$, $q$FOREIGN KEY (lost_to_competitor_id) REFERENCES public.competitors_registry(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_pipeline_id_fkey$q$, $q$FOREIGN KEY (pipeline_id) REFERENCES public.pipelines(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_sdr_id_fkey$q$, $q$FOREIGN KEY (sdr_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales$q$, $q$sales_territory_id_fkey$q$, $q$FOREIGN KEY (territory_id) REFERENCES public.territories(id) ON DELETE SET NULL$q$),
+    -- public.sales_battles
+    ($q$public$q$, $q$sales_battles$q$, $q$sales_battles_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sales_battles$q$, $q$sales_battles_winner_id_fkey$q$, $q$FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.sales_goals
+    ($q$public$q$, $q$sales_goals$q$, $q$sales_goals_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE RESTRICT$q$),
+    -- public.sales_streaks
+    ($q$public$q$, $q$sales_streaks$q$, $q$sales_streaks_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.sales_territories
+    ($q$public$q$, $q$sales_territories$q$, $q$sales_territories_current_owner_id_fkey$q$, $q$FOREIGN KEY (current_owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.salespeople
+    ($q$public$q$, $q$salespeople$q$, $q$salespeople_squad_id_fkey$q$, $q$FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE SET NULL$q$),
+    -- public.salesperson_badges
+    ($q$public$q$, $q$salesperson_badges$q$, $q$salesperson_badges_badge_id_fkey$q$, $q$FOREIGN KEY (badge_id) REFERENCES public.collectible_badges(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$salesperson_badges$q$, $q$salesperson_badges_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.salesperson_commission_configs
+    ($q$public$q$, $q$salesperson_commission_configs$q$, $q$salesperson_commission_configs_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.salesperson_custom_field_values
+    ($q$public$q$, $q$salesperson_custom_field_values$q$, $q$salesperson_custom_field_values_field_id_fkey$q$, $q$FOREIGN KEY (field_id) REFERENCES public.team_custom_fields(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$salesperson_custom_field_values$q$, $q$salesperson_custom_field_values_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.salesperson_leagues
+    ($q$public$q$, $q$salesperson_leagues$q$, $q$salesperson_leagues_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.salesperson_preferences
+    ($q$public$q$, $q$salesperson_preferences$q$, $q$salesperson_preferences_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.salesperson_xp
+    ($q$public$q$, $q$salesperson_xp$q$, $q$salesperson_xp_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.saved_filters
+    ($q$public$q$, $q$saved_filters$q$, $q$saved_filters_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.scheduled_report_runs
+    ($q$public$q$, $q$scheduled_report_runs$q$, $q$scheduled_report_runs_schedule_id_fkey$q$, $q$FOREIGN KEY (schedule_id) REFERENCES public.scheduled_reports(id) ON DELETE CASCADE$q$),
+    -- public.scheduled_reports
+    ($q$public$q$, $q$scheduled_reports$q$, $q$scheduled_reports_report_id_fkey$q$, $q$FOREIGN KEY (report_id) REFERENCES public.custom_reports(id) ON DELETE CASCADE$q$),
+    -- public.scheduled_sends
+    ($q$public$q$, $q$scheduled_sends$q$, $q$scheduled_sends_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.score_change_logs
+    ($q$public$q$, $q$score_change_logs$q$, $q$score_change_logs_api_token_id_fkey$q$, $q$FOREIGN KEY (api_token_id) REFERENCES public.api_tokens(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$score_change_logs$q$, $q$score_change_logs_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.sdr_alert_configs
+    ($q$public$q$, $q$sdr_alert_configs$q$, $q$sdr_alert_configs_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.sdr_performance_settings
+    ($q$public$q$, $q$sdr_performance_settings$q$, $q$sdr_performance_settings_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.security_events
+    ($q$public$q$, $q$security_events$q$, $q$security_events_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.send_time_profiles
+    ($q$public$q$, $q$send_time_profiles$q$, $q$send_time_profiles_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.sequence_enrollments
+    ($q$public$q$, $q$sequence_enrollments$q$, $q$sequence_enrollments_sequence_id_fkey$q$, $q$FOREIGN KEY (sequence_id) REFERENCES public.sequences(id) ON DELETE CASCADE$q$),
+    -- public.sequence_step_assignments
+    ($q$public$q$, $q$sequence_step_assignments$q$, $q$sequence_step_assignments_enrollment_id_fkey$q$, $q$FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$sequence_step_assignments$q$, $q$sequence_step_assignments_step_id_fkey$q$, $q$FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$sequence_step_assignments$q$, $q$sequence_step_assignments_variant_id_fkey$q$, $q$FOREIGN KEY (variant_id) REFERENCES public.sequence_step_variants(id) ON DELETE SET NULL$q$),
+    -- public.sequence_step_executions
+    ($q$public$q$, $q$sequence_step_executions$q$, $q$sequence_step_executions_enrollment_id_fkey$q$, $q$FOREIGN KEY (enrollment_id) REFERENCES public.sequence_enrollments(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$sequence_step_executions$q$, $q$sequence_step_executions_step_id_fkey$q$, $q$FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$sequence_step_executions$q$, $q$sequence_step_executions_variant_id_fkey$q$, $q$FOREIGN KEY (variant_id) REFERENCES public.sequence_step_variants(id) ON DELETE SET NULL$q$),
+    -- public.sequence_step_variants
+    ($q$public$q$, $q$sequence_step_variants$q$, $q$sequence_step_variants_step_id_fkey$q$, $q$FOREIGN KEY (step_id) REFERENCES public.sequence_steps(id) ON DELETE CASCADE$q$),
+    -- public.sequence_steps
+    ($q$public$q$, $q$sequence_steps$q$, $q$sequence_steps_sequence_id_fkey$q$, $q$FOREIGN KEY (sequence_id) REFERENCES public.sequences(id) ON DELETE CASCADE$q$),
+    -- public.session_activity
+    ($q$public$q$, $q$session_activity$q$, $q$session_activity_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.skill_assessments
+    ($q$public$q$, $q$skill_assessments$q$, $q$skill_assessments_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.skill_development_tracks
+    ($q$public$q$, $q$skill_development_tracks$q$, $q$skill_development_tracks_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.sla_violations
+    ($q$public$q$, $q$sla_violations$q$, $q$sla_violations_policy_id_fkey$q$, $q$FOREIGN KEY (policy_id) REFERENCES public.sla_policies(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$sla_violations$q$, $q$sla_violations_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.slow_query_alerts
+    ($q$public$q$, $q$slow_query_alerts$q$, $q$slow_query_alerts_acknowledged_by_fkey$q$, $q$FOREIGN KEY (acknowledged_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.sms_verification_codes
+    ($q$public$q$, $q$sms_verification_codes$q$, $q$sms_verification_codes_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.squad_members
+    ($q$public$q$, $q$squad_members$q$, $q$squad_members_squad_id_fkey$q$, $q$FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE CASCADE$q$),
+    -- public.stock_movements
+    ($q$public$q$, $q$stock_movements$q$, $q$stock_movements_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    -- public.supplier_order_items
+    ($q$public$q$, $q$supplier_order_items$q$, $q$supplier_order_items_order_id_fkey$q$, $q$FOREIGN KEY (order_id) REFERENCES public.supplier_orders(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$supplier_order_items$q$, $q$supplier_order_items_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE SET NULL$q$),
+    -- public.supplier_orders
+    ($q$public$q$, $q$supplier_orders$q$, $q$supplier_orders_supplier_id_fkey$q$, $q$FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE$q$),
+    -- public.supplier_products
+    ($q$public$q$, $q$supplier_products$q$, $q$supplier_products_product_id_fkey$q$, $q$FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$supplier_products$q$, $q$supplier_products_supplier_id_fkey$q$, $q$FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE$q$),
+    -- public.supplier_risk_assessments
+    ($q$public$q$, $q$supplier_risk_assessments$q$, $q$supplier_risk_assessments_supplier_id_fkey$q$, $q$FOREIGN KEY (supplier_id) REFERENCES public.suppliers(id) ON DELETE CASCADE$q$),
+    -- public.suppliers
+    ($q$public$q$, $q$suppliers$q$, $q$suppliers_deleted_by_fkey$q$, $q$FOREIGN KEY (deleted_by) REFERENCES auth.users(id)$q$),
+    -- public.support_tickets
+    ($q$public$q$, $q$support_tickets$q$, $q$support_tickets_account_id_fkey$q$, $q$FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE$q$),
+    -- public.task_assignments
+    ($q$public$q$, $q$task_assignments$q$, $q$task_assignments_catalog_id_fkey$q$, $q$FOREIGN KEY (catalog_id) REFERENCES public.task_catalog(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$task_assignments$q$, $q$task_assignments_squad_id_fkey$q$, $q$FOREIGN KEY (squad_id) REFERENCES public.squads(id) ON DELETE SET NULL$q$),
+    -- public.tasks
+    ($q$public$q$, $q$tasks$q$, $q$tasks_client_id_fkey$q$, $q$FOREIGN KEY (client_id) REFERENCES public.clients(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$tasks$q$, $q$tasks_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$tasks$q$, $q$tasks_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$tasks$q$, $q$tasks_source_insight_id_fkey$q$, $q$FOREIGN KEY (source_insight_id) REFERENCES public.win_loss_insights(id) ON DELETE SET NULL$q$),
+    -- public.team_closers
+    ($q$public$q$, $q$team_closers$q$, $q$team_closers_closer_id_fkey$q$, $q$FOREIGN KEY (closer_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$team_closers$q$, $q$team_closers_team_id_fkey$q$, $q$FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE CASCADE$q$),
+    -- public.team_custom_fields
+    ($q$public$q$, $q$team_custom_fields$q$, $q$team_custom_fields_team_id_fkey$q$, $q$FOREIGN KEY (team_id) REFERENCES public.teams(id) ON DELETE CASCADE$q$),
+    -- public.teams
+    ($q$public$q$, $q$teams$q$, $q$teams_deleted_by_fkey$q$, $q$FOREIGN KEY (deleted_by) REFERENCES auth.users(id)$q$),
+    ($q$public$q$, $q$teams$q$, $q$teams_sdr_id_fkey$q$, $q$FOREIGN KEY (sdr_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.territories
+    ($q$public$q$, $q$territories$q$, $q$territories_current_owner_id_fkey$q$, $q$FOREIGN KEY (current_owner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.territory_history
+    ($q$public$q$, $q$territory_history$q$, $q$territory_history_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$territory_history$q$, $q$territory_history_territory_id_fkey$q$, $q$FOREIGN KEY (territory_id) REFERENCES public.territories(id) ON DELETE CASCADE$q$),
+    -- public.tournament_matches
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_player1_id_fkey$q$, $q$FOREIGN KEY (player1_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_player2_id_fkey$q$, $q$FOREIGN KEY (player2_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_tournament_id_fkey$q$, $q$FOREIGN KEY (tournament_id) REFERENCES public.tournaments(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$tournament_matches$q$, $q$tournament_matches_winner_id_fkey$q$, $q$FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.tournament_participants
+    ($q$public$q$, $q$tournament_participants$q$, $q$tournament_participants_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$tournament_participants$q$, $q$tournament_participants_tournament_id_fkey$q$, $q$FOREIGN KEY (tournament_id) REFERENCES public.tournaments(id) ON DELETE CASCADE$q$),
+    -- public.tournaments
+    ($q$public$q$, $q$tournaments$q$, $q$tournaments_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.twilio_call_sessions
+    ($q$public$q$, $q$twilio_call_sessions$q$, $q$twilio_call_sessions_queue_item_id_fkey$q$, $q$FOREIGN KEY (queue_item_id) REFERENCES public.dialer_queue_items(id) ON DELETE SET NULL$q$),
+    ($q$public$q$, $q$twilio_call_sessions$q$, $q$twilio_call_sessions_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE SET NULL$q$),
+    -- public.user_2fa
+    ($q$public$q$, $q$user_2fa$q$, $q$user_2fa_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.user_2fa_backup_codes
+    ($q$public$q$, $q$user_2fa_backup_codes$q$, $q$user_2fa_backup_codes_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.user_2fa_log
+    ($q$public$q$, $q$user_2fa_log$q$, $q$user_2fa_log_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.user_app_settings
+    ($q$public$q$, $q$user_app_settings$q$, $q$user_app_settings_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.user_mfa_settings
+    ($q$public$q$, $q$user_mfa_settings$q$, $q$user_mfa_settings_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.user_roles
+    ($q$public$q$, $q$user_roles$q$, $q$user_roles_user_id_fkey$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.v4_callback_dead_letters
+    ($q$public$q$, $q$v4_callback_dead_letters$q$, $q$v4_callback_dead_letters_quote_id_fkey$q$, $q$FOREIGN KEY (quote_id) REFERENCES public.quotes(id) ON DELETE SET NULL$q$),
+    -- public.victory_feed
+    ($q$public$q$, $q$victory_feed$q$, $q$victory_feed_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.webauthn_challenges
+    ($q$public$q$, $q$webauthn_challenges$q$, $q$fk_webauthn_challenges_user_id$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.webauthn_credentials
+    ($q$public$q$, $q$webauthn_credentials$q$, $q$fk_webauthn_credentials_user_id$q$, $q$FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE$q$),
+    -- public.webhook_allowed_domains
+    ($q$public$q$, $q$webhook_allowed_domains$q$, $q$webhook_allowed_domains_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.webhook_deliveries
+    ($q$public$q$, $q$webhook_deliveries$q$, $q$webhook_deliveries_webhook_id_fkey$q$, $q$FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE$q$),
+    -- public.webhook_dispatch_rate
+    ($q$public$q$, $q$webhook_dispatch_rate$q$, $q$webhook_dispatch_rate_subscription_id_fkey$q$, $q$FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE$q$),
+    -- public.webhook_events
+    ($q$public$q$, $q$webhook_events$q$, $q$webhook_events_webhook_id_fkey$q$, $q$FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE$q$),
+    -- public.webhook_logs
+    ($q$public$q$, $q$webhook_logs$q$, $q$webhook_logs_webhook_id_fkey$q$, $q$FOREIGN KEY (webhook_id) REFERENCES public.webhooks(id) ON DELETE CASCADE$q$),
+    -- public.webhooks
+    ($q$public$q$, $q$webhooks$q$, $q$webhooks_created_by_fkey$q$, $q$FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.website_visitor_logs
+    ($q$public$q$, $q$website_visitor_logs$q$, $q$website_visitor_logs_consent_record_id_fkey$q$, $q$FOREIGN KEY (consent_record_id) REFERENCES public.consent_records(id) ON DELETE SET NULL$q$),
+    -- public.weekly_matchups
+    ($q$public$q$, $q$weekly_matchups$q$, $q$weekly_matchups_salesperson_a_id_fkey$q$, $q$FOREIGN KEY (salesperson_a_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$weekly_matchups$q$, $q$weekly_matchups_salesperson_b_id_fkey$q$, $q$FOREIGN KEY (salesperson_b_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$weekly_matchups$q$, $q$weekly_matchups_winner_id_fkey$q$, $q$FOREIGN KEY (winner_id) REFERENCES public.salespeople(id) ON DELETE SET NULL$q$),
+    -- public.whatsapp_conversations
+    ($q$public$q$, $q$whatsapp_conversations$q$, $q$whatsapp_conversations_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    ($q$public$q$, $q$whatsapp_conversations$q$, $q$whatsapp_conversations_sender_id_fkey$q$, $q$FOREIGN KEY (sender_id) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.win_loss_analyses
+    ($q$public$q$, $q$win_loss_analyses$q$, $q$win_loss_analyses_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.win_loss_insight_comments
+    ($q$public$q$, $q$win_loss_insight_comments$q$, $q$win_loss_insight_comments_insight_id_fkey$q$, $q$FOREIGN KEY (insight_id) REFERENCES public.win_loss_insights(id) ON DELETE CASCADE$q$),
+    -- public.win_probability_deal_calibrations
+    ($q$public$q$, $q$win_probability_deal_calibrations$q$, $q$win_probability_deal_calibrations_sale_id_fkey$q$, $q$FOREIGN KEY (sale_id) REFERENCES public.sales(id) ON DELETE CASCADE$q$),
+    -- public.winloss_alert_settings
+    ($q$public$q$, $q$winloss_alert_settings$q$, $q$winloss_alert_settings_updated_by_fkey$q$, $q$FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL$q$),
+    -- public.winloss_webhook_alerts
+    ($q$public$q$, $q$winloss_webhook_alerts$q$, $q$winloss_webhook_alerts_subscription_id_fkey$q$, $q$FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE$q$),
+    -- public.winloss_webhook_dead_letters
+    ($q$public$q$, $q$winloss_webhook_dead_letters$q$, $q$winloss_webhook_dead_letters_subscription_id_fkey$q$, $q$FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE$q$),
+    -- public.winloss_webhook_deliveries
+    ($q$public$q$, $q$winloss_webhook_deliveries$q$, $q$winloss_webhook_deliveries_subscription_id_fkey$q$, $q$FOREIGN KEY (subscription_id) REFERENCES public.winloss_webhook_subscriptions(id) ON DELETE CASCADE$q$),
+    -- public.winloss_webhook_replay_audit
+    ($q$public$q$, $q$winloss_webhook_replay_audit$q$, $q$winloss_webhook_replay_audit_dead_letter_id_fkey$q$, $q$FOREIGN KEY (dead_letter_id) REFERENCES public.winloss_webhook_dead_letters(id) ON DELETE CASCADE$q$),
+    -- public.workflow_executions
+    ($q$public$q$, $q$workflow_executions$q$, $q$workflow_executions_workflow_id_fkey$q$, $q$FOREIGN KEY (workflow_id) REFERENCES public.workflows(id) ON DELETE CASCADE$q$),
+    -- public.workflow_rules
+    ($q$public$q$, $q$workflow_rules$q$, $q$workflow_rules_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$),
+    -- public.xp_adjustments
+    ($q$public$q$, $q$xp_adjustments$q$, $q$xp_adjustments_related_assignment_id_fkey$q$, $q$FOREIGN KEY (related_assignment_id) REFERENCES public.task_assignments(id) ON DELETE SET NULL$q$),
+    -- public.xp_history
+    ($q$public$q$, $q$xp_history$q$, $q$xp_history_salesperson_id_fkey$q$, $q$FOREIGN KEY (salesperson_id) REFERENCES public.salespeople(id) ON DELETE CASCADE$q$)
+  ) AS t(sch, tab, con, def) LOOP
+    alvo := NULL; atual := NULL; erro := false;
+    BEGIN
+      alvo := to_regclass(format('%I.%I', r.sch, r.tab));
+      IF alvo IS NOT NULL THEN
+        SELECT pg_catalog.pg_get_constraintdef(k.oid) INTO atual
+          FROM pg_catalog.pg_constraint k
+         WHERE k.conrelid = alvo AND k.conname = r.con;
+      END IF;
+    EXCEPTION WHEN OTHERS THEN
+      erro := true;
+      RAISE WARNING 'FK "%" em %.%: catalogo ilegivel (%) -- nada feito',
+        r.con, r.sch, r.tab, SQLERRM;
+    END;
+    IF erro THEN
+      pulou := pulou + 1;
+    ELSIF alvo IS NULL THEN
+      pulou := pulou + 1;
+      RAISE WARNING 'FK "%" NAO criada: tabela %.% ausente no alvo', r.con, r.sch, r.tab;
+    ELSIF atual IS NULL THEN
+      BEGIN
+        EXECUTE format('ALTER TABLE %I.%I ADD CONSTRAINT %I %s', r.sch, r.tab, r.con, r.def);
+        criadas := criadas + 1;
+      EXCEPTION WHEN OTHERS THEN
+        pulou := pulou + 1;
+        RAISE WARNING 'FK "%" em %.% NAO criada: %', r.con, r.sch, r.tab, SQLERRM;
+      END;
+    ELSIF atual = r.def THEN
+      iguais := iguais + 1;
+    ELSE
+      difere := difere + 1;
+      RAISE WARNING 'FK "%" em %.% JA EXISTE com definicao diferente e NAO foi tocada. producao: % | alvo: %',
+        r.con, r.sch, r.tab, r.def, atual;
+    END IF;
+  END LOOP;
+  PERFORM set_config('search_path', sp_ant, true);
+  RAISE NOTICE 'foreign keys: % criadas, % ja iguais, % divergentes (nao tocadas), % puladas',
+    criadas, iguais, difere, pulou;
+  IF difere > 0 THEN
+    RAISE WARNING '% FK(s) com definicao diferente da producao continuam como estavam; revise os WARNINGs acima.', difere;
+  END IF;
+  IF pulou > 0 THEN
+    RAISE WARNING '% FK(s) pulada(s) -- tabela referenciada ausente ou falta de privilegio. Reexecute supabase/schema.sql depois de resolver.', pulou;
+  END IF;
+END
+$do$;
 
 -- ==========================================================
 -- AGENDAMENTOS DO PG_CRON

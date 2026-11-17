@@ -379,3 +379,60 @@ Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o 
 verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas
 `pg_get_userbyid(0)` devolve a string `'unknown (OID=0)'`, nunca NULL — sobra de ACL
 do `PUBLIC` passava em silêncio anunciando "0 entrada".
+
+### Duas lacunas que invalidavam a própria receita de restauração
+
+Achadas pelo Codex na PR #548, depois de eu ter publicado duas vezes que o arquivo
+era reaplicável. As duas são da mesma classe — **o dump concedia mas nunca revogava,
+e derrubava o que não devia** — e só apareceram porque o revisor aplicou o arquivo
+**duas vezes**. Todos os meus testes aplicavam **uma vez numa base limpa**: testei o
+que projetei, não o que documentei.
+
+1. **Não era reexecutável.** As seções de constraints (825) e de FKs (420) emitiam
+   `DROP CONSTRAINT IF EXISTS` antes de cada `ADD`. O `IF EXISTS` suprime "não
+   existe", não suprime dependência: derrubar uma PK que sustenta o índice de uma FK
+   falha com `cannot drop constraint ..._pkey because other objects depend on it`, e o
+   `ADD` seguinte vira `multiple primary keys for table ... are not allowed`. Medido
+   na 2ª aplicação: **87 + 87 = 174 erros**, e com `ON_ERROR_STOP=1` o psql saía 3 em
+   `account_contacts_pkey` (linha 5834) — **antes** das seções 92, 99 e 99b, que são
+   justamente as que dependem de reexecutar para instalar o que ficou de fora por
+   falta de privilégio. Consertado consultando `pg_constraint` antes de agir:
+   ausente → `ADD`; presente e idêntica (`pg_get_constraintdef`) → nada; presente e
+   diferente → `WARNING` com as duas definições e **nenhum `DROP`**. Zero `DROP` no
+   arquivo montado. A leitura do catálogo roda com `search_path = ''`, porque com
+   `public` no path o `pg_get_constraintdef` devolve `REFERENCES accounts(id)` em vez
+   de `REFERENCES public.accounts(id)` e as 420 FKs seriam acusadas de divergentes em
+   toda reexecução.
+2. **`pg_default_acl` não era normalizado.** O dump tinha 8 `ALTER DEFAULT PRIVILEGES
+   ... GRANT` e nenhum `REVOKE`. Num Supabase novo, cujo padrão de fábrica concede
+   tudo a `PUBLIC`/`anon`, restaurar **desfazia** o endurecimento de
+   `20260902121000` (TRUNCATE revogado de `anon`/`authenticated`) e os cinco
+   `REVOKE EXECUTE ... FROM PUBLIC/anon`. Consertado com 12 `REVOKE ALL` imediatamente
+   antes dos 8 `GRANT`, no escopo exato que as migrations deste repo criaram
+   (`dono = postgres`, `schema = public`, objtypes `r`/`S`/`f`); as 24 linhas de
+   plataforma (`storage`, `auth`, `realtime`, `cron`, `graphql`) ficam intactas.
+
+Medição minha, rig próprio, PostgreSQL 16 descartável, três aplicações:
+
+| aplicação | `ON_ERROR_STOP` | psql | erros | constraint/PK |
+|---|---|---|---|---|
+| 1ª (base limpa) | 0 | **0** | 1291 (1289 `MAINTAIN` do PG16 + 2 extensões indisponíveis) | **0** |
+| 2ª | **1** | **0** | **0** | **0** |
+| 3ª | **1** | **0** | **0** | **0** |
+
+Estado final do alvo: `pg_constraint` em `public`/`private` = **1245** (c 291, f 420,
+p 408, u 126), igual a produção; inventário nome a nome **4941/4941, FALTA 0 SOBRA 0**
+(as 12 diferenças restantes são triggers de plataforma em `storage`/`realtime`, sem
+migration neste repo); `pg_default_acl` com **3 linhas**, todas `(postgres, public)`,
+`S` e `f` batendo byte a byte com produção e `r` divergindo só no bit `m`
+(`MAINTAIN`, que o PG16 não conhece) — `anon` e `authenticated` **sem** `D`
+(TRUNCATE) e `f` **sem** `PUBLIC`/`anon`, ou seja, o endurecimento preservado.
+
+Correção de um número que eu publiquei: eu havia relatado **438** erros de dependência
+e aborto na linha 5846. Três medições independentes deram **87 + 87 = 174** e linha
+5834. O 438 não reproduz e está descartado.
+
+**Defeito desta classe que permanece, declarado e não consertado** (uma tarefa por
+vez): a seção 10 emite `CREATE EXTENSION` sem guarda, então uma extensão indisponível
+no alvo mata o psql na linha 89 com `ON_ERROR_STOP=1`, antes de qualquer seção — foi
+o que me obrigou a comentar `pg_net` e `supabase_vault` na variante de teste.
