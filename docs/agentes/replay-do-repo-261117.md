@@ -223,11 +223,21 @@ aplicação real revelou** — nenhuma delas aparecia na leitura do SQL:
 
 Antes dessas correções: 59 erros não-privilégio. Depois: 2, ambos de ambiente.
 
-### Quatro lacunas achadas por revisor externo
+### Cinco lacunas achadas por revisor externo
 
 Meus 12 críticos adversariais não acharam nenhuma delas, por um motivo que vale
 registrar: **eu mesmo lhes dei o escopo** ("só `public` e `private`"). Crítico não
 questiona a premissa que recebe. Foi preciso revisor de fora — Codex e Devin, na PR #548.
+
+O critério certo não é o schema da tabela, é a **origem do objeto**: foi criado por
+migration deste repo? Aplicado aos objetos fora de `public`/`private`, ele separa as
+duas coisas sem ambiguidade. Produção tem 18 policies fora desses schemas: as 16 da
+aplicação têm de 1 a 4 migrations no repo e entram no dump; `cron_job_policy` e
+`cron_job_run_details_policy` têm **zero** e ficam de fora — prova disso é que, no
+alvo restaurado, essas duas aparecem mesmo assim, criadas pela extensão `pg_cron`.
+Os 12 triggers de `storage.buckets`/`storage.objects`/`realtime.subscription` passam
+no mesmo teste com zero e também ficam de fora; `on_auth_user_created_role` tem uma
+migration e é justamente o item 2.
 
 1. **ACL herdada (segurança).** 371 das 378 funções não têm `anon` no EXECUTE em
    produção, e 297 dessas são `SECURITY DEFINER`. O dump só concedia e revogava de
@@ -243,6 +253,16 @@ questiona a premissa que recebe. Foi preciso revisor de fora — Codex e Devin, 
    localmente**: a publicação é da plataforma e não existe num Postgres avulso; a
    guarda roda sem erro, mas o `ADD TABLE` não foi exercitado.
 4. **`REPLICA IDENTITY FULL`** em 26 tabelas, ausente. Verificado: 26 no alvo.
+5. **Policies da aplicação em tabela de plataforma, e os buckets.** Mesma causa do
+   item 2, agora em `storage.objects` (14 policies), `realtime.messages` (2) e a
+   definição dos 6 buckets. A seção de RLS filtrava pelo schema da *tabela*. Sem
+   elas, o alvo restaurado teria `storage.objects` com RLS ligada e **zero** policy:
+   avatar, áudio de ligação, PDF de orçamento e export de relatório ficariam
+   inacessíveis ao usuário final. E sem os buckets, `file_size_limit` e
+   `allowed_mime_types` ficariam nulos — o alvo aceitaria upload que produção recusa
+   (`call-recordings` tem 100 MB e 12 mime types; `quote-pdfs`, só `application/pdf`).
+   Verificado no alvo restaurado: 14 + 2 policies e os 6 buckets idênticos a produção
+   nas 6 colunas de definição; total de policies 1035 = 1035 de produção.
 
 Um bug dentro da própria correção, achado pelo crítico da seção de ACL: o bloco de
 verificação usava `COALESCE(pg_get_userbyid(grantee),'PUBLIC')`, mas

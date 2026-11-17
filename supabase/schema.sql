@@ -26282,6 +26282,127 @@ END
 $do$;
 
 -- ==========================================================
+-- OBJETOS DE APP EM SCHEMA DE PLATAFORMA
+-- ==========================================================
+-- objetos de app em schema de plataforma: 22 objetos (6 buckets + 16 policies)
+-- Origem: Supabase usyxfpqlsspldubptrdl (producao), leitura de storage.buckets e pg_policy.
+-- Complementa 95-rls-policies.sql, que filtra pelo schema da TABELA (public/private) e por
+--   isso nao cobre policy da aplicacao instalada em tabela que a plataforma fornece.
+-- Criterio de inclusao: o objeto e criado por migration DESTE repo (supabase/migrations/).
+--   Verificado nome a nome com grep: as 16 policies abaixo tem migration; as 2 policies de
+--   cron.job / cron.job_run_details (cron_job_policy, cron_job_run_details_policy) tem 0
+--   migrations e sao da plataforma -> ficam de fora de proposito.
+-- Ordem: buckets antes das policies (policy de storage.objects so faz sentido com o bucket).
+-- Dentro de cada parte, ORDER BY (id) e (schema, tabela, nome) para o arquivo ser estavel no git.
+-- Nao emite ALTER TABLE ... ENABLE ROW LEVEL SECURITY: em producao storage.objects,
+--   storage.buckets e realtime.messages ja vem com pg_class.relrowsecurity = true
+--   (relforcerowsecurity = false) entregue pela plataforma.
+-- Depende de: 70-funcoes.sql (public.is_admin_or_manager, usada nas policies). Assim como
+--   95-rls-policies.sql, as expressoes saem de pg_get_expr sem qualificar o schema da funcao:
+--   restaure com 'public' no search_path.
+-- Guardado por to_regclass: num Postgres avulso sem storage/realtime a secao so avisa.
+-- Privilegio para aplicar: CREATE POLICY exige ser dono da tabela. Em producao storage.objects
+--   pertence a supabase_storage_admin e realtime.messages a supabase_realtime_admin, e o papel
+--   postgres nao e membro de nenhum dos dois (pg_has_role(...,'USAGE') = false). Restaure a
+--   Parte 2 com supabase_admin ou com o dono da tabela; a Parte 1 roda como postgres (tem
+--   rolbypassrls e INSERT/UPDATE em storage.buckets).
+-- NAO VERIFICADO: se o runner de migrations do Supabase contorna essa checagem de dono. As 16
+--   policies existem em producao criadas por migration do repo, mas DDL em producao e proibido
+--   aqui, entao a checagem nao foi exercitada.
+-- Nenhuma coluna de storage.buckets guarda credencial ou URL assinada (id, name, owner,
+--   created_at, updated_at, public, avif_autodetection, file_size_limit, allowed_mime_types,
+--   owner_id, type, versioning_status, lifecycle_configuration*); nada secreto e emitido.
+
+-- =========================================================
+-- Parte 1 - BUCKETS (6)
+-- =========================================================
+-- Colunas emitidas = definicao do bucket: id, name, public, avif_autodetection,
+--   file_size_limit, allowed_mime_types.
+-- Omitidas por serem operacionais/estado: created_at, updated_at (carimbo da criacao),
+--   owner, owner_id (nulos nos 6 buckets em producao),
+--   type ('STANDARD'), versioning_status ('DISABLED'), lifecycle_configuration e
+--   lifecycle_configuration_generation (nulos) - os 6 buckets estao no default da plataforma,
+--   e esses defaults podem nem existir em versao mais antiga do storage no alvo.
+-- ON CONFLICT (id) DO UPDATE (e nao DO NOTHING): a restauracao converge para a definicao de
+--   producao mesmo se o bucket ja tiver sido criado pelo painel com limite/mime diferente,
+--   sem tocar em created_at/owner nem nos objetos ja gravados.
+
+DO $do$
+BEGIN
+  IF to_regclass('storage.buckets') IS NOT NULL THEN
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('avatars', 'avatars', true, false, 5242880, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('call-recordings', 'call-recordings', false, false, 104857600, ARRAY['audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/x-m4a', 'audio/wav', 'audio/x-wav', 'audio/vnd.wave', 'audio/webm', 'audio/ogg', 'audio/m4a', 'video/webm', 'video/mp4']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('quote-pdfs', 'quote-pdfs', false, false, 20971520, ARRAY['application/pdf']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-exports', 'report-exports', false, false, 52428800, ARRAY['application/pdf', 'application/json', 'text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('report-snapshots', 'report-snapshots', false, false, 20971520, ARRAY['application/json', 'text/csv']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+    EXECUTE $stmt$ INSERT INTO storage.buckets (id, name, public, avif_autodetection, file_size_limit, allowed_mime_types) VALUES ('winloss-reports', 'winloss-reports', false, false, 5242880, ARRAY['text/markdown']::text[]) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, public = EXCLUDED.public, avif_autodetection = EXCLUDED.avif_autodetection, file_size_limit = EXCLUDED.file_size_limit, allowed_mime_types = EXCLUDED.allowed_mime_types $stmt$;
+  ELSE
+    RAISE NOTICE 'tabela % ausente: buckets nao criados (alvo sem o schema storage)', 'storage.buckets';
+  END IF;
+END
+$do$;
+
+-- =========================================================
+-- Parte 2 - POLICIES (16)
+-- =========================================================
+-- Reconstruidas de pg_policy: polpermissive -> AS PERMISSIVE|RESTRICTIVE, polcmd -> FOR,
+--   polroles -> TO (polroles = {0} seria PUBLIC; nenhuma das 16 e PUBLIC),
+--   pg_get_expr(polqual) -> USING e pg_get_expr(polwithcheck) -> WITH CHECK,
+--   omitidos quando o expr e nulo. Cada CREATE precedido de DROP POLICY IF EXISTS.
+
+-- realtime.messages
+DO $do$
+BEGIN
+  IF to_regclass('realtime.messages') IS NOT NULL THEN
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Authenticated users can use realtime" ON realtime.messages $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Authenticated users can use realtime" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (true) WITH CHECK (true) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Scoped realtime subscriptions" ON realtime.messages $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Scoped realtime subscriptions" ON realtime.messages AS PERMISSIVE FOR ALL TO authenticated USING (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text)))) WITH CHECK (((topic ~~ 'realtime:public:%'::text) OR (topic = ('user:'::text || (auth.uid())::text)) OR (topic = ('presence:'::text || (auth.uid())::text)))) $stmt$;
+  ELSE
+    RAISE NOTICE 'tabela % ausente: policies nao instaladas (alvo sem esse schema de plataforma)', 'realtime.messages';
+  END IF;
+END
+$do$;
+
+-- storage.objects
+DO $do$
+BEGIN
+  IF to_regclass('storage.objects') IS NOT NULL THEN
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Authenticated users can upload their own avatar" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Authenticated users can upload their own avatar" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople delete own call audio" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Salespeople delete own call audio" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople read own call audio" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Salespeople read own call audio" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'call-recordings'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Salespeople upload own call audio" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Salespeople upload own call audio" ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'call-recordings'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Service role can update quote PDFs" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Service role can update quote PDFs" ON storage.objects AS PERMISSIVE FOR UPDATE TO service_role USING ((bucket_id = 'quote-pdfs'::text)) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Service role can upload quote PDFs" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Service role can upload quote PDFs" ON storage.objects AS PERMISSIVE FOR INSERT TO service_role WITH CHECK ((bucket_id = 'quote-pdfs'::text)) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can delete own quote PDFs" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Users can delete own quote PDFs" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Users can delete their own avatar" ON storage.objects AS PERMISSIVE FOR DELETE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can list their own avatars" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Users can list their own avatars" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can read own quote PDFs" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Users can read own quote PDFs" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'quote-pdfs'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "Users can update their own avatar" ON storage.objects AS PERMISSIVE FOR UPDATE TO authenticated USING (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS "owner can read own report snapshots" ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY "owner can read own report snapshots" ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-snapshots'::text) AND (is_admin_or_manager(auth.uid()) OR ((storage.foldername(name))[1] = (auth.uid())::text)))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS report_owners_can_read_exports ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY report_owners_can_read_exports ON storage.objects AS PERMISSIVE FOR SELECT TO authenticated USING (((bucket_id = 'report-exports'::text) AND (((auth.uid())::text = (storage.foldername(name))[1]) OR is_admin_or_manager(auth.uid())))) $stmt$;
+    EXECUTE $stmt$ DROP POLICY IF EXISTS report_owners_can_write_exports ON storage.objects $stmt$;
+    EXECUTE $stmt$ CREATE POLICY report_owners_can_write_exports ON storage.objects AS PERMISSIVE FOR INSERT TO authenticated WITH CHECK (((bucket_id = 'report-exports'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))) $stmt$;
+  ELSE
+    RAISE NOTICE 'tabela % ausente: policies nao instaladas (alvo sem esse schema de plataforma)', 'storage.objects';
+  END IF;
+END
+$do$;
+
+-- ==========================================================
 -- PUBLICACAO REALTIME
 -- ==========================================================
 -- publicacao supabase_realtime: 77 objetos (tabelas publicadas)
