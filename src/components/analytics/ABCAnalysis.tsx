@@ -2,7 +2,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useABCAnalysis } from '@/hooks/bi/useABCAnalysis';
-import { Package, Users, Layers, Download, Lightbulb, Workflow } from 'lucide-react';
+import {
+  Package,
+  Users,
+  Layers,
+  Download,
+  Lightbulb,
+  Workflow,
+  MoveRight,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToCSV } from '@/utils/csvExport';
 import { ABCChartTable } from './ABCChartTable';
@@ -11,6 +19,7 @@ import {
   ABCActionableAutomations,
   buildAbcAutomations,
 } from './ABCActionableAutomations';
+import { ABCMatrixShift, buildAbcMatrixShifts } from './ABCMatrixShift';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Maximize2 } from 'lucide-react';
@@ -28,6 +37,10 @@ export function ABCAnalysis() {
     data?.clients ?? [],
     data?.products ?? [],
     data?.totalRevenue ?? 0
+  );
+  const matrixShifts = buildAbcMatrixShifts(
+    data?.clientsRecentWindow ?? [],
+    data?.clientsPreviousWindow ?? []
   );
   const navigate = useNavigate();
   const location = useLocation();
@@ -134,6 +147,20 @@ export function ABCAnalysis() {
             </h3>
           </div>
           <ABCActionableAutomations automations={automations} />
+        </div>
+      )}
+
+      {/* Mudanca de classe entre duas janelas da propria base; sem as duas
+          janelas (ou sem mudanca) a secao nao aparece. */}
+      {matrixShifts.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 px-1">
+            <MoveRight className="h-5 w-5 text-primary" />
+            <h3 className="text-section-title text-foreground">
+              Quem mudou de classe
+            </h3>
+          </div>
+          <ABCMatrixShift shifts={matrixShifts} windowLabel={data?.windowLabel || ''} />
         </div>
       )}
 
