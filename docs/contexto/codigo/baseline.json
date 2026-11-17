@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
+  "commit": "cefd645d6556329d89711d3b347b522ade3e14f7",
   "branch": "main",
-  "data_commit": "2026-11-17T18:30:24-03:00",
+  "data_commit": "2026-11-17T18:34:19-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "cefd645",
+    "data": "2026-11-17",
+    "assunto": "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)"
+   },
    {
     "sha": "58dbc25",
     "data": "2026-11-17",
@@ -126,46 +131,21 @@
     "sha": "c9bccfc",
     "data": "2026-11-17",
     "assunto": "docs(bi): veredicto das 3 telas que a reescrita de main descartou (#549)"
-   },
-   {
-    "sha": "f94042e",
-    "data": "2026-11-17",
-    "assunto": "fix(bi): remove promessa de retorno que a curva ABC nao sustenta (#547)"
    }
   ],
   "arquivos_mudados_7d": 724,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
-    "mudancas": 57
+    "mudancas": 51
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 54
-   },
-   {
-    "pasta": "src/components/ui",
-    "mudancas": 49
-   },
-   {
-    "pasta": "src/components/gamification",
-    "mudancas": 41
+    "mudancas": 42
    },
    {
     "pasta": "src/components/competitive",
     "mudancas": 39
-   },
-   {
-    "pasta": "src/hooks/win-loss",
-    "mudancas": 38
-   },
-   {
-    "pasta": "src/components/race",
-    "mudancas": 37
-   },
-   {
-    "pasta": "src/components/pipeline",
-    "mudancas": 31
    },
    {
     "pasta": "package-lock.json",
@@ -176,24 +156,44 @@
     "mudancas": 29
    },
    {
-    "pasta": "src/components/win-loss",
-    "mudancas": 25
+    "pasta": "src/components/race",
+    "mudancas": 29
    },
    {
-    "pasta": "src/hooks/race",
+    "pasta": "src/components/gamification",
     "mudancas": 24
    },
    {
+    "pasta": "src/components/pipeline",
+    "mudancas": 22
+   },
+   {
+    "pasta": "src/components/activities",
+    "mudancas": 19
+   },
+   {
+    "pasta": "RELATORIO_CI.md",
+    "mudancas": 18
+   },
+   {
+    "pasta": "src/components/sales",
+    "mudancas": 17
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 17
+   },
+   {
+    "pasta": "src/components/win-loss",
+    "mudancas": 17
+   },
+   {
+    "pasta": "src/components/bi",
+    "mudancas": 16
+   },
+   {
     "pasta": "src/components/conversational",
-    "mudancas": 23
-   },
-   {
-    "pasta": "src/hooks/sales",
-    "mudancas": 23
-   },
-   {
-    "pasta": "src/hooks/gamification",
-    "mudancas": 21
+    "mudancas": 15
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 178
+    "commits": 179
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 16
+    "commits": 14
    },
    {
     "autor": "github-actions[bot]",

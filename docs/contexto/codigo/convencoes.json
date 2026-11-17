@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)",
    "feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)",
    "feat(pipeline): histórico do negócio direto do card, para negócio em aberto (#573)",
    "feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)",
-   "feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)",
-   "feat(bi): painel de mudança de classe ABC com dado real (#568)"
+   "feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

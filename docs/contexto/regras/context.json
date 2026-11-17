@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
+  "sha": "cefd645d6556329d89711d3b347b522ade3e14f7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-17 21:31 UTC",
+  "generated_at": "2026-11-17 22:13 UTC",
   "files_total": 3617,
   "code_files": 3280,
   "code_lines": 476237
@@ -297094,10 +297094,19 @@
   }
  },
  "git": {
-  "sha": "58dbc2530cc3cbbbd9b6868f9982749fcc42d156",
+  "sha": "cefd645d6556329d89711d3b347b522ade3e14f7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "cefd645",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)",
+    "files": [
+     "docs/agentes/telas-orfas-da-reescrita-261117.md"
+    ]
+   },
    {
     "sha": "58dbc25",
     "date": "2026-11-17",
@@ -297383,16 +297392,6 @@
     "files": [
      "docs/agentes/achados-auditoria-261117.md"
     ]
-   },
-   {
-    "sha": "1bcb694",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(bi): agrupa curva ABC por cliente real, nao por client_name (#541)",
-    "files": [
-     "src/hooks/bi/useABCAnalysis.test.tsx",
-     "src/hooks/bi/useABCAnalysis.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -297405,11 +297404,11 @@
     3
    ],
    [
-    "src/components/analytics/ABCAnalysis.tsx",
+    "docs/agentes/telas-orfas-da-reescrita-261117.md",
     2
    ],
    [
-    "src/hooks/bi/useABCAnalysis.ts",
+    "src/components/analytics/ABCAnalysis.tsx",
     2
    ],
    [
