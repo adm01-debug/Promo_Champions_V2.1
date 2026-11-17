@@ -37853,9 +37853,20 @@ $do$;
 
 DO $do$
 DECLARE
-  ok int := 0;
+  ok     int := 0;
+  pronto boolean := false;
 BEGIN
-  IF to_regclass('supabase_migrations.schema_migrations') IS NULL THEN
+  -- A guarda roda no proprio bloco protegido: resolver o nome exige USAGE no schema
+  -- supabase_migrations e, sem esse privilegio, to_regclass ERRA ('permission denied for
+  -- schema supabase_migrations') em vez de devolver NULL. Fora de bloco isso mata o psql
+  -- com ON_ERROR_STOP=1 — e como esta e a ultima secao, mataria o arquivo no fim.
+  BEGIN
+    pronto := to_regclass('supabase_migrations.schema_migrations') IS NOT NULL;
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE WARNING 'sem USAGE no schema supabase_migrations (%): ledger nao preenchido. Reexecute supabase/schema.sql como dono.', SQLERRM;
+    RETURN;
+  END;
+  IF NOT pronto THEN
     RAISE NOTICE 'supabase_migrations.schema_migrations ausente: ledger nao preenchido (alvo sem a CLI do Supabase)';
     RETURN;
   END IF;
