@@ -728,6 +728,7 @@
   "src/components/analytics/ABCAnalysis.tsx": [
    "src/components/analytics/ABCActionableAutomations.tsx",
    "src/components/analytics/ABCChartTable.tsx",
+   "src/components/analytics/ABCMatrixShift.tsx",
    "src/components/analytics/ABCNeuralInsights.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -742,6 +743,10 @@
    "src/components/ui/card.tsx",
    "src/lib/money.ts",
    "src/types/recharts.ts"
+  ],
+  "src/components/analytics/ABCMatrixShift.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
   ],
   "src/components/analytics/ABCNeuralInsights.tsx": [
    "src/components/ui/card.tsx"

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "25f5950373652e625bc85c24262a6fda1a0d39e4",
+  "sha": "de87a0c6326a36d33c3da59f163e61ef399d1019",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-17 19:20 UTC",
-  "files_total": 3608,
-  "code_files": 3271,
-  "code_lines": 474683
+  "generated_at": "2026-11-17 20:33 UTC",
+  "files_total": 3610,
+  "code_files": 3273,
+  "code_lines": 475020
  },
  "version": "1.3.2",
- "facts_hash": "4af6f68320e3974c",
+ "facts_hash": "a2dd880c2d540a1c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -391,8 +391,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1369,
-   ".ts": 1112,
+   ".tsx": 1370,
+   ".ts": 1113,
    ".sql": 708,
    ".mjs": 72,
    ".js": 6,
@@ -93106,7 +93106,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 19
+    "deps_count": 20
    },
    {
     "path": "",
@@ -93325,7 +93325,7 @@
      "compute_salesperson_retention_cohort",
      "get_current_salesperson_id"
     ],
-    "deps_count": 88
+    "deps_count": 89
    },
    {
     "path": "",
@@ -102229,7 +102229,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1217,
+  "components_count": 1219,
   "hooks": [
    {
     "name": "useContacts",
@@ -106172,8 +106172,8 @@
   },
   {
    "module": "src/components",
-   "files": 1217,
-   "lines": 191641,
+   "files": 1219,
+   "lines": 191896,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106502,7 +106502,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64352,
+   "lines": 64434,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -122495,6 +122495,10 @@
    {
     "file": "src/components/admin/connections/DbRollbackRatePanel.tsx",
     "text": "* Limite acima do qual o sistema deve alertar (rollbacks/min). */"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.tsx",
+    "text": "de exibicao) fora de ABCAnalysis, que ja opera no limite do ratchet de"
    },
    {
     "file": "src/components/analytics/LeadSLAMonitor.tsx",
@@ -139231,6 +139235,11 @@
     "value": "50"
    },
    {
+    "file": "src/hooks/bi/useABCAnalysis.ts",
+    "name": "ABC_WINDOW_DAYS",
+    "value": "365"
+   },
+   {
     "file": "src/hooks/bi/useChurnPeriodPreference.ts",
     "name": "DEFAULT_DAYS",
     "value": "30"
@@ -154703,6 +154712,10 @@
     "line": "gcTime: 10 * 60 * 1000,"
    },
    {
+    "file": "src/hooks/bi/useABCAnalysis.ts",
+    "line": "const WINDOW_MS = ABC_WINDOW_DAYS * 24 * 60 * 60 * 1000;"
+   },
+   {
     "file": "src/hooks/bi/useBIFilters.ts",
     "line": "const lastMonth = subMonths(now, 1);"
    },
@@ -157797,6 +157810,38 @@
    {
     "file": "src/components/analytics/ABCAnalysis.test.tsx",
     "name": "sem vendas, não exibe a seção de insights"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "buildAbcMatrixShifts"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "não gera nada quando falta uma das janelas"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "ignora cliente que não mudou de classe"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "ignora cliente ausente de uma das janelas (sem comparação possível)"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "reporta subida de classe com a variação medida e as duas receitas"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "reporta queda de classe com variação negativa"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "ordena pela maior variação absoluta"
+   },
+   {
+    "file": "src/components/analytics/ABCMatrixShift.test.ts",
+    "name": "não divide por zero quando a janela anterior tinha receita 0"
    },
    {
     "file": "src/components/cadences/ContactRulesDialog.test.tsx",
@@ -230087,7 +230132,7 @@
   },
   "src/components/analytics/ABCAnalysis.tsx": {
    "path": "src/components/analytics/ABCAnalysis.tsx",
-   "lines": 264,
+   "lines": 271,
    "exports": [
     "function ABCAnalysis"
    ],
@@ -230120,6 +230165,37 @@
    "lines": 261,
    "exports": [
     "const ABCChartTable"
+   ]
+  },
+  "src/components/analytics/ABCMatrixShift.test.ts": {
+   "path": "src/components/analytics/ABCMatrixShift.test.ts",
+   "lines": 79,
+   "is_test": true,
+   "errors": [
+    "esperava ao menos uma mudanca de classe"
+   ],
+   "tests": [
+    "buildAbcMatrixShifts",
+    "não gera nada quando falta uma das janelas",
+    "ignora cliente que não mudou de classe",
+    "ignora cliente ausente de uma das janelas (sem comparação possível)",
+    "reporta subida de classe com a variação medida e as duas receitas",
+    "reporta queda de classe com variação negativa",
+    "ordena pela maior variação absoluta",
+    "não divide por zero quando a janela anterior tinha receita 0"
+   ]
+  },
+  "src/components/analytics/ABCMatrixShift.tsx": {
+   "path": "src/components/analytics/ABCMatrixShift.tsx",
+   "lines": 169,
+   "exports": [
+    "interface AbcMatrixShift",
+    "function buildAbcMatrixShifts",
+    "function ABCMatrixShift",
+    "function ABCMatrixShiftSection"
+   ],
+   "rule_comments": [
+    "de exibicao) fora de ABCAnalysis, que ja opera no limite do ratchet de"
    ]
   },
   "src/components/analytics/ABCNeuralInsights.tsx": {
@@ -254679,9 +254755,10 @@
   },
   "src/hooks/bi/useABCAnalysis.ts": {
    "path": "src/hooks/bi/useABCAnalysis.ts",
-   "lines": 159,
+   "lines": 241,
    "exports": [
     "const CONCENTRATION_WARNING_THRESHOLD_PCT",
+    "const ABC_WINDOW_DAYS",
     "const useABCAnalysis"
    ],
    "tables": [
@@ -254699,6 +254776,7 @@
      "amount",
      "client_id",
      "client_name",
+     "created_at",
      "product_name",
      "status"
     ],
@@ -254711,6 +254789,10 @@
     {
      "name": "CONCENTRATION_WARNING_THRESHOLD_PCT",
      "value": "50"
+    },
+    {
+     "name": "ABC_WINDOW_DAYS",
+     "value": "365"
     }
    ],
    "status_values": [
@@ -254722,6 +254804,9 @@
    ],
    "hooks": [
     "useABCAnalysis"
+   ],
+   "temporal": [
+    "const WINDOW_MS = ABC_WINDOW_DAYS * 24 * 60 * 60 * 1000;"
    ],
    "percents": [
     "* de 50% da receita ganha, metade do faturamento depende de poucos clientes e o"
@@ -296508,10 +296593,22 @@
   }
  },
  "git": {
-  "sha": "25f5950373652e625bc85c24262a6fda1a0d39e4",
+  "sha": "de87a0c6326a36d33c3da59f163e61ef399d1019",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "de87a0c",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "feat(bi): painel de mudança de classe ABC com dado real (#568)",
+    "files": [
+     "src/components/analytics/ABCAnalysis.tsx",
+     "src/components/analytics/ABCMatrixShift.test.ts",
+     "src/components/analytics/ABCMatrixShift.tsx",
+     "src/hooks/bi/useABCAnalysis.ts"
+    ]
+   },
    {
     "sha": "25f5950",
     "date": "2026-11-17",
@@ -296784,15 +296881,6 @@
     "files": [
      "docs/agentes/achados-auditoria-261117.md"
     ]
-   },
-   {
-    "sha": "a2bc22b",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "docs: encerramento das 8 branches do dependabot (#537)",
-    "files": [
-     "docs/agentes/branches-encerradas-261117.md"
-    ]
    }
   ],
   "hot_files": [
@@ -296803,6 +296891,14 @@
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     3
+   ],
+   [
+    "src/components/analytics/ABCAnalysis.tsx",
+    2
+   ],
+   [
+    "src/hooks/bi/useABCAnalysis.ts",
+    2
    ],
    [
     "docs/agentes/replay-do-repo-261117.md",
@@ -296819,6 +296915,14 @@
    [
     "docs/agentes/achados-auditoria-261117.md",
     2
+   ],
+   [
+    "src/components/analytics/ABCMatrixShift.test.ts",
+    1
+   ],
+   [
+    "src/components/analytics/ABCMatrixShift.tsx",
+    1
    ],
    [
     "scripts/regras_negocio/indice.py",
@@ -296858,22 +296962,6 @@
    ],
    [
     "supabase/migrations/20261117180000_auditoria_webhooks.sql",
-    1
-   ],
-   [
-    "src/components/engagement/EngagementLeaderboardWidget.tsx",
-    1
-   ],
-   [
-    "src/hooks/engagement/useEngagementScore.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql",
     1
    ]
   ]

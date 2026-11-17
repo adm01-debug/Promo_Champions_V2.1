@@ -1199,7 +1199,7 @@
    "hooks_exportados": [
     "useABCAnalysis"
    ],
-   "linhas": 159,
+   "linhas": 241,
    "dominio": "hooks/bi",
    "tabelas": [
     "clients",

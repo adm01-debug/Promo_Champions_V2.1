@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `25f5950373` · branch `main` · 2026-11-17 19:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `de87a0c632` · branch `main` · 2026-11-17 20:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3045,6 +3045,7 @@ _nenhum item encontrado_
 | `NO_PERMISSION_MESSAGE` | `'Atividade não encontrada ou sem permissão para alterá-la'` | `src/hooks/activities/useActivities.ts` |
 | `MAX_ATTEMPTS` | `5` | `src/hooks/admin/useV4Callbacks.ts` |
 | `CONCENTRATION_WARNING_THRESHOLD_PCT` | `50` | `src/hooks/bi/useABCAnalysis.ts` |
+| `ABC_WINDOW_DAYS` | `365` | `src/hooks/bi/useABCAnalysis.ts` |
 | `DEFAULT_DAYS` | `30` | `src/hooks/bi/useChurnPeriodPreference.ts` |
 | `CALL_RECORDINGS_PAGE_SIZE` | `50` | `src/hooks/conversational/useCallRecordings.ts` |
 | `BASE_SALARY_MONTHLY` | `3500` | `src/hooks/dashboard/useROIDashboard.ts` |
@@ -3379,6 +3380,7 @@ _nenhum item encontrado_
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/assistant/useBriefingHistory.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/automation/useAutomationIntelligence.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/automation/useAutomationRules.ts` |
+| `const WINDOW_MS = ABC_WINDOW_DAYS * 24 * 60 * 60 * 1000;` | `src/hooks/bi/useABCAnalysis.ts` |
 | `const lastMonth = subMonths(now, 1);` | `src/hooks/bi/useBIFilters.ts` |
 | `const lastYear = subYears(now, 1);` | `src/hooks/bi/useBIFilters.ts` |
 | `const sixMonthsAgo = subMonths(now, 6);` | `src/hooks/bi/useBIFilters.ts` |
@@ -3530,8 +3532,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| `const CLAIM_LEASE_MS = 5 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| … +151 linhas — lista completa em `context.json` | |
+| … +152 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4249,7 +4250,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1653 testes em 210 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1661 testes em 211 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4310,6 +4311,7 @@ _nenhum item encontrado_
 | `src/hooks/useLoginRateLimiter.test.tsx` | 9 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/bi/useABCAnalysis.test.tsx` | 9 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
 | `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
+| `src/components/analytics/ABCMatrixShift.test.ts` | 8 | buildAbcMatrixShifts · não gera nada quando falta uma das janelas · ignora cliente que não mudou de classe · ignora cliente ausente de uma das janelas (sem comparação possível) … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
@@ -4733,6 +4735,7 @@ _nenhum item encontrado_
 | Mesmas regras de validação do formulário de criação (ActivityLogForm). | `src/components/activities/ActivityEditDialog.tsx` |
 | Regra real: gap entre líder e lanterna indica desempenho disperso | `src/components/activities/ArenaAITips.tsx` |
 | * Limite acima do qual o sistema deve alertar (rollbacks/min). */ | `src/components/admin/connections/DbRollbackRatePanel.tsx` |
+| de exibicao) fora de ABCAnalysis, que ja opera no limite do ratchet de | `src/components/analytics/ABCMatrixShift.tsx` |
 | chunked-in-safe: leadIds já capados por .limit() upstream | `src/components/analytics/LeadSLAMonitor.tsx` |
 | admin/manager) — o seletor espelha a mesma regra para não oferecer 403. | `src/components/assistant/SalesAssistantChat.tsx` |
 | que o LIMIT 1 sem filtro que rodava antes. | `src/components/atoms/SystemHealthBadge.tsx` |
@@ -5022,5 +5025,4 @@ _nenhum item encontrado_
 | For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
 | Telemetria pública não deve aceitar um Bearer sintático como bypass de limite. | `supabase/functions/log-web-vitals/index.ts` |
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/mine-win-loss-patterns/index.ts` |
-| * Faz o parse somente depois de validar a assinatura sobre o corpo bruto. */ | `supabase/functions/multichannel-status-webhook/index.ts` |
-| … +130 linhas — lista completa em `context.json` | |
+| … +131 linhas — lista completa em `context.json` | |

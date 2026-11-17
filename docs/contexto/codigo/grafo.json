@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2325,
- "arestas": 9564,
+ "nos": 2326,
+ "arestas": 9567,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 711
+   "importado_por": 712
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -14,7 +14,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 549
+   "importado_por": 550
   },
   {
    "arquivo": "src/components/ui/button.tsx",

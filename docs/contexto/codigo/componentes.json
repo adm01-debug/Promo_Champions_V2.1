@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1282,
+ "total": 1283,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -1477,7 +1477,7 @@
     "ABCAnalysis"
    ],
    "export_default": null,
-   "linhas": 264,
+   "linhas": 271,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useABCAnalysis"
@@ -1494,6 +1494,22 @@
    ],
    "export_default": null,
    "linhas": 261,
+   "dominio": "components/analytics",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/analytics/ABCMatrixShift.tsx",
+   "exports": [
+    "ABCMatrixShift",
+    "ABCMatrixShiftSection",
+    "AbcMatrixShift"
+   ],
+   "export_default": null,
+   "linhas": 169,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -15588,7 +15604,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 549,
+   "usado_por": 550,
    "orfao": false
   },
   {
@@ -15654,7 +15670,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 711,
+   "usado_por": 712,
    "orfao": false
   },
   {

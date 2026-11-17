@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "25f5950373652e625bc85c24262a6fda1a0d39e4",
+  "commit": "de87a0c6326a36d33c3da59f163e61ef399d1019",
   "branch": "main",
-  "data_commit": "2026-11-17T16:19:17-03:00",
+  "data_commit": "2026-11-17T17:29:55-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "de87a0c",
+    "data": "2026-11-17",
+    "assunto": "feat(bi): painel de mudança de classe ABC com dado real (#568)"
+   },
    {
     "sha": "25f5950",
     "data": "2026-11-17",
@@ -126,22 +131,17 @@
     "sha": "3ec574b",
     "data": "2026-11-17",
     "assunto": "docs: registra as decisoes sobre ledger, call_tracking e a tabela deals (#544)"
-   },
-   {
-    "sha": "1bcb694",
-    "data": "2026-11-17",
-    "assunto": "fix(bi): agrupa curva ABC por cliente real, nao por client_name (#541)"
    }
   ],
-  "arquivos_mudados_7d": 712,
+  "arquivos_mudados_7d": 713,
   "pastas_mais_mudadas_30d": [
    {
-    "pasta": "src/components/dashboard",
+    "pasta": "src/components/analytics",
     "mudancas": 57
    },
    {
-    "pasta": "src/components/analytics",
-    "mudancas": 54
+    "pasta": "src/components/dashboard",
+    "mudancas": 57
    },
    {
     "pasta": "src/components/ui",
@@ -266,10 +266,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
     "mudancas": 7
    },
@@ -294,6 +290,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 6
    }
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 173
+    "commits": 174
    },
    {
     "autor": "dependabot[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3593,
-  "arquivos_codigo": 2563,
-  "linhas_codigo": 440733,
+  "arquivos_total": 3595,
+  "arquivos_codigo": 2565,
+  "linhas_codigo": 441070,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1282,
+  "componentes": 1283,
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
   "migrations": 699,
   "cron_jobs": 31,
-  "testes": 244,
+  "testes": 245,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 212
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1217,
-   "linhas": 191642
+   "arquivos": 1219,
+   "linhas": 191897
   },
   "src/config": {
    "arquivos": 4,
@@ -616,7 +616,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64352
+   "linhas": 64434
   },
   "src/integrations": {
    "arquivos": 4,
