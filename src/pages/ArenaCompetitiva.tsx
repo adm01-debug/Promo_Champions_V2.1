@@ -63,6 +63,7 @@ import {
 } from '@/components/competitive';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { ComboIndicator } from '@/components/gamification/ComboIndicator';
 import { useRankNotifications } from '@/hooks/useRankNotifications';
 import { Badge } from '@/components/ui/badge';
 
@@ -328,6 +329,14 @@ const ArenaCompetitiva = () => {
                 <ProgressiveGoals salespersonId={currentSalesperson?.id} />
               </TabsContent>
               <TabsContent value="missions">
+                {currentSalesperson?.id && (
+                  <div className="mb-4">
+                    <ComboIndicator
+                      salespersonId={currentSalesperson.id}
+                      variant="full"
+                    />
+                  </div>
+                )}
                 <DailyMissions salespersonId={currentSalesperson?.id} />
               </TabsContent>
               <TabsContent value="chat">
