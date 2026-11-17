@@ -1,6 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
+import { describeError, dispatchOne, type DeadLetterEntry, type DispatchResult, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -300,8 +300,74 @@ export const handler = async (req: Request): Promise<Response> => {
       }, requestId);
     }
 
+    // Portao de seguranca antes de QUALQUER POST externo. Sem isto o destino e
+    // o que estiver gravado em winloss_webhook_subscriptions.url, e o dispatcher
+    // roda com service_role: quem cadastra assinatura escolhe para onde o
+    // servidor dispara (169.254.169.254, localhost, rede interna).
+    // Objetos no banco: 20261117050000_webhook_ssrf_e_rate_limit.sql.
+    // O parse da URL fica AQUI, com new URL(), e a RPC recebe o hostname ja
+    // parseado -- validar URL com regex em SQL e o que deixa passar
+    // https://permitido.com@malicioso.com/.
+    const blocked: DispatchResult[] = [];
+    const allowed: typeof targets = [];
+
+    for (const t of targets) {
+      let host = "";
+      let scheme = "";
+      try {
+        const parsed = new URL(t.url);
+        host = parsed.hostname;
+        scheme = parsed.protocol;
+      } catch {
+        host = "";
+        scheme = "";
+      }
+
+      if (scheme !== "https:" || host === "") {
+        blocked.push({ id: t.id, status: 0, attempts: 0, succeeded: false, error: "destino_invalido", total_latency_ms: 0 });
+        structuredLog("warn", { msg: "dispatch_blocked", reason: "destino_invalido", subscriptionId: t.id, scheme }, requestId);
+        continue;
+      }
+
+      const { data: hostAllowed, error: hostError } = await supabase.rpc(
+        "is_webhook_host_allowed" as never,
+        { p_host: host } as never,
+      );
+      if (hostError || hostAllowed !== true) {
+        blocked.push({ id: t.id, status: 0, attempts: 0, succeeded: false, error: "host_nao_permitido", total_latency_ms: 0 });
+        structuredLog("warn", {
+          msg: "dispatch_blocked",
+          reason: "host_nao_permitido",
+          subscriptionId: t.id,
+          host,
+          rpc_error: hostError ? hostError.message : null,
+        }, requestId);
+        continue;
+      }
+
+      const { data: withinLimit, error: limitError } = await supabase.rpc(
+        "check_webhook_rate_limit" as never,
+        { _subscription_id: t.id } as never,
+      );
+      if (limitError || withinLimit !== true) {
+        blocked.push({ id: t.id, status: 0, attempts: 0, succeeded: false, error: "rate_limit_excedido", total_latency_ms: 0 });
+        structuredLog("warn", {
+          msg: "dispatch_blocked",
+          reason: "rate_limit_excedido",
+          subscriptionId: t.id,
+          rpc_error: limitError ? limitError.message : null,
+        }, requestId);
+        continue;
+      }
+
+      allowed.push(t);
+    }
+
     const deps = buildDeps(supabase as unknown as ReturnType<typeof createClient>, requestId, replayOf);
-    const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps as unknown as Parameters<typeof dispatchOne>[2])));
+    const results: DispatchResult[] = [
+      ...blocked,
+      ...(await Promise.all(allowed.map((s) => dispatchOne(s, payload, deps as unknown as Parameters<typeof dispatchOne>[2])))),
+    ];
 
     // Per-subscription outcome log → end-of-flow marker per subscriptionId
     for (const r of results) {
