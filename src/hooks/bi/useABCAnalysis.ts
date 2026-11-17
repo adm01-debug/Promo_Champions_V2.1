@@ -63,15 +63,28 @@ export const useABCAnalysis = () => {
   return useQuery<ABCAnalysisResult>({
     queryKey: ['abc-analysis'],
     queryFn: async (): Promise<ABCAnalysisResult> => {
-      const { data: sales, error } = await supabase
-        .from('sales')
-        .select('amount, product_name, client_name, status')
-        .in('status', [...WON_SALE_STATUSES]);
+      const [{ data: sales, error }, { data: clientRows, error: clientError }] =
+        await Promise.all([
+          supabase
+            .from('sales')
+            .select('amount, product_name, client_name, client_id, status')
+            .in('status', [...WON_SALE_STATUSES]),
+          supabase.from('clients').select('id, name'),
+        ]);
 
       if (error) throw error;
+      if (clientError) throw clientError;
+
+      // sales.client_name repete o mesmo rotulo para clientes distintos, o que
+      // fundia dezenas de clientes num punhado de grupos e inflava a
+      // concentracao de receita. A identidade vem de client_id; client_name so
+      // entra como rotulo de exibicao ou como chave quando client_id e nulo.
+      const clientNameById = new Map<string, string>(
+        (clientRows || []).map(c => [c.id, c.name])
+      );
 
       const productMap = new Map<string, number>();
-      const clientMap = new Map<string, number>();
+      const clientMap = new Map<string, { name: string; revenue: number }>();
 
       (sales || []).forEach(sale => {
         const amount = sale.amount || 0;
@@ -81,11 +94,18 @@ export const useABCAnalysis = () => {
             (productMap.get(sale.product_name) || 0) + amount
           );
         }
-        if (sale.client_name) {
-          clientMap.set(
-            sale.client_name,
-            (clientMap.get(sale.client_name) || 0) + amount
-          );
+        const clientKey =
+          sale.client_id ?? (sale.client_name ? `name:${sale.client_name}` : null);
+        if (clientKey) {
+          const label =
+            (sale.client_id ? clientNameById.get(sale.client_id) : null) ??
+            sale.client_name ??
+            clientKey;
+          const current = clientMap.get(clientKey);
+          clientMap.set(clientKey, {
+            name: label,
+            revenue: (current?.revenue || 0) + amount,
+          });
         }
       });
 
@@ -93,10 +113,7 @@ export const useABCAnalysis = () => {
         name,
         revenue,
       }));
-      const clientItems = Array.from(clientMap.entries()).map(([name, revenue]) => ({
-        name,
-        revenue,
-      }));
+      const clientItems = Array.from(clientMap.values());
 
       const products = classifyABC(productItems);
       const clients = classifyABC(clientItems);
