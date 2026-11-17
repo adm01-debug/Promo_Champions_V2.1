@@ -52,6 +52,7 @@ function DealRow({
   reduced,
 }: RowComponentProps<RowProps>) {
   const r = rows[index];
+  if (!r) return null;
   const meta = salesMeta[r.sale_id];
   const isExpanded = expandedIds.has(r.sale_id);
 
