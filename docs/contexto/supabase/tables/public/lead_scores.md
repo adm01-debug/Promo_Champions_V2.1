@@ -32,6 +32,7 @@
 | lead_scores_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | lead_scores_sale_id_fkey | FOREIGN KEY | `FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | lead_scores_sale_id_key | UNIQUE | `UNIQUE (sale_id)` |  |  | sim |
+| lead_scores_score_range | CHECK | `CHECK (score IS NULL OR score >= 0 AND score <= 100) NOT VALID` |  |  | não |
 
 
 ## Índices

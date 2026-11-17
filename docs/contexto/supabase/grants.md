@@ -1204,9 +1204,12 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.webauthn_credentials | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.webauthn_credentials | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.webauthn_credentials | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.webhook_allowed_domains | authenticated | DELETE, INSERT, SELECT, UPDATE |
+| public.webhook_allowed_domains | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.webhook_deliveries | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.webhook_deliveries | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.webhook_deliveries | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.webhook_dispatch_rate | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.webhook_events | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.webhook_inbound_dedupe | authenticated | SELECT |
 | public.webhook_inbound_dedupe | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

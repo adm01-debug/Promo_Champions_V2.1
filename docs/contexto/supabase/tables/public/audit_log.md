@@ -60,8 +60,8 @@
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(EXISTS ( SELECT 1    FROM auth.users   WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |
+| roles | authenticated |
+| USING | `has_role(auth.uid(), 'admin'::app_role)` |
 | WITH CHECK |  |
 
 ### `Users can view own audit logs`

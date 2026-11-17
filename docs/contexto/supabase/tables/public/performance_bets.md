@@ -29,6 +29,7 @@
 | 11 | `ends_at` | `timestamp with time zone` | não |  |  |  |
 | 12 | `resolved_at` | `timestamp with time zone` | sim |  |  |  |
 | 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints
@@ -85,7 +86,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| update_performance_bets_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 
 ## Grants

@@ -70,6 +70,8 @@
 | idx_suppliers_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_suppliers_deleted_by_fk ON public.suppliers USING btree (deleted_by)` |
 | idx_suppliers_is_active | btree | is_active | não | sim |  | `CREATE INDEX idx_suppliers_is_active ON public.suppliers USING btree (is_active)` |
 | suppliers_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX suppliers_pkey ON public.suppliers USING btree (id)` |
+| ux_suppliers_cnpj_ativo | btree | cnpj | sim | sim | `((cnpj IS NOT NULL) AND (cnpj <> ''::text) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_suppliers_cnpj_ativo ON public.suppliers USING btree (cnpj) WHERE ((cnpj IS NOT NULL) AND (cnpj <> ''::text) AND (deleted_at IS NULL))` |
+| ux_suppliers_email_ativo | btree |  | sim | sim | `((email IS NOT NULL) AND (email <> ''::text) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_suppliers_email_ativo ON public.suppliers USING btree (lower(email)) WHERE ((email IS NOT NULL) AND (email <> ''::text) AND (deleted_at IS NULL))` |
 
 
 ## Policies (RLS)

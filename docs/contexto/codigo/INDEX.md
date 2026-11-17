@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `362dfda6e35f5bcd348b5c412321f7597b00b9af` (2026-11-14T14:56:25Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8` (2026-11-17T15:17:08-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2458), SQL (683), Markdown (206), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2482), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3538 |
-| arquivos_codigo | 2539 |
-| linhas_codigo | 437120 |
+| arquivos_total | 3593 |
+| arquivos_codigo | 2563 |
+| linhas_codigo | 440725 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
-| componentes | 1276 |
-| hooks | 478 |
+| componentes | 1282 |
+| hooks | 483 |
 | edge_functions | 171 |
-| tabelas | 414 |
-| migrations | 676 |
-| cron_jobs | 28 |
-| testes | 236 |
+| tabelas | 417 |
+| migrations | 699 |
+| cron_jobs | 31 |
+| testes | 244 |
 | workflows | 26 |
 | scripts | 78 |
-| docs_md | 206 |
+| docs_md | 212 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1096), src/pages (173), src/contexts (5)
-- hooks: src/hooks (466), src/contexts (6), src/components (4)
-- servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (153), tests/ (59), outro (18)
+- componentes: src/components (1102), src/pages (173), src/contexts (5)
+- hooks: src/hooks (471), src/contexts (6), src/components (4)
+- servicos_logica: src/lib (53), src/services (6), src/integrations (4)
+- testes: co-localizado (*.test) (160), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -73,7 +73,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/activities | 0 | 0 | 21 | 20 | 0 | 10 |
 | components/admin | 0 | 0 | 59 | 38 | 7 | 26 |
 | components/agents | 0 | 0 | 5 | 3 | 0 | 1 |
-| components/analytics | 0 | 0 | 48 | 33 | 2 | 22 |
+| components/analytics | 0 | 0 | 49 | 33 | 2 | 22 |
 | components/assistant | 0 | 0 | 13 | 13 | 3 | 13 |
 | components/atoms | 0 | 0 | 6 | 2 | 0 | 1 |
 | components/auth | 0 | 0 | 5 | 3 | 0 | 3 |
@@ -84,24 +84,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/coaching | 0 | 0 | 23 | 16 | 5 | 7 |
 | components/competitive | 0 | 0 | 34 | 31 | 0 | 40 |
 | components/conversation-intelligence | 0 | 0 | 6 | 3 | 1 | 1 |
-| components/conversational | 0 | 0 | 58 | 48 | 15 | 24 |
+| components/conversational | 0 | 0 | 59 | 49 | 15 | 24 |
 | components/customer-success | 0 | 0 | 12 | 4 | 6 | 0 |
-| components/dashboard | 0 | 0 | 56 | 100 | 8 | 75 |
+| components/dashboard | 0 | 0 | 56 | 101 | 9 | 75 |
 | components/deal-intelligence | 0 | 0 | 47 | 30 | 10 | 15 |
 | components/dialer | 0 | 0 | 7 | 10 | 2 | 7 |
 | components/email | 0 | 0 | 10 | 15 | 3 | 5 |
-| components/engagement | 0 | 0 | 18 | 23 | 5 | 12 |
+| components/engagement | 0 | 0 | 18 | 25 | 6 | 13 |
 | components/executive-briefing | 0 | 0 | 6 | 4 | 1 | 2 |
 | components/follow-up | 0 | 0 | 6 | 1 | 0 | 1 |
 | components/forecast | 0 | 0 | 7 | 1 | 1 | 2 |
-| components/gamification | 0 | 0 | 21 | 24 | 1 | 12 |
+| components/gamification | 0 | 0 | 22 | 25 | 1 | 13 |
 | components/goals | 0 | 0 | 6 | 2 | 0 | 2 |
 | components/icp | 0 | 0 | 5 | 6 | 0 | 3 |
 | components/intelligence | 0 | 0 | 10 | 10 | 3 | 6 |
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 341 | 32 | 164 |
+| components/navigation | 0 | 0 | 9 | 343 | 33 | 165 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
 | components/pipeline | 0 | 0 | 16 | 62 | 3 | 28 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
@@ -116,8 +116,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/revenue-intelligence | 0 | 0 | 37 | 59 | 19 | 32 |
 | components/sales | 0 | 0 | 16 | 53 | 3 | 24 |
 | components/sdr | 0 | 0 | 26 | 22 | 2 | 17 |
-| components/security | 0 | 0 | 18 | 14 | 3 | 14 |
-| components/sequences | 0 | 0 | 19 | 28 | 4 | 13 |
+| components/security | 0 | 0 | 19 | 15 | 3 | 15 |
+| components/sequences | 0 | 0 | 19 | 29 | 5 | 13 |
 | components/settings | 0 | 0 | 25 | 28 | 4 | 25 |
 | components/shared | 0 | 0 | 8 | 4 | 0 | 2 |
 | components/skeletons | 0 | 0 | 5 | 1 | 0 | 0 |
@@ -125,32 +125,32 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ui | 0 | 0 | 46 | 5 | 0 | 0 |
 | components/vendedor | 0 | 0 | 6 | 8 | 0 | 8 |
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
-| components/win-loss | 0 | 0 | 60 | 43 | 5 | 21 |
+| components/win-loss | 0 | 0 | 62 | 45 | 5 | 22 |
 | contexts | 0 | 0 | 6 | 5 | 0 | 1 |
-| hooks | 0 | 0 | 145 | 200 | 23 | 107 |
+| hooks | 0 | 0 | 148 | 201 | 23 | 109 |
 | hooks/admin | 0 | 0 | 10 | 34 | 2 | 22 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
 | hooks/cadences | 0 | 0 | 19 | 49 | 0 | 9 |
-| hooks/conversational | 0 | 0 | 16 | 40 | 12 | 17 |
+| hooks/conversational | 0 | 0 | 17 | 41 | 12 | 17 |
 | hooks/crm | 0 | 0 | 6 | 7 | 0 | 5 |
 | hooks/dashboard | 0 | 0 | 11 | 9 | 0 | 12 |
 | hooks/deal-intelligence | 0 | 0 | 10 | 2 | 11 | 17 |
 | hooks/email | 0 | 0 | 12 | 15 | 3 | 3 |
-| hooks/engagement | 0 | 0 | 6 | 21 | 5 | 10 |
+| hooks/engagement | 0 | 0 | 6 | 22 | 6 | 10 |
 | hooks/gamification | 0 | 0 | 17 | 27 | 0 | 21 |
 | hooks/race | 0 | 0 | 41 | 47 | 3 | 16 |
 | hooks/reporting | 0 | 0 | 10 | 18 | 3 | 7 |
 | hooks/revenue | 0 | 0 | 5 | 18 | 4 | 9 |
 | hooks/sales | 0 | 0 | 16 | 33 | 2 | 26 |
 | hooks/sequences | 0 | 0 | 10 | 27 | 5 | 8 |
-| hooks/win-loss | 0 | 0 | 52 | 34 | 4 | 15 |
-| lib | 0 | 0 | 27 | 10 | 2 | 9 |
+| hooks/win-loss | 0 | 0 | 54 | 36 | 4 | 16 |
+| lib | 0 | 0 | 28 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 110 | 155 | 161 | 812 | 114 | 294 |
+| pages | 110 | 155 | 161 | 818 | 115 | 297 |
 | pages/admin | 1 | 12 | 12 | 81 | 10 | 46 |
-| services | 0 | 0 | 5 | 0 | 0 | 12 |
+| services | 0 | 0 | 6 | 0 | 0 | 13 |
 
 ## Rotas (url → arquivo)
 - `/*` [tela] → src/pages/Vendas.tsx (protegida)
@@ -408,7 +408,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `email-composer-bulk` — tabelas: activities, clients, email_bulk_drafts, email_bulk_jobs, sales; chamada por 1 arquivo(s) do front
 - `email-engagement-scorer` — tabelas: email_engagement_scores, email_tracking_events; chamada por 1 arquivo(s) do front
 - `email-unsubscribe` (verify_jwt=false) — tabelas: -; chamada por 0 arquivo(s) do front
-- `engagement-score-recompute` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `engagement-score-recompute` — tabelas: -; chamada por 1 arquivo(s) do front
 - `enrich-lead` — tabelas: -; chamada por 1 arquivo(s) do front
 - `execute-workflow` — tabelas: activities, agenda_events, automation_runs, automation_workflows, sales, salespeople; chamada por 1 arquivo(s) do front
 - `expansion-detector` — tabelas: accounts, expansion_opportunities, expansion_playbooks, product_usage_summary; chamada por 1 arquivo(s) do front
@@ -427,7 +427,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `get-client-ip` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `health` (verify_jwt=false) — tabelas: -; chamada por 0 arquivo(s) do front
 - `helpdesk-sync` — tabelas: _internal_secrets, accounts, support_tickets; chamada por 1 arquivo(s) do front
-- `inbound-email-webhook` (verify_jwt=false) — tabelas: inbound_reply_events, sequence_step_executions; chamada por 0 arquivo(s) do front
+- `inbound-email-webhook` (verify_jwt=false) — tabelas: clients, email_tracking_events, inbound_reply_events, salespeople, sequence_step_executions; chamada por 0 arquivo(s) do front
 - `lead-scoring` — tabelas: deal_stage_history, lead_scores, sales, tasks; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `log-web-vitals` (verify_jwt=false) — tabelas: web_vitals_samples; chamada por 1 arquivo(s) do front
 - `mine-win-loss-patterns` — tabelas: win_loss_analyses, win_loss_insights, win_loss_patterns; chamada por 2 arquivo(s) do front
@@ -518,6 +518,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `auto-task-queue-hourly` 0 * * * * (20260831163000_secure_churn_and_task_crons.sql)
 - `bitrix24-sync-hourly` 17 * * * * (20261013170000_bitrix24_sync_cron.sql)
 - `campaign-health-alert-30min` */30 * * * * → edge campaign-health-alert (20260726202421_0e6c60a8-07a3-4e75-9aa4-934a5fbafc09.sql)
+- `capture-rollback-snapshot-5min` */5 * * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
 - `challenge-progress-sync` 15 3 * * * (20261019153000_lgpd_gamificacao_r2.sql)
 - `check-v4-callback-alerts-every-5min` */5 * * * * (20260831170000_secure_operational_edge_crons.sql)
 - `cleanup-stale-logs-daily` 15 3 * * * (20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql)
@@ -525,6 +526,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `cron-failure-alerter-10min` */10 * * * * (20260831170000_secure_operational_edge_crons.sql)
 - `data-retention-purge-daily` 45 3 * * * (20261001151000_log_retention_indexes_and_purge.sql)
 - `deal-risk-digest-daily` 0 11 * * * (20260910153000_reconcile_operational_edge_crons.sql)
+- `detect_slow_queries_hourly` 20 * * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
 - `detect-client-churn-alerts-hourly` 15 * * * * (20260831163000_secure_churn_and_task_crons.sql)
 - `edge-retry-threshold-alert-15min` */15 * * * * (20260831170000_secure_operational_edge_crons.sql)
 - `email-bulk-retry-15min` */15 * * * * (20260910153000_reconcile_operational_edge_crons.sql)
@@ -532,6 +534,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `gc-call-recording-ingest-jobs` 15 3 * * * (20260712232346_aec818ed-0486-4b47-8528-f607bf2d2811.sql)
 - `notify-v4-quote-status-every-5min` */5 * * * * (20260831170000_secure_operational_edge_crons.sql)
 - `process-call-recording-ingest-1min` * * * * * (20260831170000_secure_operational_edge_crons.sql)
+- `purge_old_telemetry_daily` 15 3 * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
 - `purge-quote-sync-inbound-log-30d` 15 3 * * * (20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f.sql)
 - `purge-telemetry-retention-daily` 30 3 * * * (20260712212417_ae1222eb-fbbd-453e-bc5f-b9c124c7af32.sql)
 - `purge-webhook-inbound-dedupe-30d` 0 3 * * * (20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f.sql)
@@ -560,7 +563,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 1 — ex.: /contas/:id
 - componentes_ambiguos: 0
 - menu_sem_destino: 22 — ex.: Análises -> /dashboard/analises, Colete um power-up -> powerup, Competição -> /dashboard/competicao
-- edges_orfas: 32 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
+- edges_orfas: 31 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 6 — ex.: ab_tests, experiment_assignments, experiment_variants
 - tabelas_usadas_sem_definicao: 3 — ex.: auth_users_view, table, team_members
@@ -574,27 +577,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20590 nós · 65155 arestas · 1489 comunidades · grafo do commit `362dfda6`
-- comunidades maiores: Card (513), Badge (462), Índice (277), vitest (254), Input (254), client.ts (249), DialogContent (248), getCorsHeaders (230), fetchWithTimeout (202), lazyPages.ts (189), formatBRL (183), Button (178)
-- símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
-- consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
+- não gerado neste run. uvx --from "graphifyy[sql]" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (74)
-- package-lock.json (71)
-- deno.lock (31)
-- .github/workflows/pr-checks.yml (29)
-- .github/workflows/codeql.yml (18)
+- package-lock.json (46)
+- package.json (44)
+- deno.lock (22)
 - RELATORIO_CI.md (18)
-- .github/workflows/quote-to-sale-e2e.yml (15)
-- CLAUDE.md (13)
-- .github/workflows/cron-monitoring.yml (12)
+- .github/workflows/codeql.yml (13)
+- src/integrations/supabase/types.ts (13)
 - PENDENCIAS.md (12)
-- .github/workflows/edge-functions-bundle.yml (11)
-- .github/workflows/qa-exhaustive.yml (11)
-- src/integrations/supabase/types.ts (11)
-- .github/workflows/graphify.yml (10)
-- src/components/pipeline/PipelineBoard.tsx (10)
+- .github/workflows/pr-checks.yml (9)
+- scripts/inventario/gerar-banco.mjs (9)
+- src/hooks/abm/useAccounts.ts (8)
+- tests/migrations/canonical_hardening_contract_test.ts (8)
+- .github/workflows/ci-failure-alert.yml (7)
+- .github/workflows/db-backup.yml (7)
+- .github/workflows/deploy.yml (7)
+- .github/workflows/graphify.yml (7)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -603,12 +603,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `ci-failure-alert.yml` — CI Failure Alert (workflow_dispatch, workflow_run)
 - `codeql.yml` — CodeQL (pull_request, push, schedule, workflow_dispatch; cron 23 4 * * 1)
 - `contexto-testes.yml` — Testes das automações de contexto (pull_request, push, workflow_dispatch)
-- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
+- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3 * * * *)
 - `cron-monitoring.yml` — Cron Monitoring Regression (pull_request, push, schedule, workflow_dispatch; cron 0 6 * * *)
 - `db-backup.yml` — DB Backup (off-site) (schedule, workflow_dispatch; cron 0 3 * * *)
 - `db-probe.yml` — DB Probe (read-only) (workflow_dispatch)
 - `dependabot-automerge.yml` — Dependabot Auto-merge (pull_request, schedule, workflow_dispatch; cron 30 11 * * *)
-- `dependabot-fix-lockfile.yml` — Dependabot – Fix deno.lock (pull_request_target)
+- `dependabot-fix-lockfile.yml` — Dependabot – Fix deno.lock (pull_request_target, workflow_dispatch)
 - `deploy.yml` — Deploy Pipeline (push, workflow_dispatch)
 - `edge-functions-bundle.yml` — Edge Functions Bundle Check (pull_request, push)
 - `edge-functions-input-validation.yml` — Edge Functions Input Validation Lint (pull_request, push)
@@ -647,7 +647,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `test:e2e`: `playwright test`
 - `test:e2e:ui`: `playwright test --ui`
 - `lint`: `eslint . --report-unused-disable-directives --max-warnings 0`
-- `lint:complexity`: `eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 130`
+- `lint:complexity`: `eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 131`
 - `lint:fix`: `eslint . --fix`
 - `format`: `prettier --write "src/**/*.{ts,tsx,css,json}"`
 - `format:check`: `prettier --check "src/**/*.{ts,tsx,css,json}"`
@@ -749,25 +749,25 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
-- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (6), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
+- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 ## Últimos commits
-- 2026-11-14 `362dfda` feat: editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) (#429)
-- 2026-11-14 `0657d49` docs: marca B7 como aplicada em producao (10 migrations no ar, 2026-11-14) (#486)
-- 2026-11-14 `e3668b5` fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)
-- 2026-11-14 `331599a` chore(main): release 1.4.0 (#466)
-- 2026-11-14 `6cae050` feat: editar e excluir o próprio comentário no feed de vitórias (#434)
-- 2026-11-14 `d620c11` chore(deps): bump the react-core group across 1 directory with 5 updates (#398)
-- 2026-11-14 `12b6200` fix: restringe DELETE de accounts a gestor na RLS (#460)
-- 2026-11-14 `2c56590` fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)
-- 2026-11-13 `614d675` docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)
-- 2026-11-13 `31447ff` fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)
-- 2026-11-13 `1ae8ecb` docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)
-- 2026-11-13 `d03b42e` fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)
-- 2026-11-13 `01cd315` fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)
-- 2026-11-13 `c0af401` codemod de tipografia: tracking-* sem \b e comentários ignorados (#480)
-- 2026-11-13 `914a813` fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)
+- 2026-11-17 `8fc1c8c` fix: match_reply_to_enrollment reconhece contato de conta (#565)
+- 2026-11-17 `c3d8008` docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)
+- 2026-11-17 `6417fc3` fix: sinal de resposta independe da busca de inscrição (#563)
+- 2026-11-17 `f0d43dc` fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)
+- 2026-11-17 `d2460a9` feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)
+- 2026-11-17 `13844e1` fix(db): 403 nas tres ultimas policies que leem auth.users (#559)
+- 2026-11-17 `3d0e9e9` docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)
+- 2026-11-17 `beed109` feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)
+- 2026-11-17 `2a3a8ca` feat(db): auditoria nas duas tabelas de webhook (#551)
+- 2026-11-17 `ba21ed9` feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)
+- 2026-11-17 `f4e85df` chore(types): sincroniza types.ts com o banco oficial [auto] (#556)
+- 2026-11-17 `b3daa82` docs(agentes): veredicto byte a byte das 9 branches vivas (#555)
+- 2026-11-17 `0b645fb` fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)
+- 2026-11-17 `62ddfbe` fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)
+- 2026-11-17 `c4f4e3b` fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

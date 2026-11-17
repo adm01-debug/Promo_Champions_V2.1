@@ -95,6 +95,7 @@
 | idx_clients_total_value | btree | total_value | não | sim |  | `CREATE INDEX idx_clients_total_value ON public.clients USING btree (total_value DESC)` |
 | idx_clients_user_id | btree | user_id | não | sim |  | `CREATE INDEX idx_clients_user_id ON public.clients USING btree (user_id)` |
 | ux_clients_email | btree |  | sim | sim | `((email IS NOT NULL) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_clients_email ON public.clients USING btree (lower(email)) WHERE ((email IS NOT NULL) AND (deleted_at IS NULL))` |
+| ux_clients_phone | btree | phone | sim | sim | `((phone IS NOT NULL) AND (phone <> ''::text) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_clients_phone ON public.clients USING btree (phone) WHERE ((phone IS NOT NULL) AND (phone <> ''::text) AND (deleted_at IS NULL))` |
 
 
 ## Policies (RLS)

@@ -7,11 +7,11 @@ AS $function$
 BEGIN
     RETURN QUERY
     SELECT 
-        EXTRACT(YEAR FROM q.created_at) as year,
-        EXTRACT(MONTH FROM q.created_at) as month,
+        EXTRACT(YEAR FROM q.created_at)::double precision as year,
+        EXTRACT(MONTH FROM q.created_at)::double precision as month,
         COUNT(q.id)::BIGINT as quotes_count,
-        SUM(q.total_amount)::NUMERIC as total_revenue,
-        AVG(q.total_amount)::NUMERIC as avg_ticket
+        SUM(q.total_value)::NUMERIC as total_revenue,
+        AVG(q.total_value)::NUMERIC as avg_ticket
     FROM public.quotes q
     WHERE q.client_id = _client_id
     AND q.created_at >= NOW() - (_months || ' months')::INTERVAL

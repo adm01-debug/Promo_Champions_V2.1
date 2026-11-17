@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.audit_activity_changes()
  RETURNS trigger
  LANGUAGE plpgsql
+ SECURITY DEFINER
  SET search_path TO 'public'
 AS $function$
 BEGIN

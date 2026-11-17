@@ -15,11 +15,13 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.account_activities | View activities of accessible accounts | SELECT | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_activities.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
 | public.account_contacts | Manage contacts of accessible accounts | ALL | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
 | public.account_contacts | View contacts of accessible accounts | SELECT | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
-| public.account_plans | Account plans owner or admin can read | SELECT | PERMISSIVE | public | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()))` |  |
-| public.account_plans | Account plans owner or admin can update | UPDATE | PERMISSIVE | public | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()))` |  |
+| public.account_plans | Account plans owner or admin can read | SELECT | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
+| public.account_plans | Account plans owner or admin can update | UPDATE | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
 | public.account_plans | Owners or admins can insert account plans | INSERT | PERMISSIVE | authenticated |  | `((created_by = auth.uid()) AND (is_admin_or_manager(auth.uid()) OR (created_by = auth.uid())))` |
-| public.accounts | Owners and managers can manage accounts | ALL | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` |
-| public.accounts | Owners and managers can view accounts | SELECT | PERMISSIVE | authenticated | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` |  |
+| public.accounts | Managers can delete accounts | DELETE | PERMISSIVE | authenticated | `( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager)` |  |
+| public.accounts | Owners and managers can insert accounts | INSERT | PERMISSIVE | authenticated |  | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+| public.accounts | Owners and managers can update accounts | UPDATE | PERMISSIVE | authenticated | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+| public.accounts | Owners and managers can view accounts | SELECT | PERMISSIVE | authenticated | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |  |
 | public.achievements | Authenticated users can read achievements | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.achievements | Users can insert own achievements | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
 | public.active_power_ups | Users can insert own power_ups | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
@@ -34,7 +36,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.activities | Users can read own activities or admins all | SELECT | PERMISSIVE | public | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
 | public.activities | Users can update own activities | UPDATE | PERMISSIVE | public | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
 | public.activities | admin_delete_activities | DELETE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
-| public.activity_audit_logs | Users can view audit logs for their activities | SELECT | PERMISSIVE | public | `((auth.uid() IN ( SELECT activities.salesperson_id    FROM activities   WHERE (activities.id = activity_audit_logs.activity_id))) OR (EXISTS ( SELECT 1    FROM user_roles   WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role]))))))` |  |
+| public.activity_audit_logs | Users can view audit logs for their activities | SELECT | PERMISSIVE | authenticated | `((EXISTS ( SELECT 1    FROM activities a   WHERE ((a.id = activity_audit_logs.activity_id) AND (a.salesperson_id = get_current_salesperson_id())))) OR is_admin_or_manager(auth.uid()))` |  |
 | public.activity_goals | Admins can delete activity_goals | DELETE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.activity_goals | Users can insert own activity_goals | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
 | public.activity_goals | Users can update own activity_goals | UPDATE | PERMISSIVE | authenticated | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
@@ -61,7 +63,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.approval_workflows | Authenticated users can view active workflows | SELECT | PERMISSIVE | authenticated | `(is_active = true)` |  |
 | public.asset_usage_logs | Users insert own usage logs | INSERT | PERMISSIVE | authenticated |  | `(user_id = auth.uid())` |
 | public.asset_usage_logs | Users see own logs, managers see all | SELECT | PERMISSIVE | authenticated | `((user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
-| public.audit_log | Admins can view all audit logs | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM auth.users   WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |  |
+| public.audit_log | Admins can view all audit logs | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.audit_log | Users can view own audit logs | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.audit_logs | Admins can view audit logs | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.audit_logs | Users can insert own audit entries | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = actor_id)` |
@@ -74,6 +76,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.available_spins | Own spins manage | ALL | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
 | public.available_spins | Users can view own or admin can view all spins | SELECT | PERMISSIVE | authenticated | `((salesperson_id IN ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
 | public.available_spins | Users can view their own spins | SELECT | PERMISSIVE | public | `(salesperson_id IN ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid())))` |  |
+| public.battle_participants | Admins can add battle participants | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
 | public.battle_participants | Admins can update participants | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.battle_participants | Authenticated can read battle_participants | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
 | public.battle_participants | Users can join battles as self | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
@@ -207,6 +210,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.combo_tracking | Admins can update combo_tracking | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.combo_tracking | Anyone can read combo_tracking | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.combo_tracking | Users can insert own combo_tracking | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid())  LIMIT 1))` |
+| public.combo_tracking | Users can update own combo_tracking | UPDATE | PERMISSIVE | authenticated | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` |
 | public.commercial_approval_requests | Criar solicitações | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = requester_id)` |
 | public.commercial_approval_requests | Only admins and managers can update approval requests | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.commercial_approval_requests | Users can create approval requests | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = requester_id)` |
@@ -262,6 +266,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.custom_reports | owner_full_access | ALL | PERMISSIVE | authenticated | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |
 | public.custom_reports | shared_select | SELECT | PERMISSIVE | authenticated | `(is_shared = true)` |  |
 | public.daily_challenge_progress | Users can read own daily_challenge_progress | SELECT | PERMISSIVE | authenticated | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| public.daily_challenge_rotations | Deny all access to daily_challenge_rotations | ALL | PERMISSIVE | anon, authenticated | `false` | `false` |
 | public.daily_challenges | Admins and managers can delete daily_challenges | DELETE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.daily_challenges | Admins and managers can insert daily_challenges | INSERT | PERMISSIVE | public |  | `is_admin_or_manager(auth.uid())` |
 | public.daily_challenges | Admins and managers can update daily_challenges | UPDATE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
@@ -359,6 +364,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.error_logs | Admins can view error logs | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.error_logs | Only admins can view error logs | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.error_logs | anon can insert error logs | INSERT | PERMISSIVE | anon |  | `((user_id IS NULL) OR (user_id = auth.uid()))` |
+| public.error_logs | authenticated can insert error logs | INSERT | PERMISSIVE | authenticated |  | `((user_id IS NULL) OR (user_id = auth.uid()))` |
 | public.executive_briefings | Admins can delete briefings | DELETE | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.executive_briefings | Admins can update briefings | UPDATE | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.executive_briefings | Authenticated users can view briefings | SELECT | PERMISSIVE | authenticated | `true` |  |
@@ -378,7 +384,9 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.feature_flags | Authenticated users can view feature flags | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.feature_flags | Only admins can manage feature flags | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
 | public.feed_comments | Authenticated can read feed_comments | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
+| public.feed_comments | Users can delete own feed_comments | DELETE | PERMISSIVE | authenticated | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` |  |
 | public.feed_comments | Users can insert own feed_comments | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
+| public.feed_comments | Users can update own feed_comments | UPDATE | PERMISSIVE | authenticated | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` |
 | public.feed_reactions | Authenticated can delete own reactions | DELETE | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
 | public.feed_reactions | Authenticated can read feed_reactions | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
 | public.feed_reactions | Users can insert own feed_reactions | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
@@ -405,6 +413,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.geo_access_logs | Admins can read geo_access_logs | SELECT | PERMISSIVE | public | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.geo_blocked_regions | Admin and managers can read geo_blocked_regions | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.geo_blocked_regions | Admins can manage geo_blocked_regions | ALL | PERMISSIVE | public | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| public.geocode_cache | Deny all access to geocode_cache | ALL | PERMISSIVE | anon, authenticated | `false` | `false` |
 | public.icp_data | Admins can insert icp_data | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
 | public.icp_data | Admins can update icp_data | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.icp_data | Authenticated users can read icp_data | SELECT | PERMISSIVE | authenticated | `true` |  |
@@ -444,7 +453,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.lead_churn_risk | Salespeople can read churn risk of their sales | SELECT | PERMISSIVE | authenticated | `(EXISTS ( SELECT 1    FROM (sales s      JOIN salespeople sp ON ((sp.id = s.salesperson_id)))   WHERE ((s.id = lead_churn_risk.sale_id) AND (sp.auth_user_id = auth.uid()))))` |  |
 | public.lead_detailed_logs | Users can insert logs for their clients | INSERT | PERMISSIVE | authenticated |  | `((auth.uid() = created_by) AND (is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM clients c   WHERE ((c.id = lead_detailed_logs.client_id) AND (c.user_id = auth.uid()))))))` |
 | public.lead_detailed_logs | Users can insert own logs | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = created_by)` |
-| public.lead_detailed_logs | Users can view logs of their clients | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM clients c   WHERE ((c.id = lead_detailed_logs.client_id) AND ((c.user_id = auth.uid()) OR (auth.uid() IN ( SELECT users.id            FROM auth.users           WHERE ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text)))))))` |  |
+| public.lead_detailed_logs | Users can view logs of their clients | SELECT | PERMISSIVE | authenticated | `(EXISTS ( SELECT 1    FROM clients c   WHERE ((c.id = lead_detailed_logs.client_id) AND ((c.user_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)))))` |  |
 | public.lead_detailed_logs | Users can view own logs | SELECT | PERMISSIVE | authenticated | `((auth.uid() = created_by) OR is_admin_or_manager(auth.uid()))` |  |
 | public.lead_intelligence_metrics | Authenticated read lead_intelligence_metrics | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.lead_routing_log | Admin and managers can read lead_routing_log | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
@@ -769,8 +778,12 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.salesperson_xp | Authenticated users can read salesperson_xp | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.salesperson_xp | Authenticated users can view XP | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.saved_filters | Users can create their own saved filters | INSERT | PERMISSIVE | public |  | `(auth.uid() = user_id)` |
+| public.saved_filters | Users can delete own filters | DELETE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.saved_filters | Users can delete their own saved filters | DELETE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
+| public.saved_filters | Users can insert own filters | INSERT | PERMISSIVE | public |  | `(auth.uid() = user_id)` |
+| public.saved_filters | Users can update own filters | UPDATE | PERMISSIVE | public | `(auth.uid() = user_id)` | `(auth.uid() = user_id)` |
 | public.saved_filters | Users can update their own saved filters | UPDATE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
+| public.saved_filters | Users can view own filters | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.saved_filters | Users can view their own saved filters | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.scheduled_report_runs | owner or manager can view scheduled_report_runs | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM scheduled_reports sr   WHERE ((sr.id = scheduled_report_runs.schedule_id) AND ((sr.created_by = auth.uid()) OR is_admin_or_manager(auth.uid())))))` |  |
 | public.scheduled_reports | owner can insert scheduled_reports | INSERT | PERMISSIVE | public |  | `(created_by = auth.uid())` |
@@ -952,16 +965,16 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.webauthn_credentials | Users can insert own webauthn credentials | INSERT | PERMISSIVE | public |  | `(auth.uid() = user_id)` |
 | public.webauthn_credentials | Users can update own webauthn credentials | UPDATE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.webauthn_credentials | Users can view own webauthn credentials | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
+| public.webhook_allowed_domains | Admins manage webhook_allowed_domains | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
 | public.webhook_deliveries | Admins and managers can view deliveries | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.webhook_events | Admins and managers can manage webhook_events | ALL | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.webhook_inbound_dedupe | Admins can read inbound dedupe | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.webhook_inbound_dedupe | Deny writes to non-service | ALL | RESTRICTIVE | anon, authenticated | `false` | `false` |
 | public.webhook_inbound_log | webhook_inbound_log_authenticated_read | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.webhook_inbound_log | webhook_inbound_log_service_all | ALL | PERMISSIVE | service_role | `true` | `true` |
-| public.webhook_logs | Admins can view webhook logs | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM auth.users   WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |  |
+| public.webhook_logs | Admins can view webhook logs | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.webhooks | Admins and managers can manage webhooks | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.webhooks | Admins and managers can view webhooks | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
-| public.webhooks | Admins can manage webhooks | ALL | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM auth.users   WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |  |
 | public.website_visitor_logs | Admins e Managers podem ver logs de visitantes | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM user_roles   WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role])))))` |  |
 | public.weekly_challenges | Admins and managers can delete weekly_challenges | DELETE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.weekly_challenges | Admins and managers can insert weekly_challenges | INSERT | PERMISSIVE | public |  | `is_admin_or_manager(auth.uid())` |

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 478,
+ "total": 483,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 86,
+   "usado_por": 88,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -1199,9 +1199,10 @@
    "hooks_exportados": [
     "useABCAnalysis"
    ],
-   "linhas": 142,
+   "linhas": 159,
    "dominio": "hooks/bi",
    "tabelas": [
+    "clients",
     "sales"
    ],
    "rpcs": [],
@@ -2400,6 +2401,28 @@
    "usado_por": 1,
    "usado_por_arquivos": [
     "src/components/conversational/CoachingActionsList.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/conversational/useCoachingProgress.ts",
+   "hooks_exportados": [
+    "useCoachingProgress"
+   ],
+   "linhas": 26,
+   "dominio": "hooks/conversational",
+   "tabelas": [],
+   "rpcs": [
+    "coaching_progress_by_salesperson"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/conversational/CoachingProgressCard.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -3950,9 +3973,10 @@
    "arquivo": "src/hooks/engagement/useEngagementScore.ts",
    "hooks_exportados": [
     "useEngagementLeaderboard",
-    "useEngagementScore"
+    "useEngagementScore",
+    "useRecomputeContactEngagement"
    ],
-   "linhas": 88,
+   "linhas": 127,
    "dominio": "hooks/engagement",
    "tabelas": [
     "contact_engagement_score",
@@ -3960,9 +3984,13 @@
     "engagement_score_leaderboard"
    ],
    "rpcs": [],
-   "edges": [],
+   "edges": [
+    "engagement-score-recompute"
+   ],
    "hooks_internos": [
-    "useQuery"
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
    ],
    "canais_realtime": [],
    "usado_por": 4,
@@ -8000,6 +8028,26 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/useCombo.ts",
+   "hooks_exportados": [
+    "useTodayCombo"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/gamification/ComboIndicator.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useCommissionBonusAwards.ts",
    "hooks_exportados": [
     "useCommissionBonusAwards",
@@ -8550,7 +8598,7 @@
    "hooks_exportados": [
     "useEmailMetrics"
    ],
-   "linhas": 207,
+   "linhas": 209,
    "dominio": "hooks",
    "tabelas": [
     "email_logs",
@@ -9113,7 +9161,7 @@
    "hooks_exportados": [
     "useLoginRateLimiter"
    ],
-   "linhas": 106,
+   "linhas": 140,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [
@@ -9123,7 +9171,8 @@
    ],
    "edges": [],
    "hooks_internos": [
-    "useCallback"
+    "useCallback",
+    "useRef"
    ],
    "canais_realtime": [],
    "usado_por": 1,
@@ -9164,7 +9213,7 @@
    "hooks_exportados": [
     "useMFA"
    ],
-   "linhas": 346,
+   "linhas": 442,
    "dominio": "hooks",
    "tabelas": [
     "user_mfa_settings"
@@ -9184,6 +9233,7 @@
     "useAuth",
     "useCallback",
     "useEffect",
+    "useRef",
     "useState"
    ],
    "canais_realtime": [],
@@ -9633,7 +9683,7 @@
    "hooks_exportados": [
     "usePipelineVelocity"
    ],
-   "linhas": 130,
+   "linhas": 152,
    "dominio": "hooks",
    "tabelas": [
     "deal_stage_history",
@@ -9643,7 +9693,9 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
-    "useQuery"
+    "useAuth",
+    "useQuery",
+    "useRef"
    ],
    "canais_realtime": [],
    "usado_por": 1,
@@ -10518,6 +10570,34 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/useSessionManagement.ts",
+   "hooks_exportados": [
+    "useSessionManagement"
+   ],
+   "linhas": 310,
+   "dominio": "hooks",
+   "tabelas": [
+    "active_sessions"
+   ],
+   "rpcs": [
+    "refresh_session",
+    "validate_session"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/security/SessionManager.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/useSLATracking.ts",
    "hooks_exportados": [
     "useResolveSLAViolation",
@@ -10949,7 +11029,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 38,
+   "usado_por": 39,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -10958,6 +11038,7 @@
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
     "src/components/enablement/SalesEnablementHub.tsx",
+    "src/components/engagement/EngagementLeaderboardWidget.tsx",
     "src/components/mobile/MobileDrawer.tsx",
     "src/components/molecules/UserRoleBadge.tsx",
     "src/components/organisms/AppSidebar.tsx",
@@ -10979,8 +11060,7 @@
     "src/hooks/useSecurityAlertNotifications.ts",
     "src/pages/AccessDenied.tsx",
     "src/pages/AccountBasedEngagement.tsx",
-    "src/pages/AccountBasedSelling.tsx",
-    "src/pages/ApprovalWorkflowsPage.tsx"
+    "src/pages/AccountBasedSelling.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -11062,7 +11142,7 @@
    "hooks_exportados": [
     "useWebAuthn"
    ],
-   "linhas": 256,
+   "linhas": 313,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -11072,6 +11152,8 @@
    "hooks_internos": [
     "useAuth",
     "useCallback",
+    "useEffect",
+    "useRef",
     "useState"
    ],
    "canais_realtime": [],
@@ -11704,6 +11786,53 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/win-loss/useUpsellSuggestions.ts",
+   "hooks_exportados": [
+    "useUpsellSuggestions"
+   ],
+   "linhas": 59,
+   "dominio": "hooks/win-loss",
+   "tabelas": [
+    "sales"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/win-loss/UpsellSuggestionCard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/win-loss/useUserDashboardLayout.ts",
+   "hooks_exportados": [
+    "useUserDashboardLayout"
+   ],
+   "linhas": 99,
+   "dominio": "hooks/win-loss",
+   "tabelas": [
+    "user_winloss_preferences"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/win-loss/DashboardLayoutEditor.tsx",
+    "src/pages/WinLossIntelligence.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/win-loss/useWebhookAlertHistory.ts",
    "hooks_exportados": [
     "useWebhookAlertHistory"
@@ -12041,7 +12170,7 @@
     "src/hooks/win-loss/useWinLossScenarios.ts",
     "src/pages/WinLossIntelligence.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/win-loss/useWinLossAnomalies.ts",
@@ -12128,7 +12257,7 @@
     "src/hooks/win-loss/useWinLossSalespersonStats.ts",
     "src/pages/WinLossIntelligence.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/win-loss/useWinLossDigest.ts",

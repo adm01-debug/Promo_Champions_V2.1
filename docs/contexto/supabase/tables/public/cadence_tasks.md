@@ -27,6 +27,7 @@
 | 9 | `call_result` | `text` | sim |  |  |  |
 | 10 | `priority` | `text` | sim | `'normal'::text` |  |  |
 | 11 | `task_type` | `text` | sim | `'manual'::text` |  |  |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints
@@ -99,6 +100,7 @@
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
 | trg_award_xp_on_quote_cadence_task_complete | AFTER | UPDATE | ROW | enabled | private.award_xp_on_quote_cadence_task_complete |
+| update_cadence_tasks_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 
 ## Grants

@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -85,15 +85,35 @@
 
 ## Policies (RLS)
 
-### `Owners and managers can manage accounts`
+### `Managers can delete accounts`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | DELETE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` |
-| WITH CHECK | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` |
+| USING | `( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager)` |
+| WITH CHECK |  |
+
+### `Owners and managers can insert accounts`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+
+### `Owners and managers can update accounts`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+| WITH CHECK | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
 
 ### `Owners and managers can view accounts`
 
@@ -102,7 +122,7 @@
 | comando | SELECT |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `(is_admin_or_manager(auth.uid()) OR (owner_id = get_current_salesperson_id()))` |
+| USING | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
 | WITH CHECK |  |
 
 

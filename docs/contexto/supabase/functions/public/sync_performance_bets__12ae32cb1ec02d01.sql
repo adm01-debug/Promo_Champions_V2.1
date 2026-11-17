@@ -23,15 +23,15 @@ BEGIN
             )
             WHEN b.bet_type = 'calls' THEN (
                 SELECT COUNT(*) FROM public.activities 
-                WHERE salesperson_id = v_salesperson_id AND activity_type = 'call' AND created_at >= b.starts_at AND created_at <= b.ends_at
+                WHERE salesperson_id = v_salesperson_id AND activity_type = 'call' AND created_at >= b.starts_at AND created_at <= b.ends_at AND deleted_at IS NULL
             )
             WHEN b.bet_type = 'meetings' THEN (
                 SELECT COUNT(*) FROM public.activities 
-                WHERE salesperson_id = v_salesperson_id AND activity_type = 'meeting' AND created_at >= b.starts_at AND created_at <= b.ends_at
+                WHERE salesperson_id = v_salesperson_id AND activity_type = 'meeting' AND created_at >= b.starts_at AND created_at <= b.ends_at AND deleted_at IS NULL
             )
             WHEN b.bet_type = 'activities' THEN (
                 SELECT COUNT(*) FROM public.activities 
-                WHERE salesperson_id = v_salesperson_id AND created_at >= b.starts_at AND created_at <= b.ends_at
+                WHERE salesperson_id = v_salesperson_id AND created_at >= b.starts_at AND created_at <= b.ends_at AND deleted_at IS NULL
             )
             ELSE b.current_value
         END

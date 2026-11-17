@@ -38,6 +38,7 @@ BEGIN
       WHERE salesperson_id = v_rec.salesperson_id
         AND notes LIKE '%' || v_tag || '%'
         AND notes LIKE '%' || v_title || '%'
+        AND deleted_at IS NULL
     ) THEN
       CONTINUE;
     END IF;

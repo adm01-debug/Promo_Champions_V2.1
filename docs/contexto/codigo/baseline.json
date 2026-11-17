@@ -2,157 +2,161 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "362dfda6e35f5bcd348b5c412321f7597b00b9af",
+  "commit": "8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8",
   "branch": "main",
-  "data_commit": "2026-11-14T14:56:25Z",
+  "data_commit": "2026-11-17T15:17:08-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
    {
-    "sha": "362dfda",
-    "data": "2026-11-14",
-    "assunto": "feat: editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) (#429)"
+    "sha": "8fc1c8c",
+    "data": "2026-11-17",
+    "assunto": "fix: match_reply_to_enrollment reconhece contato de conta (#565)"
    },
    {
-    "sha": "0657d49",
-    "data": "2026-11-14",
-    "assunto": "docs: marca B7 como aplicada em producao (10 migrations no ar, 2026-11-14) (#486)"
+    "sha": "c3d8008",
+    "data": "2026-11-17",
+    "assunto": "docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)"
    },
    {
-    "sha": "e3668b5",
-    "data": "2026-11-14",
-    "assunto": "fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)"
+    "sha": "6417fc3",
+    "data": "2026-11-17",
+    "assunto": "fix: sinal de resposta independe da busca de inscrição (#563)"
    },
    {
-    "sha": "331599a",
-    "data": "2026-11-14",
-    "assunto": "chore(main): release 1.4.0 (#466)"
+    "sha": "f0d43dc",
+    "data": "2026-11-17",
+    "assunto": "fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)"
    },
    {
-    "sha": "6cae050",
-    "data": "2026-11-14",
-    "assunto": "feat: editar e excluir o próprio comentário no feed de vitórias (#434)"
+    "sha": "d2460a9",
+    "data": "2026-11-17",
+    "assunto": "feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)"
    },
    {
-    "sha": "d620c11",
-    "data": "2026-11-14",
-    "assunto": "chore(deps): bump the react-core group across 1 directory with 5 updates (#398)"
+    "sha": "13844e1",
+    "data": "2026-11-17",
+    "assunto": "fix(db): 403 nas tres ultimas policies que leem auth.users (#559)"
    },
    {
-    "sha": "12b6200",
-    "data": "2026-11-14",
-    "assunto": "fix: restringe DELETE de accounts a gestor na RLS (#460)"
+    "sha": "3d0e9e9",
+    "data": "2026-11-17",
+    "assunto": "docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)"
    },
    {
-    "sha": "2c56590",
-    "data": "2026-11-14",
-    "assunto": "fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)"
+    "sha": "beed109",
+    "data": "2026-11-17",
+    "assunto": "feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)"
    },
    {
-    "sha": "614d675",
-    "data": "2026-11-13",
-    "assunto": "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)"
+    "sha": "2a3a8ca",
+    "data": "2026-11-17",
+    "assunto": "feat(db): auditoria nas duas tabelas de webhook (#551)"
    },
    {
-    "sha": "31447ff",
-    "data": "2026-11-13",
-    "assunto": "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)"
+    "sha": "ba21ed9",
+    "data": "2026-11-17",
+    "assunto": "feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)"
    },
    {
-    "sha": "1ae8ecb",
-    "data": "2026-11-13",
-    "assunto": "docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)"
+    "sha": "f4e85df",
+    "data": "2026-11-17",
+    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#556)"
    },
    {
-    "sha": "d03b42e",
-    "data": "2026-11-13",
-    "assunto": "fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)"
+    "sha": "b3daa82",
+    "data": "2026-11-17",
+    "assunto": "docs(agentes): veredicto byte a byte das 9 branches vivas (#555)"
    },
    {
-    "sha": "01cd315",
-    "data": "2026-11-13",
-    "assunto": "fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)"
+    "sha": "0b645fb",
+    "data": "2026-11-17",
+    "assunto": "fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)"
    },
    {
-    "sha": "c0af401",
-    "data": "2026-11-13",
-    "assunto": "codemod de tipografia: tracking-* sem \\b e comentários ignorados (#480)"
+    "sha": "62ddfbe",
+    "data": "2026-11-17",
+    "assunto": "fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)"
    },
    {
-    "sha": "914a813",
-    "data": "2026-11-13",
-    "assunto": "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)"
+    "sha": "c4f4e3b",
+    "data": "2026-11-17",
+    "assunto": "fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)"
    },
    {
-    "sha": "389ba61",
-    "data": "2026-11-13",
-    "assunto": "fix: remover tendências fixas dos KPIs de conversas (#451)"
+    "sha": "da0c2a1",
+    "data": "2026-11-17",
+    "assunto": "chore(db): versiona o schema de produção e testa a restauração (#548)"
    },
    {
-    "sha": "2ed73dc",
-    "data": "2026-11-13",
-    "assunto": "fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)"
+    "sha": "5ceecc6",
+    "data": "2026-11-17",
+    "assunto": "docs(db): veredicto dos 27 caminhos únicos das branches fechadas (#550)"
    },
    {
-    "sha": "bb623b7",
-    "data": "2026-11-13",
-    "assunto": "fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)"
+    "sha": "c9bccfc",
+    "data": "2026-11-17",
+    "assunto": "docs(bi): veredicto das 3 telas que a reescrita de main descartou (#549)"
    },
    {
-    "sha": "b83d412",
-    "data": "2026-11-13",
-    "assunto": "chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)"
+    "sha": "f94042e",
+    "data": "2026-11-17",
+    "assunto": "fix(bi): remove promessa de retorno que a curva ABC nao sustenta (#547)"
    },
    {
-    "sha": "3f027d1",
-    "data": "2026-11-13",
-    "assunto": "fix: remover fila de aprovação fictícia das cadências (#440)"
+    "sha": "8f38219",
+    "data": "2026-11-17",
+    "assunto": "docs(db): mede o replay do repo e registra a decisão de não consertar agora (#546)"
    },
    {
-    "sha": "824a372",
-    "data": "2026-11-13",
-    "assunto": "fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)"
+    "sha": "133abff",
+    "data": "2026-11-17",
+    "assunto": "feat(bi): ações recomendadas na curva ABC a partir da classificação real (#545)"
    },
    {
-    "sha": "b97dd91",
-    "data": "2026-11-13",
-    "assunto": "fix: permite gestor inscrever participantes ao criar batalha (#478)"
+    "sha": "a45b9ed",
+    "data": "2026-11-17",
+    "assunto": "fix(db): registra no ledger as 594 migrations ja aplicadas no schema (#543)"
    },
    {
-    "sha": "749babe",
-    "data": "2026-11-13",
-    "assunto": "fix: metas de atividades sem indicadores e ações fictícias (#444)"
+    "sha": "3ec574b",
+    "data": "2026-11-17",
+    "assunto": "docs: registra as decisoes sobre ledger, call_tracking e a tabela deals (#544)"
    },
    {
-    "sha": "c82f9b3",
-    "data": "2026-11-13",
-    "assunto": "fix: relatório de cadências passa a usar dados reais do banco (#449)"
+    "sha": "1bcb694",
+    "data": "2026-11-17",
+    "assunto": "fix(bi): agrupa curva ABC por cliente real, nao por client_name (#541)"
    },
    {
-    "sha": "05eca38",
-    "data": "2026-11-13",
-    "assunto": "fix: apontar APP_URL para o domínio de produção na Vercel (#439)"
+    "sha": "31ed35d",
+    "data": "2026-11-17",
+    "assunto": "fix(db): remove do ledger as 241 versoes de migration sem arquivo local (#540)"
    }
   ],
-  "arquivos_mudados_7d": 694,
+  "arquivos_mudados_7d": 746,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 56
+    "mudancas": 57
    },
    {
     "pasta": "src/components/analytics",
-    "mudancas": 49
+    "mudancas": 54
    },
    {
     "pasta": "src/components/ui",
     "mudancas": 49
    },
    {
+    "pasta": "src/components/gamification",
+    "mudancas": 39
+   },
+   {
     "pasta": "src/components/competitive",
     "mudancas": 38
    },
    {
-    "pasta": "src/components/gamification",
+    "pasta": "src/hooks/win-loss",
     "mudancas": 38
    },
    {
@@ -160,20 +164,24 @@
     "mudancas": 37
    },
    {
-    "pasta": "src/hooks/win-loss",
-    "mudancas": 35
+    "pasta": "package-lock.json",
+    "mudancas": 29
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 29
    },
    {
     "pasta": "src/components/pipeline",
     "mudancas": 29
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 26
+    "pasta": "src/components/win-loss",
+    "mudancas": 25
    },
    {
-    "pasta": "package.json",
-    "mudancas": 26
+    "pasta": "src/components/conversational",
+    "mudancas": 24
    },
    {
     "pasta": "src/hooks/gamification",
@@ -186,83 +194,39 @@
    {
     "pasta": "src/hooks/sales",
     "mudancas": 23
-   },
-   {
-    "pasta": "src/components/conversational",
-    "mudancas": 22
-   },
-   {
-    "pasta": "src/components/win-loss",
-    "mudancas": 22
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package.json",
-    "mudancas": 74
+    "arquivo": "package-lock.json",
+    "mudancas": 46
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 71
+    "arquivo": "package.json",
+    "mudancas": 44
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 31
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 29
-   },
-   {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 18
+    "mudancas": 22
    },
    {
     "arquivo": "RELATORIO_CI.md",
     "mudancas": 18
    },
    {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 15
-   },
-   {
-    "arquivo": "CLAUDE.md",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 13
    },
    {
-    "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 12
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 13
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
-    "mudancas": 11
-   },
-   {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "docs/RUNBOOK.md",
+    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 9
    },
    {
@@ -270,76 +234,112 @@
     "mudancas": 9
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 9
+    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "tests/migrations/canonical_hardening_contract_test.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/ci-failure-alert.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/db-backup.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/migrations-drift.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 7
    },
    {
     "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 9
+    "mudancas": 7
    },
    {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 9
+    "mudancas": 7
    },
    {
-    "arquivo": "src/components/activities/ActivityLogForm.tsx",
-    "mudancas": 8
+    "arquivo": "supabase/functions/inbound-email-webhook/index.ts",
+    "mudancas": 7
    },
    {
-    "arquivo": "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
-    "mudancas": 8
+    "arquivo": "inventario/estado/edges.json",
+    "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
-    "mudancas": 8
+    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 119
-   },
-   {
-    "autor": "devin-ai-integration[bot]",
-    "commits": 25
+    "commits": 172
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 23
+    "commits": 27
+   },
+   {
+    "autor": "devin-ai-integration[bot]",
+    "commits": 24
+   },
+   {
+    "autor": "github-actions[bot]",
+    "commits": 13
    },
    {
     "autor": "Claude",
     "commits": 12
-   },
-   {
-    "autor": "github-actions[bot]",
-    "commits": 9
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3538,
-  "arquivos_codigo": 2539,
-  "linhas_codigo": 437120,
+  "arquivos_total": 3593,
+  "arquivos_codigo": 2563,
+  "linhas_codigo": 440725,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1276,
-  "hooks": 478,
+  "componentes": 1282,
+  "hooks": 483,
   "edge_functions": 171,
-  "tabelas": 414,
-  "migrations": 676,
-  "cron_jobs": 28,
-  "testes": 236,
+  "tabelas": 417,
+  "migrations": 699,
+  "cron_jobs": 31,
+  "testes": 244,
   "workflows": 26,
   "scripts": 78,
-  "docs_md": 206
+  "docs_md": 212
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1210,
-   "linhas": 190599
+   "arquivos": 1217,
+   "linhas": 191642
   },
   "src/config": {
    "arquivos": 4,
@@ -615,16 +615,16 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 540,
-   "linhas": 63235
+   "arquivos": 547,
+   "linhas": 64352
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25560
+   "linhas": 25673
   },
   "src/lib": {
-   "arquivos": 77,
-   "linhas": 8549
+   "arquivos": 80,
+   "linhas": 8649
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -632,19 +632,19 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44332
+   "linhas": 44448
   },
   "src/routes": {
    "arquivos": 3,
    "linhas": 1557
   },
   "src/services": {
-   "arquivos": 7,
-   "linhas": 1177
+   "arquivos": 9,
+   "linhas": 1330
   },
   "src/test": {
-   "arquivos": 13,
-   "linhas": 1179
+   "arquivos": 15,
+   "linhas": 1326
   },
   "src/types": {
    "arquivos": 4,
@@ -655,8 +655,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 316,
-   "linhas": 65577
+   "arquivos": 319,
+   "linhas": 66393
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -686,7 +686,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25491
+   "linhas": 25604
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
@@ -790,8 +790,8 @@
   "console_log": 167,
   "ts_ignore": 0,
   "eslint_disable": 9,
-  "todos": 6,
-  "arquivos_acima_500_linhas": 68
+  "todos": 7,
+  "arquivos_acima_500_linhas": 69
  },
  "todos": [
   {
@@ -817,6 +817,12 @@
    "linha": 4,
    "tipo": "TODO",
    "texto": "PR (scan do diretório):"
+  },
+  {
+   "arquivo": "src/hooks/useMFA.ts",
+   "linha": 53,
+   "tipo": "TODO",
+   "texto": "estado sensível — códigos de recuperação e"
   },
   {
    "arquivo": "src/test/activities-bets-migration.test.ts",
@@ -873,7 +879,6 @@
    "customer-success-360",
    "customer-success-hub",
    "elevenlabs-stt",
-   "engagement-score-recompute",
    "generate-loss-coaching",
    "get-client-ip",
    "lead-scoring",

@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -76,6 +76,16 @@
 | roles | authenticated |
 | USING |  |
 | WITH CHECK | `(salesperson_id = ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid())  LIMIT 1))` |
+
+### `Users can update own combo_tracking`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` |
+| WITH CHECK | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` |
 
 
 ## Triggers

@@ -71,8 +71,8 @@
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(EXISTS ( SELECT 1    FROM clients c   WHERE ((c.id = lead_detailed_logs.client_id) AND ((c.user_id = auth.uid()) OR (auth.uid() IN ( SELECT users.id            FROM auth.users           WHERE ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text)))))))` |
+| roles | authenticated |
+| USING | `(EXISTS ( SELECT 1    FROM clients c   WHERE ((c.id = lead_detailed_logs.client_id) AND ((c.user_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)))))` |
 | WITH CHECK |  |
 
 ### `Users can view own logs`

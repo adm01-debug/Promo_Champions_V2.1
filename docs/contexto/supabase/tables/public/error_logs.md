@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -77,6 +77,16 @@
 | comando | INSERT |
 | tipo | PERMISSIVE |
 | roles | anon |
+| USING |  |
+| WITH CHECK | `((user_id IS NULL) OR (user_id = auth.uid()))` |
+
+### `authenticated can insert error logs`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
 | USING |  |
 | WITH CHECK | `((user_id IS NULL) OR (user_id = auth.uid()))` |
 

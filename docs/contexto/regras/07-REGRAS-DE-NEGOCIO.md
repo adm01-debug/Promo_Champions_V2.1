@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `362dfda6e3` · branch `main` · 2026-11-14 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8fc1c8c53c` · branch `main` · 2026-11-17 18:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -11,100 +11,12 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
-| `saved_filters` | Users can view own filters | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `saved_filters` | Users can insert own filters | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `saved_filters` | Users can update own filters | UPDATE | public | permissive | `auth.uid() = user_id` | `auth.uid() = user_id` |
-| `saved_filters` | Users can delete own filters | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `entity_versions` | Users can insert versions | INSERT | public | permissive |  | `auth.uid() = changed_by OR changed_by IS NULL` |
 | `saved_filters` | Users manage own filters | ALL | public | permissive | `auth.uid() = user_id` |  |
-| `salespeople` | Users can delete own salesperson record | DELETE | authenticated | permissive | `auth_user_id = auth.uid()` |  |
-| `achievements` | Authenticated users can read achievements | SELECT | authenticated | permissive | `true` |  |
-| `salesperson_xp` | Authenticated users can read salesperson_xp | SELECT | authenticated | permissive | `true` |  |
-| `cadence_steps` | Authenticated users can read cadence_steps | SELECT | authenticated | permissive | `true` |  |
-| `cadences` | Authenticated users can read cadences | SELECT | authenticated | permissive | `true` |  |
-| `category_metrics` | Authenticated users can read category_metrics | SELECT | authenticated | permissive | `true` |  |
-| `products` | Authenticated users can read products | SELECT | authenticated | permissive | `true` |  |
-| `playbooks` | Authenticated users can read playbooks | SELECT | authenticated | permissive | `true` |  |
-| `playbook_items` | Authenticated users can read playbook_items | SELECT | authenticated | permissive | `true` |  |
-| `objections_library` | Authenticated users can read objections_library | SELECT | authenticated | permissive | `true` |  |
-| `user_roles` | Admins can manage all roles | ALL | authenticated | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `access_denied_logs` | Admins can view access logs | SELECT | authenticated | permissive | `has_role(auth.uid(), 'admin')` |  |
-| `access_denied_logs` | Authenticated users can log access denied | INSERT | authenticated | permissive |  | `user_id = auth.uid()` |
-| `security_alert_settings` | Admins can view security settings | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `security_alert_settings` | Admins can update security settings | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `security_alert_settings` | Admins can insert security settings | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `security_alert_history` | Admins can view alert history | SELECT | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `clients` | Admins and managers can insert clients | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `clients` | Admins and managers can update clients | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `clients` | Admins and managers can delete clients | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `products` | Admins and managers can insert products | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `products` | Admins and managers can update products | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `products` | Admins and managers can delete products | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `playbooks` | Admins and managers can insert playbooks | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `playbooks` | Admins and managers can update playbooks | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `playbooks` | Admins and managers can delete playbooks | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `playbook_items` | Admins and managers can insert playbook_items | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `playbook_items` | Admins and managers can update playbook_items | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `playbook_items` | Admins and managers can delete playbook_items | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `cadences` | Admins and managers can insert cadences | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `cadences` | Admins and managers can update cadences | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `cadences` | Admins and managers can delete cadences | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `cadence_steps` | Admins and managers can insert cadence_steps | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `cadence_steps` | Admins and managers can update cadence_steps | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `cadence_steps` | Admins and managers can delete cadence_steps | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `objections_library` | Admins and managers can insert objections_library | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `objections_library` | Admins and managers can update objections_library | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `objections_library` | Admins and managers can delete objections_library | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `circuit_breaker_events` | Admins and managers can view circuit breaker events | SELECT | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `circuit_breaker_events` | Admins can delete circuit breaker events | DELETE | public | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
-| `teams` | Admins and managers can insert teams | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `teams` | Admins and managers can update teams | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `teams` | Admins and managers can delete teams | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `team_closers` | Admins and managers can insert team_closers | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `team_closers` | Admins and managers can delete team_closers | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `client_portfolio` | Admins and managers can delete client_portfolio | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `portfolio_settings` | Admins can manage portfolio_settings | ALL | public | permissive | `has_role(auth.uid(), 'admin')` | `has_role(auth.uid(), 'admin')` |
-| `bitrix24_sync_logs` | Admins and managers can view sync logs | SELECT | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `daily_metrics` | Admins and managers can insert daily_metrics | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `daily_metrics` | Admins and managers can update daily_metrics | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `daily_metrics` | Admins and managers can delete daily_metrics | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `category_metrics` | Admins and managers can insert category_metrics | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `category_metrics` | Admins and managers can update category_metrics | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `category_metrics` | Admins and managers can delete category_metrics | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `email_logs` | Admins and managers can view email_logs | SELECT | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `deal_chat_history` | Users can delete own chat history | DELETE | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `weekly_challenges` | Admins and managers can insert weekly_challenges | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `weekly_challenges` | Admins and managers can update weekly_challenges | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `weekly_challenges` | Admins and managers can delete weekly_challenges | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `daily_challenges` | Admins and managers can insert daily_challenges | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `daily_challenges` | Admins and managers can update daily_challenges | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `daily_challenges` | Admins and managers can delete daily_challenges | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `push_subscriptions` | Users can view their own push subscription | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `push_subscriptions` | Users can create their own push subscription | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `push_subscriptions` | Users can update their own push subscription | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `push_subscriptions` | Users can delete their own push subscription | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `demand_forecasts` | Authenticated users can view demand forecasts | SELECT | public | permissive | `public.is_authenticated()` |  |
-| `demand_forecasts` | Admins and managers can insert demand forecasts | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `demand_forecasts` | Admins and managers can update demand forecasts | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `demand_forecasts` | Admins and managers can delete demand forecasts | DELETE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `inventory_levels` | Admins and managers can insert inventory levels | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `inventory_levels` | Admins and managers can update inventory levels | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `inventory_levels` | Admins and managers can delete inventory levels | DELETE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `stock_movements` | Admins and managers can insert stock movements | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `suppliers` | Admins and managers can insert suppliers | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `suppliers` | Admins and managers can update suppliers | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
 | `suppliers` | Admins and managers can delete suppliers | DELETE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `supplier_products` | Admins and managers can insert supplier_products | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `supplier_products` | Admins and managers can update supplier_products | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `supplier_products` | Admins and managers can delete supplier_products | DELETE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `supplier_orders` | Admins and managers can insert supplier_orders | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `supplier_orders` | Admins and managers can update supplier_orders | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `supplier_orders` | Admins and managers can delete supplier_orders | DELETE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `supplier_order_items` | Admins and managers can insert supplier_order_items | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `supplier_risk_assessments` | Admins and managers can insert supplier_risk_assessments | INSERT | public | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `supplier_risk_assessments` | Admins and managers can update supplier_risk_assessments | UPDATE | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `digital_signatures` | Admins and managers can delete digital_signatures | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `document_signers` | Admins and managers can delete document_signers | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `deals` | Users can view active deals | SELECT | public | permissive | `deleted_at IS NULL AND ( true )` |  |
 | `clients` | Admins can view deleted records | SELECT | public | permissive | `deleted_at IS NOT NULL AND EXISTS ( SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND is_admin = true )` |  |
 | `deals` | Admins can view deleted deals | SELECT | public | permissive | `deleted_at IS NOT NULL AND EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND is_admin = true)` |  |
@@ -115,67 +27,16 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `deals` | Users can read deals if has permission | SELECT | public | permissive | `has_permission(auth.uid(), 'deals', 'read') OR assigned_to = auth.uid()` |  |
 | `deals` | Users can create deals if has permission | INSERT | public | permissive |  | `has_permission(auth.uid(), 'deals', 'create')` |
 | `deals` | Users can update deals if has permission | UPDATE | public | permissive | `has_permission(auth.uid(), 'deals', 'update') OR assigned_to = auth.uid()` |  |
-| `rate_limit_logs` | Admins can view rate_limit_logs | SELECT | public | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `blocked_ips` | Admins can manage blocked_ips | ALL | public | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `ip_whitelist` | Admins can manage ip_whitelist | ALL | public | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `rate_limit_settings` | Admins can manage rate_limit_settings | ALL | public | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `active_sessions` | Users can view own sessions | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `active_sessions` | Admins can view all sessions | SELECT | public | permissive | `public.has_role(auth.uid(), 'admin')` |  |
 | `user_mfa_settings` | Users can update own MFA settings | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `mfa_verification_attempts` | Users can view own MFA attempts | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `reauthentication_requests` | Users can view own reauth requests | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `reauthentication_requests` | Users can insert own reauth requests | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `known_devices` | Users can view own devices | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `known_devices` | Users can insert own devices | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `known_devices` | Users can update own devices | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `known_devices` | Users can delete own devices | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `login_alerts` | Users can view own alerts | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `login_alerts` | Users can update own alerts | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `webauthn_credentials` | Users can view own webauthn credentials | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `webauthn_credentials` | Users can insert own webauthn credentials | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `webauthn_credentials` | Users can update own webauthn credentials | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `webauthn_credentials` | Users can delete own webauthn credentials | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `permissions` | Admins can manage permissions | ALL | public | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `role_permissions` | Admins can manage role_permissions | ALL | public | permissive | `public.has_role(auth.uid(), 'admin')` | `public.has_role(auth.uid(), 'admin')` |
-| `salesperson_preferences` | Users can read own preferences | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `salesperson_preferences` | Users can insert own preferences | INSERT | public | permissive |  | `salesperson_id = get_current_salesperson_id()` |
-| `salesperson_preferences` | Users can update own preferences | UPDATE | public | permissive | `salesperson_id = get_current_salesperson_id()` |  |
-| `sales` | Users can read own sales or admins all | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `sales` | Users can insert own sales | INSERT | public | permissive |  | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |
 | `sales` | Users can delete own sales | DELETE | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `activities` | Users can read own activities or admins all | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `sales_goals` | Users can read own goals or admins all | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `sales_goals` | Admins can insert goals | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid())` |
-| `sales_goals` | Admins can update goals | UPDATE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `sales_goals` | Admins can delete goals | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `deal_outcomes` | Users can read own outcomes or admins all | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `deal_outcomes` | Users can insert own outcomes | INSERT | public | permissive |  | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |
-| `deal_outcomes` | Users can update own outcomes | UPDATE | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `deal_outcomes` | Users can delete own outcomes | DELETE | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `lead_scores` | Users can read own lead scores or admins all | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM public.sales s WHERE s.id = lead_scores.sale_id AND (s.salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())) )` |  |
-| `lead_scores` | Users can insert lead scores for own sales | INSERT | public | permissive |  | `EXISTS ( SELECT 1 FROM public.sales s WHERE s.id = lead_scores.sale_id AND (s.salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())) )` |
-| `lead_scores` | Users can update own lead scores | UPDATE | public | permissive | `EXISTS ( SELECT 1 FROM public.sales s WHERE s.id = lead_scores.sale_id AND (s.salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())) )` |  |
-| `lead_scores` | Users can delete own lead scores | DELETE | public | permissive | `EXISTS ( SELECT 1 FROM public.sales s WHERE s.id = lead_scores.sale_id AND (s.salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())) )` |  |
-| `tasks` | Users can read own tasks or admins all | SELECT | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `tasks` | Users can update own tasks | UPDATE | public | permissive | `salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())` |  |
-| `audit_log` | Users can view own audit logs | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `audit_log` | Admins can view all audit logs | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM auth.users WHERE id = auth.uid() AND raw_user_meta_data->>'role' = 'admin' )` |  |
-| `webhooks` | Admins can manage webhooks | ALL | public | permissive | `EXISTS ( SELECT 1 FROM auth.users WHERE id = auth.uid() AND raw_user_meta_data->>'role' = 'admin' )` |  |
-| `webhook_logs` | Admins can view webhook logs | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM auth.users WHERE id = auth.uid() AND raw_user_meta_data->>'role' = 'admin' )` |  |
-| `clients` | Users can view own clients | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `clients` | Users can insert own clients | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `clients` | Users can update own clients | UPDATE | public | permissive | `auth.uid() = user_id` |  |
 | `clients` | Users can delete own clients | DELETE | public | permissive | `auth.uid() = user_id` |  |
 | `deals` | Users can view own deals | SELECT | public | permissive | `auth.uid() = user_id` |  |
 | `deals` | Users can insert own deals | INSERT | public | permissive |  | `auth.uid() = user_id` |
 | `deals` | Users can delete own deals | DELETE | public | permissive | `auth.uid() = user_id` |  |
 | `activities` | Users can view own activities | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `activities` | Users can insert own activities | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `activities` | Users can update own activities | UPDATE | public | permissive | `auth.uid() = user_id` |  |
 | `activities` | Users can delete own activities | DELETE | public | permissive | `auth.uid() = user_id` |  |
 | `products` | Everyone can view active products | SELECT | public | permissive | `active = true` |  |
 | `tasks` | Users can view own or assigned tasks | SELECT | public | permissive | `auth.uid() = user_id OR auth.uid() = assigned_to` |  |
-| `tasks` | Users can insert own tasks | INSERT | public | permissive |  | `auth.uid() = user_id` |
 | `tasks` | Users can update assigned tasks | UPDATE | public | permissive | `auth.uid() = user_id OR auth.uid() = assigned_to` |  |
 | `tasks` | Users can delete own tasks | DELETE | public | permissive | `auth.uid() = user_id` |  |
 | `webhooks` | Users can view their own webhooks | SELECT | public | permissive | `auth.uid() = user_id` |  |
@@ -183,18 +44,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `webhooks` | Users can update their own webhooks | UPDATE | public | permissive | `auth.uid() = user_id` |  |
 | `webhooks` | Users can delete their own webhooks | DELETE | public | permissive | `auth.uid() = user_id` |  |
 | `call_tracking` | Users can view their own call tracking | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `notifications` | Users can view their own notifications | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `notification_preferences` | Users can update their notification preferences | ALL | public | permissive | `auth.uid() = user_id` |  |
 | `daily_challenges` | Users can view their own challenges | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `password_history` | Users can view own password history | SELECT | public | permissive | `auth.uid() = user_id` |  |
 | `login_attempts` | Admins can view login attempts | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin' )` |  |
-| `session_activity` | Users can view own session activity | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `data_access_log` | Users can view own data access | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `user_2fa` | Users can view own 2FA settings | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `user_2fa` | Users can insert own 2FA settings | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `user_2fa` | Users can update own 2FA settings | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `user_2fa_backup_codes` | Users can view own backup codes | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `user_2fa_backup_codes` | Users can update own backup codes | UPDATE | public | permissive | `auth.uid() = user_id` |  |
 | `deals` | Admins can do anything on deals | ALL | public | permissive | `EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )` |  |
 | `deals` | Managers can view all deals | SELECT | public | permissive | `EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role IN ('manager', 'admin') )` |  |
 | `deals` | Users can view assigned deals | SELECT | public | permissive | `assigned_to = auth.uid() OR created_by = auth.uid()` |  |
@@ -219,154 +70,290 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `users` | Users view own profile | SELECT | public | permissive | `id = auth.uid() OR EXISTS ( SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'manager') )` |  |
 | `users` | Users update own profile | UPDATE | public | permissive | `id = auth.uid()` |  |
 | `users` | Admins full users access | ALL | public | permissive | `EXISTS ( SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin' )` |  |
-| `saved_filters` | Users can view their own saved filters | SELECT | public | permissive | `auth.uid() = user_id` |  |
-| `saved_filters` | Users can create their own saved filters | INSERT | public | permissive |  | `auth.uid() = user_id` |
-| `saved_filters` | Users can update their own saved filters | UPDATE | public | permissive | `auth.uid() = user_id` |  |
-| `saved_filters` | Users can delete their own saved filters | DELETE | public | permissive | `auth.uid() = user_id` |  |
-| `quotes` | Closers can read quotes | SELECT | public | permissive | `is_admin_or_manager(auth.uid()) OR created_by = get_current_salesperson_id()` |  |
-| `quotes` | Closers can insert quotes | INSERT | public | permissive |  | `is_admin_or_manager(auth.uid()) OR created_by = get_current_salesperson_id()` |
-| `quotes` | Closers can update quotes | UPDATE | public | permissive | `is_admin_or_manager(auth.uid()) OR created_by = get_current_salesperson_id()` |  |
 | `quotes` | Admins can delete quotes | DELETE | public | permissive | `is_admin_or_manager(auth.uid())` |  |
-| `workflow_rules` | Users can manage own workflow rules | ALL | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` | `salesperson_id = public.get_current_salesperson_id()` |
-| `email_tracking_events` | Users can view own email tracking | ALL | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` | `salesperson_id = public.get_current_salesperson_id()` |
-| `dashboard_layouts` | Users can manage own dashboard layout | ALL | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` | `salesperson_id = public.get_current_salesperson_id()` |
-| `feed_reactions` | Authenticated can delete own reactions | DELETE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` |  |
-| `sales_battles` | Admins can manage battles | ALL | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `battle_participants` | Admins can update participants | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `competitive_seasons` | Admins can manage seasons | ALL | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `rank_change_notifications` | Users can update own notifications | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` |  |
-| `salesperson_leagues` | Anyone can read leagues | SELECT | authenticated | permissive | `true` |  |
-| `salesperson_leagues` | System can manage leagues | ALL | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `sales_streaks` | Anyone can read streaks | SELECT | authenticated | permissive | `true` |  |
-| `sales_streaks` | Insert own streak | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `weekly_matchups` | Anyone can read matchups | SELECT | authenticated | permissive | `true` |  |
-| `weekly_matchups` | Admins manage matchups | ALL | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `salesperson_badges` | Authenticated can view earned badges | SELECT | authenticated | permissive | `true` |  |
-| `salesperson_badges` | Users can update own badges | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` |  |
-| `salesperson_badges` | System can insert badges | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `progressive_goals` | Users can insert own goals | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `kudos` | Authenticated can view kudos | SELECT | authenticated | permissive | `true` |  |
-| `kudos` | Users can send kudos | INSERT | authenticated | permissive |  | `from_salesperson_id = public.get_current_salesperson_id()` |
-| `kudos` | Admins can update kudos | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `tournaments` | Auth users can read tournaments | SELECT | authenticated | permissive | `true` |  |
-| `tournament_participants` | Auth users can read participants | SELECT | authenticated | permissive | `true` |  |
-| `tournament_matches` | Auth users can read matches | SELECT | authenticated | permissive | `true` |  |
-| `sales_territories` | Auth users can read territories | SELECT | authenticated | permissive | `true` |  |
-| `territory_history` | Auth users can read territory history | SELECT | authenticated | permissive | `true` |  |
-| `active_sessions` | Users can read own sessions | SELECT | authenticated | permissive | `user_id = auth.uid()` |  |
-| `active_sessions` | Users can insert own sessions | INSERT | authenticated | permissive |  | `user_id = auth.uid()` |
-| `active_sessions` | Users can update own sessions | UPDATE | authenticated | permissive | `user_id = auth.uid()` |  |
-| `active_sessions` | Users can delete own sessions | DELETE | authenticated | permissive | `user_id = auth.uid()` |  |
-| `push_subscriptions` | Users can read own push subscriptions | SELECT | authenticated | permissive | `user_id = auth.uid()` |  |
-| `push_subscriptions` | Users can insert own push subscriptions | INSERT | authenticated | permissive |  | `user_id = auth.uid()` |
-| `push_subscriptions` | Users can update own push subscriptions | UPDATE | authenticated | permissive | `user_id = auth.uid()` |  |
-| `push_subscriptions` | Users can delete own push subscriptions | DELETE | authenticated | permissive | `user_id = auth.uid()` |  |
-| `webauthn_challenges` | Users can read own webauthn challenges | SELECT | authenticated | permissive | `user_id = auth.uid()` |  |
-| `webauthn_challenges` | Users can insert own webauthn challenges | INSERT | authenticated | permissive |  | `user_id = auth.uid()` |
-| `webauthn_challenges` | Users can delete own webauthn challenges | DELETE | authenticated | permissive | `user_id = auth.uid()` |  |
-| `rate_limit_logs` | Admins can read rate_limit_logs | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `activity_goals` | Users can insert own activity_goals | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `activity_goals` | Users can update own activity_goals | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `activity_goals` | Admins can delete activity_goals | DELETE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `achievements` | Users can insert own achievements | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `active_power_ups` | Users can insert own power_ups | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `deal_stage_history` | Users can insert own deal_stage_history | INSERT | authenticated | permissive |  | `sale_id IN ( SELECT id FROM public.sales WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
-| `deal_stage_history` | Users can update own deal_stage_history | UPDATE | authenticated | permissive | `sale_id IN ( SELECT id FROM public.sales WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| `cadence_tasks` | Users can insert own cadence_tasks | INSERT | authenticated | permissive |  | `prospect_cadence_id IN ( SELECT id FROM public.prospect_cadences WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
-| `cadence_tasks` | Users can update own cadence_tasks | UPDATE | authenticated | permissive | `prospect_cadence_id IN ( SELECT id FROM public.prospect_cadences WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| `cadence_tasks` | Users can delete own cadence_tasks | DELETE | authenticated | permissive | `prospect_cadence_id IN ( SELECT id FROM public.prospect_cadences WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| `icp_data` | Admins can insert icp_data | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `icp_data` | Admins can update icp_data | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `playbook_progress` | Users can insert own playbook_progress | INSERT | authenticated | permissive |  | `completed_by = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |
-| `playbook_progress` | Users can update own playbook_progress | UPDATE | authenticated | permissive | `completed_by = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `playbook_progress` | Users can delete own playbook_progress | DELETE | authenticated | permissive | `completed_by = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `prospect_cadences` | Users can insert own prospect_cadences | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |
-| `prospect_cadences` | Users can update own prospect_cadences | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `prospect_cadences` | Users can delete own prospect_cadences | DELETE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `performance_bets` | Users can insert own bets | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `performance_bets` | Users can update own bets | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` |  |
-| `battle_participants` | Users can join battles as self | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `feed_comments` | Users can insert own feed_comments | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `feed_reactions` | Users can insert own feed_reactions | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `sales_territories` | Admins can insert territories | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `sales_territories` | Admins can update territories | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `tournaments` | Admins can insert tournaments | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `tournaments` | Admins can update tournaments | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `tournament_matches` | Admins can insert matches | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `tournament_matches` | Admins can update matches | UPDATE | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `tournament_participants` | Users can insert own tournament_participants | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |
-| `tournament_participants` | Users can update own tournament_participants | UPDATE | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `territory_history` | Admins can insert territory_history | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `salespeople` | Admins can insert salespeople | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `lead_routing_log` | Admins can insert lead_routing_log | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `rank_change_notifications` | Users can insert own rank_notifications | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id()` |
-| `victory_feed` | Users can insert own victory_feed | INSERT | authenticated | permissive |  | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |
-| `quote_sync_logs` | Admins can insert quote_sync_logs | INSERT | authenticated | permissive |  | `public.is_admin_or_manager(auth.uid())` |
-| `clients` | Users can read assigned clients | SELECT | authenticated | permissive | `id IN ( SELECT client_id FROM public.client_portfolio WHERE salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| `suppliers` | Admin and managers can read suppliers | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
-| `chat_conversations` | Users can read own chat_conversations | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id()` |  |
-| `chat_messages` | Users can read own chat_messages | SELECT | authenticated | permissive | `conversation_id IN ( SELECT id FROM public.chat_conversations WHERE salesperson_id = public.get_current_salesperson_id() )` |  |
-| `document_signers` | Users can read own document_signers | SELECT | authenticated | permissive | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| `deal_chat_history` | Users can read own deal_chat_history | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `client_portfolio` | Users can read own client_portfolio | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
-| `document_signers` | Authenticated users can insert document_signers | INSERT | authenticated | permissive |  | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
-| `document_signers` | Authenticated users can update document_signers | UPDATE | authenticated | permissive | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| … +748 linhas — lista completa em `context.json` | | | | | | |
+| `storage.objects` | Authenticated users can upload their own avatar | INSERT | authenticated | permissive |  | `bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]` |
+| `storage.objects` | Users can update their own avatar | UPDATE | authenticated | permissive | `bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]` |  |
+| `storage.objects` | Users can delete their own avatar | DELETE | authenticated | permissive | `bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]` |  |
+| `storage.objects` | Users can read own quote PDFs | SELECT | authenticated | permissive | `bucket_id = 'quote-pdfs' AND ( auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin_or_manager(auth.uid()) )` |  |
+| `storage.objects` | Users can delete own quote PDFs | DELETE | authenticated | permissive | `bucket_id = 'quote-pdfs' AND ( auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin_or_manager(auth.uid()) )` |  |
+| `storage.objects` | Service role can upload quote PDFs | INSERT | service_role | permissive |  | `bucket_id = 'quote-pdfs'` |
+| `storage.objects` | Service role can update quote PDFs | UPDATE | service_role | permissive | `bucket_id = 'quote-pdfs'` |  |
+| `error_logs` | Authenticated users can insert their own error logs | INSERT | authenticated | permissive |  | `auth.uid() IS NOT NULL AND (user_id IS NULL OR user_id = auth.uid())` |
+| `realtime.messages` | Scoped realtime subscriptions | ALL | authenticated | permissive | `topic LIKE 'realtime:public:%' OR topic = ('user:' \|\| auth.uid()::text) OR topic = ('presence:' \|\| auth.uid()::text)` | `topic LIKE 'realtime:public:%' OR topic = ('user:' \|\| auth.uid()::text) OR topic = ('presence:' \|\| auth.uid()::text)` |
+| `storage.objects` | report_owners_can_read_exports | SELECT | authenticated | permissive | `bucket_id = 'report-exports' AND (auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin_or_manager(auth.uid()))` |  |
+| `pipeline_coverage_recommendations` | Authenticated users can update coverage recommendations | UPDATE | authenticated | permissive | `true` |  |
+| `cadence_alert_templates` | Public write for alert templates | ALL | public | permissive | `true` |  |
+| `cadence_outcome_rules` | Public write for outcome rules | ALL | public | permissive | `true` |  |
+| `sales` | Admins and Managers can delete sales | DELETE | public | permissive | `public.is_admin_or_manager()` |  |
+| `storage.objects` | Users can list their own avatars | SELECT | authenticated | permissive | `bucket_id = 'avatars' AND (auth.uid())::text = (storage.foldername(name))[1]` |  |
+| `maintenance_log` | Deny writes to non-service on maintenance_log | ALL | anon, authenticated | restrictive | `true` | `false` |
+| `login_attempts` | Service role can insert login_attempts | INSERT | service_role | permissive |  | `true` |
+| `storage.objects` | Salespeople delete own call audio | DELETE | authenticated | permissive | `bucket_id = 'call-recordings' AND ( auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin_or_manager(auth.uid()) )` |  |
+| `storage.objects` | Salespeople read own call audio | SELECT | authenticated | permissive | `bucket_id = 'call-recordings' AND ( auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin_or_manager(auth.uid()) )` |  |
+| `storage.objects` | Salespeople upload own call audio | INSERT | authenticated | permissive |  | `bucket_id = 'call-recordings' AND auth.uid()::text = (storage.foldername(name))[1]` |
+| `storage.objects` | owner can read own report snapshots | SELECT | authenticated | permissive | `bucket_id = 'report-snapshots' AND ( public.is_admin_or_manager(auth.uid()) OR (storage.foldername(name))[1] = auth.uid()::text )` |  |
+| `storage.objects` | report_owners_can_write_exports | INSERT | authenticated | permissive |  | `bucket_id = 'report-exports' AND auth.uid()::text = (storage.foldername(name))[1]` |
+| `leads` | leads_authenticated_all | ALL | authenticated | permissive | `true` | `true` |
+| `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
+| `_internal_secrets` | Deny all access to _internal_secrets | ALL | authenticated, anon | permissive | `false` | `false` |
+| `ab_tests` | Admins and managers can manage ab_tests | ALL | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `access_denied_logs` | Admins can view access logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))` |  |
+| `access_denied_logs` | Authenticated users can log access denied | INSERT | authenticated | permissive |  | `(user_id = auth.uid())` |
+| `access_denied_logs` | Authenticated users can log access denied events | INSERT | authenticated | permissive |  | `(auth.uid() = user_id)` |
+| `access_denied_logs` | Users can insert their own access logs | INSERT | PUBLIC | permissive |  | `(auth.uid() = user_id)` |
+| `account_activities` | Insert activities for accessible accounts | INSERT | authenticated | permissive |  | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_activities.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
+| `account_activities` | View activities of accessible accounts | SELECT | authenticated | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_activities.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
+| `account_contacts` | Manage contacts of accessible accounts | ALL | authenticated | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
+| `account_contacts` | View contacts of accessible accounts | SELECT | authenticated | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_contacts.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
+| `account_plans` | Account plans owner or admin can read | SELECT | authenticated | permissive | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
+| `account_plans` | Account plans owner or admin can update | UPDATE | authenticated | permissive | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |
+| `account_plans` | Owners or admins can insert account plans | INSERT | authenticated | permissive |  | `((created_by = auth.uid()) AND (is_admin_or_manager(auth.uid()) OR (created_by = auth.uid())))` |
+| `accounts` | Managers can delete accounts | DELETE | authenticated | permissive | `( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager)` |  |
+| `accounts` | Owners and managers can insert accounts | INSERT | authenticated | permissive |  | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+| `accounts` | Owners and managers can update accounts | UPDATE | authenticated | permissive | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |
+| `accounts` | Owners and managers can view accounts | SELECT | authenticated | permissive | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (owner_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)))` |  |
+| `achievements` | Authenticated users can read achievements | SELECT | authenticated | permissive | `true` |  |
+| `achievements` | Users can insert own achievements | INSERT | authenticated | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `active_power_ups` | Users can insert own power_ups | INSERT | authenticated | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `active_power_ups` | Users can view own or admin can view all power-ups | SELECT | authenticated | permissive | `((salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `active_sessions` | Admins can view all sessions | SELECT | PUBLIC | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `active_sessions` | Users can delete own sessions | DELETE | authenticated | permissive | `(user_id = auth.uid())` |  |
+| `active_sessions` | Users can insert own sessions | INSERT | authenticated | permissive |  | `(user_id = auth.uid())` |
+| `active_sessions` | Users can read own sessions | SELECT | authenticated | permissive | `(user_id = auth.uid())` |  |
+| `active_sessions` | Users can update own sessions | UPDATE | authenticated | permissive | `(user_id = auth.uid())` |  |
+| `active_sessions` | Users can view own sessions | SELECT | PUBLIC | permissive | `(auth.uid() = user_id)` |  |
+| `activities` | Users can insert own activities | INSERT | PUBLIC | permissive |  | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |
+| `activities` | Users can read own activities or admins all | SELECT | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `activities` | Users can update own activities | UPDATE | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `activities` | admin_delete_activities | DELETE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `activity_audit_logs` | Users can view audit logs for their activities | SELECT | authenticated | permissive | `((EXISTS ( SELECT 1 FROM activities a WHERE ((a.id = activity_audit_logs.activity_id) AND (a.salesperson_id = get_current_salesperson_id())))) OR is_admin_or_manager(auth.uid()))` |  |
+| `activity_goals` | Admins can delete activity_goals | DELETE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `activity_goals` | Users can insert own activity_goals | INSERT | authenticated | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `activity_goals` | Users can update own activity_goals | UPDATE | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `activity_goals` | Users can view own activity_goals or admin | SELECT | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `agenda_events` | Admins/Managers view all agenda events | SELECT | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `agenda_events` | Salespeople manage own agenda events | ALL | PUBLIC | permissive | `(salesperson_id = get_current_salesperson_id())` | `(salesperson_id = get_current_salesperson_id())` |
+| `ai_agent_actions` | View actions of accessible runs | SELECT | authenticated | permissive | `(EXISTS ( SELECT 1 FROM ai_agent_runs r WHERE ((r.id = ai_agent_actions.run_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))))` |  |
+| `ai_agent_runs` | Cancel own agent runs | UPDATE | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))` | `(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'cancelled'::text) AND (result IS NULL) AND (completed_at IS NULL) AND ((approved_by IS NULL) OR (approved_by = auth.uid())))` |
+| `ai_agent_runs` | Insert own pending agent runs | INSERT | authenticated | permissive |  | `(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'pending'::text) AND (approved_by IS NULL) AND (result IS NULL) AND (completed_at IS NULL) AND (steps = '[]'::jsonb))` |
+| `ai_agent_runs` | Salespeople view own agent runs | SELECT | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `ai_narrative_cache` | Authenticated users can read cache | SELECT | authenticated | permissive | `true` |  |
+| `ai_narrative_cache` | Service role manages cache | ALL | service_role | permissive | `true` | `true` |
+| `ai_sales_insights` | Users can view insights for their sales | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM sales WHERE ((sales.id = ai_sales_insights.sale_id) AND (sales.salesperson_id = auth.uid()))))` |  |
+| `api_tokens` | Admins can manage API tokens | ALL | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| `api_tokens` | Users can see own tokens | SELECT | authenticated | permissive | `((created_by = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `app_config` | admin manager write app_config | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `app_config` | authenticated read app_config | SELECT | authenticated | permissive | `true` |  |
+| `approval_decisions` | Admins and managers can create decisions | INSERT | authenticated | permissive |  | `(is_admin_or_manager(auth.uid()) AND (approver_id = auth.uid()))` |
+| `approval_decisions` | Users can view decisions on their requests | SELECT | authenticated | permissive | `(EXISTS ( SELECT 1 FROM approval_requests ar WHERE ((ar.id = approval_decisions.request_id) AND ((ar.requester_id = auth.uid()) OR is_admin_or_manager(auth.uid())))))` |  |
+| `approval_requests` | Admins and managers can update requests | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `approval_requests` | Users can create requests | INSERT | authenticated | permissive |  | `(requester_id = auth.uid())` |
+| `approval_requests` | Users can view own requests | SELECT | authenticated | permissive | `((requester_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
+| `approval_workflows` | Admins and managers can manage workflows | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `approval_workflows` | Authenticated users can view active workflows | SELECT | authenticated | permissive | `(is_active = true)` |  |
+| `asset_usage_logs` | Users insert own usage logs | INSERT | authenticated | permissive |  | `(user_id = auth.uid())` |
+| `asset_usage_logs` | Users see own logs, managers see all | SELECT | authenticated | permissive | `((user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
+| `audit_log` | Admins can view all audit logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM auth.users WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |  |
+| `audit_log` | Users can view own audit logs | SELECT | PUBLIC | permissive | `(auth.uid() = user_id)` |  |
+| `audit_logs` | Admins can view audit logs | SELECT | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `audit_logs` | Users can insert own audit entries | INSERT | authenticated | permissive |  | `(auth.uid() = actor_id)` |
+| `auto_task_queue_settings` | auto_task_queue_settings_admin_write | ALL | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| `auto_task_queue_settings` | auto_task_queue_settings_read_auth | SELECT | authenticated | permissive | `true` |  |
+| `automation_runs` | Authenticated users can view runs | SELECT | authenticated | permissive | `true` |  |
+| `automation_runs` | automation_runs_select_admin_manager | SELECT | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `automation_workflows` | Admins/managers manage workflows | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `automation_workflows` | Authenticated users can view active workflows | SELECT | PUBLIC | permissive | `(auth.uid() IS NOT NULL)` |  |
+| `available_spins` | Own spins manage | ALL | authenticated | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `available_spins` | Users can view own or admin can view all spins | SELECT | authenticated | permissive | `((salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `available_spins` | Users can view their own spins | SELECT | PUBLIC | permissive | `(salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))` |  |
+| `battle_participants` | Admins can add battle participants | INSERT | authenticated | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `battle_participants` | Admins can update participants | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `battle_participants` | Authenticated can read battle_participants | SELECT | PUBLIC | permissive | `(auth.uid() IS NOT NULL)` |  |
+| `battle_participants` | Users can join battles as self | INSERT | authenticated | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `bitrix24_sync_logs` | Admins and managers can view sync logs | SELECT | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `blocked_ips` | Admins can manage blocked_ips | ALL | PUBLIC | permissive | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| `buying_committee` | Users can manage committee for their sales | ALL | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM sales WHERE ((sales.id = buying_committee.sale_id) AND ((sales.salesperson_id = auth.uid()) OR (auth.uid() IN ( SELECT user_roles.user_id FROM user_roles WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role]))))))))` |  |
+| `buying_committee` | Users can view committee for their sales | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM sales WHERE ((sales.id = buying_committee.sale_id) AND ((sales.salesperson_id = auth.uid()) OR (auth.uid() IN ( SELECT user_roles.user_id FROM user_roles WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role]))))))))` |  |
+| `buying_committee_members` | bcm_delete | DELETE | PUBLIC | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM sales s WHERE ((s.id = buying_committee_members.sale_id) AND (s.salesperson_id = get_current_salesperson_id())))))` |  |
+| `buying_committee_members` | bcm_insert | INSERT | PUBLIC | permissive |  | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM sales s WHERE ((s.id = buying_committee_members.sale_id) AND (s.salesperson_id = get_current_salesperson_id())))))` |
+| `buying_committee_members` | bcm_select | SELECT | PUBLIC | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM sales s WHERE ((s.id = buying_committee_members.sale_id) AND (s.salesperson_id = get_current_salesperson_id())))))` |  |
+| `buying_committee_members` | bcm_update | UPDATE | PUBLIC | permissive | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM sales s WHERE ((s.id = buying_committee_members.sale_id) AND (s.salesperson_id = get_current_salesperson_id())))))` |  |
+| `buying_signals` | Admins e Managers podem ver sinais de compra | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role])))))` |  |
+| `cadence_ab_assignments` | Admins/managers manage ab assignments | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `cadence_ab_assignments` | Authenticated can view ab assignments | SELECT | authenticated | permissive | `true` |  |
+| `cadence_ab_tests` | Admins/managers manage ab tests | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `cadence_ab_tests` | Authenticated can view ab tests | SELECT | authenticated | permissive | `true` |  |
+| `cadence_advanced_stats` | Leitura pública autenticada para stats | SELECT | PUBLIC | permissive | `(auth.role() = 'authenticated'::text)` |  |
+| `cadence_alert_templates` | Authenticated read for alert templates | SELECT | authenticated | permissive | `true` |  |
+| `cadence_enrollment_rules` | Admins/managers can manage enrollment rules | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `cadence_enrollment_rules` | Authenticated can view enrollment rules | SELECT | authenticated | permissive | `true` |  |
+| `cadence_funnel_rules` | Authenticated users can view funnel rules | SELECT | authenticated | permissive | `true` |  |
+| `cadence_funnel_rules` | Only admins can manage funnel rules | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `cadence_outcome_rules` | Authenticated read for outcome rules | SELECT | authenticated | permissive | `true` |  |
+| `cadence_steps` | Admins and managers can delete cadence_steps | DELETE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `cadence_steps` | Admins and managers can insert cadence_steps | INSERT | PUBLIC | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `cadence_steps` | Admins and managers can update cadence_steps | UPDATE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `cadence_steps` | Authenticated users can read cadence_steps | SELECT | authenticated | permissive | `true` |  |
+| `cadence_tasks` | Users can delete own cadence_tasks | DELETE | authenticated | permissive | `((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |  |
+| `cadence_tasks` | Users can insert own cadence_tasks | INSERT | authenticated | permissive |  | `((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |
+| `cadence_tasks` | Users can update own cadence_tasks | UPDATE | authenticated | permissive | `((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |  |
+| `cadence_tasks` | Users can view own cadence_tasks or admin | SELECT | authenticated | permissive | `((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |  |
+| `cadences` | Admins and managers can delete cadences | DELETE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `cadences` | Admins and managers can insert cadences | INSERT | PUBLIC | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `cadences` | Admins and managers can update cadences | UPDATE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `cadences` | Authenticated users can read cadences | SELECT | authenticated | permissive | `true` |  |
+| `call_coaching_scorecards` | ccs_read_authenticated | SELECT | authenticated | permissive | `true` |  |
+| `call_coaching_scorecards` | ccs_write_admin_manager | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_conversation_metrics` | ccm_select_authenticated | SELECT | authenticated | permissive | `true` |  |
+| `call_conversation_metrics` | ccm_write_admin_manager | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_critical_moments` | Authenticated users can insert critical moments | INSERT | PUBLIC | permissive |  | `(auth.uid() = owner_id)` |
+| `call_critical_moments` | Users can view own critical moments | SELECT | authenticated | permissive | `((get_current_salesperson_id() = salesperson_id) OR is_admin_or_manager(auth.uid()))` |  |
+| `call_critical_moments` | ccm_admin_delete | DELETE | PUBLIC | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR (owner_id = auth.uid()))` |  |
+| `call_critical_moments` | ccm_owner_read | SELECT | PUBLIC | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'manager'::app_role) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `call_critical_moments` | ccm_owner_update | UPDATE | PUBLIC | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'manager'::app_role) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `call_insights` | System inserts insights | INSERT | PUBLIC | permissive |  | `(EXISTS ( SELECT 1 FROM call_recordings r WHERE ((r.id = call_insights.recording_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |
+| `call_insights` | View insights via recording access | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM call_recordings r WHERE ((r.id = call_insights.recording_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |  |
+| `call_intelligence_triggers` | Allow read for all authenticated users | SELECT | PUBLIC | permissive | `(auth.role() = 'authenticated'::text)` |  |
+| `call_logs` | Delete own call logs | DELETE | PUBLIC | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `call_logs` | Insert own call logs | INSERT | PUBLIC | permissive |  | `(owner_id = auth.uid())` |
+| `call_logs` | Update own call logs | UPDATE | PUBLIC | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `call_logs` | View call logs | SELECT | PUBLIC | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `call_metric_benchmarks` | cmb_select_authenticated | SELECT | authenticated | permissive | `true` |  |
+| `call_metric_benchmarks` | cmb_write_admin | ALL | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| `call_objection_analysis` | Admin/manager write objection analysis | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_objection_analysis` | Authenticated read objection analysis | SELECT | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `call_objections` | Admin/manager write call objections | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_objections` | Authenticated read call objections | SELECT | authenticated | permissive | `true` |  |
+| `call_question_analysis` | auth read question analysis | SELECT | authenticated | permissive | `true` |  |
+| `call_question_analysis` | managers write question analysis | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_questions` | auth read questions | SELECT | authenticated | permissive | `true` |  |
+| `call_questions` | managers write questions | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `call_recording_ingest_jobs` | admin_can_read_all_ingest_jobs | SELECT | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `call_recording_ingest_jobs` | salesperson_can_enqueue_own_ingest_jobs | INSERT | authenticated | permissive |  | `(salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))` |
+| `call_recording_ingest_jobs` | salesperson_can_read_own_ingest_jobs | SELECT | authenticated | permissive | `(salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))` |  |
+| `call_recordings` | Admins delete recordings | DELETE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `call_recordings` | Salespeople create own recordings | INSERT | PUBLIC | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `call_recordings` | Salespeople update own recordings | UPDATE | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `call_recordings` | Salespeople view own recordings | SELECT | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `call_sentiment_timeline` | Service role manages sentiment timeline | ALL | PUBLIC | permissive | `(auth.role() = 'service_role'::text)` | `(auth.role() = 'service_role'::text)` |
+| `call_sentiment_timeline` | View sentiment of own/managed recordings | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM call_recordings cr WHERE ((cr.id = call_sentiment_timeline.recording_id) AND ((cr.salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))))` |  |
+| `call_transcripts` | System inserts transcripts | INSERT | PUBLIC | permissive |  | `(EXISTS ( SELECT 1 FROM call_recordings r WHERE ((r.id = call_transcripts.recording_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |
+| `call_transcripts` | View transcripts via recording access | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM call_recordings r WHERE ((r.id = call_transcripts.recording_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |  |
+| `campaign_health_alerts` | admin can delete campaign health alerts | DELETE | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `campaign_health_alerts` | owner or admin can view campaign health alerts | SELECT | authenticated | permissive | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` |  |
+| `category_metrics` | Admins and managers can delete category_metrics | DELETE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `category_metrics` | Admins and managers can insert category_metrics | INSERT | PUBLIC | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `category_metrics` | Admins and managers can update category_metrics | UPDATE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `category_metrics` | Authenticated users can read category_metrics | SELECT | authenticated | permissive | `true` |  |
+| `challenge_progress` | Users can read own challenge_progress | SELECT | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `channel_credentials` | Owners can delete their credentials | DELETE | authenticated | permissive | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
+| `channel_credentials` | Owners can insert their credentials | INSERT | authenticated | permissive |  | `(owner_id = auth.uid())` |
+| `channel_credentials` | Owners can update their credentials | UPDATE | authenticated | permissive | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
+| `channel_credentials` | Owners can view their credentials | SELECT | authenticated | permissive | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
+| `channel_interactions` | Users can create own interactions | INSERT | PUBLIC | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `channel_interactions` | Users can delete own interactions | DELETE | PUBLIC | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `channel_interactions` | Users can update own interactions | UPDATE | PUBLIC | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `channel_interactions` | Users can view own interactions | SELECT | PUBLIC | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `chat_conversations` | Users can delete own chat_conversations | DELETE | authenticated | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `chat_conversations` | Users can insert own chat_conversations | INSERT | authenticated | permissive |  | `(salesperson_id = get_current_salesperson_id())` |
+| `chat_conversations` | Users can read own chat_conversations | SELECT | authenticated | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `chat_conversations` | Users can update own chat_conversations | UPDATE | authenticated | permissive | `(salesperson_id = get_current_salesperson_id())` |  |
+| `chat_messages` | Users can insert own chat_messages | INSERT | authenticated | permissive |  | `(conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |
+| `chat_messages` | Users can read own chat_messages | SELECT | authenticated | permissive | `(conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |  |
+| `churn_alert_settings` | Admins manage churn alert settings | ALL | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
+| `churn_alert_settings` | Anyone authenticated can read churn alert settings | SELECT | authenticated | permissive | `true` |  |
+| `circuit_breaker_events` | Admin/manager can log circuit breaker events | INSERT | authenticated | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `circuit_breaker_events` | Admins and managers can view circuit breaker events | SELECT | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `circuit_breaker_events` | Admins can delete circuit breaker events | DELETE | PUBLIC | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `client_churn_alerts_state` | Admins can view all churn alert state | SELECT | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `client_churn_alerts_state` | Users can view their own churn alert state | SELECT | authenticated | permissive | `(salesperson_id = auth.uid())` |  |
+| `client_interactions` | Allow authenticated users to insert interactions | INSERT | PUBLIC | permissive |  | `(auth.role() = 'authenticated'::text)` |
+| `client_interactions` | Portfolio interactions readable | SELECT | PUBLIC | permissive | `(is_admin_or_manager(auth.uid()) OR (auth.uid() = user_id) OR (client_id IN ( SELECT client_portfolio.client_id FROM client_portfolio WHERE (client_portfolio.salesperson_id = get_current_salesperson_id()))))` |  |
+| `client_interactions` | Users can insert own interactions | INSERT | authenticated | permissive |  | `(auth.uid() = user_id)` |
+| `client_interactions` | Users can view own interactions | SELECT | authenticated | permissive | `((auth.uid() = user_id) OR is_admin_or_manager(auth.uid()))` |  |
+| `client_portfolio` | Users can insert own client_portfolio | INSERT | authenticated | permissive |  | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |
+| `client_portfolio` | Users can read own client_portfolio | SELECT | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `client_portfolio` | Users can update own client_portfolio | UPDATE | authenticated | permissive | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
+| `client_portfolio` | admin_delete_client_portfolio | DELETE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `client_renewals` | Client renewals scoped visibility | SELECT | PUBLIC | permissive | `(is_admin_or_manager(auth.uid()) OR (client_id IN ( SELECT client_portfolio.client_id FROM client_portfolio WHERE (client_portfolio.salesperson_id = get_current_salesperson_id()))))` |  |
+| `clients` | Admins and managers can insert clients | INSERT | PUBLIC | permissive |  | `is_admin_or_manager(auth.uid())` |
+| `clients` | Admins and managers can update clients | UPDATE | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `clients` | Users can insert own clients | INSERT | PUBLIC | permissive |  | `(auth.uid() = user_id)` |
+| `clients` | Users can read assigned clients | SELECT | authenticated | permissive | `((id IN ( SELECT client_portfolio.client_id FROM client_portfolio WHERE (client_portfolio.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |  |
+| `clients` | Users can update own clients | UPDATE | PUBLIC | permissive | `(auth.uid() = user_id)` |  |
+| `clients` | Users can view own clients | SELECT | PUBLIC | permissive | `(auth.uid() = user_id)` |  |
+| `clients` | admin_delete_clients | DELETE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `coaching_actions` | Admin or manager delete coaching | DELETE | PUBLIC | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `coaching_actions` | Admin or manager insert coaching | INSERT | PUBLIC | permissive |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `coaching_actions` | Salesperson updates own coaching status | UPDATE | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `coaching_actions` | Salesperson views own coaching | SELECT | PUBLIC | permissive | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `coaching_opportunities` | coaching_opp_read_authenticated | SELECT | authenticated | permissive | `true` |  |
+| `coaching_opportunities` | coaching_opp_write_admin_manager | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `coaching_scorecard_config` | Allow read for all authenticated users | SELECT | PUBLIC | permissive | `(auth.role() = 'authenticated'::text)` |  |
+| `coaching_sessions` | Admins and managers manage all coaching sessions | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `coaching_sessions` | Coaches manage their own sessions | ALL | authenticated | permissive | `(coach_id = auth.uid())` | `(coach_id = auth.uid())` |
+| `coaching_sessions` | Salespeople view their own sessions | SELECT | authenticated | permissive | `(salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))` |  |
+| `coaching_skill_benchmarks` | coaching_bench_read_authenticated | SELECT | authenticated | permissive | `true` |  |
+| `coaching_skill_benchmarks` | coaching_bench_write_admin_manager | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `cohort_analyses` | owner_full_access_cohorts | ALL | authenticated | permissive | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` | `((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |
+| `collectible_badges` | Anyone authenticated can view badges | SELECT | PUBLIC | permissive | `(auth.uid() IS NOT NULL)` |  |
+| `combo_tracking` | Admins can update combo_tracking | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `combo_tracking` | Anyone can read combo_tracking | SELECT | authenticated | permissive | `true` |  |
+| `combo_tracking` | Users can insert own combo_tracking | INSERT | authenticated | permissive |  | `(salesperson_id = ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()) LIMIT 1))` |
+| `combo_tracking` | Users can update own combo_tracking | UPDATE | authenticated | permissive | `(salesperson_id = ( SELECT s.id FROM salespeople s WHERE (s.auth_user_id = auth.uid()) LIMIT 1))` | `(salesperson_id = ( SELECT s.id FROM salespeople s WHERE (s.auth_user_id = auth.uid()) LIMIT 1))` |
+| `commercial_approval_requests` | Criar solicitações | INSERT | authenticated | permissive |  | `(auth.uid() = requester_id)` |
+| `commercial_approval_requests` | Only admins and managers can update approval requests | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
+| `commercial_approval_requests` | Users can create approval requests | INSERT | authenticated | permissive |  | `(auth.uid() = requester_id)` |
+| `commercial_approval_requests` | Users can view their own approval requests | SELECT | authenticated | permissive | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |  |
+| `commercial_approval_requests` | Ver solicitações | SELECT | authenticated | permissive | `true` |  |
+| `commission_bonus_awards` | Admins delete awards | DELETE | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
+| `commission_bonus_awards` | Admins insert awards | INSERT | authenticated | permissive |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `commission_bonus_awards` | Admins update awards | UPDATE | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| `commission_bonus_awards` | Salespeople view own awards | SELECT | authenticated | permissive | `((salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
+| `commission_bonuses` | Admins and managers manage commission_bonuses | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
+| … +801 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
 | Tabela | Coluna | Regra |
 |---|---|---|
-| `saved_filters` | `id` | PK; default gen_random_uuid() |
+| `saved_filters` | `id` | default gen_random_uuid() |
 | `saved_filters` | `user_id` | obrigatório |
 | `saved_filters` | `entity_type` | obrigatório |
 | `saved_filters` | `name` | obrigatório |
-| `saved_filters` | `filters` | default '{}' |
+| `saved_filters` | `filters` | default '{}'::jsonb |
 | `saved_filters` | `is_default` | default false |
 | `saved_filters` | `created_at` | default now() |
 | `saved_filters` | `updated_at` | default now() |
-| `entity_versions` | `id` | PK; default gen_random_uuid() |
+| `entity_versions` | `id` | default gen_random_uuid() |
 | `entity_versions` | `entity_type` | obrigatório |
 | `entity_versions` | `entity_id` | obrigatório |
 | `entity_versions` | `version_number` | obrigatório |
-| `entity_versions` | `data` | obrigatório |
-| `entity_versions` | `changed_by` | FK → users.id |
-| `entity_versions` | `changed_at` | default NOW() |
-| `entity_versions` | `(tabela)` | CONSTRAINT unique_version UNIQUE (entity_type, entity_id, version_number) |
-| `audit_log` | `id` | PK; default uuid_generate_v4() |
-| `audit_log` | `user_id` | FK → users.id |
-| `audit_log` | `action` | obrigatório; CHECK action IN ('INSERT', 'UPDATE', 'DELETE') |
+| `entity_versions` | `data` | default '{}'::jsonb |
+| `entity_versions` | `changed_at` | default now() |
+| `audit_log` | `id` | default gen_random_uuid() |
 | `audit_log` | `table_name` | obrigatório |
 | `audit_log` | `record_id` | obrigatório |
+| `audit_log` | `action` | obrigatório |
 | `audit_log` | `created_at` | default now() |
-| `sales` | `id` | PK; default gen_random_uuid() |
+| `sales` | `id` | default gen_random_uuid() |
 | `sales` | `client_name` | obrigatório |
 | `sales` | `product_name` | obrigatório |
 | `sales` | `amount` | obrigatório |
-| `sales` | `status` | default 'pending'; CHECK status IN ('completed', 'pending', 'cancelled') |
-| `sales` | `category` | default 'subscription'; CHECK category IN ('subscription', 'service', 'project', 'other') |
+| `sales` | `status` | default 'pending'::text |
+| `sales` | `category` | default 'subscription'::text |
 | `sales` | `created_at` | default now() |
 | `sales` | `updated_at` | default now() |
-| `sales` | `salesperson_id` | FK → salespeople.id |
-| `sales` | `source` | default 'other' |
-| `sales` | `pipeline_id` | FK → pipelines.id |
-| `sales` | `account_id` | FK → accounts.id ON DELETE SET NULL |
-| `sales` | `client_id` | FK → clients.id ON DELETE SET NULL |
-| `sales` | `product_id` | FK → products.id |
+| `sales` | `source` | default 'other'::text |
+| `sales` | `stock_reduced` | default false |
 | `sales` | `enrichment_data` | default '{}'::jsonb |
-| `sales` | `lost_to_competitor_id` | FK → competitors_registry.id |
-| `sales` | `territory_id` | FK → territories.id |
+| `sales` | `enrichment_status` | default 'pending'::text |
 | `sales` | `ai_prediction_score` | default 0 |
-| `sales` | `sdr_id` | FK → salespeople.id |
+| `sales` | `whatsapp_status` | default 'not_connected'::text |
 | `sales` | `is_first_sale` | default false |
-| `sales` | `closer_id` | FK → salespeople.id |
-| `sales` | `deal_status` | CALCULADA = CASE WHEN status IN ('completed', 'won', 'closed') THEN 'completed'::public.deal_status WHEN status IN ('lost', 'cancelled') THEN 'lost'::public.deal_status WHEN status = 'qualified' THEN 'qualified'::public.deal_status WHEN status = 'proposal' THEN 'proposal'::public.deal_status WHEN status = 'negotiation' THEN 'negotiation'::public.deal_status WHEN status IN ('pending', 'lead', 'prospecting', 'open', 'in_progress') THEN 'pending'::public.deal_status ELSE NULL END |
-| `sales` | `version` | obrigatório |
-| `sales` | `(tabela)` | constraint sales_category_check CHECK (category = ANY (ARRAY['subscription', 'service', 'project', 'other', 'brindes'])) |
-| `sales` | `(tabela)` | constraint sales_status_check CHECK (status = ANY (ARRAY['completed', 'pending', 'cancelled', 'lead', 'qualified', 'proposal', 'negotiation', 'closed', 'prospecting', 'won', 'lost'])) |
-| `sales` | `(tabela)` | constraint sales_amount_positive CHECK (amount >= 0) |
-| `daily_metrics` | `id` | PK; default gen_random_uuid() |
-| `daily_metrics` | `date` | obrigatório; único |
+| `sales` | `version` | default 1 |
+| `daily_metrics` | `id` | default gen_random_uuid() |
+| `daily_metrics` | `date` | obrigatório |
 | `daily_metrics` | `revenue` | default 0 |
 | `daily_metrics` | `revenue_goal` | default 0 |
 | `daily_metrics` | `new_clients` | default 0 |
@@ -374,162 +361,129 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `daily_metrics` | `conversion_rate` | default 0 |
 | `daily_metrics` | `avg_ticket` | default 0 |
 | `daily_metrics` | `created_at` | default now() |
-| `category_metrics` | `id` | PK; default gen_random_uuid() |
+| `category_metrics` | `id` | default gen_random_uuid() |
 | `category_metrics` | `date` | obrigatório |
 | `category_metrics` | `category` | obrigatório |
 | `category_metrics` | `percentage` | default 0 |
 | `category_metrics` | `created_at` | default now() |
-| `category_metrics` | `(tabela)` | UNIQUE(date, category) |
-| `salespeople` | `id` | PK; default gen_random_uuid() |
+| `salespeople` | `id` | default gen_random_uuid() |
 | `salespeople` | `name` | obrigatório |
-| `salespeople` | `email` | único |
 | `salespeople` | `commission_rate` | default 10.00 |
 | `salespeople` | `is_active` | default true |
 | `salespeople` | `created_at` | default now() |
 | `salespeople` | `updated_at` | default now() |
-| `salespeople` | `role` | default 'hybrid' |
-| `salespeople` | `auth_user_id` | único |
-| `salespeople` | `squad_id` | FK → squads.id |
+| `salespeople` | `role` | default 'hybrid'::salesperson_role |
+| `salespeople` | `score_total` | default 0 |
 | `salespeople` | `notify_sales_in_app` | default true |
-| `salespeople` | `score_total` | obrigatório |
-| `sales_goals` | `id` | PK; default gen_random_uuid() |
-| `sales_goals` | `salesperson_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
+| `salespeople` | `notify_sales_email` | default false |
+| `sales_goals` | `id` | default gen_random_uuid() |
+| `sales_goals` | `salesperson_id` | obrigatório |
 | `sales_goals` | `month` | obrigatório |
 | `sales_goals` | `goal_amount` | default 0 |
 | `sales_goals` | `created_at` | default now() |
-| `sales_goals` | `(tabela)` | UNIQUE(salesperson_id, month) |
-| `deal_outcomes` | `id` | PK; default gen_random_uuid() |
-| `deal_outcomes` | `sale_id` | FK → sales.id ON DELETE CASCADE |
-| `deal_outcomes` | `salesperson_id` | FK → salespeople.id ON DELETE CASCADE |
-| `deal_outcomes` | `outcome` | obrigatório; CHECK outcome IN ('won', 'lost') |
+| `deal_outcomes` | `id` | default gen_random_uuid() |
+| `deal_outcomes` | `outcome` | obrigatório |
 | `deal_outcomes` | `reason` | obrigatório |
 | `deal_outcomes` | `created_at` | default now() |
-| `deal_stage_history` | `id` | PK; default gen_random_uuid() |
-| `deal_stage_history` | `sale_id` | FK → sales.id ON DELETE CASCADE |
+| `deal_stage_history` | `id` | default gen_random_uuid() |
 | `deal_stage_history` | `stage` | obrigatório |
 | `deal_stage_history` | `entered_at` | default now() |
 | `deal_stage_history` | `is_backfilled` | default false |
-| `objections_library` | `id` | PK; default gen_random_uuid() |
+| `objections_library` | `id` | default gen_random_uuid() |
 | `objections_library` | `objection` | obrigatório |
 | `objections_library` | `response` | obrigatório |
-| `objections_library` | `category` | default 'general' |
+| `objections_library` | `category` | default 'general'::text |
 | `objections_library` | `effectiveness_score` | default 0 |
 | `objections_library` | `usage_count` | default 0 |
-| `objections_library` | `created_by` | FK → salespeople.id |
 | `objections_library` | `created_at` | default now() |
 | `objections_library` | `updated_at` | default now() |
-| `objections_library` | `tags` | default '{}' |
-| `notification_preferences` | `user_id` | PK; FK → users.id ON DELETE CASCADE |
-| `notification_preferences` | `email_enabled` | default true |
-| `notification_preferences` | `push_enabled` | default true |
-| `notification_preferences` | `sms_enabled` | default false |
-| `notification_preferences` | `deal_updates` | default true |
-| `notification_preferences` | `task_reminders` | default true |
-| `notification_preferences` | `team_mentions` | default true |
-| `notification_preferences` | `daily_digest` | default false |
-| `notification_preferences` | `updated_at` | default now() |
-| `notification_preferences` | `consecutive_days_threshold` | obrigatório |
-| `notification_preferences` | `created_at` | obrigatório |
+| `objections_library` | `tags` | default '{}'::text[] |
+| `notification_preferences` | `id` | default gen_random_uuid() |
 | `notification_preferences` | `email` | obrigatório |
-| `notification_preferences` | `frequency` | obrigatório |
-| `notification_preferences` | `id` | obrigatório |
-| `notification_preferences` | `inactive_threshold_days` | obrigatório |
-| `notification_preferences` | `is_active` | obrigatório |
-| `notification_preferences` | `notify_at_risk_goals` | obrigatório |
-| `notification_preferences` | `notify_inactive_clients` | obrigatório |
-| `notification_preferences` | `notify_stagnant_deals` | obrigatório |
-| `notification_preferences` | `preferred_time` | obrigatório |
-| `notification_preferences` | `stagnant_threshold_days` | obrigatório |
-| `tasks` | `id` | PK; default gen_random_uuid() |
+| `notification_preferences` | `is_active` | default true |
+| `notification_preferences` | `frequency` | default 'daily'::text |
+| `notification_preferences` | `notify_stagnant_deals` | default true |
+| `notification_preferences` | `notify_inactive_clients` | default true |
+| `notification_preferences` | `notify_at_risk_goals` | default true |
+| `notification_preferences` | `stagnant_threshold_days` | default 14 |
+| `notification_preferences` | `inactive_threshold_days` | default 60 |
+| `notification_preferences` | `preferred_time` | default '08:00:00'::time |
+| `notification_preferences` | `created_at` | default now() |
+| `notification_preferences` | `updated_at` | default now() |
+| `notification_preferences` | `consecutive_days_threshold` | default 3 |
+| `tasks` | `id` | default gen_random_uuid() |
 | `tasks` | `title` | obrigatório |
-| `tasks` | `salesperson_id` | FK → salespeople.id ON DELETE CASCADE |
-| `tasks` | `sale_id` | FK → sales.id ON DELETE SET NULL |
-| `tasks` | `priority` | default 'medium' |
-| `tasks` | `status` | default 'pending' |
-| `tasks` | `task_type` | default 'other' |
+| `tasks` | `priority` | default 'medium'::task_priority |
+| `tasks` | `status` | default 'pending'::task_status |
+| `tasks` | `task_type` | default 'other'::task_type |
 | `tasks` | `due_date` | default CURRENT_DATE |
 | `tasks` | `created_at` | default now() |
 | `tasks` | `updated_at` | default now() |
-| `tasks` | `source_insight_id` | FK → win_loss_insights.id on delete set null |
-| `tasks` | `client_id` | FK → clients.id ON DELETE CASCADE |
-| `tasks` | `(tabela)` | constraint tasks_due_date_check CHECK (due_date >= '2020-01-01') |
-| `playbooks` | `id` | PK; default gen_random_uuid() |
+| `playbooks` | `id` | default gen_random_uuid() |
 | `playbooks` | `stage` | obrigatório |
 | `playbooks` | `title` | obrigatório |
 | `playbooks` | `created_at` | default now() |
 | `playbooks` | `updated_at` | default now() |
-| `playbook_items` | `id` | PK; default gen_random_uuid() |
-| `playbook_items` | `playbook_id` | obrigatório; FK → playbooks.id ON DELETE CASCADE |
+| `playbook_items` | `id` | default gen_random_uuid() |
+| `playbook_items` | `playbook_id` | obrigatório |
 | `playbook_items` | `content` | obrigatório |
 | `playbook_items` | `item_order` | default 0 |
 | `playbook_items` | `is_required` | default false |
-| `playbook_items` | `item_type` | default 'checklist' |
+| `playbook_items` | `item_type` | default 'checklist'::text |
 | `playbook_items` | `created_at` | default now() |
-| `playbook_items` | `asset_id` | FK → sales_enablement_assets.id |
-| `playbook_progress` | `id` | PK; default gen_random_uuid() |
-| `playbook_progress` | `playbook_item_id` | obrigatório; FK → playbook_items.id ON DELETE CASCADE |
-| `playbook_progress` | `sale_id` | obrigatório; FK → sales.id ON DELETE CASCADE |
+| `playbook_progress` | `id` | default gen_random_uuid() |
+| `playbook_progress` | `playbook_item_id` | obrigatório |
+| `playbook_progress` | `sale_id` | obrigatório |
 | `playbook_progress` | `completed_at` | default now() |
-| `playbook_progress` | `completed_by` | FK → salespeople.id |
-| `playbook_progress` | `(tabela)` | UNIQUE(playbook_item_id, sale_id) |
-| `lead_scores` | `id` | PK; default gen_random_uuid() |
-| `lead_scores` | `sale_id` | obrigatório; FK → sales.id ON DELETE CASCADE |
+| `lead_scores` | `id` | default gen_random_uuid() |
+| `lead_scores` | `sale_id` | obrigatório |
 | `lead_scores` | `score` | default 0 |
-| `lead_scores` | `factors` | default '{}' |
+| `lead_scores` | `factors` | default '{}'::jsonb |
 | `lead_scores` | `calculated_at` | default now() |
 | `lead_scores` | `created_at` | default now() |
 | `lead_scores` | `updated_at` | default now() |
-| `lead_scores` | `(tabela)` | UNIQUE(sale_id) |
-| `activities` | `id` | PK; default gen_random_uuid() |
-| `activities` | `sale_id` | FK → sales.id ON DELETE CASCADE |
-| `activities` | `salesperson_id` | FK → salespeople.id ON DELETE SET NULL |
+| `activities` | `id` | default gen_random_uuid() |
 | `activities` | `activity_type` | obrigatório |
 | `activities` | `outcome` | obrigatório |
 | `activities` | `created_at` | default now() |
-| `activities` | `client_id` | FK → clients.id |
-| `activities` | `lead_status` | default 'prospect' |
-| `cadences` | `id` | PK; default uuid_generate_v4() |
+| `activities` | `lead_status` | default 'prospect'::text |
+| `activities` | `qualification_score` | default 0 |
+| `cadences` | `id` | default gen_random_uuid() |
 | `cadences` | `name` | obrigatório |
 | `cadences` | `is_active` | default true |
-| `cadences` | `created_by` | FK → users.id |
 | `cadences` | `created_at` | default now() |
-| `cadences` | `cadence_type` | default 'prospecting' |
-| `cadences` | `updated_at` | obrigatório |
-| `cadence_steps` | `id` | PK; default uuid_generate_v4() |
-| `cadence_steps` | `cadence_id` | obrigatório; FK → cadences.id ON DELETE CASCADE |
-| `cadence_steps` | `step_order` | obrigatório |
-| `cadence_steps` | `step_type` | obrigatório; CHECK step_type IN ('email', 'call', 'linkedin', 'task') |
-| `cadence_steps` | `delay_days` | obrigatório |
+| `cadences` | `updated_at` | default now() |
+| `cadences` | `cadence_type` | default 'prospecting'::cadence_type |
+| `cadence_steps` | `id` | default gen_random_uuid() |
+| `cadence_steps` | `cadence_id` | obrigatório |
+| `cadence_steps` | `day_number` | default 1 |
+| `cadence_steps` | `action_type` | obrigatório |
+| `cadence_steps` | `title` | obrigatório |
+| `cadence_steps` | `step_order` | default 0 |
 | `cadence_steps` | `created_at` | default now() |
 | `cadence_steps` | `needs_approval` | default false |
-| `cadence_steps` | `task_type` | default 'manual' |
-| `cadence_steps` | `action_type` | obrigatório |
-| `cadence_steps` | `day_number` | obrigatório |
-| `cadence_steps` | `title` | obrigatório |
-| `prospect_cadences` | `id` | PK; default gen_random_uuid() |
-| `prospect_cadences` | `sale_id` | FK → sales.id ON DELETE CASCADE |
-| `prospect_cadences` | `cadence_id` | obrigatório; FK → cadences.id ON DELETE CASCADE |
-| `prospect_cadences` | `salesperson_id` | FK → salespeople.id |
-| `prospect_cadences` | `status` | default 'active'; CHECK status IN ('active', 'paused', 'completed', 'cancelled') |
+| `cadence_steps` | `singu_variables` | default '[]'::jsonb |
+| `cadence_steps` | `task_type` | default 'manual'::text |
+| `prospect_cadences` | `id` | default gen_random_uuid() |
+| `prospect_cadences` | `cadence_id` | obrigatório |
+| `prospect_cadences` | `status` | default 'active'::text |
 | `prospect_cadences` | `started_at` | default now() |
 | `prospect_cadences` | `current_step` | default 0 |
 | `prospect_cadences` | `created_at` | default now() |
 | `prospect_cadences` | `updated_at` | default now() |
-| `prospect_cadences` | `enrolled_via_rule_id` | FK → cadence_enrollment_rules.id ON DELETE SET NULL |
-| `prospect_cadences` | `quote_id` | FK → quotes.id ON DELETE CASCADE |
-| `prospect_cadences` | `funnel_stage` | default 'new'; CHECK funnel_stage IN ('new', 'high_interest', 'waiting_approval', 'scheduled') |
-| `prospect_cadences` | `enrollment_source` | obrigatório |
-| `prospect_cadences` | `(tabela)` | UNIQUE(sale_id, cadence_id) |
-| `prospect_cadences` | `(tabela)` | constraint prospect_cadences_target_check CHECK ((sale_id IS NOT NULL) OR (quote_id IS NOT NULL)) |
-| `cadence_tasks` | `id` | PK; default gen_random_uuid() |
-| `cadence_tasks` | `prospect_cadence_id` | obrigatório; FK → prospect_cadences.id ON DELETE CASCADE |
-| `cadence_tasks` | `cadence_step_id` | obrigatório; FK → cadence_steps.id ON DELETE CASCADE |
+| `prospect_cadences` | `enrollment_source` | default 'manual'::text |
+| `prospect_cadences` | `funnel_stage` | default 'new'::text |
+| `cadence_tasks` | `id` | default gen_random_uuid() |
+| `cadence_tasks` | `prospect_cadence_id` | obrigatório |
+| `cadence_tasks` | `cadence_step_id` | obrigatório |
 | `cadence_tasks` | `scheduled_date` | obrigatório |
-| `cadence_tasks` | `status` | default 'pending'; CHECK status IN ('pending', 'completed', 'skipped') |
+| `cadence_tasks` | `status` | default 'pending'::text |
 | `cadence_tasks` | `created_at` | default now() |
-| `cadence_tasks` | `task_type` | default 'manual' |
-| `activity_goals` | `id` | PK; default gen_random_uuid() |
-| `activity_goals` | `salesperson_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
+| `cadence_tasks` | `priority` | default 'normal'::text |
+| `cadence_tasks` | `task_type` | default 'manual'::text |
+| `cadence_tasks` | `updated_at` | obrigatório |
+| `activity_goals` | `id` | default gen_random_uuid() |
+| `activity_goals` | `salesperson_id` | obrigatório |
 | `activity_goals` | `calls_goal` | default 30 |
 | `activity_goals` | `emails_goal` | default 20 |
 | `activity_goals` | `meetings_goal` | default 3 |
@@ -537,489 +491,621 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `activity_goals` | `whatsapp_goal` | default 15 |
 | `activity_goals` | `created_at` | default now() |
 | `activity_goals` | `updated_at` | default now() |
-| `activity_goals` | `(tabela)` | UNIQUE(salesperson_id) |
-| `achievements` | `id` | PK; default gen_random_uuid() |
-| `achievements` | `salesperson_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
-| `achievements` | `achievement_type` | default 'daily_goal' |
+| `achievements` | `id` | default gen_random_uuid() |
+| `achievements` | `salesperson_id` | obrigatório |
+| `achievements` | `achievement_type` | default 'daily_goal'::text |
 | `achievements` | `achievement_date` | default CURRENT_DATE |
-| `achievements` | `details` | default '{}' |
+| `achievements` | `details` | default '{}'::jsonb |
 | `achievements` | `created_at` | default now() |
-| `salesperson_xp` | `id` | PK; default gen_random_uuid() |
-| `salesperson_xp` | `salesperson_id` | obrigatório; único; FK → salespeople.id ON DELETE CASCADE |
+| `salesperson_xp` | `id` | default gen_random_uuid() |
+| `salesperson_xp` | `salesperson_id` | obrigatório |
 | `salesperson_xp` | `total_xp` | default 0 |
 | `salesperson_xp` | `current_level` | default 1 |
 | `salesperson_xp` | `xp_to_next_level` | default 100 |
 | `salesperson_xp` | `created_at` | default now() |
 | `salesperson_xp` | `updated_at` | default now() |
-| `xp_history` | `id` | PK; default gen_random_uuid() |
-| `xp_history` | `salesperson_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
+| `xp_history` | `id` | default gen_random_uuid() |
+| `xp_history` | `salesperson_id` | obrigatório |
 | `xp_history` | `xp_amount` | obrigatório |
 | `xp_history` | `source_type` | obrigatório |
 | `xp_history` | `created_at` | default now() |
-| `clients` | `id` | PK; default gen_random_uuid() |
+| `clients` | `id` | default gen_random_uuid() |
 | `clients` | `name` | obrigatório |
 | `clients` | `total_value` | default 0 |
 | `clients` | `created_at` | default now() |
 | `clients` | `updated_at` | default now() |
+| `clients` | `email_verified` | default false |
+| `clients` | `phone_verified` | default false |
 | `clients` | `is_activated` | default false |
-| `products` | `id` | PK; default gen_random_uuid() |
+| `products` | `id` | default gen_random_uuid() |
 | `products` | `name` | obrigatório |
-| `products` | `category` | default 'subscription' |
+| `products` | `category` | default 'subscription'::text |
 | `products` | `price` | default 0 |
 | `products` | `sales_count` | default 0 |
 | `products` | `rating` | default 0 |
-| `products` | `status` | default 'ativo' |
+| `products` | `status` | default 'ativo'::text |
 | `products` | `created_at` | default now() |
 | `products` | `updated_at` | default now() |
-| `products` | `sku` | único |
 | `products` | `stock_quantity` | default 0 |
-| `products` | `(tabela)` | constraint products_price_positive CHECK (price >= 0) |
-| `products` | `(tabela)` | constraint products_stock_positive CHECK (stock_quantity >= 0) |
-| `user_roles` | `user_id` | PK; FK → users.id ON DELETE CASCADE |
-| `user_roles` | `role` | obrigatório; CHECK role IN ('admin', 'manager', 'sales', 'viewer') |
-| `user_roles` | `assigned_at` | default now() |
-| `user_roles` | `assigned_by` | FK → users.id |
-| `user_roles` | `created_at` | obrigatório |
-| `user_roles` | `id` | obrigatório |
-| `user_roles` | `updated_at` | obrigatório |
-| `access_denied_logs` | `id` | PK; default gen_random_uuid() |
+| `products` | `min_stock_level` | default 5 |
+| `user_roles` | `id` | default gen_random_uuid() |
+| `user_roles` | `user_id` | obrigatório |
+| `user_roles` | `role` | default 'salesperson'::app_role |
+| `user_roles` | `created_at` | default now() |
+| `user_roles` | `updated_at` | default now() |
+| `access_denied_logs` | `id` | default gen_random_uuid() |
 | `access_denied_logs` | `user_id` | obrigatório |
 | `access_denied_logs` | `attempted_path` | obrigatório |
 | `access_denied_logs` | `created_at` | default now() |
-| `security_alert_settings` | `id` | PK; default gen_random_uuid() |
+| `security_alert_settings` | `id` | default gen_random_uuid() |
 | `security_alert_settings` | `spike_threshold` | default 5 |
 | `security_alert_settings` | `time_window_hours` | default 1 |
 | `security_alert_settings` | `cooldown_hours` | default 24 |
 | `security_alert_settings` | `created_at` | default now() |
 | `security_alert_settings` | `updated_at` | default now() |
-| `security_alert_history` | `id` | PK; default gen_random_uuid() |
-| `security_alert_history` | `alert_type` | default 'access_denied_spike' |
+| `security_alert_history` | `id` | default gen_random_uuid() |
+| `security_alert_history` | `alert_type` | default 'access_denied_spike'::text |
 | `security_alert_history` | `recipients` | obrigatório |
 | `security_alert_history` | `access_count` | obrigatório |
 | `security_alert_history` | `time_window_hours` | obrigatório |
 | `security_alert_history` | `threshold_used` | obrigatório |
 | `security_alert_history` | `created_at` | default now() |
-| `circuit_breaker_events` | `id` | PK; default gen_random_uuid() |
+| `circuit_breaker_events` | `id` | default gen_random_uuid() |
 | `circuit_breaker_events` | `circuit_name` | obrigatório |
 | `circuit_breaker_events` | `event_type` | obrigatório |
 | `circuit_breaker_events` | `failure_count` | default 0 |
 | `circuit_breaker_events` | `details` | default '{}'::jsonb |
 | `circuit_breaker_events` | `created_at` | default now() |
-| `teams` | `id` | PK; default gen_random_uuid() |
+| `teams` | `id` | default gen_random_uuid() |
 | `teams` | `name` | obrigatório |
-| `teams` | `sdr_id` | FK → salespeople.id ON DELETE SET NULL |
 | `teams` | `is_active` | default true |
 | `teams` | `inactivity_days` | default 365 |
 | `teams` | `created_at` | default now() |
 | `teams` | `updated_at` | default now() |
-| `team_closers` | `id` | PK; default gen_random_uuid() |
-| `team_closers` | `team_id` | obrigatório; FK → teams.id ON DELETE CASCADE |
-| `team_closers` | `closer_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
+| `team_closers` | `id` | default gen_random_uuid() |
+| `team_closers` | `team_id` | obrigatório |
+| `team_closers` | `closer_id` | obrigatório |
 | `team_closers` | `created_at` | default now() |
-| `team_closers` | `(tabela)` | UNIQUE(team_id, closer_id) |
-| … +2941 linhas — lista completa em `context.json` | | |
+| `icp_data` | `id` | default gen_random_uuid() |
+| `icp_data` | `client_id` | obrigatório |
+| `icp_data` | `is_icp_match` | default false |
+| `icp_data` | `created_at` | default now() |
+| `icp_data` | `updated_at` | default now() |
+| `icp_data` | `icp_score` | default 0 |
+| `client_portfolio` | `id` | default gen_random_uuid() |
+| `client_portfolio` | `client_id` | obrigatório |
+| `client_portfolio` | `salesperson_id` | obrigatório |
+| `client_portfolio` | `status` | default 'inactive'::text |
+| `client_portfolio` | `assigned_at` | default now() |
+| `client_portfolio` | `source` | default 'database'::text |
+| `client_portfolio` | `created_at` | default now() |
+| `client_portfolio` | `updated_at` | default now() |
+| `client_portfolio` | `is_active` | default true |
+| `lead_routing_log` | `id` | default gen_random_uuid() |
+| `lead_routing_log` | `routing_reason` | obrigatório |
+| `lead_routing_log` | `created_at` | default now() |
+| `portfolio_settings` | `id` | default gen_random_uuid() |
+| `portfolio_settings` | `setting_key` | obrigatório |
+| `portfolio_settings` | `setting_value` | obrigatório |
+| `portfolio_settings` | `updated_at` | default now() |
+| `bitrix24_sync_logs` | `id` | default gen_random_uuid() |
+| `bitrix24_sync_logs` | `sync_type` | default 'sync-all'::text |
+| `bitrix24_sync_logs` | `status` | default 'success'::text |
+| `bitrix24_sync_logs` | `companies_from_bitrix` | default 0 |
+| `bitrix24_sync_logs` | `companies_to_bitrix` | default 0 |
+| `bitrix24_sync_logs` | `deals_from_bitrix` | default 0 |
+| `bitrix24_sync_logs` | `deals_to_bitrix` | default 0 |
+| `bitrix24_sync_logs` | `triggered_by` | default 'manual'::text |
+| `bitrix24_sync_logs` | `created_at` | default now() |
+| `sdr_alert_history` | `id` | default gen_random_uuid() |
+| `sdr_alert_history` | `created_at` | default now() |
+| `sdr_alert_history` | `triggered_by` | default 'cron'::text |
+| `sdr_alert_history` | `sdrs_notified` | default 0 |
+| `sdr_alert_history` | `threshold_used` | default 3 |
+| `sdr_alert_history` | `sdr_details` | default '[]'::jsonb |
+| `sdr_alert_history` | `admin_emails` | default '{}'::text[] |
+| `email_logs` | `id` | default gen_random_uuid() |
+| `email_logs` | `function_name` | obrigatório |
+| `email_logs` | `recipient_email` | obrigatório |
+| `email_logs` | `status` | default 'sent'::text |
+| `email_logs` | `metadata` | default '{}'::jsonb |
+| `email_logs` | `created_at` | default now() |
+| `chat_conversations` | `id` | default gen_random_uuid() |
+| `chat_conversations` | `salesperson_id` | obrigatório |
+| `chat_conversations` | `title` | default 'Nova |
+| `chat_conversations` | `created_at` | default now() |
+| `chat_conversations` | `updated_at` | default now() |
+| `chat_messages` | `id` | default gen_random_uuid() |
+| `chat_messages` | `conversation_id` | obrigatório |
+| … +2645 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
-| trigger_saved_filters_updated_at | BEFORE UPDATE | `saved_filters` | `update_saved_filters_updated_at` |  |
-| trigger_single_default_filter | BEFORE INSERT OR UPDATE OF IS_DEFAULT | `saved_filters` | `ensure_single_default_filter` | `NEW.is_default = true` |
 | on_auth_user_created_role | AFTER INSERT | `auth.users` | `handle_new_user_role` |  |
-| update_salespeople_updated_at | BEFORE UPDATE | `salespeople` | `update_updated_at_column` |  |
-| update_clients_updated_at | BEFORE UPDATE | `clients` | `update_updated_at_column` |  |
-| update_sales_updated_at | BEFORE UPDATE | `sales` | `update_updated_at_column` |  |
-| update_products_updated_at | BEFORE UPDATE | `products` | `update_updated_at_column` |  |
-| update_tasks_updated_at | BEFORE UPDATE | `tasks` | `update_updated_at_column` |  |
-| update_cadences_updated_at | BEFORE UPDATE | `cadences` | `update_updated_at_column` |  |
-| update_teams_updated_at | BEFORE UPDATE | `teams` | `update_updated_at_column` |  |
-| update_playbooks_updated_at | BEFORE UPDATE | `playbooks` | `update_updated_at_column` |  |
-| update_objections_library_updated_at | BEFORE UPDATE | `objections_library` | `update_updated_at_column` |  |
-| update_activity_goals_updated_at | BEFORE UPDATE | `activity_goals` | `update_updated_at_column` |  |
-| update_notification_preferences_updated_at | BEFORE UPDATE | `notification_preferences` | `update_updated_at_column` |  |
-| update_security_alert_settings_updated_at | BEFORE UPDATE | `security_alert_settings` | `update_updated_at_column` |  |
-| update_portfolio_settings_updated_at | BEFORE UPDATE | `portfolio_settings` | `update_updated_at_column` |  |
-| update_icp_data_updated_at | BEFORE UPDATE | `icp_data` | `update_updated_at_column` |  |
-| update_lead_scores_updated_at | BEFORE UPDATE | `lead_scores` | `update_updated_at_column` |  |
-| update_client_portfolio_updated_at | BEFORE UPDATE | `client_portfolio` | `update_updated_at_column` |  |
-| update_prospect_cadences_updated_at | BEFORE UPDATE | `prospect_cadences` | `update_updated_at_column` |  |
-| update_salesperson_xp_updated_at | BEFORE UPDATE | `salesperson_xp` | `update_updated_at_column` |  |
-| update_user_roles_updated_at | BEFORE UPDATE | `user_roles` | `update_updated_at_column` |  |
-| update_chat_conversations_updated_at | BEFORE UPDATE | `chat_conversations` | `update_updated_at_column` |  |
-| update_weekly_challenges_updated_at | BEFORE UPDATE | `weekly_challenges` | `update_updated_at_column` |  |
-| update_challenge_progress_updated_at | BEFORE UPDATE | `challenge_progress` | `update_updated_at_column` |  |
-| update_push_subscriptions_updated_at | BEFORE UPDATE | `push_subscriptions` | `update_updated_at_column` |  |
-| update_demand_forecasts_updated_at | BEFORE UPDATE | `demand_forecasts` | `update_updated_at_column` |  |
-| update_inventory_levels_updated_at | BEFORE UPDATE | `inventory_levels` | `update_updated_at_column` |  |
-| update_suppliers_updated_at | BEFORE UPDATE | `suppliers` | `update_updated_at_column` |  |
-| update_supplier_products_updated_at | BEFORE UPDATE | `supplier_products` | `update_updated_at_column` |  |
-| update_supplier_orders_updated_at | BEFORE UPDATE | `supplier_orders` | `update_updated_at_column` |  |
-| update_digital_signatures_updated_at | BEFORE UPDATE | `digital_signatures` | `update_updated_at_column` |  |
-| trigger_record_price_history | AFTER UPDATE | `supplier_products` | `record_price_history` |  |
 | audit_soft_delete_clients | AFTER UPDATE | `clients` | `log_soft_delete` |  |
 | audit_soft_delete_deals | AFTER UPDATE | `deals` | `log_soft_delete` |  |
-| audit_soft_delete_products | AFTER UPDATE | `products` | `log_soft_delete` |  |
-| audit_soft_delete_suppliers | AFTER UPDATE | `suppliers` | `log_soft_delete` |  |
-| audit_soft_delete_teams | AFTER UPDATE | `teams` | `log_soft_delete` |  |
-| update_blocked_ips_updated_at | BEFORE UPDATE | `blocked_ips` | `update_updated_at_column` |  |
-| update_ip_whitelist_updated_at | BEFORE UPDATE | `ip_whitelist` | `update_updated_at_column` |  |
-| update_rate_limit_settings_updated_at | BEFORE UPDATE | `rate_limit_settings` | `update_updated_at_column` |  |
-| update_mfa_settings_updated_at | BEFORE UPDATE | `user_mfa_settings` | `update_updated_at_column` |  |
-| update_password_reset_requests_updated_at | BEFORE UPDATE | `password_reset_requests` | `update_updated_at_column` |  |
-| update_salesperson_preferences_updated_at | BEFORE UPDATE | `salesperson_preferences` | `update_updated_at_column` |  |
-| log_clients_access | AFTER INSERT OR UPDATE OR DELETE | `clients` | `log_data_access` |  |
 | log_deals_access | AFTER INSERT OR UPDATE OR DELETE | `deals` | `log_data_access` |  |
-| user_2fa_updated_at | BEFORE UPDATE | `user_2fa` | `update_2fa_updated_at` |  |
 | audit_deals | AFTER INSERT OR UPDATE OR DELETE | `deals` | `audit_trigger_func` |  |
 | audit_clients | AFTER INSERT OR UPDATE OR DELETE | `clients` | `audit_trigger_func` |  |
 | audit_users | AFTER INSERT OR UPDATE OR DELETE | `users` | `audit_trigger_func` |  |
-| update_saved_filters_updated_at | BEFORE UPDATE | `saved_filters` | `update_updated_at_column` |  |
-| ensure_single_default_filter_trigger | BEFORE INSERT OR UPDATE | `saved_filters` | `ensure_single_default_filter` |  |
-| update_quotes_updated_at | BEFORE UPDATE | `quotes` | `update_updated_at_column` |  |
-| check_mood_value | BEFORE INSERT OR UPDATE | `mood_entries` | `validate_mood_value` |  |
-| update_message_templates_updated_at | BEFORE UPDATE | `message_templates` | `update_updated_at_column` |  |
-| update_feature_flags_updated_at | BEFORE UPDATE | `feature_flags` | `update_updated_at_column` |  |
-| update_commission_rules_updated_at | BEFORE UPDATE | `commission_rules` | `update_updated_at_column` |  |
-| update_commissions_updated_at | BEFORE UPDATE | `commissions` | `update_updated_at_column` |  |
-| update_agenda_events_updated_at | BEFORE UPDATE | `agenda_events` | `update_updated_at_column` |  |
-| trg_auto_create_commission | AFTER INSERT OR UPDATE OF STATUS | `sales` | `auto_create_commission` |  |
-| update_approval_workflows_updated_at | BEFORE UPDATE | `approval_workflows` | `update_updated_at_column` |  |
-| update_approval_requests_updated_at | BEFORE UPDATE | `approval_requests` | `update_updated_at_column` |  |
-| update_webhooks_updated_at | BEFORE UPDATE | `webhooks` | `update_updated_at_column` |  |
-| trg_sla_policies_updated | BEFORE UPDATE | `sla_policies` | `update_updated_at_column` |  |
-| trg_sla_violations_updated | BEFORE UPDATE | `sla_violations` | `update_updated_at_column` |  |
-| trg_lead_routing_rules_updated | BEFORE UPDATE | `lead_routing_rules` | `update_updated_at_column` |  |
-| workflows_updated_at | BEFORE UPDATE | `workflows` | `update_updated_at_column` |  |
-| update_enrollment_rules_updated_at | BEFORE UPDATE | `cadence_enrollment_rules` | `update_updated_at_column` |  |
-| trg_auto_pause_cadence_on_response | AFTER INSERT | `channel_interactions` | `auto_pause_cadence_on_response` |  |
-| update_ab_tests_updated_at | BEFORE UPDATE | `cadence_ab_tests` | `update_updated_at_column` |  |
-| update_call_recordings_updated_at | BEFORE UPDATE | `call_recordings` | `update_updated_at_column` |  |
-| trg_accounts_updated_at | BEFORE UPDATE | `accounts` | `update_updated_at_column` |  |
+| audit_sales_changes | AFTER UPDATE | `sales` | `handle_audit_logging` |  |
+| update_cadence_tasks_updated_at | BEFORE UPDATE | `cadence_tasks` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `account_contacts` | `handle_updated_at` |  |
 | trg_account_contacts_updated_at | BEFORE UPDATE | `account_contacts` | `update_updated_at_column` |  |
-| trg_automation_workflows_updated_at | BEFORE UPDATE | `automation_workflows` | `update_updated_at_column` |  |
-| trg_sea_updated_at | BEFORE UPDATE | `sales_enablement_assets` | `update_updated_at_column` |  |
-| trg_asset_view_increment | AFTER INSERT | `asset_usage_logs` | `increment_asset_view_count` |  |
-| trg_auto_forecast_category | BEFORE INSERT OR UPDATE OF STATUS | `sales` | `auto_set_forecast_category` |  |
-| trg_bcm_updated_at | BEFORE UPDATE | `buying_committee_members` | `update_updated_at_column` |  |
-| update_custom_reports_updated_at | BEFORE UPDATE | `custom_reports` | `update_updated_at_column` |  |
-| update_report_schedules_updated_at | BEFORE UPDATE | `report_schedules` | `update_updated_at_column` |  |
-| update_cohort_analyses_updated_at | BEFORE UPDATE | `cohort_analyses` | `update_updated_at_column` |  |
-| trg_sequences_updated_at | BEFORE UPDATE | `sequences` | `update_updated_at_column` |  |
-| trg_seq_enrollments_updated_at | BEFORE UPDATE | `sequence_enrollments` | `update_updated_at_column` |  |
-| trg_recompute_engagement_on_signal | AFTER INSERT OR UPDATE | `contact_send_time_profile` | `trg_recompute_engagement` |  |
+| set_updated_at | BEFORE UPDATE | `account_plans` | `handle_updated_at` |  |
+| update_account_plans_updated_at | BEFORE UPDATE | `account_plans` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `accounts` | `handle_updated_at` |  |
+| trg_accounts_updated_at | BEFORE UPDATE | `accounts` | `update_updated_at_column` |  |
+| audit_activities_trigger | AFTER UPDATE | `activities` | `audit_activity_changes` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `activities` | `audit_log_row_change` |  |
+| tr_maintain_streaks | AFTER INSERT | `activities` | `maintain_sales_streaks` |  |
+| tr_performance_update_activities | AFTER INSERT OR UPDATE | `activities` | `handle_performance_update` |  |
+| tr_sync_battle_score_activities | AFTER INSERT OR UPDATE | `activities` | `sync_battle_score` |  |
+| tr_sync_bets_activities | AFTER INSERT OR DELETE OR UPDATE | `activities` | `sync_performance_bets` |  |
+| tr_sync_combo_activities | AFTER INSERT | `activities` | `sync_combo_on_activity` |  |
 | trg_activities_auto_pause | AFTER INSERT | `activities` | `trg_activities_auto_pause_sequences` |  |
-| trg_channel_credentials_updated_at | BEFORE UPDATE | `channel_credentials` | `update_updated_at_column` |  |
-| trg_outbound_messages_updated_at | BEFORE UPDATE | `outbound_messages` | `update_updated_at_column` |  |
+| update_bets_on_activity | AFTER INSERT OR UPDATE | `activities` | `trigger_update_performance_bets` |  |
+| set_updated_at | BEFORE UPDATE | `activity_goals` | `handle_updated_at` |  |
+| update_activity_goals_updated_at | BEFORE UPDATE | `activity_goals` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `agenda_events` | `handle_updated_at` |  |
+| update_agenda_events_updated_at | BEFORE UPDATE | `agenda_events` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `ai_agent_runs` | `handle_updated_at` |  |
 | trg_ai_agent_runs_updated_at | BEFORE UPDATE | `ai_agent_runs` | `update_updated_at_column` |  |
-| trg_lead_scores_history | AFTER INSERT OR UPDATE OF SCORE | `lead_scores` | `record_lead_score_history` |  |
-| trg_lead_score_explanations_updated | BEFORE UPDATE | `lead_score_explanations` | `update_updated_at_column` |  |
-| trg_email_bulk_jobs_updated | BEFORE UPDATE | `email_bulk_jobs` | `update_updated_at_column` |  |
-| trg_email_bulk_drafts_updated | BEFORE UPDATE | `email_bulk_drafts` | `update_updated_at_column` |  |
-| trg_snapshot_engagement_score | AFTER INSERT OR UPDATE | `email_engagement_scores` | `snapshot_engagement_score` |  |
-| trg_auto_link_sale_to_account | BEFORE INSERT OR UPDATE OF CLIENT_NAME | `sales` | `auto_link_sale_to_account` |  |
-| trg_dialer_queues_updated | BEFORE UPDATE | `dialer_queues` | `update_updated_at_column` |  |
-| trg_competitors_registry_updated_at | BEFORE UPDATE | `competitors_registry` | `update_updated_at_column` |  |
-| trg_coaching_actions_updated_at | BEFORE UPDATE | `coaching_actions` | `update_updated_at_column` |  |
+| trg_ai_narrative_cache_updated_at | BEFORE UPDATE | `ai_narrative_cache` | `update_updated_at_column` |  |
+| trg_audit_api_tokens | AFTER INSERT OR DELETE OR UPDATE | `api_tokens` | `process_audit_log` |  |
+| set_updated_at | BEFORE UPDATE | `approval_requests` | `handle_updated_at` |  |
+| update_approval_requests_updated_at | BEFORE UPDATE | `approval_requests` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `approval_workflows` | `handle_updated_at` |  |
+| update_approval_workflows_updated_at | BEFORE UPDATE | `approval_workflows` | `update_updated_at_column` |  |
+| on_asset_influence_boost | AFTER INSERT | `asset_usage_logs` | `notify_asset_influence_boost` |  |
+| trg_asset_view_increment | AFTER INSERT | `asset_usage_logs` | `increment_asset_view_count` |  |
+| trg_auto_task_queue_settings_updated_at | BEFORE UPDATE | `auto_task_queue_settings` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `automation_workflows` | `handle_updated_at` |  |
+| trg_automation_workflows_updated_at | BEFORE UPDATE | `automation_workflows` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `available_spins` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `blocked_ips` | `handle_updated_at` |  |
+| update_blocked_ips_updated_at | BEFORE UPDATE | `blocked_ips` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `buying_committee` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `buying_committee_members` | `handle_updated_at` |  |
+| trg_bcm_updated_at | BEFORE UPDATE | `buying_committee_members` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `cadence_ab_tests` | `handle_updated_at` |  |
+| update_ab_tests_updated_at | BEFORE UPDATE | `cadence_ab_tests` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `cadence_alert_templates` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `cadence_enrollment_rules` | `handle_updated_at` |  |
+| update_enrollment_rules_updated_at | BEFORE UPDATE | `cadence_enrollment_rules` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `cadence_funnel_rules` | `handle_updated_at` |  |
+| update_cadence_funnel_rules_updated_at | BEFORE UPDATE | `cadence_funnel_rules` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `cadence_outcome_rules` | `handle_updated_at` |  |
+| trg_award_xp_on_quote_cadence_task_complete | AFTER UPDATE | `cadence_tasks` | `award_xp_on_quote_cadence_task_complete` |  |
+| set_updated_at | BEFORE UPDATE | `cadences` | `handle_updated_at` |  |
+| update_cadences_updated_at | BEFORE UPDATE | `cadences` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `call_critical_moments` | `handle_updated_at` |  |
+| tr_critical_moment_health | AFTER INSERT OR UPDATE | `call_critical_moments` | `trigger_recalculate_deal_health` |  |
 | trg_ccm_updated_at | BEFORE UPDATE | `call_critical_moments` | `update_updated_at_column` |  |
 | trg_notify_critical_moment | AFTER INSERT | `call_critical_moments` | `notify_critical_moment_created` |  |
-| trg_deal_health_scores_updated | BEFORE UPDATE | `deal_health_scores` | `update_updated_at_column` |  |
-| update_deal_stakeholders_updated_at | BEFORE UPDATE | `deal_stakeholders` | `update_updated_at_column` |  |
-| update_committee_coverage_updated_at | BEFORE UPDATE | `deal_committee_coverage` | `update_updated_at_column` |  |
-| trg_dvp_updated_at | BEFORE UPDATE | `deal_velocity_predictions` | `update_updated_at_column` |  |
-| trg_svb_updated_at | BEFORE UPDATE | `stage_velocity_baselines` | `update_updated_at_column` |  |
-| update_stage_conversion_metrics_updated_at | BEFORE UPDATE | `stage_conversion_metrics` | `update_updated_at_column` |  |
-| update_stage_bottleneck_insights_updated_at | BEFORE UPDATE | `stage_bottleneck_insights` | `update_updated_at_column` |  |
-| update_revenue_forecasts_updated_at | BEFORE UPDATE | `revenue_forecasts` | `update_updated_at_column` |  |
-| trg_race_seasons_updated | BEFORE UPDATE | `race_seasons` | `update_updated_at_column` |  |
-| trg_race_cars_updated | BEFORE UPDATE | `race_cars` | `update_updated_at_column` |  |
-| trg_snapshot_committee_coverage | AFTER INSERT OR UPDATE | `deal_committee_coverage` | `snapshot_committee_coverage` |  |
-| trg_record_sale_stage_transition | AFTER INSERT OR UPDATE OF STATUS | `sales` | `record_sale_stage_transition` |  |
-| update_skill_assessments_updated_at | BEFORE UPDATE | `skill_assessments` | `update_updated_at_column` |  |
-| update_skill_tracks_updated_at | BEFORE UPDATE | `skill_development_tracks` | `update_updated_at_column` |  |
-| update_coaching_sessions_updated_at | BEFORE UPDATE | `coaching_sessions` | `update_updated_at_column` |  |
-| trg_task_catalog_updated | BEFORE UPDATE | `task_catalog` | `update_updated_at_column` |  |
-| trg_task_assignments_updated | BEFORE UPDATE | `task_assignments` | `update_updated_at_column` |  |
-| trg_squads_updated_at | BEFORE UPDATE | `squads` | `update_updated_at_column` |  |
-| update_race_teams_updated_at | BEFORE UPDATE | `race_teams` | `update_updated_at_column` |  |
-| update_race_rivalries_persistent_updated_at | BEFORE UPDATE | `race_rivalries_persistent` | `update_updated_at_column` |  |
-| trg_race_user_preferences_updated_at | BEFORE UPDATE | `race_user_preferences` | `update_updated_at_column` |  |
-| validate_race_event_trigger | BEFORE INSERT | `race_events` | `validate_race_event` |  |
-| trg_auto_enroll_quote_cadence | AFTER INSERT OR UPDATE OF STATUS | `quotes` | `auto_enroll_quote_cadence` |  |
-| trg_award_xp_on_quote_cadence_task_complete | AFTER UPDATE | `cadence_tasks` | `award_xp_on_quote_cadence_task_complete` |  |
-| trg_award_xp_on_quote_approved_via_cadence | AFTER UPDATE | `quotes` | `award_xp_on_quote_approved_via_cadence` |  |
-| trg_notify_critical_winloss | AFTER INSERT | `win_loss_patterns` | `notify_critical_winloss_pattern` |  |
-| update_winloss_dlq_updated_at | BEFORE UPDATE | `winloss_webhook_dead_letters` | `update_updated_at_column` |  |
-| user_app_settings_touch_updated_at | BEFORE UPDATE | `user_app_settings` | `update_updated_at_column` |  |
-| trg_log_order_status_change | BEFORE UPDATE OF STATUS | `orders` | `log_order_status_change` |  |
-| trg_log_order_creation | AFTER INSERT | `orders` | `log_order_creation` |  |
-| trg_touch_winloss_alert_settings | BEFORE UPDATE | `winloss_alert_settings` | `touch_winloss_alert_settings` |  |
-| trg_integration_connections_updated | BEFORE UPDATE | `integration_connections` | `update_updated_at_column` |  |
-| trg_integration_autotest_settings_updated | BEFORE UPDATE | `integration_autotest_settings` | `update_updated_at_column` |  |
-| update_follow_up_templates_updated_at | BEFORE UPDATE | `follow_up_templates` | `update_updated_at_column` |  |
-| update_follow_up_territory_rules_updated_at | BEFORE UPDATE | `follow_up_territory_rules` | `update_updated_at_column` |  |
-| update_cadence_funnel_rules_updated_at | BEFORE UPDATE | `cadence_funnel_rules` | `update_updated_at_column` |  |
-| trg_email_tracking_to_cadence_intent | AFTER INSERT | `email_tracking_events` | `trg_process_email_tracking_event` |  |
-| tr_update_client_value | AFTER INSERT OR UPDATE OR DELETE | `sales` | `update_client_total_value` |  |
-| tr_manage_stock | BEFORE INSERT OR UPDATE | `sales` | `manage_stock_on_sale` |  |
-| tr_update_client_ltv | AFTER INSERT OR UPDATE | `sales` | `update_client_ltv_on_sale` |  |
-| tr_auto_add_client_portfolio | AFTER INSERT | `clients` | `auto_add_client_to_portfolio` |  |
-| tr_update_product_stock | AFTER INSERT OR UPDATE | `sales` | `update_product_stock` |  |
-| tr_update_client_total_value | AFTER INSERT OR UPDATE OR DELETE | `sales` | `handle_client_ltv_update` |  |
-| tr_handle_stock_on_sale | AFTER UPDATE | `sales` | `handle_stock_management` |  |
-| tr_auto_followup_on_sale | AFTER UPDATE | `sales` | `auto_create_sale_followup` |  |
-| update_mql_qualifications_updated_at | BEFORE UPDATE | `mql_qualifications` | `handle_updated_at` |  |
-| audit_sales_changes | AFTER UPDATE | `sales` | `handle_audit_logging` |  |
-| audit_tasks_changes | AFTER UPDATE | `tasks` | `handle_audit_logging` |  |
-| trg_generate_cadence_tasks | AFTER INSERT | `prospect_cadences` | `generate_cadence_tasks` |  |
-| trg_auto_enroll_on_sale | AFTER INSERT OR UPDATE OF STATUS | `sales` | `auto_enroll_in_cadence` |  |
-| on_competitor_price_update | AFTER INSERT | `competitors_pricing` | `check_price_threats` |  |
-| on_asset_ai_activation | AFTER UPDATE OF VIEW_COUNT | `sales_enablement_assets` | `notify_asset_ai_status` |  |
-| on_asset_influence_boost | AFTER INSERT | `asset_usage_logs` | `notify_asset_influence_boost` |  |
-| tr_competitor_mention_health | AFTER INSERT OR UPDATE | `competitor_mentions` | `trigger_recalculate_deal_health` |  |
-| tr_critical_moment_health | AFTER INSERT OR UPDATE | `call_critical_moments` | `trigger_recalculate_deal_health` |  |
-| trig_update_icp_score | BEFORE INSERT OR UPDATE | `icp_data` | `fn_calculate_icp_score` |  |
-| tr_check_battle_achievements | AFTER UPDATE OF WINNER_ID | `weekly_matchups` | `check_battle_achievements` |  |
-| tr_sync_battle_score_sales | AFTER INSERT OR UPDATE | `sales` | `sync_battle_score` |  |
-| tr_sync_battle_score_activities | AFTER INSERT OR UPDATE | `activities` | `sync_battle_score` |  |
-| tr_victory_battle | AFTER UPDATE | `sales_battles` | `auto_victory_post` | `OLD.status IS DISTINCT FROM NEW.status` |
-| tr_maintain_streaks | AFTER INSERT | `activities` | `maintain_sales_streaks` |  |
-| tr_notify_battle_victory | AFTER UPDATE | `sales_battles` | `fn_notify_victory` | `NEW.status = 'completed'` |
-| tr_sync_total_xp | AFTER INSERT | `xp_history` | `sync_total_xp` |  |
-| tr_sync_bets_sales | AFTER INSERT OR UPDATE OR DELETE | `sales` | `sync_performance_bets` |  |
-| tr_sync_bets_activities | AFTER INSERT OR UPDATE OR DELETE | `activities` | `sync_performance_bets` |  |
-| tr_sync_territory | AFTER INSERT OR UPDATE OR DELETE | `sales` | `sync_territory_ownership` |  |
-| update_bets_on_sale | AFTER INSERT OR UPDATE | `sales` | `trigger_update_performance_bets` |  |
-| update_bets_on_activity | AFTER INSERT OR UPDATE | `activities` | `trigger_update_performance_bets` |  |
-| update_territories_on_sale | AFTER INSERT OR UPDATE | `sales` | `trigger_update_territories` |  |
-| refresh_monthly_summary_on_sale | AFTER INSERT OR UPDATE OR DELETE | `sales` | `trigger_refresh_monthly_summary` |  |
-| tr_performance_update_sales | AFTER INSERT OR UPDATE | `sales` | `handle_performance_update` |  |
-| tr_performance_update_activities | AFTER INSERT OR UPDATE | `activities` | `handle_performance_update` |  |
-| tr_territory_conquest | AFTER INSERT | `sales` | `handle_territory_conquest` | `NEW.status = 'won' OR NEW.status = 'completed'` |
-| update_enriched_company_intelligence_updated_at | BEFORE UPDATE | `enriched_company_intelligence` | `update_updated_at_column` |  |
-| update_person_intelligence_updated_at | BEFORE UPDATE | `person_intelligence` | `update_updated_at_column` |  |
-| update_account_plans_updated_at | BEFORE UPDATE | `account_plans` | `update_updated_at_column` |  |
-| update_cs_tickets_updated_at | BEFORE UPDATE | `cs_tickets` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `call_metric_benchmarks` | `handle_updated_at` |  |
+| call_recording_ingest_jobs_updated_at | BEFORE UPDATE | `call_recording_ingest_jobs` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `call_recordings` | `handle_updated_at` |  |
+| trg_auto_coaching_after_summary | AFTER INSERT OR UPDATE OF SUMMARIZED_AT | `call_recordings` | `trigger_auto_coaching_on_recording` |  |
+| trg_recording_generate_coaching | AFTER INSERT OR UPDATE OF TRANSCRIPT | `call_recordings` | `trg_recording_generate_coaching` |  |
+| update_call_recordings_updated_at | BEFORE UPDATE | `call_recordings` | `update_updated_at_column` |  |
+| trg_campaign_health_alerts_updated | BEFORE UPDATE | `campaign_health_alerts` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `challenge_progress` | `handle_updated_at` |  |
+| update_challenge_progress_updated_at | BEFORE UPDATE | `challenge_progress` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `channel_credentials` | `handle_updated_at` |  |
+| trg_channel_credentials_updated_at | BEFORE UPDATE | `channel_credentials` | `update_updated_at_column` |  |
+| trg_auto_pause_cadence_on_response | AFTER INSERT | `channel_interactions` | `auto_pause_cadence_on_response` |  |
+| set_updated_at | BEFORE UPDATE | `chat_conversations` | `handle_updated_at` |  |
+| update_chat_conversations_updated_at | BEFORE UPDATE | `chat_conversations` | `update_updated_at_column` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `client_portfolio` | `audit_log_row_change` |  |
+| set_updated_at | BEFORE UPDATE | `client_portfolio` | `handle_updated_at` |  |
+| update_client_portfolio_updated_at | BEFORE UPDATE | `client_portfolio` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `client_renewals` | `handle_updated_at` |  |
 | update_client_renewals_updated_at | BEFORE UPDATE | `client_renewals` | `update_updated_at_column` |  |
-| trg_refresh_ranking_on_sale_change | AFTER INSERT OR UPDATE OR DELETE | `sales` | `trg_refresh_ranking_on_sale` |  |
-| tr_set_sdr_id | BEFORE INSERT | `sales` | `set_sdr_id_on_insert` |  |
-| tr_handle_sale_commissions | AFTER INSERT OR UPDATE | `sales` | `handle_sale_commissions` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `clients` | `audit_log_row_change` |  |
+| log_clients_access | AFTER INSERT OR DELETE OR UPDATE | `clients` | `log_data_access` |  |
+| set_updated_at | BEFORE UPDATE | `clients` | `handle_updated_at` |  |
+| tr_auto_add_client_portfolio | AFTER INSERT | `clients` | `auto_add_client_to_portfolio` |  |
+| update_clients_updated_at | BEFORE UPDATE | `clients` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `coaching_actions` | `handle_updated_at` |  |
+| trg_coaching_actions_updated_at | BEFORE UPDATE | `coaching_actions` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `coaching_sessions` | `handle_updated_at` |  |
+| update_coaching_sessions_updated_at | BEFORE UPDATE | `coaching_sessions` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `cohort_analyses` | `handle_updated_at` |  |
+| update_cohort_analyses_updated_at | BEFORE UPDATE | `cohort_analyses` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `combo_tracking` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `commercial_approval_requests` | `handle_updated_at` |  |
+| update_commercial_approvals_updated_at | BEFORE UPDATE | `commercial_approval_requests` | `update_updated_at_column` |  |
+| trg_notify_bonus_paid | AFTER INSERT OR UPDATE OF STATUS | `commission_bonus_awards` | `notify_salesperson_on_bonus_paid` | `(new.status = 'paid'::text)` |
+| update_commission_bonus_awards_updated_at | BEFORE UPDATE | `commission_bonus_awards` | `update_updated_at_column` |  |
+| update_commission_bonuses_updated_at | BEFORE UPDATE | `commission_bonuses` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `commission_rules` | `handle_updated_at` |  |
+| update_commission_rules_updated_at | BEFORE UPDATE | `commission_rules` | `update_updated_at_column` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `commissions` | `audit_log_row_change` |  |
+| set_updated_at | BEFORE UPDATE | `commissions` | `handle_updated_at` |  |
+| trg_enforce_status_transition | BEFORE UPDATE OF STATUS | `commissions` | `enforce_status_transition` |  |
+| update_commissions_updated_at | BEFORE UPDATE | `commissions` | `update_updated_at_column` |  |
+| tr_competitor_mention_health | AFTER INSERT OR UPDATE | `competitor_mentions` | `trigger_recalculate_deal_health` |  |
+| on_competitor_price_update | AFTER INSERT | `competitors_pricing` | `check_price_threats` |  |
+| set_updated_at | BEFORE UPDATE | `competitors_registry` | `handle_updated_at` |  |
+| trg_competitors_registry_updated_at | BEFORE UPDATE | `competitors_registry` | `update_updated_at_column` |  |
+| update_consent_records_updated_at | BEFORE UPDATE | `consent_records` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `contact_engagement_score` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `contact_send_time_profile` | `handle_updated_at` |  |
+| trg_recompute_engagement_on_signal | AFTER INSERT OR UPDATE | `contact_send_time_profile` | `trg_recompute_engagement` |  |
+| set_updated_at | BEFORE UPDATE | `cs_tickets` | `handle_updated_at` |  |
+| update_cs_tickets_updated_at | BEFORE UPDATE | `cs_tickets` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `custom_reports` | `handle_updated_at` |  |
+| update_custom_reports_updated_at | BEFORE UPDATE | `custom_reports` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `daily_challenge_progress` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `daily_challenges` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `dashboard_layouts` | `handle_updated_at` |  |
+| trg_data_subject_requests_guard_payload | BEFORE INSERT OR UPDATE OF PAYLOAD | `data_subject_requests` | `data_subject_requests_guard_payload` |  |
+| update_data_subject_requests_updated_at | BEFORE UPDATE | `data_subject_requests` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `deal_committee_coverage` | `handle_updated_at` |  |
+| trg_snapshot_committee_coverage | AFTER INSERT OR UPDATE | `deal_committee_coverage` | `snapshot_committee_coverage` |  |
+| update_committee_coverage_updated_at | BEFORE UPDATE | `deal_committee_coverage` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `deal_health_scores` | `handle_updated_at` |  |
+| trg_deal_health_scores_updated | BEFORE UPDATE | `deal_health_scores` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `deal_stakeholders` | `handle_updated_at` |  |
+| update_deal_stakeholders_updated_at | BEFORE UPDATE | `deal_stakeholders` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `deal_velocity_predictions` | `handle_updated_at` |  |
+| trg_dvp_updated_at | BEFORE UPDATE | `deal_velocity_predictions` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `demand_forecasts` | `handle_updated_at` |  |
+| update_demand_forecasts_updated_at | BEFORE UPDATE | `demand_forecasts` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `dialer_queues` | `handle_updated_at` |  |
+| trg_dialer_queues_updated | BEFORE UPDATE | `dialer_queues` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `digital_signatures` | `handle_updated_at` |  |
+| update_digital_signatures_updated_at | BEFORE UPDATE | `digital_signatures` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `email_bulk_drafts` | `handle_updated_at` |  |
+| trg_email_bulk_drafts_recovery | BEFORE UPDATE | `email_bulk_drafts` | `track_bulk_draft_recovery` |  |
+| trg_email_bulk_drafts_updated | BEFORE UPDATE | `email_bulk_drafts` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `email_bulk_jobs` | `handle_updated_at` |  |
+| trg_email_bulk_jobs_updated | BEFORE UPDATE | `email_bulk_jobs` | `update_updated_at_column` |  |
+| trg_snapshot_engagement_score | AFTER INSERT OR UPDATE | `email_engagement_scores` | `snapshot_engagement_score` |  |
+| trg_email_tracking_to_cadence_intent | AFTER INSERT | `email_tracking_events` | `trg_process_email_tracking_event` |  |
+| set_updated_at | BEFORE UPDATE | `enriched_company_intelligence` | `handle_updated_at` |  |
+| update_enriched_company_intelligence_updated_at | BEFORE UPDATE | `enriched_company_intelligence` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `expansion_opportunities` | `handle_updated_at` |  |
+| trg_exp_opps_uat | BEFORE UPDATE | `expansion_opportunities` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `expansion_playbooks` | `handle_updated_at` |  |
+| trg_exp_playbooks_uat | BEFORE UPDATE | `expansion_playbooks` | `update_updated_at_column` |  |
 | set_updated_at | BEFORE UPDATE | `external_seller_map` | `handle_updated_at` |  |
-| set_updated_at | BEFORE UPDATE | `v4_callback_dead_letters` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `feature_flags` | `handle_updated_at` |  |
+| update_feature_flags_updated_at | BEFORE UPDATE | `feature_flags` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `follow_up_settings` | `handle_updated_at` |  |
+| tr_template_versioning | BEFORE UPDATE | `follow_up_settings` | `handle_template_versioning` |  |
+| set_updated_at | BEFORE UPDATE | `follow_up_templates` | `handle_updated_at` |  |
+| update_follow_up_templates_updated_at | BEFORE UPDATE | `follow_up_templates` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `follow_up_territory_rules` | `handle_updated_at` |  |
+| update_follow_up_territory_rules_updated_at | BEFORE UPDATE | `follow_up_territory_rules` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `geo_blocked_regions` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `icp_data` | `handle_updated_at` |  |
+| trig_update_icp_score | BEFORE INSERT OR UPDATE | `icp_data` | `fn_calculate_icp_score` |  |
+| update_icp_data_updated_at | BEFORE UPDATE | `icp_data` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `icp_parameters` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `integration_autotest_settings` | `handle_updated_at` |  |
+| trg_integration_autotest_settings_updated | BEFORE UPDATE | `integration_autotest_settings` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `integration_connections` | `handle_updated_at` |  |
+| trg_integration_connections_updated | BEFORE UPDATE | `integration_connections` | `update_updated_at_column` |  |
+| trg_integration_secret_refs_updated_at | BEFORE UPDATE | `integration_secret_refs` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `inventory_levels` | `handle_updated_at` |  |
+| update_inventory_levels_updated_at | BEFORE UPDATE | `inventory_levels` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `ip_whitelist` | `handle_updated_at` |  |
+| update_ip_whitelist_updated_at | BEFORE UPDATE | `ip_whitelist` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `lead_routing_rules` | `handle_updated_at` |  |
+| trg_lead_routing_rules_updated | BEFORE UPDATE | `lead_routing_rules` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `lead_score_explanations` | `handle_updated_at` |  |
+| trg_lead_score_explanations_updated | BEFORE UPDATE | `lead_score_explanations` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `lead_scores` | `handle_updated_at` |  |
+| trg_lead_scores_history | AFTER INSERT OR UPDATE OF SCORE | `lead_scores` | `record_lead_score_history` |  |
+| update_lead_scores_updated_at | BEFORE UPDATE | `lead_scores` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `league_members` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `message_templates` | `handle_updated_at` |  |
+| update_message_templates_updated_at | BEFORE UPDATE | `message_templates` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `monthly_sales_summary` | `handle_updated_at` |  |
+| check_mood_value | BEFORE INSERT OR UPDATE | `mood_entries` | `validate_mood_value` |  |
+| set_updated_at | BEFORE UPDATE | `mql_qualifications` | `handle_updated_at` |  |
+| update_mql_qualifications_updated_at | BEFORE UPDATE | `mql_qualifications` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `notification_preferences` | `handle_updated_at` |  |
+| update_notification_preferences_updated_at | BEFORE UPDATE | `notification_preferences` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `objection_library` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `objections_library` | `handle_updated_at` |  |
+| update_objections_library_updated_at | BEFORE UPDATE | `objections_library` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `onboarding_journeys` | `handle_updated_at` |  |
+| trg_onb_journeys_uat | BEFORE UPDATE | `onboarding_journeys` | `update_updated_at_column` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `orders` | `audit_log_row_change` |  |
+| set_updated_at | BEFORE UPDATE | `orders` | `handle_updated_at` |  |
+| trg_log_order_creation | AFTER INSERT | `orders` | `log_order_creation` |  |
+| trg_log_order_status_change | BEFORE UPDATE OF STATUS | `orders` | `log_order_status_change` |  |
+| set_updated_at | BEFORE UPDATE | `outbound_messages` | `handle_updated_at` |  |
+| trg_outbound_messages_updated_at | BEFORE UPDATE | `outbound_messages` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `password_reset_requests` | `handle_updated_at` |  |
+| update_password_reset_requests_updated_at | BEFORE UPDATE | `password_reset_requests` | `update_updated_at_column` |  |
+| update_performance_bets_updated_at | BEFORE UPDATE | `performance_bets` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `person_intelligence` | `handle_updated_at` |  |
+| update_person_intelligence_updated_at | BEFORE UPDATE | `person_intelligence` | `update_updated_at_column` |  |
+| trg_pab_updated_at | BEFORE UPDATE | `personal_assistant_briefings` | `update_updated_at_column` |  |
+| trg_pa_nudges_protect | BEFORE UPDATE | `personal_assistant_nudges` | `protect_pa_nudge_content` |  |
+| trg_pa_nudges_updated_at | BEFORE UPDATE | `personal_assistant_nudges` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `pipelines` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `playbooks` | `handle_updated_at` |  |
+| update_playbooks_updated_at | BEFORE UPDATE | `playbooks` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `portfolio_settings` | `handle_updated_at` |  |
+| update_portfolio_settings_updated_at | BEFORE UPDATE | `portfolio_settings` | `update_updated_at_column` |  |
+| audit_soft_delete_products | AFTER UPDATE | `products` | `log_soft_delete` |  |
+| set_updated_at | BEFORE UPDATE | `products` | `handle_updated_at` |  |
+| update_products_updated_at | BEFORE UPDATE | `products` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `progressive_goals` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `prospect_cadences` | `handle_updated_at` |  |
+| trg_generate_cadence_tasks | AFTER INSERT | `prospect_cadences` | `generate_cadence_tasks` |  |
+| update_prospect_cadences_updated_at | BEFORE UPDATE | `prospect_cadences` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `push_subscriptions` | `handle_updated_at` |  |
+| update_push_subscriptions_updated_at | BEFORE UPDATE | `push_subscriptions` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `qbr_schedule` | `handle_updated_at` |  |
+| trg_qbr_schedule_uat | BEFORE UPDATE | `qbr_schedule` | `update_updated_at_column` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `quotes` | `audit_log_row_change` |  |
+| bump_version | BEFORE UPDATE | `quotes` | `bump_row_version` |  |
+| set_updated_at | BEFORE UPDATE | `quotes` | `handle_updated_at` |  |
+| trg_auto_enroll_quote_cadence | AFTER INSERT OR UPDATE OF STATUS | `quotes` | `auto_enroll_quote_cadence` |  |
+| trg_award_xp_on_quote_approved_via_cadence | AFTER UPDATE | `quotes` | `award_xp_on_quote_approved_via_cadence` |  |
 | trg_convert_quote_to_order | AFTER INSERT OR UPDATE OF STATUS | `quotes` | `convert_quote_to_order` |  |
 | trg_enqueue_v4_callback | AFTER UPDATE OF STATUS | `quotes` | `enqueue_v4_callback` |  |
-| v4_callback_metrics_updated_at | BEFORE UPDATE | `v4_callback_metrics` | `update_updated_at_column` |  |
-| trg_quotes_inbound_updated_at | BEFORE UPDATE | `quotes_inbound` | `set_quotes_inbound_updated_at` |  |
-| trg_normalize_quotes_inbound | BEFORE INSERT OR UPDATE | `quotes_inbound` | `fn_normalize_quotes_inbound` |  |
+| update_quotes_updated_at | BEFORE UPDATE | `quotes` | `update_updated_at_column` |  |
 | trg_auto_map_inbound_seller | AFTER INSERT OR UPDATE OF SELLER_EMAIL | `quotes_inbound` | `fn_auto_map_inbound_seller` |  |
-| trg_ai_narrative_cache_updated_at | BEFORE UPDATE | `ai_narrative_cache` | `update_updated_at_column` |  |
-| call_recording_ingest_jobs_updated_at | BEFORE UPDATE | `call_recording_ingest_jobs` | `update_updated_at_column` |  |
-| trg_forecast_cache_invalidate | AFTER UPDATE | `revenue_forecasts` | `trg_invalidate_forecast_narrative_cache` |  |
-| trg_pab_updated_at | BEFORE UPDATE | `personal_assistant_briefings` | `update_updated_at_column` |  |
-| trg_pa_nudges_updated_at | BEFORE UPDATE | `personal_assistant_nudges` | `update_updated_at_column` |  |
-| trg_pa_nudges_protect | BEFORE UPDATE | `personal_assistant_nudges` | `protect_pa_nudge_content` |  |
-| update_commission_bonuses_updated_at | BEFORE UPDATE | `commission_bonuses` | `update_updated_at_column` |  |
-| update_commission_bonus_awards_updated_at | BEFORE UPDATE | `commission_bonus_awards` | `update_updated_at_column` |  |
-| trg_notify_bonus_paid | AFTER INSERT OR UPDATE OF STATUS | `commission_bonus_awards` | `notify_salesperson_on_bonus_paid` | `NEW.status = 'paid'` |
-| trg_auto_task_queue_settings_updated_at | BEFORE UPDATE | `auto_task_queue_settings` | `update_updated_at_column` |  |
-| trg_stage_inactivity_rules_updated | BEFORE UPDATE | `stage_inactivity_rules` | `update_updated_at_column` |  |
-| trg_campaign_health_alerts_updated | BEFORE UPDATE | `campaign_health_alerts` | `update_updated_at_column` |  |
-| trg_email_bulk_drafts_recovery | BEFORE UPDATE | `email_bulk_drafts` | `track_bulk_draft_recovery` |  |
-| trg_website_visitor_log_consent | BEFORE INSERT | `website_visitor_logs` | `fn_website_visitor_log_consent` |  |
-| trg_audit_user_roles | AFTER INSERT OR UPDATE OR DELETE | `user_roles` | `audit_user_roles_change` |  |
-| trg_enforce_status_transition | BEFORE UPDATE OF STATUS | `sales` | `enforce_status_transition` |  |
-| trg_enforce_status_transition | BEFORE UPDATE OF STATUS | `commissions` | `enforce_status_transition` |  |
-| tr_victory_sale | AFTER UPDATE | `sales` | `auto_victory_post` | `OLD.deal_status IS DISTINCT FROM NEW.deal_status` |
-| tr_notify_sale_victory | AFTER UPDATE | `sales` | `fn_notify_victory` | `NEW.deal_status = 'completed'` |
-| trg_sales_stamp_closed_at | BEFORE INSERT OR UPDATE OF STATUS | `sales` | `trg_sales_stamp_closed_at` |  |
-| trg_deal_stage_history | AFTER INSERT OR UPDATE OF STATUS | `sales` | `trg_deal_stage_history` |  |
-| trg_integration_secret_refs_updated_at | BEFORE UPDATE | `integration_secret_refs` | `update_updated_at_column` |  |
+| trg_normalize_quotes_inbound | BEFORE INSERT OR UPDATE | `quotes_inbound` | `fn_normalize_quotes_inbound` |  |
+| trg_quotes_inbound_ordering_guard | BEFORE INSERT OR UPDATE | `quotes_inbound` | `fn_quotes_inbound_ordering_guard` |  |
+| trg_quotes_inbound_updated_at | BEFORE UPDATE | `quotes_inbound` | `set_quotes_inbound_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `race_cars` | `handle_updated_at` |  |
 | trg_race_cars_guard_counters | BEFORE INSERT OR UPDATE | `race_cars` | `race_cars_guard_counters` |  |
-| trg_data_subject_requests_guard_payload | BEFORE INSERT OR UPDATE OF PAYLOAD | `data_subject_requests` | `data_subject_requests_guard_payload` |  |
-| audit_activities_trigger | AFTER UPDATE | `activities` | `audit_activity_changes` |  |
-| audit_business_changes | AFTER UPDATE OR DELETE | `activities` | `audit_log_row_change` |  |
-| update_performance_bets_updated_at | BEFORE UPDATE | `performance_bets` | `update_updated_at_column` |  |
+| trg_race_cars_updated | BEFORE UPDATE | `race_cars` | `update_updated_at_column` |  |
+| validate_race_event_trigger | BEFORE INSERT | `race_events` | `validate_race_event` |  |
+| set_updated_at | BEFORE UPDATE | `race_rivalries_persistent` | `handle_updated_at` |  |
+| update_race_rivalries_persistent_updated_at | BEFORE UPDATE | `race_rivalries_persistent` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `race_seasons` | `handle_updated_at` |  |
+| trg_race_seasons_updated | BEFORE UPDATE | `race_seasons` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `race_teams` | `handle_updated_at` |  |
+| update_race_teams_updated_at | BEFORE UPDATE | `race_teams` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `race_user_preferences` | `handle_updated_at` |  |
+| trg_race_user_preferences_updated_at | BEFORE UPDATE | `race_user_preferences` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `rate_limit_settings` | `handle_updated_at` |  |
+| update_rate_limit_settings_updated_at | BEFORE UPDATE | `rate_limit_settings` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `renewals` | `handle_updated_at` |  |
+| trg_renewals_uat | BEFORE UPDATE | `renewals` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `report_schedules` | `handle_updated_at` |  |
+| update_report_schedules_updated_at | BEFORE UPDATE | `report_schedules` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `revenue_forecasts` | `handle_updated_at` |  |
+| trg_forecast_cache_invalidate | AFTER UPDATE | `revenue_forecasts` | `trg_invalidate_forecast_narrative_cache` |  |
+| update_revenue_forecasts_updated_at | BEFORE UPDATE | `revenue_forecasts` | `update_updated_at_column` |  |
+| audit_business_changes | AFTER DELETE OR UPDATE | `sales` | `audit_log_row_change` |  |
+| bump_version | BEFORE UPDATE | `sales` | `bump_row_version` |  |
+| refresh_monthly_summary_on_sale | AFTER INSERT OR DELETE OR UPDATE | `sales` | `trigger_refresh_monthly_summary` |  |
+| set_updated_at | BEFORE UPDATE | `sales` | `handle_updated_at` |  |
+| tr_auto_followup_on_sale | AFTER UPDATE | `sales` | `auto_create_sale_followup` |  |
+| tr_handle_sale_commissions | AFTER INSERT OR UPDATE | `sales` | `handle_sale_commissions` |  |
+| tr_handle_stock_on_sale | AFTER UPDATE | `sales` | `handle_stock_management` |  |
+| tr_manage_stock | BEFORE INSERT OR UPDATE | `sales` | `manage_stock_on_sale` |  |
+| tr_notify_sale_victory | AFTER UPDATE | `sales` | `fn_notify_victory` | `(new.deal_status = 'completed'::deal_status)` |
+| tr_performance_update_sales | AFTER INSERT OR UPDATE | `sales` | `handle_performance_update` |  |
+| tr_set_sdr_id | BEFORE INSERT | `sales` | `set_sdr_id_on_insert` |  |
+| tr_sync_battle_score_sales | AFTER INSERT OR UPDATE | `sales` | `sync_battle_score` |  |
+| tr_sync_bets_sales | AFTER INSERT OR DELETE OR UPDATE | `sales` | `sync_performance_bets` |  |
+| tr_sync_territory | AFTER INSERT OR DELETE OR UPDATE | `sales` | `sync_territory_ownership` |  |
+| tr_territory_conquest | AFTER INSERT | `sales` | `handle_territory_conquest` |  |
+| tr_update_client_ltv | AFTER INSERT OR UPDATE | `sales` | `update_client_ltv_on_sale` |  |
+| tr_update_client_total_value | AFTER INSERT OR DELETE OR UPDATE | `sales` | `handle_client_ltv_update` |  |
+| tr_update_client_value | AFTER INSERT OR DELETE OR UPDATE | `sales` | `update_client_total_value` |  |
+| tr_update_product_stock | AFTER INSERT OR UPDATE | `sales` | `update_product_stock` |  |
+| tr_victory_sale | AFTER UPDATE | `sales` | `auto_victory_post` | `(old.deal_status IS DISTINCT FROM new.deal_status)` |
+| trg_auto_create_commission | AFTER INSERT OR UPDATE OF STATUS | `sales` | `auto_create_commission` |  |
+| trg_auto_enroll_on_sale | AFTER INSERT OR UPDATE OF STATUS | `sales` | `auto_enroll_in_cadence` |  |
+| trg_auto_forecast_category | BEFORE INSERT OR UPDATE OF STATUS | `sales` | `auto_set_forecast_category` |  |
+| trg_auto_link_sale_to_account | BEFORE INSERT OR UPDATE OF CLIENT_NAME | `sales` | `auto_link_sale_to_account` |  |
+| trg_deal_stage_history | AFTER INSERT OR UPDATE OF STATUS | `sales` | `trg_deal_stage_history` |  |
+| trg_enforce_status_transition | BEFORE UPDATE OF STATUS | `sales` | `enforce_status_transition` |  |
+| trg_record_sale_stage_transition | AFTER INSERT OR UPDATE OF STATUS | `sales` | `record_sale_stage_transition` |  |
+| trg_refresh_ranking_on_sale_change | AFTER INSERT OR DELETE OR UPDATE | `sales` | `trg_refresh_ranking_on_sale` |  |
+| trg_sales_stamp_closed_at | BEFORE INSERT OR UPDATE OF STATUS | `sales` | `trg_sales_stamp_closed_at` |  |
+| update_bets_on_sale | AFTER INSERT OR UPDATE | `sales` | `trigger_update_performance_bets` |  |
+| update_sales_updated_at | BEFORE UPDATE | `sales` | `update_updated_at_column` |  |
+| update_territories_on_sale | AFTER INSERT OR UPDATE | `sales` | `trigger_update_territories` |  |
+| tr_notify_battle_victory | AFTER UPDATE | `sales_battles` | `fn_notify_victory` | `(new.status = 'completed'::text)` |
+| on_asset_ai_activation | AFTER UPDATE OF VIEW_COUNT | `sales_enablement_assets` | `notify_asset_ai_status` |  |
+| set_updated_at | BEFORE UPDATE | `sales_enablement_assets` | `handle_updated_at` |  |
+| trg_sea_updated_at | BEFORE UPDATE | `sales_enablement_assets` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `sales_streaks` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `sales_territories` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `salespeople` | `handle_updated_at` |  |
+| update_salespeople_updated_at | BEFORE UPDATE | `salespeople` | `update_updated_at_column` |  |
+| set_updated_at | BEFORE UPDATE | `salesperson_commission_configs` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `salesperson_custom_field_values` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `salesperson_leagues` | `handle_updated_at` |  |
+| set_updated_at | BEFORE UPDATE | `salesperson_preferences` | `handle_updated_at` |  |
+| … +87 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
 | Função | Mensagem | Origem |
 |---|---|---|
-| `validate_mood_value` | mood_score must be between 1 and 5 | `supabase/migrations/20260402110711_bc8566d0-e7aa-476b-870c-7d517defb199.sql` |
-| `update_user_mfa_settings` | Not authenticated | `supabase/migrations/20260404155258_7109bf7e-3093-412b-97a9-e67436fd98ba.sql` |
-| `update_user_mfa_settings` | Invalid preferred_method. Must be totp, sms, or none. | `supabase/migrations/20260404155258_7109bf7e-3093-412b-97a9-e67436fd98ba.sql` |
-| `update_own_sale` | Not authenticated as a salesperson | `supabase/migrations/20260412115357_dcf9ab46-7f4b-484f-bf6f-7a87bcbc40f7.sql` |
-| `update_own_sale` | Sale not found or not owned by you | `supabase/migrations/20260412115357_dcf9ab46-7f4b-484f-bf6f-7a87bcbc40f7.sql` |
-| `increment_sales_streak` | Not authorized | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `increment_combo` | Not authorized | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `increment_goal_progress` | Not authorized | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `increment_goal_progress` | Invalid increment (must be 1-100) | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `add_league_weekly_xp` | Not authorized | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `add_league_weekly_xp` | Invalid XP amount | `supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql` |
-| `toggle_workflow_active` | Not authorized | `supabase/migrations/20260416200128_9a349ada-690b-440b-b745-6f94b7e4160e.sql` |
-| `compute_cohort_retention` | Cohort não encontrado ou sem permissão | `supabase/migrations/20260416234424_66fbe1df-5677-4a6c-bea6-daf700e06009.sql` |
-| `declare_step_winner` | Not authorized | `supabase/migrations/20260417004724_5b69c678-9bcb-4757-afa3-c7f08a0bd49c.sql` |
-| `declare_step_winner` | Variant not found | `supabase/migrations/20260417004724_5b69c678-9bcb-4757-afa3-c7f08a0bd49c.sql` |
-| `update_call_recording_transcript` | Recording not found | `supabase/migrations/20260417115509_514f0fe4-af62-4b72-aec8-3ce37b4ed9ac.sql` |
-| `update_call_recording_transcript` | Not authorized to update this recording | `supabase/migrations/20260417115509_514f0fe4-af62-4b72-aec8-3ce37b4ed9ac.sql` |
-| `update_call_recording_diarization` | Recording not found | `supabase/migrations/20260417120210_00a66fee-a4de-44a1-97ab-db5926583629.sql` |
-| `update_call_recording_diarization` | Not authorized | `supabase/migrations/20260417120210_00a66fee-a4de-44a1-97ab-db5926583629.sql` |
-| `update_call_recording_summary` | Recording not found | `supabase/migrations/20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4.sql` |
-| `update_call_recording_summary` | Not authorized | `supabase/migrations/20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4.sql` |
-| `update_call_recording_summary` | Invalid sentiment value | `supabase/migrations/20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4.sql` |
-| `create_activities_from_action_items` | Recording not found | `supabase/migrations/20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4.sql` |
-| `create_activities_from_action_items` | Not authorized | `supabase/migrations/20260417122626_dc9224cc-f218-47fe-8306-93dcad7150f4.sql` |
-| `mark_entity_for_reindex` | forbidden | `supabase/migrations/20260417155732_08d9a90e-f30b-4744-8c96-8f455d1b5a03.sql` |
-| `next_dialer_item` | Not authorized for queue % | `supabase/migrations/20260417181059_373308ac-cd9e-4c9f-b695-1c5b3ba6d799.sql` |
-| `grant_task_xp` | Only admins can grant XP | `supabase/migrations/20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql` |
-| `grant_task_xp` | Assignment not found | `supabase/migrations/20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql` |
-| `manual_xp_adjustment` | Only admins can adjust XP | `supabase/migrations/20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql` |
-| `manual_xp_adjustment` | Reason is required (min 3 chars) | `supabase/migrations/20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql` |
-| `assign_task_to_squad` | Only admins can assign tasks to squads | `supabase/migrations/20260418151200_f3721bce-9ab4-4188-aacd-524d2fbc3ffe.sql` |
-| `bulk_approve_assignments` | Only admins can bulk approve | `supabase/migrations/20260418151200_f3721bce-9ab4-4188-aacd-524d2fbc3ffe.sql` |
-| `finalize_race_season` | Apenas administradores podem finalizar temporadas | `supabase/migrations/20260418162310_4e1bd709-f02a-48bd-a65e-c9a4f0036498.sql` |
-| `finalize_race_season` | Temporada não encontrada | `supabase/migrations/20260418162310_4e1bd709-f02a-48bd-a65e-c9a4f0036498.sql` |
-| `validate_race_event` | race_event rejected: season % does not exist | `supabase/migrations/20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql` |
-| `validate_race_event` | race_event rejected: season % is not active (status=%) | `supabase/migrations/20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql` |
-| `validate_race_event` | race_event rejected: no race_car found for salesperson % | `supabase/migrations/20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql` |
-| `send_notification` | Not authorized to send notification to other users | `supabase/migrations/20260512213357_15e3dcb3-7cf3-4f6e-9af2-21233a6401d4.sql` |
-| `get_dashboard_kpis` | not_authenticated | `supabase/migrations/20260627185517_2ad2ea8a-25bf-4972-a0fe-c533b2571a13.sql` |
-| `increment_v4_callback_metric` | invalid metric column: % | `supabase/migrations/20260706163053_2452df1f-1769-439c-87fd-46103e8bedbc.sql` |
-| `fn_backfill_orders_conversion_seq` | [NOT_AUTHENTICATED] Sessão ausente | `supabase/migrations/20260708134842_fd3e5f78-b315-4078-8bb1-315778671975.sql` |
-| `fn_backfill_orders_conversion_seq` | [FORBIDDEN] Apenas administradores podem reexecutar o backfill | `supabase/migrations/20260708134842_fd3e5f78-b315-4078-8bb1-315778671975.sql` |
-| `fn_convert_quote_to_sale` | [NOT_AUTHENTICATED] Sessão inválida ou expirada | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [QUOTE_NOT_FOUND] Orçamento não encontrado | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [FORBIDDEN] Você não tem permissão para converter este orçamento | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [INVALID_STATUS] Orçamento precisa estar aprovado/aceito. Status atual: % | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [INVALID_TOTAL] Valor total do orçamento inválido | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [EMPTY_ITEMS] Orçamento sem itens não pode virar venda | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_convert_quote_to_sale` | [TOTAL_MISMATCH] Total do orçamento (%) não bate com a soma dos itens (%) | `supabase/migrations/20260710142606_502f6e24-0b43-463f-9cc3-202ff44796a6.sql` |
-| `fn_admin_platform_slo` | permission denied: admin role required | `supabase/migrations/20260711145130_b2c8eda9-8da9-46fe-aefe-3b950fa412d1.sql` |
-| `fn_record_conversion_attempt` | [NOT_AUTHENTICATED] auth.uid() ausente | `supabase/migrations/20260711151406_fd14194a-1b24-422f-bd8a-c274b1fe60e6.sql` |
-| `fn_admin_conversion_trail` | [NOT_AUTHENTICATED] auth.uid() ausente | `supabase/migrations/20260711151406_fd14194a-1b24-422f-bd8a-c274b1fe60e6.sql` |
-| `fn_admin_conversion_trail` | [FORBIDDEN] admin role requerido | `supabase/migrations/20260711151406_fd14194a-1b24-422f-bd8a-c274b1fe60e6.sql` |
-| `fn_admin_conversion_trail` | [INVALID_INPUT] informe quote_id ou sale_id | `supabase/migrations/20260711151406_fd14194a-1b24-422f-bd8a-c274b1fe60e6.sql` |
-| `fn_admin_cleanup_stale_logs` | permission denied: admin role required | `supabase/migrations/20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql` |
-| `fn_admin_web_vitals_p75` | permission denied: admin role required | `supabase/migrations/20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql` |
-| `fn_admin_reset_circuit` | permission denied: admin role required | `supabase/migrations/20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql` |
-| `fn_admin_reset_circuit` | circuit_name required | `supabase/migrations/20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql` |
-| `admin_get_cron_job_stats` | FORBIDDEN | `supabase/migrations/20260712213630_85d48e51-71fa-4a2f-8161-ece309fe0345.sql` |
-| `purge_old_telemetry` | refusing to purge with retention < 7 days (got %) | `supabase/migrations/20260712220130_4232377c-8085-469d-af1b-ea13afa5219a.sql` |
-| `admin_top_queries` | access denied | `supabase/migrations/20260712220239_7d875e88-07c9-45c0-a739-7cc51a5dce4a.sql` |
-| `admin_reset_query_stats` | access denied | `supabase/migrations/20260712220239_7d875e88-07c9-45c0-a739-7cc51a5dce4a.sql` |
-| `complete_call_recording_ingest_job` | job % not found | `supabase/migrations/20260712230117_598d71a5-beaa-46b3-876a-df1bde70d0f7.sql` |
-| `fn_test_simulate_stalled_check` | fn_test_simulate_stalled_check requires negative synthetic jobid | `supabase/migrations/20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020.sql` |
-| `fn_test_cleanup_cron_alerts` | requires negative synthetic jobid | `supabase/migrations/20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020.sql` |
-| `fn_test_backdate_cron_alert` | requires negative synthetic jobid | `supabase/migrations/20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020.sql` |
-| `fn_test_mark_cron_failure` | fn_test_mark_cron_failure requires negative synthetic jobid | `supabase/migrations/20260712230906_1031d7dd-3d6d-4eca-9312-36fdb4432c9b.sql` |
-| `fn_admin_cron_alert_metrics` | access denied | `supabase/migrations/20260712231310_b4d39c3c-b39d-45f4-a1f5-ae4cb06587aa.sql` |
-| `fn_admin_get_new_cron_failures` | access denied | `supabase/migrations/20260712231501_204c3ba6-97ac-4159-9d75-4785991db844.sql` |
-| `fn_admin_list_dead_letter_ingest_jobs` | access_denied | `supabase/migrations/20260712231649_1cc215fd-80c1-4e9e-badb-b88ef75c6317.sql` |
-| `fn_admin_replay_dead_letter_ingest_job` | access_denied | `supabase/migrations/20260712232718_6cfc1884-5c14-4d44-b3b3-ba91edde064a.sql` |
-| `protect_pa_nudge_content` | nudge.content is immutable | `supabase/migrations/20260723122258_04332939-3a35-43e1-b47e-9ec896a02355.sql` |
-| `protect_pa_nudge_content` | nudge.salesperson_id is immutable | `supabase/migrations/20260723122258_04332939-3a35-43e1-b47e-9ec896a02355.sql` |
-| `record_email_opt_out` | invalid_email | `supabase/migrations/20260726200015_4da82c03-38f9-4478-b6f8-5ba0e25d9cbe.sql` |
-| `update_client_portfolio_status` | not_authenticated | `supabase/migrations/20260827000001_harden_webhooks_portfolio_and_idempotency.sql` |
-| `update_client_portfolio_status` | portfolio_not_found | `supabase/migrations/20260827000001_harden_webhooks_portfolio_and_idempotency.sql` |
-| `update_client_portfolio_status` | forbidden | `supabase/migrations/20260827000001_harden_webhooks_portfolio_and_idempotency.sql` |
-| `reassign_inactive_client_portfolio` | Esta operação é exclusiva do serviço interno | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Limite de inatividade inválido | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Carteira não encontrada | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Carteira foi alterada desde a seleção do job | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Carteira não atingiu o limite de inatividade observado | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Vendedor de destino inválido | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `reassign_inactive_client_portfolio` | Vendedor de destino inválido ou inativo | `supabase/migrations/20260830000002_harden_lead_routing.sql` |
-| `get_login_lockout_status` | email_invalid | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `record_failed_login_attempt` | email_invalid | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `record_failed_login_attempt` | rate_limit_exceeded | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `record_successful_login_attempt` | not_authenticated | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `check_2fa_failed_attempts` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `log_security_event` | not_authenticated | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `log_security_event` | severity_invalid | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `log_security_event` | event_payload_invalid | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `soft_delete_record` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `soft_delete_record` | actor_mismatch | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `soft_delete_record` | unsupported_soft_delete_table | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `restore_deleted_record` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `restore_deleted_record` | actor_mismatch | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `restore_deleted_record` | unsupported_soft_delete_table | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `get_deleted_records` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `get_deleted_records` | unsupported_soft_delete_table | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `get_deleted_records` | limit_out_of_range | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `hard_delete_record` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `hard_delete_record` | unsupported_hard_delete_table | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `restore_record` | forbidden | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `restore_record` | unsupported_soft_delete_table | `supabase/migrations/20260831130000_harden_public_access_and_privileged_rpcs.sql` |
-| `detect_slow_queries` | thresholds_must_be_positive | `supabase/migrations/20260831130001_repair_cron_and_fk_indexes.sql` |
-| `trigger_generate_urgent_client_tasks` | auto_task_queue_cron_secrets_missing | `supabase/migrations/20260831163000_secure_churn_and_task_crons.sql` |
-| `trigger_generate_urgent_client_tasks` | auto_task_queue_cron_base_url_must_be_https | `supabase/migrations/20260831163000_secure_churn_and_task_crons.sql` |
-| `trigger_detect_client_churn_alerts` | detect_client_churn_cron_secrets_missing | `supabase/migrations/20260831163000_secure_churn_and_task_crons.sql` |
-| `trigger_detect_client_churn_alerts` | detect_client_churn_cron_base_url_must_be_https | `supabase/migrations/20260831163000_secure_churn_and_task_crons.sql` |
-| `enforce_status_transition` | Transição de status inválida em %: % → % | `supabase/migrations/20261001213000_status_transitions_state_machine.sql` |
-| `transition_commission_status` | Comissão não encontrada: % | `supabase/migrations/20261001213000_status_transitions_state_machine.sql` |
-| `transition_commission_status` | not_authorized | `supabase/migrations/20261001213000_status_transitions_state_machine.sql` |
-| `transition_commission_status` | Transição de status inválida em commissions: % → % | `supabase/migrations/20261001213000_status_transitions_state_machine.sql` |
-| `add_salesperson_xp` | Not authorized | `supabase/migrations/20261001214000_app_config_sla_xp.sql` |
-| `add_salesperson_xp` | Invalid XP amount (must be 1-10000) | `supabase/migrations/20261001214000_app_config_sla_xp.sql` |
-| `transition_sale_status` | Venda não encontrada: % | `supabase/migrations/20261002020100_transition_sale_status_closer_owner.sql` |
-| `transition_sale_status` | not_authorized | `supabase/migrations/20261002020100_transition_sale_status_closer_owner.sql` |
-| `transition_sale_status` | optimistic_lock_conflict: versão esperada %, versão atual % | `supabase/migrations/20261002020100_transition_sale_status_closer_owner.sql` |
-| `transition_sale_status` | Transição de status inválida em sales: % → % | `supabase/migrations/20261002020100_transition_sale_status_closer_owner.sql` |
-| `fn_admin_cron_alert_breakdown` | access_denied | `supabase/migrations/20261005150000_fix_fn_admin_cron_alert_breakdown.sql` |
-| `admin_edge_cron_status` | forbidden | `supabase/migrations/20261013122000_admin_edge_cron_status.sql` |
-| `spin_prize_wheel` | Autenticação obrigatória para girar a roda | `supabase/migrations/20261014000000_gamificacao_server_side.sql` |
-| `spin_prize_wheel` | Identificador idempotente obrigatório | `supabase/migrations/20261014000000_gamificacao_server_side.sql` |
-| `spin_prize_wheel` | Perfil comercial não encontrado para o usuário autenticado | `supabase/migrations/20261014000000_gamificacao_server_side.sql` |
-| `spin_prize_wheel` | Nenhum giro disponível | `supabase/migrations/20261014000000_gamificacao_server_side.sql` |
-| `spin_prize_wheel` | Nenhum giro disponível | `supabase/migrations/20261014000000_gamificacao_server_side.sql` |
-| `trigger_internal_edge_job` | internal_edge_job_not_allowed | `supabase/migrations/20261014000001_fix_allowlist_bitrix24_gamificacao.sql` |
-| `trigger_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/migrations/20261014000001_fix_allowlist_bitrix24_gamificacao.sql` |
-| `trigger_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/migrations/20261014000001_fix_allowlist_bitrix24_gamificacao.sql` |
-| `claim_weekly_challenge_reward` | Autenticação obrigatória para resgatar recompensa | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_weekly_challenge_reward` | Perfil comercial não encontrado para o usuário autenticado | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_weekly_challenge_reward` | Desafio não encontrado | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_weekly_challenge_reward` | Desafio não concluído ou recompensa já resgatada | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_daily_challenge_reward` | Autenticação obrigatória para resgatar recompensa | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_daily_challenge_reward` | Perfil comercial não encontrado para o usuário autenticado | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_daily_challenge_reward` | Desafio não encontrado | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_daily_challenge_reward` | Desafio não concluído ou recompensa já resgatada | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_streak_achievements` | Autenticação obrigatória para resgatar conquistas | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `claim_streak_achievements` | Perfil comercial não encontrado para o usuário autenticado | `supabase/migrations/20261018190100_gamificacao_claim_matchups_rotations.sql` |
-| `award_salesperson_xp` | forbidden: award_salesperson_xp é interno (service_role) | `supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql` |
-| `race_cars_guard_counters` | Contadores de corrida são gerenciados pelo servidor | `supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql` |
-| `race_cars_guard_counters` | Contadores de corrida são gerenciados pelo servidor | `supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql` |
-| `sync_challenge_progress` | Perfil comercial não encontrado | `supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql` |
-| `sync_challenge_progress` | forbidden: só o próprio progresso pode ser sincronizado | `supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql` |
-| `compute_pipeline_inspection` | Not authorized | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Apenas administradores e gestores podem rotear clientes | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | client_id é obrigatório | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Estratégia de roteamento inválida: % | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | salesperson_id é obrigatório para atribuição manual | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Cliente não encontrado | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Cliente já possui uma carteira; use o fluxo explícito de transferência | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Nenhum closer ou híbrido ativo está disponível para roteamento | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `route_unassigned_client_portfolio` | Vendedor de destino inválido ou inativo | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | Apenas administradores e gestores podem atribuir leads | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | sale_id é obrigatório | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | Venda não encontrada | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | Nenhuma regra ativa é compatível com a venda | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | Estratégia de regra não suportada: % | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | Nenhum vendedor ativo está disponível para atribuição | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `auto_assign_lead` | A venda já foi atribuída por outra operação | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
-| `append_agent_step` | Run not found | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `append_agent_step` | Not authorized | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `complete_agent_run` | Run not found | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `complete_agent_run` | Not authorized | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `approve_agent_run` | Run not found | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `approve_agent_run` | Not authorized | `supabase/migrations/20261027130000_agent_runs_owner_check_e_grants.sql` |
-| `create_agent_run` | No salesperson context | `supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql` |
-| `create_agent_run` | Target entity not found | `supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql` |
-| `create_agent_run` | Target entity not owned by caller | `supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql` |
-| `anonymize_data_subject` | forbidden: somente admin/manager ou service_role podem anonimizar titulares | `supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql` |
-| `anonymize_data_subject` | pelo menos um identificador do titular é obrigatório (email, subject_id, phone ou ip) | `supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql` |
-| `award_sale_xp` | Autenticação obrigatória | `supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql` |
-| `award_sale_xp` | Venda não encontrada | `supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql` |
-| `get_semantic_coverage` | forbidden | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
-| `award_bonus_if_eligible` | not authenticated | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
-| `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql` |
+| `compute_cohort_retention` | Cohort não encontrado ou sem permissão | `supabase/schema.sql` |
+| `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/schema.sql` |
+| `add_league_weekly_xp` | Not authorized | `supabase/schema.sql` |
+| `add_league_weekly_xp` | Invalid XP amount | `supabase/schema.sql` |
+| `add_salesperson_xp` | Not authorized | `supabase/schema.sql` |
+| `add_salesperson_xp` | Invalid XP amount (must be 1-10000) | `supabase/schema.sql` |
+| `admin_edge_cron_status` | forbidden | `supabase/schema.sql` |
+| `admin_get_cron_job_stats` | FORBIDDEN | `supabase/schema.sql` |
+| `admin_reset_query_stats` | access denied | `supabase/schema.sql` |
+| `admin_top_queries` | access denied | `supabase/schema.sql` |
+| `anonymize_data_subject` | forbidden: somente admin/manager ou service_role podem anonimizar titulares | `supabase/schema.sql` |
+| `anonymize_data_subject` | pelo menos um identificador do titular é obrigatório (email, subject_id, phone ou ip) | `supabase/schema.sql` |
+| `append_agent_step` | Run not found | `supabase/schema.sql` |
+| `append_agent_step` | Not authorized | `supabase/schema.sql` |
+| `approve_agent_run` | Run not found | `supabase/schema.sql` |
+| `approve_agent_run` | Not authorized | `supabase/schema.sql` |
+| `assign_task_to_squad` | Only admins can assign tasks to squads | `supabase/schema.sql` |
+| `auto_assign_lead` | Apenas administradores e gestores podem atribuir leads | `supabase/schema.sql` |
+| `auto_assign_lead` | sale_id é obrigatório | `supabase/schema.sql` |
+| `auto_assign_lead` | Venda não encontrada | `supabase/schema.sql` |
+| `auto_assign_lead` | Nenhuma regra ativa é compatível com a venda | `supabase/schema.sql` |
+| `auto_assign_lead` | Estratégia de regra não suportada: % | `supabase/schema.sql` |
+| `auto_assign_lead` | Nenhum vendedor ativo está disponível para atribuição | `supabase/schema.sql` |
+| `auto_assign_lead` | A venda já foi atribuída por outra operação | `supabase/schema.sql` |
+| `award_bonus_if_eligible` | not authenticated | `supabase/schema.sql` |
+| `award_sale_xp` | Autenticação obrigatória | `supabase/schema.sql` |
+| `award_sale_xp` | Venda não encontrada | `supabase/schema.sql` |
+| `award_salesperson_xp` | forbidden: award_salesperson_xp é interno (service_role) | `supabase/schema.sql` |
+| `bulk_approve_assignments` | Only admins can bulk approve | `supabase/schema.sql` |
+| `check_2fa_failed_attempts` | forbidden | `supabase/schema.sql` |
+| `claim_daily_challenge_reward` | Autenticação obrigatória para resgatar recompensa | `supabase/schema.sql` |
+| `claim_daily_challenge_reward` | Perfil comercial não encontrado para o usuário autenticado | `supabase/schema.sql` |
+| `claim_daily_challenge_reward` | Desafio não encontrado | `supabase/schema.sql` |
+| `claim_daily_challenge_reward` | Desafio não concluído ou recompensa já resgatada | `supabase/schema.sql` |
+| `claim_streak_achievements` | Autenticação obrigatória para resgatar conquistas | `supabase/schema.sql` |
+| `claim_streak_achievements` | Perfil comercial não encontrado para o usuário autenticado | `supabase/schema.sql` |
+| `claim_weekly_challenge_reward` | Autenticação obrigatória para resgatar recompensa | `supabase/schema.sql` |
+| `claim_weekly_challenge_reward` | Perfil comercial não encontrado para o usuário autenticado | `supabase/schema.sql` |
+| `claim_weekly_challenge_reward` | Desafio não encontrado | `supabase/schema.sql` |
+| `claim_weekly_challenge_reward` | Desafio não concluído ou recompensa já resgatada | `supabase/schema.sql` |
+| `complete_agent_run` | Run not found | `supabase/schema.sql` |
+| `complete_agent_run` | Not authorized | `supabase/schema.sql` |
+| `complete_call_recording_ingest_job` | job % not found | `supabase/schema.sql` |
+| `compute_pipeline_inspection` | Not authorized | `supabase/schema.sql` |
+| `create_activities_from_action_items` | Recording not found | `supabase/schema.sql` |
+| `create_activities_from_action_items` | Not authorized | `supabase/schema.sql` |
+| `create_agent_run` | No salesperson context | `supabase/schema.sql` |
+| `create_agent_run` | Target entity not found | `supabase/schema.sql` |
+| `create_agent_run` | Target entity not owned by caller | `supabase/schema.sql` |
+| `declare_step_winner` | Not authorized | `supabase/schema.sql` |
+| `declare_step_winner` | Variant not found | `supabase/schema.sql` |
+| `detect_slow_queries` | thresholds_must_be_positive | `supabase/schema.sql` |
+| `enforce_status_transition` | Transição de status inválida em %: % → % | `supabase/schema.sql` |
+| `finalize_race_season` | Apenas administradores podem finalizar temporadas | `supabase/schema.sql` |
+| `finalize_race_season` | Temporada não encontrada | `supabase/schema.sql` |
+| `fn_admin_cleanup_stale_logs` | permission denied: admin role required | `supabase/schema.sql` |
+| `fn_admin_conversion_trail` | [NOT_AUTHENTICATED] auth.uid() ausente | `supabase/schema.sql` |
+| `fn_admin_conversion_trail` | [FORBIDDEN] admin role requerido | `supabase/schema.sql` |
+| `fn_admin_conversion_trail` | [INVALID_INPUT] informe quote_id ou sale_id | `supabase/schema.sql` |
+| `fn_admin_cron_alert_breakdown` | access_denied | `supabase/schema.sql` |
+| `fn_admin_cron_alert_metrics` | access denied | `supabase/schema.sql` |
+| `fn_admin_get_new_cron_failures` | access denied | `supabase/schema.sql` |
+| `fn_admin_list_dead_letter_ingest_jobs` | access_denied | `supabase/schema.sql` |
+| `fn_admin_replay_dead_letter_ingest_job` | access_denied | `supabase/schema.sql` |
+| `fn_admin_reset_circuit` | permission denied: admin role required | `supabase/schema.sql` |
+| `fn_admin_reset_circuit` | circuit_name required | `supabase/schema.sql` |
+| `fn_backfill_orders_conversion_seq` | [NOT_AUTHENTICATED] Sessão ausente | `supabase/schema.sql` |
+| `fn_backfill_orders_conversion_seq` | [FORBIDDEN] Apenas administradores podem reexecutar o backfill | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [NOT_AUTHENTICATED] Sessão inválida ou expirada | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [QUOTE_NOT_FOUND] Orçamento não encontrado | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [FORBIDDEN] Você não tem permissão para converter este orçamento | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [INVALID_STATUS] Orçamento precisa estar aprovado/aceito. Status atual: % | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [INVALID_TOTAL] Valor total do orçamento inválido | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [EMPTY_ITEMS] Orçamento sem itens não pode virar venda | `supabase/schema.sql` |
+| `fn_convert_quote_to_sale` | [TOTAL_MISMATCH] Total do orçamento (%) não bate com a soma dos itens (%) | `supabase/schema.sql` |
+| `fn_record_conversion_attempt` | [NOT_AUTHENTICATED] auth.uid() ausente | `supabase/schema.sql` |
+| `fn_test_backdate_cron_alert` | requires negative synthetic jobid | `supabase/schema.sql` |
+| `fn_test_cleanup_cron_alerts` | requires negative synthetic jobid | `supabase/schema.sql` |
+| `fn_test_mark_cron_failure` | fn_test_mark_cron_failure requires negative synthetic jobid | `supabase/schema.sql` |
+| `fn_test_simulate_stalled_check` | fn_test_simulate_stalled_check requires negative synthetic jobid | `supabase/schema.sql` |
+| `get_dashboard_kpis` | not_authenticated | `supabase/schema.sql` |
+| `get_deleted_records` | forbidden | `supabase/schema.sql` |
+| `get_deleted_records` | unsupported_soft_delete_table | `supabase/schema.sql` |
+| `get_deleted_records` | limit_out_of_range | `supabase/schema.sql` |
+| `get_login_lockout_status` | email_invalid | `supabase/schema.sql` |
+| `get_semantic_coverage` | forbidden | `supabase/schema.sql` |
+| `grant_task_xp` | Only admins can grant XP | `supabase/schema.sql` |
+| `grant_task_xp` | Assignment not found | `supabase/schema.sql` |
+| `hard_delete_record` | forbidden | `supabase/schema.sql` |
+| `hard_delete_record` | unsupported_hard_delete_table | `supabase/schema.sql` |
+| `increment_combo` | Not authorized | `supabase/schema.sql` |
+| `increment_goal_progress` | Not authorized | `supabase/schema.sql` |
+| `increment_goal_progress` | Invalid increment (must be 1-100) | `supabase/schema.sql` |
+| `increment_sales_streak` | Not authorized | `supabase/schema.sql` |
+| `increment_v4_callback_metric` | invalid metric column: % | `supabase/schema.sql` |
+| `log_security_event` | not_authenticated | `supabase/schema.sql` |
+| `log_security_event` | severity_invalid | `supabase/schema.sql` |
+| `log_security_event` | event_payload_invalid | `supabase/schema.sql` |
+| `manual_xp_adjustment` | Only admins can adjust XP | `supabase/schema.sql` |
+| `manual_xp_adjustment` | Reason is required (min 3 chars) | `supabase/schema.sql` |
+| `mark_entity_for_reindex` | forbidden | `supabase/schema.sql` |
+| `next_dialer_item` | Not authorized for queue % | `supabase/schema.sql` |
+| `protect_pa_nudge_content` | nudge.content is immutable | `supabase/schema.sql` |
+| `protect_pa_nudge_content` | nudge.salesperson_id is immutable | `supabase/schema.sql` |
+| `purge_old_telemetry` | refusing to purge with retention < 7 days (got %) | `supabase/schema.sql` |
+| `race_cars_guard_counters` | Contadores de corrida são gerenciados pelo servidor | `supabase/schema.sql` |
+| `race_cars_guard_counters` | Contadores de corrida são gerenciados pelo servidor | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Esta operação é exclusiva do serviço interno | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Limite de inatividade inválido | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Carteira não encontrada | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Carteira foi alterada desde a seleção do job | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Carteira não atingiu o limite de inatividade observado | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Vendedor de destino inválido | `supabase/schema.sql` |
+| `reassign_inactive_client_portfolio` | Vendedor de destino inválido ou inativo | `supabase/schema.sql` |
+| `record_email_opt_out` | invalid_email | `supabase/schema.sql` |
+| `record_failed_login_attempt` | email_invalid | `supabase/schema.sql` |
+| `record_failed_login_attempt` | rate_limit_exceeded | `supabase/schema.sql` |
+| `record_successful_login_attempt` | not_authenticated | `supabase/schema.sql` |
+| `restore_deleted_record` | forbidden | `supabase/schema.sql` |
+| `restore_deleted_record` | actor_mismatch | `supabase/schema.sql` |
+| `restore_deleted_record` | unsupported_soft_delete_table | `supabase/schema.sql` |
+| `restore_record` | forbidden | `supabase/schema.sql` |
+| `restore_record` | unsupported_soft_delete_table | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Apenas administradores e gestores podem rotear clientes | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | client_id é obrigatório | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Estratégia de roteamento inválida: % | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | salesperson_id é obrigatório para atribuição manual | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Cliente não encontrado | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Cliente já possui uma carteira; use o fluxo explícito de transferência | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Nenhum closer ou híbrido ativo está disponível para roteamento | `supabase/schema.sql` |
+| `route_unassigned_client_portfolio` | Vendedor de destino inválido ou inativo | `supabase/schema.sql` |
+| `send_notification` | Not authorized to send notification to other users | `supabase/schema.sql` |
+| `soft_delete_record` | forbidden | `supabase/schema.sql` |
+| `soft_delete_record` | actor_mismatch | `supabase/schema.sql` |
+| `soft_delete_record` | unsupported_soft_delete_table | `supabase/schema.sql` |
+| `spin_prize_wheel` | Autenticação obrigatória para girar a roda | `supabase/schema.sql` |
+| `spin_prize_wheel` | Identificador idempotente obrigatório | `supabase/schema.sql` |
+| `spin_prize_wheel` | Perfil comercial não encontrado para o usuário autenticado | `supabase/schema.sql` |
+| `spin_prize_wheel` | Nenhum giro disponível | `supabase/schema.sql` |
+| `spin_prize_wheel` | Nenhum giro disponível | `supabase/schema.sql` |
+| `sync_challenge_progress` | Perfil comercial não encontrado | `supabase/schema.sql` |
+| `sync_challenge_progress` | forbidden: só o próprio progresso pode ser sincronizado | `supabase/schema.sql` |
+| `toggle_workflow_active` | Not authorized | `supabase/schema.sql` |
+| `transition_commission_status` | Comissão não encontrada: % | `supabase/schema.sql` |
+| `transition_commission_status` | not_authorized | `supabase/schema.sql` |
+| `transition_commission_status` | Transição de status inválida em commissions: % → % | `supabase/schema.sql` |
+| `transition_sale_status` | Venda não encontrada: % | `supabase/schema.sql` |
+| `transition_sale_status` | not_authorized | `supabase/schema.sql` |
+| `transition_sale_status` | optimistic_lock_conflict: versão esperada %, versão atual % | `supabase/schema.sql` |
+| `transition_sale_status` | Transição de status inválida em sales: % → % | `supabase/schema.sql` |
+| `trigger_detect_client_churn_alerts` | detect_client_churn_cron_secrets_missing | `supabase/schema.sql` |
+| `trigger_detect_client_churn_alerts` | detect_client_churn_cron_base_url_must_be_https | `supabase/schema.sql` |
+| `trigger_generate_urgent_client_tasks` | auto_task_queue_cron_secrets_missing | `supabase/schema.sql` |
+| `trigger_generate_urgent_client_tasks` | auto_task_queue_cron_base_url_must_be_https | `supabase/schema.sql` |
+| `trigger_internal_edge_job` | internal_edge_job_not_allowed | `supabase/schema.sql` |
+| `trigger_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/schema.sql` |
+| `trigger_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/schema.sql` |
+| `update_call_recording_diarization` | Recording not found | `supabase/schema.sql` |
+| `update_call_recording_diarization` | Not authorized | `supabase/schema.sql` |
+| `update_call_recording_summary` | Recording not found | `supabase/schema.sql` |
+| `update_call_recording_summary` | Not authorized | `supabase/schema.sql` |
+| `update_call_recording_summary` | Invalid sentiment value | `supabase/schema.sql` |
+| `update_call_recording_transcript` | Recording not found | `supabase/schema.sql` |
+| `update_call_recording_transcript` | Not authorized to update this recording | `supabase/schema.sql` |
+| `update_client_portfolio_status` | not_authenticated | `supabase/schema.sql` |
+| `update_client_portfolio_status` | portfolio_not_found | `supabase/schema.sql` |
+| `update_client_portfolio_status` | forbidden | `supabase/schema.sql` |
+| `update_own_sale` | Not authenticated as a salesperson | `supabase/schema.sql` |
+| `update_own_sale` | Sale not found or not owned by you | `supabase/schema.sql` |
+| `update_user_mfa_settings` | Not authenticated | `supabase/schema.sql` |
+| `update_user_mfa_settings` | Invalid preferred_method. Must be totp, sms, or none. | `supabase/schema.sql` |
+| `validate_mood_value` | mood_score must be between 1 and 5 | `supabase/schema.sql` |
+| `validate_race_event` | race_event rejected: season % does not exist | `supabase/schema.sql` |
+| `validate_race_event` | race_event rejected: season % is not active (status=%) | `supabase/schema.sql` |
+| `validate_race_event` | race_event rejected: no race_car found for salesperson % | `supabase/schema.sql` |
+| `fn_admin_platform_slo` | permission denied: admin role required | `supabase/schema.sql` |
+| `fn_admin_web_vitals_p75` | permission denied: admin role required | `supabase/schema.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -1027,53 +1113,52 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Tabela | Coluna | Valores permitidos (enum/CHECK) | Default |
 |---|---|---|---|
-| `sales` | `status` | `cancelled`, `closed`, `completed`, `lead`, `lost`, `negotiation`, `pending`, `proposal`, `prospecting`, `qualified`, `won` | `pending` |
+| `sales` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `sales` | `enrichment_status` | **livre (sem enum/CHECK)** | `pending` |
+| `sales` | `whatsapp_status` | **livre (sem enum/CHECK)** | `not_connected` |
 | `sales` | `stage` | **livre (sem enum/CHECK)** |  |
 | `sales` | `deal_status` | **livre (sem enum/CHECK)** |  |
-| `sales` | `enrichment_status` | **livre (sem enum/CHECK)** |  |
-| `sales` | `whatsapp_status` | **livre (sem enum/CHECK)** |  |
 | `deal_stage_history` | `stage` | **livre (sem enum/CHECK)** |  |
 | `tasks` | `status` | `pending`, `in_progress`, `completed`, `cancelled` | `pending` |
 | `playbooks` | `stage` | **livre (sem enum/CHECK)** |  |
 | `activities` | `lead_status` | **livre (sem enum/CHECK)** | `prospect` |
-| `cadence_steps` | `step_order` | **livre (sem enum/CHECK)** |  |
-| `cadence_steps` | `step_type` | `call`, `email`, `linkedin`, `task` |  |
-| `prospect_cadences` | `status` | `active`, `cancelled`, `completed`, `paused` | `active` |
+| `cadence_steps` | `step_order` | **livre (sem enum/CHECK)** | `0` |
+| `prospect_cadences` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `prospect_cadences` | `current_step` | **livre (sem enum/CHECK)** | `0` |
-| `prospect_cadences` | `funnel_stage` | `high_interest`, `new`, `scheduled`, `waiting_approval` | `new` |
-| `cadence_tasks` | `status` | `completed`, `pending`, `skipped` | `pending` |
+| `prospect_cadences` | `funnel_stage` | **livre (sem enum/CHECK)** | `new` |
+| `cadence_tasks` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `products` | `status` | **livre (sem enum/CHECK)** | `ativo` |
 | `circuit_breaker_events` | `previous_state` | **livre (sem enum/CHECK)** |  |
 | `circuit_breaker_events` | `new_state` | **livre (sem enum/CHECK)** |  |
-| `client_portfolio` | `status` | `active`, `at_risk`, `churned`, `inactive`, `nurturing` | `inactive` |
+| `client_portfolio` | `status` | **livre (sem enum/CHECK)** | `inactive` |
 | `bitrix24_sync_logs` | `status` | **livre (sem enum/CHECK)** | `success` |
 | `email_logs` | `status` | **livre (sem enum/CHECK)** | `sent` |
 | `suppliers` | `state` | **livre (sem enum/CHECK)** |  |
-| `supplier_orders` | `status` | `cancelled`, `confirmed`, `delivered`, `pending`, `shipped` | `pending` |
-| `digital_signatures` | `status` | `draft`, `expired`, `pending`, `rejected`, `signed` | `draft` |
-| `document_signers` | `status` | `pending`, `rejected`, `signed` | `pending` |
+| `supplier_orders` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `digital_signatures` | `status` | **livre (sem enum/CHECK)** | `draft` |
+| `document_signers` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `migration_log` | `status` | **livre (sem enum/CHECK)** |  |
-| `password_reset_requests` | `status` | `approved`, `completed`, `expired`, `pending`, `rejected` | `pending` |
-| `webhook_logs` | `response_status` | **livre (sem enum/CHECK)** |  |
+| `password_reset_requests` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `webhook_logs` | `status` | **livre (sem enum/CHECK)** |  |
-| `webhook_events` | `status` | `failed`, `pending`, `success` | `pending` |
+| `webhook_logs` | `response_status` | **livre (sem enum/CHECK)** |  |
+| `webhook_events` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `quotes` | `status` | **livre (sem enum/CHECK)** | `draft` |
+| `quotes` | `sync_status` | **livre (sem enum/CHECK)** | `none` |
 | `quotes` | `billing_status` | **livre (sem enum/CHECK)** | `pending` |
-| `quotes` | `sync_status` | **livre (sem enum/CHECK)** |  |
-| `quote_sync_logs` | `status` | **livre (sem enum/CHECK)** |  |
+| `quote_sync_logs` | `status` | **livre (sem enum/CHECK)** | `success` |
 | `sales_battles` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `competitive_seasons` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `weekly_matchups` | `status` | **livre (sem enum/CHECK)** | `active` |
-| `tournaments` | `status` | `active`, `completed`, `upcoming` | `upcoming` |
-| `tournament_matches` | `status` | `active`, `completed`, `pending` | `pending` |
-| `performance_bets` | `status` | `active`, `cancelled`, `lost`, `won` | `active` |
+| `tournaments` | `status` | **livre (sem enum/CHECK)** | `upcoming` |
+| `tournament_matches` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `performance_bets` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `message_templates` | `pipeline_stage` | **livre (sem enum/CHECK)** |  |
-| `channel_interactions` | `status` | `delivered`, `failed`, `read`, `replied`, `scheduled`, `sent` | `sent` |
+| `channel_interactions` | `status` | **livre (sem enum/CHECK)** | `sent` |
 | `pipeline_stages` | `stage_order` | **livre (sem enum/CHECK)** | `0` |
-| `nps_surveys` | `status` | `pending`, `responded`, `sent` | `pending` |
-| `commissions` | `status` | `approved`, `cancelled`, `paid`, `pending` | `pending` |
-| `agenda_events` | `status` | `cancelled`, `completed`, `in_progress`, `pending` | `pending` |
-| `approval_requests` | `status` | `approved`, `cancelled`, `expired`, `pending`, `rejected` | `pending` |
+| `nps_surveys` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `commissions` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `agenda_events` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `approval_requests` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `webhook_deliveries` | `response_status` | **livre (sem enum/CHECK)** |  |
 | `sla_policies` | `stage` | **livre (sem enum/CHECK)** |  |
 | `sla_violations` | `stage` | **livre (sem enum/CHECK)** |  |
@@ -1084,10 +1169,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `workflow_executions` | `step_log` | **livre (sem enum/CHECK)** |  |
 | `cadence_enrollment_rules` | `trigger_stage` | **livre (sem enum/CHECK)** |  |
 | `cadence_ab_tests` | `status` | **livre (sem enum/CHECK)** | `draft` |
-| `call_recordings` | `status` | `analyzing`, `failed`, `pending`, `ready`, `transcribing` | `pending` |
-| `deal_health_scores` | `days_in_stage` | **livre (sem enum/CHECK)** |  |
-| `accounts` | `health_status` | `at_risk`, `critical`, `healthy`, `unknown` | `unknown` |
-| `automation_runs` | `status` | `failed`, `partial`, `skipped`, `success` | `success` |
+| `call_recordings` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `deal_health_scores` | `days_in_stage` | **livre (sem enum/CHECK)** | `0` |
+| `accounts` | `health_status` | **livre (sem enum/CHECK)** | `unknown` |
+| `automation_runs` | `status` | **livre (sem enum/CHECK)** | `success` |
 | `sales_enablement_assets` | `funnel_stage` | **livre (sem enum/CHECK)** |  |
 | `pipeline_inspection_snapshots` | `stage` | **livre (sem enum/CHECK)** |  |
 | `pipeline_inspection_snapshots` | `days_in_stage` | **livre (sem enum/CHECK)** | `0` |
@@ -1097,23 +1182,23 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `onboarding_journeys` | `current_step` | **livre (sem enum/CHECK)** | `0` |
 | `onboarding_steps` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `expansion_opportunities` | `status` | **livre (sem enum/CHECK)** | `identified` |
-| `report_executions` | `status` | `failed`, `pending`, `running`, `success` | `pending` |
-| `scheduled_report_runs` | `status` | `failed`, `running`, `success` | `running` |
+| `report_executions` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `scheduled_report_runs` | `status` | **livre (sem enum/CHECK)** | `running` |
 | `sequence_steps` | `step_order` | **livre (sem enum/CHECK)** |  |
-| `sequence_enrollments` | `status` | `active`, `completed`, `exited`, `failed`, `paused` | `active` |
+| `sequence_enrollments` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `sequence_enrollments` | `current_step` | **livre (sem enum/CHECK)** | `0` |
-| `sequence_step_executions` | `status` | `failed`, `queued`, `sent`, `skipped` |  |
-| `outbound_messages` | `status` | `delivered`, `failed`, `queued`, `read`, `sent` | `queued` |
-| `ai_agent_runs` | `status` | `awaiting_approval`, `cancelled`, `completed`, `failed`, `pending`, `running` | `pending` |
+| `sequence_step_executions` | `status` | **livre (sem enum/CHECK)** |  |
+| `outbound_messages` | `status` | **livre (sem enum/CHECK)** | `queued` |
+| `ai_agent_runs` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `ai_agent_actions` | `step_index` | **livre (sem enum/CHECK)** |  |
-| `ai_agent_actions` | `status` | `error`, `executing`, `pending_approval`, `skipped`, `success` | `success` |
+| `ai_agent_actions` | `status` | **livre (sem enum/CHECK)** | `success` |
 | `email_bulk_jobs` | `status` | **livre (sem enum/CHECK)** | `draft` |
-| `scheduled_sends` | `status` | `cancelled`, `failed`, `pending`, `sent` | `pending` |
-| `dialer_queue_items` | `status` | `calling`, `done`, `pending`, `skipped`, `snoozed` | `pending` |
+| `scheduled_sends` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `dialer_queue_items` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `twilio_call_sessions` | `status` | **livre (sem enum/CHECK)** | `initiated` |
-| `coaching_actions` | `status` | `accepted`, `dismissed`, `pending`, `practiced` | `pending` |
-| `call_critical_moments` | `status` | `acknowledged`, `actioned`, `dismissed`, `new` | `new` |
-| `deal_velocity_predictions` | `velocity_status` | `ahead`, `on_track`, `slow`, `stalled` | `on_track` |
+| `coaching_actions` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `call_critical_moments` | `status` | **livre (sem enum/CHECK)** | `new` |
+| `deal_velocity_predictions` | `velocity_status` | **livre (sem enum/CHECK)** | `on_track` |
 | `deal_velocity_predictions` | `current_stage` | **livre (sem enum/CHECK)** |  |
 | `deal_velocity_predictions` | `days_in_stage` | **livre (sem enum/CHECK)** |  |
 | `deal_velocity_predictions` | `expected_days_in_stage` | **livre (sem enum/CHECK)** |  |
@@ -1122,10 +1207,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `stage_conversion_metrics` | `from_stage` | **livre (sem enum/CHECK)** |  |
 | `stage_conversion_metrics` | `to_stage` | **livre (sem enum/CHECK)** |  |
 | `stage_bottleneck_insights` | `stage` | **livre (sem enum/CHECK)** |  |
-| `race_seasons` | `status` | `active`, `finished`, `upcoming` | `upcoming` |
+| `race_seasons` | `status` | **livre (sem enum/CHECK)** | `upcoming` |
 | `pipeline_coverage_snapshots` | `stage` | **livre (sem enum/CHECK)** |  |
 | `win_probability_calibrations` | `stage` | **livre (sem enum/CHECK)** |  |
-| `quota_attainment_predictions` | `pace_status` | **livre (sem enum/CHECK)** |  |
 | `call_objections` | `resolution_status` | **livre (sem enum/CHECK)** | `unresolved` |
 | `deal_stage_transitions` | `from_stage` | **livre (sem enum/CHECK)** |  |
 | `deal_stage_transitions` | `to_stage` | **livre (sem enum/CHECK)** |  |
@@ -1134,46 +1218,46 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `win_loss_analyses` | `lost_stage` | **livre (sem enum/CHECK)** |  |
 | `win_calibration_buckets` | `stage` | **livre (sem enum/CHECK)** |  |
 | `win_probability_deal_calibrations` | `stage` | **livre (sem enum/CHECK)** |  |
-| `coaching_sessions` | `status` | `canceled`, `completed`, `scheduled` | `scheduled` |
+| `coaching_sessions` | `status` | **livre (sem enum/CHECK)** | `scheduled` |
 | `task_assignments` | `status` | `pending`, `in_progress`, `submitted`, `approved`, `rejected` | `pending` |
 | `winloss_webhook_subscriptions` | `last_status` | **livre (sem enum/CHECK)** |  |
 | `winloss_webhook_deliveries` | `status` | **livre (sem enum/CHECK)** | `0` |
 | `winloss_webhook_dead_letters` | `last_status` | **livre (sem enum/CHECK)** |  |
-| `winloss_webhook_dead_letters` | `status` | `archived`, `pending`, `replayed`, `replaying` | `pending` |
+| `winloss_webhook_dead_letters` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `winloss_webhook_dead_letters` | `last_replay_status` | **livre (sem enum/CHECK)** |  |
-| `orders` | `status` | `cancelled`, `confirmed`, `delivered`, `pending`, `preparing`, `shipped` | `pending` |
+| `orders` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `order_status_events` | `status` | **livre (sem enum/CHECK)** |  |
 | `winloss_webhook_replay_audit` | `http_status` | **livre (sem enum/CHECK)** | `0` |
 | `integration_health_checks` | `status` | `success`, `failure`, `degraded`, `pending` |  |
 | `integration_autotest_jobs` | `status` | **livre (sem enum/CHECK)** | `running` |
-| `commercial_approval_requests` | `status` | `approved`, `pending`, `rejected` | `pending` |
+| `commercial_approval_requests` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `follow_up_audit_logs` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `follow_up_notifications` | `status` | **livre (sem enum/CHECK)** | `unread` |
-| `cadence_funnel_rules` | `from_stage` | `high_interest`, `new`, `scheduled`, `waiting_approval` |  |
-| `cadence_funnel_rules` | `to_stage` | `high_interest`, `new`, `scheduled`, `waiting_approval` |  |
+| `cadence_funnel_rules` | `from_stage` | **livre (sem enum/CHECK)** |  |
+| `cadence_funnel_rules` | `to_stage` | **livre (sem enum/CHECK)** |  |
 | `cadence_outcome_rules` | `to_stage` | **livre (sem enum/CHECK)** |  |
 | `duplicate_block_logs` | `status` | **livre (sem enum/CHECK)** | `Blocked` |
 | `integration_logs` | `status` | **livre (sem enum/CHECK)** |  |
 | `mql_qualifications` | `qualification_status` | **livre (sem enum/CHECK)** | `pending` |
-| `lead_churn_risk` | `status` | `active`, `ignored`, `resolved` | `active` |
+| `lead_churn_risk` | `status` | **livre (sem enum/CHECK)** | `active` |
 | `sale_notifications_audit` | `status` | **livre (sem enum/CHECK)** | `sent` |
 | `enriched_company_intelligence` | `funding_stage` | **livre (sem enum/CHECK)** |  |
 | `cs_tickets` | `status` | **livre (sem enum/CHECK)** | `open` |
 | `client_renewals` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `whatsapp_conversations` | `status` | **livre (sem enum/CHECK)** |  |
-| `quote_sync_inbound_log` | `status` | `accepted`, `bad_request`, `duplicate`, `error`, `ignored`, `method_not_allowed`, `not_found`, `processed`, `rejected`, `unauthorized` |  |
+| `quote_sync_inbound_log` | `status` | **livre (sem enum/CHECK)** |  |
 | `quote_sync_inbound_log` | `http_status` | **livre (sem enum/CHECK)** |  |
-| `quotes_inbound` | `status` | `approved`, `cancelled`, `converted`, `draft`, `expired`, `lost`, `open`, `pending`, `rejected`, `sent`, `won` |  |
+| `quotes_inbound` | `status` | **livre (sem enum/CHECK)** |  |
 | `webhook_inbound_log` | `http_status` | **livre (sem enum/CHECK)** |  |
-| `maintenance_log` | `status` | `completed`, `failed`, `running`, `skipped` | `running` |
+| `maintenance_log` | `status` | **livre (sem enum/CHECK)** | `running` |
 | `quote_conversion_audit` | `previous_status` | **livre (sem enum/CHECK)** |  |
 | `quote_conversion_audit` | `new_status` | **livre (sem enum/CHECK)** |  |
 | `cron_failure_alerts` | `status` | **livre (sem enum/CHECK)** |  |
-| `call_recording_ingest_jobs` | `status` | `dead_letter`, `failed`, `pending`, `processing`, `succeeded` | `pending` |
+| `call_recording_ingest_jobs` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `forecast_narrative_dead_letters` | `http_status` | **livre (sem enum/CHECK)** |  |
-| `commission_bonus_awards` | `status` | `cancelled`, `paid`, `pending` | `pending` |
+| `commission_bonus_awards` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `stage_inactivity_rules` | `stage` | **livre (sem enum/CHECK)** |  |
-| `data_subject_requests` | `status` | `completed`, `in_progress`, `pending`, `rejected` | `pending` |
+| `data_subject_requests` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `status_transitions` | `status_origem` | **livre (sem enum/CHECK)** |  |
 | `status_transitions` | `status_destino` | **livre (sem enum/CHECK)** |  |
 | `stage_probabilities` | `stage` | **livre (sem enum/CHECK)** |  |
@@ -1520,6 +1604,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | SkillTrend | improving \| stable \| declining | `src/components/coaching/skills/skillGapHelpers.ts` |
 | ArenaCategoryId | all \| ranking \| competitions \| profile \| broadcast \| tools | `src/components/competitive/ArenaCategoryHub.tsx` |
 | ConvSource | call \| email \| meeting \| whatsapp | `src/components/conversation-intelligence/conversationHelpers.ts` |
+| CoachingCategory | opening \| discovery \| objection \| closing \| talk_ratio \| pace \| empathy \| other | `src/components/conversational/coachingHelpers.ts` |
 | CoachingSeverity | info \| warning \| critical | `src/components/conversational/coachingHelpers.ts` |
 | CoachingStatus | pending \| accepted \| dismissed \| practiced | `src/components/conversational/coachingHelpers.ts` |
 | MomentType | objection \| buying_signal \| price_mention \| discount_request \| churn_signal \| competitor \| commitment \| next_step | `src/components/conversational/criticalMomentsHelpers.ts` |
@@ -1662,6 +1747,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | AtRiskPresetId | all \| low \| medium \| high \| critical | `src/hooks/win-loss/atRiskPresets.ts` |
 | ChunkStatus | pending \| running \| succeeded \| failed \| cancelled | `src/hooks/win-loss/useAsyncReplayQueue.ts` |
 | RiskSeverity | low \| medium \| high \| critical | `src/hooks/win-loss/useAtRiskFromPatterns.ts` |
+| DEFAULT_LAYOUT | 'kpi', 'next-best', 'trend', 'matrix', 'cycle', 'loss-flow', 'cohort', 'win-by-hour', 'salespeople', 'competitors', 'script-ab', 'scenarios', 'icp', 'sentiment', 'season', 'at-risk', // 'insights' nao entra: o painel fica fixo no rodape porque tem ancora // de deep-link (#wl-insights) e animacao de … | `src/hooks/win-loss/useUserDashboardLayout.ts` |
 | WebhookAlertKind | consecutive_failures \| high_retry_rate \| attempts_exhausted | `src/hooks/win-loss/useWebhookAlerts.ts` |
 | DeadLetterStatus | pending \| replaying \| replayed \| archived | `src/hooks/win-loss/useWebhookDeadLetters.ts` |
 | WebhookStatsWindow | 24h \| 7d \| 30d | `src/hooks/win-loss/useWebhookDeliveryStats.ts` |
@@ -1691,7 +1777,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | SuppressionReason | hard_bounce \| complaint \| unsubscribe | `supabase/functions/_shared/unsubscribe.ts` |
 | NormalizedMessageStatus | sent \| delivered \| read \| failed | `supabase/functions/_shared/webhook-integrity.ts` |
 | InboundEmailProvider | resend \| sendgrid \| generic | `supabase/functions/_shared/webhook-integrity.ts` |
-| InboundEventType | reply \| bounce \| complaint \| unsubscribe \| other | `supabase/functions/_shared/webhook-integrity.ts` |
+| InboundEventType | reply \| bounce \| complaint \| unsubscribe \| open \| click \| other | `supabase/functions/_shared/webhook-integrity.ts` |
 | RiskSeverity | low \| medium \| high \| critical | `supabase/functions/_shared/winloss-contract.ts` |
 | RiskReasonCode | STAGNATION_HIGH \| STAGNATION_LOW \| AMOUNT_ALIGNED \| STAGE_STUCK \| COMPETITOR_PRESSURE \| CROSSED_SIGNALS | `supabase/functions/_shared/winloss-contract.ts` |
 | RiskReasonSource | stagnation \| amount \| stage \| competitor \| generic | `supabase/functions/_shared/winloss-contract.ts` |
@@ -1909,52 +1995,50 @@ _nenhum item encontrado_
 
 | Tabela | Coluna | Expressão |
 |---|---|---|
-| `sales` | `deal_status` | `CASE WHEN status IN ('completed', 'won', 'closed') THEN 'completed'::public.deal_status WHEN status IN ('lost', 'cancelled') THEN 'lost'::public.deal_status WHEN status = 'qualified' THEN 'qualified'::public.deal_status WHEN status = 'proposal' THEN 'proposal'::public.deal_status WHEN status = 'negotiation' THEN 'negotiation'::public.deal_status WHEN status IN ('pending', 'lead', 'prospecting', 'open', 'in_progress') THEN 'pending'::public.deal_status ELSE NULL END` |
-| `contact_send_time_profile` | `score` | `opens * 1.0 + clicks * 2.0 + replies * 5.0` |
-| `win_probability_deal_calibrations` | `calibration_delta` | `calibrated_probability - declared_probability` |
+| `win_probability_deal_calibrations` | `calibration_delta` | `(calibrated_probability - declared_probability)` |
 
 ### G.2 Views (consultas derivadas)
 
 | View | SELECT |
 |---|---|
-| `v_active_clients` | `SELECT * FROM clients WHERE deleted_at IS NULL` |
-| `v_deleted_clients` | `SELECT c.*, u.email as deleted_by_email FROM clients c LEFT JOIN auth.users u ON u.id = c.deleted_by WHERE c.deleted_at IS NOT NULL` |
+| `v_active_clients` | `SELECT id, name, email, phone, company, total_value, created_at, updated_at, deleted_at, deleted_by, delete_reason, lat, lng, user_id, last_interaction_at, lead_source, email_verified, phone_verified, last_enrichment_id, is_activated, activated_at, ramo_atividade FROM clients WHERE deleted_at IS NUL …` |
+| `v_deleted_clients` | `SELECT c.id, c.name, c.email, c.phone, c.company, c.total_value, c.created_at, c.updated_at, c.deleted_at, c.deleted_by, c.delete_reason, c.lat, c.lng, c.user_id, c.last_interaction_at, c.lead_source, c.email_verified, c.phone_verified, c.last_enrichment_id, c.is_activated, c.activated_at, c.ramo_at …` |
 | `v_active_deals` | `SELECT * FROM deals WHERE deleted_at IS NULL` |
 | `v_deleted_deals` | `SELECT d.*, u.email as deleted_by_email FROM deals d LEFT JOIN auth.users u ON u.id = d.deleted_by WHERE d.deleted_at IS NOT NULL` |
-| `v_active_activities` | `SELECT * FROM activities WHERE deleted_at IS NULL` |
-| `v_active_products` | `SELECT * FROM products WHERE deleted_at IS NULL` |
-| `v_active_suppliers` | `SELECT * FROM suppliers WHERE deleted_at IS NULL` |
-| `v_active_teams` | `SELECT * FROM teams WHERE deleted_at IS NULL` |
+| `v_active_activities` | `SELECT id, sale_id, salesperson_id, activity_type, outcome, notes, duration_minutes, contact_name, created_at, client_id, lead_status, mql_qualified_at, qualification_score, deleted_at, deleted_by, delete_reason FROM activities WHERE deleted_at IS NULL` |
+| `v_active_products` | `SELECT id, name, category, price, sales_count, rating, status, created_at, updated_at, sku, stock_quantity, min_stock_level, description, default_cost, cost_synced_at, deleted_at, deleted_by, delete_reason FROM products WHERE deleted_at IS NULL` |
+| `v_active_suppliers` | `SELECT id, name, contact_name, email, phone, address, city, state, country, cnpj, category, payment_terms, lead_time_days, reliability_score, is_active, notes, created_at, updated_at, deleted_at, deleted_by, delete_reason FROM suppliers WHERE deleted_at IS NULL` |
+| `v_active_teams` | `SELECT id, name, sdr_id, is_active, inactivity_days, created_at, updated_at, deleted_at, deleted_by, delete_reason FROM teams WHERE deleted_at IS NULL` |
 | `deals_active` | `SELECT * FROM deals WHERE deleted_at IS NULL` |
-| `clients_active` | `SELECT * FROM clients WHERE deleted_at IS NULL` |
-| `activities_active` | `SELECT * FROM activities WHERE deleted_at IS NULL` |
-| `tasks_active` | `SELECT * FROM tasks WHERE deleted_at IS NULL` |
-| `salespeople_public` | `SELECT id, name, avatar_url, role, is_active FROM public.salespeople WHERE (is_active = true)` |
-| `sequence_variant_performance` | `SELECT v.step_id, v.id AS variant_id, v.label, (count(e.id))::integer AS sent, (count(e.replied_at))::integer AS replied, CASE WHEN (count(e.id) > 0) THEN round(((100.0 * (count(e.replied_at))::numeric) / (count(e.id))::numeric), 2) ELSE (0)::numeric END AS reply_rate FROM (sequence_step_variants v …` |
+| `clients_active` | `SELECT id, name, email, phone, company, total_value, created_at, updated_at, deleted_at, deleted_by, delete_reason, lat, lng, user_id, last_interaction_at, lead_source, email_verified, phone_verified, last_enrichment_id, is_activated, activated_at, ramo_atividade FROM clients WHERE deleted_at IS NUL …` |
+| `activities_active` | `SELECT id, sale_id, salesperson_id, activity_type, outcome, notes, duration_minutes, contact_name, created_at, client_id, lead_status, mql_qualified_at, qualification_score, deleted_at, deleted_by, delete_reason FROM activities WHERE deleted_at IS NULL` |
+| `tasks_active` | `SELECT id, title, description, salesperson_id, sale_id, priority, status, task_type, due_date, due_time, completed_at, created_at, updated_at, source_insight_id, client_id, deleted_at FROM tasks WHERE deleted_at IS NULL` |
+| `salespeople_public` | `SELECT id, name, avatar_url, role, is_active FROM salespeople WHERE is_active = true` |
+| `sequence_variant_performance` | `SELECT v.step_id, v.id AS variant_id, v.label, count(e.id)::integer AS sent, count(e.replied_at)::integer AS replied, CASE WHEN count(e.id) > 0 THEN round(100.0 * count(e.replied_at)::numeric / count(e.id)::numeric, 2) ELSE 0::numeric END AS reply_rate FROM sequence_step_variants v LEFT JOIN sequenc …` |
 | `contact_best_send_window` | `SELECT contact_id, contact_type, hour_of_day, day_of_week, opens, clicks, replies, score, rank FROM ( SELECT p.id, p.contact_id, p.contact_type, p.hour_of_day, p.day_of_week, p.opens, p.clicks, p.replies, p.score, p.updated_at, row_number() OVER (PARTITION BY p.contact_id, p.contact_type ORDER BY p. …` |
-| `engagement_score_leaderboard` | `SELECT id, contact_id, contact_type, score, tier, total_opens, total_clicks, total_replies, last_signal_at, updated_at, CASE WHEN (contact_type = 'lead'::text) THEN ( SELECT sales.client_name FROM sales WHERE (sales.id = ces.contact_id)) WHEN (contact_type = 'client'::text) THEN ( SELECT clients.nam …` |
-| `call_sentiment_summary` | `SELECT recording_id, count(*) AS segments_count, (avg(score))::numeric(4,3) AS avg_score, (avg(score) FILTER (WHERE (speaker = 'salesperson'::text)))::numeric(4,3) AS avg_score_salesperson, (avg(score) FILTER (WHERE (speaker = 'client'::text)))::numeric(4,3) AS avg_score_client, count(*) FILTER (WHE …` |
-| `client_purchase_seasonality` | `SELECT c.id AS client_id, c.name AS client_name, EXTRACT(MONTH FROM s.created_at AT TIME ZONE 'America/Sao_Paulo')::int AS month_of_year, EXTRACT(DOW FROM s.created_at AT TIME ZONE 'America/Sao_Paulo')::int AS day_of_week, COUNT(*)::int AS deal_count, COALESCE(AVG(s.amount), 0)::numeric AS avg_reven …` |
+| `engagement_score_leaderboard` | `SELECT id, contact_id, contact_type, score, tier, total_opens, total_clicks, total_replies, last_signal_at, updated_at, CASE WHEN contact_type = 'lead'::text THEN ( SELECT sales.client_name FROM sales WHERE sales.id = ces.contact_id) WHEN contact_type = 'client'::text THEN ( SELECT clients.name FROM …` |
+| `call_sentiment_summary` | `SELECT recording_id, count(*) AS segments_count, avg(score)::numeric(4,3) AS avg_score, avg(score) FILTER (WHERE speaker = 'salesperson'::text)::numeric(4,3) AS avg_score_salesperson, avg(score) FILTER (WHERE speaker = 'client'::text)::numeric(4,3) AS avg_score_client, count(*) FILTER (WHERE sentime …` |
+| `client_purchase_seasonality` | `SELECT c.id AS client_id, c.name AS client_name, EXTRACT(month FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text))::integer AS month_of_year, EXTRACT(dow FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text))::integer AS day_of_week, count(*)::integer AS deal_count, COALESCE(avg(s.amoun …` |
 | `race_leaderboard_view` | `WITH season_metrics AS ( SELECT rs.id AS season_id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id AS car_id, rc.salesperson_id, sp.name AS salesperson_name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname, COALESCE(sum(s.amount) FILTER …` |
-| `v_pipeline_coverage_summary` | `SELECT DISTINCT ON (COALESCE((owner_id)::text, 'global'::text)) COALESCE((owner_id)::text, 'global'::text) AS owner_key, owner_id, period_start, period_end, sum(quota_amount) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS total_quota, sum(weighted_pipeline) OVER (PA …` |
-| `coaching_impact_metrics` | `WITH base AS ( SELECT cs.id AS session_id, cs.salesperson_id, cs.coach_id, cs.completed_at, cs.focus_skills, cs.outcome_rating FROM coaching_sessions cs WHERE ((cs.status = 'completed'::text) AND (cs.completed_at IS NOT NULL) AND (cs.salesperson_id IS NOT NULL)) ), score_pre AS ( SELECT b_1.session_ …` |
-| `revenue_forecast_view` | `WITH open_deals AS ( SELECT s.id, s.salesperson_id, s.amount, s.status, s.forecast_category, s.created_at, s.updated_at, sp.probability AS stage_probability FROM public.sales s JOIN public.stage_probabilities sp ON sp.stage = s.status WHERE sp.probability > 0 AND sp.probability < 1 ), category_agg A …` |
-| `conversation_insights_summary` | `SELECT analyzed_by AS user_id, (count(*))::integer AS total_analyses, (count(*) FILTER (WHERE (sentiment = 'positive'::text)))::integer AS positive_count, (count(*) FILTER (WHERE (sentiment = 'negative'::text)))::integer AS negative_count, (count(*) FILTER (WHERE (sentiment = 'neutral'::text)))::int …` |
-| `latest_briefing_view` | `SELECT id, briefing_date, pulse_score, headline, narrative, key_wins, key_risks, recommended_actions, generated_by, created_by, created_at FROM public.executive_briefings ORDER BY briefing_date DESC, created_at DESC LIMIT 1` |
-| `race_rivalries_view` | `WITH overtake_pairs AS ( SELECT race_events.season_id, race_events.salesperson_id AS overtaker_id, ((race_events.metadata ->> 'overtaken_id'::text))::uuid AS overtaken_id, race_events.created_at FROM race_events WHERE ((race_events.event_type = 'overtake'::text) AND (race_events.metadata ? 'overtake …` |
-| `race_spectator_view` | `SELECT season_id, car_id, salesperson_id, salesperson_name, avatar_url, car_number, primary_color, secondary_color, car_style, nickname, role_type, total_sales, deals_count, score, progress FROM public.race_leaderboard_view` |
-| `follow_up_audit_view` | `SELECT al.id, al.sale_id, s.client_name AS lead_name, al.user_id, sp.name AS user_name, al.action_type, al.details, al.status, al.retry_count, al.created_at FROM ((follow_up_audit_logs al LEFT JOIN sales s ON ((al.sale_id = s.id))) LEFT JOIN salespeople sp ON ((al.user_id = sp.auth_user_id)))` |
-| `competitive_ranking` | `SELECT * FROM public.mv_competitive_ranking` |
-| `web_vitals_p75_last7d` | `SELECT route, metric, COUNT(*) AS samples, percentile_cont(0.75) WITHIN GROUP (ORDER BY value) AS p75, percentile_cont(0.95) WITHIN GROUP (ORDER BY value) AS p95, AVG(value) AS avg_value, SUM(CASE WHEN rating = 'poor' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*),0) AS poor_ratio FROM public.web_vital …` |
-| `v_rate_limit_blocked_sellers` | `SELECT identifier, identifier_type, action AS endpoint, request_count, window_start, window_end AS blocked_until, EXTRACT(EPOCH FROM (window_end - now())) AS seconds_until_unblock, created_at FROM public.rate_limit_logs WHERE action = 'quote-sync-promo-champions' AND blocked = true AND window_end IS …` |
-| `v_quote_to_sale_invariants` | `WITH dup AS ( SELECT COUNT(*)::BIGINT AS n FROM ( SELECT order_number FROM public.orders WHERE order_number IS NOT NULL GROUP BY order_number HAVING COUNT(*) > 1 ) d ), orphans AS ( SELECT COUNT(*)::BIGINT AS n FROM public.sales s WHERE s.source IN ('quote_conversion', 'gift_store') AND NOT EXISTS ( …` |
-| `v_security_definer_exposure` | `SELECT n.nspname AS schema_name, p.proname AS function_name, pg_get_function_identity_arguments(p.oid) AS args, has_function_privilege('anon', p.oid, 'EXECUTE') AS anon_can_execute, has_function_privilege('authenticated', p.oid, 'EXECUTE') AS authenticated_can_execute, has_function_privilege('servic …` |
-| `v_platform_wal_health` | `SELECT (SELECT pg_size_pretty(sum(size)) FROM pg_ls_waldir()) AS wal_dir_size, (SELECT pg_size_pretty(pg_database_size(current_database()))) AS db_size, (SELECT count(*) FROM pg_replication_slots WHERE active) AS active_slots, (SELECT count(*) FROM pg_replication_slots WHERE NOT active) AS inactive_ …` |
-| `v_platform_slo` | `WITH days AS ( SELECT generate_series( (current_date - INTERVAL '29 days')::date, current_date, '1 day'::interval )::date AS day ), dispatch AS ( SELECT date_trunc('day', wd.created_at)::date AS day, COUNT(*) FILTER (WHERE wd.succeeded IS TRUE) AS sent_ok, COUNT(*) FILTER (WHERE wd.succeeded IS FALS …` |
+| `v_pipeline_coverage_summary` | `SELECT DISTINCT ON ((COALESCE(owner_id::text, 'global'::text))) COALESCE(owner_id::text, 'global'::text) AS owner_key, owner_id, period_start, period_end, sum(quota_amount) OVER (PARTITION BY (COALESCE(owner_id::text, 'global'::text)), calculated_at) AS total_quota, sum(weighted_pipeline) OVER (PART …` |
+| `coaching_impact_metrics` | `WITH base AS ( SELECT cs.id AS session_id, cs.salesperson_id, cs.coach_id, cs.completed_at, cs.focus_skills, cs.outcome_rating FROM coaching_sessions cs WHERE cs.status = 'completed'::text AND cs.completed_at IS NOT NULL AND cs.salesperson_id IS NOT NULL ), score_pre AS ( SELECT b_1.session_id, avg( …` |
+| `revenue_forecast_view` | `WITH open_deals AS ( SELECT s.id, s.salesperson_id, s.amount, s.status, s.forecast_category, s.created_at, s.updated_at, sp.probability AS stage_probability FROM sales s JOIN stage_probabilities sp ON sp.stage = s.status WHERE sp.probability > 0::numeric AND sp.probability < 1::numeric ), category_a …` |
+| `conversation_insights_summary` | `SELECT analyzed_by AS user_id, count(*)::integer AS total_analyses, count(*) FILTER (WHERE sentiment = 'positive'::text)::integer AS positive_count, count(*) FILTER (WHERE sentiment = 'negative'::text)::integer AS negative_count, count(*) FILTER (WHERE sentiment = 'neutral'::text)::integer AS neutra …` |
+| `latest_briefing_view` | `SELECT id, briefing_date, pulse_score, headline, narrative, key_wins, key_risks, recommended_actions, generated_by, created_by, created_at FROM executive_briefings ORDER BY briefing_date DESC, created_at DESC LIMIT 1` |
+| `race_rivalries_view` | `WITH overtake_pairs AS ( SELECT race_events.season_id, race_events.salesperson_id AS overtaker_id, (race_events.metadata ->> 'overtaken_id'::text)::uuid AS overtaken_id, race_events.created_at FROM race_events WHERE race_events.event_type = 'overtake'::text AND race_events.metadata ? 'overtaken_id': …` |
+| `race_spectator_view` | `SELECT season_id, car_id, salesperson_id, salesperson_name, avatar_url, car_number, primary_color, secondary_color, car_style, nickname, role_type, total_sales, deals_count, score, progress FROM race_leaderboard_view` |
+| `follow_up_audit_view` | `SELECT al.id, al.sale_id, s.client_name AS lead_name, al.user_id, sp.name AS user_name, al.action_type, al.details, al.status, al.retry_count, al.created_at FROM follow_up_audit_logs al LEFT JOIN sales s ON al.sale_id = s.id LEFT JOIN salespeople sp ON al.user_id = sp.auth_user_id` |
+| `competitive_ranking` | `SELECT id, name, avatar_url, role, total_sales, deals_count, leads_count, rank FROM mv_competitive_ranking` |
+| `web_vitals_p75_last7d` | `SELECT route, metric, count(*) AS samples, percentile_cont(0.75::double precision) WITHIN GROUP (ORDER BY value) AS p75, percentile_cont(0.95::double precision) WITHIN GROUP (ORDER BY value) AS p95, avg(value) AS avg_value, sum( CASE WHEN rating = 'poor'::text THEN 1 ELSE 0 END)::double precision / …` |
+| `v_rate_limit_blocked_sellers` | `SELECT identifier, identifier_type, action AS endpoint, request_count, window_start, window_end AS blocked_until, EXTRACT(epoch FROM window_end - now()) AS seconds_until_unblock, created_at FROM rate_limit_logs WHERE action = 'quote-sync-promo-champions'::text AND blocked = true AND window_end IS NO …` |
+| `v_quote_to_sale_invariants` | `WITH dup AS ( SELECT count(*) AS n FROM ( SELECT orders.order_number FROM orders WHERE orders.order_number IS NOT NULL GROUP BY orders.order_number HAVING count(*) > 1) d ), orphans AS ( SELECT count(*) AS n FROM sales s WHERE (s.source = ANY (ARRAY['quote_conversion'::text, 'gift_store'::text])) AN …` |
+| `v_security_definer_exposure` | `SELECT n.nspname AS schema_name, p.proname AS function_name, pg_get_function_identity_arguments(p.oid) AS args, has_function_privilege('anon'::name, p.oid, 'EXECUTE'::text) AS anon_can_execute, has_function_privilege('authenticated'::name, p.oid, 'EXECUTE'::text) AS authenticated_can_execute, has_fu …` |
+| `v_platform_wal_health` | `SELECT ( SELECT pg_size_pretty(sum(pg_ls_waldir.size)) AS pg_size_pretty FROM pg_ls_waldir() pg_ls_waldir(name, size, modification)) AS wal_dir_size, ( SELECT pg_size_pretty(pg_database_size(current_database())) AS pg_size_pretty) AS db_size, ( SELECT count(*) AS count FROM pg_replication_slots WHER …` |
+| `v_platform_slo` | `WITH days AS ( SELECT generate_series((CURRENT_DATE - '29 days'::interval)::date::timestamp with time zone, CURRENT_DATE::timestamp with time zone, '1 day'::interval)::date AS day ), dispatch AS ( SELECT date_trunc('day'::text, wd.created_at)::date AS day, count(*) FILTER (WHERE wd.succeeded IS TRUE …` |
 | `v_quote_conversion_history` | `SELECT a.id AS audit_id, a.created_at AS occurred_at, a.quote_id, q.title AS quote_title, q.client_name AS quote_client, a.sale_id, a.order_id, a.order_number, a.previous_status, a.new_status, a.reused_order, a.idempotent, a.success, a.error_code, a.error_message, a.latency_ms, a.request_id, a.actor …` |
-| `v_quote_conversion_metrics_daily` | `SELECT date_trunc('day', created_at)::date AS day, COUNT(*) AS attempts, COUNT(*) FILTER (WHERE success) AS successes, COUNT(*) FILTER (WHERE NOT success) AS failures, COUNT(*) FILTER (WHERE idempotent) AS idempotent_hits, COUNT(*) FILTER (WHERE reused_order) AS reused_orders, ROUND( COUNT(*) FILTER …` |
-| `v_web_vitals_p75` | `SELECT date_trunc('day', created_at)::date AS day, COALESCE(NULLIF(route, ''), '/') AS route, CASE WHEN viewport_width IS NULL THEN 'unknown' WHEN viewport_width < 768 THEN 'mobile' WHEN viewport_width < 1024 THEN 'tablet' ELSE 'desktop' END AS device_type, metric AS metric_name, COUNT(*)::int AS sa …` |
-| `sales_with_markup` | `SELECT s.id, s.client_id, s.client_name, s.product_id, s.product_name, s.sku, s.amount, s.status, s.salesperson_id, s.sdr_id, s.closer_id, s.created_at, s.updated_at, s.markup_pct, s.cost_source, s.cost_synced_at, CASE WHEN public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid() …` |
+| `v_quote_conversion_metrics_daily` | `SELECT date_trunc('day'::text, created_at)::date AS day, count(*) AS attempts, count(*) FILTER (WHERE success) AS successes, count(*) FILTER (WHERE NOT success) AS failures, count(*) FILTER (WHERE idempotent) AS idempotent_hits, count(*) FILTER (WHERE reused_order) AS reused_orders, round(count(*) F …` |
+| `v_web_vitals_p75` | `SELECT date_trunc('day'::text, created_at)::date AS day, COALESCE(NULLIF(route, ''::text), '/'::text) AS route, CASE WHEN viewport_width IS NULL THEN 'unknown'::text WHEN viewport_width < 768 THEN 'mobile'::text WHEN viewport_width < 1024 THEN 'tablet'::text ELSE 'desktop'::text END AS device_type, …` |
+| `sales_with_markup` | `SELECT id, client_id, client_name, product_id, product_name, sku, amount, status, salesperson_id, sdr_id, closer_id, created_at, updated_at, markup_pct, cost_source, cost_synced_at, CASE WHEN has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) THEN unit_cost ELSE NUL …` |
 | `mv_competitive_ranking` | `WITH monthly_sales AS ( SELECT salesperson_id, SUM(amount) as total_sales, COUNT(*) as deals_count FROM public.sales WHERE status IN ('completed', 'won', 'closed') AND COALESCE(closed_at, updated_at) >= date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo' AND …` |
 
 ### G.3 Funções de cálculo/decisão no código
@@ -2489,7 +2573,7 @@ _nenhum item encontrado_
   ```
 - **shouldMatchAndPauseEnrollment(eventType: InboundEventType,)** — `supabase/functions/_shared/webhook-integrity.ts`
   ```
-  return eventType !== "other";
+  return ENROLLMENT_AFFECTING.has(eventType);
   ```
 - **createValidationErrorResponse(error: string, details: WebhookValidationError[], contractVersion: string, corsHeaders: Record<string, string>)** — `supabase/functions/_shared/webhook-validator.ts`
   ```
@@ -2594,6 +2678,7 @@ _nenhum item encontrado_
 | `85%` | `src/components/activities/AchievementBadgeDisplay.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/components/activities/ActivityLeaderboard.tsx` |
 | `fillOpacity={1 - index * 0.15}` | `src/components/activities/ActivityStatsCharts.tsx` |
+| `transition={{ delay: index * 0.1 }}` | `src/components/analytics/ABCActionableAutomations.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/analytics/ABCNeuralInsights.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/analytics/AIPerformanceInsights.tsx` |
 | `delay: weekIndex * 0.005 + dayIndex * 0.01,` | `src/components/analytics/ActivityHeatmap.tsx` |
@@ -2887,8 +2972,7 @@ _nenhum item encontrado_
 | `transition={{ delay: idx * 0.1 }}` | `src/pages/Estoque.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/pages/FunnelAnalysis.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/pages/HistoricoDesafiosDiarios.tsx` |
-| `transition={{ duration: 0.8 + Math.random() * 0.4, ease: 'easeOut' }}` | `src/pages/MetasAtividades.tsx` |
-| … +59 linhas — lista completa em `context.json` | |
+| … +60 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -2901,6 +2985,8 @@ _nenhum item encontrado_
 | `PAGE_LIMIT` | `100` | `src/components/admin/connections/DeadLetterIngestPanel.tsx` |
 | `FAILING_REFETCH_MS` | `15` | `src/components/admin/connections/IntegrationHealthCard.tsx` |
 | `HEALTHY_REFETCH_MS` | `60` | `src/components/admin/connections/IntegrationHealthCard.tsx` |
+| `CONCENTRATION_RISK_PCT` | `50` | `src/components/analytics/ABCActionableAutomations.tsx` |
+| `LONG_TAIL_MAX_PCT` | `10` | `src/components/analytics/ABCActionableAutomations.tsx` |
 | `DAYS_TO_SHOW` | `365` | `src/components/analytics/ActivityHeatmap.tsx` |
 | `NUDGE_INTERVAL_MS` | `5` | `src/components/assistant/PersonalAssistantDrawer.tsx` |
 | `DEV_EMAIL` | `'dev@promobrindes.com.br'` | `src/components/auth/DevOnly.tsx` |
@@ -2955,6 +3041,7 @@ _nenhum item encontrado_
 | `ALERT_COOLDOWN_MS` | `30000` | `src/hooks/useQueryPerformance.ts` |
 | `JITTER_FACTOR` | `0.3` | `src/hooks/useRetryMutation.ts` |
 | `MAX_ENTRIES` | `50` | `src/hooks/useScrollRestoration.ts` |
+| `SESSION_CHECK_INTERVAL` | `5` | `src/hooks/useSessionManagement.ts` |
 | `NO_PERMISSION_MESSAGE` | `'Atividade não encontrada ou sem permissão para alterá-la'` | `src/hooks/activities/useActivities.ts` |
 | `MAX_ATTEMPTS` | `5` | `src/hooks/admin/useV4Callbacks.ts` |
 | `CONCENTRATION_WARNING_THRESHOLD_PCT` | `50` | `src/hooks/bi/useABCAnalysis.ts` |
@@ -3272,6 +3359,8 @@ _nenhum item encontrado_
 | `staleTime: 30 * 60 * 1000,` | `src/hooks/useSDRMetrics.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/useSDRMetrics.ts` |
 | `const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);` | `src/hooks/useSecurityMonitoring.ts` |
+| `const SESSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutos` | `src/hooks/useSessionManagement.ts` |
+| `const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas` | `src/hooks/useSessionManagement.ts` |
 | `? new Date(Date.now() + daysRemaining * 24 * 60 * 60 * 1000)` | `src/hooks/useStockForecast.ts` |
 | `const thirtyDaysAgo = subDays(new Date(), 30).toISOString();` | `src/hooks/useStockForecast.ts` |
 | `const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');` | `src/hooks/useTeamAchievementStats.ts` |
@@ -3442,9 +3531,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
 | `const CLAIM_LEASE_MS = 5 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| `const DELIVERY_RETRY_MS = 15 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| `const SKIPPED_RETRY_MS = 24 * 60 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| … +146 linhas — lista completa em `context.json` | |
+| … +151 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -3582,6 +3669,7 @@ _nenhum item encontrado_
 | 50 | `src/hooks/win-loss/useReplayAudit.ts` |
 | 500 | `src/hooks/win-loss/useReplayAudit.ts` |
 | 2000 | `src/hooks/win-loss/useScriptABTest.ts` |
+| 200 | `src/hooks/win-loss/useUpsellSuggestions.ts` |
 | 200 | `src/hooks/win-loss/useWebhookAlerts.ts` |
 | 50 | `src/hooks/win-loss/useWebhookAlerts.ts` |
 | 100 | `src/hooks/win-loss/useWebhookDeadLetters.ts` |
@@ -3702,6 +3790,7 @@ _nenhum item encontrado_
 | 5000 | `supabase/functions/generate-revenue-forecast/index.ts` |
 | 1 | `supabase/functions/helpdesk-sync/index.ts` |
 | 1 | `supabase/functions/inbound-email-webhook/index.ts` |
+| 2 | `supabase/functions/inbound-email-webhook/index.ts` |
 | 2000 | `supabase/functions/lead-scoring/index.ts` |
 | 5000 | `supabase/functions/mine-win-loss-patterns/index.ts` |
 | 100 | `supabase/functions/new-device-alert/index.ts` |
@@ -3748,9 +3837,7 @@ _nenhum item encontrado_
 | 10000 | `supabase/functions/revops-hub/index.ts` |
 | 5000 | `supabase/functions/revops-hub/index.ts` |
 | 50000 | `supabase/functions/revops-hub/index.ts` |
-| 100 | `supabase/functions/rotate-daily-challenges/index.ts` |
-| 10 | `supabase/functions/sales-assistant-chat/index.ts` |
-| … +35 linhas — lista completa em `context.json` | |
+| … +37 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
@@ -4015,6 +4102,7 @@ _nenhum item encontrado_
 | Erro ao aprovar:  | `src/components/security/PasswordResetApproval.tsx` |
 | Erro ao rejeitar:  | `src/components/security/PasswordResetApproval.tsx` |
 | ; import { useReauthentication } from  | `src/components/security/ReauthDialog.tsx` |
+| ; import { useSessionManagement } from  | `src/components/security/SessionManager.tsx` |
 | API não configurada | `src/components/settings/AIAssistantSettings.tsx` |
 | Erro ao testar voz | `src/components/settings/AIAssistantSettings.tsx` |
 | Erro ao testar alerta | `src/components/settings/AccessDeniedLogs.tsx` |
@@ -4055,8 +4143,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| Créditos de IA esgotados. | `src/hooks/useBehavioralAnalysis.ts` |
-| … +676 linhas — lista completa em `context.json` | |
+| … +688 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4162,7 +4249,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1601 testes em 203 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1653 testes em 210 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4215,9 +4302,13 @@ _nenhum item encontrado_
 | `src/lib/navigationGuard.test.tsx` | 11 | navigationGuard · requestNavigation executa direto sem sujeira · requestNavigation confirma antes de sair com sujeira · requestNavigation bloqueia quando o usuário cancela … |
 | `src/lib/auth/passwordErrorMessages.test.ts` | 11 | classifyPasswordError · returns unknown for null/undefined · detects HIBP leaked password via message · detects HIBP via weak_password code even when message is empty … |
 | `src/lib/winloss/scenarioChartKey.test.ts` | 11 | buildScenarioChartKey · retorna scenario-empty quando data vazia · retorna scenario-empty quando fitN=0 mesmo com data · retorna scenario-insufficient com fitN < 3 … |
+| `src/services/comboService.test.ts` | 11 | comboService.getComboTier · retorna o maior tier cujo minActions foi atingido · não há gap entre tiers: todo count mapeia para algum tier · comboService.getComboTierIndex … |
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
+| `src/components/analytics/ABCActionableAutomations.test.ts` | 9 | buildAbcAutomations · não gera nada sem clientes · não gera nada com receita zero, mesmo havendo clientes · classe A acima do limiar de concentração vira risco … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
+| `src/hooks/useLoginRateLimiter.test.tsx` | 9 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
+| `src/hooks/bi/useABCAnalysis.test.tsx` | 9 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
 | `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
@@ -4225,17 +4316,17 @@ _nenhum item encontrado_
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |
+| `src/lib/winRate.test.ts` | 8 | winRate — fonte única da fórmula · calcula percentual entre deals decididos · retorna 0 quando não há deals decididos · retorna 100 quando só há vitórias … |
 | `src/hooks/automation/useAutomationWorkflows.test.tsx` | 7 | useUpdateWorkflow · atualiza o mesmo registro com os campos do construtor · mostra toast de erro quando o banco recusa · trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso … |
 | `src/hooks/cadences/useCadenceReport.test.tsx` | 7 | aggregateCadenceReport · sem linhas devolve zeros (sem número inventado) · pondera resposta/conversão pelo número de inscritos de cada cadência · useCadenceChannelExecution … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
+| `src/hooks/win-loss/useWinLossAggregations.test.ts` | 7 | aggregateBySalesperson (usa lib winRate) · calcula winRate = wins/(wins+losses) por vendedor · vendedor sem deals decididos não aparece (sale_id sem mapa é ignorado) · 0 wins e 0 losses → winRate 0 … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
-| `src/hooks/useLoginRateLimiter.test.tsx` | 6 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
 | `src/hooks/activities/useActivities.test.tsx` | 6 | useUpdateActivity · atualiza só atividades não excluídas e invalida lista, stats e ranking · mostra erro quando a RLS bloqueia a alteração (0 linhas afetadas) · useDeleteActivity … |
-| `src/hooks/bi/useABCAnalysis.test.tsx` | 6 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
 | `src/hooks/cadences/useCadenceChannelStats.test.ts` | 6 | fetchCadenceChannelStats · conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas · usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje) · calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas) … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |
 | `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
@@ -4271,6 +4362,7 @@ _nenhum item encontrado_
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
 | `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
 | `src/test/csv-export.test.ts` | 5 | CSV Export Utils · formatDateForExport should format correctly · formatPercentForExport should format correctly · formatCurrencyForExport should format correctly … |
+| `src/test/feed-batalha-post-unico.test.ts` | 5 | migration feed_batalha_post_unico · remove o trigger duplicado tr_victory_battle de forma idempotente · nenhuma migration posterior recria tr_victory_battle · fn_notify_victory vira o caminho único e idempotente por battle_id … |
 | `src/test/quote-error-messages.test.ts` | 5 | parseConvertQuoteError (módulo standalone) · normaliza espaços em branco antes do prefixo · devolve UNKNOWN para prefixo inválido ou desconhecido · todos os códigos têm mensagem PT-BR não-vazia mapeada … |
 | `src/test/sale-status.test.ts` | 5 | sale status helpers · treats manual and integration successful statuses as won · recognises lost statuses · treats pipeline stages as open (neither won nor lost) … |
 | `src/test/security/accounts-delete-policy.test.ts` | 5 | accounts — RLS de DELETE só para gestor · existe policy viva cobrindo DELETE · nenhuma policy que cobre DELETE aceita o dono (vendedor) · a policy FOR ALL antiga foi removida … |
@@ -4324,9 +4416,11 @@ _nenhum item encontrado_
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
 | `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
+| `src/lib/recordingMime.test.ts` | 3 | resolveRecordingMimeType · normaliza %s (%s) para %s · preserva MIME desconhecido para o Storage rejeitá-lo |
 | `src/lib/usageAnalytics.test.ts` | 3 | usage analytics · agrega visualizações a partir de eventos reais · mantém somente a última atividade observada por usuário |
 | `src/pages/PowerDialer.test.tsx` | 3 | PowerDialer — permissão de editar/excluir fila · usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas · admin vê Editar/Excluir em todas as filas |
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
+| `src/test/activities-soft-delete-functions.test.ts` | 3 | funções SQL ignoram activities apagadas (soft delete) · %s: toda leitura de activities filtra deleted_at IS NULL · a correção não desfaz o status canônico nem o alias anti-ambiguidade |
 | `src/test/security/battle-participants-insert-policy.test.ts` | 3 | battle_participants — INSERT para admin/gestor · existe policy de INSERT viva liberando is_admin_or_manager(auth.uid()) · vendedor continua limitado à auto-inscrição |
 | `tests/e2e/quote-to-sale-error-payload-ui.spec.ts` | 3 | Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN) · TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada · FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada |
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
@@ -4500,6 +4594,7 @@ _nenhum item encontrado_
 | `invoke(` | `src/hooks/engagement/useAccountEngagement.ts` |
 | `invoke(` | `src/hooks/engagement/useBulkComposer.ts` |
 | `invoke(` | `src/hooks/engagement/useEmailEngagementScore.ts` |
+| `invoke(` | `src/hooks/engagement/useEngagementScore.ts` |
 | `invoke(` | `src/hooks/engagement/useSendTimeOptimization.ts` |
 | `invoke(` | `src/hooks/executive-briefing/useGenerateBriefing.ts` |
 | `invoke(` | `src/hooks/forecast/useRevenueForecast.ts` |
@@ -4548,6 +4643,7 @@ _nenhum item encontrado_
 | `notify_inactive_clients` | `src/pages/Notificacoes.tsx` |
 | `notify_stagnant_deals` | `src/pages/Notificacoes.tsx` |
 | `notify` | `src/pages/RaceArenaHub.tsx` |
+| `notify` | `supabase/functions/_shared/canonical-hardening_contract_test.ts` |
 | `notify` | `supabase/functions/_shared/operational-cron-auth_contract_test.ts` |
 | `notify` | `supabase/functions/access-denied-alerts/index.ts` |
 | `resend.emails.send` | `supabase/functions/access-denied-alerts/index.ts` |
@@ -4620,6 +4716,7 @@ _nenhum item encontrado_
 | `notify` | `supabase/migrations/20261014000001_fix_allowlist_bitrix24_gamificacao.sql` |
 | `notify_sale_completion` | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
 | `notify_sale_completion` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
+| `notify` | `supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código
@@ -4684,6 +4781,10 @@ _nenhum item encontrado_
 | leads deve passar pela RPC `auto_assign_lead`, que serializa a estratégia | `src/hooks/useLeadAssignment.ts` |
 | Limit batch size | `src/hooks/useLeadScoring.ts` |
 | Contrato do webhook aceita no máximo 500 dealIds por chamada. | `src/hooks/useLeadScoring.ts` |
+| do e-mail anterior não pode sobrescrever o status do e-mail atual. | `src/hooks/useLoginRateLimiter.ts` |
+| e-mail — a resposta tardia da primeira não pode sobrescrever a segunda). | `src/hooks/useLoginRateLimiter.ts` |
+| Falha de fetch não pode parecer "MFA inativo" — expõe o erro. | `src/hooks/useMFA.ts` |
+| QueryClient global nao pode servir dados da sessao anterior. | `src/hooks/usePipelineVelocity.ts` |
 | Request notification permission | `src/hooks/usePushNotifications.ts` |
 | sem limite, o teto de 1000 linhas do PostgREST truncava silencioso. | `src/hooks/useQuotes.ts` |
 | A função no banco cuida de: lock, idempotência, autorização, validação | `src/hooks/useQuotes.ts` |
@@ -4696,7 +4797,10 @@ _nenhum item encontrado_
 | * Comissão como fração (0.05 = 5%). Se omitido, campos de comissão vêm zerados. */ | `src/hooks/useRunRateProjection.ts` |
 | Request notification permission on mount | `src/hooks/useSDRAlertNotifications.ts` |
 | Limit to recent activities for speed | `src/hooks/useSDRMetrics.ts` |
+| Atualizar atividade da sessão — throttle: no máximo 1x a cada 10s | `src/hooks/useSessionManagement.ts` |
 | O cache de módulo não expira sozinho: no logout/troca de conta a | `src/hooks/useUnreadNotificationsCount.ts` |
+| Falha de listagem não pode parecer "nenhuma passkey" — expõe erro. | `src/hooks/useWebAuthn.ts` |
+| verifyOtp falhando não pode ser tratado como login bem-sucedido. | `src/hooks/useWebAuthn.ts` |
 | * Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */ | `src/hooks/admin/useApprovalWorkflows.ts` |
 | - Limite defensivo de 30 registros para não pesar o Hub. | `src/hooks/assistant/useBriefingHistory.ts` |
 | - staleTime alto pois histórico muda no máximo 1x por dia. | `src/hooks/assistant/useBriefingHistory.ts` |
@@ -4919,11 +5023,4 @@ _nenhum item encontrado_
 | Telemetria pública não deve aceitar um Bearer sintático como bypass de limite. | `supabase/functions/log-web-vitals/index.ts` |
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/mine-win-loss-patterns/index.ts` |
 | * Faz o parse somente depois de validar a assinatura sobre o corpo bruto. */ | `supabase/functions/multichannel-status-webhook/index.ts` |
-| Input validation | `supabase/functions/new-device-alert/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/next-best-action/index.ts` |
-| Auth required (verify_jwt = true). Uses caller JWT so RLS applies. | `supabase/functions/nlq-query/index.ts` |
-| Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/nlq-query/index.ts` |
-| Guarda de configuração: sem secrets, apenas conta o backlog e retorna | `supabase/functions/notify-v4-quote-status/index.ts` |
-| *Dica do Coach**\n${coachTip ?? "Faça um contato objetivo com o próximo passo e prazo claramente combinados."}\n\nQual prioridade você quer atacar primeiro?`; | `supabase/functions/personal-assistant-stream/fallback.ts` |
-| Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/personal-assistant-stream/index.ts` |
-| … +118 linhas — lista completa em `context.json` | |
+| … +130 linhas — lista completa em `context.json` | |

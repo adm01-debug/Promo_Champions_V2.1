@@ -1,1 +1,0 @@
-REVOKE EXECUTE ON FUNCTION public.is_authenticated() FROM PUBLIC, anon, authenticated;

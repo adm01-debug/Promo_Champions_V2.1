@@ -1,1 +1,0 @@
-ALTER FUNCTION public.merge_clients(UUID, UUID[], JSONB) SET search_path = public;

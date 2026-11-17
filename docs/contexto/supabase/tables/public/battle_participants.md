@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 4 |
 | realtime (publication) | sim |
 | replica identity | default |
 | vem de extensão | não |
@@ -45,6 +45,16 @@
 
 
 ## Policies (RLS)
+
+### `Admins can add battle participants`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `is_admin_or_manager(auth.uid())` |
 
 ### `Admins can update participants`
 

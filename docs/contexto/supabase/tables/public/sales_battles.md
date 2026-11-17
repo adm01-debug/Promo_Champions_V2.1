@@ -83,7 +83,6 @@
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
 | tr_notify_battle_victory | AFTER | UPDATE | ROW | enabled | public.fn_notify_victory |
-| tr_victory_battle | AFTER | UPDATE | ROW | enabled | public.auto_victory_post |
 
 
 ## Grants

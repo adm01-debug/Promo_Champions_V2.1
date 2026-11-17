@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-17 18:18 UTC
+
+- Snapshot inicial.
+
+
 ## 2026-11-14 15:51 UTC
 
 - **functions** alterado (12): `private.handle_performance_update()`, `private.update_performance_bet_progress()`, `public.audit_activity_changes()`, `public.audit_log_row_change()`, `public.audit_trigger_func()`, `public.check_performance_bets_completion(p_salesperson_id uuid)`, `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`, `public.log_soft_delete()`, `public.process_performance_bet_event()`, `public.update_updated_at_column()`

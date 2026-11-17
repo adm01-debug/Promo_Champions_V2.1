@@ -57,6 +57,7 @@
 | idx_teams_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_teams_deleted_by_fk ON public.teams USING btree (deleted_by)` |
 | idx_teams_sdr_id | btree | sdr_id | não | sim |  | `CREATE INDEX idx_teams_sdr_id ON public.teams USING btree (sdr_id)` |
 | teams_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX teams_pkey ON public.teams USING btree (id)` |
+| ux_teams_name_ativo | btree | name | sim | sim | `((name IS NOT NULL) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_teams_name_ativo ON public.teams USING btree (name) WHERE ((name IS NOT NULL) AND (deleted_at IS NULL))` |
 
 
 ## Policies (RLS)

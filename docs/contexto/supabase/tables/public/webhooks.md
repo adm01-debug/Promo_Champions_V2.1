@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 2 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -81,21 +81,12 @@
 | USING | `is_admin_or_manager(auth.uid())` |
 | WITH CHECK |  |
 
-### `Admins can manage webhooks`
-
-| campo | valor |
-|---|---|
-| comando | ALL |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `(EXISTS ( SELECT 1    FROM auth.users   WHERE ((users.id = auth.uid()) AND ((users.raw_user_meta_data ->> 'role'::text) = 'admin'::text))))` |
-| WITH CHECK |  |
-
 
 ## Triggers
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| audit_business_changes | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.audit_log_row_change |
 | set_updated_at | BEFORE | UPDATE | ROW | enabled | public.handle_updated_at |
 | update_webhooks_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 

@@ -332,7 +332,6 @@
 | tr_sync_bets_sales | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.sync_performance_bets |
 | tr_sync_territory | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.sync_territory_ownership |
 | tr_territory_conquest | AFTER | INSERT | ROW | enabled | private.handle_territory_conquest |
-| tr_update_bets_on_sale | AFTER | INSERT | ROW | enabled | public.process_performance_bet_event |
 | tr_update_client_ltv | AFTER | INSERT OR UPDATE | ROW | enabled | public.update_client_ltv_on_sale |
 | tr_update_client_total_value | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.handle_client_ltv_update |
 | tr_update_client_value | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.update_client_total_value |

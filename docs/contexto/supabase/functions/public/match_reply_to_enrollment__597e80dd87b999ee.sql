@@ -11,11 +11,12 @@ BEGIN
     RETURN NULL;
   END IF;
 
-  -- Try via sales (leads/deals) email
+  -- Lead: public.sales não guarda e-mail; o contato é o cliente vinculado.
   SELECT se.id INTO _enrollment_id
   FROM public.sequence_enrollments se
-  JOIN public.sales s ON s.id = se.contact_id AND se.contact_type = 'lead'
-  WHERE lower(s.email) = lower(_contact_email)
+  JOIN public.sales s   ON s.id = se.contact_id AND se.contact_type = 'lead'
+  JOIN public.clients c ON c.id = s.client_id
+  WHERE lower(c.email) = lower(_contact_email)
     AND se.status IN ('active','scheduled')
     AND se.auto_paused_at IS NULL
     AND se.started_at <= _received_at
@@ -26,11 +27,27 @@ BEGIN
     RETURN _enrollment_id;
   END IF;
 
-  -- Try via clients email
+  -- Cliente: e-mail direto na própria tabela.
   SELECT se.id INTO _enrollment_id
   FROM public.sequence_enrollments se
   JOIN public.clients c ON c.id = se.contact_id AND se.contact_type = 'client'
   WHERE lower(c.email) = lower(_contact_email)
+    AND se.status IN ('active','scheduled')
+    AND se.auto_paused_at IS NULL
+    AND se.started_at <= _received_at
+  ORDER BY se.started_at DESC
+  LIMIT 1;
+
+  IF _enrollment_id IS NOT NULL THEN
+    RETURN _enrollment_id;
+  END IF;
+
+  -- Contato de conta: e-mail em public.account_contacts.
+  SELECT se.id INTO _enrollment_id
+  FROM public.sequence_enrollments se
+  JOIN public.account_contacts ac
+    ON ac.id = se.contact_id AND se.contact_type = 'contact'
+  WHERE lower(ac.email) = lower(_contact_email)
     AND se.status IN ('active','scheduled')
     AND se.auto_paused_at IS NULL
     AND se.started_at <= _received_at

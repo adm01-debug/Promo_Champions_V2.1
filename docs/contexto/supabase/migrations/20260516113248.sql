@@ -1,1 +1,0 @@
-GRANT EXECUTE ON FUNCTION public.is_admin_or_manager(uuid) TO anon, authenticated;

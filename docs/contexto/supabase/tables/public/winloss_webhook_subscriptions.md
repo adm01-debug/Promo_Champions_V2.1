@@ -25,6 +25,8 @@
 | 7 | `last_status` | `integer` | sim |  |  |  |
 | 8 | `created_by` | `uuid` | não |  |  |  |
 | 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 10 | `rate_limit_per_minute` | `integer` | não | `60` |  |  |
+| 11 | `rate_limit_window_seconds` | `integer` | não | `60` |  |  |
 
 
 ## Constraints
@@ -32,12 +34,14 @@
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
 | winloss_webhook_subscriptions_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
+| winloss_webhook_subscriptions_rate_limit_valido | CHECK | `CHECK (rate_limit_per_minute > 0 AND rate_limit_window_seconds > 0)` |  |  | sim |
 
 
 ## Referenciada por (FKs de outras tabelas)
 
 | tabela | constraint | colunas | on delete |
 |---|---|---|---|
+| public.webhook_dispatch_rate | webhook_dispatch_rate_subscription_id_fkey | subscription_id | CASCADE |
 | public.winloss_webhook_alerts | winloss_webhook_alerts_subscription_id_fkey | subscription_id | CASCADE |
 | public.winloss_webhook_dead_letters | winloss_webhook_dead_letters_subscription_id_fkey | subscription_id | CASCADE |
 | public.winloss_webhook_deliveries | winloss_webhook_deliveries_subscription_id_fkey | subscription_id | CASCADE |
@@ -66,7 +70,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| audit_business_changes | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.audit_log_row_change |
 
 
 ## Grants

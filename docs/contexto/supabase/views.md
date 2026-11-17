@@ -469,10 +469,10 @@ WITH season_metrics AS (
             count(DISTINCT s.client_name) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::text]))::numeric AS new_clients_raw,
             ( SELECT count(*)::numeric AS count
                    FROM activities a
-                  WHERE a.salesperson_id = rc.salesperson_id AND a.created_at::date >= rs.start_date AND a.created_at::date <= rs.end_date) AS activities_raw,
+                  WHERE a.salesperson_id = rc.salesperson_id AND a.created_at::date >= rs.start_date AND a.created_at::date <= rs.end_date AND a.deleted_at IS NULL) AS activities_raw,
             ( SELECT count(*)::numeric AS count
                    FROM activities a
-                  WHERE a.salesperson_id = rc.salesperson_id AND a.created_at::date >= rs.start_date AND a.created_at::date <= rs.end_date AND (a.outcome = ANY (ARRAY['connected'::activity_outcome, 'qualified'::activity_outcome, 'scheduled'::activity_outcome, 'callback'::activity_outcome]))) AS conversations_raw
+                  WHERE a.salesperson_id = rc.salesperson_id AND a.created_at::date >= rs.start_date AND a.created_at::date <= rs.end_date AND a.deleted_at IS NULL AND (a.outcome = ANY (ARRAY['connected'::activity_outcome, 'qualified'::activity_outcome, 'scheduled'::activity_outcome, 'callback'::activity_outcome]))) AS conversations_raw
            FROM race_seasons rs
              CROSS JOIN race_cars rc
              JOIN salespeople sp ON sp.id = rc.salesperson_id

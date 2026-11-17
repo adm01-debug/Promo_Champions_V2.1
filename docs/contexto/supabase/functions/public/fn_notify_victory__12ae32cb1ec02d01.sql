@@ -21,7 +21,15 @@ BEGIN
             );
         END IF;
     ELSIF TG_TABLE_NAME = 'sales_battles' THEN
-        IF NEW.status = 'completed' AND OLD.status = 'active' AND NEW.winner_id IS NOT NULL THEN
+        IF NEW.status = 'completed'
+           AND OLD.status IS DISTINCT FROM 'completed'
+           AND NEW.winner_id IS NOT NULL
+           AND NOT EXISTS (
+               SELECT 1
+                 FROM public.victory_feed vf
+                WHERE vf.event_type = 'achievement'
+                  AND vf.metadata ->> 'battle_id' = NEW.id::text
+           ) THEN
             SELECT name INTO v_salesperson_name FROM public.salespeople WHERE id = NEW.winner_id;
 
             INSERT INTO public.victory_feed (salesperson_id, event_type, title, description, metadata)

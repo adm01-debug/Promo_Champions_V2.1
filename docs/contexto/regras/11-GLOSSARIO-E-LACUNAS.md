@@ -1,13 +1,13 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `362dfda6e3` · branch `main` · 2026-11-14 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8fc1c8c53c` · branch `main` · 2026-11-17 18:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
 
 | Termo | Significado / valores | Tamanho | Origem |
 |---|---|---|---|
-| `_internal_secrets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | types.ts |
+| `_internal_secrets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `ab_tests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
 | `access_denied_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `account_activities` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
@@ -31,8 +31,8 @@
 | `approval_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `approval_workflows` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `asset_usage_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `audit_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
+| `audit_log` | superseded por public.audit_logs (20261001193100_audit_log_canonical). Mantida só para leitura histórica. | 8 colunas | migration |
+| `audit_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `auto_task_queue_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `automation_runs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `automation_workflows` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
@@ -50,9 +50,9 @@
 | `cadence_enrollment_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `cadence_funnel_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `cadence_outcome_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `cadence_steps` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
-| `cadence_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `cadences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `cadence_steps` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `cadence_tasks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `cadences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `call_coaching_scorecards` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `call_conversation_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `call_critical_moments` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
@@ -79,7 +79,7 @@
 | `churn_alert_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `circuit_breaker_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `client_churn_alerts_state` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `client_interactions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `client_interactions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `client_portfolio` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `client_renewals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `clients` | _(sem COMMENT ON TABLE — significado não documentado)_ | 22 colunas | migration |
@@ -114,7 +114,7 @@
 | `custom_reports` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `daily_challenge_progress` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `daily_challenge_rotations` | _(sem COMMENT ON TABLE — significado não documentado)_ | 2 colunas | migration |
-| `daily_challenges` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `daily_challenges` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `daily_metrics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `daily_streak_achievements` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `dashboard_layouts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
@@ -172,13 +172,13 @@
 | `follow_up_settings` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `follow_up_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `follow_up_territory_rules` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `forecast_accuracy` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
+| `forecast_accuracy` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `forecast_confidence_scores` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `forecast_deal_contributions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `forecast_narrative_dead_letters` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `forecast_snapshots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
-| `geo_access_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | types.ts |
-| `geo_blocked_regions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | types.ts |
+| `forecast_snapshots` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
+| `geo_access_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `geo_blocked_regions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `geocode_cache` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `icp_data` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `icp_parameters` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
@@ -214,11 +214,11 @@
 | `message_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `mfa_verification_attempts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `migration_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `monthly_sales_summary` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
+| `monthly_sales_summary` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `mood_entries` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `mql_qualifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
-| `notification_preferences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 23 colunas | migration |
-| `notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
+| `notification_preferences` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
+| `notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `nps_surveys` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `objection_library` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `objections_library` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
@@ -243,7 +243,7 @@
 | `pipeline_inspections` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `pipeline_stages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `pipelines` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `plan_rollback_ddl` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | types.ts |
+| `plan_rollback_ddl` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `playbook_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `playbook_progress` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `playbooks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
@@ -267,11 +267,11 @@
 | `quota_attainment_actions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `quota_attainment_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `quota_attainment_forecasts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `quota_attainment_predictions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 23 colunas | migration |
+| `quota_attainment_predictions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `quote_conversion_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `quote_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `quote_sync_inbound_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `quote_sync_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `quote_sync_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `quotes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 43 colunas | migration |
 | `quotes_inbound` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `race_badges` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
@@ -307,7 +307,7 @@
 | `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `sales_streaks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `sales_territories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| … +314 linhas — lista completa em `context.json` | | | |
+| … +318 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -337,29 +337,48 @@
 | status | valor `closed_won` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/assistant/DealPreviewCard.tsx`<br>`compara:src/components/assistant/dealRiskCalculator.ts` |
 | status | valor `closed_lost` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/assistant/DealPreviewCard.tsx`<br>`compara:src/components/assistant/dealRiskCalculator.ts` |
 | status | valor `overdue` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/bi/ChurnTaskCompletionCard.tsx` |
+| status | valor `draft` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/cadences/ABTestDialog.tsx`<br>`compara:src/components/quotes/QuoteCard.tsx`<br>`compara:src/components/quotes/QuoteDetailDialog.tsx`<br>`compara:src/hooks/useQuotes.ts` |
+| status | valor `upcoming` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/competitive/TournamentBrackets.tsx`<br>`compara:src/pages/CompetitiveSeasonsAdmin.tsx`<br>`compara:supabase/functions/customer-success-360/index.ts`<br>`escreve:src/components/competitive/TournamentBrackets.tsx` |
+| status | valor `transcribing` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/conversational/TranscribeButton.tsx`<br>`escreve:src/hooks/conversational/useCallRecordings.ts`<br>`escreve:supabase/functions/transcribe-call-recording/index.ts` |
 | status | valor `Pendente` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | status | valor `Cancelado` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | status | valor `SUBSCRIBED` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | status | valor `CHANNEL_ERROR` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | status | valor `breached` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/pipeline/SLADashboard.tsx`<br>`compara:src/hooks/useDealSLAs.ts` |
+| status | valor `inactive` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/portfolio/PortfolioCloserGrid.tsx`<br>`compara:src/hooks/crm/useClientPortfolio.ts`<br>`filtra:supabase/functions/auto-reassign-inactive/index.ts` |
 | status | valor `Blocked` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/purchase-intelligence/DuplicateBlockAudit.tsx` |
 | status | valor `no-data` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/GhostCar.tsx`<br>`compara:src/components/race/GhostStatusBadge.tsx`<br>`escreve:src/hooks/race/useGhostCar.ts` |
 | status | valor `behind` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/GhostStatusBadge.tsx` |
+| status | valor `finished` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/admin/SeasonsManagerTable.tsx`<br>`compara:src/hooks/race/useMyCareer.ts`<br>`escreve:supabase/functions/process-race-event/index.ts`<br>`escreve:supabase/functions/start-race-season/index.ts` |
 | status | valor `unqualified` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/sdr/MQLQualificationForm.tsx` |
+| status | valor `expired` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/security/PasswordResetApproval.tsx`<br>`compara:src/hooks/useQuotes.ts`<br>`escreve:supabase/functions/check-quote-expiration/index.ts`<br>`escreve:supabase/functions/send-password-reset/index.ts` |
+| status | valor `exited` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/sequences/sequenceHelpers.ts` |
+| status | valor `signed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AssinaturaDigital.tsx`<br>`escreve:src/hooks/useDigitalSignatures.ts` |
 | status | valor `verified` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useMFA.ts` |
+| status | valor `replied` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useMultichannel.ts` |
+| status | valor `responded` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useNPSSurveys.ts`<br>`compara:src/pages/NPSDashboard.tsx`<br>`escreve:src/hooks/useNPSSurveys.ts` |
 | status | valor `Proposta` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useNextBestAction.ts` |
 | status | valor `ativo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/useProducts.ts` |
 | status | valor `passed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RetryTestStatusPage.tsx`<br>`compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:src/hooks/useRetryTestRun.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
+| status | valor `ready` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ConversationalIntelligence.tsx`<br>`escreve:src/hooks/conversational/useUploadCallRecording.ts`<br>`escreve:supabase/functions/analyze-call/index.ts`<br>`escreve:supabase/functions/email-composer-bulk/index.ts` |
+| status | valor `snoozed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/dialer/usePowerDialer.ts` |
+| status | valor `queued` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/multichannel/useOutboundMessages.ts` |
 | status | valor `fired` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/win-loss/useWebhookAlertHistory.ts` |
 | status | valor `suppressed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/win-loss/useWebhookAlertHistory.ts` |
+| status | valor `awaiting_approval` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AIAgents.tsx` |
 | status | valor `attempted` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/FollowUpInteligente.tsx` |
 | status | valor `abandoned` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RelatoriosExecutivos.tsx` |
+| status | valor `ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RetryTestStatusPage.tsx`<br>`compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
 | status | valor `violated` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/SLATrackingPage.tsx` |
 | status | valor `meta` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/admin/AdminPlatformSLOPage.tsx` |
 | status | valor `abaixo` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/admin/AdminPlatformSLOPage.tsx` |
 | status | valor `etapa_inexistente` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/_shared/deal-probability-calc_test.ts` |
+| status | valor `executing` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/ai-agent-orchestrator/index.ts` |
+| status | valor `pending_approval` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/ai-agent-orchestrator/index.ts`<br>`filtra:supabase/functions/ai-agent-orchestrator/index.ts` |
+| status | valor `analyzing` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/analyze-call/index.ts` |
 | status | valor `identified` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/customer-success-360/index.ts`<br>`escreve:supabase/functions/expansion-detector/index.ts`<br>`filtra:supabase/functions/expansion-detector/index.ts` |
 | status | valor `proposed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/customer-success-360/index.ts` |
+| status | valor `churned` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/customer-success-360/index.ts` |
 | status | valor `unknown_xyz` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/detect-winloss-at-risk/breakdown_invariants_test.ts` |
 | status | valor `totally_unknown` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/detect-winloss-at-risk/breakdown_invariants_test.ts` |
 | status | valor `Vendido` para `status` usado no código não existe em nenhum enum do banco/TS | `filtra:supabase/functions/dialer-queue-builder/index.ts` |
@@ -369,6 +388,8 @@
 | status | valor `very_slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/external-db-bridge/index.ts` |
 | status | valor `Fechado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/pricing-intelligence/index.ts` |
 | status | valor `fulfilled` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/process-call-recording-ingest/index.ts`<br>`compara:supabase/functions/send-push-notification/index.ts` |
+| status | valor `processing` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/process-scheduled-sends/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts`<br>`filtra:supabase/functions/process-scheduled-sends/index.ts` |
+| status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `server_misconfigured` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_signature` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_json` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
@@ -384,6 +405,7 @@
 | status | valor `hmac_missing` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `hmac_mismatch` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_payload` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
+| status | valor `method_not_allowed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `missing_signature` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `string` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `transcribed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/transcribe-call-recording/index.ts` |
@@ -407,8 +429,11 @@
 | status | valor `unblocked` para `state` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/useFormGuard.ts` |
 | status | valor `suspended` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/race/useRaceSounds.ts` |
 | status | valor `activated` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/lib/swUpdater.ts` |
+| status | valor `snoozed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/helpdesk-sync/index.ts` |
 | status | valor `lighting` para `phase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/StartLights.tsx` |
 | status | valor `go` para `phase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/StartLights.tsx` |
+| status | valor `high_interest` para `to_stage` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/sales/cadence/CadenceFunnelConfig.tsx` |
+| status | valor `converted` para `new_status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/useQuotes.ts` |
 | status | valor `unresolved` para `resolution_status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/analyze-objection-handling/index.ts` |
 | status | valor `injected` para `lovable_browser_auth_status` usado no código não existe em nenhum enum do banco/TS | `compara:tests/a11y/routes.ts` |
 | coluna | coluna `deal_name` usada no código não existe no schema de `sales` |  |
@@ -465,14 +490,9 @@
 | tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `user_permissions_cache` usada no código não existe nas migrations/types do repo | `supabase/migrations/20251228000002_advanced_permissions.sql` |
 | tabela | tabela `users` usada no código não existe nas migrations/types do repo | `scripts/graphify/static-contracts.test.mjs` |
-| rls | `app_config`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `chat_messages`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
-| rls | `client_portfolio`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/hooks/crm/useClientPortfolio.ts` |
 | rls | `follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
-| rls | `geo_access_logs`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx` |
-| rls | `geo_blocked_regions`: acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx`<br>`src/components/security/GeoBlockingMap.tsx` |
 | rls | `integration_logs`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/components/dashboard/IntegrationStatusPanel.tsx` |
-| rls | `sale_notifications_audit`: RLS ligado sem nenhuma política → só service_role acessa | `src/hooks/useSaleNotificationAudits.ts` |
 | dinheiro | `slow_query_alerts.total_exec_ms` guarda dinheiro em `double precision NOT NULL` (ponto flutuante) — arredondamento imprevisível; padrão é numeric |  |
 | edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
 | edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
@@ -516,70 +536,56 @@
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/semantic-reindex-batch/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `tests/e2e/quote-to-sale-cleanup-contract.spec.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `tests/e2e/helpers/quote-to-sale-helpers.ts` |
-| segurança | função `log_data_access` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260104183000_security_enhancements.sql` |
-| segurança | função `audit_trigger` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260104200100_audit_trail_complete.sql` |
-| segurança | função `audit_trigger_func` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260814210000_fix_clients_update_triggers.sql` |
-| segurança | função `send_notification` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512213357_15e3dcb3-7cf3-4f6e-9af2-21233a6401d4.sql` |
-| segurança | função `fn_calculate_icp_score` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260511203112_2dd0b918-e14b-411d-bfd7-1c4018d0432d.sql` |
-| segurança | função `process_weekly_league_reset` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512143013_d0ee44c6-25d4-42a1-8f86-4492bda7491c.sql` |
-| segurança | função `auto_victory_post` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260814190000_fix_broken_sales_triggers.sql` |
-| segurança | função `maintain_sales_streaks` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260815110000_fix_maintain_sales_streaks.sql` |
-| segurança | função `handle_territory_conquest` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql` |
-| segurança | função `calculate_deal_risk_score` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513194322_de774cc9-8b6f-4814-9c4e-3f80fbffaadb.sql` |
-| segurança | função `refresh_competitive_ranking` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260517113746_ba2cd7eb-24e5-40ef-a0e6-2b2a233dedb2.sql` |
-| segurança | função `set_sdr_id_on_insert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260517131244_419ed71c-170d-4a29-a1b9-66aa785fd0ec.sql` |
-| segurança | função `check_is_first_sale` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260517132342_8859b5fc-de51-484f-ada7-1992f48a62c7.sql` |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
 - Nenhuma regra manual em `manual/`: prazos, limites, exceções comerciais, quem aprova o quê — só o negócio sabe.
-- `sales.status` tem valores ['cancelled', 'closed', 'completed', 'lead', 'lost', 'negotiation', 'pending', 'proposal', 'prospecting', 'qualified', 'won'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `sales.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `sales.deal_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `sales.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sales.enrichment_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sales.whatsapp_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `sales.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `sales.deal_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_stage_history.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `tasks.status` tem valores ['pending', 'in_progress', 'completed', 'cancelled'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
 - `playbooks.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `activities.lead_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cadence_steps.step_order` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `cadence_steps.step_type` tem valores ['call', 'email', 'linkedin', 'task'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `prospect_cadences.status` tem valores ['active', 'cancelled', 'completed', 'paused'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `prospect_cadences.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `prospect_cadences.current_step` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `prospect_cadences.funnel_stage` tem valores ['high_interest', 'new', 'scheduled', 'waiting_approval'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `cadence_tasks.status` tem valores ['completed', 'pending', 'skipped'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `prospect_cadences.funnel_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `cadence_tasks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `products.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `circuit_breaker_events.previous_state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `circuit_breaker_events.new_state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `client_portfolio.status` tem valores ['active', 'at_risk', 'churned', 'inactive', 'nurturing'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `client_portfolio.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `bitrix24_sync_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `email_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `suppliers.state` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `supplier_orders.status` tem valores ['cancelled', 'confirmed', 'delivered', 'pending', 'shipped'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `digital_signatures.status` tem valores ['draft', 'expired', 'pending', 'rejected', 'signed'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `document_signers.status` tem valores ['pending', 'rejected', 'signed'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `supplier_orders.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `digital_signatures.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `document_signers.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `migration_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `password_reset_requests.status` tem valores ['approved', 'completed', 'expired', 'pending', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `webhook_logs.response_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `password_reset_requests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `webhook_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `webhook_events.status` tem valores ['failed', 'pending', 'success'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `webhook_logs.response_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `webhook_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quotes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `quotes.billing_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quotes.sync_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `quotes.billing_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quote_sync_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sales_battles.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `competitive_seasons.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `weekly_matchups.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `tournaments.status` tem valores ['active', 'completed', 'upcoming'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `tournament_matches.status` tem valores ['active', 'completed', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `performance_bets.status` tem valores ['active', 'cancelled', 'lost', 'won'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `tournaments.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `tournament_matches.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `performance_bets.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `message_templates.pipeline_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `channel_interactions.status` tem valores ['delivered', 'failed', 'read', 'replied', 'scheduled', 'sent'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `channel_interactions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `pipeline_stages.stage_order` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `nps_surveys.status` tem valores ['pending', 'responded', 'sent'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `commissions.status` tem valores ['approved', 'cancelled', 'paid', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `agenda_events.status` tem valores ['cancelled', 'completed', 'in_progress', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `approval_requests.status` tem valores ['approved', 'cancelled', 'expired', 'pending', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `nps_surveys.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `commissions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `agenda_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `approval_requests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `webhook_deliveries.response_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sla_policies.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sla_violations.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -590,10 +596,10 @@
 - `workflow_executions.step_log` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cadence_enrollment_rules.trigger_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cadence_ab_tests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `call_recordings.status` tem valores ['analyzing', 'failed', 'pending', 'ready', 'transcribing'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `call_recordings.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_health_scores.days_in_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `accounts.health_status` tem valores ['at_risk', 'critical', 'healthy', 'unknown'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `automation_runs.status` tem valores ['failed', 'partial', 'skipped', 'success'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `accounts.health_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `automation_runs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sales_enablement_assets.funnel_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `pipeline_inspection_snapshots.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `pipeline_inspection_snapshots.days_in_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -603,23 +609,23 @@
 - `onboarding_journeys.current_step` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `onboarding_steps.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `expansion_opportunities.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `report_executions.status` tem valores ['failed', 'pending', 'running', 'success'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `scheduled_report_runs.status` tem valores ['failed', 'running', 'success'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `report_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `scheduled_report_runs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sequence_steps.step_order` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `sequence_enrollments.status` tem valores ['active', 'completed', 'exited', 'failed', 'paused'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `sequence_enrollments.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sequence_enrollments.current_step` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `sequence_step_executions.status` tem valores ['failed', 'queued', 'sent', 'skipped'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `outbound_messages.status` tem valores ['delivered', 'failed', 'queued', 'read', 'sent'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `ai_agent_runs.status` tem valores ['awaiting_approval', 'cancelled', 'completed', 'failed', 'pending', 'running'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `sequence_step_executions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `outbound_messages.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `ai_agent_runs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `ai_agent_actions.step_index` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `ai_agent_actions.status` tem valores ['error', 'executing', 'pending_approval', 'skipped', 'success'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `ai_agent_actions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `email_bulk_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `scheduled_sends.status` tem valores ['cancelled', 'failed', 'pending', 'sent'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `dialer_queue_items.status` tem valores ['calling', 'done', 'pending', 'skipped', 'snoozed'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `scheduled_sends.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `dialer_queue_items.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `twilio_call_sessions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `coaching_actions.status` tem valores ['accepted', 'dismissed', 'pending', 'practiced'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `call_critical_moments.status` tem valores ['acknowledged', 'actioned', 'dismissed', 'new'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `deal_velocity_predictions.velocity_status` tem valores ['ahead', 'on_track', 'slow', 'stalled'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `coaching_actions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `call_critical_moments.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `deal_velocity_predictions.velocity_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_velocity_predictions.current_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_velocity_predictions.days_in_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_velocity_predictions.expected_days_in_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -628,10 +634,9 @@
 - `stage_conversion_metrics.from_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_conversion_metrics.to_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_bottleneck_insights.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `race_seasons.status` tem valores ['active', 'finished', 'upcoming'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `race_seasons.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `pipeline_coverage_snapshots.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `win_probability_calibrations.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `quota_attainment_predictions.pace_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `call_objections.resolution_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_stage_transitions.from_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `deal_stage_transitions.to_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
@@ -640,51 +645,51 @@
 - `win_loss_analyses.lost_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `win_calibration_buckets.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `win_probability_deal_calibrations.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `coaching_sessions.status` tem valores ['canceled', 'completed', 'scheduled'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `coaching_sessions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `task_assignments.status` tem valores ['pending', 'in_progress', 'submitted', 'approved', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
 - `winloss_webhook_subscriptions.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_deliveries.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_dead_letters.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `winloss_webhook_dead_letters.status` tem valores ['archived', 'pending', 'replayed', 'replaying'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `winloss_webhook_dead_letters.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_dead_letters.last_replay_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `orders.status` tem valores ['cancelled', 'confirmed', 'delivered', 'pending', 'preparing', 'shipped'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `orders.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `order_status_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_replay_audit.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `integration_health_checks.status` tem valores ['success', 'failure', 'degraded', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
 - `integration_autotest_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `commercial_approval_requests.status` tem valores ['approved', 'pending', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `commercial_approval_requests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `follow_up_audit_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `follow_up_notifications.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `cadence_funnel_rules.from_stage` tem valores ['high_interest', 'new', 'scheduled', 'waiting_approval'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
-- `cadence_funnel_rules.to_stage` tem valores ['high_interest', 'new', 'scheduled', 'waiting_approval'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `cadence_funnel_rules.from_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `cadence_funnel_rules.to_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cadence_outcome_rules.to_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `duplicate_block_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `integration_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `mql_qualifications.qualification_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `lead_churn_risk.status` tem valores ['active', 'ignored', 'resolved'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `lead_churn_risk.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `sale_notifications_audit.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `enriched_company_intelligence.funding_stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cs_tickets.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `client_renewals.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `whatsapp_conversations.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `quote_sync_inbound_log.status` tem valores ['accepted', 'bad_request', 'duplicate', 'error', 'ignored', 'method_not_allowed', 'not_found', 'processed', 'rejected', 'unauthorized'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `quote_sync_inbound_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quote_sync_inbound_log.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `quotes_inbound.status` tem valores ['approved', 'cancelled', 'converted', 'draft', 'expired', 'lost', 'open', 'pending', 'rejected', 'sent', 'won'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `quotes_inbound.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `webhook_inbound_log.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `maintenance_log.status` tem valores ['completed', 'failed', 'running', 'skipped'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `maintenance_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quote_conversion_audit.previous_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `quote_conversion_audit.new_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `cron_failure_alerts.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `call_recording_ingest_jobs.status` tem valores ['dead_letter', 'failed', 'pending', 'processing', 'succeeded'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `call_recording_ingest_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `forecast_narrative_dead_letters.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `commission_bonus_awards.status` tem valores ['cancelled', 'paid', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `commission_bonus_awards.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_inactivity_rules.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- `data_subject_requests.status` tem valores ['completed', 'in_progress', 'pending', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.
+- `data_subject_requests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `status_transitions.status_origem` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 403/408 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `audit_log`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks` …
+- 403/410 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes

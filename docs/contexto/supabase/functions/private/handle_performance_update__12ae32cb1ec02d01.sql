@@ -37,7 +37,8 @@ BEGIN
             WHERE salesperson_id = v_bet.salesperson_id 
               AND created_at >= v_bet.created_at 
               AND created_at <= v_bet.ends_at
-              AND activity_type = 'call';
+              AND activity_type = 'call'
+              AND deleted_at IS NULL;
               
         ELSIF v_bet.bet_type = 'meetings' THEN
             SELECT COUNT(*) INTO v_bet.current_value 
@@ -45,14 +46,16 @@ BEGIN
             WHERE salesperson_id = v_bet.salesperson_id 
               AND created_at >= v_bet.created_at 
               AND created_at <= v_bet.ends_at
-              AND activity_type = 'meeting';
+              AND activity_type = 'meeting'
+              AND deleted_at IS NULL;
               
         ELSIF v_bet.bet_type = 'activities' THEN
             SELECT COUNT(*) INTO v_bet.current_value 
             FROM public.activities 
             WHERE salesperson_id = v_bet.salesperson_id 
               AND created_at >= v_bet.created_at 
-              AND created_at <= v_bet.ends_at;
+              AND created_at <= v_bet.ends_at
+              AND deleted_at IS NULL;
         END IF;
 
         -- Update the current value and check status
@@ -67,9 +70,9 @@ BEGIN
                 updated_at = now()
             WHERE id = v_bet.id;
             
-            -- Award XP
-            INSERT INTO public.xp_transactions (salesperson_id, amount, source, source_id, description)
-            VALUES (v_bet.salesperson_id, v_xp_change, 'bet', v_bet.id, 'Vitória em Aposta: ' || v_bet.description);
+            -- Award XP (xp_history → trigger sync_total_xp atualiza salesperson_xp)
+            INSERT INTO public.xp_history (salesperson_id, xp_amount, source_type, source_id, description)
+            VALUES (v_bet.salesperson_id, v_xp_change, 'bet_won', v_bet.id::text, 'Vitória em Aposta: ' || COALESCE(v_bet.description, ''));
         ELSE
             UPDATE public.performance_bets 
             SET current_value = v_bet.current_value,

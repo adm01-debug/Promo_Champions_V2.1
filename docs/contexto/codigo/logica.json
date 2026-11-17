@@ -1,14 +1,14 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 72,
+ "total": 74,
  "por_camada": {
   "config": 3,
   "contexts": 1,
   "integrations": 4,
-  "lib": 52,
+  "lib": 53,
   "python": 3,
-  "services": 5,
+  "services": 6,
   "utils": 4
  },
  "arquivos": [
@@ -392,7 +392,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 545,
+   "usado_por": 550,
    "usado_por_modulos": [
     "components/activities",
     "components/admin",
@@ -540,7 +540,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25491,
+   "linhas": 25604,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -776,7 +776,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "usado_por_modulos": [
     "components/activities",
     "components/bi",
@@ -791,7 +791,8 @@
     "hooks/email",
     "hooks/gamification",
     "hooks/notifications",
-    "hooks/win-loss"
+    "hooks/win-loss",
+    "services"
    ],
    "coberto_por_testes": 0,
    "orfao": false
@@ -877,6 +878,31 @@
     "hooks",
     "hooks/dashboard",
     "lib/log"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/excelExporter.ts",
+   "camada": "lib",
+   "exports": [
+    "exportToExcel"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
    ],
    "coberto_por_testes": 0,
    "orfao": false
@@ -1355,7 +1381,7 @@
    "usado_por_modulos": [
     "hooks/conversational"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -1824,7 +1850,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 389,
+   "usado_por": 391,
    "usado_por_modulos": [
     "components/accessibility",
     "components/activities",
@@ -2181,11 +2207,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "usado_por_modulos": [
-    "hooks/win-loss"
+    "hooks",
+    "hooks/win-loss",
+    "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -2275,6 +2303,33 @@
     "pages"
    ],
    "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/comboService.ts",
+   "camada": "services",
+   "exports": [
+    "COMBO_TIERS",
+    "comboService"
+   ],
+   "export_default": null,
+   "linhas": 95,
+   "tabelas": [
+    "combo_tracking"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/gamification",
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -2394,7 +2449,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "usado_por_modulos": [
     "components/activities",
     "components/analytics",

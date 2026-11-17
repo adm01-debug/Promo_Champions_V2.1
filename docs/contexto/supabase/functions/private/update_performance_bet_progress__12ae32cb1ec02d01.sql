@@ -38,7 +38,8 @@ BEGIN
             WHERE salesperson_id = bet_record.salesperson_id 
               AND created_at >= bet_record.created_at 
               AND created_at <= bet_record.ends_at
-              AND activity_type = 'call';
+              AND activity_type = 'call'
+              AND deleted_at IS NULL;
               
         ELSIF bet_record.bet_type = 'meetings' THEN
             SELECT COUNT(*) INTO progress_val 
@@ -46,14 +47,16 @@ BEGIN
             WHERE salesperson_id = bet_record.salesperson_id 
               AND created_at >= bet_record.created_at 
               AND created_at <= bet_record.ends_at
-              AND activity_type = 'meeting';
+              AND activity_type = 'meeting'
+              AND deleted_at IS NULL;
               
         ELSIF bet_record.bet_type = 'activities' THEN
             SELECT COUNT(*) INTO progress_val 
             FROM public.activities 
             WHERE salesperson_id = bet_record.salesperson_id 
               AND created_at >= bet_record.created_at 
-              AND created_at <= bet_record.ends_at;
+              AND created_at <= bet_record.ends_at
+              AND deleted_at IS NULL;
         END IF;
 
         -- Update the current value
@@ -70,13 +73,7 @@ BEGIN
             
             xp_change := (bet_record.xp_wagered * bet_record.xp_multiplier)::INTEGER;
             
-            -- Award XP
-            UPDATE public.salesperson_xp 
-            SET total_xp = total_xp + xp_change,
-                updated_at = now()
-            WHERE salesperson_id = bet_record.salesperson_id;
-            
-            -- Log history
+            -- Award XP (xp_history → trigger sync_total_xp atualiza salesperson_xp; não somar aqui de novo)
             INSERT INTO public.xp_history (salesperson_id, xp_amount, source_type, source_id, description)
             VALUES (bet_record.salesperson_id, xp_change, 'bet_won', bet_record.id, 'Ganhou aposta: ' || bet_record.description);
             

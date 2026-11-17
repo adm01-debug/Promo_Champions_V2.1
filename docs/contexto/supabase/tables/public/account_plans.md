@@ -47,6 +47,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| account_plans_account_id_key | btree | account_id | sim | sim |  | `CREATE UNIQUE INDEX account_plans_account_id_key ON public.account_plans USING btree (account_id)` |
 | account_plans_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX account_plans_pkey ON public.account_plans USING btree (id)` |
 | idx_account_plans_account_id | btree | account_id | não | sim |  | `CREATE INDEX idx_account_plans_account_id ON public.account_plans USING btree (account_id)` |
 | idx_account_plans_created_by | btree | created_by | não | sim |  | `CREATE INDEX idx_account_plans_created_by ON public.account_plans USING btree (created_by)` |
@@ -60,8 +61,8 @@
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()))` |
+| roles | authenticated |
+| USING | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
 | WITH CHECK |  |
 
 ### `Account plans owner or admin can update`
@@ -70,8 +71,8 @@
 |---|---|
 | comando | UPDATE |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()))` |
+| roles | authenticated |
+| USING | `(is_admin_or_manager(auth.uid()) OR (created_by = auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = account_plans.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
 | WITH CHECK |  |
 
 ### `Owners or admins can insert account plans`

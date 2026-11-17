@@ -34,6 +34,7 @@
   "supabase/functions/_shared/business-date.ts",
   "supabase/functions/_shared/campaign-health.test.ts",
   "supabase/functions/_shared/campaign-health.ts",
+  "supabase/functions/_shared/canonical-hardening_contract_test.ts",
   "supabase/functions/_shared/chunked-in.ts",
   "supabase/functions/_shared/chunked-in_smoke_test.ts",
   "supabase/functions/_shared/chunked_in_lint_test.ts",
@@ -65,6 +66,7 @@
   "supabase/functions/_shared/operational-cron-auth_contract_test.ts",
   "supabase/functions/_shared/pii.ts",
   "supabase/functions/_shared/privileged-churn-auth_contract_test.ts",
+  "supabase/functions/_shared/race-leaderboard-status_contract_test.ts",
   "supabase/functions/_shared/rate-limit.ts",
   "supabase/functions/_shared/request-body.ts",
   "supabase/functions/_shared/request-body_test.ts",
@@ -2686,10 +2688,12 @@
     "cors.ts",
     "request-id.ts"
    ],
-   "chamada_pelo_front": [],
+   "chamada_pelo_front": [
+    "src/hooks/engagement/useEngagementScore.ts"
+   ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "orfa": false,
    "testes": 0
   },
   {
@@ -3366,21 +3370,25 @@
   {
    "nome": "inbound-email-webhook",
    "entrada": "supabase/functions/inbound-email-webhook/index.ts",
-   "arquivos": 1,
-   "linhas": 202,
+   "arquivos": 2,
+   "linhas": 485,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
     "POST"
    ],
    "tabelas": [
+    "clients",
+    "email_tracking_events",
     "inbound_reply_events",
+    "salespeople",
     "sequence_step_executions"
    ],
    "rpcs": [
     "auto_pause_enrollment",
     "match_reply_to_enrollment",
-    "record_email_opt_out"
+    "record_email_opt_out",
+    "record_engagement_signal"
    ],
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -4171,7 +4179,7 @@
    "nome": "process-cadence-tasks",
    "entrada": "supabase/functions/process-cadence-tasks/index.ts",
    "arquivos": 1,
-   "linhas": 250,
+   "linhas": 259,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -6505,7 +6513,7 @@
    "nome": "winloss-webhook-dispatcher",
    "entrada": "supabase/functions/winloss-webhook-dispatcher/index.ts",
    "arquivos": 14,
-   "linhas": 5713,
+   "linhas": 5779,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -6518,7 +6526,9 @@
     "winloss_webhook_subscriptions"
    ],
    "rpcs": [
-    "is_admin_or_manager"
+    "check_webhook_rate_limit",
+    "is_admin_or_manager",
+    "is_webhook_host_allowed"
    ],
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",

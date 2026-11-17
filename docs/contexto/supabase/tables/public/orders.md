@@ -44,6 +44,7 @@
 | orders_quote_id_fkey | FOREIGN KEY | `FOREIGN KEY (quote_id) REFERENCES quotes(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | orders_salesperson_id_fkey | FOREIGN KEY | `FOREIGN KEY (salesperson_id) REFERENCES salespeople(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | orders_status_check | CHECK | `CHECK (status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'preparing'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text]))` |  |  | sim |
+| orders_total_non_negative | CHECK | `CHECK (total IS NULL OR total >= 0::numeric) NOT VALID` |  |  | não |
 
 
 ## Referenciada por (FKs de outras tabelas)

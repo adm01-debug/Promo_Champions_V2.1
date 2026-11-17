@@ -70,6 +70,8 @@
 | quotes_created_by_fkey | FOREIGN KEY | `FOREIGN KEY (created_by) REFERENCES salespeople(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | quotes_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | quotes_sale_id_fkey | FOREIGN KEY | `FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
+| quotes_subtotal_non_negative | CHECK | `CHECK (subtotal IS NULL OR subtotal >= 0::numeric)` |  |  | sim |
+| quotes_total_value_non_negative | CHECK | `CHECK (total_value IS NULL OR total_value >= 0::numeric) NOT VALID` |  |  | não |
 
 
 ## Referenciada por (FKs de outras tabelas)
@@ -99,6 +101,7 @@
 | idx_quotes_valid_until | btree | valid_until | não | sim |  | `CREATE INDEX idx_quotes_valid_until ON public.quotes USING btree (valid_until)` |
 | quotes_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX quotes_pkey ON public.quotes USING btree (id)` |
 | ux_quotes_external_quote_id | btree | external_quote_id | sim | sim | `(external_quote_id IS NOT NULL)` | `CREATE UNIQUE INDEX ux_quotes_external_quote_id ON public.quotes USING btree (external_quote_id) WHERE (external_quote_id IS NOT NULL)` |
+| ux_quotes_quote_number_ativo | btree | quote_number | sim | sim | `((quote_number IS NOT NULL) AND (deleted_at IS NULL))` | `CREATE UNIQUE INDEX ux_quotes_quote_number_ativo ON public.quotes USING btree (quote_number) WHERE ((quote_number IS NOT NULL) AND (deleted_at IS NULL))` |
 
 
 ## Policies (RLS)

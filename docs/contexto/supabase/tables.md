@@ -10,7 +10,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.account_activities](tables/public/account_activities.md) | table | sim | 2 | 10 | não |  |
 | [public.account_contacts](tables/public/account_contacts.md) | table | sim | 2 | 18 | não |  |
 | [public.account_plans](tables/public/account_plans.md) | table | sim | 3 | 16 | não |  |
-| [public.accounts](tables/public/accounts.md) | table | sim | 2 | 22 | não |  |
+| [public.accounts](tables/public/accounts.md) | table | sim | 4 | 22 | não |  |
 | [public.achievements](tables/public/achievements.md) | table | sim | 2 | 6 | não |  |
 | [public.active_power_ups](tables/public/active_power_ups.md) | table | sim | 2 | 8 | não |  |
 | [public.active_sessions](tables/public/active_sessions.md) | table | sim | 6 | 12 | não |  |
@@ -34,7 +34,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.automation_runs](tables/public/automation_runs.md) | table | sim | 2 | 9 | não |  |
 | [public.automation_workflows](tables/public/automation_workflows.md) | table | sim | 2 | 13 | não |  |
 | [public.available_spins](tables/public/available_spins.md) | table | sim | 3 | 4 | não |  |
-| [public.battle_participants](tables/public/battle_participants.md) | table | sim | 3 | 6 | sim |  |
+| [public.battle_participants](tables/public/battle_participants.md) | table | sim | 4 | 6 | sim |  |
 | [public.bitrix24_sync_logs](tables/public/bitrix24_sync_logs.md) | table | sim | 1 | 11 | não |  |
 | [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 10 | não |  |
 | [public.buying_committee](tables/public/buying_committee.md) | table | sim | 2 | 9 | não |  |
@@ -48,7 +48,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cadence_funnel_rules](tables/public/cadence_funnel_rules.md) | table | sim | 2 | 13 | não |  |
 | [public.cadence_outcome_rules](tables/public/cadence_outcome_rules.md) | table | sim | 1 | 12 | não |  |
 | [public.cadence_steps](tables/public/cadence_steps.md) | table | sim | 4 | 12 | não |  |
-| [public.cadence_tasks](tables/public/cadence_tasks.md) | table | sim | 4 | 11 | sim |  |
+| [public.cadence_tasks](tables/public/cadence_tasks.md) | table | sim | 4 | 12 | sim |  |
 | [public.cadences](tables/public/cadences.md) | table | sim | 4 | 7 | não |  |
 | [public.call_coaching_scorecards](tables/public/call_coaching_scorecards.md) | table | sim | 2 | 15 | sim |  |
 | [public.call_conversation_metrics](tables/public/call_conversation_metrics.md) | table | sim | 2 | 14 | sim |  |
@@ -86,7 +86,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.coaching_skill_benchmarks](tables/public/coaching_skill_benchmarks.md) | table | sim | 2 | 6 | sim |  |
 | [public.cohort_analyses](tables/public/cohort_analyses.md) | table | sim | 1 | 10 | não |  |
 | [public.collectible_badges](tables/public/collectible_badges.md) | table | sim | 1 | 10 | não |  |
-| [public.combo_tracking](tables/public/combo_tracking.md) | table | sim | 3 | 9 | não |  |
+| [public.combo_tracking](tables/public/combo_tracking.md) | table | sim | 4 | 9 | não |  |
 | [public.commercial_approval_requests](tables/public/commercial_approval_requests.md) | table | sim | 5 | 14 | não |  |
 | [public.commission_bonus_awards](tables/public/commission_bonus_awards.md) | table | sim | 4 | 12 | sim |  |
 | [public.commission_bonuses](tables/public/commission_bonuses.md) | table | sim | 2 | 12 | não |  |
@@ -109,7 +109,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.csat_ces_surveys](tables/public/csat_ces_surveys.md) | table | sim | 2 | 10 | não |  |
 | [public.custom_reports](tables/public/custom_reports.md) | table | sim | 2 | 9 | não |  |
 | [public.daily_challenge_progress](tables/public/daily_challenge_progress.md) | table | sim | 1 | 8 | não |  |
-| [public.daily_challenge_rotations](tables/public/daily_challenge_rotations.md) | table | sim | 0 | 2 | não |  |
+| [public.daily_challenge_rotations](tables/public/daily_challenge_rotations.md) | table | sim | 1 | 2 | não |  |
 | [public.daily_challenges](tables/public/daily_challenges.md) | table | sim | 4 | 10 | não |  |
 | [public.daily_metrics](tables/public/daily_metrics.md) | table | sim | 4 | 9 | não |  |
 | [public.daily_streak_achievements](tables/public/daily_streak_achievements.md) | table | sim | 1 | 7 | não |  |
@@ -151,7 +151,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.engagement_score_history](tables/public/engagement_score_history.md) | table | sim | 2 | 7 | não |  |
 | [public.enriched_company_intelligence](tables/public/enriched_company_intelligence.md) | table | sim | 1 | 14 | não |  |
 | [public.entity_versions](tables/public/entity_versions.md) | table | sim | 2 | 8 | não |  |
-| [public.error_logs](tables/public/error_logs.md) | table | sim | 3 | 11 | não |  |
+| [public.error_logs](tables/public/error_logs.md) | table | sim | 4 | 11 | não |  |
 | [public.executive_briefings](tables/public/executive_briefings.md) | table | sim | 4 | 11 | não |  |
 | [public.expansion_opportunities](tables/public/expansion_opportunities.md) | table | sim | 2 | 11 | não |  |
 | [public.expansion_playbooks](tables/public/expansion_playbooks.md) | table | sim | 2 | 10 | não |  |
@@ -160,7 +160,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.experiments](tables/public/experiments.md) | table | sim | 2 | 7 | não |  |
 | [public.external_seller_map](tables/public/external_seller_map.md) | table | sim | 2 | 8 | não |  |
 | [public.feature_flags](tables/public/feature_flags.md) | table | sim | 2 | 9 | não |  |
-| [public.feed_comments](tables/public/feed_comments.md) | table | sim | 2 | 5 | não |  |
+| [public.feed_comments](tables/public/feed_comments.md) | table | sim | 4 | 5 | não |  |
 | [public.feed_reactions](tables/public/feed_reactions.md) | table | sim | 3 | 5 | não |  |
 | [public.follow_up_audit_logs](tables/public/follow_up_audit_logs.md) | table | sim | 2 | 8 | não |  |
 | [public.follow_up_notifications](tables/public/follow_up_notifications.md) | table | sim | 1 | 8 | não |  |
@@ -174,7 +174,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.forecast_snapshots](tables/public/forecast_snapshots.md) | table | sim | 3 | 13 | sim |  |
 | [public.geo_access_logs](tables/public/geo_access_logs.md) | table | sim | 1 | 10 | não |  |
 | [public.geo_blocked_regions](tables/public/geo_blocked_regions.md) | table | sim | 2 | 9 | não |  |
-| [public.geocode_cache](tables/public/geocode_cache.md) | table | sim | 0 | 6 | não |  |
+| [public.geocode_cache](tables/public/geocode_cache.md) | table | sim | 1 | 6 | não |  |
 | [public.icp_data](tables/public/icp_data.md) | table | sim | 4 | 11 | não |  |
 | [public.icp_parameters](tables/public/icp_parameters.md) | table | sim | 2 | 11 | não |  |
 | [public.inbound_reply_events](tables/public/inbound_reply_events.md) | table | sim | 1 | 10 | não |  |
@@ -209,7 +209,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.message_templates](tables/public/message_templates.md) | table | sim | 4 | 13 | não |  |
 | [public.mfa_verification_attempts](tables/public/mfa_verification_attempts.md) | table | sim | 1 | 7 | não |  |
 | [public.migration_log](tables/public/migration_log.md) | table | sim | 1 | 5 | não |  |
-| [public.monthly_sales_summary](tables/public/monthly_sales_summary.md) | table | sim | 1 | 5 | não |  |
+| [public.monthly_sales_summary](tables/public/monthly_sales_summary.md) | table | sim | 1 | 6 | não |  |
 | [public.mood_entries](tables/public/mood_entries.md) | table | sim | 3 | 5 | não |  |
 | [public.mql_qualifications](tables/public/mql_qualifications.md) | table | sim | 1 | 15 | não |  |
 | [public.notification_preferences](tables/public/notification_preferences.md) | table | sim | 5 | 14 | não |  |
@@ -226,7 +226,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.page_analytics](tables/public/page_analytics.md) | table | sim | 3 | 12 | não |  |
 | [public.password_history](tables/public/password_history.md) | table | sim | 1 | 4 | não |  |
 | [public.password_reset_requests](tables/public/password_reset_requests.md) | table | sim | 3 | 13 | não |  |
-| [public.performance_bets](tables/public/performance_bets.md) | table | sim | 3 | 13 | sim |  |
+| [public.performance_bets](tables/public/performance_bets.md) | table | sim | 3 | 14 | sim |  |
 | [public.performance_impact_factors](tables/public/performance_impact_factors.md) | table | sim | 1 | 6 | não |  |
 | [public.permissions](tables/public/permissions.md) | table | sim | 2 | 6 | não |  |
 | [public.person_intelligence](tables/public/person_intelligence.md) | table | sim | 1 | 11 | não |  |
@@ -311,7 +311,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.salesperson_performance_telemetry](tables/public/salesperson_performance_telemetry.md) | table | sim | 1 | 5 | não |  |
 | [public.salesperson_preferences](tables/public/salesperson_preferences.md) | table | sim | 3 | 10 | não |  |
 | [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 3 | 7 | sim |  |
-| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 4 | 8 | não | Filtros salvos por usuários para diferentes entidades |
+| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 8 | 8 | não | Filtros salvos por usuários para diferentes entidades |
 | [public.scheduled_report_runs](tables/public/scheduled_report_runs.md) | table | sim | 1 | 8 | não |  |
 | [public.scheduled_reports](tables/public/scheduled_reports.md) | table | sim | 4 | 15 | não |  |
 | [public.scheduled_sends](tables/public/scheduled_sends.md) | table | sim | 3 | 11 | não |  |
@@ -379,12 +379,14 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.web_vitals_samples](tables/public/web_vitals_samples.md) | table | sim | 1 | 12 | não |  |
 | [public.webauthn_challenges](tables/public/webauthn_challenges.md) | table | sim | 3 | 7 | não |  |
 | [public.webauthn_credentials](tables/public/webauthn_credentials.md) | table | sim | 4 | 11 | não |  |
+| [public.webhook_allowed_domains](tables/public/webhook_allowed_domains.md) | table | sim | 1 | 6 | não | Allowlist de hosts para webhook de saida. Vazia = nada e permitido (fail-closed). Gerida por admin. A blocklist de rede privada/metadata nao fica aqui: esta no corpo de is_webhook_host_allowed(). |
 | [public.webhook_deliveries](tables/public/webhook_deliveries.md) | table | sim | 1 | 11 | não |  |
+| [public.webhook_dispatch_rate](tables/public/webhook_dispatch_rate.md) | table | sim | 0 | 5 | não |  |
 | [public.webhook_events](tables/public/webhook_events.md) | table | sim | 1 | 9 | não | Deny-all intencional: RLS habilitado sem policies (20260104180000). Sem consumidores PostgREST em src/ nem functions/; qualquer escrita futura ocorre via service_role, que bypassa RLS. Documentado no pacote authz 2026-10-01. |
 | [public.webhook_inbound_dedupe](tables/public/webhook_inbound_dedupe.md) | table | sim | 2 | 9 | não |  |
 | [public.webhook_inbound_log](tables/public/webhook_inbound_log.md) | table | sim | 2 | 10 | não |  |
 | [public.webhook_logs](tables/public/webhook_logs.md) | table | sim | 1 | 9 | não |  |
-| [public.webhooks](tables/public/webhooks.md) | table | sim | 3 | 15 | não |  |
+| [public.webhooks](tables/public/webhooks.md) | table | sim | 2 | 15 | não |  |
 | [public.website_visitor_logs](tables/public/website_visitor_logs.md) | table | sim | 1 | 11 | não |  |
 | [public.weekly_challenges](tables/public/weekly_challenges.md) | table | sim | 4 | 11 | não |  |
 | [public.weekly_matchups](tables/public/weekly_matchups.md) | table | sim | 2 | 10 | não |  |
@@ -404,7 +406,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.winloss_webhook_dispatch_metrics](tables/public/winloss_webhook_dispatch_metrics.md) | table | sim | 1 | 8 | não |  |
 | [public.winloss_webhook_replay_audit](tables/public/winloss_webhook_replay_audit.md) | table | sim | 1 | 13 | não |  |
 | [public.winloss_webhook_replay_invocations](tables/public/winloss_webhook_replay_invocations.md) | table | sim | 1 | 12 | não |  |
-| [public.winloss_webhook_subscriptions](tables/public/winloss_webhook_subscriptions.md) | table | sim | 1 | 9 | não |  |
+| [public.winloss_webhook_subscriptions](tables/public/winloss_webhook_subscriptions.md) | table | sim | 1 | 11 | não |  |
 | [public.workflow_executions](tables/public/workflow_executions.md) | table | sim | 3 | 10 | não |  |
 | [public.workflow_rules](tables/public/workflow_rules.md) | table | sim | 1 | 13 | não |  |
 | [public.workflows](tables/public/workflows.md) | table | sim | 2 | 13 | não |  |

@@ -24,7 +24,7 @@ BEGIN
     _flags := '[]'::jsonb;
     _days_stage := EXTRACT(epoch FROM (now() - _r.updated_at))::integer / 86400;
 
-    SELECT MAX(created_at) INTO _last_act FROM public.activities WHERE sale_id = _r.id;
+    SELECT MAX(created_at) INTO _last_act FROM public.activities WHERE sale_id = _r.id AND deleted_at IS NULL;
     _days_act := CASE WHEN _last_act IS NULL THEN NULL ELSE EXTRACT(epoch FROM (now() - _last_act))::integer / 86400 END;
 
     IF _days_stage > 14 THEN _flags := _flags || jsonb_build_array(jsonb_build_object('flag','stale_stage','severity','high','days',_days_stage)); END IF;

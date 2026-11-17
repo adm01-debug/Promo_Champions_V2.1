@@ -51,8 +51,8 @@
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `((auth.uid() IN ( SELECT activities.salesperson_id    FROM activities   WHERE (activities.id = activity_audit_logs.activity_id))) OR (EXISTS ( SELECT 1    FROM user_roles   WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = ANY (ARRAY['admin'::app_role, 'manager'::app_role]))))))` |
+| roles | authenticated |
+| USING | `((EXISTS ( SELECT 1    FROM activities a   WHERE ((a.id = activity_audit_logs.activity_id) AND (a.salesperson_id = get_current_salesperson_id())))) OR is_admin_or_manager(auth.uid()))` |
 | WITH CHECK |  |
 
 

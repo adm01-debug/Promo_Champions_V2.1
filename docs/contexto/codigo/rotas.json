@@ -2135,7 +2135,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 89
+   "arquivos_puxados": 90
   },
   {
    "protegida": false,
@@ -2170,6 +2170,7 @@
     "useReducedMotion"
    ],
    "tabelas": [
+    "clients",
     "sales"
    ],
    "rpcs": [],
@@ -2177,7 +2178,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,
@@ -2572,6 +2573,7 @@
     "useSalespeople",
     "useSalespeopleRanking",
     "useState",
+    "useTodayCombo",
     "useUpdateSalesperson",
     "useUpsertCompetitor",
     "useUserRoles",
@@ -2606,6 +2608,7 @@
     "useSalesStreaks",
     "useSalespeople",
     "useSalespeopleRanking",
+    "useTodayCombo",
     "useUpdateSalesperson",
     "useUpsertCompetitor",
     "useUserRoles",
@@ -2619,6 +2622,7 @@
     "available_spins",
     "battle_participants",
     "collectible_badges",
+    "combo_tracking",
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
@@ -2673,7 +2677,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 86
+   "arquivos_puxados": 91
   },
   {
    "protegida": false,
@@ -2976,6 +2980,7 @@
     "useMemo",
     "useNavigate",
     "useReducedMotion",
+    "useRef",
     "useState",
     "useWebAuthn"
    ],
@@ -3152,7 +3157,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 12
+   "arquivos_puxados": 13
   },
   {
    "protegida": false,
@@ -4864,12 +4869,17 @@
     "useScriptABTest",
     "useSearchParams",
     "useSeasonComparison",
+    "useSensor",
+    "useSensors",
     "useSentimentTrend",
+    "useSortable",
     "useStageBaselines",
     "useStageBottlenecks",
     "useStageConversion",
     "useState",
     "useStuckDeals",
+    "useUpsellSuggestions",
+    "useUserDashboardLayout",
     "useUserRoles",
     "useWLKpis",
     "useWLTrend",
@@ -4941,6 +4951,8 @@
     "useStageBottlenecks",
     "useStageConversion",
     "useStuckDeals",
+    "useUpsellSuggestions",
+    "useUserDashboardLayout",
     "useUserRoles",
     "useWLKpis",
     "useWLTrend",
@@ -4994,6 +5006,7 @@
     "tasks",
     "user_app_settings",
     "user_roles",
+    "user_winloss_preferences",
     "win_loss_analyses",
     "win_loss_insights",
     "win_loss_patterns",
@@ -5046,7 +5059,7 @@
     "technical",
     "toolbar"
    ],
-   "arquivos_puxados": 192
+   "arquivos_puxados": 196
   },
   {
    "protegida": false,
@@ -10098,6 +10111,7 @@
     "useReducedMotion",
     "useRef",
     "useSecurityStats",
+    "useSessionManagement",
     "useState"
    ],
    "hooks_locais": [
@@ -10113,9 +10127,11 @@
     "useRateLimitSettings",
     "useRateLimitStats",
     "useReducedMotion",
-    "useSecurityStats"
+    "useSecurityStats",
+    "useSessionManagement"
    ],
    "tabelas": [
+    "active_sessions",
     "blocked_ips",
     "circuit_breaker_events",
     "geo_blocked_regions",
@@ -10134,9 +10150,11 @@
     "is_ip_whitelisted",
     "record_failed_login_attempt",
     "record_successful_login_attempt",
+    "refresh_session",
     "regenerate_backup_codes",
     "set_mfa_preferred_method",
     "setup_sms_mfa",
+    "validate_session",
     "verify_and_enable_sms",
     "verify_mfa_code"
    ],
@@ -10146,7 +10164,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 32
+   "arquivos_puxados": 35
   },
   {
    "protegida": false,
@@ -10181,6 +10199,7 @@
     "usePromoteSequenceWinners",
     "useQuery",
     "useQueryClient",
+    "useRecomputeContactEngagement",
     "useResumeEnrollment",
     "useScheduleOptimalSend",
     "useScheduledSends",
@@ -10214,6 +10233,7 @@
     "useInboundReplyEvents",
     "useOutboundMessages",
     "usePromoteSequenceWinners",
+    "useRecomputeContactEngagement",
     "useResumeEnrollment",
     "useScheduleOptimalSend",
     "useScheduledSends",
@@ -10252,6 +10272,7 @@
    ],
    "edges": [
     "ai-email-composer",
+    "engagement-score-recompute",
     "schedule-optimal-send",
     "send-multichannel-message",
     "sequence-ab-promote",
@@ -10970,8 +10991,13 @@
     "useScriptABTest",
     "useSearchParams",
     "useSeasonComparison",
+    "useSensor",
+    "useSensors",
     "useSentimentTrend",
+    "useSortable",
     "useState",
+    "useUpsellSuggestions",
+    "useUserDashboardLayout",
     "useUserRoles",
     "useWLKpis",
     "useWLTrend",
@@ -11029,6 +11055,8 @@
     "useScriptABTest",
     "useSeasonComparison",
     "useSentimentTrend",
+    "useUpsellSuggestions",
+    "useUserDashboardLayout",
     "useUserRoles",
     "useWLKpis",
     "useWLTrend",
@@ -11071,6 +11099,7 @@
     "tasks",
     "user_app_settings",
     "user_roles",
+    "user_winloss_preferences",
     "win_loss_analyses",
     "win_loss_insights",
     "win_loss_patterns",
@@ -11113,7 +11142,7 @@
     "table",
     "toolbar"
    ],
-   "arquivos_puxados": 167
+   "arquivos_puxados": 171
   },
   {
    "protegida": false,

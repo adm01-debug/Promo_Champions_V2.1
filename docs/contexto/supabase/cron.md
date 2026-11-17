@@ -37,3 +37,15 @@ Horários em UTC. Execuções recentes em `cron-runs.md`.
 | 48 | bitrix24-sync-hourly | `17 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('bitrix24-sync');` |
 | 49 | weekly-matchups-resolution | `5 0 * * 1` | sim | postgres | postgres | `SELECT public.resolve_weekly_matchups()` |
 | 76 | challenge-progress-sync | `15 3 * * *` | sim | postgres | postgres | `SELECT public.sync_challenge_progress()` |
+| 77 | sequence-runner-5min | `*/5 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('sequence-runner');` |
+| 78 | process-cadence-tasks-5min | `*/5 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('process-cadence-tasks');` |
+| 79 | process-scheduled-sends-15min | `*/15 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('process-scheduled-sends');` |
+| 80 | check-quote-expiration-daily | `0 8 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('check-quote-expiration');` |
+| 81 | check-lead-sla-15min | `*/15 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('check-lead-sla');` |
+| 82 | sdr-consecutive-alerts-daily | `0 11 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('sdr-consecutive-alerts');` |
+| 83 | activity-goal-alerts-daily | `0 18 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('activity-goal-alerts');` |
+| 84 | challenge-expiration-alerts-daily | `0 12 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('challenge-expiration-alerts');` |
+| 85 | send-alert-notifications-5min | `*/5 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('send-alert-notifications');` |
+| 86 | auto-reassign-inactive-daily | `0 9 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('auto-reassign-inactive');` |
+| 87 | access-denied-alerts-hourly | `0 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('access-denied-alerts');` |
+| 88 | scheduled-reports-runner-hourly | `10 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('scheduled-reports-runner');` |

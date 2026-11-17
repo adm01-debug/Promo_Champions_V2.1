@@ -41,6 +41,7 @@
 |---|---|---|---|---|---|
 | activities_client_id_fkey | FOREIGN KEY | `FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | activities_deleted_by_fkey | FOREIGN KEY | `FOREIGN KEY (deleted_by) REFERENCES auth.users(id)` | NO ACTION | NO ACTION | sim |
+| activities_duration_positive | CHECK | `CHECK (duration_minutes IS NULL OR duration_minutes >= 0)` |  |  | sim |
 | activities_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | activities_sale_id_fkey | FOREIGN KEY | `FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
 | activities_salesperson_id_fkey | FOREIGN KEY | `FOREIGN KEY (salesperson_id) REFERENCES salespeople(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
@@ -120,14 +121,14 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
-| audit_activities | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.audit_trigger_func |
-| audit_activities_trigger | AFTER | DELETE OR UPDATE | ROW | enabled | public.audit_activity_changes |
-| audit_soft_delete_activities | AFTER | UPDATE | ROW | enabled | public.log_soft_delete |
+| audit_activities_trigger | AFTER | UPDATE | ROW | enabled | public.audit_activity_changes |
+| audit_business_changes | AFTER | DELETE OR UPDATE | ROW | enabled | public.audit_log_row_change |
+| guard_activity_soft_delete | BEFORE | UPDATE | ROW | enabled | private.guard_activity_soft_delete |
 | tr_maintain_streaks | AFTER | INSERT | ROW | enabled | public.maintain_sales_streaks |
 | tr_performance_update_activities | AFTER | INSERT OR UPDATE | ROW | enabled | private.handle_performance_update |
 | tr_sync_battle_score_activities | AFTER | INSERT OR UPDATE | ROW | enabled | public.sync_battle_score |
 | tr_sync_bets_activities | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.sync_performance_bets |
-| tr_update_bets_on_activity | AFTER | INSERT | ROW | enabled | public.process_performance_bet_event |
+| tr_sync_combo_activities | AFTER | INSERT | ROW | enabled | public.sync_combo_on_activity |
 | trg_activities_auto_pause | AFTER | INSERT | ROW | enabled | private.trg_activities_auto_pause_sequences |
 | update_bets_on_activity | AFTER | INSERT OR UPDATE | ROW | enabled | private.trigger_update_performance_bets |
 

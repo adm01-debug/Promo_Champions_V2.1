@@ -19,7 +19,7 @@ BEGIN
   IF _sale.id IS NULL THEN RETURN; END IF;
 
   SELECT MAX(created_at), COUNT(*) INTO _last_activity, _activity_count
-  FROM public.activities WHERE sale_id = _sale_id;
+  FROM public.activities WHERE sale_id = _sale_id AND deleted_at IS NULL;
 
   SELECT COUNT(*) INTO _interaction_count
   FROM public.channel_interactions WHERE deal_id = _sale_id AND created_at > now() - interval '14 days';

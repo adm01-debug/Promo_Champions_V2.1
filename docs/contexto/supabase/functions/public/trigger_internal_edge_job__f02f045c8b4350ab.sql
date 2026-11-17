@@ -38,7 +38,7 @@ BEGIN
       'scheduled-reports-runner',
       -- gamificação (Onda B)
       'rotate-daily-challenges',
-      -- integração Bitrix24 (restaurado: removido inadvertidamente em 20261014000000)
+      -- integração Bitrix24
       'bitrix24-sync'
     ]::text[])
   ) THEN

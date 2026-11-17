@@ -17,6 +17,7 @@ Uso e tamanho em `stats.md`.
 | public.account_contacts | idx_account_contacts_account | btree | account_id | não | sim |  |
 | public.account_contacts | idx_account_contacts_role | btree | buying_role | não | sim |  |
 | public.account_contacts | idx_account_contacts_sale_id | btree | sale_id | não | sim |  |
+| public.account_plans | account_plans_account_id_key | btree | account_id | sim | sim |  |
 | public.account_plans | account_plans_pkey | btree | id | sim | sim |  |
 | public.account_plans | idx_account_plans_account_id | btree | account_id | não | sim |  |
 | public.account_plans | idx_account_plans_created_by | btree | created_by | não | sim |  |
@@ -278,6 +279,7 @@ Uso e tamanho em `stats.md`.
 | public.clients | idx_clients_total_value | btree | total_value | não | sim |  |
 | public.clients | idx_clients_user_id | btree | user_id | não | sim |  |
 | public.clients | ux_clients_email | btree |  | sim | sim | `((email IS NOT NULL) AND (deleted_at IS NULL))` |
+| public.clients | ux_clients_phone | btree | phone | sim | sim | `((phone IS NOT NULL) AND (phone <> ''::text) AND (deleted_at IS NULL))` |
 | public.coaching_actions | coaching_actions_pkey | btree | id | sim | sim |  |
 | public.coaching_actions | idx_coaching_actions_recording | btree | recording_id | não | sim |  |
 | public.coaching_actions | idx_coaching_actions_sp_status | btree | salesperson_id, status, created_at | não | sim |  |
@@ -890,6 +892,7 @@ Uso e tamanho em `stats.md`.
 | public.quotes | idx_quotes_valid_until | btree | valid_until | não | sim |  |
 | public.quotes | quotes_pkey | btree | id | sim | sim |  |
 | public.quotes | ux_quotes_external_quote_id | btree | external_quote_id | sim | sim | `(external_quote_id IS NOT NULL)` |
+| public.quotes | ux_quotes_quote_number_ativo | btree | quote_number | sim | sim | `((quote_number IS NOT NULL) AND (deleted_at IS NULL))` |
 | public.quotes_inbound | idx_quotes_inbound_client_id | btree | client_id | não | sim |  |
 | public.quotes_inbound | idx_quotes_inbound_event_at | btree | event_at | não | sim |  |
 | public.quotes_inbound | idx_quotes_inbound_last_event | btree | last_event | não | sim | `(last_event IS NOT NULL)` |
@@ -1202,6 +1205,8 @@ Uso e tamanho em `stats.md`.
 | public.suppliers | idx_suppliers_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.suppliers | idx_suppliers_is_active | btree | is_active | não | sim |  |
 | public.suppliers | suppliers_pkey | btree | id | sim | sim |  |
+| public.suppliers | ux_suppliers_cnpj_ativo | btree | cnpj | sim | sim | `((cnpj IS NOT NULL) AND (cnpj <> ''::text) AND (deleted_at IS NULL))` |
+| public.suppliers | ux_suppliers_email_ativo | btree |  | sim | sim | `((email IS NOT NULL) AND (email <> ''::text) AND (deleted_at IS NULL))` |
 | public.support_tickets | idx_support_tickets_account | btree | account_id | não | sim |  |
 | public.support_tickets | idx_support_tickets_status | btree | status | não | sim |  |
 | public.support_tickets | support_tickets_pkey | btree | id | sim | sim |  |
@@ -1239,6 +1244,7 @@ Uso e tamanho em `stats.md`.
 | public.teams | idx_teams_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.teams | idx_teams_sdr_id | btree | sdr_id | não | sim |  |
 | public.teams | teams_pkey | btree | id | sim | sim |  |
+| public.teams | ux_teams_name_ativo | btree | name | sim | sim | `((name IS NOT NULL) AND (deleted_at IS NULL))` |
 | public.territories | idx_territories_current_owner_id | btree | current_owner_id | não | sim |  |
 | public.territories | territories_name_key | btree | name | sim | sim |  |
 | public.territories | territories_pkey | btree | id | sim | sim |  |
@@ -1305,9 +1311,13 @@ Uso e tamanho em `stats.md`.
 | public.webauthn_credentials | idx_webauthn_credentials_user_id | btree | user_id | não | sim |  |
 | public.webauthn_credentials | webauthn_credentials_credential_id_key | btree | credential_id | sim | sim |  |
 | public.webauthn_credentials | webauthn_credentials_pkey | btree | id | sim | sim |  |
+| public.webhook_allowed_domains | ux_webhook_allowed_domains_pattern | btree | pattern | sim | sim |  |
+| public.webhook_allowed_domains | webhook_allowed_domains_pkey | btree | id | sim | sim |  |
 | public.webhook_deliveries | idx_webhook_deliveries_created_at | btree | created_at | não | sim |  |
 | public.webhook_deliveries | idx_webhook_deliveries_webhook_id | btree | webhook_id | não | sim |  |
 | public.webhook_deliveries | webhook_deliveries_pkey | btree | id | sim | sim |  |
+| public.webhook_dispatch_rate | idx_webhook_dispatch_rate_sub_ts | btree | subscription_id, dispatched_at | não | sim |  |
+| public.webhook_dispatch_rate | webhook_dispatch_rate_pkey | btree | id | sim | sim |  |
 | public.webhook_events | idx_webhook_events_retry | btree | next_retry_at | não | sim | `(status = 'pending'::text)` |
 | public.webhook_events | idx_webhook_events_status | btree | status | não | sim | `(status = 'pending'::text)` |
 | public.webhook_events | idx_webhook_events_webhook_id | btree | webhook_id | não | sim |  |

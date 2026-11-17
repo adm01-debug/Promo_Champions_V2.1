@@ -21,6 +21,7 @@
 | 3 | `deals` | `integer` | sim | `0` |  |  |
 | 4 | `won_deals` | `integer` | sim | `0` |  |  |
 | 5 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 6 | `lost_deals` | `integer` | não | `0` |  |  |
 
 
 ## Constraints

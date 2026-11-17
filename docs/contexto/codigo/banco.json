@@ -8,12 +8,12 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 676,
+ "migrations": 699,
  "seeds": [
   "supabase/seed.sql"
  ],
  "avisos": [
-  "61 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "62 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -295,6 +295,7 @@
   "check_quote_expirations",
   "check_rate_limit",
   "check_sla_violations",
+  "check_webhook_rate_limit",
   "claim_daily_challenge_reward",
   "claim_pending_cadence_tasks",
   "claim_streak_achievements",
@@ -366,6 +367,7 @@
   "fn_normalize_quotes_inbound",
   "fn_notify_victory",
   "fn_purge_rollback_snapshots",
+  "fn_quotes_inbound_ordering_guard",
   "fn_record_conversion_attempt",
   "fn_slo_burn_rate",
   "fn_test_backdate_cron_alert",
@@ -442,6 +444,7 @@
   "initialize_totp",
   "is_admin_or_manager",
   "is_authenticated",
+  "is_country_blocked",
   "is_email_opted_out",
   "is_ip_blocked",
   "is_ip_whitelisted",
@@ -450,6 +453,7 @@
   "is_recipient_opted_out",
   "is_salesperson_active",
   "is_valid_status_transition",
+  "is_webhook_host_allowed",
   "log_audit",
   "log_audit_event",
   "log_data_access",
@@ -532,6 +536,7 @@
   "start_of_week",
   "sync_battle_score",
   "sync_challenge_progress",
+  "sync_combo_on_activity",
   "sync_performance_bets",
   "sync_quote_from_webhook",
   "sync_quote_to_sale_status",
@@ -549,8 +554,10 @@
   "trg_invalidate_forecast_narrative_cache",
   "trg_process_email_tracking_event",
   "trg_recompute_engagement",
+  "trg_recording_generate_coaching",
   "trg_refresh_ranking_on_sale",
   "trg_sales_stamp_closed_at",
+  "trigger_auto_coaching_on_recording",
   "trigger_campaign_health_alert",
   "trigger_detect_client_churn_alerts",
   "trigger_generate_urgent_client_tasks",
@@ -656,6 +663,13 @@
    "evento": "insert or update or delete",
    "tabela": "activities",
    "funcao": "sync_performance_bets"
+  },
+  {
+   "nome": "tr_sync_combo_activities",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "activities",
+   "funcao": "sync_combo_on_activity"
   },
   {
    "nome": "trg_activities_auto_pause",
@@ -791,6 +805,13 @@
    "funcao": "award_xp_on_quote_cadence_task_complete"
   },
   {
+   "nome": "update_cadence_tasks_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "cadence_tasks",
+   "funcao": "update_updated_at_column"
+  },
+  {
    "nome": "update_cadences_updated_at",
    "quando": "before",
    "evento": "update",
@@ -824,6 +845,20 @@
    "evento": "update",
    "tabela": "call_recording_ingest_jobs",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_auto_coaching_after_summary",
+   "quando": "after",
+   "evento": "insert or update of summarized_at",
+   "tabela": "call_recordings",
+   "funcao": "trigger_auto_coaching_on_recording"
+  },
+  {
+   "nome": "trg_recording_generate_coaching",
+   "quando": "after",
+   "evento": "insert or update of transcript",
+   "tabela": "call_recordings",
+   "funcao": "trg_recording_generate_coaching"
   },
   {
    "nome": "update_call_recordings_updated_at",
@@ -1442,13 +1477,6 @@
    "funcao": "update_updated_at_column"
   },
   {
-   "nome": "audit_business_changes",
-   "quando": "after",
-   "evento": "update or delete",
-   "tabela": "public",
-   "funcao": "audit_log_row_change"
-  },
-  {
    "nome": "bump_version",
    "quando": "before",
    "evento": "update",
@@ -1517,6 +1545,13 @@
    "evento": "insert or update",
    "tabela": "quotes_inbound",
    "funcao": "fn_normalize_quotes_inbound"
+  },
+  {
+   "nome": "trg_quotes_inbound_ordering_guard",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "quotes_inbound",
+   "funcao": "fn_quotes_inbound_ordering_guard"
   },
   {
    "nome": "trg_quotes_inbound_updated_at",
@@ -1827,13 +1862,6 @@
    "funcao": "fn_notify_victory"
   },
   {
-   "nome": "tr_victory_battle",
-   "quando": "after",
-   "evento": "update",
-   "tabela": "sales_battles",
-   "funcao": "auto_victory_post"
-  },
-  {
    "nome": "on_asset_ai_activation",
    "quando": "after",
    "evento": "update of view_count",
@@ -2128,6 +2156,20 @@
    "funcao": "update_updated_at_column"
   },
   {
+   "nome": "set_updated_at_webhook_allowed_domains",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "webhook_allowed_domains",
+   "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "set_updated_at_webhook_dispatch_rate",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "webhook_dispatch_rate",
+   "funcao": "update_updated_at_column"
+  },
+  {
    "nome": "update_webhooks_updated_at",
    "quando": "before",
    "evento": "update",
@@ -2216,6 +2258,11 @@
    "chama_edge": "campaign-health-alert"
   },
   {
+   "nome": "capture-rollback-snapshot-5min",
+   "agenda": "*/5 * * * *",
+   "migration": "20261117070000_reconcilia_objetos_orfaos_producao.sql"
+  },
+  {
    "nome": "challenge-progress-sync",
    "agenda": "15 3 * * *",
    "migration": "20261019153000_lgpd_gamificacao_r2.sql"
@@ -2251,6 +2298,11 @@
    "migration": "20260910153000_reconcile_operational_edge_crons.sql"
   },
   {
+   "nome": "detect_slow_queries_hourly",
+   "agenda": "20 * * * *",
+   "migration": "20261117070000_reconcilia_objetos_orfaos_producao.sql"
+  },
+  {
    "nome": "detect-client-churn-alerts-hourly",
    "agenda": "15 * * * *",
    "migration": "20260831163000_secure_churn_and_task_crons.sql"
@@ -2284,6 +2336,11 @@
    "nome": "process-call-recording-ingest-1min",
    "agenda": "* * * * *",
    "migration": "20260831170000_secure_operational_edge_crons.sql"
+  },
+  {
+   "nome": "purge_old_telemetry_daily",
+   "agenda": "15 3 * * *",
+   "migration": "20261117070000_reconcilia_objetos_orfaos_producao.sql"
   },
   {
    "nome": "purge-quote-sync-inbound-log-30d",
@@ -2385,19 +2442,34 @@
  ],
  "tabelas": {
   "_internal_secrets": {
-   "colunas": {},
-   "rls": false,
+   "colunas": {
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "value": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
    "policies": [
     {
      "nome": "Deny all access to _internal_secrets",
      "comando": "all",
-     "para": "anon, authenticated",
+     "para": "authenticated, anon",
      "tipo": "permissive"
     }
    ],
    "indices": [],
    "fks": [],
-   "criada_em": null,
+   "criada_em": "20260715184427_8e4ec70a-caf2-4a8d-9042-e26e29fa3a54.sql",
    "usada_no_front": 0,
    "usada_em_edges": [
     "_shared",
@@ -3580,11 +3652,11 @@
     "user_id->auth"
    ],
    "criada_em": "20251231120039_b2152855-d5fa-4fa1-8557-b2884e44108d.sql",
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "activities": {
    "colunas": {
@@ -3894,6 +3966,7 @@
     "tr_performance_update_activities",
     "tr_sync_battle_score_activities",
     "tr_sync_bets_activities",
+    "tr_sync_combo_activities",
     "trg_activities_auto_pause",
     "update_bets_on_activity"
    ],
@@ -5420,7 +5493,7 @@
     {
      "nome": "Admins can view all audit logs",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -7679,6 +7752,13 @@
      "pk": false,
      "default": "'manual'",
      "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
@@ -7736,7 +7816,8 @@
     "process-cadence-tasks"
    ],
    "triggers": [
-    "trg_award_xp_on_quote_cadence_task_complete"
+    "trg_award_xp_on_quote_cadence_task_complete",
+    "update_cadence_tasks_updated_at"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -9668,6 +9749,8 @@
     "transcribe-call-recording"
    ],
    "triggers": [
+    "trg_auto_coaching_after_summary",
+    "trg_recording_generate_coaching",
     "update_call_recordings_updated_at"
    ],
    "sem_rls": false,
@@ -11752,6 +11835,11 @@
      "nome": "ux_clients_email",
      "colunas": "lower(email",
      "unico": true
+    },
+    {
+     "nome": "ux_clients_phone",
+     "colunas": "phone",
+     "unico": true
     }
    ],
    "fks": [
@@ -11759,12 +11847,13 @@
     "user_id->auth"
    ],
    "criada_em": "20251214012659_3118d383-73c6-4815-a245-4105e62cb87b.sql",
-   "usada_no_front": 24,
+   "usada_no_front": 25,
    "usada_em_edges": [
     "ai-email-composer",
     "bitrix24-sync",
     "customer-success-360",
     "email-composer-bulk",
+    "inbound-email-webhook",
     "predictive-intelligence",
     "scheduled-reports-runner",
     "send-quote-to-client",
@@ -12643,6 +12732,12 @@
      "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
+    },
+    {
+     "nome": "Users can update own combo_tracking",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
     }
    ],
    "indices": [
@@ -12656,11 +12751,11 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20260330181929_7bd6f520-5bb7-4669-b3bd-5fa7d2af218b.sql",
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "commercial_approval_requests": {
    "colunas": {
@@ -19547,6 +19642,7 @@
    "usada_no_front": 2,
    "usada_em_edges": [
     "email-engagement-scorer",
+    "inbound-email-webhook",
     "send-time-optimizer"
    ],
    "triggers": [
@@ -20043,6 +20139,12 @@
     {
      "nome": "Admins can view error logs",
      "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "authenticated can insert error logs",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
@@ -22010,12 +22112,101 @@
    "nao_usada": false
   },
   "geo_access_logs": {
-   "colunas": {},
-   "rls": false,
-   "policies": [],
-   "indices": [],
+   "colunas": {
+    "attempted_path": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "blocked": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "city": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "country_code": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "country_name": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "ip_address": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "region": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "user_agent": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Admins can read geo_access_logs",
+     "comando": "select",
+     "para": "public",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_geo_access_logs_country_code",
+     "colunas": "country_code",
+     "unico": false
+    },
+    {
+     "nome": "idx_geo_access_logs_created_at",
+     "colunas": "created_at DESC",
+     "unico": false
+    }
+   ],
    "fks": [],
-   "criada_em": null,
+   "criada_em": "20261117070000_reconcilia_objetos_orfaos_producao.sql",
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
@@ -22023,19 +22214,102 @@
    "nao_usada": false
   },
   "geo_blocked_regions": {
-   "colunas": {},
-   "rls": false,
+   "colunas": {
+    "blocked_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "blocked_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "country_code": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "country_name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "is_active": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "reason": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
    "policies": [
     {
      "nome": "Admin and managers can read geo_blocked_regions",
      "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
+    },
+    {
+     "nome": "Admins can manage geo_blocked_regions",
+     "comando": "all",
+     "para": "public",
+     "tipo": "permissive"
     }
    ],
-   "indices": [],
-   "fks": [],
-   "criada_em": null,
+   "indices": [
+    {
+     "nome": "idx_geo_blocked_regions_blocked_by",
+     "colunas": "blocked_by",
+     "unico": false
+    },
+    {
+     "nome": "idx_geo_blocked_regions_country_code",
+     "colunas": "country_code",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "blocked_by->auth"
+   ],
+   "criada_em": "20261117070000_reconcilia_objetos_orfaos_producao.sql",
    "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
@@ -23758,7 +24032,7 @@
     {
      "nome": "Users can view logs of their clients",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -25405,6 +25679,13 @@
     "deals": {
      "tipo": "integer",
      "nn": false,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "lost_deals": {
+     "tipo": "integer",
+     "nn": true,
      "pk": false,
      "default": "0",
      "ref": null
@@ -28951,6 +29232,69 @@
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
+  },
+  "plan_rollback_ddl": {
+   "colunas": {
+    "captured_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "ddl": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "etapa": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "bigserial",
+     "nn": false,
+     "pk": true,
+     "default": null,
+     "ref": null
+    },
+    "object_name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "object_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Internal admin only - service_role bypasses RLS",
+     "comando": "all",
+     "para": "service_role",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20261117070000_reconcilia_objetos_orfaos_producao.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
   },
   "playbook_items": {
    "colunas": {
@@ -32559,6 +32903,11 @@
      "nome": "ux_quotes_external_quote_id",
      "colunas": "external_quote_id",
      "unico": true
+    },
+    {
+     "nome": "ux_quotes_quote_number_ativo",
+     "colunas": "quote_number",
+     "unico": true
     }
    ],
    "fks": [
@@ -32606,6 +32955,13 @@
      "nn": true,
      "pk": false,
      "default": "now()",
+     "ref": null
+    },
+    "event_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     },
     "id": {
@@ -32756,6 +33112,7 @@
    "triggers": [
     "trg_auto_map_inbound_seller",
     "trg_normalize_quotes_inbound",
+    "trg_quotes_inbound_ordering_guard",
     "trg_quotes_inbound_updated_at"
    ],
    "sem_rls": false,
@@ -36071,7 +36428,7 @@
     "territory_id->territories"
    ],
    "criada_em": "20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e.sql",
-   "usada_no_front": 110,
+   "usada_no_front": 111,
    "usada_em_edges": [
     "ai-copilot",
     "ai-email-composer",
@@ -36274,8 +36631,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
-    "tr_notify_battle_victory",
-    "tr_victory_battle"
+    "tr_notify_battle_victory"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -36888,6 +37244,7 @@
     "execute-workflow",
     "extract-deal-stakeholders",
     "generate-urgent-client-tasks",
+    "inbound-email-webhook",
     "next-best-action",
     "notify-ranking-position",
     "personal-assistant-stream",
@@ -42262,6 +42619,16 @@
      "nome": "idx_suppliers_is_active",
      "colunas": "is_active",
      "unico": false
+    },
+    {
+     "nome": "ux_suppliers_cnpj_ativo",
+     "colunas": "cnpj",
+     "unico": true
+    },
+    {
+     "nome": "ux_suppliers_email_ativo",
+     "colunas": "lower(email",
+     "unico": true
     }
    ],
    "fks": [
@@ -43295,6 +43662,11 @@
      "nome": "idx_teams_sdr_id",
      "colunas": "sdr_id",
      "unico": false
+    },
+    {
+     "nome": "ux_teams_name_ativo",
+     "colunas": "name",
+     "unico": true
     }
    ],
    "fks": [
@@ -44668,11 +45040,11 @@
    "indices": [],
    "fks": [],
    "criada_em": "20260421101729_9e60825c-1009-48b4-93e3-79030c85f9cd.sql",
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "users": {
    "colunas": {
@@ -45395,7 +45767,9 @@
      "unico": false
     }
    ],
-   "fks": [],
+   "fks": [
+    "user_id->auth"
+   ],
    "criada_em": "20251231124536_b90feb11-36b2-4de9-bfb5-ca04c1638a98.sql",
    "usada_no_front": 0,
    "usada_em_edges": [
@@ -45524,7 +45898,9 @@
      "unico": false
     }
    ],
-   "fks": [],
+   "fks": [
+    "user_id->auth"
+   ],
    "criada_em": "20251231124536_b90feb11-36b2-4de9-bfb5-ca04c1638a98.sql",
    "usada_no_front": 0,
    "usada_em_edges": [
@@ -45533,6 +45909,79 @@
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
+  },
+  "webhook_allowed_domains": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "pattern": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Admins manage webhook_allowed_domains",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "ux_webhook_allowed_domains_pattern",
+     "colunas": "pattern",
+     "unico": true
+    }
+   ],
+   "fks": [
+    "created_by->auth"
+   ],
+   "criada_em": "20261117050000_webhook_ssrf_e_rate_limit.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "set_updated_at_webhook_allowed_domains"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
   },
   "webhook_deliveries": {
    "colunas": {
@@ -45646,6 +46095,65 @@
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
+  },
+  "webhook_dispatch_rate": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "dispatched_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "subscription_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "winloss_webhook_subscriptions"
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [
+    {
+     "nome": "idx_webhook_dispatch_rate_sub_ts",
+     "colunas": "subscription_id, dispatched_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "subscription_id->winloss_webhook_subscriptions"
+   ],
+   "criada_em": "20261117050000_webhook_ssrf_e_rate_limit.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "set_updated_at_webhook_dispatch_rate"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
   },
   "webhook_events": {
    "colunas": {
@@ -46053,7 +46561,7 @@
     {
      "nome": "Admins can view webhook logs",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -46212,12 +46720,6 @@
      "nome": "Admins and managers can view webhooks",
      "comando": "select",
      "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "Admins can manage webhooks",
-     "comando": "all",
-     "para": "public",
      "tipo": "permissive"
     },
     {
@@ -48509,6 +49011,20 @@
      "default": null,
      "ref": null
     },
+    "rate_limit_per_minute": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "60",
+     "ref": null
+    },
+    "rate_limit_window_seconds": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "60",
+     "ref": null
+    },
     "secret": {
      "tipo": "text",
      "nn": false,
@@ -49189,6 +49705,11 @@
    "usada_em": 1
   },
   {
+   "nome": "check_webhook_rate_limit",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "claim_daily_challenge_reward",
    "definida": true,
    "usada_em": 2
@@ -49205,6 +49726,11 @@
   },
   {
    "nome": "claim_weekly_challenge_reward",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "coaching_progress_by_salesperson",
    "definida": true,
    "usada_em": 1
   },
@@ -49534,6 +50060,11 @@
    "usada_em": 1
   },
   {
+   "nome": "is_webhook_host_allowed",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "log_audit_event",
    "definida": true,
    "usada_em": 1
@@ -49606,7 +50137,7 @@
   {
    "nome": "record_engagement_signal",
    "definida": true,
-   "usada_em": 2
+   "usada_em": 3
   },
   {
    "nome": "record_failed_login_attempt",
@@ -49622,6 +50153,11 @@
    "nome": "record_successful_login_attempt",
    "definida": true,
    "usada_em": 2
+  },
+  {
+   "nome": "refresh_session",
+   "definida": true,
+   "usada_em": 1
   },
   {
    "nome": "regenerate_backup_codes",
@@ -49745,6 +50281,11 @@
   },
   {
    "nome": "validate_api_token",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "validate_session",
    "definida": true,
    "usada_em": 1
   },

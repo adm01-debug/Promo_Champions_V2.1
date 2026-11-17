@@ -31,6 +31,7 @@
 
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
+| pipeline_stage_order_positive | CHECK | `CHECK (stage_order IS NULL OR stage_order >= 0)` |  |  | sim |
 | pipeline_stages_pipeline_id_fkey | FOREIGN KEY | `FOREIGN KEY (pipeline_id) REFERENCES pipelines(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | pipeline_stages_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 

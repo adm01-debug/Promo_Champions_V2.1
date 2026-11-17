@@ -1,32 +1,32 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2308,
- "arestas": 9518,
+ "nos": 2325,
+ "arestas": 9564,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 707
+   "importado_por": 711
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 548
+   "importado_por": 553
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 545
+   "importado_por": 549
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 536
+   "importado_por": 539
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 390
+   "importado_por": 392
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 315
+   "importado_por": 317
   },
   {
    "arquivo": "src/lib/money.ts",
@@ -70,11 +70,11 @@
   },
   {
    "arquivo": "src/constants/index.ts",
-   "importado_por": 96
+   "importado_por": 97
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",
-   "importado_por": 88
+   "importado_por": 90
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
@@ -121,12 +121,12 @@
    "importado_por": 40
   },
   {
-   "arquivo": "supabase/functions/_shared/ai-gateway.ts",
+   "arquivo": "src/hooks/useUserRoles.ts",
    "importado_por": 39
   },
   {
-   "arquivo": "src/hooks/useUserRoles.ts",
-   "importado_por": 38
+   "arquivo": "supabase/functions/_shared/ai-gateway.ts",
+   "importado_por": 39
   },
   {
    "arquivo": "supabase/functions/_shared/business-date.ts",
@@ -213,6 +213,7 @@
   "supabase/functions/email-unsubscribe/security_test.ts",
   "supabase/functions/enrich-lead/contract_test.ts",
   "supabase/functions/execute-workflow/contracts_test.ts",
+  "supabase/functions/inbound-email-webhook/contract_test.ts",
   "supabase/functions/lead-scoring/lead-scoring_test.ts",
   "supabase/functions/log-web-vitals/security_test.ts",
   "supabase/functions/personal-assistant-stream/fallback_test.ts",
@@ -261,7 +262,7 @@
   },
   {
    "modulo": "hooks",
-   "depende_de": 16,
+   "depende_de": 17,
    "importado_por": 82
   },
   {
@@ -335,14 +336,14 @@
    "importado_por": 2
   },
   {
+   "modulo": "components/gamification",
+   "depende_de": 8,
+   "importado_por": 8
+  },
+  {
    "modulo": "components/cadences",
    "depende_de": 12,
    "importado_por": 3
-  },
-  {
-   "modulo": "components/gamification",
-   "depende_de": 7,
-   "importado_por": 8
   }
  ],
  "arestas_em": "docs/contexto/codigo/grafo-arestas.json"

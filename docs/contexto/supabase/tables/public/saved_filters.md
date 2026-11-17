@@ -8,7 +8,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 4 |
+| policies | 8 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -62,6 +62,16 @@
 | USING |  |
 | WITH CHECK | `(auth.uid() = user_id)` |
 
+### `Users can delete own filters`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | public |
+| USING | `(auth.uid() = user_id)` |
+| WITH CHECK |  |
+
 ### `Users can delete their own saved filters`
 
 | campo | valor |
@@ -72,11 +82,41 @@
 | USING | `(auth.uid() = user_id)` |
 | WITH CHECK |  |
 
+### `Users can insert own filters`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | public |
+| USING |  |
+| WITH CHECK | `(auth.uid() = user_id)` |
+
+### `Users can update own filters`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | public |
+| USING | `(auth.uid() = user_id)` |
+| WITH CHECK | `(auth.uid() = user_id)` |
+
 ### `Users can update their own saved filters`
 
 | campo | valor |
 |---|---|
 | comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | public |
+| USING | `(auth.uid() = user_id)` |
+| WITH CHECK |  |
+
+### `Users can view own filters`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
 | tipo | PERMISSIVE |
 | roles | public |
 | USING | `(auth.uid() = user_id)` |
@@ -100,6 +140,7 @@
 | ensure_single_default_filter_trigger | BEFORE | INSERT OR UPDATE | ROW | enabled | public.ensure_single_default_filter |
 | set_updated_at | BEFORE | UPDATE | ROW | enabled | public.handle_updated_at |
 | trigger_saved_filters_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_saved_filters_updated_at |
+| trigger_single_default_filter | BEFORE | INSERT OR UPDATE | ROW | enabled | public.ensure_single_default_filter |
 | update_saved_filters_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

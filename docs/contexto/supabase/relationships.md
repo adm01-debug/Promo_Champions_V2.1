@@ -397,7 +397,11 @@
 | public.user_roles | user_id | auth.users | id | CASCADE | NO ACTION |
 | public.v4_callback_dead_letters | quote_id | public.quotes | id | SET NULL | NO ACTION |
 | public.victory_feed | salesperson_id | public.salespeople | id | CASCADE | NO ACTION |
+| public.webauthn_challenges | user_id | auth.users | id | CASCADE | NO ACTION |
+| public.webauthn_credentials | user_id | auth.users | id | CASCADE | NO ACTION |
+| public.webhook_allowed_domains | created_by | auth.users | id | SET NULL | NO ACTION |
 | public.webhook_deliveries | webhook_id | public.webhooks | id | CASCADE | NO ACTION |
+| public.webhook_dispatch_rate | subscription_id | public.winloss_webhook_subscriptions | id | CASCADE | NO ACTION |
 | public.webhook_events | webhook_id | public.webhooks | id | CASCADE | NO ACTION |
 | public.webhook_logs | webhook_id | public.webhooks | id | CASCADE | NO ACTION |
 | public.webhooks | created_by | auth.users | id | SET NULL | NO ACTION |

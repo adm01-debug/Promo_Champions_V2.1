@@ -3,9 +3,9 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2458)",
-   "SQL (683)",
-   "Markdown (206)",
+   "TypeScript (2482)",
+   "SQL (708)",
+   "Markdown (212)",
    "JavaScript (78)",
    "JSON (33)",
    "YAML (28)",
@@ -86,7 +86,7 @@
    "graphify:test": "node --test scripts/graphify/*.test.mjs",
    "graphify:verify": "node scripts/graphify/verify-output.mjs",
    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-   "lint:complexity": "eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 130",
+   "lint:complexity": "eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 131",
    "lint:fix": "eslint . --fix",
    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
@@ -115,17 +115,17 @@
    "@supabase/supabase-js": "^2.118.0",
    "@tanstack/react-query": "^5.105.1",
    "date-fns": "^4.4.0",
-   "framer-motion": "^13.2.0",
+   "framer-motion": "^14.13.0",
    "next-themes": "^0.4.6",
    "react": "^19.3.1",
    "react-day-picker": "^10.0.2",
    "react-dom": "^19.3.1",
    "react-helmet-async": "^3.0.0",
-   "react-hook-form": "^7.49.0",
+   "react-hook-form": "^7.92.0",
    "react-intersection-observer": "^11.0.1",
    "react-leaflet": "^5.0.0",
    "react-markdown": "^10.1.0",
-   "react-resizable-panels": "^2.0.0",
+   "react-resizable-panels": "^4.22.0",
    "react-router-dom": "^7.18.5",
    "react-window": "^2.5.3",
    "recharts": "3.10.1",
@@ -352,7 +352,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "3-59/10 * * * *"
+    "3 * * * *"
    ],
    "branches": [
     "main"
@@ -509,7 +509,8 @@
    "arquivo": ".github/workflows/dependabot-fix-lockfile.yml",
    "nome": "Dependabot – Fix deno.lock",
    "gatilhos": [
-    "pull_request_target"
+    "pull_request_target",
+    "workflow_dispatch"
    ],
    "crons": [],
    "branches": [],
@@ -1367,6 +1368,10 @@
    "arquivos_md": 16
   },
   {
+   "pasta": "docs/agentes",
+   "arquivos_md": 12
+  },
+  {
    "pasta": "docs/decisions",
    "arquivos_md": 11
   },
@@ -1381,10 +1386,6 @@
   {
    "pasta": "docs/execucao",
    "arquivos_md": 8
-  },
-  {
-   "pasta": "docs/agentes",
-   "arquivos_md": 6
   },
   {
    "pasta": "docs/contexto",
@@ -1757,6 +1758,10 @@
     "arquivos": 1
    },
    {
+    "host": "promo.com",
+    "arquivos": 1
+   },
+   {
     "host": "seu-endpoint.com",
     "arquivos": 1
    },
@@ -2090,6 +2095,7 @@
    "is_ip_blocked",
    "is_ip_whitelisted",
    "is_recipient_opted_out",
+   "is_webhook_host_allowed",
    "verify_reauth_request"
   ],
   "guards": [

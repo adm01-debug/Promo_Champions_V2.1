@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1276,
+ "total": 1282,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -1455,12 +1455,29 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
+   "exports": [
+    "ABCActionableAutomations",
+    "AbcAutomation",
+    "CONCENTRATION_RISK_PCT",
+    "LONG_TAIL_MAX_PCT"
+   ],
+   "export_default": null,
+   "linhas": 187,
+   "dominio": "components/analytics",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
    "exports": [
     "ABCAnalysis"
    ],
    "export_default": null,
-   "linhas": 241,
+   "linhas": 264,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useABCAnalysis"
@@ -5038,6 +5055,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/conversational/CoachingProgressCard.tsx",
+   "exports": [
+    "CoachingProgressCard"
+   ],
+   "export_default": null,
+   "linhas": 122,
+   "dominio": "components/conversational",
+   "hooks_locais": [
+    "useCoachingProgress"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/conversational/CompetitorMentionsCard.tsx",
    "exports": [
     "CompetitorMentionsCard"
@@ -7801,10 +7834,12 @@
     "EngagementLeaderboardWidget"
    ],
    "export_default": null,
-   "linhas": 58,
+   "linhas": 82,
    "dominio": "components/engagement",
    "hooks_locais": [
-    "useEngagementLeaderboard"
+    "useEngagementLeaderboard",
+    "useRecomputeContactEngagement",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -8228,6 +8263,22 @@
    "dominio": "components/gamification",
    "hooks_locais": [
     "useLevelUpCelebration"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/gamification/ComboIndicator.tsx",
+   "exports": [
+    "ComboIndicator"
+   ],
+   "export_default": null,
+   "linhas": 157,
+   "dominio": "components/gamification",
+   "hooks_locais": [
+    "useTodayCombo"
    ],
    "tabelas": [],
    "edges": [],
@@ -14266,6 +14317,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/security/SessionManager.tsx",
+   "exports": [
+    "SessionManager"
+   ],
+   "export_default": null,
+   "linhas": 199,
+   "dominio": "components/security",
+   "hooks_locais": [
+    "useSessionManagement"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/semantic/SemanticSearchDialog.tsx",
    "exports": [
     "SemanticSearchDialog"
@@ -15474,7 +15541,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -15521,7 +15588,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 545,
+   "usado_por": 549,
    "orfao": false
   },
   {
@@ -15555,7 +15622,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 536,
+   "usado_por": 539,
    "orfao": false
   },
   {
@@ -15587,7 +15654,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 707,
+   "usado_por": 711,
    "orfao": false
   },
   {
@@ -15988,7 +16055,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 315,
+   "usado_por": 317,
    "orfao": false
   },
   {
@@ -16557,6 +16624,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/win-loss/DashboardLayoutEditor.tsx",
+   "exports": [
+    "DashboardLayoutEditor"
+   ],
+   "export_default": null,
+   "linhas": 177,
+   "dominio": "components/win-loss",
+   "hooks_locais": [
+    "useUserDashboardLayout"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/win-loss/DealTimelineExpand.tsx",
    "exports": [
     "DealTimelineExpand"
@@ -16933,12 +17016,28 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/win-loss/UpsellSuggestionCard.tsx",
+   "exports": [
+    "UpsellSuggestionCard"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "dominio": "components/win-loss",
+   "hooks_locais": [
+    "useUpsellSuggestions"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/win-loss/VirtualDealsList.tsx",
    "exports": [
     "VirtualDealsList"
    ],
    "export_default": null,
-   "linhas": 155,
+   "linhas": 160,
    "dominio": "components/win-loss",
    "hooks_locais": [
     "useReducedMotion"
@@ -17362,7 +17461,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 86,
+   "usado_por": 88,
    "orfao": false
   },
   {
@@ -18038,7 +18137,7 @@
     "ArenaCompetitiva"
    ],
    "export_default": "ArenaCompetitiva",
-   "linhas": 381,
+   "linhas": 390,
    "dominio": "pages",
    "hooks_locais": [
     "useRankNotifications"
@@ -19020,7 +19119,7 @@
     "HistoricalBenchmark"
    ],
    "export_default": "HistoricalBenchmark",
-   "linhas": 273,
+   "linhas": 285,
    "dominio": "pages",
    "hooks_locais": [
     "useMonthlySalesBenchmark"
@@ -19990,7 +20089,7 @@
     "SDRDashboard"
    ],
    "export_default": "SDRDashboard",
-   "linhas": 662,
+   "linhas": 673,
    "dominio": "pages",
    "hooks_locais": [
     "useDialerQueues",
@@ -20009,7 +20108,7 @@
     "SecurityDashboard"
    ],
    "export_default": "SecurityDashboard",
-   "linhas": 289,
+   "linhas": 294,
    "dominio": "pages",
    "hooks_locais": [
     "useCircuitBreakerHistory",
@@ -20245,7 +20344,7 @@
     "VendedorDashboard"
    ],
    "export_default": "VendedorDashboard",
-   "linhas": 419,
+   "linhas": 422,
    "dominio": "pages",
    "hooks_locais": [
     "useCountUp"
@@ -20334,7 +20433,7 @@
     "WinLossIntelligence"
    ],
    "export_default": "WinLossIntelligence",
-   "linhas": 483,
+   "linhas": 559,
    "dominio": "pages",
    "hooks_locais": [
     "useFilteredWinLossAnalyses",

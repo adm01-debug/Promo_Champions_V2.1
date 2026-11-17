@@ -29,6 +29,7 @@
 
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
+| fk_webauthn_challenges_user_id | FOREIGN KEY | `FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
 | webauthn_challenges_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | webauthn_challenges_type_check | CHECK | `CHECK (type = ANY (ARRAY['registration'::text, 'authentication'::text]))` |  |  | sim |
 

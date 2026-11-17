@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -53,6 +53,16 @@
 | USING | `(auth.uid() IS NOT NULL)` |
 | WITH CHECK |  |
 
+### `Users can delete own feed_comments`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` |
+| WITH CHECK |  |
+
 ### `Users can insert own feed_comments`
 
 | campo | valor |
@@ -62,6 +72,16 @@
 | roles | authenticated |
 | USING |  |
 | WITH CHECK | `(salesperson_id = get_current_salesperson_id())` |
+
+### `Users can update own feed_comments`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` |
+| WITH CHECK | `(salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))` |
 
 
 ## Triggers

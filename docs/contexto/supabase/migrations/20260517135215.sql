@@ -1,1 +1,0 @@
-GRANT EXECUTE ON FUNCTION public.get_current_salesperson_id() TO authenticated, anon;

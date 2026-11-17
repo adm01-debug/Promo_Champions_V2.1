@@ -1,1 +1,0 @@
-DROP INDEX IF EXISTS public.idx_error_logs_severity;
