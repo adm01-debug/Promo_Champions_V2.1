@@ -43,10 +43,26 @@ jobs:
             URL=$(jq -r '.url' <<<"$PR")
             TITLE=$(jq -r '.title' <<<"$PR")
             AUTHOR=$(jq -r '.author.login' <<<"$PR")
+            AUTHOR_IS_BOT=$(jq -r '.author.is_bot // false' <<<"$PR")
             DRAFT=$(jq -r '.isDraft' <<<"$PR")
             CREATED=$(date -d "$(jq -r '.createdAt' <<<"$PR")" +%s)
             AGE=$((NOW - CREATED))
             REVIEWS=$(jq '.reviews | length' <<<"$PR")
+
+            # PR de bot não tem revisor humano a cobrar: o lembrete marcava
+            # um handle de app (ex.: @app/dependabot na PR #347, comentários
+            # 6603260264 e 6666778445) e só gerava ruído. Dois critérios porque
+            # o campo is_bot do gh não cobre todo app que abre PR.
+            if [ "$AUTHOR_IS_BOT" = "true" ]; then
+              echo "PR #$NUMBER: autor é bot ($AUTHOR), fora do SLA."
+              continue
+            fi
+            case "$AUTHOR" in
+              *'[bot]')
+                echo "PR #$NUMBER: autor é bot ($AUTHOR), fora do SLA."
+                continue
+                ;;
+            esac
 
             # Drafts e PRs novas não entram no SLA.
             [ "$DRAFT" = "true" ] && continue
