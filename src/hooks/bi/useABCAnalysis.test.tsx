@@ -8,17 +8,31 @@ let salesRows: Array<{
   amount: number | null;
   product_name: string | null;
   client_name: string | null;
+  client_id?: string | null;
   status: string;
 }> = [];
 
+let clientRows: Array<{ id: string; name: string }> = [];
+
+// O mock despacha por tabela: antes devolvia as vendas para qualquer `from()`,
+// então a consulta a `clients` recebia vendas e o agrupamento por client_id
+// nunca era exercitado.
 vi.mock('@/integrations/supabase/client', () => {
-  const query = {
-    select: () => query,
-    in: () => query,
-    then: (resolve: (value: { data: unknown[]; error: null }) => unknown) =>
-      Promise.resolve({ data: salesRows, error: null }).then(resolve),
+  const makeQuery = (rows: () => unknown[]) => {
+    const query = {
+      select: () => query,
+      in: () => query,
+      then: (resolve: (value: { data: unknown[]; error: null }) => unknown) =>
+        Promise.resolve({ data: rows(), error: null }).then(resolve),
+    };
+    return query;
   };
-  return { supabase: { from: () => query } };
+  return {
+    supabase: {
+      from: (table: string) =>
+        table === 'clients' ? makeQuery(() => clientRows) : makeQuery(() => salesRows),
+    },
+  };
 });
 
 const { useABCAnalysis, CONCENTRATION_WARNING_THRESHOLD_PCT } =
@@ -32,6 +46,7 @@ function wrapper({ children }: { children: ReactNode }) {
 describe('useABCAnalysis', () => {
   beforeEach(() => {
     salesRows = [];
+    clientRows = [];
   });
 
   it('calcula a concentração dos maiores clientes a partir das vendas reais', async () => {
@@ -108,6 +123,95 @@ describe('useABCAnalysis', () => {
       description: 'Seus 3 principais clientes geram 50.0% da receita.',
       type: 'info',
     });
+  });
+
+  it('clientes distintos com o mesmo nome não são fundidos', async () => {
+    // O bug corrigido: client_name repetido colapsava clientes diferentes num
+    // só grupo e inflava a concentração.
+    clientRows = [
+      { id: 'c1', name: 'Cliente Demo' },
+      { id: 'c2', name: 'Cliente Demo' },
+    ];
+    salesRows = [
+      {
+        amount: 600,
+        product_name: 'Caneca',
+        client_name: 'Cliente Demo',
+        client_id: 'c1',
+        status: 'won',
+      },
+      {
+        amount: 400,
+        product_name: 'Caneca',
+        client_name: 'Cliente Demo',
+        client_id: 'c2',
+        status: 'won',
+      },
+    ];
+
+    const { result } = renderHook(() => useABCAnalysis(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.clients).toHaveLength(2);
+    expect(result.current.data?.clients.map(c => c.revenue)).toEqual([600, 400]);
+  });
+
+  it('mesmo cliente com nomes divergentes vira um grupo, rotulado pelo cadastro', async () => {
+    clientRows = [{ id: 'c1', name: 'Nome do Cadastro' }];
+    salesRows = [
+      {
+        amount: 300,
+        product_name: 'Caneca',
+        client_name: 'Apelido A',
+        client_id: 'c1',
+        status: 'won',
+      },
+      {
+        amount: 200,
+        product_name: 'Caneca',
+        client_name: 'Apelido B',
+        client_id: 'c1',
+        status: 'won',
+      },
+    ];
+
+    const { result } = renderHook(() => useABCAnalysis(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.clients).toHaveLength(1);
+    expect(result.current.data?.clients[0]).toMatchObject({
+      name: 'Nome do Cadastro',
+      revenue: 500,
+    });
+  });
+
+  it('venda sem client_id continua agrupada pelo nome', async () => {
+    clientRows = [{ id: 'c1', name: 'Com Cadastro' }];
+    salesRows = [
+      {
+        amount: 400,
+        product_name: 'Caneca',
+        client_name: 'Com Cadastro',
+        client_id: 'c1',
+        status: 'won',
+      },
+      {
+        amount: 100,
+        product_name: 'Caneca',
+        client_name: 'Sem Cadastro',
+        client_id: null,
+        status: 'won',
+      },
+    ];
+
+    const { result } = renderHook(() => useABCAnalysis(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.clients.map(c => c.name)).toEqual([
+      'Com Cadastro',
+      'Sem Cadastro',
+    ]);
+    expect(result.current.data?.totalRevenue).toBe(500);
   });
 
   it('sem vendas, não gera nenhum insight', async () => {
