@@ -144,3 +144,70 @@ um commit da própria main. Reverificada byte a byte (ancestral de main, 0 commi
 `release-please--…`) seguem o veredicto da tabela acima: nenhuma tem trabalho
 exclusivo não incorporado. `automation/types-sync` tem o blob de `types.ts`
 **idêntico** ao da main (`2074f052b`).
+
+---
+
+## Varredura das 79 PRs fechadas sem merge — 17/11/2026
+
+As branches vivas não eram o único lugar onde trabalho de outro agente podia ter
+ficado para trás. Toda PR **fechada sem merge** também foi verificada, porque o
+GitHub preserva o commit dela em `refs/pull/<N>/head` mesmo depois de a branch
+desaparecer.
+
+- **79** PRs fechadas sem merge. **59** são `dependabot` (bump de dependência — o
+  que vale é o `package.json` atual) e **3** são ping de CI sem conteúdo
+  (`#371`, `#372`, `#376`).
+- **20 não-dependabot** analisadas uma por uma: `#65`, `#106`, `#132`, `#276`,
+  `#280`, `#281`, `#302`, `#303`, `#304`, `#305`, `#310`, `#365`, `#369`, `#415`,
+  `#459`, `#461`, `#464`, `#488` (e os três pings acima).
+
+### Método
+
+Para cada PR: `git fetch origin refs/pull/<N>/head`, comparação dos caminhos da
+árvore da branch com `origin/main` e, para cada caminho que só existe na branch,
+duas perguntas — existe arquivo de mesmo nome em outro lugar da main (movido)? a
+main importa esse nome (consumidor vivo)?
+
+Comparar commit por commit não serve aqui: a história da `main` foi reescrita, e
+essas branches têm mais de 12.000 commits "fora da main" só por isso. A
+comparação é de **conteúdo**, não de ancestralidade.
+
+### Resultado
+
+| medida                                                       | valor   |
+| ------------------------------------------------------------ | ------- |
+| caminhos exclusivos distintos nas 20 branches                | 173     |
+| com arquivo de mesmo nome em outro caminho da main (movidos) | 19      |
+| sem homônimo na main                                         | 154     |
+| destes, **não importados por nada** na main                  | **153** |
+
+- Os 19 movidos são reorganização de pasta, não perda: `RaceArena.tsx` está em
+  `src/components/race/`, `CommandPalette.tsx` em `src/components/command/`,
+  `goalsService`/`useGoals` aparecem em 9 arquivos da main.
+- O único dos 154 cujo nome a main ainda cita é `src/components/ui/sonner.tsx`,
+  e a citação é o **pacote** `sonner`: `src/App.tsx` importa
+  `Toaster as SonnerComponent` direto dele, e a main tem seu próprio
+  `src/components/ui/toaster.tsx`. O wrapper antigo está superado.
+- Os outros 153 são componentes pré-reescrita que **ninguém importa** na main
+  (13 em `gamification`, 12 em `ui`, 10 em `dashboard`, …). Restaurar qualquer um
+  injetaria código morto, não funcionalidade — é o oposto do que o sistema precisa.
+  Entre eles, três sem nenhum vestígio na main: `PermissionGate`, `SettingsPanel`
+  e `password-strength` (permissão hoje é `useUserRoles` + RLS; as telas de
+  configuração existem como rota própria).
+- As 3 migrations exclusivas das PRs do Devin já tinham veredicto em
+  `docs/agentes/migrations-arquivadas-veredicto-261117.md`:
+  `20261019120000_bitrix24_sync_run_lock.sql` **SUPERADA**,
+  `20261019150000_agent_run_owner_check.sql` **INCORPORADA** (6/6 objetos),
+  `20261019151000_sales_status_canon_r2.sql` **INCORPORADA** (18/18).
+- As PRs `#459`, `#461` e `#464` — regras de negócio (post único no feed de
+  batalha, funções SQL ignorando soft delete, 12 crons da máquina de vendas) —
+  têm seus 5 arquivos **byte a byte idênticos** na main; foram incorporadas por
+  outro caminho antes de a PR ser fechada.
+- `ABCMatrixShift.tsx` e `Client360PredictiveCards.tsx` aparecem como exclusivos
+  em quase toda PR fechada recente: foram removidos **de propósito** pelas PRs
+  mergeadas #441 e #446, o mesmo veredicto já dado para
+  `automation/inventario-estado`.
+
+**Conclusão: nenhuma das 79 PRs fechadas guarda trabalho recuperável.** O que era
+bom foi incorporado (verificado byte a byte onde o arquivo existe na main), o
+resto é conteúdo pré-reescrita sem consumidor.
