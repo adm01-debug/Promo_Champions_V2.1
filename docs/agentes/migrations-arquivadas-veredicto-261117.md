@@ -15,7 +15,8 @@ caminhos distintos fora de main: 1350
 
 Dos 1.181, **1.154** são de `snapshot/261117/contexto` (tudo `docs/contexto/`, gerado
 por `contexto[bot]`: 443 `.md`, 690 `.sql` que são dumps de `pg_get_functiondef` e
-21 `.json`). Sobram **27 caminhos** em 7 tags: 22 migrations e 5 outros arquivos.
+21 `.json`). Sobram **27 caminhos** em 7 tags: 22 migrations e 5 outros arquivos — e este
+documento dá veredicto aos 27.
 
 ## Método
 
@@ -167,6 +168,44 @@ dormente (0 linhas).
 **Não aplica**: faz JOIN com uma tabela `public.roles` que não existe
 (`to_regclass` → NULL) e usa `user_roles.role_id`, coluna que não existe — a real é
 `role`, do enum `app_role`.
+
+## Os outros 5 caminhos únicos (não são migrations)
+
+Os 27 caminhos únicos são 22 migrations e **5 outros arquivos**. Mesma pergunta,
+mesmo critério:
+
+| arquivo | tag | veredicto |
+|---|---|---|
+| `scripts/fix_cors.sh` | `archive/audit/rlx-security-fix` | **INCORPORADA pelo resultado** |
+| `scripts/fix_cors.py` | idem | idem |
+| `scripts/fix_cors.cjs` | idem | idem |
+| `src/lib/queryClient.ts` | idem | **SUPERADA** |
+| `.github/runner-test.md` | `archive/claude/chore-ci-runner-test-261106-0320` | **OBSOLETA** |
+
+**Os três `fix_cors`** são a mesma ferramenta escrita em três linguagens: um mutador em
+massa que trocaria `corsHeaders` estático por `getCorsHeaders(req)` dinâmico nas edge
+functions. **O trabalho que ele faria já está feito.** Medido em `origin/main`, nos 171
+handlers `index.ts`:
+
+```
+dinâmico (getCorsHeaders) = 167
+estático (corsHeaders)    =   0
+sem CORS                  =   4
+```
+
+Os 4 sem CORS são de propósito: `check-quote-expiration` (cron, sem chamador de
+navegador), `twilio-call-status` e `twilio-call-twiml` (webhook servidor-a-servidor) e
+`report-embed-public`, que escreve os próprios cabeçalhos para um embed público
+(`GET, OPTIONS`). Rodar o script hoje não mudaria nada — e `supabase/functions/_shared/cors.ts:112`
+mantém `corsHeaders` exportado de propósito, para chamadas sem `Request`.
+
+**`src/lib/queryClient.ts`** limpava o cache de consultas no logout. `main` faz mais que
+isso: o `signOut` termina em `window.location.href = '/auth'` (descarta o processo
+inteiro da página, e com ele qualquer cache em memória) e apaga `api-cache` do Cache
+Storage. Trocar por essa versão seria regressão.
+
+**`.github/runner-test.md`** é um arquivo de quatro linhas com um carimbo de data, feito
+para testar se havia runner de CI disponível em 06/11. Nada a recuperar.
 
 ## Observação sobre os 10 PARCIAL
 
