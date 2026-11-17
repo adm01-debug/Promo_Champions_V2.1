@@ -11,6 +11,7 @@ import {
   ABCActionableAutomations,
   buildAbcAutomations,
 } from './ABCActionableAutomations';
+import { ABCMatrixShiftSection } from './ABCMatrixShift';
 import { toast } from 'sonner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Maximize2 } from 'lucide-react';
@@ -136,6 +137,12 @@ export function ABCAnalysis() {
           <ABCActionableAutomations automations={automations} />
         </div>
       )}
+
+      {/* Mudanca de classe entre duas janelas da propria base. A secao decide
+          sozinha se aparece (sem as duas janelas, ou sem mudanca, devolve null):
+          os ramos ficam nela, nao aqui -- ABCAnalysis ja opera no limite de
+          complexidade do ratchet de lint. */}
+      <ABCMatrixShiftSection data={data} />
 
       <div className="grid gap-6">
         <div className="space-y-6">

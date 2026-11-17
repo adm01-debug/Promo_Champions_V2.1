@@ -27,6 +27,12 @@ interface ABCAnalysisResult {
   summary: ABCSummary;
   totalRevenue: number;
   neuralInsights: NeuralInsight[];
+  /** Curva de clientes da janela mais recente (ver ABC_WINDOW_DAYS). */
+  clientsRecentWindow: ABCItem[];
+  /** Mesma curva na janela imediatamente anterior, para comparar classes. */
+  clientsPreviousWindow: ABCItem[];
+  /** Rotulo das duas janelas comparadas, derivado do dado. Vazio = sem janela. */
+  windowLabel: string;
 }
 
 /**
@@ -35,6 +41,57 @@ interface ABCAnalysisResult {
  * insight vira 'warning'. Abaixo (ou igual) disso, é só informativo ('info').
  */
 export const CONCENTRATION_WARNING_THRESHOLD_PCT = 50;
+
+/**
+ * Tamanho de cada janela da comparacao de classe ABC. As janelas sao ancoradas
+ * na venda ganha mais recente -- nao em `now()` -- porque a base pode nao ter
+ * venda nos ultimos dias e uma janela vazia nao compara nada.
+ */
+export const ABC_WINDOW_DAYS = 365;
+
+interface SaleRow {
+  amount: number | null;
+  product_name?: string | null;
+  client_name?: string | null;
+  client_id?: string | null;
+  created_at?: string | null;
+}
+
+/**
+ * Identidade do cliente numa venda: vem de `client_id`; `client_name` so entra
+ * como rotulo de exibicao ou como chave quando `client_id` e nulo.
+ */
+function resolveSaleClient(sale: SaleRow, clientNameById: Map<string, string>) {
+  const key = sale.client_id ?? (sale.client_name ? `name:${sale.client_name}` : null);
+  if (!key) return null;
+  const label =
+    (sale.client_id ? clientNameById.get(sale.client_id) : null) ??
+    sale.client_name ??
+    key;
+  return { key, label };
+}
+
+/** Receita por cliente dentro de [from, to), ja no formato de classifyABC. */
+function clientItemsInWindow(
+  sales: SaleRow[],
+  clientNameById: Map<string, string>,
+  from: number,
+  to: number
+) {
+  const map = new Map<string, { name: string; revenue: number }>();
+  sales.forEach(sale => {
+    const at = sale.created_at ? Date.parse(sale.created_at) : NaN;
+    if (!Number.isFinite(at) || at < from || at >= to) return;
+    const client = resolveSaleClient(sale, clientNameById);
+    if (!client) return;
+    const current = map.get(client.key);
+    map.set(client.key, {
+      name: client.label,
+      revenue: (current?.revenue || 0) + (sale.amount || 0),
+    });
+  });
+  return Array.from(map.values());
+}
 
 function classifyABC(items: { name: string; revenue: number }[]): ABCItem[] {
   const sorted = [...items].sort((a, b) => b.revenue - a.revenue);
@@ -67,7 +124,7 @@ export const useABCAnalysis = () => {
         await Promise.all([
           supabase
             .from('sales')
-            .select('amount, product_name, client_name, client_id, status')
+            .select('amount, product_name, client_name, client_id, status, created_at')
             .in('status', [...WON_SALE_STATUSES]),
           supabase.from('clients').select('id, name'),
         ]);
@@ -94,16 +151,11 @@ export const useABCAnalysis = () => {
             (productMap.get(sale.product_name) || 0) + amount
           );
         }
-        const clientKey =
-          sale.client_id ?? (sale.client_name ? `name:${sale.client_name}` : null);
-        if (clientKey) {
-          const label =
-            (sale.client_id ? clientNameById.get(sale.client_id) : null) ??
-            sale.client_name ??
-            clientKey;
-          const current = clientMap.get(clientKey);
-          clientMap.set(clientKey, {
-            name: label,
+        const client = resolveSaleClient(sale, clientNameById);
+        if (client) {
+          const current = clientMap.get(client.key);
+          clientMap.set(client.key, {
+            name: client.label,
             revenue: (current?.revenue || 0) + amount,
           });
         }
@@ -117,6 +169,33 @@ export const useABCAnalysis = () => {
 
       const products = classifyABC(productItems);
       const clients = classifyABC(clientItems);
+
+      // Janelas ancoradas na venda ganha mais recente da propria base.
+      const WINDOW_MS = ABC_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+      const timestamps = (sales || [])
+        .map(s => (s.created_at ? Date.parse(s.created_at) : NaN))
+        .filter(t => Number.isFinite(t));
+      const anchor = timestamps.length ? Math.max(...timestamps) + 1 : null;
+
+      const clientsRecentWindow = anchor
+        ? classifyABC(
+            clientItemsInWindow(sales || [], clientNameById, anchor - WINDOW_MS, anchor)
+          )
+        : [];
+      const clientsPreviousWindow = anchor
+        ? classifyABC(
+            clientItemsInWindow(
+              sales || [],
+              clientNameById,
+              anchor - 2 * WINDOW_MS,
+              anchor - WINDOW_MS
+            )
+          )
+        : [];
+      const windowLabel =
+        anchor && clientsRecentWindow.length && clientsPreviousWindow.length
+          ? `${ABC_WINDOW_DAYS} dias até ${new Date(anchor - 1).toLocaleDateString('pt-BR')}`
+          : '';
 
       const countByClass = (items: ABCItem[]) => ({
         A: items.filter(i => i.classification === 'A').length,
@@ -151,6 +230,9 @@ export const useABCAnalysis = () => {
         },
         totalRevenue,
         neuralInsights,
+        clientsRecentWindow,
+        clientsPreviousWindow,
+        windowLabel,
       };
     },
     staleTime: 1000 * 60 * 30,
