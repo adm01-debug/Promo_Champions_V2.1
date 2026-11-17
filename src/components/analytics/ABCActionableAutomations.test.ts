@@ -76,6 +76,21 @@ describe('buildAbcAutomations', () => {
     expect(distribuido.some(x => x.id === 'dependencia-produto')).toBe(false);
   });
 
+  it('o card da classe B ressalva o que a curva não mede, sem prometer retorno superior', () => {
+    const clients = [item('C1', 600, 'A'), item('C2', 350, 'B'), item('C3', 50, 'C')];
+    const b = buildAbcAutomations(clients, [item('P1', 1000, 'A')], 1000).find(
+      x => x.id === 'promover-classe-b'
+    );
+    expect(b).toBeDefined();
+
+    // A curva ABC sai só de receita ganha: o hook não traz custo de aquisição,
+    // margem nem conversão. A ação precisa dizer isso, senão volta a prometer
+    // retorno comparativo que o dado não sustenta (regressão da #545).
+    expect(b?.action).toMatch(/custo/i);
+    expect(b?.action).toMatch(/convers/i);
+    expect(`${b?.title} ${b?.action}`).not.toMatch(/rende mais|maior retorno/i);
+  });
+
   it('cada item traz achado e ação, e nenhum texto fica vazio', () => {
     const clients = [item('C1', 600, 'A'), item('C2', 350, 'B'), item('C3', 50, 'C')];
     const all = buildAbcAutomations(
