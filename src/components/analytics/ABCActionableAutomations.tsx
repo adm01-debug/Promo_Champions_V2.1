@@ -70,10 +70,13 @@ export function buildAbcAutomations(
   if (classB.length) {
     out.push({
       id: 'promover-classe-b',
-      title: 'Classe B é o alvo de maior retorno',
+      title: 'Classe B: faixa intermediária',
       finding: `${classB.length} ${classB.length === 1 ? 'cliente soma' : 'clientes somam'} ${pct(share(classB))} da receita.`,
+      // A curva ABC é calculada só sobre receita ganha: o hook não traz custo de
+      // aquisição, margem nem conversão. Por isso a ação aponta a faixa como
+      // candidata a avaliar, e não promete retorno maior que buscar cliente novo.
       action:
-        'Priorizar campanha nesses clientes: subir de B para A rende mais que buscar cliente novo.',
+        'Avaliar campanha de aproximação nessa faixa. A curva mostra peso em receita, não custo nem conversão — compare com o custo de aquisição antes de priorizar.',
       severity: 'opportunity',
     });
   }
@@ -179,3 +182,5 @@ export function ABCActionableAutomations({ automations }: ABCActionableAutomatio
     </div>
   );
 }
+
+ABCActionableAutomations.displayName = 'ABCActionableAutomations';
