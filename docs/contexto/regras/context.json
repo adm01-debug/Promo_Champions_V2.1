@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8",
+  "sha": "25f5950373652e625bc85c24262a6fda1a0d39e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-17 18:18 UTC",
+  "generated_at": "2026-11-17 19:20 UTC",
   "files_total": 3608,
   "code_files": 3271,
-  "code_lines": 474675
+  "code_lines": 474683
  },
  "version": "1.3.2",
- "facts_hash": "2f8f2cb5088b8568",
+ "facts_hash": "4af6f68320e3974c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -105928,7 +105928,7 @@
   {
    "module": "scripts",
    "files": 97,
-   "lines": 23996,
+   "lines": 24004,
    "tables": [
     "a",
     "achievements",
@@ -228410,7 +228410,7 @@
   },
   "scripts/regras_negocio/indice.py": {
    "path": "scripts/regras_negocio/indice.py",
-   "lines": 237,
+   "lines": 245,
    "exports": [
     "def git",
     "def parse_dt",
@@ -296508,10 +296508,19 @@
   }
  },
  "git": {
-  "sha": "8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8",
+  "sha": "25f5950373652e625bc85c24262a6fda1a0d39e4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "25f5950",
+    "date": "2026-11-17",
+    "author": "adm01-debug",
+    "subject": "fix: índice do contexto carimba a data absoluta da coleta (#566)",
+    "files": [
+     "scripts/regras_negocio/indice.py"
+    ]
+   },
    {
     "sha": "8fc1c8c",
     "date": "2026-11-17",
@@ -296784,15 +296793,6 @@
     "files": [
      "docs/agentes/branches-encerradas-261117.md"
     ]
-   },
-   {
-    "sha": "4e3ce14",
-    "date": "2026-11-16",
-    "author": "adm01-debug",
-    "subject": "docs: conferência byte a byte das branches encerradas (#536)",
-    "files": [
-     "docs/agentes/branches-encerradas-261117.md"
-    ]
    }
   ],
   "hot_files": [
@@ -296821,8 +296821,8 @@
     2
    ],
    [
-    "docs/agentes/branches-encerradas-261117.md",
-    2
+    "scripts/regras_negocio/indice.py",
+    1
    ],
    [
     "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql",

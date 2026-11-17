@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8` (2026-11-17T15:17:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `25f5950373652e625bc85c24262a6fda1a0d39e4` (2026-11-17T16:19:17-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3593 |
 | arquivos_codigo | 2563 |
-| linhas_codigo | 440725 |
+| linhas_codigo | 440733 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -577,10 +577,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- não gerado neste run. uvx --from "graphifyy[sql]" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente
+- 21667 nós · 66440 arestas · 1534 comunidades · grafo do commit `25f59503`
+- comunidades maiores: Card (805), schema.sql (785), Button (616), client.ts (318), Índice (277), ScrollArea (265), vitest (243), Badge (239), Avatar (239), getCorsHeaders (212), utils.ts (200), react (189)
+- símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
+- consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (46)
+- package-lock.json (45)
 - package.json (44)
 - deno.lock (22)
 - RELATORIO_CI.md (18)
@@ -590,11 +593,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/pr-checks.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - src/hooks/abm/useAccounts.ts (8)
-- tests/migrations/canonical_hardening_contract_test.ts (8)
 - .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/db-backup.yml (7)
 - .github/workflows/deploy.yml (7)
 - .github/workflows/graphify.yml (7)
+- .github/workflows/migrations-drift.yml (7)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -753,6 +756,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 ## Últimos commits
+- 2026-11-17 `25f5950` fix: índice do contexto carimba a data absoluta da coleta (#566)
 - 2026-11-17 `8fc1c8c` fix: match_reply_to_enrollment reconhece contato de conta (#565)
 - 2026-11-17 `c3d8008` docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)
 - 2026-11-17 `6417fc3` fix: sinal de resposta independe da busca de inscrição (#563)
@@ -767,7 +771,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `b3daa82` docs(agentes): veredicto byte a byte das 9 branches vivas (#555)
 - 2026-11-17 `0b645fb` fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)
 - 2026-11-17 `62ddfbe` fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)
-- 2026-11-17 `c4f4e3b` fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

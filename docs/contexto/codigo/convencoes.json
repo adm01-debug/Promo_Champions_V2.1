@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: índice do contexto carimba a data absoluta da coleta (#566)",
    "fix: match_reply_to_enrollment reconhece contato de conta (#565)",
    "docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)",
    "fix: sinal de resposta independe da busca de inscrição (#563)",
-   "fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)",
-   "feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)"
+   "fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
