@@ -98,14 +98,23 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, ctx) => {
     //    invocations race (CWE-362).
     //    The WHERE also filters by prospect_cadences.status = 'active'
     //    so paused/cancelled cadences are never executed (CRITICAL #5 fix).
-    const { data: claimedIds, error: claimErr } = await supabase.rpc(
+    const { data: claimedRows, error: claimErr } = await supabase.rpc(
       "claim_pending_cadence_tasks",
       { p_today: today, p_limit: 20 },
     );
 
     if (claimErr) throw claimErr;
 
-    if (!claimedIds || claimedIds.length === 0) {
+    // A RPC e RETURNS TABLE(task_id uuid): o PostgREST devolve [{ task_id }], nao
+    // uma lista de uuid. chunkedIn espera string[] e `.in("id", [{...}])` montaria
+    // `id=in.([object Object])`. Como `.rpc()` sem tipo gerado volta como any, o
+    // deno check nao reclamava. Aceita as duas formas para nao depender do shape.
+    const claimedIds: string[] =
+      ((claimedRows ?? []) as Array<string | { task_id?: string }>)
+        .map((row) => (typeof row === "string" ? row : row?.task_id))
+        .filter((id): id is string => typeof id === "string" && id.length > 0);
+
+    if (claimedIds.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, processed: 0, results: [] }),
         { headers: { ...responseCorsHeaders, "Content-Type": "application/json" }, status: 200 },
