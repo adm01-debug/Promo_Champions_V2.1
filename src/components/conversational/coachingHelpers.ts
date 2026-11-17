@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-type CoachingCategory =
+export type CoachingCategory =
   | 'opening'
   | 'discovery'
   | 'objection'
