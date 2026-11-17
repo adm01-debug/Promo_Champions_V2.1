@@ -152,7 +152,15 @@ export const WebhookContracts = {
 
   inboundEmail: z.object({
     provider: z.enum(["resend", "sendgrid", "generic"]),
-    eventType: z.enum(["reply", "bounce", "complaint", "unsubscribe", "other"]),
+    eventType: z.enum([
+      "reply",
+      "bounce",
+      "complaint",
+      "unsubscribe",
+      "open",
+      "click",
+      "other",
+    ]),
     fromEmail: z.string().email({ message: "E-mail inválido" }).nullable(),
     messageId: z.string().nullable(),
     receivedAt: z.string().datetime({ message: "Data inválida" }).optional(),

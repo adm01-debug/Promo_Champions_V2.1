@@ -43,6 +43,8 @@ export type InboundEventType =
   | "bounce"
   | "complaint"
   | "unsubscribe"
+  | "open"
+  | "click"
   | "other";
 export type InboundEmailPayload =
   | Record<string, unknown>
@@ -56,6 +58,13 @@ export interface ParsedInboundEmailEvent {
   receivedAt: string;
   eventType: InboundEventType;
   payload: Record<string, unknown>;
+  /**
+   * Destinatário do e-mail. Em resposta/bounce o endereço que importa é o
+   * remetente (fromEmail); em telemetria de abertura e clique é o contrário —
+   * quem abriu/clicou é quem recebeu. Resend manda `data.to` (lista),
+   * SendGrid manda `email`.
+   */
+  recipientEmail: string | null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -73,6 +82,8 @@ function normalizeEventType(value: unknown): InboundEventType {
   if (type.includes("bounce")) return "bounce";
   if (type.includes("complain") || type === "spamreport") return "complaint";
   if (type.includes("unsubscribe")) return "unsubscribe";
+  if (type.includes("click")) return "click";
+  if (type.includes("open")) return "open";
   if (
     type.includes("reply") || type.includes("received") || type === "inbound"
   ) {
@@ -95,6 +106,15 @@ function extractEmail(value: unknown): string | null {
   return raw ? raw.replace(/.*<([^>]+)>.*/, "$1") : null;
 }
 
+function extractFirstEmail(value: unknown): string | null {
+  if (!Array.isArray(value)) return extractEmail(value);
+  for (const item of value) {
+    const found = extractEmail(item);
+    if (found) return found;
+  }
+  return null;
+}
+
 function parseResendEvent(
   payload: Record<string, unknown>,
   now: () => string,
@@ -108,6 +128,7 @@ function parseResendEvent(
     receivedAt: asString(data.created_at) ?? now(),
     eventType: normalizeEventType(payload.type),
     payload,
+    recipientEmail: extractFirstEmail(data.to) ?? extractEmail(data.email),
   };
 }
 
@@ -125,6 +146,7 @@ function parseSendGridEvent(
       : unixTimestampToIso(payload.timestamp, now),
     eventType: normalizeEventType(payload.event),
     payload,
+    recipientEmail: extractEmail(payload.email),
   };
 }
 
@@ -140,6 +162,7 @@ function parseGenericEvent(
     receivedAt: asString(payload.received_at) ?? now(),
     eventType: normalizeEventType(payload.event_type),
     payload,
+    recipientEmail: extractFirstEmail(payload.to) ?? extractEmail(payload.recipient),
   };
 }
 
@@ -167,9 +190,27 @@ export function parseInboundEmailEvents(
   return isRecord(payload) ? [parseGenericEvent(payload, now)] : [];
 }
 
-/** Eventos de telemetria ainda são registrados, mas não pausam uma cadência. */
+const ENROLLMENT_AFFECTING: ReadonlySet<InboundEventType> = new Set([
+  "reply",
+  "bounce",
+  "complaint",
+  "unsubscribe",
+]);
+
+/**
+ * Eventos de telemetria ainda são registrados, mas não pausam uma cadência.
+ * A lista é explícita: abertura e clique são engajamento positivo e pausar a
+ * sequência por causa deles seria o oposto do efeito desejado.
+ */
 export function shouldMatchAndPauseEnrollment(
   eventType: InboundEventType,
 ): boolean {
-  return eventType !== "other";
+  return ENROLLMENT_AFFECTING.has(eventType);
+}
+
+/** Abertura e clique: telemetria por mensagem, não evento terminal de inscrição. */
+export function isEmailTelemetryEvent(
+  eventType: InboundEventType,
+): eventType is "open" | "click" {
+  return eventType === "open" || eventType === "click";
 }
