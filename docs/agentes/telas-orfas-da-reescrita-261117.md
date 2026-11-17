@@ -8,7 +8,9 @@ Vale para `ABCMatrixShift`, `Client360PredictiveCards` e `ABCActionableAutomatio
 **Não perdeu funcionalidade: perdeu fabricação.** As três telas existiam e eram
 montadas na árvore anterior, mas duas delas eram alimentadas por arrays
 **hardcoded** no hook, com nomes de cliente que não existem no banco e percentuais
-inventados. A terceira foi recuperada e refeita sobre dado real (PR #545).
+inventados. Duas foram recuperadas e refeitas sobre dado real: `ABCActionableAutomations`
+(PR #545) e `ABCMatrixShift` (PR #568). A terceira, `Client360PredictiveCards`, foi
+substituída na `main` por `Client360HealthNbaSection`, que faz o mesmo sobre dado real.
 
 ## Como os arquivos foram encontrados
 
@@ -44,8 +46,9 @@ Na árvore anterior (`snapshot/261117/automation-inventario-estado`):
 - `src/components/analytics/ABCAnalysis.tsx:215` → `<ABCActionableAutomations automations={data?.automations || []} />`
 - `src/components/clients/Client360View.tsx` → importava `Client360PredictiveCards`
 
-Em `main` hoje não há **nenhuma** referência em código a `ABCMatrixShift` nem a
-`Client360PredictiveCards` — só menções em documentação.
+Em `main` hoje `ABCMatrixShift` **voltou a ser montado** (PR #568, 17/11) em
+`src/components/analytics/ABCAnalysis.tsx`, via `ABCMatrixShiftSection`. De
+`Client360PredictiveCards` não há referência em código — só menções em documentação.
 
 ## O que alimentava essas montagens
 
@@ -53,15 +56,33 @@ Em `main` hoje não há **nenhuma** referência em código a `ABCMatrixShift` ne
 
 ```ts
 const matrixShifts: MatrixShift[] = [
-  { name: 'Cliente VIP S/A',    from: 'B', to: 'A', change:  25, reason: 'Aumento de recorrência' },
-  { name: 'Distribuidora Beta', from: 'A', to: 'B', change: -12, reason: 'Redução de pedidos semanais' },
-  { name: 'Tech Solutions',     from: 'C', to: 'B', change:  40, reason: 'Novo contrato assinado' },
+  {
+    name: 'Cliente VIP S/A',
+    from: 'B',
+    to: 'A',
+    change: 25,
+    reason: 'Aumento de recorrência',
+  },
+  {
+    name: 'Distribuidora Beta',
+    from: 'A',
+    to: 'B',
+    change: -12,
+    reason: 'Redução de pedidos semanais',
+  },
+  {
+    name: 'Tech Solutions',
+    from: 'C',
+    to: 'B',
+    change: 40,
+    reason: 'Novo contrato assinado',
+  },
 ];
 
 const automations: Automation[] = [
   { title: 'Escudo de Retenção Classe A', impact: '+15% Retenção' },
-  { title: 'Upgrade Velocity B->A',       impact: '+22% Receita' },
-  { title: 'Reativação Neural',           impact: '+8% Recuperação' },
+  { title: 'Upgrade Velocity B->A', impact: '+22% Receita' },
+  { title: 'Reativação Neural', impact: '+8% Recuperação' },
 ];
 ```
 
@@ -87,26 +108,33 @@ A PR #547 depois removeu dela uma afirmação que **eu** havia embarcado
 ("subir de B para A rende mais que buscar cliente novo") e que o dado não
 sustentava — achada por Devin e Codex.
 
-### `ABCMatrixShift` — preservada, não remontada
+### `ABCMatrixShift` — remontado sobre dado real (PR #568, 17/11)
 
 Componente de apresentação **limpo**: 92 linhas, recebe `shifts: MatrixShift[]`
 por prop, sem número fixo e sem fonte de dado própria. O problema nunca foi o
 componente: era o hook que o alimentava.
 
-Não foi remontado porque o dado para calcular deslocamento de classe **não
-existe**:
+**Correção do veredicto abaixo.** A conclusão original — "não há dado para
+calcular deslocamento de classe" — vinha de ancorar a janela em `now()`. A venda
+ganha mais recente da base é de 2026-10-06, então qualquer janela contada a
+partir de hoje chega vazia. Ancorando as duas janelas na **venda mais recente da
+própria base** (`ABC_WINDOW_DAYS = 365` em `src/hooks/bi/useABCAnalysis.ts`), o
+de-para de classe existe e o painel renderiza. O hook passou a devolver
+`clientsRecentWindow`, `clientsPreviousWindow` e `windowLabel`; o cálculo puro
+está em `buildAbcMatrixShifts()` com 7 testes em
+`src/components/analytics/ABCMatrixShift.test.ts`.
+
+A medição que levou ao veredicto original segue válida como retrato da base:
 
 ```
   1 compra(s):  41 cliente(s)  max_produtos=1  2026-08-02 .. 2026-08-29
 506 compra(s):   1 cliente(s)  max_produtos=7  2024-01-02 .. 2026-08-09
 ```
 
-41 dos 42 clientes só aparecem em agosto/2026. Sem um período anterior não há
-de-para de classe. Remontá-lo exigiria repetir exatamente o que foi removido.
-
-**Destrava com:** base semeada com recompra ao longo de dois ou mais períodos.
-Aí o hook calcula `matrixShifts` de verdade e o componente é reaproveitado
-como está — ele não precisa de mudança.
+41 dos 42 clientes só aparecem em agosto/2026 — mas isso não impede a
+comparação, porque a janela é ancorada no dado e não no calendário de hoje.
+O componente foi reaproveitado **como estava**, sem uma linha de mudança: o que
+mudou foi o hook, que agora calcula em vez de inventar.
 
 ### `Client360PredictiveCards` — preservada, não remontada
 
@@ -124,8 +152,18 @@ Diferente do `ABCMatrixShift`, aqui não há camada aproveitável: a fabricaçã
 no próprio componente, não no hook. Remontá-lo seria colocar de volta botões que
 mentem para quem clica.
 
-**Destrava com:** sequências de recompra por cliente (não existem hoje) **e** uma
-reescrita do componente, porque o atual não aceita dado por prop.
+**Já coberto na `main` por outro componente.** A função de negócio que esta tela
+prometia — prever a próxima compra, sugerir a ação e agendar o follow-up — existe
+e grava no banco: `src/components/clients/Client360HealthNbaSection.tsx`, montado
+em `src/components/clients/Client360View.tsx:88`. Ele lê
+`data.predictedNextPurchaseDays`, `data.churnRisk` e `data.nba` do
+`useClient360`, e o botão chama `createTask.mutate()`, criando tarefa real em
+`public.tasks` com o vendedor resolvido por `get_current_salesperson_id` — no
+lugar do `toast.success('Lembrete agendado!')` que não persistia nada.
+
+Ou seja: o arquivo descartado não levou função nenhuma com ele. Remontá-lo
+exigiria, além de dado de recompra que não existe, uma reescrita do componente
+(o atual não aceita dado por prop) — e duplicaria o que já funciona.
 
 ## Nada foi perdido
 
