@@ -43,6 +43,56 @@ function escapeLikePattern(value: string): string {
   return value.replace(/[\\%_]/g, (match) => `\\${match}`);
 }
 
+type ResolvedClient = { id: string; user_id: string | null };
+
+/**
+ * Resolve o contato pelo e-mail em public.clients. Lead vive em `sales` e tem os
+ * dados de contato no `clients` ligado (ver sequence-runner), e `sales` não tem
+ * coluna de e-mail — então o cliente é o único ponto de entrada confiável.
+ * Em caso de empate, o mais antigo, de forma determinística.
+ */
+async function resolveClientByEmail(
+  // deno-lint-ignore no-explicit-any -- clientes Supabase têm generics variados por function
+  admin: SupabaseClient<any, any, any>,
+  email: string,
+): Promise<{ client: ResolvedClient | null; ambiguous: boolean }> {
+  const { data, error } = await admin
+    .from('clients')
+    .select('id, user_id')
+    .ilike('email', escapeLikePattern(email))
+    .is('deleted_at', null)
+    .order('created_at', { ascending: true })
+    .limit(2);
+  if (error) throw error;
+  const rows = (data ?? []) as ResolvedClient[];
+  return { client: rows[0] ?? null, ambiguous: rows.length > 1 };
+}
+
+/**
+ * Resposta é o sinal de engajamento mais forte, e nada o gravava: a function
+ * sequence-record-reply, que faria isso, não está deployada (teto de 100
+ * functions do plano). Aqui o sinal é independente de inscrição em sequência —
+ * produção tem 0 inscrições, e uma resposta a e-mail de cadência ou
+ * transacional vale igual.
+ */
+async function recordReplyEngagement(
+  // deno-lint-ignore no-explicit-any -- clientes Supabase têm generics variados por function
+  admin: SupabaseClient<any, any, any>,
+  event: ParsedInboundEmailEvent,
+): Promise<boolean> {
+  if (!event.fromEmail) return false;
+  const { client } = await resolveClientByEmail(admin, event.fromEmail);
+  if (!client) return false;
+  const { error } = await admin.rpc('record_engagement_signal', {
+    _contact_id: client.id,
+    _contact_type: 'client',
+    _signal: 'reply',
+    _occurred_at: event.receivedAt,
+  });
+  if (error) throw error;
+  return true;
+}
+
 function extractClickLink(payload: Record<string, unknown>): string | null {
   const data = (payload.data ?? {}) as Record<string, unknown>;
   const click = (data.click ?? {}) as Record<string, unknown>;
@@ -89,17 +139,7 @@ async function recordEmailTelemetry(
     if (existing?.length) return 'duplicate';
   }
 
-  const { data: candidates, error: clientErr } = await admin
-    .from('clients')
-    .select('id, user_id')
-    .ilike('email', escapeLikePattern(recipient))
-    .is('deleted_at', null)
-    .order('created_at', { ascending: true })
-    .limit(2);
-  if (clientErr) throw clientErr;
-  const client = (candidates?.[0] ?? null) as
-    | { id: string; user_id: string | null }
-    | null;
+  const { client, ambiguous } = await resolveClientByEmail(admin, recipient);
 
   // salesperson_id deixa o evento visível no painel de e-mail do dono da
   // carteira (useEmailTracking filtra por ele).
@@ -129,9 +169,7 @@ async function recordEmailTelemetry(
       message_id: event.messageId,
       source: 'inbound-email-webhook',
       ...(link ? { link } : {}),
-      ...(candidates && candidates.length > 1
-        ? { ambiguous_recipient: true }
-        : {}),
+      ...(ambiguous ? { ambiguous_recipient: true } : {}),
     } as never,
   });
   if (insertErr) throw insertErr;
@@ -215,6 +253,7 @@ Deno.serve(
     try {
       const matchedEnrollmentIds: string[] = [];
       let telemetryRecorded = 0;
+      let replySignals = 0;
       for (const event of events) {
         // Telemetria não entra em inbound_reply_events: a chave única daquela
         // tabela é (provider, message_id), de um evento terminal por mensagem,
@@ -290,6 +329,21 @@ Deno.serve(
           if (supErr) throw supErr;
         }
 
+        // Sinal de engajamento da resposta: vale com ou sem inscrição casada,
+        // e roda só para evento recém-persistido (o guard de upsert acima),
+        // então reentrega assinada não conta a mesma resposta duas vezes.
+        if (event.eventType === 'reply') {
+          const gravou = await recordReplyEngagement(admin, event);
+          if (gravou) {
+            replySignals += 1;
+          } else {
+            ctx.log('info', 'reply_sem_contato_resolvido', {
+              provider: event.provider,
+              tem_remetente: Boolean(event.fromEmail),
+            });
+          }
+        }
+
         if (matchedEnrollmentId && affectsEnrollment) {
           const reason =
             event.eventType === 'bounce'
@@ -333,6 +387,7 @@ Deno.serve(
         processed: events.length,
         matched: matchedEnrollmentIds.length,
         telemetry: telemetryRecorded,
+        reply_signals: replySignals,
         event_type: events.length === 1 ? events[0].eventType : undefined,
       });
     } catch (e) {
