@@ -180,12 +180,12 @@
     "mudancas": 25
    },
    {
-    "pasta": "src/components/conversational",
+    "pasta": "src/hooks/race",
     "mudancas": 24
    },
    {
-    "pasta": "src/hooks/race",
-    "mudancas": 24
+    "pasta": "src/components/conversational",
+    "mudancas": 23
    },
    {
     "pasta": "src/hooks/sales",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 17
+    "commits": 16
    },
    {
     "autor": "github-actions[bot]",
