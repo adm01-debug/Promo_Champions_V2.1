@@ -134,3 +134,35 @@ export function ABCMatrixShift({ shifts, windowLabel }: ABCMatrixShiftProps) {
     </Card>
   );
 }
+
+interface ABCMatrixShiftSectionProps {
+  data?: {
+    clientsRecentWindow?: ABCItem[];
+    clientsPreviousWindow?: ABCItem[];
+    windowLabel?: string;
+  };
+}
+
+/**
+ * Secao pronta para a tela: deriva as mudancas, decide se aparece e carrega o
+ * titulo. Existe para manter os ramos (optional chaining, fallbacks, condicao
+ * de exibicao) fora de ABCAnalysis, que ja opera no limite do ratchet de
+ * complexidade do lint.
+ */
+export function ABCMatrixShiftSection({ data }: ABCMatrixShiftSectionProps) {
+  const shifts = buildAbcMatrixShifts(
+    data?.clientsRecentWindow ?? [],
+    data?.clientsPreviousWindow ?? []
+  );
+  if (shifts.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 px-1">
+        <MoveRight className="h-5 w-5 text-primary" />
+        <h3 className="text-section-title text-foreground">Quem mudou de classe</h3>
+      </div>
+      <ABCMatrixShift shifts={shifts} windowLabel={data?.windowLabel ?? ''} />
+    </div>
+  );
+}
