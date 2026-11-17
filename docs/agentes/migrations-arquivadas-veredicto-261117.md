@@ -29,25 +29,41 @@ Critério:
 - **INCORPORADA** — todos os objetos existem. O trabalho chegou lá por outro caminho.
 - **PARCIAL** — alguns existem. O documento diz quais faltam.
 - **OBSOLETA** — não existem, e o alvo também não existe mais.
-- **PENDENTE** — faltam objetos e a tabela-alvo **existe**. Trabalho real não aplicado.
+- **PENDENTE** — faltam objetos e a tabela-alvo **existe**.
+
+Esse último critério estava **errado**. Perguntar "os objetos desta migration existem?"
+marca como pendência todo trabalho que foi **refeito melhor em outro lugar**. A pergunta
+certa é: **o problema que ela resolve continua aberto?** As 6 marcadas PENDENTE foram
+re-revisadas com essa pergunta — uma por agente, lendo produção e `origin/main` — e o
+resultado mudou:
+
+- **SUPERADA** — o problema está resolvido hoje por outro mecanismo.
+- **PARCIALMENTE_COBERTA** — parte resolvida; o resto é lacuna real.
+
+**5 das 6 eram falso positivo meu.** Sobrou **uma** lacuna real, tratada na PR #551.
+E aplicar qualquer uma das 6 hoje seria **inseguro** — detalhe em cada verbete.
 
 ## Resultado
 
 | veredicto | n |
 |---|---:|
 | PARCIAL | 10 |
-| **PENDENTE** | **6** |
+| **SUPERADA** (eram PENDENTE) | **5** |
+| **PARCIALMENTE_COBERTA** (era PENDENTE) | **1** |
 | INCORPORADA | 5 |
 | OBSOLETA | 1 |
 
+Trabalho perdido ao fechar as 22 branches: **nenhum**. Trabalho que precisava ser
+terminado: **um**, e está na PR #551.
+
 | veredicto | objetos | presentes | arquivo | tag |
 |---|---:|---:|---|---|
-| **PENDENTE** | 15 | 0 | `20260725000002_audit_2fa_auth_fixes.sql` | `audit/rlx-security-fix` |
-| **PENDENTE** | 28 | 7 | `20260725000008_audit_log_fixes.sql` | `audit/rlx-security-fix` |
-| **PENDENTE** | 19 | 4 | `20260727000003_audit_schema_unification.sql` | `audit/rlx-security-fix` |
-| **PENDENTE** | 14 | 2 | `20260727000004_uuid_consistency_cleanup.sql` | `audit/rlx-security-fix` |
-| **PENDENTE** | 19 | 0 | `20260727000007_twilio_webhook_security.sql` | `audit/rlx-security-fix` |
-| **PENDENTE** | 16 | 0 | `20261019120000_bitrix24_sync_run_lock.sql` | `fix/hermes-420605-integracoes-r2` |
+| **SUPERADA** | 15 | 0 | `20260725000002_audit_2fa_auth_fixes.sql` | `audit/rlx-security-fix` |
+| **PARC.COB.** | 28 | 7 | `20260725000008_audit_log_fixes.sql` | `audit/rlx-security-fix` |
+| **SUPERADA** | 19 | 4 | `20260727000003_audit_schema_unification.sql` | `audit/rlx-security-fix` |
+| **SUPERADA** | 14 | 2 | `20260727000004_uuid_consistency_cleanup.sql` | `audit/rlx-security-fix` |
+| **SUPERADA** | 19 | 0 | `20260727000007_twilio_webhook_security.sql` | `audit/rlx-security-fix` |
+| **SUPERADA** | 16 | 0 | `20261019120000_bitrix24_sync_run_lock.sql` | `fix/hermes-420605-integracoes-r2` |
 | **PARCIAL** | 23 | 5 | `20260725000001_audit_rls_critical_fixes.sql` | `audit/rlx-security-fix` |
 | **PARCIAL** | 22 | 14 | `20260725000003_audit_webhook_security_fixes.sql` | `audit/rlx-security-fix` |
 | **PARCIAL** | 8 | 6 | `20260725000004_audit_sql_injection_fixes.sql` | `audit/rlx-security-fix` |
@@ -65,49 +81,92 @@ Critério:
 | **INCORPORADA** | 6 | 6 | `20261019150000_agent_run_owner_check.sql` | `fix/hermes-420603-sec-agent-runs` |
 | **INCORPORADA** | 18 | 18 | `20261019151000_sales_status_canon_r2.sql` | `fix/hermes-420639-sales-status-canon` |
 
-## Os 6 PENDENTE, em efeito de negócio
+## As 6 que eu tinha marcado PENDENTE, uma a uma
 
+Cada verbete traz: o problema, o mecanismo que o resolve hoje (com arquivo:linha ou nome
+de objeto em produção) e por que aplicar a arquivada seria ruim.
 
-### `20260725000002_audit_2fa_auth_fixes.sql`
+### `20261019120000_bitrix24_sync_run_lock.sql` — SUPERADA
 
-`archive/audit/rlx-security-fix` — **0 de 15** objetos presentes em produção.
+`archive/fix/hermes-420605-integracoes-r2` — 0 de 16 objetos.
 
-Perde-se o registro de que o sistema hoje nao consegue gravar o historico de atividade de sessao nem limpar o historico de acesso a dados dos usuarios — um buraco de auditoria que ainda existe no banco; a correcao em si nao se perde porque teria mesmo de ser refeita, ja que foi escrita para um desenho de permissoes que nao e o do banco atual.
+Era a trava que impede duas sincronizações com o Bitrix24 ao mesmo tempo. **Essa trava
+já existe**, construída 8 dias depois, de forma mais geral: `20261027120100_edge_job_lock_lease.sql`
+criou `public.edge_job_locks` + `try_edge_job_lock`/`release_edge_job_lock`, todos
+presentes em produção, e a edge function de `main` os chama no run inteiro — o comentário
+dela cita o **mesmo** modo de falha (`ux_icp_data_bitrix_id`). Nenhum objeto `bitrix24_sync_*`
+existe em produção.
 
+**Aplicar hoje criaria uma segunda trava concorrente**, com dois mecanismos disputando o
+mesmo run. Esta era a que eu tinha chamado de "a mais acionável das 6".
 
-### `20260725000008_audit_log_fixes.sql`
+### `20260725000008_audit_log_fixes.sql` — PARCIALMENTE_COBERTA
 
-`archive/audit/rlx-security-fix` — **7 de 28** objetos presentes em produção.
+`archive/audit/rlx-security-fix` — 7 de 28 objetos.
 
-Perde-se o unico registro de que mudancas em webhooks e nas assinaturas de webhook de ganho/perda nao ficam gravadas em lugar nenhum hoje: se alguem alterar ou apagar uma dessas integracoes, nao ha como descobrir depois quem fez nem o que mudou. Orcamentos, pedidos, vendas e atividades ja tem esse registro funcionando por outro caminho, entao o restante do arquivo e plano antigo e superado, nao trabalho perdido.
+Das 6 tabelas que ela queria auditar, **4 já são** (`quotes`, `orders`, `sales`,
+`activities`), pelo mecanismo canônico `audit_business_changes` → `audit_log_row_change`
+→ `public.audit_logs`, criado em `20261001193100_audit_log_canonical.sql:196` e :288-291.
+Esse mecanismo é mais amplo (10 tabelas), redige senha/token/segredo via `audit_scrub` e
+grava `request_id` — nada disso existe na arquivada. Está vivo: `audit_logs` tem 17.236
+linhas de `quotes` (última em 14/11), 5.301 de `orders`, 4.649 de `sales`.
 
+**Em aberto, e é lacuna real:** `webhooks` e `winloss_webhook_subscriptions` ficaram de
+fora da lista canônica. Nenhum trigger de auditoria, `0` linhas de webhook em
+`audit_logs`, e a escrita vem direto do front (`src/hooks/useWebhooks.ts`,
+`src/hooks/win-loss/useWebhookSubscriptions.ts`) sem chamar `log_audit_event`. Hoje
+ninguém consegue provar quem criou, alterou, desligou ou apagou um webhook — o endereço
+externo para onde o sistema despeja os dados de negócios ganhos e perdidos. Há 1
+assinatura ativa. **→ PR #551**, que anexa o trigger canônico nas duas tabelas,
+com `INSERT` incluído.
 
-### `20260727000003_audit_schema_unification.sql`
+**Aplicar a arquivada seria destrutivo**, em três níveis: (a) nem aplica —
+`create_audit_trigger_for_table` consulta `pg_triggers`, que não existe
+(`to_regclass` → NULL), e a primeira chamada aborta a transação; (b) se o nome fosse
+corrigido, os triggers gerados inserem em `resource_type`/`resource_id`, colunas que não
+existem em produção — **todo** insert/update/delete em `quotes`, `orders`, `sales` e
+`activities` passaria a falhar, travando o CRM; (c) a fase 2 move `public.audit_logs`
+para o schema `deprecated`, que é justamente a tabela onde a auditoria atual grava e que
+a tela de admin lê (`src/hooks/admin/useAuditLogs.ts:35`).
 
-`archive/audit/rlx-security-fix` — **4 de 19** objetos presentes em produção.
+### `20260727000003_audit_schema_unification.sql` e `20260727000004_uuid_consistency_cleanup.sql` — SUPERADAS
 
-Perde-se o unico trabalho pronto para arrumar o registro de quem mexeu em que no sistema: hoje esse historico esta espalhado em quatro tabelas diferentes e com formatos incompativeis, entao parte das alteracoes feitas pelos usuarios pode nao estar sendo registrada — sem esse arquivo, consertar isso vira trabalho do zero.
+`archive/audit/rlx-security-fix` — 4 de 19 e 2 de 14 objetos.
 
+As duas queriam unificar o histórico de auditoria espalhado em tabelas incompatíveis.
+`20261001193100_audit_log_canonical.sql` fez isso, e **no sentido contrário** ao das
+arquivadas: a canônica é `public.audit_logs` (plural); `public.audit_log` (singular),
+para onde elas convergiriam, é a marcada como superada.
 
-### `20260727000004_uuid_consistency_cleanup.sql`
+**Aplicar hoje moveria o histórico na direção errada**, para a tabela aposentada.
 
-`archive/audit/rlx-security-fix` — **2 de 14** objetos presentes em produção.
+### `20260727000007_twilio_webhook_security.sql` — SUPERADA
 
-Perde-se o plano ja escrito de arrumar a bagunca do historico de auditoria: hoje o sistema guarda o "quem mexeu em que" em quatro tabelas separadas, com 33.651 registros numa delas e so 345 na tabela oficial, e sem os indices de busca. Sem esse arquivo, alguem teria que redescobrir e reescrever do zero como unificar esse historico e deixar as consultas de auditoria rapidas — nada deixa de funcionar hoje, mas a consulta de auditoria continua espalhada, lenta e nao confiavel.
+`archive/audit/rlx-security-fix` — 0 de 19 objetos.
 
+Queria proteger no banco o endpoint público que a Twilio usa. **A proteção existe, na
+camada certa**: validação HMAC da assinatura `X-Twilio-Signature` feita na própria edge
+function, antes de qualquer escrita — `supabase/functions/_shared/webhook-auth.ts:177`
+(`verifyTwilioSignature`, HMAC-SHA1 com comparação timing-safe) e `:200`
+(`verifyTwilioSignatureAny`). O documento anterior dizia que o endpoint "aceita qualquer
+um que descubra a URL": **isso estava errado**.
 
-### `20260727000007_twilio_webhook_security.sql`
+### `20260725000002_audit_2fa_auth_fixes.sql` — SUPERADA
 
-`archive/audit/rlx-security-fix` — **0 de 19** objetos presentes em produção.
+`archive/audit/rlx-security-fix` — 0 de 15 objetos.
 
-Perde-se o unico rascunho de uma protecao que nunca foi ligada: hoje o endereco publico que a Twilio usa para avisar o sistema sobre ligacoes aceita qualquer pessoa que descubra a URL, o que permite a um estranho inventar registros de ligacoes que nunca aconteceram no historico comercial; jogar o arquivo fora nao piora nada agora, mas apaga o ponto de partida ja escrito para resolver isso — e vale saber que, do jeito que esta, ele tambem nao resolveria sozinho, porque a parte que de fato confere a autenticidade do aviso ficou sem ser escrita.
+Dos 4 problemas que ela listava: a limpeza do histórico de acesso existe
+(`20261001151000_log_retention_indexes_and_purge.sql:102` e `:111` criam
+`data_retention_policies` + `fn_apply_data_retention()`, com job diário
+`data-retention-purge-daily` ativo); a policy de admin sobre `login_attempts` já existe
+em produção (nome com underscore, por isso o casamento por nome falhou); `has_role`
+existe e é a usada em `main`; e a policy de `session_activity` foi avaliada e descartada
+de propósito em `20261117040000_integridade_resgatada_rlx.sql:34-37`, por ser tabela
+dormente (0 linhas).
 
-
-### `20261019120000_bitrix24_sync_run_lock.sql`
-
-`archive/fix/hermes-420605-integracoes-r2` — **0 de 16** objetos presentes em produção.
-
-Perde-se a trava que impede duas sincronizacoes com o Bitrix24 rodarem ao mesmo tempo — sem ela, a mesma venda ou o mesmo cliente pode ser cadastrado em duplicata no Bitrix, e a sincronizacao inteira pode abortar no meio, deixando dados desatualizados ate alguem perceber.
+**Não aplica**: faz JOIN com uma tabela `public.roles` que não existe
+(`to_regclass` → NULL) e usa `user_roles.role_id`, coluna que não existe — a real é
+`role`, do enum `app_role`.
 
 ## Observação sobre os 10 PARCIAL
 
@@ -131,5 +190,16 @@ Todas as 22 seguem alcançáveis pela tag indicada na coluna. Recuperar é um co
 git show archive/fix/hermes-420605-integracoes-r2:supabase/migrations/20261019120000_bitrix24_sync_run_lock.sql
 ```
 
-Nenhuma foi trazida para `main`: aplicar DDL em produção é decisão do dono
-(AGENTS.md §5.8), e várias delas não aplicam mais como estão.
+Nenhuma foi trazida para `main` — e agora por um motivo mais forte do que a regra:
+**as 6 têm `aplicar hoje = inseguro`**, e duas delas quebrariam o CRM ou a auditoria que
+funciona. A única lacuna real foi resolvida com uma migration nova e pequena (PR #551),
+não com o arquivo arquivado.
+
+## O erro que este documento corrige
+
+A primeira versão dizia **6 PENDENTE** e chamava a trava do Bitrix de "a mais acionável
+das 6". As duas afirmações estavam erradas, e seguir a segunda teria criado uma trava
+concorrente em produção. A causa não foi o banco nem os agentes: foi **a pergunta que eu
+fiz a eles**. "Os objetos existem?" mede nomes; "o problema continua aberto?" mede o
+sistema. Trabalho refeito melhor em outro lugar passa no primeiro teste como se fosse
+perda.
