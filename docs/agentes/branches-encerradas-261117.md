@@ -28,7 +28,7 @@ de código.
 
 - tip: `36b2fa5e0db939a5e844dd242dc9fde1746abceb` (2026-09-04)
 - veredito: **ENCERRADA** — nada se perde.
-- Exclusivos: 20260904000001_fix_broadcast_sale_completed.sql e 20260904000002_recreate_performance_indexes.sql. O 1º JÁ ESTÁ APLICADO em produção (pg_get_functiondef de broadcast_sale_completed não cita o projeto antigo rapjswienfhkobhlamxb, lê de _internal_secrets, sem JWT embutido). O 2º é OBSOLETO: cria idx_deals_* em public.deals, tabela que não existe (produção tem sales); os 4 idx_clients_* que ele também cria já existem.
+- Exclusivos: 20260904000001*fix_broadcast_sale_completed.sql e 20260904000002_recreate_performance_indexes.sql. O 1º JÁ ESTÁ APLICADO em produção (pg_get_functiondef de broadcast_sale_completed não cita o projeto antigo rapjswienfhkobhlamxb, lê de \_internal_secrets, sem JWT embutido). O 2º é OBSOLETO: cria idx_deals*_ em public.deals, tabela que não existe (produção tem sales); os 4 idx*clients*_ que ele também cria já existem.
 
 ### `claude/chore-ci-runner-test-261106-0320`
 
@@ -148,3 +148,52 @@ branches já apagadas. Para trazer qualquer uma de volta:
 
     git branch <nome> archive/<nome>
     git push origin <nome>
+
+## Conferência byte a byte (fecho da auditoria)
+
+A primeira passagem comparou **presença** de arquivo. Esta compara **conteúdo**:
+93.932 blobs das 29 tags `archive/*` contra `main`. 2.244 caminhos divergem,
+mas 2.191 divergem em 3+ branches — é a árvore pré-rewrite que a `main`
+substituiu, não trabalho perdido. Restaram **5 blobs distintos**, cada um em
+1–2 tags, e todos foram abertos linha a linha:
+
+| arquivo                                                  | tag                                   | veredito                                                                    |
+| -------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
+| `src/lib/excelExporter.ts`                               | `feat/sync-promogifts-webhook-secret` | branch **não tem** o `sanitizeCsvCell` (CWE-1236) da `main`                 |
+| `src/types/sales.ts`                                     | `claude/resolver-prs-conflito-lzrz0o` | branch **não tem** os 7 campos de rentabilidade da `main`                   |
+| `…20260830000000_fix_race_leaderboard_status.sql`        | `audit/hermes-h770179-…`              | branch rankeia todo vendedor em toda temporada e não dá o `GRANT` ao `anon` |
+| `supabase/functions/_shared/sale-statuses.ts`            | `v2/hidden-features-…`                | `isOpenSaleStatus` por allowlist dessincronizaria edge e front              |
+| `supabase/functions/winloss-webhook-dispatcher/retry.ts` | `audit/rlx-security-fix`              | guarda SSRF interna, superada pelo portão em `index.ts`                     |
+
+Evidência do caso da leaderboard, em produção: a view tem o filtro de papel
+(`definition LIKE '%hybrid%'`), devolve **10 linhas** e não 16, com temporadas
+ativas `closer,sdr` sobre carros de `closer,hybrid,sdr` — ou seja, um closer
+**não** entra no ranking da temporada de SDR. A versão da branch rankearia os 16. `has_table_privilege('anon','race_spectator_view','SELECT')` = `true`.
+
+Sobre o `retry.ts`: `dispatchOne` é chamado em um único ponto de produção,
+`winloss-webhook-dispatcher/index.ts:369`, e já sobre a lista `allowed` que o
+portão monta nas linhas 327–363 (esquema `https`, allowlist de host, rate
+limit). A cópia em `run-retry-tests/retry.ts` não tem guarda, mas `fetchFn` é
+obrigatório sem default (linha 63), só os 4 arquivos de teste a importam e três
+injetam mock — nenhuma URL vinda do banco chega lá.
+
+### As 14 branches que ficaram, conferidas por conteúdo
+
+Não foram só justificadas: foram comparadas. Os 1.154 arquivos exclusivos da
+`contexto` são todos `docs/contexto/**` (contexto gerado, lido em runtime).
+Fora isso, 6 branches carregam os mesmos **3 componentes ausentes da `main`**:
+
+- `src/components/analytics/ABCActionableAutomations.tsx`
+- `src/components/analytics/ABCMatrixShift.tsx`
+- `src/components/clients/Client360PredictiveCards.tsx`
+
+São maquetes, não funcionalidade: `Client360PredictiveCards()` não recebe
+props, não consulta nada e chumba `"Linha Industrial X" / "92% Probabilidade"`.
+Vêm junto com um export falso (`setTimeout(2000)` → "Dossiê PDF gerado com
+sucesso!") e um botão `Filtros` sem handler. As mesmas branches ainda usam
+`bg-gradient-to-br`, de antes da migração para Tailwind v4 — prova de que a
+`main` é a versão nova. Trazer isso de volta mostraria previsão inventada como
+real; é regressão, não resgate.
+
+**Resultado: nenhum trabalho perdido. As 29 exclusões estão provadas por
+conteúdo, não por presença de arquivo.**
