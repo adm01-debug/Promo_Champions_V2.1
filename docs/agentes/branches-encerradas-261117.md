@@ -62,7 +62,7 @@ de código.
 
 ## Branches retidas
 
-- **`audit/rlx-security-fix`** — tip `08c2134079b475f06121e6fc5e81aa1798effae7` (2026-07-27) — RETER: ainda guarda o SQL de SSRF/rate-limit de webhook (webhook_allowed_domains, is_url_allowed, webhook_dispatch_rate, check_webhook_rate_limit, webhook_security_config, fn_get_all_admin_ids), que NÃO existe em produção e NÃO foi portado: a allowlist nasce bloqueando e derrubaria a assinatura ativa. Só apagar depois dessa decisão.
+- **`audit/rlx-security-fix`** — tip `08c2134079b475f06121e6fc5e81aa1798effae7` (2026-07-27) — **ENCERRADA** depois do resgate. Era a única retida por conteúdo. O motivo da retenção não se sustentou: eu afirmei que a allowlist derrubaria "a assinatura ativa", mas ao conferir o dado a única linha de `winloss_webhook_subscriptions` tem host `test.invalid` e `active = false` — não havia integração viva. Resgatado em duas PRs, as duas aplicadas e verificadas em produção: #529 (3 CHECKs + 4 UNIQUE parciais + 2 FKs de passkey) e #530 (SSRF e rate-limit de webhook, reescritos). O SQL original NÃO foi portado como estava porque é inseguro e não roda: allowlist e blocklist na mesma tabela sem coluna que as separe (logo `169.254.169.254` ficava cadastrado como permitido), alias duplicado que lança exceção, `::INET` sobre `'localhost'` com `EXCEPTION WHEN others` engolindo o erro (blocklist pulada inteira), wildcard que nunca casa e allowlist vazia permitindo tudo (fail-open). A reescrita passa 23/23 casos adversariais. O que ficou de fora é obsoleto, já aplicado ou código morto, item por item, nos corpos de #529 e #530.
 - **`automation/inventario-estado`** — tip `660347cb567abe6b434b4f14eb28a2bfa0be921d` (2026-11-12) — RETER: automação de inventário/estado; operacional
 - **`claude/fix-permissoes-admin-261117-0110`** — tip `edef650e420224434156ad63616fa6163d4822c0` (2026-11-17) — RETER: minha, PR #526 aberta
 - **`contexto`** — tip `06acff090ddbb3b81788e56729e6cc6a2584e780` (2026-11-14) — RETER: contexto gerado; AGENTS.md §8 proíbe PR dela. 1154 arquivos exclusivos, todos gerados.
@@ -123,3 +123,28 @@ Total: 31 branches.
 | #523 | card de progresso de coaching IA na página do vendedor                       | v2/hidden-features                                    |
 | #524 | editor de layout do dashboard Win/Loss, com largura por widget               | v2/hidden-features                                    |
 | #525 | conserta get_client_seasonality e get_industry_seasonality                   | diagnóstico de audit/rlx-security-fix                 |
+
+## Resultado final
+
+De **43 branches remotas, 29 foram encerradas** — todas de agente de IA, todas
+com tag `archive/<nome>` no remoto apontando para o mesmo SHA da branch.
+**Nenhuma branch de agente de IA restou.**
+
+As 14 que ficaram não são trabalho de agente:
+
+| branch                              | por quê                                      |
+| ----------------------------------- | -------------------------------------------- |
+| `main`                              | branch principal                             |
+| `contexto`                          | contexto gerado; AGENTS.md §8 proíbe PR dela |
+| `automation/inventario-estado`      | automação operacional                        |
+| `release-please--branches--main--…` | o bot a regenera                             |
+| `computador_local`                  | máquina do dono                              |
+| 8 × `dependabot/*`                  | do bot, não é trabalho de agente             |
+
+Reversibilidade **testada, não prometida**: depois de apagar, recuperei
+`src/components/auth/PermissionGate.tsx` (66 linhas) e
+`canonical_hardening_contract_test.ts` (289 linhas) de dentro das tags de
+branches já apagadas. Para trazer qualquer uma de volta:
+
+    git branch <nome> archive/<nome>
+    git push origin <nome>
