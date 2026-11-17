@@ -234,3 +234,23 @@ DROP TRIGGER IF EXISTS trg_auto_coaching_after_summary ON public.call_recordings
 CREATE TRIGGER trg_auto_coaching_after_summary
   AFTER INSERT OR UPDATE OF summarized_at ON public.call_recordings
   FOR EACH ROW EXECUTE FUNCTION public.trigger_auto_coaching_on_recording();
+
+-- ──────────────────── agendamentos (pg_cron) ────────────────────
+-- 3 dos 45 jobs de produção não eram agendados por nenhuma migration. As
+-- funções que eles chamam JÁ têm arquivo; só o agendamento faltava.
+-- cron.schedule é upsert por nome, então re-executar não duplica.
+-- Guardado em DO porque a extensão pg_cron não existe em base local/preview.
+DO $do$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule('capture-rollback-snapshot-5min', '*/5 * * * *',
+      'SELECT public.admin_capture_rollback_snapshot()');
+    PERFORM cron.schedule('detect_slow_queries_hourly', '20 * * * *',
+      'SELECT public.detect_slow_queries(500, 100)');
+    PERFORM cron.schedule('purge_old_telemetry_daily', '15 3 * * *',
+      'SELECT public.purge_old_telemetry(90)');
+  ELSE
+    RAISE NOTICE 'pg_cron ausente — agendamentos ignorados nesta base';
+  END IF;
+END
+$do$;
