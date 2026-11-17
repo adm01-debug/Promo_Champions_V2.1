@@ -11,6 +11,7 @@ import {
 } from '@/components/deal-intelligence/winloss/winLossHelpers';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { DealTimelineExpand } from './DealTimelineExpand';
+import { UpsellSuggestionCard } from './UpsellSuggestionCard';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface SaleMeta {
@@ -123,6 +124,9 @@ function DealRow({
               className="overflow-hidden"
             >
               <DealTimelineExpand saleId={r.sale_id} />
+              <div className="mt-3">
+                <UpsellSuggestionCard saleId={r.sale_id} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
