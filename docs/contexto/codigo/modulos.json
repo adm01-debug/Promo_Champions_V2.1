@@ -51,7 +51,8 @@
     "useAllSalespeopleXP",
     "useSalespersonXP",
     "useStreakRanking",
-    "useTeamAchievementStats"
+    "useTeamAchievementStats",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
@@ -59,7 +60,8 @@
     "achievements",
     "app_config",
     "salespeople",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "buckets": [],
@@ -120,7 +122,8 @@
     "useUpdateActivity",
     "useUpdateActivityGoals",
     "useUpdateSalesperson",
-    "useUpsertActivityGoal"
+    "useUpsertActivityGoal",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
@@ -134,7 +137,8 @@
     "sales_goals",
     "salespeople",
     "salesperson_xp",
-    "sdr_alert_configs"
+    "sdr_alert_configs",
+    "xp_history"
    ],
    "rpcs": [
     "merge_clients"
@@ -342,6 +346,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/dashboard",
     "components/templates",
     "hooks/admin-tasks",
     "pages",
@@ -1426,7 +1431,8 @@
     "useCloserPipeline",
     "useRecentClosedDeals",
     "useSalespersonXP",
-    "useTopClosers"
+    "useTopClosers",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
@@ -1436,7 +1442,8 @@
     "error_logs",
     "sales",
     "salespeople",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [
     "transition_sale_status"
@@ -1744,12 +1751,13 @@
    "modulo": "components/competitive",
    "arquivos": 34,
    "testes": 3,
-   "linhas": 8187,
+   "linhas": 8193,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 33,
    "hooks_locais": [
+    "useAllSalespeopleXP",
     "useAuth",
     "useCollectibleBadges",
     "useCompetitiveChat",
@@ -1775,18 +1783,21 @@
     "useSalesStreaks",
     "useSalespeople",
     "useSalespeopleRanking",
+    "useSalespersonXP",
     "useUpdateSalesperson",
     "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
-    "useWeeklyRanking"
+    "useWeeklyRanking",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [
     "active_power_ups",
     "activities",
+    "app_config",
     "available_spins",
     "battle_participants",
     "collectible_badges",
@@ -1824,7 +1835,8 @@
     "tournaments",
     "user_roles",
     "victory_feed",
-    "weekly_matchups"
+    "weekly_matchups",
+    "xp_history"
    ],
    "rpcs": [
     "claim_daily_challenge_reward",
@@ -1872,6 +1884,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/gamification",
     "components/profile",
     "components/shared",
     "components/ui",
@@ -2184,13 +2197,13 @@
   },
   {
    "modulo": "components/dashboard",
-   "arquivos": 56,
+   "arquivos": 57,
    "testes": 0,
-   "linhas": 10276,
+   "linhas": 10414,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 56,
+   "componentes": 57,
    "hooks_locais": [
     "useActivityQualityScore",
     "useAllSalespeopleXP",
@@ -2281,6 +2294,7 @@
     "useSpeechSynthesis",
     "useStreakAchievements",
     "useSubmitMood",
+    "useTaskAssignments",
     "useTeamActivityFeed",
     "useTodayMood",
     "useTrendsData",
@@ -2292,7 +2306,8 @@
     "useVictoryFeed",
     "useWeeklyChallenges",
     "useWeeklyMatchups",
-    "useWeeklyRanking"
+    "useWeeklyRanking",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -2373,6 +2388,7 @@
     "sequence_enrollments",
     "sequences",
     "stage_probabilities",
+    "task_assignments",
     "tasks",
     "tournament_matches",
     "tournament_participants",
@@ -2381,7 +2397,8 @@
     "user_roles",
     "victory_feed",
     "weekly_challenges",
-    "weekly_matchups"
+    "weekly_matchups",
+    "xp_history"
    ],
    "rpcs": [
     "calculate_daily_challenge_streak",
@@ -2446,6 +2463,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/admin",
     "components/analytics",
     "components/assistant",
     "components/atoms",
@@ -2463,6 +2481,7 @@
     "contexts",
     "hooks",
     "hooks/activities",
+    "hooks/admin-tasks",
     "hooks/assistant",
     "hooks/dashboard",
     "hooks/gamification",
@@ -3416,13 +3435,13 @@
   },
   {
    "modulo": "components/gamification",
-   "arquivos": 22,
+   "arquivos": 24,
    "testes": 0,
-   "linhas": 4109,
+   "linhas": 4429,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 22,
+   "componentes": 24,
    "hooks_locais": [
     "useAllSalespeopleXP",
     "useAudio",
@@ -3448,7 +3467,8 @@
     "useSoundSettings",
     "useStreakAchievements",
     "useTodayCombo",
-    "useWeeklyChallenges"
+    "useWeeklyChallenges",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -3467,7 +3487,8 @@
     "leagues",
     "salespeople",
     "salesperson_xp",
-    "weekly_challenges"
+    "weekly_challenges",
+    "xp_history"
    ],
    "rpcs": [
     "calculate_daily_challenge_streak",
@@ -3503,6 +3524,7 @@
     "components/achievements",
     "components/activities",
     "components/closer",
+    "components/competitive",
     "components/dashboard",
     "components/goals",
     "components/sdr",
@@ -3541,13 +3563,15 @@
    "componentes": 6,
    "hooks_locais": [
     "useAllSalespeopleXP",
-    "useSalespersonXP"
+    "useSalespersonXP",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [
     "app_config",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "buckets": [],
@@ -3613,6 +3637,7 @@
     "components/cadences",
     "components/engagement",
     "components/multichannel",
+    "components/pipeline",
     "components/sales",
     "components/sdr",
     "components/sequences",
@@ -4347,6 +4372,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDealVelocity",
     "useDealsForQuotes",
     "useDebouncedValue",
@@ -4579,7 +4605,8 @@
     "useWeeklyRanking",
     "useWeeklyWonDeals",
     "useWhatsApp",
-    "useWinLossAnalysis"
+    "useWinLossAnalysis",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -4782,7 +4809,8 @@
     "weekly_matchups",
     "whatsapp_conversations",
     "whatsapp_template_versions",
-    "winloss_webhook_dead_letters"
+    "winloss_webhook_dead_letters",
+    "xp_history"
    ],
    "rpcs": [
     "admin_edge_cron_status",
@@ -5290,6 +5318,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDealVelocity",
     "useDealsForQuotes",
     "useDebouncedValue",
@@ -5550,7 +5579,8 @@
     "useWeeklyRanking",
     "useWeeklyWonDeals",
     "useWhatsApp",
-    "useWinLossAnalysis"
+    "useWinLossAnalysis",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -5758,7 +5788,8 @@
     "weekly_matchups",
     "whatsapp_conversations",
     "whatsapp_template_versions",
-    "winloss_webhook_dead_letters"
+    "winloss_webhook_dead_letters",
+    "xp_history"
    ],
    "rpcs": [
     "admin_edge_cron_status",
@@ -5907,13 +5938,13 @@
   },
   {
    "modulo": "components/pipeline",
-   "arquivos": 16,
+   "arquivos": 18,
    "testes": 3,
-   "linhas": 3092,
+   "linhas": 3625,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 16,
+   "componentes": 18,
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
     "useAnalyzeAtRiskDeal",
@@ -5934,6 +5965,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDeleteCadence",
     "useDeleteCadenceStep",
     "useEnrollInCadence",
@@ -5992,6 +6024,8 @@
     "cadences",
     "circuit_breaker_events",
     "clients",
+    "deal_chat_history",
+    "deal_outcomes",
     "deal_stage_history",
     "deal_stakeholders",
     "icp_data",
@@ -6058,6 +6092,7 @@
    ],
    "depende_de_modulos": [
     "components/deal-intelligence",
+    "components/icons",
     "components/tasks",
     "components/ui",
     "config",
@@ -7508,7 +7543,8 @@
     "useSalespersonXP",
     "useSequence",
     "useSequences",
-    "useUpdateSequence"
+    "useUpdateSequence",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -7532,7 +7568,8 @@
     "sdr_alert_history",
     "sequence_enrollments",
     "sequences",
-    "tasks"
+    "tasks",
+    "xp_history"
    ],
    "rpcs": [
     "log_audit_event"
@@ -8484,6 +8521,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDealVelocity",
     "useDealsForQuotes",
     "useDebouncedValue",
@@ -8749,7 +8787,8 @@
     "useWeeklyRanking",
     "useWeeklyWonDeals",
     "useWhatsApp",
-    "useWinLossAnalysis"
+    "useWinLossAnalysis",
+    "useXPHistory"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -8959,7 +8998,8 @@
     "weekly_matchups",
     "whatsapp_conversations",
     "whatsapp_template_versions",
-    "winloss_webhook_dead_letters"
+    "winloss_webhook_dead_letters",
+    "xp_history"
    ],
    "rpcs": [
     "admin_edge_cron_status",
@@ -9887,7 +9927,7 @@
    "modulo": "hooks",
    "arquivos": 148,
    "testes": 19,
-   "linhas": 20165,
+   "linhas": 20167,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10093,7 +10133,8 @@
     "useWeeklyComparison",
     "useWeightedForecast",
     "useWhatsApp",
-    "useWorkflowRules"
+    "useWorkflowRules",
+    "useXPHistory"
    ],
    "hooks_definidos": [
     "useToast",
@@ -10494,7 +10535,8 @@
     "whatsapp_conversations",
     "workflow_executions",
     "workflow_rules",
-    "workflows"
+    "workflows",
+    "xp_history"
    ],
    "rpcs": [
     "award_bonus_if_eligible",
@@ -11200,7 +11242,8 @@
     ]
    },
    "importado_por_outros_modulos": [
-    "components/admin"
+    "components/admin",
+    "components/dashboard"
    ],
    "depende_de_modulos": [
     "components/admin",
@@ -13060,7 +13103,7 @@
    "modulo": "hooks/gamification",
    "arquivos": 17,
    "testes": 3,
-   "linhas": 2433,
+   "linhas": 2477,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13092,7 +13135,8 @@
     "useStreakAchievements",
     "useWeeklyChallenges",
     "useWeeklyMatchups",
-    "useWeeklyRanking"
+    "useWeeklyRanking",
+    "useXPHistory"
    ],
    "hooks_definidos": [
     "useAchievements",
@@ -13119,6 +13163,7 @@
     "usePrizeWheel",
     "useAllSalespeopleXP",
     "useSalespersonXP",
+    "useXPHistory",
     "useChallengesWithProgress",
     "useClaimChallengeReward",
     "useDeactivateWeeklyChallenge",
@@ -13148,7 +13193,8 @@
     "salesperson_leagues",
     "salesperson_xp",
     "weekly_challenges",
-    "weekly_matchups"
+    "weekly_matchups",
+    "xp_history"
    ],
    "rpcs": [
     "calculate_daily_challenge_streak",
@@ -13192,7 +13238,8 @@
      "salesperson_leagues",
      "salesperson_xp",
      "weekly_challenges",
-     "weekly_matchups"
+     "weekly_matchups",
+     "xp_history"
     ],
     "rpcs": [
      "calculate_daily_challenge_streak",
@@ -14287,7 +14334,8 @@
     "useSoundSettings",
     "useSystemSoundSettings",
     "useUpdateSalesperson",
-    "useUserRoles"
+    "useUserRoles",
+    "useXPHistory"
    ],
    "hooks_definidos": [
     "useContactFrequencyRules",
@@ -14352,7 +14400,8 @@
     "salesperson_preferences",
     "salesperson_xp",
     "team_custom_fields",
-    "user_roles"
+    "user_roles",
+    "xp_history"
    ],
    "rpcs": [
     "award_sale_xp",
@@ -15855,7 +15904,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 7,
-   "linhas": 39572,
+   "linhas": 39580,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -16945,6 +16994,7 @@
     "useWorkflowRules",
     "useWorkflowRuns",
     "useWorkflows",
+    "useXPHistory",
     "useXpAdjustments"
    ],
    "hooks_definidos": [],
@@ -17362,7 +17412,8 @@
     "workflow_executions",
     "workflow_rules",
     "workflows",
-    "xp_adjustments"
+    "xp_adjustments",
+    "xp_history"
    ],
    "rpcs": [
     "admin_edge_cron_status",
@@ -18811,6 +18862,7 @@
     "useWorkflowRules",
     "useWorkflowRuns",
     "useWorkflows",
+    "useXPHistory",
     "useXpAdjustments"
    ],
    "hooks_definidos": [],
@@ -19251,7 +19303,8 @@
     "workflow_executions",
     "workflow_rules",
     "workflows",
-    "xp_adjustments"
+    "xp_adjustments",
+    "xp_history"
    ],
    "rpcs": [
     "admin_edge_cron_status",

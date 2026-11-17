@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `de87a0c632` · branch `main` · 2026-11-17 20:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8a0bc946dd` · branch `main` · 2026-11-17 21:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1278,7 +1278,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `Transient` | escreve | `supabase/functions/_shared/unsubscribe_test.ts` |
 | `type` | `action` | compara, escreve | `src/pages/WorkflowsPage.tsx`<br>`supabase/functions/workflow-executor/index.ts` |
 | `type` | `activities_today` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
-| `type` | `activity` | compara, escreve | `src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts`<br>`src/hooks/useTeamActivityFeed.ts`<br>`supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `activity` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts`<br>`src/hooks/useTeamActivityFeed.ts`<br>`supabase/functions/semantic-index-entity/index.ts` |
 | `type` | `admin_summary` | escreve | `supabase/functions/sdr-consecutive-alerts/index.ts` |
 | `type` | `ai_sales_coach` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `analysis` | escreve | `src/components/assistant/constants.ts` |
@@ -1297,7 +1297,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `call_now` | compara | `src/components/tasks/NextBestAction.tsx` |
 | `type` | `call_recording` | compara | `supabase/functions/semantic-index-entity/index.ts` |
 | `type` | `change_stage` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx` |
-| `type` | `chat` | compara, escreve | `src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
+| `type` | `chat` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `checkpoint` | compara, escreve | `src/hooks/race/useRaceSounds.ts`<br>`supabase/functions/process-race-event/index.ts` |
 | `type` | `churn_alert` | escreve, filtra | `src/components/admin/churn/ChurnHistoryChart.tsx`<br>`src/pages/AdminHistoricoAlertasChurn.tsx`<br>`supabase/functions/detect-client-churn-alerts/index.ts` |
 | `type` | `client` | compara, escreve | `src/components/molecules/GlobalSearch.tsx`<br>`supabase/functions/semantic-index-entity/index.ts` |
@@ -1379,7 +1379,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `objections` | escreve | `src/components/assistant/constants.ts` |
 | `type` | `opportunity` | compara, escreve | `src/components/analytics/ABCNeuralInsights.tsx`<br>`src/components/intelligence/PipelineStrategicReview.tsx`<br>`src/hooks/bi/useABCAnalysis.ts` |
 | `type` | `order` | compara | `supabase/functions/external-db-bridge/index.ts` |
-| `type` | `outcome` | compara, escreve | `src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
+| `type` | `outcome` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `overtake` | compara, escreve | `src/components/race/raceTrackHelpers.ts`<br>`src/hooks/race/useRaceSounds.ts`<br>`src/hooks/useMicroGoals.ts`<br>`supabase/functions/process-race-event/index.ts` |
 | `type` | `pct` | compara, escreve | `src/components/reporting/funnelReportHelpers.ts` |
 | `type` | `pipeline_funnel` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
@@ -1420,7 +1420,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `spamreport` | compara | `supabase/functions/_shared/webhook-integrity.ts` |
 | `type` | `split` | escreve | `supabase/functions/territory-optimization/index.ts` |
 | `type` | `spring` | escreve | `src/App.tsx`<br>`src/components/auth/AuthBrandPanel.tsx`<br>`src/components/competitive/BadgesGallery.tsx`<br>`src/components/competitive/LiveScoreboard.tsx`<br>`src/components/dashboard/DashboardEmptyState.tsx`<br>… +45 |
-| `type` | `stage_change` | compara, escreve | `src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
+| `type` | `stage_change` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `stagnant_deal` | escreve | `src/hooks/notifications/useAlerts.ts`<br>`supabase/functions/send-alert-notifications/index.ts` |
 | `type` | `start` | compara, escreve | `src/components/customer-success/CS360Filters.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | `type` | `status` | escreve | `supabase/functions/whatsapp-inbound-webhook/index.ts` |
@@ -1436,7 +1436,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `success` | compara, escreve | `src/components/analytics/AIPerformanceInsights.tsx`<br>`src/components/intelligence/ActivityPulse.tsx`<br>`src/components/reports/ExecInsightsBanner.tsx`<br>`src/pages/RelatoriosExecutivos.tsx` |
 | `type` | `system` | escreve | `supabase/functions/_shared/notification-categories_test.ts`<br>`supabase/functions/cron-failure-alerter/index.ts` |
 | `type` | `task` | compara | `supabase/functions/semantic-index-entity/index.ts` |
-| `type` | `task_completed` | compara, escreve | `src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
+| `type` | `task_completed` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `taunt` | escreve | `src/components/competitive/CompetitiveChat.tsx` |
 | `type` | `team_ranking` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `template` | escreve | `supabase/functions/send-multichannel-message/index.ts` |
@@ -1531,7 +1531,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `identified` | compara, escreve, filtra | `supabase/functions/customer-success-360/index.ts`<br>`supabase/functions/expansion-detector/index.ts` |
 | `status` | `idle` | compara, escreve | `src/components/admin/connections/SmokeTestChecklist.tsx`<br>`src/components/admin/connections/smokeTestHelpers.ts`<br>`src/components/dashboard/DevKpiDebugPanel.tsx` |
 | `status` | `ignored` | compara, escreve | `src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
-| `status` | `in_progress` | compara, escreve | `src/hooks/admin/useDataSubjectRequests.ts`<br>`src/pages/AdminSolicitacoesTitular.tsx`<br>`src/pages/OnboardingTracking.tsx`<br>`supabase/functions/customer-success-360/index.ts`<br>`supabase/functions/onboarding-launcher/index.ts` |
+| `status` | `in_progress` | compara, escreve | `src/components/dashboard/MyAssignedTasks.tsx`<br>`src/hooks/admin/useDataSubjectRequests.ts`<br>`src/pages/AdminSolicitacoesTitular.tsx`<br>`src/pages/OnboardingTracking.tsx`<br>`supabase/functions/customer-success-360/index.ts`<br>… +1 |
 | `status` | `inactive` | compara, filtra | `src/components/portfolio/PortfolioCloserGrid.tsx`<br>`src/hooks/crm/useClientPortfolio.ts`<br>`supabase/functions/auto-reassign-inactive/index.ts` |
 | `status` | `inativo` | compara | `src/components/admin/AdminSystemStatus.tsx` |
 | `status` | `initiated` | escreve | `supabase/functions/twilio-click-to-call/index.ts` |
@@ -1560,7 +1560,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara, escreve | `src/hooks/useRetryTestRun.ts`<br>`src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
 | `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +58 |
+| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +59 |
 | `status` | `pending_approval` | compara, filtra | `supabase/functions/ai-agent-orchestrator/index.ts` |
 | `status` | `permanent` | compara | `src/hooks/email/failedDraftsHelpers.ts` |
 | `status` | `practiced` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
@@ -1667,6 +1667,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | AccentColor | purple \| blue \| green \| orange \| pink \| cyan \| amber \| rose | `src/hooks/useCustomTheme.ts` |
 | ThemeMode | light \| dark \| system | `src/hooks/useCustomTheme.ts` |
 | QuestionType | general \| analysis \| objections \| closing \| strategy | `src/hooks/useDealChatHistory.ts` |
+| TimelineEventType | activity \| stage_change \| task_completed \| outcome \| chat | `src/hooks/useDealTimeline.ts` |
 | LeadSource | linkedin \| referral \| inbound \| outbound \| event \| website \| paid_ads \| other | `src/hooks/useLeadSourceAnalysis.ts` |
 | Channel | whatsapp \| email \| linkedin \| sms \| phone | `src/hooks/useMultichannel.ts` |
 | NotificationCategory | general \| sales \| goals \| gamification \| security \| system \| team \| ai \| approval \| commission | `src/hooks/useNotifications.ts` |
@@ -2784,6 +2785,8 @@ _nenhum item encontrado_
 | `transition={{ delay: index * 0.08 }}` | `src/components/gamification/DailyChallengesCard.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/gamification/LeagueCard.tsx` |
 | `delay: i * 0.12,` | `src/components/gamification/StreakWidget.tsx` |
+| `transition={{ delay: groupIndex * 0.05 }}` | `src/components/gamification/XPHistoryTimeline.tsx` |
+| `transition={{ delay: groupIndex * 0.05 + itemIndex * 0.02 }}` | `src/components/gamification/XPTimelineItem.tsx` |
 | `delay: 0.1 + i * 0.05,` | `src/components/gamification/XPToast.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/components/goals/CommissionCalculator.tsx` |
 | `// Calculate trend: if projection is 10% higher than goal, it's strong` | `src/components/goals/SalespersonGoalCard.tsx` |
@@ -2970,9 +2973,7 @@ _nenhum item encontrado_
 | `Competências entre 40-60%` | `src/pages/Competencias.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/pages/DesafiosSemanais.tsx` |
 | `transition={{ delay: idx * 0.1 }}` | `src/pages/Estoque.tsx` |
-| `transition={{ delay: index * 0.1 }}` | `src/pages/FunnelAnalysis.tsx` |
-| `transition={{ delay: index * 0.1 }}` | `src/pages/HistoricoDesafiosDiarios.tsx` |
-| … +60 linhas — lista completa em `context.json` | |
+| … +62 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -3430,6 +3431,7 @@ _nenhum item encontrado_
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/gamification/useLeagues.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
 | `gcTime: 15 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
+| `gcTime: 5 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
 | `Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))` | `src/hooks/gamification/useWeeklyChallenges.ts` |
 | `gcTime: 15 * 60 * 1000,` | `src/hooks/notifications/useAlerts.ts` |
@@ -3531,8 +3533,7 @@ _nenhum item encontrado_
 | `const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();` | `supabase/functions/recompute-stage-baselines/index.ts` |
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
-| `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +152 linhas — lista completa em `context.json` | |
+| … +153 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -3643,6 +3644,7 @@ _nenhum item encontrado_
 | 1 | `src/hooks/executive-briefing/useLatestBriefing.ts` |
 | 1 | `src/hooks/gamification/useLeagues.ts` |
 | 10 | `src/hooks/gamification/usePrizeWheel.ts` |
+| 50 | `src/hooks/gamification/useSalespersonXP.ts` |
 | 100 | `src/hooks/orders/useOrderTracking.ts` |
 | 1 | `src/hooks/pipeline-pulse/useQuickAction.ts` |
 | 10 | `src/hooks/race/useGhostCar.ts` |
@@ -3837,8 +3839,7 @@ _nenhum item encontrado_
 | 5000 | `supabase/functions/revenue-intelligence/index.ts` |
 | 10000 | `supabase/functions/revops-hub/index.ts` |
 | 5000 | `supabase/functions/revops-hub/index.ts` |
-| 50000 | `supabase/functions/revops-hub/index.ts` |
-| … +37 linhas — lista completa em `context.json` | |
+| … +38 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
@@ -4474,6 +4475,11 @@ _nenhum item encontrado_
 | `social` | `src/components/activities/ArenaPulseFeed.tsx` |
 | `stealth` | `src/components/activities/ArenaPulseFeed.tsx` |
 | `victory` | `src/components/activities/ArenaPulseFeed.tsx` |
+| `activity` | `src/components/pipeline/DealTimeline.tsx` |
+| `chat` | `src/components/pipeline/DealTimeline.tsx` |
+| `outcome` | `src/components/pipeline/DealTimeline.tsx` |
+| `stage_change` | `src/components/pipeline/DealTimeline.tsx` |
+| `task_completed` | `src/components/pipeline/DealTimeline.tsx` |
 | `cliente.email` | `src/lib/mergeTags.ts` |
 | `cliente.empresa` | `src/lib/mergeTags.ts` |
 | `cliente.nome` | `src/lib/mergeTags.ts` |
@@ -4748,6 +4754,7 @@ _nenhum item encontrado_
 | Simula disparo de teste e loga no banco para validação | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | * Conversor minimalista de markdown -> HTML seguro (apenas h2/h3, parágrafos, bold, lista). | `src/components/executive-briefing/briefingHelpers.ts` |
 | Generate 7-day mini heatmap data (must be before early returns) | `src/components/gamification/StreakWidget.tsx` |
+| Date + historico do negocio. A timeline so consulta o banco quando | `src/components/pipeline/DealCard.tsx` |
 | TabsList escondida — usada apenas para a11y (linkagem tab↔panel) */} | `src/components/playbooks/PlaybooksManager.tsx` |
 | * Win-rate medido na faixa de ~0% de desconto (0-1). */ | `src/components/pricing/DiscountOptimizer.tsx` |
 | * Variação de win-rate por ponto percentual de desconto (slope medido). */ | `src/components/pricing/DiscountOptimizer.tsx` |
@@ -5024,5 +5031,4 @@ _nenhum item encontrado_
 | PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
 | For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
 | Telemetria pública não deve aceitar um Bearer sintático como bypass de limite. | `supabase/functions/log-web-vitals/index.ts` |
-| Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/mine-win-loss-patterns/index.ts` |
-| … +131 linhas — lista completa em `context.json` | |
+| … +132 linhas — lista completa em `context.json` | |

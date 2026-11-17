@@ -49594,13 +49594,13 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20251213172816_8f8793bd-13ad-4c30-b65a-1ee3123f793e.sql",
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
     "tr_sync_total_xp"
    ],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   }
  },
  "tabelas_usadas_no_codigo_sem_definicao": [

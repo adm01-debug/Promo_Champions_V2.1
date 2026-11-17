@@ -2123,6 +2123,7 @@
    "src/components/ui/textarea.tsx"
   ],
   "src/components/competitive/GamifiedProfile.tsx": [
+   "src/components/gamification/XPHistoryTimeline.tsx",
    "src/components/profile/MyRaceCarMiniCard.tsx",
    "src/components/ui/avatar.tsx",
    "src/components/ui/badge.tsx",
@@ -2873,6 +2874,18 @@
   ],
   "src/components/dashboard/MiniSparkline.tsx": [
    "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/MyAssignedTasks.tsx": [
+   "src/components/admin/task-console/taskConsoleHelpers.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/admin-tasks/useTaskAssignments.ts"
   ],
   "src/components/dashboard/MyGoalAlertCard.tsx": [
    "src/contexts/AuthContext.tsx",
@@ -3994,10 +4007,23 @@
    "src/hooks/gamification/useWeeklyChallenges.ts",
    "src/lib/utils.ts"
   ],
+  "src/components/gamification/XPHistoryTimeline.tsx": [
+   "src/components/gamification/XPTimelineItem.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/gamification/useSalespersonXP.ts",
+   "src/lib/utils.ts"
+  ],
   "src/components/gamification/XPProgressBar.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/tooltip.tsx",
    "src/hooks/gamification/useSalespersonXP.ts"
+  ],
+  "src/components/gamification/XPTimelineItem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
   ],
   "src/components/gamification/XPToast.tsx": [
    "src/hooks/useMediaQuery.ts"
@@ -4675,6 +4701,7 @@
    "src/components/pipeline/DealPlaybookModal.tsx",
    "src/components/pipeline/DealScoreIndicator.tsx",
    "src/components/pipeline/DealSummaryCard.tsx",
+   "src/components/pipeline/DealTimeline.tsx",
    "src/components/pipeline/QuickActionsMenu.tsx",
    "src/components/pipeline/SLACountdown.tsx",
    "src/components/pipeline/Sparkline.tsx",
@@ -4716,6 +4743,17 @@
   "src/components/pipeline/DealSummaryCard.tsx": [
    "src/components/ui/button.tsx",
    "src/lib/money.ts"
+  ],
+  "src/components/pipeline/DealTimeline.tsx": [
+   "src/components/pipeline/dealTimelineConstants.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useDealTimeline.ts",
+   "src/hooks/usePipeline.ts",
+   "src/lib/utils.ts"
   ],
   "src/components/pipeline/InactivityPanel.tsx": [
    "src/components/ui/badge.tsx",
@@ -4789,6 +4827,10 @@
   "src/components/pipeline/StagnantDealAlert.tsx": [
    "src/components/ui/tooltip.tsx",
    "src/lib/utils.ts"
+  ],
+  "src/components/pipeline/dealTimelineConstants.tsx": [
+   "src/components/icons/Linkedin.tsx",
+   "src/hooks/useDealTimeline.ts"
   ],
   "src/components/playbooks/PlaybookAdherenceStats.tsx": [
    "src/components/ui/card.tsx",
@@ -11591,6 +11633,7 @@
   "src/pages/VendedorDashboard.tsx": [
    "src/components/ai/NextBestActionCard.tsx",
    "src/components/conversational/CoachingProgressCard.tsx",
+   "src/components/dashboard/MyAssignedTasks.tsx",
    "src/components/dashboard/PersonalAssistantSummaryCard.tsx",
    "src/components/skeletons/PageLoadingSkeleton.tsx",
    "src/components/skeletons/SkeletonTransition.tsx",

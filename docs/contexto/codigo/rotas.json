@@ -2533,6 +2533,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAllSalespeopleXP",
     "useAuth",
     "useCallback",
     "useCollectibleBadges",
@@ -2572,6 +2573,7 @@
     "useSalesStreaks",
     "useSalespeople",
     "useSalespeopleRanking",
+    "useSalespersonXP",
     "useState",
     "useTodayCombo",
     "useUpdateSalesperson",
@@ -2579,9 +2581,12 @@
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
-    "useWeeklyRanking"
+    "useWeeklyRanking",
+    "useXPHistory",
+    "useXpConfig"
    ],
    "hooks_locais": [
+    "useAllSalespeopleXP",
     "useAuth",
     "useCollectibleBadges",
     "useCompetitiveChat",
@@ -2608,17 +2613,20 @@
     "useSalesStreaks",
     "useSalespeople",
     "useSalespeopleRanking",
+    "useSalespersonXP",
     "useTodayCombo",
     "useUpdateSalesperson",
     "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
-    "useWeeklyRanking"
+    "useWeeklyRanking",
+    "useXPHistory"
    ],
    "tabelas": [
     "active_power_ups",
     "activities",
+    "app_config",
     "available_spins",
     "battle_participants",
     "collectible_badges",
@@ -2657,7 +2665,8 @@
     "tournaments",
     "user_roles",
     "victory_feed",
-    "weekly_matchups"
+    "weekly_matchups",
+    "xp_history"
    ],
    "rpcs": [
     "claim_daily_challenge_reward",
@@ -2677,7 +2686,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 96
   },
   {
    "protegida": false,
@@ -5144,6 +5153,7 @@
     "useState",
     "useUserRoles",
     "useWeeklyChallenges",
+    "useXPHistory",
     "useXpConfig"
    ],
    "hooks_locais": [
@@ -5156,7 +5166,8 @@
     "useReducedMotion",
     "useSalespersonXP",
     "useUserRoles",
-    "useWeeklyChallenges"
+    "useWeeklyChallenges",
+    "useXPHistory"
    ],
    "tabelas": [
     "achievements",
@@ -5165,7 +5176,8 @@
     "salespeople",
     "salesperson_xp",
     "user_roles",
-    "weekly_challenges"
+    "weekly_challenges",
+    "xp_history"
    ],
    "rpcs": [
     "claim_weekly_challenge_reward",
@@ -6924,6 +6936,7 @@
     "useRef",
     "useSalespersonXP",
     "useState",
+    "useXPHistory",
     "useXpConfig"
    ],
    "hooks_locais": [
@@ -6931,7 +6944,8 @@
     "useAuth",
     "useGoalsDashboard",
     "useReducedMotion",
-    "useSalespersonXP"
+    "useSalespersonXP",
+    "useXPHistory"
    ],
    "tabelas": [
     "app_config",
@@ -6939,7 +6953,8 @@
     "sales",
     "sales_goals",
     "salespeople",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "edges": [],
@@ -6999,6 +7014,7 @@
     "useTeamAchievementStats",
     "useUpdateSalesperson",
     "useUpsertActivityGoal",
+    "useXPHistory",
     "useXpConfig"
    ],
    "hooks_locais": [
@@ -7020,7 +7036,8 @@
     "useStreakRanking",
     "useTeamAchievementStats",
     "useUpdateSalesperson",
-    "useUpsertActivityGoal"
+    "useUpsertActivityGoal",
+    "useXPHistory"
    ],
    "tabelas": [
     "achievements",
@@ -7031,7 +7048,8 @@
     "sales",
     "sales_goals",
     "salespeople",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [
     "merge_clients"
@@ -7781,6 +7799,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDeleteCadence",
     "useDeleteCadenceStep",
     "useDroppable",
@@ -7865,6 +7884,7 @@
     "useDealPlaybookProgress",
     "useDealProbabilities",
     "useDealSLAs",
+    "useDealTimeline",
     "useDeleteCadence",
     "useDeleteCadenceStep",
     "useEnrollInCadence",
@@ -7918,6 +7938,8 @@
     "cadences",
     "circuit_breaker_events",
     "clients",
+    "deal_chat_history",
+    "deal_outcomes",
     "deal_stage_history",
     "deal_stakeholders",
     "icp_data",
@@ -7964,7 +7986,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 103
+   "arquivos_puxados": 107
   },
   {
    "protegida": false,
@@ -9018,20 +9040,23 @@
     "useRef",
     "useSalespersonXP",
     "useState",
+    "useXPHistory",
     "useXpConfig"
    ],
    "hooks_locais": [
     "useAllSalespeopleXP",
     "useCompetitiveRanking",
     "useReducedMotion",
-    "useSalespersonXP"
+    "useSalespersonXP",
+    "useXPHistory"
    ],
    "tabelas": [
     "achievements",
     "app_config",
     "competitive_ranking",
     "sales",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "edges": [],
@@ -10782,6 +10807,7 @@
     "useState",
     "useToast",
     "useUpdateSalesperson",
+    "useXPHistory",
     "useXpConfig"
    ],
    "hooks_locais": [
@@ -10805,7 +10831,8 @@
     "useSendRankingNotifications",
     "useSoundSettings",
     "useToast",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useXPHistory"
    ],
    "tabelas": [
     "achievements",
@@ -10816,7 +10843,8 @@
     "sales",
     "sales_goals",
     "salespeople",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "edges": [

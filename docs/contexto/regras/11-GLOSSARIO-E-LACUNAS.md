@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `de87a0c632` · branch `main` · 2026-11-17 20:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8a0bc946dd` · branch `main` · 2026-11-17 21:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `sales_streaks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `sales_territories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| … +318 linhas — lista completa em `context.json` | | | |
+| … +319 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 

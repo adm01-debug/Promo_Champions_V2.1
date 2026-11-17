@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 88,
+   "usado_por": 89,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -198,6 +198,7 @@
     "src/components/dashboard/DevKpiDebugPanel.tsx",
     "src/components/dashboard/FuturisticSpeedometerDashboard.tsx",
     "src/components/dashboard/MiniLeaderboard.tsx",
+    "src/components/dashboard/MyAssignedTasks.tsx",
     "src/components/dashboard/MyGoalAlertCard.tsx",
     "src/components/dashboard/PersonalAssistantSummaryCard.tsx",
     "src/components/dashboard/modules/IntelligenceModule.tsx",
@@ -207,8 +208,7 @@
     "src/components/dashboard/widgets/MicroGoalsWidget.tsx",
     "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
     "src/components/dashboard/widgets/SelfBenchmarkWidget.tsx",
-    "src/components/deal-intelligence/health/CriticalDealsTable.tsx",
-    "src/components/engagement/MoodTrackerWidget.tsx"
+    "src/components/deal-intelligence/health/CriticalDealsTable.tsx"
    ],
    "coberto_por_testes": 2
   },
@@ -549,11 +549,12 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/admin/task-console/PendingApprovalsQueue.tsx",
     "src/components/admin/task-console/TaskAssignmentDialog.tsx",
-    "src/components/admin/task-console/TaskConsoleHub.tsx"
+    "src/components/admin/task-console/TaskConsoleHub.tsx",
+    "src/components/dashboard/MyAssignedTasks.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -4551,13 +4552,15 @@
    "arquivo": "src/hooks/gamification/useSalespersonXP.ts",
    "hooks_exportados": [
     "useAllSalespeopleXP",
-    "useSalespersonXP"
+    "useSalespersonXP",
+    "useXPHistory"
    ],
-   "linhas": 225,
+   "linhas": 269,
    "dominio": "hooks/gamification",
    "tabelas": [
     "app_config",
-    "salesperson_xp"
+    "salesperson_xp",
+    "xp_history"
    ],
    "rpcs": [],
    "edges": [],
@@ -4566,7 +4569,7 @@
     "useXpConfig"
    ],
    "canais_realtime": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "usado_por_arquivos": [
     "src/components/achievements/StreakRanking.tsx",
     "src/components/activities/DailyActivityRanking.tsx",
@@ -4574,6 +4577,7 @@
     "src/components/gamification/CelebrationOverlayProvider.tsx",
     "src/components/gamification/CelebrationTestButtons.tsx",
     "src/components/gamification/SalespersonLevelBadge.tsx",
+    "src/components/gamification/XPHistoryTimeline.tsx",
     "src/components/gamification/XPProgressBar.tsx",
     "src/components/goals/GoalsLeaderboard.tsx",
     "src/components/sdr/SDRAchievementTracker.tsx",
@@ -8440,7 +8444,7 @@
    "hooks_exportados": [
     "useDealTimeline"
    ],
-   "linhas": 162,
+   "linhas": 164,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8455,8 +8459,10 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "usado_por_arquivos": [
+    "src/components/pipeline/DealTimeline.tsx",
+    "src/components/pipeline/dealTimelineConstants.tsx",
     "src/components/win-loss/DealTimelineExpand.tsx"
    ],
    "coberto_por_testes": 0
@@ -9668,9 +9674,10 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_arquivos": [
     "src/components/pipeline/DealCard.tsx",
+    "src/components/pipeline/DealTimeline.tsx",
     "src/components/pipeline/PipelineBoard.tsx",
     "src/components/pipeline/PipelineColumn.tsx",
     "src/components/pipeline/QuickActionsMenu.tsx",

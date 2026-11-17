@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `de87a0c6326a36d33c3da59f163e61ef399d1019` (2026-11-17T17:29:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8a0bc946dd3d428b530e563c96ae5b113b395f6a` (2026-11-17T18:12:42-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2484), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2489), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,15 +34,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3595 |
-| arquivos_codigo | 2565 |
-| linhas_codigo | 441070 |
+| arquivos_total | 3600 |
+| arquivos_codigo | 2570 |
+| linhas_codigo | 442121 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
-| componentes | 1283 |
+| componentes | 1288 |
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 417 |
@@ -55,7 +55,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1103), src/pages (173), src/contexts (5)
+- componentes: src/components (1108), src/pages (173), src/contexts (5)
 - hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (53), src/services (6), src/integrations (4)
 - testes: co-localizado (*.test) (161), tests/ (59), outro (18)
@@ -69,8 +69,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Módulos (menu → domínio)
 | módulo | itens de menu | telas/rotas | arquivos | hooks locais | edges | tabelas |
 |---|---|---|---|---|---|---|
-| components/achievements | 0 | 0 | 5 | 7 | 0 | 4 |
-| components/activities | 0 | 0 | 21 | 20 | 0 | 10 |
+| components/achievements | 0 | 0 | 5 | 8 | 0 | 5 |
+| components/activities | 0 | 0 | 21 | 21 | 0 | 11 |
 | components/admin | 0 | 0 | 59 | 38 | 7 | 26 |
 | components/agents | 0 | 0 | 5 | 3 | 0 | 1 |
 | components/analytics | 0 | 0 | 50 | 33 | 2 | 22 |
@@ -80,13 +80,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/bi | 0 | 0 | 30 | 11 | 0 | 8 |
 | components/cadences | 0 | 0 | 22 | 54 | 1 | 17 |
 | components/clients | 0 | 0 | 19 | 9 | 1 | 7 |
-| components/closer | 0 | 0 | 8 | 7 | 0 | 6 |
+| components/closer | 0 | 0 | 8 | 8 | 0 | 7 |
 | components/coaching | 0 | 0 | 23 | 16 | 5 | 7 |
-| components/competitive | 0 | 0 | 34 | 31 | 0 | 40 |
+| components/competitive | 0 | 0 | 34 | 34 | 0 | 42 |
 | components/conversation-intelligence | 0 | 0 | 6 | 3 | 1 | 1 |
 | components/conversational | 0 | 0 | 59 | 49 | 15 | 24 |
 | components/customer-success | 0 | 0 | 12 | 4 | 6 | 0 |
-| components/dashboard | 0 | 0 | 56 | 101 | 9 | 75 |
+| components/dashboard | 0 | 0 | 57 | 103 | 9 | 77 |
 | components/deal-intelligence | 0 | 0 | 47 | 30 | 10 | 15 |
 | components/dialer | 0 | 0 | 7 | 10 | 2 | 7 |
 | components/email | 0 | 0 | 10 | 15 | 3 | 5 |
@@ -94,16 +94,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/executive-briefing | 0 | 0 | 6 | 4 | 1 | 2 |
 | components/follow-up | 0 | 0 | 6 | 1 | 0 | 1 |
 | components/forecast | 0 | 0 | 7 | 1 | 1 | 2 |
-| components/gamification | 0 | 0 | 22 | 25 | 1 | 13 |
-| components/goals | 0 | 0 | 6 | 2 | 0 | 2 |
+| components/gamification | 0 | 0 | 24 | 26 | 1 | 14 |
+| components/goals | 0 | 0 | 6 | 3 | 0 | 3 |
 | components/icp | 0 | 0 | 5 | 6 | 0 | 3 |
 | components/intelligence | 0 | 0 | 10 | 10 | 3 | 6 |
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 343 | 33 | 165 |
+| components/navigation | 0 | 0 | 9 | 345 | 33 | 166 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
-| components/pipeline | 0 | 0 | 16 | 62 | 3 | 28 |
+| components/pipeline | 0 | 0 | 18 | 63 | 3 | 30 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
 | components/playbooks | 0 | 0 | 5 | 7 | 0 | 3 |
 | components/portfolio | 0 | 0 | 11 | 17 | 0 | 7 |
@@ -115,7 +115,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/reports | 0 | 0 | 13 | 4 | 0 | 6 |
 | components/revenue-intelligence | 0 | 0 | 37 | 59 | 19 | 32 |
 | components/sales | 0 | 0 | 16 | 53 | 3 | 24 |
-| components/sdr | 0 | 0 | 26 | 22 | 2 | 17 |
+| components/sdr | 0 | 0 | 26 | 23 | 2 | 18 |
 | components/security | 0 | 0 | 19 | 15 | 3 | 15 |
 | components/sequences | 0 | 0 | 19 | 29 | 5 | 13 |
 | components/settings | 0 | 0 | 25 | 28 | 4 | 25 |
@@ -127,7 +127,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
 | components/win-loss | 0 | 0 | 62 | 45 | 5 | 22 |
 | contexts | 0 | 0 | 6 | 5 | 0 | 1 |
-| hooks | 0 | 0 | 148 | 201 | 23 | 109 |
+| hooks | 0 | 0 | 148 | 202 | 23 | 110 |
 | hooks/admin | 0 | 0 | 10 | 34 | 2 | 22 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
@@ -138,17 +138,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/deal-intelligence | 0 | 0 | 10 | 2 | 11 | 17 |
 | hooks/email | 0 | 0 | 12 | 15 | 3 | 3 |
 | hooks/engagement | 0 | 0 | 6 | 22 | 6 | 10 |
-| hooks/gamification | 0 | 0 | 17 | 27 | 0 | 21 |
+| hooks/gamification | 0 | 0 | 17 | 28 | 0 | 22 |
 | hooks/race | 0 | 0 | 41 | 47 | 3 | 16 |
 | hooks/reporting | 0 | 0 | 10 | 18 | 3 | 7 |
 | hooks/revenue | 0 | 0 | 5 | 18 | 4 | 9 |
-| hooks/sales | 0 | 0 | 16 | 33 | 2 | 26 |
+| hooks/sales | 0 | 0 | 16 | 34 | 2 | 27 |
 | hooks/sequences | 0 | 0 | 10 | 27 | 5 | 8 |
 | hooks/win-loss | 0 | 0 | 54 | 36 | 4 | 16 |
 | lib | 0 | 0 | 28 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 110 | 155 | 161 | 818 | 115 | 297 |
+| pages | 110 | 155 | 161 | 819 | 115 | 298 |
 | pages/admin | 1 | 12 | 12 | 81 | 10 | 46 |
 | services | 0 | 0 | 6 | 0 | 0 | 13 |
 
@@ -577,8 +577,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21684 nós · 66481 arestas · 1486 comunidades · grafo do commit `de87a0c6`
-- comunidades maiores: schema.sql (785), CardContent (493), client.ts (359), Input (304), Card (293), Índice (283), Badge (280), SelectContent (253), vitest (242), getCorsHeaders (208), Skeleton (203), Clientes.tsx (202)
+- 21721 nós · 66674 arestas · 1498 comunidades · grafo do commit `8a0bc946`
+- comunidades maiores: schema.sql (785), Card (615), react (483), SelectContent (294), Índice (277), lucide-react (265), client.ts (262), vitest (254), Button (250), getCorsHeaders (239), formatBRL (238), Badge (216)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -756,6 +756,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 ## Últimos commits
+- 2026-11-17 `8a0bc94` feat(pipeline): histórico do negócio direto do card, para negócio em aberto (#573)
+- 2026-11-17 `eedadeb` feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)
+- 2026-11-17 `5afc278` feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)
 - 2026-11-17 `de87a0c` feat(bi): painel de mudança de classe ABC com dado real (#568)
 - 2026-11-17 `25f5950` fix: índice do contexto carimba a data absoluta da coleta (#566)
 - 2026-11-17 `8fc1c8c` fix: match_reply_to_enrollment reconhece contato de conta (#565)
@@ -768,9 +771,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `beed109` feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)
 - 2026-11-17 `2a3a8ca` feat(db): auditoria nas duas tabelas de webhook (#551)
 - 2026-11-17 `ba21ed9` feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)
-- 2026-11-17 `f4e85df` chore(types): sincroniza types.ts com o banco oficial [auto] (#556)
-- 2026-11-17 `b3daa82` docs(agentes): veredicto byte a byte das 9 branches vivas (#555)
-- 2026-11-17 `0b645fb` fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
