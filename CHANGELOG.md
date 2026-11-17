@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-17)
+
+
+### Funcionalidades
+
+* **db:** bloqueia SSRF e limita taxa nos webhooks de saída ([#530](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/530)) ([007a6c4](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/007a6c454429caa68faddb8d724a8cd30c3b6da2))
+* editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) ([#429](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/429)) ([362dfda](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/362dfda6e35f5bcd348b5c412321f7597b00b9af))
+* exportar relatorio em Excel (.xlsx), termina trabalho de outro agente ([#517](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/517)) ([0c33752](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/0c33752785984dad4efaaadefeab6e092d572fc3))
+* **gamificação:** liga o combo diário do vendedor, de ponta a ponta ([#521](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/521)) ([490da7c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/490da7c978cd6149c049924e253dcfe7561db223))
+* **security:** tela de sessoes ativas, termina trabalho de outro agente ([#518](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/518)) ([69c213b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/69c213b9a33ddba88a3d93d7db6286ca977b5ce1))
+* **ui:** deixa o gestor personalizar a ordem do dashboard Win/Loss ([#524](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/524)) ([1b93c8b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1b93c8b481f8cb0c77579277bdc093b9262a4d76))
+* **ui:** mostra progresso de coaching IA na página do vendedor ([#523](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/523)) ([a1064fa](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a1064fabd371767e374602208bd2fe7b0ef57814))
+* **win-loss:** sugestões de upsell no expand do deal ([#522](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/522)) ([436fe5e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/436fe5e2d6ecdf780d715e83066cff8956a4f6a5))
+
+
+### Correções
+
+* **db:** aperta os grants das tabelas de webhook que eu criei ([#533](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/533)) ([f49fcbc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f49fcbcedd3d8da43a34a6c97c89e144c70d47af))
+* **db:** cadastra no papel admin as permissões que ele já exerce ([#526](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/526)) ([a32e9b7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a32e9b76e5773f7e82fd7da134c45febbe4611ef))
+* **db:** completa o conserto da sazonalidade, agora o cast de EXTRACT ([#527](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/527)) ([dd0137c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/dd0137cc0c6d20a6f1afe5d95841adec65ab1acd))
+* **db:** conserta as duas funções de sazonalidade quebradas em produção ([#525](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/525)) ([68ffc4f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/68ffc4fd7cdffe52ad05a1169990db453cd8998e))
+* **db:** policy deny-all em daily_challenge_rotations e geocode_cache ([#424](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/424)) ([e3668b5](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e3668b5e32ede1046bfa25c5ea0b2c1ca087127a))
+* **db:** resgata as constraints de integridade que faltavam de verdade ([#529](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/529)) ([56e7a51](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/56e7a51f72457d689fb1b4f71d0a834a67bd8916))
+* **db:** resgata hardening de ACL e constraints de integridade ([#513](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/513)) ([8edd3f7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8edd3f7b1272469cffb8af89b0db6670f131ddb6))
+* **deps:** reverte typescript 7 para 5.9.3 e ajusta o ratchet ([#516](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/516)) ([80b3a0b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/80b3a0b80f5e66ee128ec6d4a5b5de581c08001a))
+* **hooks:** revalidacao de sessao trocada em MFA, WebAuthn, rate-limiter e velocity ([#510](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/510)) ([0aa91e5](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/0aa91e5d9cb37931b7f52443bfb9032182fa1973))
+* resgata 3 migrations órfãs das PRs [#459](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/459), [#461](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/461) e [#464](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/464) ([#503](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/503)) ([5e29d26](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5e29d2612ed0269a9513a28c2ac42e5c6a06c29a))
+* win rate decidido no Benchmark Historico, resgatado de v2/hidden-features ([#509](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/509)) ([c445dea](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/c445dea5daeba153a97969cbe1eaa2613894f6f8))
+
 ## [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 
