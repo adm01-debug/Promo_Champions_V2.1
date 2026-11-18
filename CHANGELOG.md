@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
+
+
+### Funcionalidades
+
+* dependency review nos PRs ([#576](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/576)) ([cc8d2d2](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/cc8d2d2cfad73fef4442b875bf8442f739fc8968))
+
 ## [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-18)
 
 
