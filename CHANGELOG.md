@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-18)
+
+
+### Funcionalidades
+
+* **bi:** ações recomendadas na curva ABC a partir da classificação real ([#545](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/545)) ([133abff](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/133abff3e734a9418ff8a797cca523f459ce45fd))
+* **bi:** painel de mudança de classe ABC com dado real ([#568](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/568)) ([de87a0c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/de87a0c6326a36d33c3da59f163e61ef399d1019))
+* **db:** auditoria nas duas tabelas de webhook ([#551](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/551)) ([2a3a8ca](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2a3a8ca1d012ec66efc58a54f6524a0876ecc345))
+* **db:** bloqueia SSRF e limita taxa nos webhooks de saída ([#530](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/530)) ([007a6c4](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/007a6c454429caa68faddb8d724a8cd30c3b6da2))
+* **email:** clique e abertura de e-mail alimentam o score de engajamento ([#558](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/558)) ([beed109](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/beed1098a97bbae374e0160a49cdaffc9f43540b))
+* **email:** resposta de e-mail passa a gravar sinal de engajamento ([#561](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/561)) ([d2460a9](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d2460a9602cf2e69efe03afe6ebbe44da9fbf422))
+* **engagement:** entrada para o recálculo em lote do engajamento de contato ([#557](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/557)) ([ba21ed9](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ba21ed98ab64e88a6e112a4d5b22aae6def69e3e))
+* **pipeline:** histórico do negócio direto do card, para negócio em aberto ([#573](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/573)) ([8a0bc94](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8a0bc946dd3d428b530e563c96ae5b113b395f6a))
+* **sequências:** melhor horário de envio por contato na inscrição da sequência ([#574](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/574)) ([58dbc25](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/58dbc2530cc3cbbbd9b6868f9982749fcc42d156))
+* **tarefas:** vendedor vê e submete as tarefas que o gestor atribuiu ([#571](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/571)) ([5afc278](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5afc27862f26e55de43afcd1a0afaa0d28a73853))
+* **xp:** extrato de XP do vendedor, lendo a tabela que já era gravada ([#572](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/572)) ([eedadeb](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/eedadebcabd86dec4fbe5560479222c1939c287f))
+
+
+### Correções
+
+* **bi:** agrupa curva ABC por cliente real, nao por client_name ([#541](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/541)) ([1bcb694](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1bcb6947fe563b431ff713ac0fc300f2ec097853))
+* **bi:** remove promessa de retorno que a curva ABC nao sustenta ([#547](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/547)) ([f94042e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f94042e2dfe0bb42f1e4a81082bc202658a2ac86))
+* **cadências:** 500 em process-cadence-tasks — cria cadence_tasks.updated_at ([#553](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/553)) ([62ddfbe](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/62ddfbe10c2e9270e67f153e5ccb48d9c355f31f))
+* **ci:** gate passa a rodar os 17 testes do gerador de probes ([#569](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/569)) ([9591c26](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/9591c26bd38a366b6c534671bfea8670e63da87b))
+* **db:** 403 ao gravar error_logs — INSERT só existia para anon ([#554](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/554)) ([0b645fb](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/0b645fb99174959cc6ee541d3708cc0f5940d066))
+* **db:** 403 na tela de Webhooks — remove policy morta que lê auth.users ([#552](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/552)) ([c4f4e3b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/c4f4e3bc664658d711bb977fab30c5c9c1f9bc98))
+* **db:** aperta os grants das tabelas de webhook que eu criei ([#533](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/533)) ([f49fcbc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f49fcbcedd3d8da43a34a6c97c89e144c70d47af))
+* **db:** cadastra no papel admin as permissões que ele já exerce ([#526](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/526)) ([a32e9b7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a32e9b76e5773f7e82fd7da134c45febbe4611ef))
+* **db:** completa o conserto da sazonalidade, agora o cast de EXTRACT ([#527](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/527)) ([dd0137c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/dd0137cc0c6d20a6f1afe5d95841adec65ab1acd))
+* **db:** conserta as duas funções de sazonalidade quebradas em produção ([#525](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/525)) ([68ffc4f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/68ffc4fd7cdffe52ad05a1169990db453cd8998e))
+* **db:** cria _internal_secrets antes de usa-la na migration de 15/07 ([#542](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/542)) ([cf25752](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/cf25752e788d245a1422ec6b7106c170f769b003))
+* **db:** match_reply_to_enrollment consultava sales.email, coluna inexistente ([#562](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/562)) ([f0d43dc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f0d43dce82a9e9126832a384bf890dd5c4e8bbd9))
+* **db:** reconcilia 11 objetos de producao sem arquivo de migration ([#538](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/538)) ([d6521a4](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d6521a48fe4bdd9e4d7574857469ce5ff52f4ce1))
+* **db:** registra no ledger as 594 migrations ja aplicadas no schema ([#543](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/543)) ([a45b9ed](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a45b9ed7c4353f17e30a541f15781f59fdc1e4a4))
+* **db:** remove do ledger as 241 versoes de migration sem arquivo local ([#540](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/540)) ([31ed35d](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/31ed35da36b9a0800509f3056a57f0f77d8617b0))
+* **db:** resgata as constraints de integridade que faltavam de verdade ([#529](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/529)) ([56e7a51](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/56e7a51f72457d689fb1b4f71d0a834a67bd8916))
+* índice do contexto carimba a data absoluta da coleta ([#566](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/566)) ([25f5950](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/25f5950373652e625bc85c24262a6fda1a0d39e4))
+* match_reply_to_enrollment reconhece contato de conta ([#565](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/565)) ([8fc1c8c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8fc1c8c53c1b3fb7dc5be831f185cc9eca71f1d8))
+* sinal de resposta independe da busca de inscrição ([#563](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/563)) ([6417fc3](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/6417fc362d9f7738bb8c525b290407ec10e8c8a1))
+* SLA de revisão deixa de cobrar PR de bot ([#567](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/567)) ([54a8628](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/54a86288aa65db7f5f8b501e1140d6da392ea05d))
+
 ## [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 
