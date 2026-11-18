@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cc8d2d2cfad73fef4442b875bf8442f739fc8968",
+  "commit": "d9603220fb0292fa926625fc590b60d125a82287",
   "branch": "main",
-  "data_commit": "2026-11-18T15:04:52-03:00",
+  "data_commit": "2026-11-18T15:42:40-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d960322",
+    "data": "2026-11-18",
+    "assunto": "chore(main): release 1.6.0 (#577)"
+   },
    {
     "sha": "cc8d2d2",
     "data": "2026-11-18",
@@ -126,11 +131,6 @@
     "sha": "0b645fb",
     "data": "2026-11-17",
     "assunto": "fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)"
-   },
-   {
-    "sha": "62ddfbe",
-    "data": "2026-11-17",
-    "assunto": "fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)"
    }
   ],
   "arquivos_mudados_7d": 725,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 30
+    "mudancas": 31
    },
    {
     "pasta": "package.json",
-    "mudancas": 30
+    "mudancas": 31
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 45
+    "mudancas": 46
    },
    {
     "arquivo": "package.json",
-    "mudancas": 44
+    "mudancas": 45
    },
    {
     "arquivo": "deno.lock",
@@ -246,10 +246,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": ".github/workflows/migrations-drift.yml",
     "mudancas": 7
    },
@@ -258,11 +254,15 @@
     "mudancas": 7
    },
    {
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 7
    },
    {
-    "arquivo": "CHANGELOG.md",
+    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 6
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 14
+    "commits": 15
    },
    {
     "autor": "devin-ai-integration[bot]",

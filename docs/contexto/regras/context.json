@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "cc8d2d2cfad73fef4442b875bf8442f739fc8968",
+  "sha": "d9603220fb0292fa926625fc590b60d125a82287",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-18 18:06 UTC",
+  "generated_at": "2026-11-18 18:46 UTC",
   "files_total": 3618,
   "code_files": 3280,
   "code_lines": 476237
@@ -297101,10 +297101,22 @@
   }
  },
  "git": {
-  "sha": "cc8d2d2cfad73fef4442b875bf8442f739fc8968",
+  "sha": "d9603220fb0292fa926625fc590b60d125a82287",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d960322",
+    "date": "2026-11-18",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.6.0 (#577)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "cc8d2d2",
     "date": "2026-11-18",
@@ -297390,16 +297402,6 @@
     "files": [
      "docs/agentes/telas-orfas-da-reescrita-261117.md"
     ]
-   },
-   {
-    "sha": "f94042e",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(bi): remove promessa de retorno que a curva ABC nao sustenta (#547)",
-    "files": [
-     "src/components/analytics/ABCActionableAutomations.test.ts",
-     "src/components/analytics/ABCActionableAutomations.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -297412,27 +297414,27 @@
     3
    ],
    [
+    ".release-please-manifest.json",
+    2
+   ],
+   [
+    "CHANGELOG.md",
+    2
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
     "docs/agentes/telas-orfas-da-reescrita-261117.md",
     2
    ],
    [
     ".github/workflows/dependency-review.yml",
-    1
-   ],
-   [
-    ".release-please-manifest.json",
-    1
-   ],
-   [
-    "CHANGELOG.md",
-    1
-   ],
-   [
-    "package-lock.json",
-    1
-   ],
-   [
-    "package.json",
     1
    ],
    [

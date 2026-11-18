@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cc8d2d2cfad73fef4442b875bf8442f739fc8968` (2026-11-18T15:04:52-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d9603220fb0292fa926625fc590b60d125a82287` (2026-11-18T15:42:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -577,14 +577,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21731 nós · 66710 arestas · 1519 comunidades · grafo do commit `cc8d2d2c`
-- comunidades maiores: schema.sql (785), CardContent (344), cn (323), Button (316), PageTransition (284), getCorsHeaders (283), react (282), Índice (277), button.tsx (267), card.tsx (256), vitest (245), client.ts (232)
+- 21733 nós · 66712 arestas · 1551 comunidades · grafo do commit `d9603220`
+- comunidades maiores: schema.sql (785), Card (665), lucide-react (449), Badge (364), client.ts (318), getCorsHeaders (286), Índice (277), react (235), formatBRL (218), SelectContent (217), Button (216), Clientes.tsx (198)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (45)
-- package.json (44)
+- package-lock.json (46)
+- package.json (45)
 - deno.lock (21)
 - RELATORIO_CI.md (18)
 - .github/workflows/codeql.yml (13)
@@ -595,9 +595,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/db-backup.yml (7)
 - .github/workflows/deploy.yml (7)
-- .github/workflows/graphify.yml (7)
 - .github/workflows/migrations-drift.yml (7)
 - .github/workflows/quote-to-sale-e2e.yml (7)
+- CHANGELOG.md (7)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -697,7 +697,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `.github/ENVIRONMENTS.md` — GitHub Environments — Modelo de Segurança (73 linhas)
 - `.github/pull_request_template.md` (84 linhas)
 - `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (73 linhas)
-- `CHANGELOG.md` — Changelog (225 linhas)
+- `CHANGELOG.md` — Changelog (232 linhas)
 - `CLAUDE.md` (2 linhas)
 - `CODE_OF_CONDUCT.md` — Código de Conduta — Promo Champions (38 linhas)
 - `CONTRIBUTING.md` — Contribuindo com Promo Champions v2 (73 linhas)
@@ -754,9 +754,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
-- CHANGELOG topo: [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-18)
+- CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-18 `d960322` chore(main): release 1.6.0 (#577)
 - 2026-11-18 `cc8d2d2` feat: dependency review nos PRs (#576)
 - 2026-11-17 `998e3ad` chore(main): release 1.5.0 (#485)
 - 2026-11-17 `9591c26` fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `8fc1c8c` fix: match_reply_to_enrollment reconhece contato de conta (#565)
 - 2026-11-17 `c3d8008` docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)
 - 2026-11-17 `6417fc3` fix: sinal de resposta independe da busca de inscrição (#563)
-- 2026-11-17 `f0d43dc` fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
