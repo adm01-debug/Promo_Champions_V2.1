@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "54a86288aa65db7f5f8b501e1140d6da392ea05d",
+  "commit": "9591c26bd38a366b6c534671bfea8670e63da87b",
   "branch": "main",
-  "data_commit": "2026-11-17T21:19:15-03:00",
+  "data_commit": "2026-11-17T21:19:22-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9591c26",
+    "data": "2026-11-17",
+    "assunto": "fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)"
+   },
    {
     "sha": "54a8628",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "da0c2a1",
     "data": "2026-11-17",
     "assunto": "chore(db): versiona o schema de produção e testa a restauração (#548)"
-   },
-   {
-    "sha": "5ceecc6",
-    "data": "2026-11-17",
-    "assunto": "docs(db): veredicto dos 27 caminhos únicos das branches fechadas (#550)"
    }
   ],
   "arquivos_mudados_7d": 725,
@@ -218,16 +218,16 @@
     "mudancas": 13
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 13
-   },
-   {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 12
+   },
+   {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 9
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 180
+    "commits": 181
    },
    {
     "autor": "dependabot[bot]",
