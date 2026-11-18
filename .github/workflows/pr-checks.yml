@@ -149,8 +149,13 @@ jobs:
       - name: Pins de Actions resolvem a tag declarada
         run: node scripts/ci/check-workflow-pins-resolvem.mjs
 
-      - name: Testes dos guards de pin e de execução de processo
-        run: node --test scripts/lib/seguranca-processo.test.mjs scripts/ci/check-workflow-pins-resolvem.unit.mjs
+      # gen-migration-probes.test.mjs tem 17 casos verdes na main e nenhum
+      # workflow o executava: o harness que rodaria isso (diag-probes-node-test.yml,
+      # PR #376) nunca entrou na main, e db-probe.yml só roda o gerador, não o teste.
+      # O gerador decide quais objetos a sonda de migration verifica em produção —
+      # regressão silenciosa nele faz a sonda mentir sobre o que foi aplicado.
+      - name: Testes dos guards de pin, de execução de processo e do gerador de probes
+        run: node --test scripts/lib/seguranca-processo.test.mjs scripts/ci/check-workflow-pins-resolvem.unit.mjs scripts/db-audit/gen-migration-probes.test.mjs
 
   # Gate de higiene de migrations (pacote auditoria DB/integridade):
   # nomenclatura ^\d{8,14}_.*\.sql$, versões únicas, sem arquivo vazio; em PR,
