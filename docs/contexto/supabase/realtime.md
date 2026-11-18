@@ -88,7 +88,6 @@
 | supabase_realtime | public.win_loss_patterns | default |
 | supabase_realtime | public.win_probability_calibrations | default |
 | supabase_realtime | public.win_probability_deal_calibrations | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_14 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_15 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_16 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_17 |  |
