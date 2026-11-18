@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9591c26bd38a366b6c534671bfea8670e63da87b",
+  "commit": "998e3ad0b8e5756b380e4266ba53390c166a0bfe",
   "branch": "main",
-  "data_commit": "2026-11-17T21:19:22-03:00",
+  "data_commit": "2026-11-17T21:36:13-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "998e3ad",
+    "data": "2026-11-17",
+    "assunto": "chore(main): release 1.5.0 (#485)"
+   },
    {
     "sha": "9591c26",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "c4f4e3b",
     "data": "2026-11-17",
     "assunto": "fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)"
-   },
-   {
-    "sha": "da0c2a1",
-    "data": "2026-11-17",
-    "assunto": "chore(db): versiona o schema de produção e testa a restauração (#548)"
    }
   ],
   "arquivos_mudados_7d": 725,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 29
+    "mudancas": 30
    },
    {
     "pasta": "package.json",
-    "mudancas": 29
+    "mudancas": 30
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 44
+    "mudancas": 45
    },
    {
     "arquivo": "package.json",
-    "mudancas": 43
+    "mudancas": 44
    },
    {
     "arquivo": "deno.lock",
@@ -262,6 +262,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -290,10 +294,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    }
@@ -313,7 +313,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 13
+    "commits": 14
    },
    {
     "autor": "Claude",
