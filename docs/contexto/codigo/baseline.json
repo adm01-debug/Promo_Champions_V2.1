@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "998e3ad0b8e5756b380e4266ba53390c166a0bfe",
+  "commit": "cc8d2d2cfad73fef4442b875bf8442f739fc8968",
   "branch": "main",
-  "data_commit": "2026-11-17T21:36:13-03:00",
+  "data_commit": "2026-11-18T15:04:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "cc8d2d2",
+    "data": "2026-11-18",
+    "assunto": "feat: dependency review nos PRs (#576)"
+   },
    {
     "sha": "998e3ad",
     "data": "2026-11-17",
@@ -126,11 +131,6 @@
     "sha": "62ddfbe",
     "data": "2026-11-17",
     "assunto": "fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)"
-   },
-   {
-    "sha": "c4f4e3b",
-    "data": "2026-11-17",
-    "assunto": "fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)"
    }
   ],
   "arquivos_mudados_7d": 725,
@@ -301,19 +301,19 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 181
+    "commits": 182
    },
    {
     "autor": "dependabot[bot]",
     "commits": 27
    },
    {
-    "autor": "devin-ai-integration[bot]",
+    "autor": "github-actions[bot]",
     "commits": 14
    },
    {
-    "autor": "github-actions[bot]",
-    "commits": 14
+    "autor": "devin-ai-integration[bot]",
+    "commits": 13
    },
    {
     "autor": "Claude",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3602,
+  "arquivos_total": 3603,
   "arquivos_codigo": 2572,
   "linhas_codigo": 442287,
   "rotas": 170,
@@ -337,7 +337,7 @@
   "migrations": 699,
   "cron_jobs": 31,
   "testes": 246,
-  "workflows": 26,
+  "workflows": 27,
   "scripts": 78,
   "docs_md": 212
  },

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: dependency review nos PRs (#576)",
    "chore(main): release 1.5.0 (#485)",
    "fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)",
    "fix: SLA de revisão deixa de cobrar PR de bot (#567)",
-   "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)",
-   "feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)"
+   "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

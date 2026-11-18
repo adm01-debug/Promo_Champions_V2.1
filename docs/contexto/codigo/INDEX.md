@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `998e3ad0b8e5756b380e4266ba53390c166a0bfe` (2026-11-17T21:36:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cc8d2d2cfad73fef4442b875bf8442f739fc8968` (2026-11-18T15:04:52-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2491), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2491), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3602 |
+| arquivos_total | 3603 |
 | arquivos_codigo | 2572 |
 | linhas_codigo | 442287 |
 | rotas | 170 |
@@ -49,7 +49,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 699 |
 | cron_jobs | 31 |
 | testes | 246 |
-| workflows | 26 |
+| workflows | 27 |
 | scripts | 78 |
 | docs_md | 212 |
 
@@ -577,7 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21731 nós · 66710 arestas · 1519 comunidades · grafo do commit `998e3ad0`
+- 21731 nós · 66710 arestas · 1519 comunidades · grafo do commit `cc8d2d2c`
 - comunidades maiores: schema.sql (785), CardContent (344), cn (323), Button (316), PageTransition (284), getCorsHeaders (283), react (282), Índice (277), button.tsx (267), card.tsx (256), vitest (245), client.ts (232)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -612,6 +612,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `db-probe.yml` — DB Probe (read-only) (workflow_dispatch)
 - `dependabot-automerge.yml` — Dependabot Auto-merge (pull_request, schedule, workflow_dispatch; cron 30 11 * * *)
 - `dependabot-fix-lockfile.yml` — Dependabot – Fix deno.lock (pull_request_target, workflow_dispatch)
+- `dependency-review.yml` — Dependency Review (pull_request)
 - `deploy.yml` — Deploy Pipeline (push, workflow_dispatch)
 - `edge-functions-bundle.yml` — Edge Functions Bundle Check (pull_request, push)
 - `edge-functions-input-validation.yml` — Edge Functions Input Validation Lint (pull_request, push)
@@ -756,6 +757,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-18 `cc8d2d2` feat: dependency review nos PRs (#576)
 - 2026-11-17 `998e3ad` chore(main): release 1.5.0 (#485)
 - 2026-11-17 `9591c26` fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)
 - 2026-11-17 `54a8628` fix: SLA de revisão deixa de cobrar PR de bot (#567)
@@ -770,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `c3d8008` docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)
 - 2026-11-17 `6417fc3` fix: sinal de resposta independe da busca de inscrição (#563)
 - 2026-11-17 `f0d43dc` fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)
-- 2026-11-17 `d2460a9` feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
