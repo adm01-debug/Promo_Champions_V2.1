@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cefd645d6556329d89711d3b347b522ade3e14f7` (2026-11-17T18:34:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `54a86288aa65db7f5f8b501e1140d6da392ea05d` (2026-11-17T21:19:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -577,27 +577,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21728 nós · 66707 arestas · 1536 comunidades · grafo do commit `cefd645d`
+- 21728 nós · 66707 arestas · 1536 comunidades · grafo do commit `54a86288`
 - comunidades maiores: schema.sql (785), Card (486), cn (420), getCorsHeaders (304), Índice (277), client.ts (275), DialogContent (258), Input (250), vitest (231), lucide-react (221), Skeleton (202), TableRow (195)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (45)
-- package.json (44)
-- deno.lock (22)
+- package-lock.json (44)
+- package.json (43)
+- deno.lock (21)
 - RELATORIO_CI.md (18)
 - .github/workflows/codeql.yml (13)
 - src/integrations/supabase/types.ts (13)
 - PENDENCIAS.md (12)
 - .github/workflows/pr-checks.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
-- src/hooks/abm/useAccounts.ts (8)
 - .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/db-backup.yml (7)
 - .github/workflows/deploy.yml (7)
 - .github/workflows/graphify.yml (7)
 - .github/workflows/migrations-drift.yml (7)
+- .github/workflows/quote-to-sale-e2e.yml (7)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -756,6 +756,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 ## Últimos commits
+- 2026-11-17 `54a8628` fix: SLA de revisão deixa de cobrar PR de bot (#567)
 - 2026-11-17 `cefd645` docs(agentes): corrige o registro das telas órfãs após o #568 (#575)
 - 2026-11-17 `58dbc25` feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)
 - 2026-11-17 `8a0bc94` feat(pipeline): histórico do negócio direto do card, para negócio em aberto (#573)
@@ -770,7 +771,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `d2460a9` feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)
 - 2026-11-17 `13844e1` fix(db): 403 nas tres ultimas policies que leem auth.users (#559)
 - 2026-11-17 `3d0e9e9` docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)
-- 2026-11-17 `beed109` feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

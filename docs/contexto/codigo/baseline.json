@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cefd645d6556329d89711d3b347b522ade3e14f7",
+  "commit": "54a86288aa65db7f5f8b501e1140d6da392ea05d",
   "branch": "main",
-  "data_commit": "2026-11-17T18:34:19-03:00",
+  "data_commit": "2026-11-17T21:19:15-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "54a8628",
+    "data": "2026-11-17",
+    "assunto": "fix: SLA de revisão deixa de cobrar PR de bot (#567)"
+   },
    {
     "sha": "cefd645",
     "data": "2026-11-17",
@@ -126,14 +131,9 @@
     "sha": "5ceecc6",
     "data": "2026-11-17",
     "assunto": "docs(db): veredicto dos 27 caminhos únicos das branches fechadas (#550)"
-   },
-   {
-    "sha": "c9bccfc",
-    "data": "2026-11-17",
-    "assunto": "docs(bi): veredicto das 3 telas que a reescrita de main descartou (#549)"
    }
   ],
-  "arquivos_mudados_7d": 724,
+  "arquivos_mudados_7d": 725,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 45
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 44
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 43
+   },
+   {
     "arquivo": "deno.lock",
-    "mudancas": 22
+    "mudancas": 21
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -234,10 +234,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 8
-   },
-   {
     "arquivo": ".github/workflows/ci-failure-alert.yml",
     "mudancas": 7
    },
@@ -262,7 +258,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 7
    },
    {
@@ -278,15 +274,7 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 6
    },
    {
@@ -296,12 +284,24 @@
    {
     "arquivo": "supabase/functions/send-multichannel-message/index.ts",
     "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/release-please.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "inventario/estado/banco.json",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 179
+    "commits": 180
    },
    {
     "autor": "dependabot[bot]",
