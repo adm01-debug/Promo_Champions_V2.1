@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
+  "sha": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-19 17:31 UTC",
+  "generated_at": "2026-11-19 18:16 UTC",
   "files_total": 3618,
   "code_files": 3280,
   "code_lines": 476237
@@ -297101,10 +297101,19 @@
   }
  },
  "git": {
-  "sha": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
+  "sha": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f7722f0",
+    "date": "2026-11-19",
+    "author": "github-actions[bot]",
+    "subject": "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)",
+    "files": [
+     "src/integrations/supabase/types.ts"
+    ]
+   },
    {
     "sha": "9f4dba8",
     "date": "2026-11-19",
@@ -297393,15 +297402,6 @@
      "docs/agentes/replay-do-repo-261117.md",
      "supabase/schema.sql"
     ]
-   },
-   {
-    "sha": "5ceecc6",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(db): veredicto dos 27 caminhos únicos das branches fechadas (#550)",
-    "files": [
-     "docs/agentes/migrations-arquivadas-veredicto-261117.md"
-    ]
    }
   ],
   "hot_files": [
@@ -297412,6 +297412,10 @@
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
    ],
    [
     ".release-please-manifest.json",
@@ -297479,10 +297483,6 @@
    ],
    [
     "src/components/pipeline/dealTimelineConstants.tsx",
-    1
-   ],
-   [
-    "src/hooks/useDealTimeline.ts",
     1
    ]
   ]

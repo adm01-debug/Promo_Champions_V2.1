@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f` (2026-11-19T14:19:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa` (2026-11-19T17:38:47Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -577,7 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21733 nós · 66712 arestas · 1551 comunidades · grafo do commit `9f4dba8a`
+- 21733 nós · 66712 arestas · 1551 comunidades · grafo do commit `f7722f0f`
 - comunidades maiores: schema.sql (785), Card (665), lucide-react (449), Badge (364), client.ts (318), getCorsHeaders (286), Índice (277), react (235), formatBRL (218), SelectContent (217), Button (216), Clientes.tsx (198)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -589,15 +589,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - RELATORIO_CI.md (18)
 - .github/workflows/codeql.yml (13)
 - PENDENCIAS.md (12)
-- src/integrations/supabase/types.ts (11)
+- src/integrations/supabase/types.ts (12)
 - .github/workflows/pr-checks.yml (10)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/deploy.yml (8)
 - .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/db-backup.yml (7)
 - .github/workflows/migrations-drift.yml (7)
-- .github/workflows/quote-to-sale-e2e.yml (7)
 - CHANGELOG.md (7)
+- src/hooks/abm/useAccounts.ts (7)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -757,6 +757,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-19 `f7722f0` chore(types): sincroniza types.ts com o banco oficial [auto] (#580)
 - 2026-11-19 `9f4dba8` fix: adiciona --yes no deploy de edge functions para CI (#578)
 - 2026-11-18 `d960322` chore(main): release 1.6.0 (#577)
 - 2026-11-18 `cc8d2d2` feat: dependency review nos PRs (#576)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `de87a0c` feat(bi): painel de mudança de classe ABC com dado real (#568)
 - 2026-11-17 `25f5950` fix: índice do contexto carimba a data absoluta da coleta (#566)
 - 2026-11-17 `8fc1c8c` fix: match_reply_to_enrollment reconhece contato de conta (#565)
-- 2026-11-17 `c3d8008` docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

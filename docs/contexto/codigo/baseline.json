@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
+  "commit": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
   "branch": "main",
-  "data_commit": "2026-11-19T14:19:39-03:00",
+  "data_commit": "2026-11-19T17:38:47Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f7722f0",
+    "data": "2026-11-19",
+    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)"
+   },
    {
     "sha": "9f4dba8",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "f4e85df",
     "data": "2026-11-17",
     "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#556)"
-   },
-   {
-    "sha": "b3daa82",
-    "data": "2026-11-17",
-    "assunto": "docs(agentes): veredicto byte a byte das 9 branches vivas (#555)"
    }
   ],
   "arquivos_mudados_7d": 350,
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -250,10 +250,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": "CHANGELOG.md",
     "mudancas": 7
    },
@@ -263,6 +259,10 @@
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
     "mudancas": 6
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 15
+    "commits": 16
    },
    {
     "autor": "devin-ai-integration[bot]",
