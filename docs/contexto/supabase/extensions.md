@@ -8,6 +8,6 @@
 | pg_trgm | 1.6 | 1.6 | extensions |
 | pgcrypto | 1.3 | 1.3 | extensions |
 | plpgsql | 1.0 | 1.0 | pg_catalog |
-| supabase_vault | 0.3.1 | 0.3.1 | vault |
+| supabase_vault | 0.3.2 | 0.3.2 | vault |
 | uuid-ossp | 1.1 | 1.1 | extensions |
 | vector | 0.8.2 | 0.8.2 | extensions |

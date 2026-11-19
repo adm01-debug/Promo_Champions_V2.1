@@ -8,7 +8,7 @@
 | owner | postgres |
 | security_invoker | sim |
 | opções | security_invoker=true |
-| depende de | public.activities |
+| depende de | public.activities, public.salespeople |
 | populada | n/a |
 | comentário |  |
 
@@ -91,7 +91,7 @@ SELECT c.id AS client_id,
 | owner | postgres |
 | security_invoker | sim |
 | opções | security_invoker=true |
-| depende de | public.clients |
+| depende de | public.cadences, public.clients |
 | populada | n/a |
 | comentário |  |
 
@@ -402,7 +402,7 @@ SELECT id,
 | owner | postgres |
 | security_invoker | n/a |
 | opções |  |
-| depende de | public.sales, public.salespeople |
+| depende de | public.achievements, public.sales, public.salespeople |
 | populada | sim |
 | comentário |  |
 

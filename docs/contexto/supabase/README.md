@@ -55,7 +55,7 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 
 | propriedade | valor |
 |---|---|
-| Postgres | 17.6 |
+| Postgres | 17.12 |
 | database | postgres |
 | timezone |  |
 | max_connections | 60 |

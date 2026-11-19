@@ -10,6 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
+| usada por views | public.mv_competitive_ranking |
 
 
 ## Colunas

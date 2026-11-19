@@ -10,7 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
-| usada por views | public.follow_up_audit_view, public.mv_competitive_ranking, public.race_leaderboard_view, public.salespeople_public |
+| usada por views | public.activities_active, public.follow_up_audit_view, public.mv_competitive_ranking, public.race_leaderboard_view, public.salespeople_public |
 
 
 ## Colunas

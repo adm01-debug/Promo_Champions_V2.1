@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-19 11:13 UTC
+
+- **extensions** alterado (1): `supabase_vault`
+- **views** alterado (3): `public.activities_active`, `public.clients_active`, `public.mv_competitive_ranking`
+
 ## 2026-11-18 15:13 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_14`

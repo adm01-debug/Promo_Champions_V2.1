@@ -80738,10 +80738,10 @@
         "version": "1.0"
       },
       {
-        "available_version": "0.3.1",
+        "available_version": "0.3.2",
         "name": "supabase_vault",
         "schema": "vault",
-        "version": "0.3.1"
+        "version": "0.3.2"
       },
       {
         "available_version": "1.1",
@@ -146518,7 +146518,7 @@
       "max_parallel_workers": "2",
       "max_wal_size": "1024",
       "max_worker_processes": "6",
-      "server_version": "17.6",
+      "server_version": "17.12",
       "shared_buffers": "28672",
       "statement_timeout": "90000",
       "wal_level": "logical",
@@ -157458,7 +157458,8 @@
         "comment": null,
         "definition": " SELECT id,\n    sale_id,\n    salesperson_id,\n    activity_type,\n    outcome,\n    notes,\n    duration_minutes,\n    contact_name,\n    created_at,\n    client_id,\n    lead_status,\n    mql_qualified_at,\n    qualification_score,\n    deleted_at,\n    deleted_by,\n    delete_reason\n   FROM activities\n  WHERE deleted_at IS NULL;",
         "depends_on": [
-          "public.activities"
+          "public.activities",
+          "public.salespeople"
         ],
         "kind": "view",
         "name": "activities_active",
@@ -157507,6 +157508,7 @@
         "comment": null,
         "definition": " SELECT id,\n    name,\n    email,\n    phone,\n    company,\n    total_value,\n    created_at,\n    updated_at,\n    deleted_at,\n    deleted_by,\n    delete_reason,\n    lat,\n    lng,\n    user_id,\n    last_interaction_at,\n    lead_source,\n    email_verified,\n    phone_verified,\n    last_enrichment_id,\n    is_activated,\n    activated_at,\n    ramo_atividade\n   FROM clients\n  WHERE deleted_at IS NULL;",
         "depends_on": [
+          "public.cadences",
           "public.clients"
         ],
         "kind": "view",
@@ -157642,6 +157644,7 @@
         "comment": null,
         "definition": " WITH monthly_sales AS (\n         SELECT sales.salesperson_id,\n            sum(sales.amount) AS total_sales,\n            count(*) AS deals_count\n           FROM sales\n          WHERE (sales.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) AND COALESCE(sales.closed_at, sales.updated_at) >= (date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text)) AT TIME ZONE 'America/Sao_Paulo'::text) AND COALESCE(sales.closed_at, sales.updated_at) < ((date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text)) AT TIME ZONE 'America/Sao_Paulo'::text) + '1 mon'::interval)\n          GROUP BY sales.salesperson_id\n        ), monthly_leads AS (\n         SELECT sales.salesperson_id,\n            count(*) AS leads_count\n           FROM sales\n          WHERE sales.status <> ALL (ARRAY['completed'::text, 'won'::text, 'closed'::text, 'lost'::text, 'cancelled'::text])\n          GROUP BY sales.salesperson_id\n        )\n SELECT s.id,\n    s.name,\n    s.avatar_url,\n    s.role,\n    COALESCE(ms.total_sales, 0::numeric) AS total_sales,\n    COALESCE(ms.deals_count, 0::bigint) AS deals_count,\n    COALESCE(ml.leads_count, 0::bigint) AS leads_count,\n    rank() OVER (ORDER BY (COALESCE(ms.total_sales, 0::numeric)) DESC, (COALESCE(ms.deals_count, 0::bigint)) DESC) AS rank\n   FROM salespeople s\n     LEFT JOIN monthly_sales ms ON s.id = ms.salesperson_id\n     LEFT JOIN monthly_leads ml ON s.id = ml.salesperson_id\n  WHERE s.is_active = true;",
         "depends_on": [
+          "public.achievements",
           "public.sales",
           "public.salespeople"
         ],
