@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
+  "sha": "d7af70945f69f96835b541f311c5d58e6a29a579",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-19 18:16 UTC",
+  "generated_at": "2026-11-19 21:21 UTC",
   "files_total": 3618,
   "code_files": 3280,
   "code_lines": 476237
@@ -297101,10 +297101,19 @@
   }
  },
  "git": {
-  "sha": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
+  "sha": "d7af70945f69f96835b541f311c5d58e6a29a579",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d7af709",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)",
+    "files": [
+     ".github/workflows/deploy.yml"
+    ]
+   },
    {
     "sha": "f7722f0",
     "date": "2026-11-19",
@@ -297392,16 +297401,6 @@
     "files": [
      "supabase/migrations/20261117150000_fix_403_webhooks_policy_morta.sql"
     ]
-   },
-   {
-    "sha": "da0c2a1",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "chore(db): versiona o schema de produção e testa a restauração (#548)",
-    "files": [
-     "docs/agentes/replay-do-repo-261117.md",
-     "supabase/schema.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -297412,6 +297411,10 @@
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     3
+   ],
+   [
+    ".github/workflows/deploy.yml",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -297432,10 +297435,6 @@
    [
     "package.json",
     2
-   ],
-   [
-    ".github/workflows/deploy.yml",
-    1
    ],
    [
     ".github/workflows/dependency-review.yml",

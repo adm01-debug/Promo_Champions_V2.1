@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)",
    "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)",
    "fix: adiciona --yes no deploy de edge functions para CI (#578)",
    "chore(main): release 1.6.0 (#577)",
-   "feat: dependency review nos PRs (#576)",
-   "chore(main): release 1.5.0 (#485)"
+   "feat: dependency review nos PRs (#576)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

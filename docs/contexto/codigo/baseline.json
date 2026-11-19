@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f7722f0fdb4167bd5b037d45820f8c6d2c6f47aa",
+  "commit": "d7af70945f69f96835b541f311c5d58e6a29a579",
   "branch": "main",
-  "data_commit": "2026-11-19T17:38:47Z",
+  "data_commit": "2026-11-19T18:21:07-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d7af709",
+    "data": "2026-11-19",
+    "assunto": "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)"
+   },
    {
     "sha": "f7722f0",
     "data": "2026-11-19",
@@ -126,11 +131,6 @@
     "sha": "ba21ed9",
     "data": "2026-11-17",
     "assunto": "feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)"
-   },
-   {
-    "sha": "f4e85df",
-    "data": "2026-11-17",
-    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#556)"
    }
   ],
   "arquivos_mudados_7d": 350,
@@ -223,19 +223,19 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 8
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 9
    },
    {
     "arquivo": ".github/workflows/ci-failure-alert.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 182
+    "commits": 183
    },
    {
     "autor": "dependabot[bot]",
