@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d9603220fb0292fa926625fc590b60d125a82287",
+  "commit": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
   "branch": "main",
-  "data_commit": "2026-11-18T15:42:40-03:00",
+  "data_commit": "2026-11-19T14:19:39-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9f4dba8",
+    "data": "2026-11-19",
+    "assunto": "fix: adiciona --yes no deploy de edge functions para CI (#578)"
+   },
    {
     "sha": "d960322",
     "data": "2026-11-18",
@@ -126,14 +131,9 @@
     "sha": "b3daa82",
     "data": "2026-11-17",
     "assunto": "docs(agentes): veredicto byte a byte das 9 branches vivas (#555)"
-   },
-   {
-    "sha": "0b645fb",
-    "data": "2026-11-17",
-    "assunto": "fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)"
    }
   ],
-  "arquivos_mudados_7d": 725,
+  "arquivos_mudados_7d": 350,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -234,15 +234,15 @@
     "mudancas": 9
    },
    {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 8
+   },
+   {
     "arquivo": ".github/workflows/ci-failure-alert.yml",
     "mudancas": 7
    },
    {
     "arquivo": ".github/workflows/db-backup.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 7
    },
    {

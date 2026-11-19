@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d9603220fb0292fa926625fc590b60d125a82287",
+  "sha": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-18 18:46 UTC",
+  "generated_at": "2026-11-19 17:20 UTC",
   "files_total": 3618,
   "code_files": 3280,
   "code_lines": 476237
@@ -297101,10 +297101,19 @@
   }
  },
  "git": {
-  "sha": "d9603220fb0292fa926625fc590b60d125a82287",
+  "sha": "9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9f4dba8",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix: adiciona --yes no deploy de edge functions para CI (#578)",
+    "files": [
+     ".github/workflows/deploy.yml"
+    ]
+   },
    {
     "sha": "d960322",
     "date": "2026-11-18",
@@ -297393,15 +297402,6 @@
     "files": [
      "docs/agentes/migrations-arquivadas-veredicto-261117.md"
     ]
-   },
-   {
-    "sha": "c9bccfc",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(bi): veredicto das 3 telas que a reescrita de main descartou (#549)",
-    "files": [
-     "docs/agentes/telas-orfas-da-reescrita-261117.md"
-    ]
    }
   ],
   "hot_files": [
@@ -297430,8 +297430,8 @@
     2
    ],
    [
-    "docs/agentes/telas-orfas-da-reescrita-261117.md",
-    2
+    ".github/workflows/deploy.yml",
+    1
    ],
    [
     ".github/workflows/dependency-review.yml",
@@ -297443,6 +297443,10 @@
    ],
    [
     ".github/workflows/pr-review-sla.yml",
+    1
+   ],
+   [
+    "docs/agentes/telas-orfas-da-reescrita-261117.md",
     1
    ],
    [
@@ -297479,10 +297483,6 @@
    ],
    [
     "src/hooks/useDealTimeline.ts",
-    1
-   ],
-   [
-    "src/components/competitive/GamifiedProfile.tsx",
     1
    ]
   ]
