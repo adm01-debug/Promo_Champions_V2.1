@@ -6,7 +6,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | métrica | valor |
 |---|---|
-| tamanho | 259.4 MB |
+| tamanho | 259.6 MB |
 | schema public | 155.6 MB |
 
 
@@ -67,7 +67,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.data_access_log | ~120 | 112.0 KB | 16.0 KB | 64.0 KB | 1 | ~70 | ~140 |  |
 | public.feed_reactions | ~150 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~70 | ~4.5k |  |
 | public.onboarding_journeys | ~100 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~90 | ~10 |  |
-| public.slow_query_alerts | 9 | 112.0 KB | 8.0 KB | 64.0 KB | ~50 | ~2.5k | ~2.4k | 2026-11-18 |
+| public.slow_query_alerts | 9 | 112.0 KB | 8.0 KB | 64.0 KB | 0 | ~2.5k | ~2.4k | 2026-11-19 |
 | public.supplier_products | 0 | 112.0 KB | 16.0 KB | 64.0 KB | ~40 | ~80 | ~200 |  |
 | public.support_tickets | ~150 | 112.0 KB | 24.0 KB | 56.0 KB | 0 | ~90 | 5 |  |
 | public.teams | 3 | 112.0 KB | 8.0 KB | 96.0 KB | 0 | ~90 | ~20 |  |
@@ -235,7 +235,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | ~1.1k |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | 1 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | 0 |  |
-| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~304.6k | ~54.9k |  |
+| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~304.9k | ~55k |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~70 | 3 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~190 | 7 |  |
 | public.api_tokens | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~70 | 2 |  |
@@ -465,21 +465,21 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~280 | ~1.7M | 6148.96 | `SELECT public.detect_stalled_cron_jobs()` |
-| service_role | ~410 | ~809.5k | 1984.09 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~9.9k | ~312.1k | 31.42 | `SELECT public.trigger_internal_edge_job('?')` |
-| postgres | ~30 | ~111.9k | 3497.43 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~280 | ~1.7M | 6180.60 | `SELECT public.detect_stalled_cron_jobs()` |
+| service_role | ~420 | ~828.5k | 1982.14 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~10.2k | ~319.5k | 31.33 | `SELECT public.trigger_internal_edge_job('?')` |
+| postgres | ~30 | ~119k | 3500.85 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~840 | ~44.2k | 52.42 | `SELECT public.admin_capture_rollback_snapshot()` |
 | authenticator | ~40 | ~43.9k | 1069.93 | `SELECT name FROM pg_timezone_names` |
-| postgres | ~820 | ~43.3k | 52.52 | `SELECT public.admin_capture_rollback_snapshot()` |
-| postgres | ~30 | ~32.2k | 1004.90 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| postgres | ~30 | ~34k | 1000.38 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
 | authenticator | ~40 | ~27.2k | 664.00 | `WITH -- Recursively get the base types of domains base_types AS ( WITH RECURSIVE recurse AS ( SELECT oid, typbasetype, typnamespace AS base_namespace, COALESCE(NULLIF(typbasetype, $2), oid) AS base_type FROM pg_type UNIO` |
 | postgres | ~130 | ~16.9k | 128.31 | `SELECT pg_advisory_xact_lock(hashtext($1))` |
-| postgres | ~11.8k | ~14.5k | 1.24 | `WITH rows AS ( SELECT id FROM net.http_request_queue ORDER BY id LIMIT $1 ) DELETE FROM net.http_request_queue q USING rows WHERE q.id = rows.id RETURNING q.id, q.method, q.url, timeout_milliseconds, array(select key \|\| ` |
-| postgres | ~30 | ~13.8k | 430.36 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| postgres | ~70 | ~10.8k | 156.14 | `SELECT public.detect_slow_queries($1, $2)` |
-| postgres | ~11.8k | ~10.6k | 0.90 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
-| postgres | ~30 | ~10.2k | 318.36 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| pgbouncer | ~110 | ~10k | 90.61 | `SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput, coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, $1), ARRAY ( SELECT a.atttypid FROM pg_attribute AS a WHERE a.attrelid = t.typrelid AND a.` |
+| postgres | ~12k | ~14.8k | 1.23 | `WITH rows AS ( SELECT id FROM net.http_request_queue ORDER BY id LIMIT $1 ) DELETE FROM net.http_request_queue q USING rows WHERE q.id = rows.id RETURNING q.id, q.method, q.url, timeout_milliseconds, array(select key \|\| ` |
+| postgres | ~30 | ~14.4k | 424.16 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| postgres | ~70 | ~10.9k | 155.57 | `SELECT public.detect_slow_queries($1, $2)` |
+| postgres | ~12k | ~10.9k | 0.90 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
+| postgres | ~30 | ~10.8k | 318.29 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| pgbouncer | ~110 | ~10.1k | 89.77 | `SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput, coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, $1), ARRAY ( SELECT a.atttypid FROM pg_attribute AS a WHERE a.attrelid = t.typrelid AND a.` |
 
 
 ## Conexões
