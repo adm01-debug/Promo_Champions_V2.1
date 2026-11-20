@@ -176,3 +176,62 @@ test('suppressKey de function distingue aridade; table ignora aux', () => {
   assert.equal(suppressKey({ kind: 'function', schema: 'public', obj: 'f', extra: '' }), 'function|public|f');
   assert.equal(suppressKey({ kind: 'table', schema: 'public', obj: 't', extra: 'x' }), 'table|public|t');
 });
+
+test('DO..EXECUTE dinamico cria probes admin_delete_* e dropa policies DELETE antigas', () => {
+  const sql = `DO $$
+DECLARE
+  t TEXT;
+  business_tables TEXT[] := ARRAY['clients','suppliers'];
+BEGIN
+  FOREACH t IN ARRAY business_tables LOOP
+    FOR pol IN SELECT policyname FROM pg_policies WHERE tablename = t AND cmd = 'DELETE'
+    LOOP
+      EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, t);
+    END LOOP;
+    EXECUTE format(
+      'CREATE POLICY %I ON public.%I FOR DELETE TO authenticated USING (public.is_admin_or_manager(auth.uid()))',
+      'admin_delete_' || t, t
+    );
+    EXECUTE format('ALTER TABLE public.%I ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ', t);
+  END LOOP;
+END $$;`;
+  const V = '20261001193000';
+  const creates = collectProbes(sql, V);
+  const drops = collectDrops(sql, V);
+  const pol = creates.filter((r) => r.kind === 'policy').map((r) => [r.obj, r.extra]);
+  assert.deepEqual(pol, [
+    ['admin_delete_clients', 'delete|clients'],
+    ['admin_delete_suppliers', 'delete|suppliers'],
+  ]);
+  const cols = creates.filter((r) => r.kind === 'column' && r.obj === 'deleted_at').map((r) => r.extra).sort();
+  assert.deepEqual(cols, ['clients', 'suppliers']);
+  // drops dinâmicos: wildcard por tabela
+  const wildcards = drops.filter((r) => r.kind === 'policy' && r.obj === '*').map((r) => r.extra).sort();
+  assert.deepEqual(wildcards, ['clients', 'suppliers']);
+});
+
+test('net-state suprime policy DELETE antiga dropada por block dinamico', () => {
+  const dynSql = `DO $$
+DECLARE t TEXT; business_tables TEXT[] := ARRAY['clients']; BEGIN
+  FOREACH t IN ARRAY business_tables LOOP
+    EXECUTE format('CREATE POLICY %I ON public.%I FOR DELETE TO authenticated USING (true)', 'admin_delete_' || t, t);
+  END LOOP;
+END $$;`;
+  const V = '20261001193000';
+  const oldCreate = collectProbes('CREATE POLICY "Admins and managers can delete clients" ON public.clients FOR DELETE USING (true);', '20251214145216');
+  const dyn = collectProbes(dynSql, V);
+  const dynDrops = collectDrops(`DO $$
+DECLARE t TEXT; business_tables TEXT[] := ARRAY['clients']; BEGIN
+  FOREACH t IN ARRAY business_tables LOOP
+    FOR pol IN SELECT policyname FROM pg_policies WHERE tablename=t AND cmd='DELETE' LOOP
+      EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, t);
+    END LOOP;
+  END LOOP;
+END $$;`, V);
+  const keeps = suppressDropped([
+    { file: 'a.sql', version: '20251214145216', creates: oldCreate, drops: [] },
+    { file: 'b.sql', version: V, creates: dyn, drops: dynDrops },
+  ]);
+  assert.equal(keeps.filter((r) => r.kind === 'policy' && r.obj === 'Admins and managers can delete clients').length, 0);
+  assert.ok(keeps.some((r) => r.kind === 'policy' && r.obj === 'admin_delete_clients'));
+});

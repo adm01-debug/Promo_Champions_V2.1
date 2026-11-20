@@ -72,7 +72,8 @@ const DROP_PATTERNS = [
   // só casa create de MESMA aridade; sem parênteses fica sem aux (backcompat).
   ['function', new RegExp(String.raw`drop\s+function\s+(?:if\s+exists\s+)?${SCH}(${ID})(?:\s*\(\s*([^()]*(?:\([^()]*\)[^()]*)*)\s*\))?`, 'gi')],
   ['trigger',  new RegExp(String.raw`drop\s+trigger\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
-  ['policy',   new RegExp(String.raw`drop\s+policy\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
+  ['policy',   new RegExp(String.raw`drop\s+policy\s+(?:if\s+exists\s+)?\*\s+on\s+public\.(${ID})\s+for\s+delete`, 'gi')],
+  // wildcard-drop acima gera obj='*' e extra=tabela; tratado em collectDrops/suppressDropped.
   ['index',    new RegExp(String.raw`drop\s+index\s+(?:concurrently\s+)?(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
   ['constraint', new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})\s+drop\s+constraint\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
   ['constraint', new RegExp(String.raw`,\s*drop\s+constraint\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
@@ -138,8 +139,161 @@ const enclosingAlterTable = (sql, index) => {
 // Extrai as probes de um SQL de migration (comentários removidos aqui
 // mesmo — o caller não precisa tratar). Exportado para o teste de
 // regressão.
+// ── Expansão de DDL dinâmico (DO .. EXECUTE format) ─────────────────────────
+// Migrations como 20261001193000_soft_delete_business_tables criam/dropam
+// objetos dentro de DO $tag$ blocks via FOREACH + EXECUTE format(...). Sem
+// expandir, o gerador (a) perde os creates (0 probe) e (b) não suprime os
+// creates antigos que o bloco dropa dinamicamente -> alarmes falsos de drift.
+// Este expander materializa esses blocks em DDL estático sondável, substituindo
+// o placeholder %I/%L de cada loop por cada tabela do array, e traduz o loop de
+// "DROP POLICY de qualquer policy FOR DELETE" num marcador de wildcard.
+//
+// Classes suportadas (padrão usado em soft_delete_business_tables):
+//   - var TEXT[] := ARRAY['t1', ...];  +  FOREACH v IN ARRAY var LOOP
+//   - EXECUTE format('CREATE POLICY %I ON public.%I FOR DELETE ...', name, t);
+//   - EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, t)
+//       -> marcador `DROP POLICY IF EXISTS * ON public.<t> FOR DELETE`
+//   - EXECUTE format('ALTER TABLE public.%I ADD COLUMN ...', t);
+//   - EXECUTE format('CREATE INDEX ... ON public.%I ...', t);
+const expandDynamic = (rawSql) => {
+  let sql = rawSql;
+  const materialized = [];
+  const doRe = /\bDO\s+(\$[A-Za-z0-9_]*\$)([\s\S]*?)\1/gi;
+  let dm;
+  while ((dm = doRe.exec(rawSql))) {
+    const block = dm[2];
+    // Tabelas do array TYPE[] := ARRAY['a','b',...];
+    const arrRe = /(\w+)\s*TEXT\[\]\s*:=\s*ARRAY\s*\[\s*((?:'[^']*'\s*,?\s*)+)\s*\]\s*;/i;
+    const am = arrRe.exec(block);
+    if (!am) continue;
+    const tables = [...am[2].matchAll(/'([^']*)'/g)].map((m) => m[1]);
+    const arrayVar = am[1];
+    // FOREACH v IN ARRAY var LOOP
+    const fc = new RegExp(`FOREACH\\s+(\\w+)\\s+IN\\s+ARRAY\\s+${arrayVar}\\s+LOOP`, 'i').exec(block);
+    const loopVar = fc ? fc[1] : Array.from(new Set([...block.matchAll(/\b(\w+)\s+IN\s+ARRAY\s+\w+\s+LOOP/gi)])).length ? null : null;
+    if (!loopVar) continue;
+    // Cada EXECUTE format(...)
+    const exRe = /EXECUTE\s+format\s*\(/g;
+    let ex;
+    while ((ex = exRe.exec(block))) {
+      // extrai conteúdo balanceado até o ')' de fechamento + ';'
+      let depth = 1, i = exRe.lastIndex, j;
+      const start = i;
+      while (i < block.length && depth > 0) {
+        const ch = block[i];
+        if (ch === '(') depth++;
+        else if (ch === ')') depth--;
+        i++;
+      }
+      j = i; // pos após ')'
+      let end = j;
+      while (end < block.length && block[end] !== ';') end++;
+      const inner = block.slice(start, j - 1);
+      const parts = splitTopLevel(inner);
+      // template = primeira parte (string literal)
+      const tplRe = /^\s*'((?:[^']|'')*)'\s*,?/s;
+      const tplM = tplRe.exec(inner);
+      if (!tplM) continue;
+      const template = tplM[1].replace(/''/g, "'");
+      const argStrs = parts.slice(1);
+      // classifica cada arg em relação ao loopVar
+      const argInfo = argStrs.map((a) => classifyArg(a, loopVar));
+      // drop de policies: marca wildcard
+      if (/^\s*drop\s+policy/i.test(template)) {
+        for (const t of tables) {
+          materialized.push(`DROP POLICY IF EXISTS * ON public.${t} FOR DELETE;`);
+        }
+        continue;
+      }
+      // create/alter/index: exige uma ocorrencia de loopVar como tabela; se
+      // algum arg nao resolve por loop, pula (nao conseguimos materializar).
+      const resolved = resolveTemplate(template, argInfo, tables, loopVar);
+      if (resolved === null) continue;
+      materialized.push(resolved);
+    }
+    // remove o bloco DO do texto (materialization fica anexado)
+    sql = sql.replace(dm[0], '');
+  }
+  return materialized.join('\n') + '\n' + sql;
+};
+
+// Quebra string em argumentos por vírgula de nível top-level (fora de quotes/parens).
+const splitTopLevel = (s) => {
+  const out = [];
+  let depth = 0, cur = '', i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'") { cur += c; i++; while (i < s.length && s[i] !== "'") { cur += s[i]; i++; } cur += "'"; i++; continue; }
+    if (c === '(' || c === '[') depth++;
+    else if (c === ')' || c === ']') depth--;
+    if (c === ',' && depth === 0) { out.push(cur); cur = ''; i++; continue; }
+    cur += c; i++;
+  }
+  if (cur.trim() !== '') out.push(cur);
+  return out;
+};
+
+// Classifica um argumento do format: como produzir o valor por tabela.
+// Retorna {type:'table'|'lit'|'concat-fix'|'dynamic'} + payload.
+const classifyArg = (arg, loopVar) => {
+  const a = arg.trim();
+  // 'literal' || var
+  let m = /^'(?:[^']|'')*'\s*\|\|\s*\b(\w+)$/s.exec(a);
+  if (m && m[1] === loopVar) {
+    const lit = a.slice(a.indexOf("'") + 1, a.lastIndexOf("'")).replace(/''/g, "'");
+    return { type: 'prefix', prefix: lit };
+  }
+  // var || 'literal'
+  m = /^(\w+)\s*\|\|\s*'(?:[^']|'')*'$/s.exec(a);
+  if (m && m[1] === loopVar) {
+    const lit = a.slice(a.lastIndexOf("'") + 1, a.length - 1).replace(/''/g, "'");
+    return { type: 'suffix', suffix: lit };
+  }
+  // var sozinho
+  if (/^\w+$/s.test(a) && a.trim() === loopVar) return { type: 'table' };
+  // referência a outra coluna/registro (ex. pol.policyname) → dinâmico
+  if (/^[a-zA-Z_]\w*\.[a-zA-Z_]\w*$/s.test(a)) return { type: 'dynamic' };
+  // string literal fixa (ex. nome de schema)
+  if (/^'[^']*'$/s.test(a)) return { type: 'lit', value: a.slice(1, -1) };
+  return { type: 'dynamic' };
+};
+
+// Substitui %I/%L do template pelos valores por tabela. Retorna DDL ou null.
+const resolveTemplate = (template, argInfo, tables, loopVar) => {
+  const phCount = (template.match(/%[IL]/g) || []).length;
+  if (argInfo.some((v) => v.type === 'dynamic')) return null;
+  if (phCount !== argInfo.length && phCount !== tables.length) {
+    // placeholders devem casar com argInfo em ordem; se houver mais args que
+    // placeholders, ignoramos o excedente apenas quando resolvíveis.
+  }
+  const lines = [];
+  for (const t of tables) {
+    let oi = 0, res = '', k = 0;
+    for (k = 0; k < template.length; k++) {
+      if (template[k] === '%' && (template[k+1] === 'I' || template[k+1] === 'L')) {
+        const info = argInfo[oi] || { type: 'dynamic' };
+        oi++;
+        let val;
+        if (info.type === 'table') val = litIdent(t);
+        else if (info.type === 'prefix') val = litIdent(info.prefix + t);
+        else if (info.type === 'suffix') val = litIdent(t + info.suffix);
+        else if (info.type === 'lit') val = info.value;
+        else return null;
+        res += val;
+        k++;
+        continue;
+      }
+      res += template[k];
+    }
+    lines.push(res);
+  }
+  return lines.join('\n');
+};
+
+const litIdent = (s) => (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s) ? s : `"${s.replace(/"/g, '""')}"`);
+
 export const collectProbes = (rawSql, version, file = '') => {
-  const sql = stripComments(rawSql);
+  const sql = stripComments(expandDynamic(rawSql));
   const rows = [];
   const seen = new Set();
   for (const [kind, re] of PATTERNS) {
@@ -192,7 +346,7 @@ export const collectProbes = (rawSql, version, file = '') => {
 // function → aridade dos args, quando presentes). Exportado para o teste
 // de regressão.
 export const collectDrops = (rawSql, version, file = '') => {
-  const sql = stripComments(rawSql);
+  const sql = stripComments(expandDynamic(rawSql));
   const rows = [];
   const seen = new Set();
   for (const [kind, re] of DROP_PATTERNS) {
@@ -201,7 +355,15 @@ export const collectDrops = (rawSql, version, file = '') => {
     while ((m = re.exec(sql))) {
       const groups = m.slice(1).map(strip);
       let schema, obj, extra;
-      if (kind === 'trigger' || kind === 'policy') {
+      if (kind === 'policy') {
+        // wildcard dinámico (bloco DO dropa todas as FOR DELETE da tabela):
+        // obj='*' + extra=tabela, para suppressDropped suprimir creates de DELETE.
+        if (/^\s*drop\s+policy/i.test(m[0]) && /\*\s+on\s+/i.test(m[0])) {
+          obj = '*'; schema = 'public'; extra = groups[0];
+        } else {
+          obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
+        }
+      } else if (kind === 'trigger') {
         obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
       } else if (kind === 'constraint' || kind === 'column') {
         if (groups[2] !== undefined) {
@@ -263,12 +425,27 @@ export const suppressDropped = (fileSets) => {
     .sort((a, b) => (a.version < b.version ? -1 : a.version > b.version ? 1 : 0))
     .map((fs) => ({ ...fs, creates: fs.creates ?? [], drops: fs.drops ?? [] }));
   const droppedLater = new Set();
+  const droppedDeleteTables = new Set(); // tabelas cujo bloco DO dropa TODAS as policies FOR DELETE
   const keeps = [];
   for (let i = sorted.length - 1; i >= 0; i--) {
     const fs = sorted[i];
-    const kept = fs.creates.filter((c) => !droppedLater.has(suppressKey(c)));
+    const kept = fs.creates.filter((c) => {
+      if (droppedLater.has(suppressKey(c))) return false;
+      // wildcard: bloco dinâmico dropou todas as policies FOR DELETE da tabela
+      if (c.kind === 'policy' && c.obj !== '*') {
+        const tbl = c.extra.includes('|') ? c.extra.split('|')[1] ?? '' : c.extra;
+        const cmd = c.extra.includes('|') ? c.extra.split('|')[0] : '';
+        if (cmd.toLowerCase() === 'delete' && droppedDeleteTables.has(`${c.schema}|${tbl}`)) return false;
+      }
+      return true;
+    });
     keeps.unshift(...kept);
-    for (const d of fs.drops) droppedLater.add(suppressKey(d));
+    for (const d of fs.drops) {
+      droppedLater.add(suppressKey(d));
+      if (d.kind === 'policy' && d.obj === '*' && d.extra) {
+        droppedDeleteTables.add(`${d.schema}|${d.extra}`);
+      }
+    }
   }
   return keeps;
 };
