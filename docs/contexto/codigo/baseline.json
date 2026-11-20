@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
+  "commit": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
   "branch": "main",
-  "data_commit": "2026-11-20T15:14:44-03:00",
+  "data_commit": "2026-11-20T15:57:50-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "76bcae8",
+    "data": "2026-11-20",
+    "assunto": "fix: grava path do PDF de quote em bucket privado (#590)"
+   },
+   {
+    "sha": "bb4c144",
+    "data": "2026-11-20",
+    "assunto": "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)"
+   },
+   {
+    "sha": "a1377be",
+    "data": "2026-11-20",
+    "assunto": "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)"
+   },
+   {
+    "sha": "8203561",
+    "data": "2026-11-20",
+    "assunto": "docs: linha de base e regras de negocio da Fase 0 (#587)"
+   },
    {
     "sha": "7bf29f5",
     "data": "2026-11-20",
@@ -111,29 +131,9 @@
     "sha": "8fc1c8c",
     "data": "2026-11-17",
     "assunto": "fix: match_reply_to_enrollment reconhece contato de conta (#565)"
-   },
-   {
-    "sha": "c3d8008",
-    "data": "2026-11-17",
-    "assunto": "docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)"
-   },
-   {
-    "sha": "6417fc3",
-    "data": "2026-11-17",
-    "assunto": "fix: sinal de resposta independe da busca de inscrição (#563)"
-   },
-   {
-    "sha": "f0d43dc",
-    "data": "2026-11-17",
-    "assunto": "fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)"
-   },
-   {
-    "sha": "d2460a9",
-    "data": "2026-11-17",
-    "assunto": "feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)"
    }
   ],
-  "arquivos_mudados_7d": 208,
+  "arquivos_mudados_7d": 213,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 43
+    "mudancas": 40
    },
    {
     "arquivo": "package.json",
-    "mudancas": 42
+    "mudancas": 40
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 18
+    "mudancas": 16
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
@@ -266,10 +266,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 6
-   },
-   {
     "arquivo": "CLAUDE.md",
     "mudancas": 6
    },
@@ -290,6 +286,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+    "mudancas": 5
+   },
+   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 188
+    "commits": 192
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3604,
+  "arquivos_total": 3608,
   "arquivos_codigo": 2572,
-  "linhas_codigo": 442524,
+  "linhas_codigo": 442527,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "testes": 246,
   "workflows": 27,
   "scripts": 78,
-  "docs_md": 212
+  "docs_md": 216
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -656,7 +656,7 @@
   },
   "supabase/functions": {
    "arquivos": 319,
-   "linhas": 66393
+   "linhas": 66396
   },
   "tailwind.config.ts": {
    "arquivos": 1,

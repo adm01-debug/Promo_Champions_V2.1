@@ -4604,7 +4604,7 @@
    "nome": "receive-quote-webhook",
    "entrada": "supabase/functions/receive-quote-webhook/index.ts",
    "arquivos": 1,
-   "linhas": 342,
+   "linhas": 345,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
@@ -4623,9 +4623,7 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
-   "buckets": [
-    "quote-pdfs"
-   ],
+   "buckets": [],
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [

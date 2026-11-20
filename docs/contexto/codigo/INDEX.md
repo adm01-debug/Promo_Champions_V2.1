@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7bf29f54a0362eb82ecce8abe1fb05ce273b6757` (2026-11-20T15:14:44-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `76bcae837dac1265ad6a22bd5d357aca715c0bd1` (2026-11-20T15:57:50-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2491), SQL (709), Markdown (212), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2491), SQL (709), Markdown (216), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3604 |
+| arquivos_total | 3608 |
 | arquivos_codigo | 2572 |
-| linhas_codigo | 442524 |
+| linhas_codigo | 442527 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 246 |
 | workflows | 27 |
 | scripts | 78 |
-| docs_md | 212 |
+| docs_md | 216 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -577,16 +577,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21739 nós · 66723 arestas · 1517 comunidades · grafo do commit `7bf29f54`
-- comunidades maiores: schema.sql (785), Card (756), Button (617), client.ts (352), Badge (340), Índice (277), TabsTrigger (259), vitest (247), framer-motion (240), getCorsHeaders (235), date-fns (189), utils.ts (166)
+- 21760 nós · 66742 arestas · 1520 comunidades · grafo do commit `76bcae83`
+- comunidades maiores: schema.sql (785), Card (562), Skeleton (394), lucide-react (377), Badge (314), Índice (277), vitest (268), client.ts (265), Input (247), Button (237), getCorsHeaders (230), constants/index.ts (193)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (43)
-- package.json (42)
+- package-lock.json (40)
+- package.json (40)
 - RELATORIO_CI.md (18)
-- deno.lock (18)
+- deno.lock (16)
 - .github/workflows/codeql.yml (13)
 - PENDENCIAS.md (12)
 - .github/workflows/deploy.yml (11)
@@ -753,10 +753,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
-- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
+- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/pendencias (4), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-20 `76bcae8` fix: grava path do PDF de quote em bucket privado (#590)
+- 2026-11-20 `bb4c144` chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)
+- 2026-11-20 `a1377be` docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)
+- 2026-11-20 `8203561` docs: linha de base e regras de negocio da Fase 0 (#587)
 - 2026-11-20 `7bf29f5` fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)
 - 2026-11-20 `e7e7315` infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)
 - 2026-11-20 `d443a72` chore(config): documenta que a function health nao esta na allowlist do deploy (#584)
@@ -768,10 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-18 `d960322` chore(main): release 1.6.0 (#577)
 - 2026-11-18 `cc8d2d2` feat: dependency review nos PRs (#576)
 - 2026-11-17 `998e3ad` chore(main): release 1.5.0 (#485)
-- 2026-11-17 `9591c26` fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)
-- 2026-11-17 `54a8628` fix: SLA de revisão deixa de cobrar PR de bot (#567)
-- 2026-11-17 `cefd645` docs(agentes): corrige o registro das telas órfãs após o #568 (#575)
-- 2026-11-17 `58dbc25` feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

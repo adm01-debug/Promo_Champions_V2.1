@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
+  "sha": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 18:15 UTC",
-  "files_total": 3619,
+  "generated_at": "2026-11-20 18:58 UTC",
+  "files_total": 3623,
   "code_files": 3281,
-  "code_lines": 476520
+  "code_lines": 476523
  },
  "version": "1.3.2",
- "facts_hash": "bf49521381f64cee",
+ "facts_hash": "99c37f9b1dc909af",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107571,7 +107571,7 @@
   {
    "module": "supabase/functions",
    "files": 319,
-   "lines": 66393,
+   "lines": 66396,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -286622,7 +286622,7 @@
   },
   "supabase/functions/receive-quote-webhook/index.ts": {
    "path": "supabase/functions/receive-quote-webhook/index.ts",
-   "lines": 342,
+   "lines": 345,
    "tables": [
     {
      "table": "quote_sync_logs",
@@ -297117,10 +297117,48 @@
   }
  },
  "git": {
-  "sha": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
+  "sha": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "76bcae8",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: grava path do PDF de quote em bucket privado (#590)",
+    "files": [
+     "supabase/functions/receive-quote-webhook/index.ts"
+    ]
+   },
+   {
+    "sha": "bb4c144",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)",
+    "files": [
+     "docs/pendencias/backlog-verificado.md"
+    ]
+   },
+   {
+    "sha": "a1377be",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)",
+    "files": [
+     "docs/pendencias/_ordem.md",
+     "docs/pendencias/backlog-verificado.md"
+    ]
+   },
+   {
+    "sha": "8203561",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "docs: linha de base e regras de negocio da Fase 0 (#587)",
+    "files": [
+     "docs/pendencias/_linha-de-base.md",
+     "docs/pendencias/_regras-de-negocio.md"
+    ]
+   },
    {
     "sha": "7bf29f5",
     "date": "2026-11-20",
@@ -297379,47 +297417,6 @@
     "files": [
      "supabase/migrations/20261117190000_fix_403_policies_lendo_auth_users.sql"
     ]
-   },
-   {
-    "sha": "3d0e9e9",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)",
-    "files": [
-     "docs/agentes/veredicto-branches-vivas-261117.md"
-    ]
-   },
-   {
-    "sha": "beed109",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)",
-    "files": [
-     "src/hooks/useEmailMetrics.ts",
-     "supabase/functions/_shared/webhook-integrity.ts",
-     "supabase/functions/_shared/webhook-integrity_test.ts",
-     "supabase/functions/_shared/webhook-validator.ts",
-     "supabase/functions/inbound-email-webhook/index.ts"
-    ]
-   },
-   {
-    "sha": "2a3a8ca",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(db): auditoria nas duas tabelas de webhook (#551)",
-    "files": [
-     "supabase/migrations/20261117180000_auditoria_webhooks.sql"
-    ]
-   },
-   {
-    "sha": "ba21ed9",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)",
-    "files": [
-     "src/components/engagement/EngagementLeaderboardWidget.tsx",
-     "src/hooks/engagement/useEngagementScore.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -297428,8 +297425,8 @@
     4
    ],
    [
-    "supabase/functions/inbound-email-webhook/index.ts",
-    3
+    "docs/pendencias/backlog-verificado.md",
+    2
    ],
    [
     "docs/DEPLOYMENT.md",
@@ -297452,8 +297449,24 @@
     2
    ],
    [
-    "docs/agentes/veredicto-branches-vivas-261117.md",
+    "supabase/functions/inbound-email-webhook/index.ts",
     2
+   ],
+   [
+    "supabase/functions/receive-quote-webhook/index.ts",
+    1
+   ],
+   [
+    "docs/pendencias/_ordem.md",
+    1
+   ],
+   [
+    "docs/pendencias/_linha-de-base.md",
+    1
+   ],
+   [
+    "docs/pendencias/_regras-de-negocio.md",
+    1
    ],
    [
     "src/hooks/useEvolutionCurves.ts",
@@ -297485,22 +297498,6 @@
    ],
    [
     ".github/workflows/pr-checks.yml",
-    1
-   ],
-   [
-    ".github/workflows/pr-review-sla.yml",
-    1
-   ],
-   [
-    "docs/agentes/telas-orfas-da-reescrita-261117.md",
-    1
-   ],
-   [
-    "src/components/sequences/BestSendWindowCard.tsx",
-    1
-   ],
-   [
-    "src/components/sequences/SequenceEnrollmentsDrawer.tsx",
     1
    ]
   ]

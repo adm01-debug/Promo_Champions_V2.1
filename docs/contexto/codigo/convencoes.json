@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)",
-   "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)",
-   "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)",
-   "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)",
-   "fix(db): dropa policies permissive de sales/activities (USING true) (#582)"
+   "fix: grava path do PDF de quote em bucket privado (#590)",
+   "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)",
+   "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)",
+   "docs: linha de base e regras de negocio da Fase 0 (#587)",
+   "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
