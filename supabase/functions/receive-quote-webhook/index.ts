@@ -282,10 +282,13 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
             if (uploadErr) {
               console.error("[receive-quote-webhook] PDF upload error:", uploadErr);
             } else {
-              const { data: urlData } = supabase.storage.from("quote-pdfs").getPublicUrl(pdfPath);
-              if (urlData?.publicUrl) {
-                await supabase.from("quotes").update({ pdf_url: urlData.publicUrl }).eq("id", quoteId);
-              }
+              // Bucket quote-pdfs é PRIVADO: a URL pública (getPublicUrl) retorna
+              // 404. Front (QuoteDetailDialog) e send-quote-to-client extraem o
+              // path via regex /\/quote-pdfs\/(.+)$/ e assinam createSignedUrl na
+              // hora. Gravamos o path embutido no formato /quote-pdfs/, sem depender
+              // de domínio fixo — assim o regex casá e a assinatura funciona.
+              const pdfUrlPath = `${supabaseUrl}/storage/v1/object/public/quote-pdfs/${pdfPath}`;
+              await supabase.from("quotes").update({ pdf_url: pdfUrlPath }).eq("id", quoteId);
             }
             }
           }
