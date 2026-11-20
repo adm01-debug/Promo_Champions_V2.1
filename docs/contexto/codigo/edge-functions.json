@@ -4262,7 +4262,7 @@
    "nome": "process-race-event",
    "entrada": "supabase/functions/process-race-event/index.ts",
    "arquivos": 2,
-   "linhas": 523,
+   "linhas": 527,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -4494,7 +4494,7 @@
    "nome": "race-commentary",
    "entrada": "supabase/functions/race-commentary/index.ts",
    "arquivos": 2,
-   "linhas": 222,
+   "linhas": 226,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

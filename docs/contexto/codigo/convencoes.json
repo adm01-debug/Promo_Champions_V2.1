@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)",
    "chore: registra A5 como concluido no backlog (#595)",
    "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)",
    "chore: registra T22 como consolidado na main (#593)",
-   "chore: registra conclusão do A3 no backlog (#592)",
-   "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)"
+   "chore: registra conclusão do A3 no backlog (#592)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

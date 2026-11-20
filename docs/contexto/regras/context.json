@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "66230eea83be3ca105ac7bcaa31a048dc76179a2",
+  "sha": "d5e70798da27cb0816b32805550665bb900019b3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 20:14 UTC",
+  "generated_at": "2026-11-20 20:29 UTC",
   "files_total": 3623,
   "code_files": 3281,
-  "code_lines": 476576
+  "code_lines": 476584
  },
  "version": "1.3.2",
- "facts_hash": "a8384a8bf50959aa",
+ "facts_hash": "757cf86426e9b4d7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107571,7 +107571,7 @@
   {
    "module": "supabase/functions",
    "files": 319,
-   "lines": 66449,
+   "lines": 66457,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -285759,7 +285759,7 @@
   },
   "supabase/functions/process-race-event/index_test.ts": {
    "path": "supabase/functions/process-race-event/index_test.ts",
-   "lines": 38,
+   "lines": 42,
    "env": [
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
@@ -286165,7 +286165,7 @@
   },
   "supabase/functions/race-commentary/index_test.ts": {
    "path": "supabase/functions/race-commentary/index_test.ts",
-   "lines": 41,
+   "lines": 45,
    "env": [
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
@@ -297128,10 +297128,20 @@
   }
  },
  "git": {
-  "sha": "66230eea83be3ca105ac7bcaa31a048dc76179a2",
+  "sha": "d5e70798da27cb0816b32805550665bb900019b3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d5e7079",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)",
+    "files": [
+     "supabase/functions/process-race-event/index_test.ts",
+     "supabase/functions/race-commentary/index_test.ts"
+    ]
+   },
    {
     "sha": "66230ee",
     "date": "2026-11-20",
@@ -297418,15 +297428,6 @@
     "files": [
      "scripts/regras_negocio/indice.py"
     ]
-   },
-   {
-    "sha": "8fc1c8c",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: match_reply_to_enrollment reconhece contato de conta (#565)",
-    "files": [
-     "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -297457,6 +297458,14 @@
    [
     "package.json",
     2
+   ],
+   [
+    "supabase/functions/process-race-event/index_test.ts",
+    1
+   ],
+   [
+    "supabase/functions/race-commentary/index_test.ts",
+    1
    ],
    [
     "supabase/functions/personal-assistant-stream/index.ts",
@@ -297500,14 +297509,6 @@
    ],
    [
     "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    ".github/workflows/dependency-review.yml",
     1
    ]
   ]
