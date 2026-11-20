@@ -8654,7 +8654,7 @@
    "hooks_exportados": [
     "useEvolutionCurves"
    ],
-   "linhas": 107,
+   "linhas": 108,
    "dominio": "hooks",
    "tabelas": [
     "sales",

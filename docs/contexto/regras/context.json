@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
+  "sha": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 16:26 UTC",
+  "generated_at": "2026-11-20 18:15 UTC",
   "files_total": 3619,
   "code_files": 3281,
-  "code_lines": 476519
+  "code_lines": 476520
  },
  "version": "1.3.2",
- "facts_hash": "dcc51183a8923054",
+ "facts_hash": "bf49521381f64cee",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106537,7 +106537,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64523,
+   "lines": 64524,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -248963,7 +248963,7 @@
   },
   "src/hooks/useEvolutionCurves.ts": {
    "path": "src/hooks/useEvolutionCurves.ts",
-   "lines": 107,
+   "lines": 108,
    "exports": [
     "function useEvolutionCurves"
    ],
@@ -297117,10 +297117,19 @@
   }
  },
  "git": {
-  "sha": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
+  "sha": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7bf29f5",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)",
+    "files": [
+     "src/hooks/useEvolutionCurves.ts"
+    ]
+   },
    {
     "sha": "e7e7315",
     "date": "2026-11-20",
@@ -297411,15 +297420,6 @@
      "src/components/engagement/EngagementLeaderboardWidget.tsx",
      "src/hooks/engagement/useEngagementScore.ts"
     ]
-   },
-   {
-    "sha": "f4e85df",
-    "date": "2026-11-17",
-    "author": "github-actions[bot]",
-    "subject": "chore(types): sincroniza types.ts com o banco oficial [auto] (#556)",
-    "files": [
-     "src/integrations/supabase/types.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -297433,10 +297433,6 @@
    ],
    [
     "docs/DEPLOYMENT.md",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
     2
    ],
    [
@@ -297460,6 +297456,10 @@
     2
    ],
    [
+    "src/hooks/useEvolutionCurves.ts",
+    1
+   ],
+   [
     ".github/workflows/main.yml",
     1
    ],
@@ -297473,6 +297473,10 @@
    ],
    [
     "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
+    1
+   ],
+   [
+    "src/integrations/supabase/types.ts",
     1
    ],
    [
@@ -297497,10 +297501,6 @@
    ],
    [
     "src/components/sequences/SequenceEnrollmentsDrawer.tsx",
-    1
-   ],
-   [
-    "src/components/sequences/sendTimeHelpers.test.ts",
     1
    ]
   ]

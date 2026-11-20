@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
+  "commit": "7bf29f54a0362eb82ecce8abe1fb05ce273b6757",
   "branch": "main",
-  "data_commit": "2026-11-20T13:25:25-03:00",
+  "data_commit": "2026-11-20T15:14:44-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7bf29f5",
+    "data": "2026-11-20",
+    "assunto": "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)"
+   },
    {
     "sha": "e7e7315",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "d2460a9",
     "data": "2026-11-17",
     "assunto": "feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)"
-   },
-   {
-    "sha": "13844e1",
-    "data": "2026-11-17",
-    "assunto": "fix(db): 403 nas tres ultimas policies que leem auth.users (#559)"
    }
   ],
-  "arquivos_mudados_7d": 207,
+  "arquivos_mudados_7d": 208,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,18 +199,18 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 44
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 43
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 19
+    "arquivo": "package.json",
+    "mudancas": 42
    },
    {
     "arquivo": "RELATORIO_CI.md",
+    "mudancas": 18
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 18
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 187
+    "commits": 188
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3604,
   "arquivos_codigo": 2572,
-  "linhas_codigo": 442523,
+  "linhas_codigo": 442524,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -616,7 +616,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64523
+   "linhas": 64524
   },
   "src/integrations": {
    "arquivos": 4,
