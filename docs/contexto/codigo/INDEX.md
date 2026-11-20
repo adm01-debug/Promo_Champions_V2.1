@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `be50d67a3a33585e5c422477a1e27cfc21d0744b` (2026-11-20T16:16:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2ac2520d7eb4db50ad93d78dc76703bb757c24d0` (2026-11-20T16:46:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3608 |
 | arquivos_codigo | 2572 |
-| linhas_codigo | 442572 |
+| linhas_codigo | 442580 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -577,8 +577,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21760 nós · 66749 arestas · 1529 comunidades · grafo do commit `be50d67a`
-- comunidades maiores: schema.sql (785), Card (524), cn (367), Skeleton (363), getCorsHeaders (279), DialogContent (279), Índice (277), Input (275), lucide-react (267), client.ts (255), vitest (247), WinLossIntelligence.tsx (223)
+- 21760 nós · 66750 arestas · 1550 comunidades · grafo do commit `2ac2520d`
+- comunidades maiores: schema.sql (785), cn (342), Card (328), Button (284), Índice (277), react (263), Badge (259), CardHeader (251), CardContent (237), SelectContent (229), getCorsHeaders (223), Skeleton (217)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -591,7 +591,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - PENDENCIAS.md (12)
 - .github/workflows/deploy.yml (11)
 - src/integrations/supabase/types.ts (11)
-- .github/workflows/pr-checks.yml (10)
+- .github/workflows/pr-checks.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/db-backup.yml (7)
@@ -757,6 +757,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-20 `2ac2520` fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)
+- 2026-11-20 `0e9fef2` chore: registra T22 como consolidado na main (#593)
+- 2026-11-20 `56253c6` chore: registra conclusão do A3 no backlog (#592)
 - 2026-11-20 `be50d67` fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)
 - 2026-11-20 `76bcae8` fix: grava path do PDF de quote em bucket privado (#590)
 - 2026-11-20 `bb4c144` chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)
@@ -769,9 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `9017094` fix(db): dropa policies permissive de sales/activities (USING true) (#582)
 - 2026-11-19 `d7af709` fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)
 - 2026-11-19 `f7722f0` chore(types): sincroniza types.ts com o banco oficial [auto] (#580)
-- 2026-11-19 `9f4dba8` fix: adiciona --yes no deploy de edge functions para CI (#578)
-- 2026-11-18 `d960322` chore(main): release 1.6.0 (#577)
-- 2026-11-18 `cc8d2d2` feat: dependency review nos PRs (#576)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
+  "commit": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
   "branch": "main",
-  "data_commit": "2026-11-20T16:16:09-03:00",
+  "data_commit": "2026-11-20T16:46:33-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "2ac2520",
+    "data": "2026-11-20",
+    "assunto": "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)"
+   },
+   {
+    "sha": "0e9fef2",
+    "data": "2026-11-20",
+    "assunto": "chore: registra T22 como consolidado na main (#593)"
+   },
+   {
+    "sha": "56253c6",
+    "data": "2026-11-20",
+    "assunto": "chore: registra conclusão do A3 no backlog (#592)"
+   },
    {
     "sha": "be50d67",
     "data": "2026-11-20",
@@ -116,24 +131,9 @@
     "sha": "eedadeb",
     "data": "2026-11-17",
     "assunto": "feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)"
-   },
-   {
-    "sha": "5afc278",
-    "data": "2026-11-17",
-    "assunto": "feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)"
-   },
-   {
-    "sha": "de87a0c",
-    "data": "2026-11-17",
-    "assunto": "feat(bi): painel de mudança de classe ABC com dado real (#568)"
-   },
-   {
-    "sha": "25f5950",
-    "data": "2026-11-17",
-    "assunto": "fix: índice do contexto carimba a data absoluta da coleta (#566)"
    }
   ],
-  "arquivos_mudados_7d": 214,
+  "arquivos_mudados_7d": 215,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -231,7 +231,7 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 10
+    "mudancas": 9
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
@@ -266,10 +266,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 6
-   },
-   {
     "arquivo": "inventario/estado/edges.json",
     "mudancas": 6
    },
@@ -286,22 +282,26 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 5
-   },
-   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
    {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "inventario/estado/banco.json",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "release-please-config.json",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 193
+    "commits": 196
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3608,
   "arquivos_codigo": 2572,
-  "linhas_codigo": 442572,
+  "linhas_codigo": 442580,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -656,7 +656,7 @@
   },
   "supabase/functions": {
    "arquivos": 319,
-   "linhas": 66441
+   "linhas": 66449
   },
   "tailwind.config.ts": {
    "arquivos": 1,

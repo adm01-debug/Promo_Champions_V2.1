@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
+  "sha": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 19:18 UTC",
+  "generated_at": "2026-11-20 19:47 UTC",
   "files_total": 3623,
   "code_files": 3281,
-  "code_lines": 476568
+  "code_lines": 476576
  },
  "version": "1.3.2",
- "facts_hash": "8ec4b554ea6b1599",
+ "facts_hash": "a8384a8bf50959aa",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107571,7 +107571,7 @@
   {
    "module": "supabase/functions",
    "files": 319,
-   "lines": 66441,
+   "lines": 66449,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -284461,7 +284461,7 @@
   },
   "supabase/functions/personal-assistant-stream/index.ts": {
    "path": "supabase/functions/personal-assistant-stream/index.ts",
-   "lines": 425,
+   "lines": 433,
    "tables": [
     {
      "table": "salespeople",
@@ -297128,10 +297128,37 @@
   }
  },
  "git": {
-  "sha": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
+  "sha": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "2ac2520",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)",
+    "files": [
+     "supabase/functions/personal-assistant-stream/index.ts"
+    ]
+   },
+   {
+    "sha": "0e9fef2",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: registra T22 como consolidado na main (#593)",
+    "files": [
+     "docs/pendencias/backlog-verificado.md"
+    ]
+   },
+   {
+    "sha": "56253c6",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: registra conclusão do A3 no backlog (#592)",
+    "files": [
+     "docs/pendencias/backlog-verificado.md"
+    ]
+   },
    {
     "sha": "be50d67",
     "date": "2026-11-20",
@@ -297400,44 +297427,16 @@
     "files": [
      "docs/agentes/veredicto-branches-vivas-261117.md"
     ]
-   },
-   {
-    "sha": "6417fc3",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: sinal de resposta independe da busca de inscrição (#563)",
-    "files": [
-     "supabase/functions/inbound-email-webhook/contract_test.ts",
-     "supabase/functions/inbound-email-webhook/index.ts"
-    ]
-   },
-   {
-    "sha": "f0d43dc",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(db): match_reply_to_enrollment consultava sales.email, coluna inexistente (#562)",
-    "files": [
-     "supabase/migrations/20261117200000_fix_match_reply_to_enrollment_sales_email.sql"
-    ]
-   },
-   {
-    "sha": "d2460a9",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(email): resposta de e-mail passa a gravar sinal de engajamento (#561)",
-    "files": [
-     "supabase/functions/inbound-email-webhook/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    ".github/workflows/deploy.yml",
+    "docs/pendencias/backlog-verificado.md",
     4
    ],
    [
-    "docs/pendencias/backlog-verificado.md",
-    2
+    ".github/workflows/deploy.yml",
+    4
    ],
    [
     "docs/DEPLOYMENT.md",
@@ -297460,8 +297459,8 @@
     2
    ],
    [
-    "supabase/functions/inbound-email-webhook/index.ts",
-    2
+    "supabase/functions/personal-assistant-stream/index.ts",
+    1
    ],
    [
     "supabase/functions/export-winloss-pdf/index.ts",

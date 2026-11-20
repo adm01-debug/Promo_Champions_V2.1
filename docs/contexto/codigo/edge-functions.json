@@ -3887,7 +3887,7 @@
    "nome": "personal-assistant-stream",
    "entrada": "supabase/functions/personal-assistant-stream/index.ts",
    "arquivos": 4,
-   "linhas": 622,
+   "linhas": 630,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
