@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 01:14 UTC
+
+- **functions** alterado (2): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`
+
 ## 2026-11-20 00:37 UTC
 
 - **migrations** adicionado (1): `20261119700000_fix_rls_sales_activities_using_true`
