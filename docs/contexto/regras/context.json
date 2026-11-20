@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
+  "sha": "66230eea83be3ca105ac7bcaa31a048dc76179a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 19:47 UTC",
+  "generated_at": "2026-11-20 20:14 UTC",
   "files_total": 3623,
   "code_files": 3281,
   "code_lines": 476576
@@ -297128,10 +297128,19 @@
   }
  },
  "git": {
-  "sha": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
+  "sha": "66230eea83be3ca105ac7bcaa31a048dc76179a2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "66230ee",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore: registra A5 como concluido no backlog (#595)",
+    "files": [
+     "docs/pendencias/backlog-verificado.md"
+    ]
+   },
    {
     "sha": "2ac2520",
     "date": "2026-11-20",
@@ -297418,21 +297427,12 @@
     "files": [
      "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql"
     ]
-   },
-   {
-    "sha": "c3d8008",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs: prova por blob das branches vivas no lugar da prova por ancestralidade (#564)",
-    "files": [
-     "docs/agentes/veredicto-branches-vivas-261117.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/pendencias/backlog-verificado.md",
-    4
+    5
    ],
    [
     ".github/workflows/deploy.yml",

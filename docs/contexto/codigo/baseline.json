@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2ac2520d7eb4db50ad93d78dc76703bb757c24d0",
+  "commit": "66230eea83be3ca105ac7bcaa31a048dc76179a2",
   "branch": "main",
-  "data_commit": "2026-11-20T16:46:33-03:00",
+  "data_commit": "2026-11-20T16:52:00-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "66230ee",
+    "data": "2026-11-20",
+    "assunto": "chore: registra A5 como concluido no backlog (#595)"
+   },
    {
     "sha": "2ac2520",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "8a0bc94",
     "data": "2026-11-17",
     "assunto": "feat(pipeline): histórico do negócio direto do card, para negócio em aberto (#573)"
-   },
-   {
-    "sha": "eedadeb",
-    "data": "2026-11-17",
-    "assunto": "feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)"
    }
   ],
-  "arquivos_mudados_7d": 215,
+  "arquivos_mudados_7d": 209,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -290,18 +290,18 @@
     "mudancas": 5
    },
    {
-    "arquivo": "inventario/estado/banco.json",
+    "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 5
    },
    {
-    "arquivo": "release-please-config.json",
+    "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 196
+    "commits": 197
    },
    {
     "autor": "dependabot[bot]",
