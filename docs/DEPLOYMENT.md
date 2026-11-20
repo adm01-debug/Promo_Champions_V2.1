@@ -71,6 +71,11 @@ Antes de mexer numa function:
 > `docs/API.md` reflete o código, não a publicação. Confirme com um `curl`
 > de health no endpoint antes de assumir que existe em produção.
 
+> A function `health` **não faz parte da allowlist** do workflow de deploy
+> (`.github/workflows/deploy.yml`, deploy das 100 functions ativas). Portanto
+> `https://<proj>.supabase.co/functions/v1/health` responde **HTTP 404** por
+> design — um 404 aqui não indica falha de deploy nem regressão.
+
 ## 5. Secrets e variáveis (configuração manual)
 
 | Onde                                                      | O que                                                 | Exemplos                                                                                                                                               |
