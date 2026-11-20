@@ -36,17 +36,17 @@
 
 ## Anexos A (planos não executados)
 
-| #   | Estado hoje       | Evidência                                                                                                                                    |
-| --- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| A1  | ✅ RESOLVIDO      | `20261013130000_comissao_regras_e_split_sdr.sql` — UNIQUE (sale_id, salesperson_id), regra vendedor>categoria>faixa>global, split SDR.       |
-| A2  | ⚪ NAO VERIFICADO | Rotação de credenciais não executada; service_role antiga no histórico de repo PÚBLICO. Requer dono.                                         |
-| A3  | 🟡 PERSISTE       | `scheduled-reports-runner`/`export-winloss-pdf` sem filtro de dono/papel — reconferir (relatório vaza venda de outros).                      |
-| A4  | 🟡 PERSISTE       | `receive-quote-webhook/index.ts:246` comenta bucket PRIVADO, mas `:285` ainda usa `getPublicUrl` (URL não assinada). Usar `createSignedUrl`. |
-| A5  | 🟡 PARCIAL        | Prompt injection em assistentes IA — separar instrução/dado e allowlist de ferramentas (reconferir `sales-assistant-chat`/`ai-copilot`).     |
-| A6  | ✅ RESOLVIDO      | `20261014000000_gamificacao_server_side.sql` — posse/coleta só servidor; roleta concede prêmio.                                              |
-| A7  | ✅ PARCIAL        | `customer-success-360/index.ts:56-61` agora lê `account_id` de tabelas próprias (não mais `orders.user_id` como account).                    |
-| A8  | ✅ PARCIAL        | `_shared/cors.ts` — allowlist (nunca `*`); falta conferir CSP `unsafe-eval` em `index.html`.                                                 |
-| A9  | ⚪ NAO VERIFICADO | Reconciliar `schema_migrations` + replay em banco efêmero. Depende de produção.                                                              |
+| #   | Estado hoje               | Evidência                                                                                                                                                                                                                   |
+| --- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | ✅ RESOLVIDO              | `20261013130000_comissao_regras_e_split_sdr.sql` — UNIQUE (sale_id, salesperson_id), regra vendedor>categoria>faixa>global, split SDR.                                                                                      |
+| A2  | ⚪ NAO VERIFICADO         | Rotação de credenciais não executada; service_role antiga no histórico de repo PÚBLICO. Requer dono.                                                                                                                        |
+| A3  | ✅ CONCLUÍDO (2026-11-20) | `export-winloss-pdf` agora escopa por dono (service client para admin/manager via `is_admin_or_manager`; client escopado ao JWT + RLS para demais) e valida payload `{period}`. PR #591 mergeada (be50d67). Fix no Anexo A. |
+| A4  | 🟡 PERSISTE               | `receive-quote-webhook/index.ts:246` comenta bucket PRIVADO, mas `:285` ainda usa `getPublicUrl` (URL não assinada). Usar `createSignedUrl`.                                                                                |
+| A5  | 🟡 PARCIAL                | Prompt injection em assistentes IA — separar instrução/dado e allowlist de ferramentas (reconferir `sales-assistant-chat`/`ai-copilot`).                                                                                    |
+| A6  | ✅ RESOLVIDO              | `20261014000000_gamificacao_server_side.sql` — posse/coleta só servidor; roleta concede prêmio.                                                                                                                             |
+| A7  | ✅ PARCIAL                | `customer-success-360/index.ts:56-61` agora lê `account_id` de tabelas próprias (não mais `orders.user_id` como account).                                                                                                   |
+| A8  | ✅ PARCIAL                | `_shared/cors.ts` — allowlist (nunca `*`); falta conferir CSP `unsafe-eval` em `index.html`.                                                                                                                                |
+| A9  | ⚪ NAO VERIFICADO         | Reconciliar `schema_migrations` + replay em banco efêmero. Depende de produção.                                                                                                                                             |
 
 ## Verificações pendentes (não executadas — dependem de banco/UI/runbooks p/ decidir)
 
