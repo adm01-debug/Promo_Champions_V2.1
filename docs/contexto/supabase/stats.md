@@ -7,7 +7,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | métrica | valor |
 |---|---|
 | tamanho | 251.3 MB |
-| schema public | 155.8 MB |
+| schema public | 155.9 MB |
 
 
 ## Tabelas (ordenadas por tamanho)
@@ -25,7 +25,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.semantic_index | 0 | 1.2 MB | 0 B | 1.2 MB | 0 | 7 | 0 |  |
 | public.tasks | ~1.6k | 920.0 KB | 376.0 KB | 504.0 KB | 1 | ~20 | 0 |  |
 | public.quotes | ~490 | 784.0 KB | 304.0 KB | 440.0 KB | 0 | ~20 | ~3.5k | 2026-11-20 |
-| public.cron_failure_alerts | ~1.6k | 752.0 KB | 240.0 KB | 472.0 KB | ~30 | ~10 | ~1.7k | 2026-11-20 |
+| public.cron_failure_alerts | ~1.6k | 752.0 KB | 240.0 KB | 472.0 KB | ~30 | ~10 | ~1.8k | 2026-11-20 |
 | public.lead_score_history | ~1.2k | 728.0 KB | 544.0 KB | 144.0 KB | 0 | 4 | 0 |  |
 | public.territories | ~40 | 728.0 KB | 456.0 KB | 232.0 KB | 0 | 5 | ~61.6k | 2026-11-20 |
 | public.clients | ~100 | 720.0 KB | 40.0 KB | 640.0 KB | ~20 | ~20 | 0 |  |
@@ -98,7 +98,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.qbr_schedule | ~20 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | 7 | 0 |  |
 | public.role_permissions | ~30 | 72.0 KB | 8.0 KB | 48.0 KB | ~10 | 5 | 0 |  |
 | public.team_closers | 6 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | 7 | 0 |  |
-| public.v4_callback_dead_letters | 2 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~530 | 0 |  |
+| public.v4_callback_dead_letters | 2 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~570 | 0 |  |
 | public.winloss_webhook_subscriptions | 1 | 72.0 KB | 8.0 KB | 24.0 KB | ~30 | ~30 | 0 |  |
 | public.active_power_ups | 4 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 5 | 0 |  |
 | public.automation_runs | ~40 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | 5 | 0 |  |
@@ -119,7 +119,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_alert_settings | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 1 | 5 | 0 |  |
 | public.activity_goals | 9 | 56.0 KB | 8.0 KB | 48.0 KB | ~20 | 6 | 0 |  |
 | public.agenda_events | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~10 | 0 |  |
-| public.cadence_tasks | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~140 | 0 |  |
+| public.cadence_tasks | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~160 | 0 |  |
 | public.channel_interactions | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | ~10 | 0 |  |
 | public.combo_tracking | 0 | 56.0 KB | 8.0 KB | 48.0 KB | 1 | 5 | 0 |  |
 | public.daily_metrics | ~30 | 56.0 KB | 8.0 KB | 48.0 KB | 7 | 4 | 0 |  |
@@ -129,10 +129,10 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.skill_assessments | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | 8 | 0 |  |
 | public.task_assignments | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | 9 | 0 |  |
 | public.twilio_call_sessions | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | 9 | 0 |  |
-| public.user_roles | ~10 | 56.0 KB | 8.0 KB | 48.0 KB | 5 | ~750 | 1 |  |
+| public.user_roles | ~10 | 56.0 KB | 8.0 KB | 48.0 KB | 5 | ~760 | 1 |  |
 | public.webhook_inbound_log | 0 | 56.0 KB | 0 B | 48.0 KB | 0 | 8 | 0 |  |
 | public.ai_narrative_cache | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 6 | 0 |  |
-| public.auto_task_queue_settings | 1 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~20 | 0 |  |
+| public.auto_task_queue_settings | 1 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | ~30 | 0 |  |
 | public.blocked_ips | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 7 | 0 |  |
 | public.cadence_steps | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 5 | 4 | 0 |  |
 | public.cadences | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 1 | 3 | 0 |  |
@@ -151,7 +151,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.lead_assignments | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 9 | 0 |  |
 | public.outbound_messages | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 8 | 0 |  |
 | public.pipeline_stages | 7 | 48.0 KB | 8.0 KB | 32.0 KB | ~20 | 4 | 0 |  |
-| public.portfolio_settings | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 3 | 3 | 0 |  |
+| public.portfolio_settings | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 3 | 4 | 0 |  |
 | public.quota_attainment_forecasts | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 7 | 0 |  |
 | public.race_badges | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 8 | 0 |  |
 | public.race_cars | 8 | 48.0 KB | 8.0 KB | 32.0 KB | 0 | 4 | 0 |  |
@@ -159,7 +159,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.rate_limit_settings | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 5 | 3 | 0 |  |
 | public.reauthentication_requests | 1 | 48.0 KB | 8.0 KB | 32.0 KB | 1 | 3 | 1 |  |
 | public.sales_territories | 8 | 48.0 KB | 8.0 KB | 32.0 KB | 8 | 4 | 0 |  |
-| public.sequence_enrollments | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~140 | 0 |  |
+| public.sequence_enrollments | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | ~160 | 0 |  |
 | public.sequence_step_assignments | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 9 | 0 |  |
 | public.skill_development_tracks | 0 | 48.0 KB | 0 B | 40.0 KB | 0 | 7 | 0 |  |
 | public.sla_policies | 0 | 48.0 KB | 8.0 KB | 32.0 KB | 5 | 3 | 0 |  |
@@ -235,7 +235,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~10 | 0 |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | 5 | 0 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | 6 | 0 |  |
-| public._internal_secrets | 3 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~5.9k | 0 |  |
+| public._internal_secrets | 3 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~6.3k | 0 |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 5 | 0 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 7 | 0 |  |
 | public.api_tokens | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | 5 | 0 |  |
@@ -489,21 +489,21 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~90 | ~463k | 5261.36 | `SELECT public.detect_stalled_cron_jobs()` |
-| service_role | ~130 | ~162.8k | 1252.05 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~3.4k | ~73.3k | 21.33 | `SELECT public.trigger_internal_edge_job($1)` |
-| postgres | ~20 | ~63.6k | 2765.49 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
-| postgres | ~20 | ~13.3k | 577.18 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
-| postgres | ~20 | ~9.1k | 396.64 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| postgres | ~260 | ~8.9k | 33.91 | `SELECT public.admin_capture_rollback_snapshot()` |
-| postgres | ~20 | ~7.9k | 345.24 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| service_role | ~130 | ~5.3k | 41.29 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "p_today", "p_limit" FROM json_to_record(pgrst_payload.json_data) AS _("p_today" date, "p_limit" integer) LIMIT $4)` |
-| postgres | ~20 | ~4.7k | 202.35 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
+| postgres | ~100 | ~501.7k | 5281.29 | `SELECT public.detect_stalled_cron_jobs()` |
+| service_role | ~140 | ~181k | 1274.35 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~3.7k | ~79.4k | 21.24 | `SELECT public.trigger_internal_edge_job($1)` |
+| postgres | ~20 | ~72.1k | 2885.07 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~20 | ~14.6k | 584.02 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| postgres | ~20 | ~10.1k | 402.94 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| postgres | ~280 | ~9.6k | 33.65 | `SELECT public.admin_capture_rollback_snapshot()` |
+| postgres | ~20 | ~8.5k | 341.68 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| service_role | ~150 | ~6.4k | 42.11 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "p_today", "p_limit" FROM json_to_record(pgrst_payload.json_data) AS _("p_today" date, "p_limit" integer) LIMIT $4)` |
+| postgres | ~20 | ~5.1k | 202.42 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
+| postgres | ~20 | ~4.5k | 179.34 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
 | authenticator | 8 | ~4.2k | 519.53 | `WITH -- Recursively get the base types of domains base_types AS ( WITH RECURSIVE recurse AS ( SELECT oid, typbasetype, typnamespace AS base_namespace, COALESCE(NULLIF(typbasetype, $2), oid) AS base_type FROM pg_type UNIO` |
-| postgres | ~20 | ~4.2k | 180.46 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
-| postgres | ~20 | ~3.4k | 146.92 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
-| postgres | ~3.8k | ~3k | 0.77 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
-| postgres | ~20 | ~2.8k | 122.95 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
+| postgres | ~20 | ~3.7k | 147.57 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
+| postgres | ~4.2k | ~3.2k | 0.77 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
+| postgres | ~20 | ~3k | 121.13 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
 
 
 ## Conexões
