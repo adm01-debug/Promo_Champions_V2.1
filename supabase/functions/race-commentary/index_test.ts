@@ -9,7 +9,11 @@ Deno.test("race-commentary: OPTIONS CORS", async () => {
   const r = await fetch(URL_FN, { method: "OPTIONS" });
   await r.text();
   assertEquals(r.status, 200);
-  assertEquals(r.headers.get("Access-Control-Allow-Origin"), "*");
+  // SEC-07: CORS allowlist — sem Origin, responde com a primeira origem
+  // permitida (nunca `*`).
+  const allowOrigin = r.headers.get("Access-Control-Allow-Origin");
+  assert(allowOrigin);
+  assert(allowOrigin !== "*");
 });
 
 Deno.test("race-commentary: invalid leaderboard → 400", async () => {
