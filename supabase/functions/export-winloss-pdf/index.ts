@@ -1,6 +1,6 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getUserClient, getServiceClient, UnauthorizedError, type AuthenticatedContext } from '../_shared/auth-client.ts';
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface AnalysisRow {
@@ -18,8 +18,9 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   // ── Authentication ────────────────────────────────────────────────────
   // Require a valid user JWT — prevents unauthenticated callers from
   // exfiltrating win/loss competitive intelligence.
+  let authCtx: AuthenticatedContext | null = null;
   try {
-    await getUserClient(req);
+    authCtx = await getUserClient(req);
   } catch (e) {
     if (e instanceof UnauthorizedError) {
       return new Response(
@@ -31,9 +32,18 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   }
 
   try {
-    // Service client needed to read win_loss_analyses regardless of RLS row
-    // ownership (report aggregates across all accessible analyses).
-    const supabase = getServiceClient("export-winloss-pdf aggregates win_loss_analyses for report");
+    // Governanca (A3): o relatorio so expoe o que o usuario ja enxerga na UI.
+    // admin/manager (is_admin_or_manager) veem o conjunto global; os demais
+    // rodam com o client escopado ao JWT, e a policy RLS "wla read auth"
+    // (20260515150338) filtra win_loss_analyses pelo dono via sale_id. Isso
+    // impede que o PDF vaze analises de win/loss de outro vendedor.
+    const { data: isPrivileged } = await authCtx!.client.rpc(
+      "is_admin_or_manager",
+      { _user_id: authCtx!.userId }
+    );
+    const supabase = isPrivileged
+      ? getServiceClient("export-winloss-pdf: admin/manager agregam win_loss_analyses globais para o relatorio")
+      : authCtx.client;
 
     const { data: analyses } = await supabase
       .from('win_loss_analyses')
