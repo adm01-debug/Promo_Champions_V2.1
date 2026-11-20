@@ -57,8 +57,9 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     // Group sales by day and salesperson
     const days = new Map<string, Record<string, number>>();
 
-    // Generate all days in range
-    const start = new Date(startDate);
+    // Generate all days in range. Parse startDate as local midnight so the
+    // range aligns with getLocalISODate(sale.created_at) in TZs west of UTC.
+    const start = new Date(`${startDate}T00:00:00`);
     const end = new Date();
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const key = getLocalISODate(d);
