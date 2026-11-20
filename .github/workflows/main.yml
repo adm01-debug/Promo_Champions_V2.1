@@ -8,9 +8,9 @@ name: CI/CD — Post-merge Main
 #   no merge com a base atual.
 #
 # Deploy de edge functions:
-#   NÃO feito aqui. O projeto tem 173 edge functions e o plano Supabase
-#   limita a 100 deployadas simultaneamente. Deploys controlados vão via
-#   Deploy Pipeline (workflow_dispatch ou tag v*) — veja deploy.yml.
+#   NÃO feito aqui. Com o plano pago, o Deploy Pipeline (deploy.yml) publica
+#   todas as edge functions do repo de forma dinâmica — dispatch manual ou
+#   tag v* dispara o deploy completo.
 #
 # Relação com outros workflows:
 #   - PR Checks: roda em PRs e em push para main (gate de qualidade).
