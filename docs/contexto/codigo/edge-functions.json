@@ -2801,7 +2801,7 @@
    "nome": "export-winloss-pdf",
    "entrada": "supabase/functions/export-winloss-pdf/index.ts",
    "arquivos": 1,
-   "linhas": 132,
+   "linhas": 177,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2809,7 +2809,9 @@
    "tabelas": [
     "win_loss_analyses"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "is_admin_or_manager"
+   ],
    "env": [],
    "buckets": [],
    "chama_edges": [],
@@ -2818,7 +2820,8 @@
     "auth-client.ts",
     "business-date.ts",
     "cors.ts",
-    "request-id.ts"
+    "request-id.ts",
+    "validation.ts"
    ],
    "chamada_pelo_front": [
     "src/components/win-loss/ExportPdfButton.tsx"

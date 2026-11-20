@@ -12875,7 +12875,8 @@
    "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/business-date.ts",
    "supabase/functions/_shared/cors.ts",
-   "supabase/functions/_shared/request-id.ts"
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/validation.ts"
   ],
   "supabase/functions/external-db-bridge/index.ts": [
    "supabase/functions/_shared/cors.ts",

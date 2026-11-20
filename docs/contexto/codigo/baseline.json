@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
+  "commit": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
   "branch": "main",
-  "data_commit": "2026-11-20T15:57:50-03:00",
+  "data_commit": "2026-11-20T16:16:09-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "be50d67",
+    "data": "2026-11-20",
+    "assunto": "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)"
+   },
    {
     "sha": "76bcae8",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "25f5950",
     "data": "2026-11-17",
     "assunto": "fix: índice do contexto carimba a data absoluta da coleta (#566)"
-   },
-   {
-    "sha": "8fc1c8c",
-    "data": "2026-11-17",
-    "assunto": "fix: match_reply_to_enrollment reconhece contato de conta (#565)"
    }
   ],
-  "arquivos_mudados_7d": 213,
+  "arquivos_mudados_7d": 214,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 192
+    "commits": 193
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3608,
   "arquivos_codigo": 2572,
-  "linhas_codigo": 442527,
+  "linhas_codigo": 442572,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -656,7 +656,7 @@
   },
   "supabase/functions": {
    "arquivos": 319,
-   "linhas": 66396
+   "linhas": 66441
   },
   "tailwind.config.ts": {
    "arquivos": 1,

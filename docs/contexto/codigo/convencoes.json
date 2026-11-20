@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)",
    "fix: grava path do PDF de quote em bucket privado (#590)",
    "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)",
    "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)",
-   "docs: linha de base e regras de negocio da Fase 0 (#587)",
-   "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)"
+   "docs: linha de base e regras de negocio da Fase 0 (#587)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

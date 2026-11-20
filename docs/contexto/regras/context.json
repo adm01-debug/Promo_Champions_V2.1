@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
+  "sha": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 18:58 UTC",
+  "generated_at": "2026-11-20 19:18 UTC",
   "files_total": 3623,
   "code_files": 3281,
-  "code_lines": 476523
+  "code_lines": 476568
  },
  "version": "1.3.2",
- "facts_hash": "99c37f9b1dc909af",
+ "facts_hash": "8ec4b554ea6b1599",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107571,7 +107571,7 @@
   {
    "module": "supabase/functions",
    "files": 319,
-   "lines": 66396,
+   "lines": 66441,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -115711,6 +115711,7 @@
     "supabase/functions/email-engagement-scorer/index.ts",
     "supabase/functions/engagement-score-recompute/index.ts",
     "supabase/functions/expansion-detector/index.ts",
+    "supabase/functions/export-winloss-pdf/index.ts",
     "supabase/functions/external-db-bridge/index.ts",
     "supabase/functions/generate-executive-briefing/index.ts",
     "supabase/functions/generate-loss-coaching/index.ts",
@@ -123641,6 +123642,10 @@
    {
     "file": "supabase/functions/execute-workflow/index.ts",
     "text": "Contract validation"
+   },
+   {
+    "file": "supabase/functions/export-winloss-pdf/index.ts",
+    "text": "AUD-VALIDACAO: o body chega como { filters }. Validação de entrada antes"
    },
    {
     "file": "supabase/functions/extract-coaching-actions/index.ts",
@@ -281829,7 +281834,7 @@
   },
   "supabase/functions/export-winloss-pdf/index.ts": {
    "path": "supabase/functions/export-winloss-pdf/index.ts",
-   "lines": 132,
+   "lines": 177,
    "tables": [
     {
      "table": "win_loss_analyses",
@@ -281846,6 +281851,12 @@
     ]
    },
    "dyn_from": 2,
+   "rpc": [
+    "is_admin_or_manager"
+   ],
+   "rule_comments": [
+    "AUD-VALIDACAO: o body chega como { filters }. Validação de entrada antes"
+   ],
    "pagination": [
     "500"
    ]
@@ -297117,10 +297128,19 @@
   }
  },
  "git": {
-  "sha": "76bcae837dac1265ad6a22bd5d357aca715c0bd1",
+  "sha": "be50d67a3a33585e5c422477a1e27cfc21d0744b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "be50d67",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)",
+    "files": [
+     "supabase/functions/export-winloss-pdf/index.ts"
+    ]
+   },
    {
     "sha": "76bcae8",
     "date": "2026-11-20",
@@ -297408,15 +297428,6 @@
     "files": [
      "supabase/functions/inbound-email-webhook/index.ts"
     ]
-   },
-   {
-    "sha": "13844e1",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(db): 403 nas tres ultimas policies que leem auth.users (#559)",
-    "files": [
-     "supabase/migrations/20261117190000_fix_403_policies_lendo_auth_users.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -297451,6 +297462,10 @@
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     2
+   ],
+   [
+    "supabase/functions/export-winloss-pdf/index.ts",
+    1
    ],
    [
     "supabase/functions/receive-quote-webhook/index.ts",
@@ -297494,10 +297509,6 @@
    ],
    [
     ".github/workflows/dependency-review.yml",
-    1
-   ],
-   [
-    ".github/workflows/pr-checks.yml",
     1
    ]
   ]

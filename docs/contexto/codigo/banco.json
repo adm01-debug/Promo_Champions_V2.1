@@ -50042,7 +50042,7 @@
   {
    "nome": "is_admin_or_manager",
    "definida": true,
-   "usada_em": 68
+   "usada_em": 69
   },
   {
    "nome": "is_ip_blocked",

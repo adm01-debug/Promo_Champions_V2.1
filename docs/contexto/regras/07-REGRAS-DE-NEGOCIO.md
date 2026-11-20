@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `76bcae837d` · branch `main` · 2026-11-20 18:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `be50d67a3a` · branch `main` · 2026-11-20 19:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5018,6 +5018,7 @@ _nenhum item encontrado_
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/email-composer-bulk/index.ts` |
 | O token limita o efeito, mas a rota ainda é pública e não deve permitir | `supabase/functions/email-unsubscribe/index.ts` |
 | Contract validation | `supabase/functions/execute-workflow/index.ts` |
+| AUD-VALIDACAO: o body chega como { filters }. Validação de entrada antes | `supabase/functions/export-winloss-pdf/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/extract-coaching-actions/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/extract-committee-from-call/index.ts` |
 | Resolve owner_id (required by deal_stakeholders) | `supabase/functions/extract-committee-from-call/index.ts` |
@@ -5035,5 +5036,4 @@ _nenhum item encontrado_
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
 | PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
 | For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
-| Telemetria pública não deve aceitar um Bearer sintático como bypass de limite. | `supabase/functions/log-web-vitals/index.ts` |
-| … +132 linhas — lista completa em `context.json` | |
+| … +133 linhas — lista completa em `context.json` | |
