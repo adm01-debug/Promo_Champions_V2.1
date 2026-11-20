@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d443a7213ed9a7e4056c03d5e78a47ebf98c7990` (2026-11-20T10:48:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518` (2026-11-20T13:25:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -577,20 +577,20 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21739 nós · 66723 arestas · 1517 comunidades · grafo do commit `d443a721`
+- 21739 nós · 66723 arestas · 1517 comunidades · grafo do commit `e7e7315f`
 - comunidades maiores: schema.sql (785), Card (756), Button (617), client.ts (352), Badge (340), Índice (277), TabsTrigger (259), vitest (247), framer-motion (240), getCorsHeaders (235), date-fns (189), utils.ts (166)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (45)
-- package.json (44)
-- deno.lock (20)
+- package-lock.json (44)
+- package.json (43)
+- deno.lock (19)
 - RELATORIO_CI.md (18)
 - .github/workflows/codeql.yml (13)
 - PENDENCIAS.md (12)
+- .github/workflows/deploy.yml (11)
 - src/integrations/supabase/types.ts (11)
-- .github/workflows/deploy.yml (10)
 - .github/workflows/pr-checks.yml (10)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/ci-failure-alert.yml (7)
@@ -715,7 +715,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/DATA_RETENTION.md` — DATA RETENTION — Política de retenção e purge (90 linhas)
 - `docs/DEAD_TABLES.md` — DEAD TABLES — Tabelas sem referência no código (92 linhas)
 - `docs/DEAL_RISK_CRITERIA.md` — Critério canônico de "deal em risco" (26 linhas)
-- `docs/DEPLOYMENT.md` — Deploy — Promo Champions V2.1 (115 linhas)
+- `docs/DEPLOYMENT.md` — Deploy — Promo Champions V2.1 (112 linhas)
 - `docs/DESIGN_SYSTEM.md` — Design System - Promo Champions (1183 linhas)
 - `docs/DOCUMENTACAO_SISTEMA.md` — 📋 Documentação Completa do Sistema — Promo Champions (Sales Arena) (1741 linhas)
 - `docs/DR_PLAN.md` — Plano de Recuperação de Desastres (DR Plan) (80 linhas)
@@ -757,6 +757,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-20 `e7e7315` infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)
 - 2026-11-20 `d443a72` chore(config): documenta que a function health nao esta na allowlist do deploy (#584)
 - 2026-11-20 `de515ef` fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)
 - 2026-11-20 `9017094` fix(db): dropa policies permissive de sales/activities (USING true) (#582)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `cefd645` docs(agentes): corrige o registro das telas órfãs após o #568 (#575)
 - 2026-11-17 `58dbc25` feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)
 - 2026-11-17 `8a0bc94` feat(pipeline): histórico do negócio direto do card, para negócio em aberto (#573)
-- 2026-11-17 `eedadeb` feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

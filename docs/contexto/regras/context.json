@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
+  "sha": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 13:49 UTC",
+  "generated_at": "2026-11-20 16:26 UTC",
   "files_total": 3619,
   "code_files": 3281,
   "code_lines": 476519
@@ -297117,10 +297117,21 @@
   }
  },
  "git": {
-  "sha": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
+  "sha": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e7e7315",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)",
+    "files": [
+     ".github/workflows/deploy.yml",
+     ".github/workflows/main.yml",
+     "docs/DEPLOYMENT.md"
+    ]
+   },
    {
     "sha": "d443a72",
     "date": "2026-11-20",
@@ -297409,29 +297420,20 @@
     "files": [
      "src/integrations/supabase/types.ts"
     ]
-   },
-   {
-    "sha": "b3daa82",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(agentes): veredicto byte a byte das 9 branches vivas (#555)",
-    "files": [
-     "docs/agentes/veredicto-branches-vivas-261117.md"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/deploy.yml",
-    3
-   ],
-   [
-    "docs/agentes/veredicto-branches-vivas-261117.md",
-    3
+    4
    ],
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     3
+   ],
+   [
+    "docs/DEPLOYMENT.md",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -297454,7 +297456,11 @@
     2
    ],
    [
-    "docs/DEPLOYMENT.md",
+    "docs/agentes/veredicto-branches-vivas-261117.md",
+    2
+   ],
+   [
+    ".github/workflows/main.yml",
     1
    ],
    [
@@ -297495,10 +297501,6 @@
    ],
    [
     "src/components/sequences/sendTimeHelpers.test.ts",
-    1
-   ],
-   [
-    "src/components/sequences/sendTimeHelpers.ts",
     1
    ]
   ]

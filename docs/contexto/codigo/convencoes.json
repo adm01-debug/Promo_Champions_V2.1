@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)",
    "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)",
    "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)",
    "fix(db): dropa policies permissive de sales/activities (USING true) (#582)",
-   "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)",
-   "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)"
+   "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

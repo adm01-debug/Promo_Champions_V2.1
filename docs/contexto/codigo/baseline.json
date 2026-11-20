@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
+  "commit": "e7e7315f3577c6e4f1b56cfb24a75ebc1b9ce518",
   "branch": "main",
-  "data_commit": "2026-11-20T10:48:39-03:00",
+  "data_commit": "2026-11-20T13:25:25-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e7e7315",
+    "data": "2026-11-20",
+    "assunto": "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)"
+   },
    {
     "sha": "d443a72",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "13844e1",
     "data": "2026-11-17",
     "assunto": "fix(db): 403 nas tres ultimas policies que leem auth.users (#559)"
-   },
-   {
-    "sha": "3d0e9e9",
-    "data": "2026-11-17",
-    "assunto": "docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)"
    }
   ],
-  "arquivos_mudados_7d": 280,
+  "arquivos_mudados_7d": 207,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 45
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 44
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 43
+   },
+   {
     "arquivo": "deno.lock",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -222,12 +222,12 @@
     "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 10
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 186
+    "commits": 187
    },
    {
     "autor": "dependabot[bot]",
