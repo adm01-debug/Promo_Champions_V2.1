@@ -53,3 +53,8 @@
 - Itens 1, 13, A2, A9: exigem consulta ao banco de produção usyxfpqlsspldubptrdl (MCP/credenciais) — fora do alcance da verificação por código.
 - Item 21: inventário exato de componentes órfãos (17 deal-health/segurança) não recontado.
 - Item 22: consenso da fonte única por métrica — decisão de arquitetura, não só código.
+
+## PRs de outros agentes fechadas sem merge (verificado 2026-11-20)
+
+- **PR #570** (`supabase/migrations/20261117220000_revoke_supabase_admin_default_truncate.sql`, +50): fecha o privilégio padrão de TRUNCATE a anon/authenticated em tabelas futuras via `supabase_admin`. **Fechada sem merge** por exigir superusuário (`permission denied to change default privileges`). Patch preservado na avaliação desta sessão. É DDL de produção — regra 8, requer dono. O risco segue ABERTO em produção (`pg_default_acl` com `anon=arwdDxtm` sob `supabase_admin`).
+- **PR #488** (`.github/workflows/contexto.yml`, cron 6x/hora → 1x/hora): **objetivo já aplicado na main** — `contexto.yml` hoje roda `cron: '3 * * * *'` (1x/hora). Nada a recuperar.
