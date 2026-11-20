@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
 
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
@@ -9,7 +9,11 @@ Deno.test("process-race-event: OPTIONS returns CORS", async () => {
   const r = await fetch(URL_FN, { method: "OPTIONS" });
   await r.text();
   assertEquals(r.status, 200);
-  assertEquals(r.headers.get("Access-Control-Allow-Origin"), "*");
+  // SEC-07: CORS allowlist — sem Origin, responde com a primeira origem
+  // permitida (nunca `*`).
+  const allowOrigin = r.headers.get("Access-Control-Allow-Origin");
+  assert(allowOrigin);
+  assert(allowOrigin !== "*");
 });
 
 Deno.test("process-race-event: missing auth returns 401", async () => {
