@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "90170947dd61c137feaf860c2ecb28add9bfaa84",
+  "sha": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 00:41 UTC",
+  "generated_at": "2026-11-20 13:49 UTC",
   "files_total": 3619,
   "code_files": 3281,
-  "code_lines": 476283
+  "code_lines": 476519
  },
  "version": "1.3.2",
- "facts_hash": "10fcbd0dbb96df9d",
+ "facts_hash": "dcc51183a8923054",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -105963,7 +105963,7 @@
   {
    "module": "scripts",
    "files": 97,
-   "lines": 24004,
+   "lines": 24240,
    "tables": [
     "a",
     "achievements",
@@ -157732,6 +157732,14 @@
    {
     "file": "scripts/db-audit/gen-migration-probes.test.mjs",
     "name": "suppressKey de function distingue aridade; table ignora aux"
+   },
+   {
+    "file": "scripts/db-audit/gen-migration-probes.test.mjs",
+    "name": "DO..EXECUTE dinamico cria probes admin_delete_* e dropa policies DELETE antigas"
+   },
+   {
+    "file": "scripts/db-audit/gen-migration-probes.test.mjs",
+    "name": "net-state suprime policy DELETE antiga dropada por block dinamico"
    },
    {
     "file": "scripts/graphify/catalog-adapter.test.mjs",
@@ -227887,7 +227895,7 @@
   },
   "scripts/db-audit/gen-migration-probes.mjs": {
    "path": "scripts/db-audit/gen-migration-probes.mjs",
-   "lines": 366,
+   "lines": 543,
    "exports": [
     "const collectProbes",
     "const collectDrops",
@@ -227902,13 +227910,14 @@
    ],
    "rule_comments": [
     "existência de objetos apenas: a reconciliação de versões do ledger",
+    "placeholders, ignoramos o excedente apenas quando resolvíveis.",
     "regressão não deve varrer supabase/migrations nem imprimir."
    ],
    "doc": "!/usr/bin/env node Gera SQL de sondagem que verifica, para cada migration em um intervalo de versões, se os objetos que ela cria existem em produção. Escopo = existência de objetos apenas: a reconciliação de versões do ledger (schema_migrations × arquivos do repo) é responsabilidade do drift check e …"
   },
   "scripts/db-audit/gen-migration-probes.test.mjs": {
    "path": "scripts/db-audit/gen-migration-probes.test.mjs",
-   "lines": 179,
+   "lines": 238,
    "is_test": true,
    "doc": "Testes de regressão do gerador de probes: node --test scripts/db-audit/gen-migration-probes.test.mjs",
    "tests": [
@@ -227928,7 +227937,9 @@
     "drop-then-recreate no MESMO arquivo sobrevive (net-state)",
     "DROP FUNCTION sem parênteses continua sem aux em collectDrops",
     "aridade no DROP FUNCTION casa create/drop pela MESMA aridade",
-    "suppressKey de function distingue aridade; table ignora aux"
+    "suppressKey de function distingue aridade; table ignora aux",
+    "DO..EXECUTE dinamico cria probes admin_delete_* e dropa policies DELETE antigas",
+    "net-state suprime policy DELETE antiga dropada por block dinamico"
    ]
   },
   "scripts/graphify/catalog-adapter.mjs": {
@@ -297106,10 +297117,30 @@
   }
  },
  "git": {
-  "sha": "90170947dd61c137feaf860c2ecb28add9bfaa84",
+  "sha": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d443a72",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)",
+    "files": [
+     ".github/workflows/deploy.yml",
+     "docs/DEPLOYMENT.md"
+    ]
+   },
+   {
+    "sha": "de515ef",
+    "date": "2026-11-20",
+    "author": "adm01-debug",
+    "subject": "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)",
+    "files": [
+     "scripts/db-audit/gen-migration-probes.mjs",
+     "scripts/db-audit/gen-migration-probes.test.mjs"
+    ]
+   },
    {
     "sha": "9017094",
     "date": "2026-11-19",
@@ -297387,28 +297418,13 @@
     "files": [
      "docs/agentes/veredicto-branches-vivas-261117.md"
     ]
-   },
-   {
-    "sha": "0b645fb",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(db): 403 ao gravar error_logs — INSERT só existia para anon (#554)",
-    "files": [
-     "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql"
-    ]
-   },
-   {
-    "sha": "62ddfbe",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(cadências): 500 em process-cadence-tasks — cria cadence_tasks.updated_at (#553)",
-    "files": [
-     "supabase/functions/process-cadence-tasks/index.ts",
-     "supabase/migrations/20261117160000_fix_500_cadence_tasks_updated_at.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    ".github/workflows/deploy.yml",
+    3
+   ],
    [
     "docs/agentes/veredicto-branches-vivas-261117.md",
     3
@@ -297416,10 +297432,6 @@
    [
     "supabase/functions/inbound-email-webhook/index.ts",
     3
-   ],
-   [
-    ".github/workflows/deploy.yml",
-    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -297440,6 +297452,18 @@
    [
     "package.json",
     2
+   ],
+   [
+    "docs/DEPLOYMENT.md",
+    1
+   ],
+   [
+    "scripts/db-audit/gen-migration-probes.mjs",
+    1
+   ],
+   [
+    "scripts/db-audit/gen-migration-probes.test.mjs",
+    1
    ],
    [
     "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
@@ -297475,18 +297499,6 @@
    ],
    [
     "src/components/sequences/sendTimeHelpers.ts",
-    1
-   ],
-   [
-    "src/hooks/engagement/useSendTimeOptimization.ts",
-    1
-   ],
-   [
-    "src/components/pipeline/DealCard.tsx",
-    1
-   ],
-   [
-    "src/components/pipeline/DealTimeline.tsx",
     1
    ]
   ]

@@ -146,11 +146,11 @@
   {
    "arquivo": "scripts/db-audit/gen-migration-probes.test.mjs",
    "tipo": "unit",
-   "linhas": 179,
+   "linhas": 238,
    "testa": [
     "scripts/db-audit/gen-migration-probes.mjs"
    ],
-   "casos": 17
+   "casos": 19
   },
   {
    "arquivo": "scripts/graphify-local.unit.mjs",

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "90170947dd61c137feaf860c2ecb28add9bfaa84",
+  "commit": "d443a7213ed9a7e4056c03d5e78a47ebf98c7990",
   "branch": "main",
-  "data_commit": "2026-11-20T00:34:08Z",
+  "data_commit": "2026-11-20T10:48:39-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d443a72",
+    "data": "2026-11-20",
+    "assunto": "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)"
+   },
+   {
+    "sha": "de515ef",
+    "data": "2026-11-20",
+    "assunto": "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)"
+   },
    {
     "sha": "9017094",
     "data": "2026-11-20",
@@ -121,19 +131,9 @@
     "sha": "3d0e9e9",
     "data": "2026-11-17",
     "assunto": "docs(agentes): censo das edge functions e veredicto das 79 PRs fechadas (#560)"
-   },
-   {
-    "sha": "beed109",
-    "data": "2026-11-17",
-    "assunto": "feat(email): clique e abertura de e-mail alimentam o score de engajamento (#558)"
-   },
-   {
-    "sha": "2a3a8ca",
-    "data": "2026-11-17",
-    "assunto": "feat(db): auditoria nas duas tabelas de webhook (#551)"
    }
   ],
-  "arquivos_mudados_7d": 351,
+  "arquivos_mudados_7d": 280,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 46
-   },
-   {
-    "arquivo": "package.json",
     "mudancas": 45
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 44
+   },
+   {
     "arquivo": "deno.lock",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -226,12 +226,12 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/pr-checks.yml",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 9
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
@@ -254,6 +254,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "mudancas": 7
+   },
+   {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 7
    },
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": "inventario/estado/edges.json",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
     "mudancas": 6
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 184
+    "commits": 186
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3604,
   "arquivos_codigo": 2572,
-  "linhas_codigo": 442287,
+  "linhas_codigo": 442523,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -448,7 +448,7 @@
   },
   "scripts/db-audit": {
    "arquivos": 3,
-   "linhas": 577
+   "linhas": 813
   },
   "scripts/debt-report.mjs": {
    "arquivos": 1,
@@ -791,7 +791,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 7,
-  "arquivos_acima_500_linhas": 69
+  "arquivos_acima_500_linhas": 70
  },
  "todos": [
   {
