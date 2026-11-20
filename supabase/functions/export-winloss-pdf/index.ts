@@ -1,7 +1,11 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getUserClient, getServiceClient, UnauthorizedError, type AuthenticatedContext } from '../_shared/auth-client.ts';
 import { toBusinessDate } from "../_shared/business-date.ts";
+import {
+  collectErrors, validateEnum, validateArray,
+  validationErrorResponse, type ValidationError,
+} from '../_shared/validation.ts';
 
 interface AnalysisRow {
   outcome: string;
@@ -18,8 +22,9 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   // ── Authentication ────────────────────────────────────────────────────
   // Require a valid user JWT — prevents unauthenticated callers from
   // exfiltrating win/loss competitive intelligence.
+  let authCtx: AuthenticatedContext | null = null;
   try {
-    await getUserClient(req);
+    authCtx = await getUserClient(req);
   } catch (e) {
     if (e instanceof UnauthorizedError) {
       return new Response(
@@ -31,15 +36,55 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
   }
 
   try {
-    // Service client needed to read win_loss_analyses regardless of RLS row
-    // ownership (report aggregates across all accessible analyses).
-    const supabase = getServiceClient("export-winloss-pdf aggregates win_loss_analyses for report");
+    // Governanca (A3): o relatorio so expoe o que o usuario ja enxerga na UI.
+    // admin/manager (is_admin_or_manager) veem o conjunto global; os demais
+    // rodam com o client escopado ao JWT, e a policy RLS "wla read auth"
+    // (20260515150338) filtra win_loss_analyses pelo dono via sale_id. Isso
+    // impede que o PDF vaze analises de win/loss de outro vendedor.
+    const { data: isPrivileged } = await authCtx!.client.rpc(
+      "is_admin_or_manager",
+      { _user_id: authCtx!.userId }
+    );
+    const supabase = isPrivileged
+      ? getServiceClient("export-winloss-pdf: admin/manager agregam win_loss_analyses globais para o relatorio")
+      : authCtx.client;
 
-    const { data: analyses } = await supabase
+    // AUD-VALIDACAO: o body chega como { filters }. Validação de entrada antes
+    // de qualquer leitura — period do conjunto permitido, listas sem tamanho
+    // abusivo. Um body inválido responde 400 sem tocar no banco.
+    let bodyData: unknown = {};
+    try {
+      bodyData = await req.json();
+    } catch {
+      // body ausente/vazio é tratado como filtros padrão (sem erro).
+    }
+    const rawFilters = (bodyData as { filters?: unknown })?.filters ?? {};
+    const fperiod = (rawFilters as { period?: unknown })?.period;
+    const fsales = (rawFilters as { salespersonIds?: unknown })?.salespersonIds;
+    const fseg = (rawFilters as { segments?: unknown })?.segments;
+    const fsrc = (rawFilters as { sources?: unknown })?.sources;
+    const periodStr = typeof fperiod === "number" ? String(fperiod) : null;
+    const errors: (ValidationError | null)[] = [
+      periodStr ? validateEnum(periodStr, "period", ["7", "30", "90", "180", "365"]) : null,
+      validateArray(fsales ?? [], "salespersonIds", { required: false, maxLength: 100 }),
+      validateArray(fseg ?? [], "segments", { required: false, maxLength: 100 }),
+      validateArray(fsrc ?? [], "sources", { required: false, maxLength: 100 }),
+    ];
+    const collected = collectErrors(errors);
+    if (collected.length) {
+      return validationErrorResponse(collected, corsHeaders);
+    }
+    const periodDays = periodStr ? Number(periodStr) : 90;
+    const since = new Date();
+    since.setDate(since.getDate() - periodDays);
+
+    const query = supabase
       .from('win_loss_analyses')
       .select('outcome, primary_reason, competitor, amount, analyzed_at')
+      .gte('analyzed_at', since.toISOString())
       .order('analyzed_at', { ascending: false })
       .limit(500);
+    const { data: analyses } = await query;
 
     const rows = (analyses ?? []) as AnalysisRow[];
     const wins = rows.filter(r => r.outcome === 'won');
