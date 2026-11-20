@@ -1,0 +1,55 @@
+﻿# Backlog Verificado — Funcionalidades Pendentes (Fase 1)
+
+> Re-verificado item a item na main `8203561` (após #586/#587), 2026-11-20.
+> Estado real = o que o CÓDIGO mostra hoje, com evidência arquivo:linha. Não repete a auditoria de 11/10 verbatim.
+> Legenda: ✅ RESOLVIDO · 🟡 PERSISTE/PARCIAL · ⚪ NAO VERIFICADO (depende de banco/secret).
+
+## Top 25
+
+| #   | Estado hoje       | Evidência (main `8203561`)                                                                                                                                                                                 |
+| --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | ⚪ NAO VERIFICADO | Nenhuma migration grava `_internal_secrets` (`functions_base_url`/`anon_key`); só lêem (`20261117070000:142,187`). Depende do banco vivo.                                                                  |
+| 2   | 🟡 PARCIAL        | `sequence-runner`/`process-cadence-tasks`/`process-scheduled-sends` agendados via cron na `20261112224500`; mapeamento lead tende a `sales`; `sequence-runner/index.ts` não tem `cron.schedule` interno.   |
+| 3   | ✅ RESOLVIDO      | Wrappers public em `20261013121000_wrappers_private_sequence_rpcs.sql` (reexportam private→public p/ PostgREST).                                                                                           |
+| 4   | ✅ RESOLVIDO      | `QuoteCard.tsx:58-64` invoke `send-quote-to-client` (email+whatsapp); expiração agendada (`check-quote-expiration` cron na `20261112224500`).                                                              |
+| 5   | ✅ RESOLVIDO      | `useWhatsApp.ts:36` envia de verdade via `send-multichannel-message`; grava conversa + atualiza sale.                                                                                                      |
+| 6   | ✅ RESOLVIDO      | `enqueue_email` (inexistente) trocado por `send-transactional-email` em `_shared/transactional-email-sender.ts:17`, `send-churn-alert-email/index.ts:5,117`.                                               |
+| 7   | ✅ RESOLVIDO      | `bi/index.tsx` exporta componentes reais (não stubs); `Speedometer.tsx` recebe `value` por prop; `revenue-intelligence/index.ts:45,75` lê `sales_goals`.                                                   |
+| 8   | 🟡 PERSISTE       | `mv_competitive_ranking` (`20260517113746`) só conta `status='completed'` em `monthly_sales` — won/closed somem do ranking.                                                                                |
+| 9   | 🟡 PARCIAL        | `db-backup.yml:52` agora aponta pooler do projeto oficial `usyxfpqlsspldubptrdl`; off-site depende de secret (`upload` pulado se ausente, `db-backup.yml:41`).                                             |
+| 10  | 🟡 PERSISTE       | Repo ainda `visibility: PUBLIC` (gh API, 2026-11-20). Crítico: PII + segredos históricos. Decidir com dono.                                                                                                |
+| 11  | 🟡 PERSISTE       | `src/integrations/supabase/env.ts:5` ainda cai no default de produção sem env de preview/staging.                                                                                                          |
+| 12  | ✅ PARCIAL        | `deploy.yml` não faz `db push` quando falta `SUPABASE_DB_PASSWORD` (comentado em `deploy.yml:23`); deploy das edge functions publicado (171/172, health 200) nesta sessão.                                 |
+| 13  | ⚪ NAO VERIFICADO | `_shared/ai-gateway.ts:4-9` ainda aponta para `ai.gateway.lovable.dev`; 46 functions IA dependem do secret `LOVABLE_API_KEY`/`LOVABLE_AI_GATEWAY_URL`.                                                     |
+| 14  | 🟡 PARCIAL        | 12 crons de rotina agendados na `20261112224500` (dependem do item 1 estar ok no banco; 404 até o deploy das functions). `AdminSystemStatus` ainda mostra horários — reconferir.                           |
+| 15  | ✅ PARCIAL        | `send-multichannel-message/index.ts` agora dispatcha `meta_cloud`/`evolution`/`zapi` + `whatsapp-inbound-webhook`; falta retry/reprocessamento de falhas.                                                  |
+| 16  | 🟡 PERSISTE       | `bitrix24-sync` sem config.toml/verify_jwt; sem refresh automático de token; tokens legados em texto puro.                                                                                                 |
+| 17  | ✅ RESOLVIDO      | `twilio-call-twiml/index.ts:70,133-137` só grava após verificar consentimento LGPD (`consent_records`).                                                                                                    |
+| 18  | 🟡 PERSISTE       | Credenciais Twilio/Meta legíveis por manager; `external-db-bridge` e ferramentas de teste — reconferir grants no banco.                                                                                    |
+| 19  | ✅ RESOLVIDO      | `useSecurityMonitoring.ts:61-65` usa `record_successful/failed_login_attempt` (RPC) em vez de INSERT direto.                                                                                               |
+| 20  | ✅ RESOLVIDO      | `useQuickAction.ts:16` chama `calculate-deal-health` (existe).                                                                                                                                             |
+| 21  | ✅ PARCIAL        | `pages/ConversationalIntelligence.tsx` existe; 17 componentes de deal-health/segurança — reconferir quais ainda não montados.                                                                              |
+| 22  | 🟡 PERSISTE       | Ainda múltiplos: `generate-revenue-forecast`+`revenue-forecast-ai`+`demand-forecast`; vários `win-probability`. Consolidar fonte por métrica.                                                              |
+| 23  | ✅ RESOLVIDO      | `lib/brDocuments.ts:34-37` valida CNPJ alfanumérico 2026 (ASCII−48, módulo 11).                                                                                                                            |
+| 24  | ✅ RESOLVIDO      | `20261014000000_gamificacao_server_side.sql` (trigger em sales→process-race-event; roleta concede prêmio; rotate-daily-challenges com cron); `process-race-event/index.ts:206-208` corrige diff de placar. |
+| 25  | 🟡 PERSISTE       | `SLACK_CI_WEBHOOK_URL` citado em 4 workflows; 5 workflows vermelhos diários; cobertura 3,99%. Canal de alerta + gate completo pendentes.                                                                   |
+
+## Anexos A (planos não executados)
+
+| #   | Estado hoje       | Evidência                                                                                                                                    |
+| --- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | ✅ RESOLVIDO      | `20261013130000_comissao_regras_e_split_sdr.sql` — UNIQUE (sale_id, salesperson_id), regra vendedor>categoria>faixa>global, split SDR.       |
+| A2  | ⚪ NAO VERIFICADO | Rotação de credenciais não executada; service_role antiga no histórico de repo PÚBLICO. Requer dono.                                         |
+| A3  | 🟡 PERSISTE       | `scheduled-reports-runner`/`export-winloss-pdf` sem filtro de dono/papel — reconferir (relatório vaza venda de outros).                      |
+| A4  | 🟡 PERSISTE       | `receive-quote-webhook/index.ts:246` comenta bucket PRIVADO, mas `:285` ainda usa `getPublicUrl` (URL não assinada). Usar `createSignedUrl`. |
+| A5  | 🟡 PARCIAL        | Prompt injection em assistentes IA — separar instrução/dado e allowlist de ferramentas (reconferir `sales-assistant-chat`/`ai-copilot`).     |
+| A6  | ✅ RESOLVIDO      | `20261014000000_gamificacao_server_side.sql` — posse/coleta só servidor; roleta concede prêmio.                                              |
+| A7  | ✅ PARCIAL        | `customer-success-360/index.ts:56-61` agora lê `account_id` de tabelas próprias (não mais `orders.user_id` como account).                    |
+| A8  | ✅ PARCIAL        | `_shared/cors.ts` — allowlist (nunca `*`); falta conferir CSP `unsafe-eval` em `index.html`.                                                 |
+| A9  | ⚪ NAO VERIFICADO | Reconciliar `schema_migrations` + replay em banco efêmero. Depende de produção.                                                              |
+
+## Verificações pendentes (não executadas — dependem de banco/UI/runbooks p/ decidir)
+
+- Itens 1, 13, A2, A9: exigem consulta ao banco de produção usyxfpqlsspldubptrdl (MCP/credenciais) — fora do alcance da verificação por código.
+- Item 21: inventário exato de componentes órfãos (17 deal-health/segurança) não recontado.
+- Item 22: consenso da fonte única por métrica — decisão de arquitetura, não só código.
