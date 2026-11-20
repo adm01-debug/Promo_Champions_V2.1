@@ -703,3 +703,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261117190000 | [fix_403_policies_lendo_auth_users](migrations/20261117190000_fix_403_policies_lendo_auth_users.sql) | 0 |
 | 20261117200000 | [fix_match_reply_to_enrollment_sales_email](migrations/20261117200000_fix_match_reply_to_enrollment_sales_email.sql) | 0 |
 | 20261117210000 | [match_reply_to_enrollment_contato_de_conta](migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql) | 0 |
+| 20261119700000 | [fix_rls_sales_activities_using_true](migrations/20261119700000_fix_rls_sales_activities_using_true.sql) | 2 |

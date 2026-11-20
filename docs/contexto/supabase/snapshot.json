@@ -133352,6 +133352,12 @@
         "name": "match_reply_to_enrollment_contato_de_conta",
         "statements": null,
         "version": "20261117210000"
+      },
+      {
+        "name": "fix_rls_sales_activities_using_true",
+        "statements": 2,
+        "statements_sha": "0887620204acf077",
+        "version": "20261119700000"
       }
     ],
     "policies": [

@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-20 00:37 UTC
+
+- **migrations** adicionado (1): `20261119700000_fix_rls_sales_activities_using_true`
+
 ## 2026-11-19 11:13 UTC
 
 - **extensions** alterado (1): `supabase_vault`
