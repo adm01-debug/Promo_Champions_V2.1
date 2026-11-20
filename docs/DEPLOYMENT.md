@@ -49,9 +49,11 @@ pipeline**. O processo real:
 
 ## 4. Edge Functions
 
-O plano Supabase do projeto **limita a 100 functions deployadas** e o repo
-tem 173 — dezenas existem apenas no código e respondem 404 (ex.: functions
-chamadas pelo frontend não deployadas). Deploy é sempre manual via CLI:
+Com o plano pago do Supabase o teto de functions deployadas subiu acima das
+172 do repo, então o workflow `deploy.yml` publica **todas** as edge functions
+(`supabase/functions/*/index.ts`), de forma dinâmica — sem allowlist estática.
+Nova function no diretório sobe no próximo deploy automaticamente. Deploy
+também é possível manualmente via CLI:
 
 ```bash
 supabase functions deploy <nome> --project-ref usyxfpqlsspldubptrdl
@@ -67,14 +69,9 @@ Antes de mexer numa function:
 - `verify_jwt` só pode ser `false` (em `supabase/config.toml`) para webhooks
   com verificação de assinatura no handler — ver `docs/API.md`.
 
-> Funções listadas no repo podem **não estar deployadas** — o catálogo de
-> `docs/API.md` reflete o código, não a publicação. Confirme com um `curl`
-> de health no endpoint antes de assumir que existe em produção.
-
-> A function `health` **não faz parte da allowlist** do workflow de deploy
-> (`.github/workflows/deploy.yml`, deploy das 100 functions ativas). Portanto
-> `https://<proj>.supabase.co/functions/v1/health` responde **HTTP 404** por
-> design — um 404 aqui não indica falha de deploy nem regressão.
+> A function `health` é deployada junto (deploy dinâmico de todas). Portanto
+> `https://<proj>.supabase.co/functions/v1/health` deve responder **HTTP 200**
+> em produção — diferente disso é falha real de deploy, não mais 404 por design.
 
 ## 5. Secrets e variáveis (configuração manual)
 

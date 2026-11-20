@@ -114,7 +114,7 @@ jobs:
   deploy:
     name: Deploy → production
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
     needs: validate
     environment: production
     steps:
@@ -137,22 +137,15 @@ jobs:
             echo "  supabase functions deploy --project-ref usyxfpqlsspldubptrdl"
             exit 0
           fi
-          # O plano Supabase limita a 100 functions deployadas (docs/DEPLOYMENT.md §4).
-          # Deployar todas (171) com `--yes` estoura 402 (function.max_count) na 101ª.
-          # Aqui deployamos por allowlist das 100 ativas: sem regressão nas vivas,
-          # adição manual de novas funciona, e o limite nunca trava um redeploy.
-          ACTIVE=$'access-denied-alerts\naccount-engagement-aggregator\nactivity-goal-alerts\naggregate-coaching-scorecard\nai-email-composer\nanalyze-call\nanalyze-conversation-metrics\nanalyze-conversation\nanalyze-objection-handling\nanalyze-question-quality\nanalyze-sentiment-timeline\nanalyze-skill-gaps\nanalyze-stage-conversion\nanalyze-win-loss\nauto-enroll-cadence\nauto-reassign-inactive\nautomation-suggestions\nbehavioral-analysis\nbitrix24-oauth\nbitrix24-sync\nbroadcast-sale-notification\ncalculate-deal-health\ncampaign-health-alert\ncoaching-intelligence\ncoaching-session-prep\ncollect-race-powerup\nconversational-intelligence\ncreate-stagnant-tasks\ncron-failure-alerter\ncsat-ces-trigger\ncustomer-success-360\ncustomer-success-hub\ndeal-probability\ndeal-risk-digest\ndemand-forecast\ndetect-at-risk-deals\ndetect-client-churn-alerts\ndetect-coaching-opportunities\ndetect-competitor-mentions\ndetect-critical-moments\ndetect-stuck-deals\ndetect-winloss-at-risk\ndialer-queue-builder\ndiarize-call-recording\ndispatch-webhook\nedge-retry-threshold-alert\nelevenlabs-tts\nelevenlabs-voice\nemail-bulk-retry\nemail-bulk-send\nemail-composer-bulk\nemail-engagement-scorer\nemail-unsubscribe\nengagement-score-recompute\nenrich-lead\nexecute-workflow\nexpansion-detector\nexport-winloss-pdf\nexternal-db-bridge\nextract-coaching-actions\nextract-committee-from-call\nforecast-narrative\ngenerate-coaching-actions\ngenerate-executive-briefing\ngenerate-urgent-client-tasks\nhelpdesk-sync\ninbound-email-webhook\nlog-web-vitals\nmine-win-loss-patterns\nmultichannel-status-webhook\nnext-best-action\nnotify-quote-conversion\nnotify-ranking-position\nnotify-v4-quote-status\nonboarding-launcher\npersonal-assistant-stream\npipeline-pulse-aggregator\npredict-deal-velocity\npredictive-intelligence\npredictive-scoring-explain\npricing-intelligence\nprocess-cadence-tasks\nprocess-race-event\nrace-commentary\nreceive-quote-sync\nreport-embed-public\nrevenue-forecast-ai\nrevenue-intelligence\nrevops-hub\nsales-assistant-chat\nsemantic-search\nsend-churn-alert-email\nsend-multichannel-message\nsend-transactional-email\nsequence-runner\nstart-race-season\nterritory-optimization\nvisual-search\nwal-health-alert\nwebauthn'
-          for FN in $ACTIVE; do
-            if [ -d "supabase/functions/$FN" ]; then
-              echo "Deploying: $FN"
-              supabase functions deploy "$FN" --yes --project-ref usyxfpqlsspldubptrdl
-            else
-              echo "::warning::function '$FN' não existe no repo — remova da allowlist ou ajuste o nome."
-            fi
+          # Plano pago (teto acima de 171): deploya TODAS as edge functions do repo.
+          # Descobre as functions dinamicamente (qualquer diretório com index.ts),
+          # sem allowlist estática para manter — nova function sobe no próximo deploy.
+          echo "Deploying todas as edge functions do repo..."
+          for FN in $(find supabase/functions -maxdepth 2 -name index.ts -printf '%h\n' | sed 's|supabase/functions/||' | sort); do
+            echo "Deploying: $FN"
+            supabase functions deploy "$FN" --yes --project-ref usyxfpqlsspldubptrdl
           done
-          # Novas functions exigem vagas livres (limite 100). Documenta o processo no summary.
-          echo "::notice::Novas edge functions exigem vaga: remova uma obsoleta de produção (Dashboard) ou suba o plano antes de adicionar à allowlist."
-
+          echo "::notice::Deploy dinâmico: subiu todas as edge functions presentes no repo. Remova do diretório as obsoletas para não re-deployá-las."
       - name: Aplicar migrations pendentes (requer secrets Supabase)
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -174,8 +167,8 @@ jobs:
           echo "Se a tag foi criada a partir de main, o sync automático já cobre."
           echo "Caso contrário, confirme o deploy no painel da Vercel."
 
-      # 'health' NÃO está na allowlist acima (deploy das 100 functions ativas).
-      # Por isso o health check legítimo responde HTTP 404 — isso NÃO é regressão.
+      # 'health' é deployada junto (deploy dinâmico de todas) e deve responder 200.
+      # HTTP diferente de 200 aqui é falha real de deploy — os passos abaixo avisam.
       - name: Post-deploy health check (edge function 'health')
         run: |
           URL="https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health"
@@ -184,7 +177,7 @@ jobs:
           if [ "$CODE" = "200" ]; then
             echo "Health check OK ($CODE)"
           else
-            echo "::warning::Health check retornou HTTP $CODE — a function 'health' NÃO está na allowlist, então HTTP 404 é o esperado (sem alerta)."
+            echo "::warning::Health check retornou HTTP $CODE — a function 'health' agora é deployada (deploy dinâmico de todas); HTTP diferente de 200 é falha real."
           fi
 
       - name: Resumo do deploy
@@ -197,7 +190,7 @@ jobs:
             echo ""
             echo "### Passos manuais pendentes (sem secrets no Actions)"
             echo "1. Frontend: confirmar o deploy no painel da Vercel"
-            echo "2. Functions novas: adicionar à allowlist do step de deploy (\`supabase functions deploy <nome> --yes --project-ref usyxfpqlsspldubptrdl\`) após liberar vaga (limite 100)"
+            echo "2. Functions novas: sobem automaticamente no próximo deploy (deploy dinâmico de todas as edge functions do repo)"
             echo "3. Migrations: \`supabase db push --linked\`"
             echo ""
             echo "### Links"
