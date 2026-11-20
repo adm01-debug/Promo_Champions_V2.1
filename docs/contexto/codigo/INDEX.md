@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d7af70945f69f96835b541f311c5d58e6a29a579` (2026-11-19T18:21:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `90170947dd61c137feaf860c2ecb28add9bfaa84` (2026-11-20T00:34:08Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2491), SQL (708), Markdown (212), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2491), SQL (709), Markdown (212), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3603 |
+| arquivos_total | 3604 |
 | arquivos_codigo | 2572 |
 | linhas_codigo | 442287 |
 | rotas | 170 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 417 |
-| migrations | 699 |
+| migrations | 700 |
 | cron_jobs | 31 |
 | testes | 246 |
 | workflows | 27 |
@@ -577,7 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21733 nós · 66712 arestas · 1551 comunidades · grafo do commit `d7af7094`
+- 21734 nós · 66712 arestas · 1552 comunidades · grafo do commit `90170947`
 - comunidades maiores: schema.sql (785), Card (665), lucide-react (449), Badge (364), client.ts (318), getCorsHeaders (286), Índice (277), react (235), formatBRL (218), SelectContent (217), Button (216), Clientes.tsx (198)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -757,6 +757,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-20 `9017094` fix(db): dropa policies permissive de sales/activities (USING true) (#582)
 - 2026-11-19 `d7af709` fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)
 - 2026-11-19 `f7722f0` chore(types): sincroniza types.ts com o banco oficial [auto] (#580)
 - 2026-11-19 `9f4dba8` fix: adiciona --yes no deploy de edge functions para CI (#578)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-17 `eedadeb` feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)
 - 2026-11-17 `5afc278` feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)
 - 2026-11-17 `de87a0c` feat(bi): painel de mudança de classe ABC com dado real (#568)
-- 2026-11-17 `25f5950` fix: índice do contexto carimba a data absoluta da coleta (#566)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

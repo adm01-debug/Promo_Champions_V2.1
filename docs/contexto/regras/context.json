@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d7af70945f69f96835b541f311c5d58e6a29a579",
+  "sha": "90170947dd61c137feaf860c2ecb28add9bfaa84",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-19 21:21 UTC",
-  "files_total": 3618,
-  "code_files": 3280,
-  "code_lines": 476237
+  "generated_at": "2026-11-20 00:41 UTC",
+  "files_total": 3619,
+  "code_files": 3281,
+  "code_lines": 476283
  },
  "version": "1.3.2",
- "facts_hash": "08e9941460aa5622",
+ "facts_hash": "10fcbd0dbb96df9d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1114,
-   ".sql": 708,
+   ".sql": 709,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -67494,6 +67494,7 @@
    "supabase/migrations/20261117190000_fix_403_policies_lendo_auth_users.sql",
    "supabase/migrations/20261117200000_fix_match_reply_to_enrollment_sales_email.sql",
    "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql",
+   "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -107919,8 +107920,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 699,
-   "lines": 58419,
+   "files": 700,
+   "lines": 58465,
    "tables": [
     "user_permissions_cache"
    ],
@@ -295035,6 +295036,10 @@
    "path": "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql",
    "lines": 102
   },
+  "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql": {
+   "path": "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
+   "lines": 46
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297101,10 +297106,19 @@
   }
  },
  "git": {
-  "sha": "d7af70945f69f96835b541f311c5d58e6a29a579",
+  "sha": "90170947dd61c137feaf860c2ecb28add9bfaa84",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9017094",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(db): dropa policies permissive de sales/activities (USING true) (#582)",
+    "files": [
+     "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql"
+    ]
+   },
    {
     "sha": "d7af709",
     "date": "2026-11-19",
@@ -297392,15 +297406,6 @@
      "supabase/functions/process-cadence-tasks/index.ts",
      "supabase/migrations/20261117160000_fix_500_cadence_tasks_updated_at.sql"
     ]
-   },
-   {
-    "sha": "c4f4e3b",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(db): 403 na tela de Webhooks — remove policy morta que lê auth.users (#552)",
-    "files": [
-     "supabase/migrations/20261117150000_fix_403_webhooks_policy_morta.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -297435,6 +297440,10 @@
    [
     "package.json",
     2
+   ],
+   [
+    "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
+    1
    ],
    [
     ".github/workflows/dependency-review.yml",
@@ -297478,10 +297487,6 @@
    ],
    [
     "src/components/pipeline/DealTimeline.tsx",
-    1
-   ],
-   [
-    "src/components/pipeline/dealTimelineConstants.tsx",
     1
    ]
   ]

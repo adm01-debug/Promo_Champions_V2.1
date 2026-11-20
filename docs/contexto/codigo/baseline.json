@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d7af70945f69f96835b541f311c5d58e6a29a579",
+  "commit": "90170947dd61c137feaf860c2ecb28add9bfaa84",
   "branch": "main",
-  "data_commit": "2026-11-19T18:21:07-03:00",
+  "data_commit": "2026-11-20T00:34:08Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9017094",
+    "data": "2026-11-20",
+    "assunto": "fix(db): dropa policies permissive de sales/activities (USING true) (#582)"
+   },
    {
     "sha": "d7af709",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "2a3a8ca",
     "data": "2026-11-17",
     "assunto": "feat(db): auditoria nas duas tabelas de webhook (#551)"
-   },
-   {
-    "sha": "ba21ed9",
-    "data": "2026-11-17",
-    "assunto": "feat(engagement): entrada para o recálculo em lote do engajamento de contato (#557)"
    }
   ],
-  "arquivos_mudados_7d": 350,
+  "arquivos_mudados_7d": 351,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 183
+    "commits": 184
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3603,
+  "arquivos_total": 3604,
   "arquivos_codigo": 2572,
   "linhas_codigo": 442287,
   "rotas": 170,
@@ -334,7 +334,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 699,
+  "migrations": 700,
   "cron_jobs": 31,
   "testes": 246,
   "workflows": 27,
