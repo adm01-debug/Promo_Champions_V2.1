@@ -11,7 +11,11 @@ import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
-import { LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
+import {
+  AI_EMBEDDING_DIMENSIONS,
+  AI_EMBEDDING_MODEL,
+  LOVABLE_AI_EMBEDDINGS_URL,
+} from '../_shared/ai-gateway.ts';
 
 type EntityType =
   | 'client'
@@ -128,14 +132,18 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/text-embedding-004',
+      model: AI_EMBEDDING_MODEL,
       input: text.slice(0, 8000),
+      dimensions: AI_EMBEDDING_DIMENSIONS,
     }),
   });
   if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`);
   const json = await res.json();
   const emb = json?.data?.[0]?.embedding;
   if (!Array.isArray(emb)) throw new Error('Invalid embedding response');
+  if (emb.length !== AI_EMBEDDING_DIMENSIONS) {
+    throw new Error(`Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}`);
+  }
   return emb;
 }
 
@@ -186,8 +194,8 @@ Deno.serve(
       ]);
       if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
-      const apiKey = Deno.env.get('LOVABLE_API_KEY');
-      if (!apiKey) throw new Error('LOVABLE_API_KEY not configured');
+      const apiKey = Deno.env.get('OPENROUTER_API_KEY');
+      if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured');
 
       const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,

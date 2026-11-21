@@ -4,7 +4,12 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
+import {
+  AI_EMBEDDING_DIMENSIONS,
+  AI_EMBEDDING_MODEL,
+  LOVABLE_AI_CHAT_COMPLETIONS_URL,
+  LOVABLE_AI_EMBEDDINGS_URL,
+} from '../_shared/ai-gateway.ts';
 
 interface VisualSearchRequest {
   image: string; // data URL or base64
@@ -56,10 +61,7 @@ Deno.serve(
         );
       }
 
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
-
-      // Chat multimodal roda no OpenRouter; embeddings continuam no Lovable.
+      // Chat multimodal e embeddings rodam no OpenRouter.
       const CHAT_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
       if (!CHAT_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
 
@@ -223,12 +225,13 @@ Deno.serve(
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${CHAT_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'google/text-embedding-004',
+            model: AI_EMBEDDING_MODEL,
             input: searchQuery,
+            dimensions: AI_EMBEDDING_DIMENSIONS,
           }),
         }
       );

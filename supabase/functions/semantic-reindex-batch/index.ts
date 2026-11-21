@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { withRequestId } from "../_shared/request-id.ts";
@@ -50,29 +51,45 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const auth = req.headers.get("Authorization");
-    if (!auth) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const userClient = createClient(
+    const secretsClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: auth } } },
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-    const { data: u } = await userClient.auth.getUser();
-    if (!u?.user) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const { data: isAdmin } = await userClient.rpc("is_admin_or_manager", { _user_id: u.user.id });
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: "admin/manager only" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const isCron = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await secretsClient
+        .from("_internal_secrets")
+        .select("value")
+        .eq("key", "coaching_cron_secret")
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value ?? null;
+    });
+
+    if (!isCron) {
+      const auth = req.headers.get("Authorization");
+      if (!auth) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const userClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: auth } } },
+      );
+      const { data: u } = await userClient.auth.getUser();
+      if (!u?.user) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: isAdmin } = await userClient.rpc("is_admin_or_manager", { _user_id: u.user.id });
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: "admin/manager only" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const body = (await req.json().catch(() => ({}))) as BatchRequest;
