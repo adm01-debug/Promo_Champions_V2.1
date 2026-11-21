@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.6.1 (#579)",
    "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)",
    "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)",
    "chore: registra A5 como concluido no backlog (#595)",
-   "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)",
-   "chore: registra T22 como consolidado na main (#593)"
+   "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

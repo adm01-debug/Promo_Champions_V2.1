@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f26c87381ce97773d14255b80d1c590eadae8a0c",
+  "sha": "a9ec900f87662c5246810e1fc66e84098630c40b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 11:36 UTC",
+  "generated_at": "2026-11-21 11:48 UTC",
   "files_total": 3626,
   "code_files": 3283,
   "code_lines": 476703
@@ -297171,10 +297171,22 @@
   }
  },
  "git": {
-  "sha": "f26c87381ce97773d14255b80d1c590eadae8a0c",
+  "sha": "a9ec900f87662c5246810e1fc66e84098630c40b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "a9ec900",
+    "date": "2026-11-21",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.6.1 (#579)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "f26c873",
     "date": "2026-11-21",
@@ -297464,18 +297476,6 @@
      "src/components/dashboard/MyAssignedTasks.tsx",
      "src/pages/VendedorDashboard.tsx"
     ]
-   },
-   {
-    "sha": "de87a0c",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(bi): painel de mudança de classe ABC com dado real (#568)",
-    "files": [
-     "src/components/analytics/ABCAnalysis.tsx",
-     "src/components/analytics/ABCMatrixShift.test.ts",
-     "src/components/analytics/ABCMatrixShift.tsx",
-     "src/hooks/bi/useABCAnalysis.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -297488,23 +297488,23 @@
     4
    ],
    [
-    "docs/DEPLOYMENT.md",
-    2
-   ],
-   [
     ".release-please-manifest.json",
-    2
+    3
    ],
    [
     "CHANGELOG.md",
-    2
+    3
    ],
    [
     "package-lock.json",
-    2
+    3
    ],
    [
     "package.json",
+    3
+   ],
+   [
+    "docs/DEPLOYMENT.md",
     2
    ],
    [
