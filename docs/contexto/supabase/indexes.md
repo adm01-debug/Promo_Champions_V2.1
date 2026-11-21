@@ -1107,7 +1107,7 @@ Uso e tamanho em `stats.md`.
 | public.security_events | idx_security_events_user_created | btree | user_id, created_at | não | sim |  |
 | public.security_events | security_events_pkey | btree | id | sim | sim |  |
 | public.semantic_index | idx_semantic_index_content_hash | btree | entity_type, entity_id, content_hash | não | sim |  |
-| public.semantic_index | idx_semantic_index_embedding | ivfflat | embedding | não | sim |  |
+| public.semantic_index | idx_semantic_index_embedding_hnsw | hnsw | embedding | não | sim |  |
 | public.semantic_index | idx_semantic_index_entity | btree | entity_type, entity_id | não | sim |  |
 | public.semantic_index | idx_semantic_index_salesperson | btree | salesperson_id | não | sim |  |
 | public.semantic_index | semantic_index_entity_type_entity_id_key | btree | entity_type, entity_id | sim | sim |  |

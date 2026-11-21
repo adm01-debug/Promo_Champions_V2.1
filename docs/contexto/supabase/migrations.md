@@ -706,3 +706,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261119700000 | [fix_rls_sales_activities_using_true](migrations/20261119700000_fix_rls_sales_activities_using_true.sql) | 2 |
 | 20261120000000 | [20261120000000_t15_multichannel_retry](migrations/20261120000000_20261120000000_t15_multichannel_retry.sql) | 0 |
 | 20261121000000 | [20261121000000_fix_search_path_similarity_e_pgvector](migrations/20261121000000_20261121000000_fix_search_path_similarity_e_pgvector.sql) | 0 |
+| 20261122000000 | [20261122000000_schedule_semantic_reindex_cron](migrations/20261122000000_20261122000000_schedule_semantic_reindex_cron.sql) | 0 |
+| 20261123000000 | [semantic_index_hnsw_and_status_filters](migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql) | 0 |
+| 20261123000100 | [fix_auth_users_token_columns_and_identities](migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql) | 0 |

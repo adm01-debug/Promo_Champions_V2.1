@@ -94664,9 +94664,13 @@
             {
               "file": "supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 9,
+          "code_total_files": 10,
           "cron": [
             "36:notify-v4-quote-status-every-5min",
             "37:check-v4-callback-alerts-every-5min",
@@ -119942,12 +119946,12 @@
         "columns": [
           "embedding"
         ],
-        "definition": "CREATE INDEX idx_semantic_index_embedding ON public.semantic_index USING ivfflat (embedding vector_cosine_ops) WITH (lists='100')",
+        "definition": "CREATE INDEX idx_semantic_index_embedding_hnsw ON public.semantic_index USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')",
         "is_primary": false,
         "is_unique": false,
         "is_valid": true,
-        "method": "ivfflat",
-        "name": "idx_semantic_index_embedding",
+        "method": "hnsw",
+        "name": "idx_semantic_index_embedding_hnsw",
         "predicate": null,
         "schema": "public",
         "table": "semantic_index"
@@ -133419,6 +133423,21 @@
         "name": "20261121000000_fix_search_path_similarity_e_pgvector",
         "statements": null,
         "version": "20261121000000"
+      },
+      {
+        "name": "20261122000000_schedule_semantic_reindex_cron",
+        "statements": null,
+        "version": "20261122000000"
+      },
+      {
+        "name": "semantic_index_hnsw_and_status_filters",
+        "statements": [],
+        "version": "20261123000000"
+      },
+      {
+        "name": "fix_auth_users_token_columns_and_identities",
+        "statements": [],
+        "version": "20261123000100"
       }
     ],
     "policies": [

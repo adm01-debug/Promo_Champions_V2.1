@@ -42,7 +42,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_semantic_index_content_hash | btree | entity_type, entity_id, content_hash | não | sim |  | `CREATE INDEX idx_semantic_index_content_hash ON public.semantic_index USING btree (entity_type, entity_id, content_hash)` |
-| idx_semantic_index_embedding | ivfflat | embedding | não | sim |  | `CREATE INDEX idx_semantic_index_embedding ON public.semantic_index USING ivfflat (embedding vector_cosine_ops) WITH (lists='100')` |
+| idx_semantic_index_embedding_hnsw | hnsw | embedding | não | sim |  | `CREATE INDEX idx_semantic_index_embedding_hnsw ON public.semantic_index USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')` |
 | idx_semantic_index_entity | btree | entity_type, entity_id | não | sim |  | `CREATE INDEX idx_semantic_index_entity ON public.semantic_index USING btree (entity_type, entity_id)` |
 | idx_semantic_index_salesperson | btree | salesperson_id | não | sim |  | `CREATE INDEX idx_semantic_index_salesperson ON public.semantic_index USING btree (salesperson_id)` |
 | semantic_index_entity_type_entity_id_key | btree | entity_type, entity_id | sim | sim |  | `CREATE UNIQUE INDEX semantic_index_entity_type_entity_id_key ON public.semantic_index USING btree (entity_type, entity_id)` |

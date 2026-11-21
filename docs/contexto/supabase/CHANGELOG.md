@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 20:13 UTC
+
+- **functions** alterado (1): `public.trigger_internal_edge_job(p_function_name text)`
+- **indexes** adicionado (1): `public.idx_semantic_index_embedding_hnsw`
+- **indexes** removido (1): `public.idx_semantic_index_embedding`
+- **migrations** adicionado (3): `20261122000000_20261122000000_schedule_semantic_reindex_cron`, `20261123000000_semantic_index_hnsw_and_status_filters`, `20261123000100_fix_auth_users_token_columns_and_identities`
+
 ## 2026-11-21 19:12 UTC
 
 - **cron jobs** adicionado (1): `95:semantic-reindex-daily`
