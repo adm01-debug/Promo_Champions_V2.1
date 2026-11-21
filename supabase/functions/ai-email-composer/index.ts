@@ -189,7 +189,7 @@ ${body.custom_instructions ? `Instruções extras do vendedor: ${body.custom_ins
 
 Gere o e-mail agora chamando a tool emit_email.`;
 
-    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

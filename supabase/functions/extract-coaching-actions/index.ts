@@ -113,7 +113,7 @@ ${diarPreview}
 Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤120 chars) do trecho.`;
 
       const aiResp = await fetchWithTimeout(
-        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        "https://openrouter.ai/api/v1/chat/completions",
         {
           method: "POST",
           headers: {

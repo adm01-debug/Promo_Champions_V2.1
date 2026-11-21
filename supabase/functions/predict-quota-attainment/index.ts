@@ -55,7 +55,7 @@ async function generateAdvancedActions(supabase: SupabaseClient, params: {
   const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.";
   const usr = `Vendedor: ${params.salespersonName}\nMeta: R$ ${params.quota.toFixed(0)}\nProjeção P50: R$ ${params.p50.toFixed(0)}\nGap: R$ ${gap.toFixed(0)}\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\nRisco: ${params.risk}`;
   try {
-    const resp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

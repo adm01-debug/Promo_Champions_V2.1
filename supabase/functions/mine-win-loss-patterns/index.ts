@@ -157,7 +157,7 @@ async function generateInsights(
       .sort((a, b) => (b.frequency as number) - (a.frequency as number))
       .slice(0, 20);
     const resp = await fetchWithTimeout(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {

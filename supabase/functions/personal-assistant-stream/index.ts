@@ -341,7 +341,7 @@ Deno.serve(
       }
 
       const MODEL = "google/gemini-2.5-flash";
-      const upstream = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const upstream = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: MODEL, messages, stream: true }),
