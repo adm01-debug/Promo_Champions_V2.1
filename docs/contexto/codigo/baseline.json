@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
+  "commit": "06e43846c8468f39622ced1d9540530365160677",
   "branch": "main",
-  "data_commit": "2026-11-21T16:12:40-03:00",
+  "data_commit": "2026-11-21T17:39:25-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "06e4384",
+    "data": "2026-11-21",
+    "assunto": "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)"
+   },
    {
     "sha": "bff6aa6",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "de515ef",
     "data": "2026-11-20",
     "assunto": "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)"
-   },
-   {
-    "sha": "9017094",
-    "data": "2026-11-20",
-    "assunto": "fix(db): dropa policies permissive de sales/activities (USING true) (#582)"
    }
   ],
-  "arquivos_mudados_7d": 189,
+  "arquivos_mudados_7d": 195,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -148,12 +148,12 @@
     "mudancas": 39
    },
    {
-    "pasta": "package-lock.json",
+    "pasta": "package.json",
     "mudancas": 34
    },
    {
-    "pasta": "package.json",
-    "mudancas": 34
+    "pasta": "package-lock.json",
+    "mudancas": 33
    },
    {
     "pasta": "src/components/race",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 197
+    "commits": 196
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3613,
-  "arquivos_codigo": 2573,
-  "linhas_codigo": 442787,
+  "arquivos_total": 3616,
+  "arquivos_codigo": 2574,
+  "linhas_codigo": 442962,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -330,7 +330,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 703,
+  "migrations": 705,
   "cron_jobs": 32,
   "testes": 246,
   "workflows": 27,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64524
+   "linhas": 64537
   },
   "src/integrations": {
    "arquivos": 4,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 320,
-   "linhas": 66650
+   "arquivos": 321,
+   "linhas": 66812
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -885,6 +885,7 @@
    "ranking-api",
    "run-retry-tests",
    "semantic-coverage",
+   "semantic-index-entity",
    "semantic-reindex-batch",
    "semantic-search-universal",
    "sequence-record-reply",

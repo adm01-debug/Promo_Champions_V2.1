@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bff6aa63a8` · branch `main` · 2026-11-21 19:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `06e43846c8` · branch `main` · 2026-11-21 20:46 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,14 +307,14 @@
 | `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `sales_streaks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `sales_territories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| … +319 linhas — lista completa em `context.json` | | | |
+| … +320 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
 | Tabela | Colunas | Valores | Origem |
 |---|---|---|---|
 | `feature_flags` | `key, description, is_enabled, rollout_percentage` | `('race_smart_notifications', 'Kill-switch das notificações contextuais da Arena (rival ultrapassou, perto do pódio, última hora)', true, 100) ON CONFLICT (key) DO NOTHING` | `supabase/migrations/20261002000000_seed_race_smart_notifications_flag.sql` |
-| `auth.users` | `id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at` | `( '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin.seed@promobrindes.test', crypt('Password123!', gen_salt('bf')), '2026-01-01 00:00:00+00', '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00' ) ON CONFLICT (id) DO NOTHING` | `supabase/seed.sql` |
+| `auth.users` | `id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new, email_change_token_current, phone_change, phone_change_token, reauthentication_token` | `( '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin.seed@promobrindes.test', crypt('Password123!', gen_salt('bf')), '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00', '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00', '', '', '', '', '', '', '', '' ) ON CONFLIC …` | `supabase/seed.sql` |
 | `auth.identities` | `id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at` | `( '00000000-0000-0000-0000-0000000000a1', 'admin.seed@promobrindes.test', '00000000-0000-0000-0000-000000000001', '{"sub":"00000000-0000-0000-0000-000000000001","email":"admin.seed@promobrindes.test"}'::jsonb, 'email', '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00' ) ON CONFLICT (id) DO NOTHING` | `supabase/seed.sql` |
 | `user_roles` | `id, user_id, role, created_at, updated_at` | `( '00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001', 'admin', '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00' ) ON CONFLICT DO NOTHING` | `supabase/seed.sql` |
 | `salespeople` | `id, name, email, avatar_url, created_at, updated_at` | `( '00000000-0000-0000-0000-000000000020', 'Admin Seed', 'admin.seed@promobrindes.test', NULL, '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00' ) ON CONFLICT (id) DO NOTHING` | `supabase/seed.sql` |

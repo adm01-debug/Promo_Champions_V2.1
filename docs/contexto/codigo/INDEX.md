@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bff6aa63a8e78a1a4882ec77db881721ce18d005` (2026-11-21T16:12:40-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `06e43846c8468f39622ced1d9540530365160677` (2026-11-21T17:39:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2492), SQL (712), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2493), SQL (714), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3613 |
-| arquivos_codigo | 2573 |
-| linhas_codigo | 442787 |
+| arquivos_total | 3616 |
+| arquivos_codigo | 2574 |
+| linhas_codigo | 442962 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 417 |
-| migrations | 703 |
+| migrations | 705 |
 | cron_jobs | 32 |
 | testes | 246 |
 | workflows | 27 |
@@ -475,7 +475,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `scheduled-reports-runner` — tabelas: _internal_secrets, client_portfolio, clients, custom_reports, salespeople, scheduled_report_runs, scheduled_reports; chamada por 0 arquivo(s) do front
 - `sdr-consecutive-alerts` — tabelas: _internal_secrets, activities, activity_goals, email_logs, notification_preferences, salespeople, sdr_alert_history, user_roles; chamada por 1 arquivo(s) do front
 - `semantic-coverage` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `semantic-index-entity` — tabelas: client_portfolio, semantic_index; chamada por 0 arquivo(s) do front
+- `semantic-index-entity` — tabelas: client_portfolio, semantic_index; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `semantic-reindex-batch` — tabelas: _internal_secrets, semantic_index; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `semantic-search` — tabelas: -; chamada por 1 arquivo(s) do front
 - `semantic-search-universal` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -564,7 +564,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 1 — ex.: /contas/:id
 - componentes_ambiguos: 0
 - menu_sem_destino: 22 — ex.: Análises -> /dashboard/analises, Colete um power-up -> powerup, Competição -> /dashboard/competicao
-- edges_orfas: 31 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
+- edges_orfas: 32 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 6 — ex.: ab_tests, experiment_assignments, experiment_variants
 - tabelas_usadas_sem_definicao: 3 — ex.: auth_users_view, table, team_members
@@ -578,8 +578,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21789 nós · 66791 arestas · 1549 comunidades · grafo do commit `bff6aa63`
-- comunidades maiores: schema.sql (785), Card (784), Button (621), react (383), Skeleton (378), client.ts (297), getCorsHeaders (280), Índice (279), Badge (257), lazyPages.ts (163), constants/index.ts (158), useAuth (150)
+- 21796 nós · 66814 arestas · 1545 comunidades · grafo do commit `06e43846`
+- comunidades maiores: schema.sql (785), Card (605), lucide-react (429), Badge (339), client.ts (328), react (309), Índice (279), getCorsHeaders (242), Button (219), SelectContent (218), ref_npm_supabase (208), Clientes.tsx (199)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -758,6 +758,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.2...promo-champions-v2-v1.7.0) (2026-11-21)
 
 ## Últimos commits
+- 2026-11-21 `06e4384` fix: busca semantica retornando zero resultados e login quebrado (500) (#608)
 - 2026-11-21 `bff6aa6` fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)
 - 2026-11-21 `a122081` chore(release): 1.7.0 (#605)
 - 2026-11-21 `6e92a51` fix: corrige chave de chat e search_path da busca semantica (#604)
@@ -772,7 +773,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `66230ee` chore: registra A5 como concluido no backlog (#595)
 - 2026-11-20 `2ac2520` fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)
 - 2026-11-20 `0e9fef2` chore: registra T22 como consolidado na main (#593)
-- 2026-11-20 `56253c6` chore: registra conclusão do A3 no backlog (#592)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

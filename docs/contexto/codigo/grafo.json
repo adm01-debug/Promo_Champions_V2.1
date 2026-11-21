@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2333,
- "arestas": 9609,
+ "nos": 2334,
+ "arestas": 9612,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -118,7 +118,7 @@
   },
   {
    "arquivo": "supabase/functions/_shared/ai-gateway.ts",
-   "importado_por": 40
+   "importado_por": 41
   },
   {
    "arquivo": "supabase/functions/_shared/chunked-in.ts",

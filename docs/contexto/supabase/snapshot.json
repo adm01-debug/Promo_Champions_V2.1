@@ -91506,9 +91506,13 @@
             {
               "file": "supabase/functions/semantic-search-universal/index.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -95655,9 +95659,13 @@
             {
               "file": "supabase/functions/semantic-index-entity/index.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/functions/semantic-reindex-batch/index.ts",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],

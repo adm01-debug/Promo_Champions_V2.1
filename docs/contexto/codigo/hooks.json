@@ -7177,7 +7177,7 @@
    "hooks_exportados": [
     "useReindexBatch"
    ],
-   "linhas": 49,
+   "linhas": 62,
    "dominio": "hooks/semantic",
    "tabelas": [],
    "rpcs": [],

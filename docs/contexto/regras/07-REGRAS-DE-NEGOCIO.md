@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bff6aa63a8` · branch `main` · 2026-11-21 19:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `06e43846c8` · branch `main` · 2026-11-21 20:46 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1278,7 +1278,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `Transient` | escreve | `supabase/functions/_shared/unsubscribe_test.ts` |
 | `type` | `action` | compara, escreve | `src/pages/WorkflowsPage.tsx`<br>`supabase/functions/workflow-executor/index.ts` |
 | `type` | `activities_today` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
-| `type` | `activity` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts`<br>`src/hooks/useTeamActivityFeed.ts`<br>`supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `activity` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts`<br>`src/hooks/useTeamActivityFeed.ts`<br>`supabase/functions/_shared/semantic-content.ts` |
 | `type` | `admin_summary` | escreve | `supabase/functions/sdr-consecutive-alerts/index.ts` |
 | `type` | `ai_sales_coach` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `analysis` | escreve | `src/components/assistant/constants.ts` |
@@ -1295,12 +1295,12 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `calendar_preview` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `call` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/tasks/NextBestAction.tsx`<br>`src/types/index.ts` |
 | `type` | `call_now` | compara | `src/components/tasks/NextBestAction.tsx` |
-| `type` | `call_recording` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `call_recording` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `change_stage` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx` |
 | `type` | `chat` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `checkpoint` | compara, escreve | `src/hooks/race/useRaceSounds.ts`<br>`supabase/functions/process-race-event/index.ts` |
 | `type` | `churn_alert` | escreve, filtra | `src/components/admin/churn/ChurnHistoryChart.tsx`<br>`src/pages/AdminHistoricoAlertasChurn.tsx`<br>`supabase/functions/detect-client-churn-alerts/index.ts` |
-| `type` | `client` | compara, escreve | `src/components/molecules/GlobalSearch.tsx`<br>`supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `client` | compara, escreve | `src/components/molecules/GlobalSearch.tsx`<br>`supabase/functions/_shared/semantic-content.ts` |
 | `type` | `clients` | compara | `src/components/dashboard/DashboardEmptyState.tsx` |
 | `type` | `closing` | escreve | `src/components/assistant/constants.ts` |
 | `type` | `combo_tier` | compara | `src/hooks/race/useRaceSounds.ts` |
@@ -1318,12 +1318,12 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `currency` | compara | `src/components/reporting/funnelReportHelpers.ts` |
 | `type` | `custom_report` | compara, escreve | `src/components/dashboard/CustomizableDashboard.tsx`<br>`src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `date` | escreve | `src/hooks/reporting/reportBuilderHelpers.ts` |
-| `type` | `deal` | compara, escreve | `src/components/molecules/GlobalSearch.tsx`<br>`supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `deal` | compara, escreve | `src/components/molecules/GlobalSearch.tsx`<br>`supabase/functions/_shared/semantic-content.ts` |
 | `type` | `default` | escreve | `src/pages/WorkflowsPage.tsx` |
 | `type` | `discount` | compara | `src/components/tasks/NextBestAction.tsx` |
 | `type` | `drs` | compara | `src/components/race/raceTrackHelpers.ts` |
 | `type` | `email` | compara, escreve | `src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sales/cadence/CadenceAlertConfig.tsx`<br>`src/components/sales/cadence/CadenceOutcomeConfig.tsx`<br>`src/components/tasks/NextBestAction.tsx`<br>… +1 |
-| `type` | `email_message` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `email_message` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `enps` | compara, escreve | `src/components/engagement/PulseSurveyWidget.tsx` |
 | `type` | `enum` | escreve | `src/hooks/reporting/reportBuilderHelpers.ts` |
 | `type` | `eq` | compara | `supabase/functions/external-db-bridge/index.ts` |
@@ -1352,7 +1352,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `input_audio` | escreve | `supabase/functions/transcribe-call-recording/index.ts` |
 | `type` | `integer` | escreve | `supabase/functions/analyze-sentiment-timeline/index.ts`<br>`supabase/functions/detect-critical-moments/index.ts`<br>`supabase/functions/predict-deal-velocity/index.ts`<br>`supabase/functions/predict-quota-attainment/index.ts` |
 | `type` | `json_object` | escreve | `supabase/functions/behavioral-analysis/index.ts`<br>`supabase/functions/detect-coaching-opportunities/index.ts`<br>`supabase/functions/generate-coaching-actions/index.ts`<br>`supabase/functions/generate-loss-coaching/index.ts`<br>`supabase/functions/qbr-generator/index.ts` |
-| `type` | `lead` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `lead` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `lead_handoff` | escreve | `src/components/sdr/MQLQualificationForm.tsx` |
 | `type` | `leader` | compara, escreve | `src/components/race/raceTrackHelpers.ts`<br>`src/hooks/race/useRaceDetection.ts` |
 | `type` | `leader_takeover` | compara | `src/hooks/race/useRaceSounds.ts` |
@@ -1372,7 +1372,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `mrkdwn` | escreve | `supabase/functions/wal-health-alert/index.ts`<br>`supabase/functions/webvitals-regression-alert/index.ts` |
 | `type` | `neq` | compara | `supabase/functions/external-db-bridge/index.ts` |
 | `type` | `new_device` | escreve | `supabase/functions/new-device-alert/index.ts` |
-| `type` | `note` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `note` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `number` | escreve | `src/hooks/reporting/reportBuilderHelpers.ts`<br>`supabase/functions/ai-agent-orchestrator/index.ts`<br>`supabase/functions/analyze-pipeline-coverage/index.ts`<br>`supabase/functions/analyze-sentiment-timeline/index.ts`<br>`supabase/functions/analyze-skill-gaps/index.ts`<br>… +7 |
 | `type` | `object` | escreve | `supabase/functions/ai-agent-orchestrator/index.ts`<br>`supabase/functions/ai-email-composer/index.ts`<br>`supabase/functions/analyze-pipeline-coverage/index.ts`<br>`supabase/functions/analyze-sentiment-timeline/index.ts`<br>`supabase/functions/analyze-skill-gaps/index.ts`<br>… +23 |
 | `type` | `objection` | compara, escreve | `src/components/conversational/LiveIntelligenceFeed.tsx`<br>`src/components/conversational/NeuralSentimentTimeline.tsx` |
@@ -1384,12 +1384,12 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `pct` | compara, escreve | `src/components/reporting/funnelReportHelpers.ts` |
 | `type` | `pipeline_funnel` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
 | `type` | `pitstop` | compara | `src/hooks/race/useRaceSounds.ts` |
-| `type` | `playbook` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `playbook` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `power_up` | escreve | `src/hooks/gamification/usePrizeWheel.ts` |
 | `type` | `powerup` | compara | `src/hooks/race/useRaceSounds.ts` |
-| `type` | `product` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `product` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `products` | compara, escreve | `src/components/analytics/ABCAnalysis.tsx` |
-| `type` | `proposal` | compara | `src/components/tasks/NextBestAction.tsx`<br>`supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `proposal` | compara | `src/components/tasks/NextBestAction.tsx`<br>`supabase/functions/_shared/semantic-content.ts` |
 | `type` | `prospects` | compara | `src/components/bi/BIClientList.tsx` |
 | `type` | `push` | compara, escreve | `src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/components/sales/cadence/CadenceAlertConfig.tsx`<br>`src/components/sales/cadence/CadenceOutcomeConfig.tsx` |
 | `type` | `qbr_scheduled` | escreve | `supabase/functions/qbr-scheduler/index.ts` |
@@ -1435,7 +1435,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `stuck_stage` | escreve | `supabase/functions/detect-winloss-at-risk/scoring.ts` |
 | `type` | `success` | compara, escreve | `src/components/analytics/AIPerformanceInsights.tsx`<br>`src/components/intelligence/ActivityPulse.tsx`<br>`src/components/reports/ExecInsightsBanner.tsx`<br>`src/pages/RelatoriosExecutivos.tsx` |
 | `type` | `system` | escreve | `supabase/functions/_shared/notification-categories_test.ts`<br>`supabase/functions/cron-failure-alerter/index.ts` |
-| `type` | `task` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `task` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `task_completed` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `taunt` | escreve | `src/components/competitive/CompetitiveChat.tsx` |
 | `type` | `team_ranking` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
@@ -1457,7 +1457,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `week` | compara, escreve | `src/components/revenue-intelligence/forecastHelpers.ts`<br>`supabase/functions/generate-revenue-forecast/index.ts` |
 | `type` | `weekday` | compara | `supabase/functions/schedule-optimal-send/index.ts`<br>`supabase/functions/send-time-optimizer/index.ts` |
 | `type` | `whatsapp` | compara | `src/components/tasks/NextBestAction.tsx` |
-| `type` | `whatsapp_message` | compara | `supabase/functions/semantic-index-entity/index.ts` |
+| `type` | `whatsapp_message` | compara | `supabase/functions/_shared/semantic-content.ts` |
 | `type` | `win_factor` | compara | `src/lib/winloss/riskSeverity.ts`<br>`supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts` |
 | `type` | `window` | escreve | `public/sw.js` |
 | `type` | `xp` | escreve | `src/components/gamification/XPToast.tsx`<br>`src/hooks/gamification/usePrizeWheel.ts` |
@@ -1775,6 +1775,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | WON_SALE_STATUSES | "completed", "won", "closed" | `supabase/functions/_shared/sale-statuses.ts` |
 | LOST_SALE_STATUSES | "lost", "cancelled" | `supabase/functions/_shared/sale-statuses.ts` |
 | OPEN_SALE_STATUSES | "lead", "prospecting", "qualified", "proposal", "negotiation", "pending", | `supabase/functions/_shared/sale-statuses.ts` |
+| SemanticEntityType | client \| lead \| deal \| activity \| call_recording \| note \| email_message \| whatsapp_message \| proposal \| task \| playbook \| product | `supabase/functions/_shared/semantic-content.ts` |
 | SuppressionReason | hard_bounce \| complaint \| unsubscribe | `supabase/functions/_shared/unsubscribe.ts` |
 | NormalizedMessageStatus | sent \| delivered \| read \| failed | `supabase/functions/_shared/webhook-integrity.ts` |
 | InboundEmailProvider | resend \| sendgrid \| generic | `supabase/functions/_shared/webhook-integrity.ts` |
@@ -2658,7 +2659,7 @@ _nenhum item encontrado_
   ```
 - **generateEmbedding(text: string, apiKey: string)** — `supabase/functions/semantic-index-entity/index.ts`
   ```
-  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …
+  const payload = JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }); let res: Response | null = null; for (let attempt = 0; attempt < 3; attempt++) { res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: payload, }); // 429/5xx em reindexação em lote é transitório (limite de taxa do provider). if (res.ok || (res.status !== 429 & …
   ```
 - **generateEmbedding(text: string, apiKey: string)** — `supabase/functions/semantic-search-universal/index.ts`
   ```
@@ -3189,6 +3190,8 @@ _nenhum item encontrado_
 | `MAX_ATTEMPTS` | `3` | `supabase/functions/run-retry-tests/retry.ts` |
 | `TIMEOUT_MS` | `8000` | `supabase/functions/run-retry-tests/retry.ts` |
 | `PAGE` | `1000` | `supabase/functions/scheduled-reports-runner/index.ts` |
+| `EMBED_CHUNK` | `50` | `supabase/functions/semantic-reindex-batch/index.ts` |
+| `PAGE_SIZE` | `200` | `supabase/functions/semantic-reindex-batch/index.ts` |
 | `TTL_MS` | `5` | `supabase/functions/semantic-search/index.ts` |
 | `MAX_RESULT_LIMIT` | `50` | `supabase/functions/semantic-search-universal/index.ts` |
 | `TTL_MS` | `2` | `supabase/functions/semantic-search-universal/index.ts` |
@@ -3471,7 +3474,6 @@ _nenhum item encontrado_
 | `staleTime: 10 * 60 * 1000,` | `src/hooks/sales/useSalespeopleMin.ts` |
 | `(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)` | `src/hooks/sales/useSalespersonActivityReport.ts` |
 | `const STALE_MS = 1000 * 60 * 60 * 6; // 6h` | `src/hooks/scoring/useLeadScoreExplanation.ts` |
-| `setTimeout(() => qc.invalidateQueries({ queryKey: ['semantic-coverage'] }), 2500);` | `src/hooks/semantic/useReindexBatch.ts` |
 | `const TTL_MS = 24 * 60 * 60 * 1000;` | `src/hooks/win-loss/useInsightExplanation.ts` |
 | `(Date.now() - new Date(row.updated_at).getTime()) / (1000 * 60 * 60 * 24)` | `src/hooks/win-loss/useNextBestWinLossDeal.ts` |
 | `filters.since ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();` | `src/hooks/win-loss/useWebhookAlertHistory.ts` |
@@ -3538,7 +3540,8 @@ _nenhum item encontrado_
 | `const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();` | `supabase/functions/recompute-stage-baselines/index.ts` |
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
-| … +153 linhas — lista completa em `context.json` | |
+| `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
+| … +152 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4150,7 +4153,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +690 linhas — lista completa em `context.json` | |
+| … +695 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5038,4 +5041,4 @@ _nenhum item encontrado_
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
 | PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
 | For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
-| … +133 linhas — lista completa em `context.json` | |
+| … +134 linhas — lista completa em `context.json` | |

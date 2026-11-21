@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
+  "sha": "06e43846c8468f39622ced1d9540530365160677",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 19:14 UTC",
-  "files_total": 3628,
-  "code_files": 3285,
-  "code_lines": 476916
+  "generated_at": "2026-11-21 20:46 UTC",
+  "files_total": 3631,
+  "code_files": 3288,
+  "code_lines": 477147
  },
  "version": "1.3.2",
- "facts_hash": "4295aae8338317ad",
+ "facts_hash": "e25c313de759668e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -399,8 +399,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1376,
-   ".ts": 1115,
-   ".sql": 712,
+   ".ts": 1116,
+   ".sql": 714,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -59336,6 +59336,14 @@
     "src": "supabase/migrations/20261120000000_t15_multichannel_retry.sql"
    },
    {
+    "name": "idx_semantic_index_embedding_hnsw",
+    "table": "semantic_index",
+    "columns": "embedding vector_cosine_ops",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql"
+   },
+   {
     "name": "account_plans_account_id_key",
     "table": "account_plans",
     "columns": "account_id",
@@ -67534,6 +67542,8 @@
    "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
    "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
    "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+   "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
+   "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -93059,8 +93069,8 @@
    },
    {
     "table": "auth.users",
-    "columns": "id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at",
-    "values": "( '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin.seed@promobrindes.test', crypt('Password123!', gen_salt('bf')), '2026-01-01 00:00:00+00', '{\"provider\":\"email\",\"providers\":[\"email\"]}'::jsonb, '{}'::jsonb, '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00' ) ON CONFLICT (id) DO NOTHING",
+    "columns": "id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new, email_change_token_current, phone_change, phone_change_token, reauthentication_token",
+    "values": "( '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin.seed@promobrindes.test', crypt('Password123!', gen_salt('bf')), '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00', '{\"provider\":\"email\",\"providers\":[\"email\"]}'::jsonb, '{}'::jsonb, '2026-01-01 00:00:00+00', '2026-01-01 00:00:00+00', '', '', '', '', '', '', '', '' ) ON CONFLIC …",
     "src": "supabase/seed.sql"
    },
    {
@@ -99657,7 +99667,7 @@
     "doc": "",
     "errors": [
      "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
-     "Embedding error ${res.status}: ${await res.text()}",
+     "Embedding error ${res?.status ?? ",
      "Invalid embedding response",
      "OPENROUTER_API_KEY not configured"
     ],
@@ -99678,6 +99688,7 @@
      "semantic_index"
     ],
     "env": [
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -99685,7 +99696,12 @@
     "external": [],
     "invokes": [],
     "doc": "",
-    "errors": [],
+    "errors": [
+     "Embedding dimension mismatch: ${d.embedding?.length} != ${AI_EMBEDDING_DIMENSIONS}",
+     "Embedding error ${res?.status ?? ",
+     "Invalid embedding batch response (${data?.length ?? 0} of ${texts.length})",
+     "OPENROUTER_API_KEY not configured"
+    ],
     "side_effects": [],
     "webhook_events": [],
     "idempotency": false
@@ -106593,7 +106609,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64524,
+   "lines": 64537,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107614,7 +107630,7 @@
   {
    "module": "supabase",
    "files": 1,
-   "lines": 115,
+   "lines": 119,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -107626,8 +107642,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 320,
-   "lines": 66650,
+   "files": 321,
+   "lines": 66812,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -107859,6 +107875,7 @@
     "sale-statuses.ts: WON_SALE_STATUSES, LOST_SALE_STATUSES, OPEN_SALE_STATUSES, isWonSaleStatus, isLostSaleStatus, isOpenSaleStatus",
     "secret-refs.ts: resolveSecretRefs, resolveChannelCredentials",
     "security-headers.ts: htmlSecurityHeaders",
+    "semantic-content.ts: SemanticEntityType, SEMANTIC_TABLE_BY_TYPE, buildSemanticContent, sha256HexText",
     "send-pacer.ts: ThrottleConfig, DEFAULT_THROTTLE, parsePositiveInt, resolveThrottle, computeDelayMs, Sleep",
     "stage-probabilities.ts: StageProbabilityClient, STAGE_PROBABILITY_FALLBACK, getStageProbabilities",
     "test-utils.ts: createMockSupabaseClient, createMockRequest",
@@ -107868,8 +107885,7 @@
     "validation.ts: ValidationError, ValidationResult, validateString, validateUUID, validateArray, validateNumber",
     "webauthn-helpers.ts: bytesToBase64url, base64urlToBytes, expectedOrigins",
     "webhook-auth.ts: EnvReader, WebhookAuthentication, timingSafeEqual, hmacSha256Hex, hmacSha256Base64, hmacSha1Base64",
-    "webhook-integrity.ts: NormalizedMessageStatus, previousStatusesFor, canAdvanceMessageStatus, InboundEmailProvider, InboundEventType, InboundEmailPayload",
-    "webhook-validator.ts: WebhookValidationError, WebhookValidationResult, createValidationErrorResponse, validateWebhookPayload, WebhookContracts, EnterpriseWebhookSchemas"
+    "webhook-integrity.ts: NormalizedMessageStatus, previousStatusesFor, canAdvanceMessageStatus, InboundEmailProvider, InboundEventType, InboundEmailPayload"
    ],
    "docs": [
     "ai-gateway.ts: Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat e embeddings apontam para o OpenRouter (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). Ambos usam o env OPENROUTER_API_KEY (sk-or-...).",
@@ -107944,6 +107960,7 @@
     "supabase/functions/_shared/sale-statuses.ts",
     "supabase/functions/_shared/secret-refs.ts",
     "supabase/functions/_shared/security-headers.ts",
+    "supabase/functions/_shared/semantic-content.ts",
     "supabase/functions/_shared/send-pacer.ts",
     "supabase/functions/_shared/send-pacer_test.ts",
     "supabase/functions/_shared/stage-probabilities.ts",
@@ -107970,14 +107987,13 @@
     "supabase/functions/aggregate-coaching-scorecard/index.ts",
     "supabase/functions/ai-agent-orchestrator/index.ts",
     "supabase/functions/ai-copilot/index.ts",
-    "supabase/functions/ai-email-composer/index.ts",
-    "supabase/functions/analyze-call/index.ts"
+    "supabase/functions/ai-email-composer/index.ts"
    ]
   },
   {
    "module": "supabase/migrations",
-   "files": 703,
-   "lines": 58604,
+   "files": 705,
+   "lines": 58656,
    "tables": [
     "user_permissions_cache"
    ],
@@ -111694,7 +111710,8 @@
      "supabase/functions/semantic-reindex-batch/index.ts"
     ],
     "update": [
-     "supabase/functions/semantic-index-entity/index.ts"
+     "supabase/functions/semantic-index-entity/index.ts",
+     "supabase/functions/semantic-reindex-batch/index.ts"
     ]
    },
    "send_time_profiles": {
@@ -114857,6 +114874,7 @@
     "supabase/functions/sales-assistant-chat/index.ts",
     "supabase/functions/salesperson-coaching/index.ts",
     "supabase/functions/semantic-index-entity/index.ts",
+    "supabase/functions/semantic-reindex-batch/index.ts",
     "supabase/functions/semantic-search-universal/index.ts",
     "supabase/functions/semantic-search/index.ts",
     "supabase/functions/summarize-call-recording/index.ts",
@@ -115991,7 +116009,8 @@
     "src/hooks/crm/useClientPortfolio.ts"
    ],
    "upsert_semantic_entry": [
-    "supabase/functions/semantic-index-entity/index.ts"
+    "supabase/functions/semantic-index-entity/index.ts",
+    "supabase/functions/semantic-reindex-batch/index.ts"
    ],
    "validate_api_token": [
     "supabase/functions/ranking-api/index.ts"
@@ -118170,6 +118189,11 @@
     "file": "supabase/functions/_shared/sale-statuses.ts",
     "name": "OPEN_SALE_STATUSES",
     "values": "\"lead\", \"prospecting\", \"qualified\", \"proposal\", \"negotiation\", \"pending\","
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "name": "SemanticEntityType",
+    "values": "client | lead | deal | activity | call_recording | note | email_message | whatsapp_message | proposal | task | playbook | product"
    },
    {
     "file": "supabase/functions/_shared/unsubscribe.ts",
@@ -120693,6 +120717,10 @@
     "msg": "Falha na reindexação"
    },
    {
+    "file": "src/hooks/semantic/useReindexBatch.ts",
+    "msg": "Reindexação parcial"
+   },
+   {
     "file": "src/hooks/semantic/useSemanticSearch.ts",
     "msg": "Falha na busca semântica"
    },
@@ -121770,7 +121798,7 @@
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
-    "msg": "Embedding error ${res.status}: ${await res.text()}"
+    "msg": "Embedding error ${res?.status ?? "
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
@@ -121778,6 +121806,22 @@
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
+    "msg": "OPENROUTER_API_KEY not configured"
+   },
+   {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
+    "msg": "Embedding dimension mismatch: ${d.embedding?.length} != ${AI_EMBEDDING_DIMENSIONS}"
+   },
+   {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
+    "msg": "Embedding error ${res?.status ?? "
+   },
+   {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
+    "msg": "Invalid embedding batch response (${data?.length ?? 0} of ${texts.length})"
+   },
+   {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
     "msg": "OPENROUTER_API_KEY not configured"
    },
    {
@@ -123994,7 +124038,11 @@
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "429/5xx em reindexação em lote é transitório (limite de taxa do provider)."
+   },
+   {
+    "file": "supabase/functions/semantic-index-entity/index.ts",
+    "text": "Rate limit por IP — endpoint de IA consome créditos. Chamadas internas"
    },
    {
     "file": "supabase/functions/semantic-search/index.ts",
@@ -140075,6 +140123,16 @@
     "value": "1000"
    },
    {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
+    "name": "EMBED_CHUNK",
+    "value": "50"
+   },
+   {
+    "file": "supabase/functions/semantic-reindex-batch/index.ts",
+    "name": "PAGE_SIZE",
+    "value": "200"
+   },
+   {
     "file": "supabase/functions/semantic-search/index.ts",
     "name": "TTL_MS",
     "value": "5"
@@ -148122,6 +148180,78 @@
     "kind": "filtra"
    },
    {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "client",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "lead",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "deal",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "activity",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "call_recording",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "note",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "email_message",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "whatsapp_message",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "proposal",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "task",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "playbook",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/_shared/semantic-content.ts",
+    "field": "type",
+    "value": "product",
+    "kind": "compara"
+   },
+   {
     "file": "supabase/functions/_shared/unsubscribe.ts",
     "field": "type",
     "value": "complaint",
@@ -152202,78 +152332,6 @@
     "kind": "filtra"
    },
    {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "client",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "lead",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "deal",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "activity",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "call_recording",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "note",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "email_message",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "whatsapp_message",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "proposal",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "task",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "playbook",
-    "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/semantic-index-entity/index.ts",
-    "field": "type",
-    "value": "product",
-    "kind": "compara"
-   },
-   {
     "file": "supabase/functions/semantic-search/index.ts",
     "field": "role",
     "value": "system",
@@ -154373,7 +154431,7 @@
     "file": "supabase/functions/semantic-index-entity/index.ts",
     "name": "generateEmbedding",
     "params": "text: string, apiKey: string",
-    "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …"
+    "body": "const payload = JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }); let res: Response | null = null; for (let attempt = 0; attempt < 3; attempt++) { res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: payload, }); // 429/5xx em reindexação em lote é transitório (limite de taxa do provider). if (res.ok || (res.status !== 429 & …"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
@@ -155326,10 +155384,6 @@
    {
     "file": "src/hooks/scoring/useLeadScoreExplanation.ts",
     "line": "const STALE_MS = 1000 * 60 * 60 * 6; // 6h"
-   },
-   {
-    "file": "src/hooks/semantic/useReindexBatch.ts",
-    "line": "setTimeout(() => qc.invalidateQueries({ queryKey: ['semantic-coverage'] }), 2500);"
    },
    {
     "file": "src/hooks/win-loss/useInsightExplanation.ts",
@@ -189557,12 +189611,12 @@
      ],
      "deal": [
       "compara:src/components/molecules/GlobalSearch.tsx",
-      "compara:supabase/functions/semantic-index-entity/index.ts",
+      "compara:supabase/functions/_shared/semantic-content.ts",
       "escreve:src/components/molecules/GlobalSearch.tsx"
      ],
      "client": [
       "compara:src/components/molecules/GlobalSearch.tsx",
-      "compara:supabase/functions/semantic-index-entity/index.ts",
+      "compara:supabase/functions/_shared/semantic-content.ts",
       "escreve:src/components/molecules/GlobalSearch.tsx"
      ],
      "sale_alert": [
@@ -189575,7 +189629,7 @@
      "activity": [
       "compara:src/components/pipeline/DealTimeline.tsx",
       "compara:src/components/win-loss/DealTimelineExpand.tsx",
-      "compara:supabase/functions/semantic-index-entity/index.ts",
+      "compara:supabase/functions/_shared/semantic-content.ts",
       "escreve:src/hooks/useDealTimeline.ts",
       "escreve:src/hooks/useTeamActivityFeed.ts"
      ],
@@ -189685,7 +189739,7 @@
      ],
      "proposal": [
       "compara:src/components/tasks/NextBestAction.tsx",
-      "compara:supabase/functions/semantic-index-entity/index.ts"
+      "compara:supabase/functions/_shared/semantic-content.ts"
      ],
      "discount": [
       "compara:src/components/tasks/NextBestAction.tsx"
@@ -189871,6 +189925,30 @@
      "system": [
       "escreve:supabase/functions/_shared/notification-categories_test.ts",
       "escreve:supabase/functions/cron-failure-alerter/index.ts"
+     ],
+     "lead": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "call_recording": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "note": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "email_message": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "whatsapp_message": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "task": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "playbook": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
+     ],
+     "product": [
+      "compara:supabase/functions/_shared/semantic-content.ts"
      ],
      "complaint": [
       "compara:supabase/functions/_shared/unsubscribe.ts"
@@ -190099,30 +190177,6 @@
      ],
      "admin_summary": [
       "escreve:supabase/functions/sdr-consecutive-alerts/index.ts"
-     ],
-     "lead": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "call_recording": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "note": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "email_message": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "whatsapp_message": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "task": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "playbook": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
-     ],
-     "product": [
-      "compara:supabase/functions/semantic-index-entity/index.ts"
      ],
      "template": [
       "escreve:supabase/functions/send-multichannel-message/index.ts"
@@ -265260,18 +265314,16 @@
   },
   "src/hooks/semantic/useReindexBatch.ts": {
    "path": "src/hooks/semantic/useReindexBatch.ts",
-   "lines": 49,
+   "lines": 62,
    "exports": [
     "function useReindexBatch"
    ],
    "errors": [
-    "Falha na reindexação"
+    "Falha na reindexação",
+    "Reindexação parcial"
    ],
    "hooks": [
     "useReindexBatch"
-   ],
-   "temporal": [
-    "setTimeout(() => qc.invalidateQueries({ queryKey: ['semantic-coverage'] }), 2500);"
    ]
   },
   "src/hooks/semantic/useSemanticCoverage.ts": {
@@ -274475,7 +274527,7 @@
   },
   "supabase/seed.sql": {
    "path": "supabase/seed.sql",
-   "lines": 115
+   "lines": 119
   },
   "supabase/functions/_shared/ai-gateway.ts": {
    "path": "supabase/functions/_shared/ai-gateway.ts",
@@ -275523,6 +275575,85 @@
     "'unsafe-inline' apenas para style (as páginas usam <style>/style=)."
    ],
    "doc": "_shared/security-headers.ts Headers de segurança para respostas HTML públicas de edge functions (páginas renderizadas no browser: callbacks OAuth, confirmações etc.). Aplicar em TODA resposta com Content-Type: text/html: - CSP restritiva: sem scripts, sem recursos externos, sem framing; 'unsafe-inli …"
+  },
+  "supabase/functions/_shared/semantic-content.ts": {
+   "path": "supabase/functions/_shared/semantic-content.ts",
+   "lines": 120,
+   "exports": [
+    "type SemanticEntityType",
+    "const SEMANTIC_TABLE_BY_TYPE",
+    "function buildSemanticContent",
+    "function sha256HexText"
+   ],
+   "enums": [
+    {
+     "name": "SemanticEntityType",
+     "values": "client | lead | deal | activity | call_recording | note | email_message | whatsapp_message | proposal | task | playbook | product"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "client",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "lead",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "deal",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "activity",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "call_recording",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "note",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "email_message",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "whatsapp_message",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "proposal",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "task",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "playbook",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "product",
+     "kind": "compara"
+    }
+   ],
+   "doc": "Fonte unica de verdade para o conteudo indexado pelo indice semantico. Usado por `semantic-index-entity` (uma entidade) e `semantic-reindex-batch` (lote in-process), garantindo que ambos produzam texto/hash identicos."
   },
   "supabase/functions/_shared/send-pacer.ts": {
    "path": "supabase/functions/_shared/send-pacer.ts",
@@ -288095,7 +288226,7 @@
   },
   "supabase/functions/semantic-index-entity/index.ts": {
    "path": "supabase/functions/semantic-index-entity/index.ts",
-   "lines": 314,
+   "lines": 241,
    "tables": [
     {
      "table": "semantic_index",
@@ -288133,87 +288264,26 @@
    ],
    "errors": [
     "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
-    "Embedding error ${res.status}: ${await res.text()}",
+    "Embedding error ${res?.status ?? ",
     "Invalid embedding response",
     "OPENROUTER_API_KEY not configured"
    ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "client",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "lead",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "deal",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "activity",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "call_recording",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "note",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "email_message",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp_message",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "proposal",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "task",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "playbook",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "product",
-     "kind": "compara"
-    }
-   ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "429/5xx em reindexação em lote é transitório (limite de taxa do provider).",
+    "Rate limit por IP — endpoint de IA consome créditos. Chamadas internas"
    ],
    "calc_fns": [
     {
      "name": "generateEmbedding",
      "params": "text: string, apiKey: string",
-     "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …"
+     "body": "const payload = JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }); let res: Response | null = null; for (let attempt = 0; attempt < 3; attempt++) { res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: payload, }); // 429/5xx em reindexação em lote é transitório (limite de taxa do provider). if (res.ok || (res.status !== 429 & …"
     }
    ],
    "uses_service_role": true
   },
   "supabase/functions/semantic-reindex-batch/index.ts": {
    "path": "supabase/functions/semantic-reindex-batch/index.ts",
-   "lines": 168,
+   "lines": 283,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -288222,6 +288292,10 @@
     {
      "table": "semantic_index",
      "op": "select"
+    },
+    {
+     "table": "semantic_index",
+     "op": "update"
     }
    ],
    "table_cols": {
@@ -288230,18 +288304,37 @@
      "value"
     ],
     "semantic_index": [
+     "content_hash",
      "entity_id",
      "entity_type"
     ]
    },
    "dyn_from": 1,
    "rpc": [
-    "is_admin_or_manager"
+    "is_admin_or_manager",
+    "upsert_semantic_entry"
    ],
    "env": [
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
+   ],
+   "errors": [
+    "Embedding dimension mismatch: ${d.embedding?.length} != ${AI_EMBEDDING_DIMENSIONS}",
+    "Embedding error ${res?.status ?? ",
+    "Invalid embedding batch response (${data?.length ?? 0} of ${texts.length})",
+    "OPENROUTER_API_KEY not configured"
+   ],
+   "params": [
+    {
+     "name": "EMBED_CHUNK",
+     "value": "50"
+    },
+    {
+     "name": "PAGE_SIZE",
+     "value": "200"
+    }
    ],
    "uses_service_role": true
   },
@@ -293616,7 +293709,7 @@
   },
   "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql": {
    "path": "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql",
-   "lines": 40
+   "lines": 41
   },
   "supabase/migrations/20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694.sql": {
    "path": "supabase/migrations/20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694.sql",
@@ -295205,6 +295298,14 @@
     "notify"
    ],
    "uses_service_role": true
+  },
+  "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql": {
+   "path": "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
+   "lines": 18
+  },
+  "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql": {
+   "path": "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
+   "lines": 33
   },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
@@ -297272,10 +297373,26 @@
   }
  },
  "git": {
-  "sha": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
+  "sha": "06e43846c8468f39622ced1d9540530365160677",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "06e4384",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)",
+    "files": [
+     "src/hooks/semantic/useReindexBatch.ts",
+     "supabase/functions/_shared/semantic-content.ts",
+     "supabase/functions/semantic-index-entity/index.ts",
+     "supabase/functions/semantic-reindex-batch/index.ts",
+     "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql",
+     "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
+     "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
+     "supabase/seed.sql"
+    ]
+   },
    {
     "sha": "bff6aa6",
     "date": "2026-11-21",
@@ -297613,15 +297730,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "cc8d2d2",
-    "date": "2026-11-18",
-    "author": "adm01-debug",
-    "subject": "feat: dependency review nos PRs (#576)",
-    "files": [
-     ".github/workflows/dependency-review.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -297658,6 +297766,14 @@
     3
    ],
    [
+    "supabase/functions/semantic-index-entity/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/semantic-reindex-batch/index.ts",
+    2
+   ],
+   [
     "supabase/functions/_shared/ai-gateway.ts",
     2
    ],
@@ -297674,35 +297790,27 @@
     2
    ],
    [
-    "supabase/functions/semantic-index-entity/index.ts",
+    "src/hooks/semantic/useReindexBatch.ts",
     1
    ],
    [
-    "supabase/functions/semantic-reindex-batch/index.ts",
+    "supabase/functions/_shared/semantic-content.ts",
     1
    ],
    [
-    "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+    "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql",
     1
    ],
    [
-    "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
+    "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
     1
    ],
    [
-    "docs/SECRETS_ROTATION.md",
+    "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
     1
    ],
    [
-    "supabase/functions/ai-agent-orchestrator/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/ai-copilot/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/ai-email-composer/index.ts",
+    "supabase/seed.sql",
     1
    ]
   ]

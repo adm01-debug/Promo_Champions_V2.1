@@ -80,6 +80,7 @@
   "supabase/functions/_shared/sale-statuses.ts",
   "supabase/functions/_shared/secret-refs.ts",
   "supabase/functions/_shared/security-headers.ts",
+  "supabase/functions/_shared/semantic-content.ts",
   "supabase/functions/_shared/send-pacer.ts",
   "supabase/functions/_shared/send-pacer_test.ts",
   "supabase/functions/_shared/stage-probabilities.ts",
@@ -5252,7 +5253,7 @@
    "nome": "semantic-index-entity",
    "entrada": "supabase/functions/semantic-index-entity/index.ts",
    "arquivos": 1,
-   "linhas": 314,
+   "linhas": 241,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5280,21 +5281,20 @@
     "internal-service-auth.ts",
     "rate-limit.ts",
     "request-id.ts",
+    "semantic-content.ts",
     "validation.ts"
    ],
    "chamada_pelo_front": [],
-   "chamada_por_edges": [
-    "semantic-reindex-batch"
-   ],
+   "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": false,
+   "orfa": true,
    "testes": 0
   },
   {
    "nome": "semantic-reindex-batch",
    "entrada": "supabase/functions/semantic-reindex-batch/index.ts",
    "arquivos": 1,
-   "linhas": 168,
+   "linhas": 283,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5304,24 +5304,26 @@
     "semantic_index"
    ],
    "rpcs": [
-    "is_admin_or_manager"
+    "is_admin_or_manager",
+    "upsert_semantic_entry"
    ],
    "env": [
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
-   "chama_edges": [
-    "semantic-index-entity"
-   ],
+   "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "ai-gateway.ts",
     "chunked-in.ts",
     "cors.ts",
     "cron-request-auth.ts",
     "fetch-with-timeout.ts",
-    "request-id.ts"
+    "request-id.ts",
+    "semantic-content.ts"
    ],
    "chamada_pelo_front": [],
    "chamada_por_edges": [],

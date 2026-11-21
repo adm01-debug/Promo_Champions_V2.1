@@ -13360,14 +13360,17 @@
    "supabase/functions/_shared/internal-service-auth.ts",
    "supabase/functions/_shared/rate-limit.ts",
    "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/semantic-content.ts",
    "supabase/functions/_shared/validation.ts"
   ],
   "supabase/functions/semantic-reindex-batch/index.ts": [
+   "supabase/functions/_shared/ai-gateway.ts",
    "supabase/functions/_shared/chunked-in.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/cron-request-auth.ts",
    "supabase/functions/_shared/fetch-with-timeout.ts",
-   "supabase/functions/_shared/request-id.ts"
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/semantic-content.ts"
   ],
   "supabase/functions/semantic-search-universal/index.ts": [
    "supabase/functions/_shared/ai-gateway.ts",

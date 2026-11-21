@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 703,
+ "migrations": 705,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -39231,7 +39231,7 @@
      "unico": false
     },
     {
-     "nome": "idx_semantic_index_embedding",
+     "nome": "idx_semantic_index_embedding_hnsw",
      "colunas": "embedding vector_cosine_ops",
      "unico": false
     },
@@ -50302,7 +50302,7 @@
   {
    "nome": "upsert_semantic_entry",
    "definida": true,
-   "usada_em": 1
+   "usada_em": 2
   },
   {
    "nome": "validate_api_token",
