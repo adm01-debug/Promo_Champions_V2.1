@@ -17264,10 +17264,12 @@ export type Database = {
       }
       scheduled_sends: {
         Row: {
+          attempts: number
           channel: string
           created_at: string
           error: string | null
           id: string
+          next_retry_at: string | null
           optimization_source: string
           owner_id: string
           payload: Json
@@ -17277,10 +17279,12 @@ export type Database = {
           status: string
         }
         Insert: {
+          attempts?: number
           channel: string
           created_at?: string
           error?: string | null
           id?: string
+          next_retry_at?: string | null
           optimization_source?: string
           owner_id: string
           payload?: Json
@@ -17290,10 +17294,12 @@ export type Database = {
           status?: string
         }
         Update: {
+          attempts?: number
           channel?: string
           created_at?: string
           error?: string | null
           id?: string
+          next_retry_at?: string | null
           optimization_source?: string
           owner_id?: string
           payload?: Json
