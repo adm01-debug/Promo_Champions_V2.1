@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a9ec900f87662c5246810e1fc66e84098630c40b",
+  "commit": "de31d242328a82b5fb758ada0431d6d6970a1f33",
   "branch": "main",
-  "data_commit": "2026-11-21T08:47:36-03:00",
+  "data_commit": "2026-11-21T10:02:32-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "de31d24",
+    "data": "2026-11-21",
+    "assunto": "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)"
+   },
    {
     "sha": "a9ec900",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "9591c26",
     "data": "2026-11-17",
     "assunto": "fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)"
-   },
-   {
-    "sha": "54a8628",
-    "data": "2026-11-17",
-    "assunto": "fix: SLA de revisão deixa de cobrar PR de bot (#567)"
    }
   ],
-  "arquivos_mudados_7d": 202,
+  "arquivos_mudados_7d": 203,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -172,8 +172,8 @@
     "mudancas": 19
    },
    {
-    "pasta": "RELATORIO_CI.md",
-    "mudancas": 17
+    "pasta": "src/components/win-loss",
+    "mudancas": 18
    },
    {
     "pasta": "src/components/sales",
@@ -184,8 +184,8 @@
     "mudancas": 17
    },
    {
-    "pasta": "src/components/win-loss",
-    "mudancas": 17
+    "pasta": "RELATORIO_CI.md",
+    "mudancas": 16
    },
    {
     "pasta": "src/components/bi",

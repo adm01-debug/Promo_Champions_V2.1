@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "a9ec900f87662c5246810e1fc66e84098630c40b",
+  "sha": "de31d242328a82b5fb758ada0431d6d6970a1f33",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 12:48 UTC",
+  "generated_at": "2026-11-21 13:03 UTC",
   "files_total": 3626,
   "code_files": 3283,
   "code_lines": 476703
@@ -297171,10 +297171,19 @@
   }
  },
  "git": {
-  "sha": "a9ec900f87662c5246810e1fc66e84098630c40b",
+  "sha": "de31d242328a82b5fb758ada0431d6d6970a1f33",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "de31d24",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)",
+    "files": [
+     "src/components/win-loss/CompetitorBattleCardModal.tsx"
+    ]
+   },
    {
     "sha": "a9ec900",
     "date": "2026-11-21",
@@ -297466,16 +297475,6 @@
      "src/components/gamification/XPTimelineItem.tsx",
      "src/hooks/gamification/useSalespersonXP.ts"
     ]
-   },
-   {
-    "sha": "5afc278",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(tarefas): vendedor vê e submete as tarefas que o gestor atribuiu (#571)",
-    "files": [
-     "src/components/dashboard/MyAssignedTasks.tsx",
-     "src/pages/VendedorDashboard.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -297506,6 +297505,10 @@
    [
     "docs/DEPLOYMENT.md",
     2
+   ],
+   [
+    "src/components/win-loss/CompetitorBattleCardModal.tsx",
+    1
    ],
    [
     "docs/pendencias/T15-multichannel-retry.md",
@@ -297553,10 +297556,6 @@
    ],
    [
     "docs/pendencias/_linha-de-base.md",
-    1
-   ],
-   [
-    "docs/pendencias/_regras-de-negocio.md",
     1
    ]
   ]
