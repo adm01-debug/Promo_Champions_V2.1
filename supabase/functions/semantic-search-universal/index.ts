@@ -5,6 +5,11 @@ import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import {
+  AI_EMBEDDING_DIMENSIONS,
+  AI_EMBEDDING_MODEL,
+  LOVABLE_AI_EMBEDDINGS_URL,
+} from "../_shared/ai-gateway.ts";
 
 const MAX_QUERY_LENGTH = 500;
 const MAX_RESULT_LIMIT = 50;
@@ -20,10 +25,14 @@ const cache = new Map<string, { ts: number; data: unknown }>();
 const TTL_MS = 2 * 60 * 1000;
 
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
+  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "google/text-embedding-004", input: text.slice(0, 4000) }),
+    body: JSON.stringify({
+      model: AI_EMBEDDING_MODEL,
+      input: text.slice(0, 4000),
+      dimensions: AI_EMBEDDING_DIMENSIONS,
+    }),
   });
   if (!res.ok) {
     if (res.status === 429) throw new Error("RATE_LIMIT");
@@ -31,7 +40,11 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
     throw new Error(`Embedding error ${res.status}`);
   }
   const json = await res.json();
-  return json?.data?.[0]?.embedding ?? [];
+  const emb = json?.data?.[0]?.embedding ?? [];
+  if (Array.isArray(emb) && emb.length > 0 && emb.length !== AI_EMBEDDING_DIMENSIONS) {
+    throw new Error(`Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}`);
+  }
+  return emb;
 }
 
 async function generateAnswer(query: string, results: Array<{ entity_type: string; content: string }>, apiKey: string): Promise<string | null> {
@@ -89,8 +102,8 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
 
     const safeLimit = Math.min(Math.max(1, Number(limit) || 20), MAX_RESULT_LIMIT);
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+    const apiKey = Deno.env.get("OPENROUTER_API_KEY");
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY not configured");
 
     const cacheKey = `${query}::${(entity_types ?? []).join(",")}::${safeLimit}`;
     const cached = cache.get(cacheKey);
