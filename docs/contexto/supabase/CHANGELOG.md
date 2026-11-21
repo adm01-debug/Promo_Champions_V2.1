@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 18:15 UTC
+
+- **functions** alterado (3): `public.match_semantic(_query_embedding vector, _match_count integer, _entity_types text[])`, `public.search_products_semantic(_keywords text[], _query text, _limit integer)`, `public.search_products_vector(_query_embedding vector, _limit integer)`
+
 ## 2026-11-21 12:48 UTC
 
 - Snapshot inicial.

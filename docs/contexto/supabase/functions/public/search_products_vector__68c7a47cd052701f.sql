@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION public.search_products_vector(_query_embedding vector
  RETURNS TABLE(id uuid, name text, category text, price numeric, rating numeric, sales_count integer, status text, similarity_score real)
  LANGUAGE plpgsql
  STABLE SECURITY DEFINER
- SET search_path TO 'public'
+ SET search_path TO 'public', 'extensions'
 AS $function$
 BEGIN
   RETURN QUERY

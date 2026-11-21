@@ -91507,10 +91507,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=public, extensions"
         ],
         "definition": null,
-        "definition_sha": "5b541c7f01b27aab",
+        "definition_sha": "2559255891364589",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -93219,7 +93219,7 @@
             },
             {
               "file": "supabase/functions/visual-search/index.ts",
-              "hits": 1
+              "hits": 3
             }
           ],
           "code_total_files": 2,
@@ -93230,10 +93230,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=public, extensions"
         ],
         "definition": null,
-        "definition_sha": "d05e81bd235228a9",
+        "definition_sha": "04d4b0c8a42dbb4d",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -93265,10 +93265,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=public, extensions"
         ],
         "definition": null,
-        "definition_sha": "0f8201b1b98a61d6",
+        "definition_sha": "5bedd177676f89c3",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,

@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION public.match_semantic(_query_embedding vector, _match
  RETURNS TABLE(id uuid, entity_type text, entity_id uuid, content text, metadata jsonb, similarity real)
  LANGUAGE plpgsql
  STABLE SECURITY DEFINER
- SET search_path TO 'public'
+ SET search_path TO 'public', 'extensions'
 AS $function$
 DECLARE
   v_is_admin BOOLEAN;
