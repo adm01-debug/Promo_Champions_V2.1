@@ -59,6 +59,10 @@ Deno.serve(
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
+      // Chat multimodal roda no OpenRouter; embeddings continuam no Lovable.
+      const CHAT_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+      if (!CHAT_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
+
       // Normalize to data URL
       const imageUrl = image.startsWith('data:')
         ? image
@@ -70,7 +74,7 @@ Deno.serve(
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${CHAT_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -231,14 +235,42 @@ Deno.serve(
 
       if (!embRes.ok) {
         console.error('Embedding error:', await embRes.text());
-        throw new Error('Failed to generate query embedding');
+        const { data: degradedProducts } = await supabase.rpc('search_products_semantic', {
+          _keywords: analysis.keywords,
+          _query: searchQuery,
+          _limit: limit,
+        });
+        return new Response(
+          JSON.stringify({
+            analysis,
+            results: degradedProducts ?? [],
+            count: (degradedProducts ?? []).length,
+            degraded: true,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
-      const embData = await embRes.json();
+      const embData = await embRes.json().catch(() => null);
       const queryEmbedding = embData?.data?.[0]?.embedding;
 
+      // Sem embedding a busca vetorial não roda: cai no índice textual (pg_trgm).
       if (!queryEmbedding) {
-        throw new Error('Invalid embedding response from AI Gateway');
+        console.warn('visual-search: sem embedding, usando busca textual');
+        const { data: legacyOnly } = await supabase.rpc('search_products_semantic', {
+          _keywords: analysis.keywords,
+          _query: searchQuery,
+          _limit: limit,
+        });
+        return new Response(
+          JSON.stringify({
+            analysis,
+            results: legacyOnly ?? [],
+            count: (legacyOnly ?? []).length,
+            degraded: true,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const { data: products, error } = await supabase.rpc('search_products_vector', {
