@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.0...promo-champions-v2-v1.6.1) (2026-11-21)
+
+
+### Correções
+
+* adiciona --yes no deploy de edge functions para CI ([#578](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/578)) ([9f4dba8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/9f4dba8ad6cbbabe90ccf867e9226e4aa06e768f))
+* **ci:** deploy de edge functions por allowlist (100) em vez de todas (171) ([#581](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/581)) ([d7af709](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d7af70945f69f96835b541f311c5d58e6a29a579))
+* curva de evolução omite o dia atual em TZ a oeste de UTC ([#586](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/586)) ([7bf29f5](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7bf29f54a0362eb82ecce8abe1fb05ce273b6757))
+* **db:** dropa policies permissive de sales/activities (USING true) ([#582](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/582)) ([9017094](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/90170947dd61c137feaf860c2ecb28add9bfaa84))
+* **db:** gerador de probes materializa DDL dinamico DO..EXECUTE ([#583](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/583)) ([de515ef](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/de515efb235710c321983479cd420779556f2333))
+* endurece anti prompt injection no personal-assistant-stream (A5) ([#594](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/594)) ([2ac2520](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2ac2520d7eb4db50ad93d78dc76703bb757c24d0))
+* grava path do PDF de quote em bucket privado ([#590](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/590)) ([76bcae8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/76bcae837dac1265ad6a22bd5d357aca715c0bd1))
+* restringe export-winloss-pdf ao escopo do usuario (A3) ([#591](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/591)) ([be50d67](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/be50d67a3a33585e5c422477a1e27cfc21d0744b))
+* retry com backoff nos envios agendados e CHECK de status quebrado (T15) ([#596](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/596)) ([f26c873](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f26c87381ce97773d14255b80d1c590eadae8a0c))
+* testes de CORS alinhados ao SEC-07 (allowlist, nunca *) ([#597](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/597)) ([d5e7079](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d5e70798da27cb0816b32805550665bb900019b3))
+
 ## [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 
