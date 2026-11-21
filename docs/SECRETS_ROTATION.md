@@ -35,7 +35,8 @@
 | `QUOTE_SYNC_WEBHOOK_SECRET` / `QUOTE_SYNC_API_KEY`                                                   | Webhooks de sincronização de cotações                   | Supabase → Edge Functions → Secrets + sistema emissor     | Resp. integrações  | Produção | Desconhecida        |
 | `PROMOGIFTS_WEBHOOK_SECRET`                                                                          | Webhook Promogifts                                      | Supabase → Edge Functions → Secrets                       | Resp. integrações  | Produção | Desconhecida        |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`                                                             | Web Push (VAPID)                                        | Supabase → Edge Functions → Secrets                       | Resp. notificações | Produção | Desconhecida        |
-| `LOVABLE_API_KEY`                                                                                    | Gateway de IA Lovable (47 functions)                    | Supabase → Edge Functions → Secrets                       | Adm. do projeto    | Produção | Desconhecida        |
+| `OPENROUTER_API_KEY`                                                                                  | Chat IA via OpenRouter (~46 functions de chat)         | Supabase → Edge Functions → Secrets                       | Adm. do projeto    | Produção | Desconhecida        |
+| `LOVABLE_API_KEY`                                                                                    | Embeddings de IA no gateway Lovable (3 functions)      | Supabase → Edge Functions → Secrets                       | Adm. do projeto    | Produção | Desconhecida        |
 | `INTERCOM_ACCESS_TOKEN`, `ZENDESK_*`, `FRESHDESK_*`, `SLACK_WEBHOOK_URL`, `SLACK_DIGEST_WEBHOOK_URL` | Helpdesk e alertas                                      | Supabase → Edge Functions → Secrets                       | Resp. CS/ops       | Produção | Desconhecida        |
 
 ### 1.3 Segredos dentro do banco
@@ -66,7 +67,7 @@
 
 | Classe                                                                                                                                    | Cadência       | Gatilho extra                                        |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------- |
-| `SUPABASE_SERVICE_ROLE_KEY`, `coaching_cron_secret`, `LOVABLE_API_KEY`                                                                    | **Trimestral** | Imediata pós-incidente ou saída de pessoa com acesso |
+| `SUPABASE_SERVICE_ROLE_KEY`, `coaching_cron_secret`, `OPENROUTER_API_KEY`, `LOVABLE_API_KEY`                                                               | **Trimestral** | Imediata pós-incidente ou saída de pessoa com acesso |
 | Segredos de webhook (`TWILIO_AUTH_TOKEN`, `META_*`, `SENDGRID_*`, `RESEND_WEBHOOK_SECRET`, `MULTICHANNEL_*`, `INBOUND_*`, `QUOTE_SYNC_*`) | **Trimestral** | Imediata ao trocar de conta/app no provedor          |
 | Chaves de CI (`E2E_TEST_*`, `SUPABASE_ACCESS_TOKEN`)                                                                                      | **Semestral**  | Imediata quando um run loga `Invalid API key`        |
 | `VAPID_*`                                                                                                                                 | **Semestral**  | —                                                    |

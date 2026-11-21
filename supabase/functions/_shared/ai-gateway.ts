@@ -2,7 +2,8 @@
 //
 // Chat/completions aponta para o OpenRouter por padrão (endpoints OpenAI). Para
 // mudar, defina o env OPENROUTER_BASE_URL (ex.: "https://openrouter.ai/api/v1").
-// A chave de autenticação é o env LOVABLE_API_KEY (guarda o sk-or-... do OpenRouter).
+// A chave de autenticação das chamadas de chat é o env OPENROUTER_API_KEY
+// (sk-or-...); as emissões de embedding continuam usando LOVABLE_API_KEY.
 const CHAT_BASE =
   Deno.env.get('OPENROUTER_BASE_URL')?.replace(/\/+$/, '') ??
   'https://openrouter.ai/api/v1';
