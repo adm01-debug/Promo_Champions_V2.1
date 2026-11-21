@@ -13,7 +13,7 @@ interface ReindexResponse {
   ok: boolean;
   summary: Record<
     string,
-    { queued: number; skipped: number; failed: number; total_candidates: number }
+    { indexed: number; skipped: number; failed: number; total_candidates: number }
   >;
   error?: string;
 }
@@ -33,11 +33,24 @@ export function useReindexBatch() {
       return data.summary;
     },
     onSuccess: summary => {
-      const totalQueued = Object.values(summary).reduce((s, x) => s + x.queued, 0);
-      toast.success(`Reindexação iniciada`, {
-        description: `${totalQueued} registros enviados para indexação. Atualize em alguns segundos.`,
-      });
-      setTimeout(() => qc.invalidateQueries({ queryKey: ['semantic-coverage'] }), 2500);
+      const entries = Object.values(summary);
+      const totalIndexed = entries.reduce((s, x) => s + x.indexed, 0);
+      const totalSkipped = entries.reduce((s, x) => s + x.skipped, 0);
+      const totalFailed = entries.reduce((s, x) => s + x.failed, 0);
+
+      if (totalFailed > 0) {
+        toast.warning(`Reindexação parcial`, {
+          description: `${totalIndexed} indexados, ${totalSkipped} já estavam atualizados, ${totalFailed} falharam.`,
+        });
+      } else {
+        toast.success(`Reindexação concluída`, {
+          description:
+            totalIndexed > 0
+              ? `${totalIndexed} indexados, ${totalSkipped} já estavam atualizados.`
+              : `Nada a fazer — ${totalSkipped} registros já estavam atualizados.`,
+        });
+      }
+      qc.invalidateQueries({ queryKey: ['semantic-coverage'] });
     },
     onError: e => {
       toast.error('Falha na reindexação', {

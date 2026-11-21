@@ -8,7 +8,8 @@ BEGIN
       instance_id, id, aud, role, email, encrypted_password,
       email_confirmed_at, recovery_sent_at, last_sign_in_at,
       raw_app_meta_data, raw_user_meta_data,
-      created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token
+      created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token,
+      email_change_token_current, phone_change, phone_change_token, reauthentication_token
     ) VALUES (
       '00000000-0000-0000-0000-000000000000',
       new_user_id,
@@ -21,7 +22,7 @@ BEGIN
       now(), now(), now(),
       '{"provider":"email","providers":["email"]}',
       '{"full_name":"Administrador"}',
-      now(), now(), '', '', '', ''
+      now(), now(), '', '', '', '', '', '', '', ''
     );
 
     INSERT INTO auth.identities (

@@ -133,7 +133,8 @@ Deno.serve(withRequestId("semantic-reindex-batch", async (req, _ctx) => {
     const types = (body.entity_types && body.entity_types.length > 0 ? body.entity_types : DEFAULT_TYPES)
       .filter((t) => TABLE_BY_TYPE[t]);
     const onlyMissing = body.only_missing !== false;
-    const batchSize = Math.min(Math.max(1, body.batch_size ?? 100), 2000);    const concurrency = Math.min(Math.max(1, body.concurrency ?? 4), 8);
+    const batchSize = Math.min(Math.max(1, body.batch_size ?? 100), 2000);
+    const concurrency = Math.min(Math.max(1, body.concurrency ?? 4), 8);
 
     const apiKey = Deno.env.get("OPENROUTER_API_KEY");
     if (!apiKey) throw new Error("OPENROUTER_API_KEY not configured");
