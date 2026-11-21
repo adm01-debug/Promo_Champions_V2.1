@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.0...promo-champions-v2-v1.7.1) (2026-11-21)
+
+
+### Correções
+
+* busca semantica retornando zero resultados e login quebrado (500) ([#608](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/608)) ([06e4384](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/06e43846c8468f39622ced1d9540530365160677))
+* embeddings via OpenRouter e cron de reindexacao semantica ([#606](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/606)) ([bff6aa6](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/bff6aa63a8e78a1a4882ec77db881721ce18d005))
+
 ## [1.7.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.2...promo-champions-v2-v1.7.0) (2026-11-21)
 
 
