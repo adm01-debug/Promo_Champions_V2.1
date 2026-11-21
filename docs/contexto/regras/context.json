@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "06e43846c8468f39622ced1d9540530365160677",
+  "sha": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 20:46 UTC",
+  "generated_at": "2026-11-21 21:09 UTC",
   "files_total": 3631,
   "code_files": 3288,
   "code_lines": 477147
@@ -297373,10 +297373,22 @@
   }
  },
  "git": {
-  "sha": "06e43846c8468f39622ced1d9540530365160677",
+  "sha": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "374d7d8",
+    "date": "2026-11-21",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.7.1 (#607)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "06e4384",
     "date": "2026-11-21",
@@ -297717,18 +297729,6 @@
     "subject": "fix: adiciona --yes no deploy de edge functions para CI (#578)",
     "files": [
      ".github/workflows/deploy.yml"
-    ]
-   },
-   {
-    "sha": "d960322",
-    "date": "2026-11-18",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.6.0 (#577)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
     ]
    }
   ],

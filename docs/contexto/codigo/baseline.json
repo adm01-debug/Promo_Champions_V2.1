@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "06e43846c8468f39622ced1d9540530365160677",
+  "commit": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
   "branch": "main",
-  "data_commit": "2026-11-21T17:39:25-03:00",
+  "data_commit": "2026-11-21T18:08:54-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "374d7d8",
+    "data": "2026-11-21",
+    "assunto": "chore(main): release 1.7.1 (#607)"
+   },
    {
     "sha": "06e4384",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "d443a72",
     "data": "2026-11-20",
     "assunto": "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)"
-   },
-   {
-    "sha": "de515ef",
-    "data": "2026-11-20",
-    "assunto": "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)"
    }
   ],
   "arquivos_mudados_7d": 195,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 43
+    "mudancas": 44
    },
    {
     "arquivo": "package.json",
-    "mudancas": 43
+    "mudancas": 44
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -226,12 +226,12 @@
     "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "CHANGELOG.md",
     "mudancas": 11
    },
    {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 10
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 196
+    "commits": 195
    },
    {
     "autor": "dependabot[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 20
+    "commits": 21
    },
    {
     "autor": "devin-ai-integration[bot]",
