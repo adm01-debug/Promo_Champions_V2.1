@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `33b3f1c639462913279e1f85adea71f468a2e751` (2026-11-21T10:31:54-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6e92a516b02f4c98318ad7d6648180527bc2bf14` (2026-11-21T14:48:57-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2492), SQL (710), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2492), SQL (711), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3611 |
+| arquivos_total | 3612 |
 | arquivos_codigo | 2573 |
-| linhas_codigo | 442696 |
+| linhas_codigo | 442744 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 417 |
-| migrations | 701 |
+| migrations | 702 |
 | cron_jobs | 31 |
 | testes | 246 |
 | workflows | 27 |
@@ -549,9 +549,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: ai.gateway.lovable.dev, x.test, api.resend.com, example.test, promo-champions-v2-1.vercel.app, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promochampions.com.br, wa.me, x.supabase.co, api.dicebear.com
+- hosts mais citados: openrouter.ai, x.test, api.resend.com, example.test, promo-champions-v2-1.vercel.app, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, ai.gateway.lovable.dev, api.twilio.com, b.test, c.test, promochampions.com.br, wa.me, x.supabase.co
 - webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
-- env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, LOVABLE_API_KEY, METRICS_INGEST_TOKEN, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
+- env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, LOVABLE_API_KEY, METRICS_INGEST_TOKEN, OPENROUTER_API_KEY, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
 ## Permissões / papéis
 - papéis no código: user (52), system (43), closer (21), sdr (21), admin (19), alert (14), hybrid (14), status (13), region (10), authenticated (8), manager (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), tab (2), tool (2), Roles (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), salesperson (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
@@ -577,7 +577,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21780 nós · 66774 arestas · 1557 comunidades · grafo do commit `33b3f1c6`
+- 21781 nós · 66774 arestas · 1558 comunidades · grafo do commit `6e92a516`
 - comunidades maiores: schema.sql (785), Card (765), Button (616), client.ts (422), cn (280), Índice (277), Badge (257), getCorsHeaders (251), react (219), TabsTrigger (207), lazyPages.ts (167), formatBRL (157)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -737,7 +737,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/RUNBOOK.md` — 🚀 Runbook Operacional — Promo Champions (369 linhas)
 - `docs/SCHEMA_CONVENTIONS.md` — SCHEMA CONVENTIONS — Convenções de banco (Promo Champions V2.1) (52 linhas)
 - `docs/SEC-08_SERVICE_ROLE_AUDIT.md` — SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY` (65 linhas)
-- `docs/SECRETS_ROTATION.md` — Rotação de Secrets — Inventário e Política (133 linhas)
+- `docs/SECRETS_ROTATION.md` — Rotação de Secrets — Inventário e Política (134 linhas)
 - `docs/SECURITY.md` — Security Guidelines (128 linhas)
 - `docs/SECURITY_HARDENING.md` — Hardening de Segurança — SECURITY DEFINER, RLS, Edge Functions & WAL (240 linhas)
 - `docs/SECURITY_HEADERS.md` — Headers de segurança — hosting e edge functions (48 linhas)
@@ -757,6 +757,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.1...promo-champions-v2-v1.6.2) (2026-11-21)
 
 ## Últimos commits
+- 2026-11-21 `6e92a51` fix: corrige chave de chat e search_path da busca semantica (#604)
+- 2026-11-21 `b20af81` feat: troca IA de chat do Lovable para OpenRouter (#603)
 - 2026-11-21 `33b3f1c` chore(main): release 1.6.2 (#599)
 - 2026-11-21 `f1b58e0` chore(types): sincroniza types.ts com o banco oficial [auto] (#601)
 - 2026-11-21 `0f5601d` docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)
@@ -770,8 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `56253c6` chore: registra conclusão do A3 no backlog (#592)
 - 2026-11-20 `be50d67` fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)
 - 2026-11-20 `76bcae8` fix: grava path do PDF de quote em bucket privado (#590)
-- 2026-11-20 `bb4c144` chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)
-- 2026-11-20 `a1377be` docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

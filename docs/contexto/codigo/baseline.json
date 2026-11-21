@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "33b3f1c639462913279e1f85adea71f468a2e751",
+  "commit": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
   "branch": "main",
-  "data_commit": "2026-11-21T10:31:54-03:00",
+  "data_commit": "2026-11-21T14:48:57-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "6e92a51",
+    "data": "2026-11-21",
+    "assunto": "fix: corrige chave de chat e search_path da busca semantica (#604)"
+   },
+   {
+    "sha": "b20af81",
+    "data": "2026-11-21",
+    "assunto": "feat: troca IA de chat do Lovable para OpenRouter (#603)"
+   },
    {
     "sha": "33b3f1c",
     "data": "2026-11-21",
@@ -121,19 +131,9 @@
     "sha": "f7722f0",
     "data": "2026-11-19",
     "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)"
-   },
-   {
-    "sha": "9f4dba8",
-    "data": "2026-11-19",
-    "assunto": "fix: adiciona --yes no deploy de edge functions para CI (#578)"
-   },
-   {
-    "sha": "d960322",
-    "data": "2026-11-18",
-    "assunto": "chore(main): release 1.6.0 (#577)"
    }
   ],
-  "arquivos_mudados_7d": 204,
+  "arquivos_mudados_7d": 186,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -184,16 +184,16 @@
     "mudancas": 17
    },
    {
-    "pasta": "RELATORIO_CI.md",
-    "mudancas": 16
-   },
-   {
     "pasta": "src/components/bi",
     "mudancas": 16
    },
    {
     "pasta": "src/components/conversational",
     "mudancas": 15
+   },
+   {
+    "pasta": "src/components/clients",
+    "mudancas": 14
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -278,6 +278,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/functions/send-multichannel-message/index.ts",
     "mudancas": 6
    },
@@ -290,18 +294,14 @@
     "mudancas": 5
    },
    {
-    "arquivo": "inventario/estado/banco.json",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "release-please-config.json",
+    "arquivo": "docs/DEPLOYMENT.md",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 199
+    "commits": 197
    },
    {
     "autor": "dependabot[bot]",
@@ -314,17 +314,13 @@
    {
     "autor": "devin-ai-integration[bot]",
     "commits": 13
-   },
-   {
-    "autor": "Claude",
-    "commits": 12
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3611,
+  "arquivos_total": 3612,
   "arquivos_codigo": 2573,
-  "linhas_codigo": 442696,
+  "linhas_codigo": 442744,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -334,7 +330,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 701,
+  "migrations": 702,
   "cron_jobs": 31,
   "testes": 246,
   "workflows": 27,
@@ -656,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 320,
-   "linhas": 66559
+   "linhas": 66607
   },
   "tailwind.config.ts": {
    "arquivos": 1,

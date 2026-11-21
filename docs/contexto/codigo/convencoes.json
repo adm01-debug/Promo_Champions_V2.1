@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige chave de chat e search_path da busca semantica (#604)",
+   "feat: troca IA de chat do Lovable para OpenRouter (#603)",
    "chore(main): release 1.6.2 (#599)",
    "chore(types): sincroniza types.ts com o banco oficial [auto] (#601)",
-   "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)",
-   "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)",
-   "chore(main): release 1.6.1 (#579)"
+   "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

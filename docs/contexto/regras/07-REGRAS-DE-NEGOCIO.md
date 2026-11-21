@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `33b3f1c639` · branch `main` · 2026-11-21 13:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6e92a516b0` · branch `main` · 2026-11-21 17:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2634,7 +2634,7 @@ _nenhum item encontrado_
   ```
 - **generateInsights(patterns: Array<Record<string, unknown>>, totalRows: number,)** — `supabase/functions/mine-win-loss-patterns/index.ts`
   ```
-  if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( "https://ai.gateway.lovable.dev/v1/chat/completions", { method: "POST", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json", }, body: JSON.stringify({ model: "google/gemini-2.5-flash", messages: [ { role: "system", content: "Você é um analista de ve …
+  if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( "https://openrouter.ai/api/v1/chat/completions", { method: "POST", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json", }, body: JSON.stringify({ model: "google/gemini-2.5-flash", messages: [ { role: "system", content: "Você é um analista de vendas …
   ```
 - **generateEmailHTML(data: NewDeviceAlertRequest)** — `supabase/functions/new-device-alert/index.ts`
   ```
@@ -2642,11 +2642,11 @@ _nenhum item encontrado_
   ```
 - **generateAdvancedActions(supabase: SupabaseClient, params: { forecastId: string; salespersonName: string; quota: number; p50: number; prob: numbe)** — `supabase/functions/predict-quota-attainment/index.ts`
   ```
-  const apiKey = Deno.env.get("LOVABLE_API_KEY"); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR."; const usr = `Vendedor: ${params.salespersonName}\nMeta: R$ ${params.quota.toFixed(0)}\nProjeção P50: R$ ${params.p50.toFixed(0)}\nGap: R$ ${gap.toFixed(0)}\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\nRisco: ${params.risk}`; try …
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY'); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR."; const usr = `Vendedor: ${params.salespersonName}\nMeta: R$ ${params.quota.toFixed(0)}\nProjeção P50: R$ ${params.p50.toFixed(0)}\nGap: R$ ${gap.toFixed(0)}\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\nRisco: ${params.risk}`; …
   ```
 - **generateNarrative(score: number, baseline: number, topDrivers: Driver[], recommendations: Recommendation[])** — `supabase/functions/predictive-scoring-explain/index.ts`
   ```
-  const apiKey = Deno.env.get('LOVABLE_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} (${d …
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} ( …
   ```
 - **scoreFor(rules: ScoringRule[] | null, m: ScoreMetrics)** — `supabase/functions/process-race-event/index.ts`
   ```
@@ -2666,7 +2666,7 @@ _nenhum item encontrado_
   ```
 - **generateAnswer(query: string, results: Array<{ entity_type: string; content: string }>, apiKey: string)** — `supabase/functions/semantic-search-universal/index.ts`
   ```
-  if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join("\n"); try { const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: "google/gemini-2.5-flash", messages: [ { role: "system", content: "Você é um assistente de CRM. Responda em português, ci …
+  if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join("\n"); try { const res = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: "google/gemini-2.5-flash", messages: [ { role: "system", content: "Você é um assistente de CRM. Responda em português, citando …
   ```
 - **generateAlerts(supabase: SupabaseClient, pref: NotificationPreference)** — `supabase/functions/send-alert-notifications/index.ts`
   ```
@@ -4149,7 +4149,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +688 linhas — lista completa em `context.json` | |
+| … +687 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

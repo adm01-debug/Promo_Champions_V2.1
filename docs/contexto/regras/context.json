@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "33b3f1c639462913279e1f85adea71f468a2e751",
+  "sha": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 13:32 UTC",
-  "files_total": 3626,
-  "code_files": 3283,
-  "code_lines": 476703
+  "generated_at": "2026-11-21 17:49 UTC",
+  "files_total": 3627,
+  "code_files": 3284,
+  "code_lines": 476772
  },
  "version": "1.3.2",
- "facts_hash": "319055d57cea88f2",
+ "facts_hash": "ff54020d29a190da",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1115,
-   ".sql": 710,
+   ".sql": 711,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -67526,6 +67526,7 @@
    "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql",
    "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
    "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
+   "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -96314,7 +96315,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -96345,7 +96346,7 @@
      "tasks"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -96355,7 +96356,7 @@
     "doc": "",
     "errors": [
      "AI gateway error: ${response.status}",
-     "LOVABLE_API_KEY is not configured"
+     "OPENROUTER_API_KEY is not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -96374,7 +96375,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -96399,7 +96400,7 @@
      "call_transcripts"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -96445,7 +96446,7 @@
      "conversation_analyses"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -96500,7 +96501,7 @@
      "stage_probabilities"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -96545,7 +96546,7 @@
      "call_sentiment_timeline"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -96572,7 +96573,7 @@
      "skill_development_tracks"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -96601,7 +96602,7 @@
      "stage_conversion_metrics"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -96625,7 +96626,7 @@
      "win_loss_analyses"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -96725,14 +96726,14 @@
      "automation_runs"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
     "doc": "",
     "errors": [
      "AI gateway error: ${aiRes.status}",
-     "LOVABLE_API_KEY not configured"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -96887,7 +96888,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -97131,7 +97132,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -97428,7 +97429,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -97485,7 +97486,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -97531,7 +97532,7 @@
      "call_sentiment_timeline"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -97621,7 +97622,7 @@
      "call_recordings"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -97822,7 +97823,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -98028,7 +98029,7 @@
      "coaching_actions"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98059,7 +98060,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [
@@ -98087,7 +98088,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -98115,7 +98116,7 @@
      "revenue_forecasts"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -98141,7 +98142,7 @@
      "coaching_actions"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -98165,7 +98166,7 @@
      "executive_briefings"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -98195,7 +98196,7 @@
      "win_loss_analyses"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -98224,7 +98225,7 @@
      "stage_probabilities"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -98451,7 +98452,7 @@
      "win_loss_patterns"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -98545,7 +98546,7 @@
      "tasks"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98570,7 +98571,7 @@
      "salespeople_public"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -98727,7 +98728,7 @@
      "tasks"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98778,7 +98779,7 @@
      "stage_velocity_baselines"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98809,7 +98810,7 @@
      "stage_probabilities"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98833,7 +98834,7 @@
      "stage_probabilities"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -98857,7 +98858,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -99018,7 +99019,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -99065,7 +99066,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -99112,7 +99113,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -99313,7 +99314,7 @@
      "revenue_forecast_view"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -99432,7 +99433,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -99441,7 +99442,7 @@
     "doc": "",
     "errors": [
      "Failed to get AI response",
-     "LOVABLE_API_KEY is not configured"
+     "OPENROUTER_API_KEY is not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -99459,7 +99460,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -99467,7 +99468,7 @@
     "errors": [
      "AI API error: ${aiResponse.status}",
      "Invalid AI response structure",
-     "LOVABLE_API_KEY not configured"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -99674,6 +99675,7 @@
     "tables": [],
     "env": [
      "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -99699,7 +99701,7 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -99708,7 +99710,7 @@
     "doc": "",
     "errors": [
      "AI gateway error",
-     "LOVABLE_API_KEY not configured"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -100141,7 +100143,7 @@
      "sales"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
     ],
@@ -100223,7 +100225,7 @@
      "salespeople"
     ],
     "env": [
-     "LOVABLE_API_KEY"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -100329,6 +100331,7 @@
     "tables": [],
     "env": [
      "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -100337,9 +100340,8 @@
     "doc": "",
     "errors": [
      "AI gateway error",
-     "Failed to generate query embedding",
-     "Invalid embedding response from AI Gateway",
-     "LOVABLE_API_KEY not configured"
+     "LOVABLE_API_KEY not configured",
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -107602,7 +107604,7 @@
   {
    "module": "supabase/functions",
    "files": 320,
-   "lines": 66559,
+   "lines": 66607,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -107847,7 +107849,7 @@
     "webhook-validator.ts: WebhookValidationError, WebhookValidationResult, createValidationErrorResponse, validateWebhookPayload, WebhookContracts, EnterpriseWebhookSchemas"
    ],
    "docs": [
-    "ai-gateway.ts: URL do gateway de IA (Lovable AI Gateway) — ponto único de configuração. Para apontar outro gateway/proxy compatível com OpenAI, defina o env LOVABLE_AI_GATEWAY_URL no Supabase (ex.: \"https://meu-gateway.exemplo.com\").",
+    "ai-gateway.ts: Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat/completions aponta para o OpenRouter por padrão (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). A chave de autenticação das chamadas de chat é o env OPENROUTER_API_KEY ( …",
     "alert-escalation.ts: ALERT-ESCAL — Escalação de alertas operacionais críticos para canais externos. Quando um alerta tem severity=critical e um canal externo está configurado, além do fluxo interno (notifications/email aos admins) o alerta vai para: • Slack via SLACK_ALERT_WEBHOOK_URL (canal dedicado de escalação — não …",
     "auth-client.ts: SEC-08 — helper de client autenticado para edge functions. Objetivo: reduzir o uso desnecessário de `SUPABASE_SERVICE_ROLE_KEY` em edge functions que só precisam operar em nome do usuário chamador. Enforça as RLS policies como se fosse uma chamada do frontend. Regra de bolso: • Precisa executar em n …",
     "business-date.ts: Datas de negócio no fuso canônico da operação (America/Sao_Paulo). Substitui o antipadrão `new Date().toISOString().split('T')[0]` (ou `.slice(0, 10)`), que devolve o dia em UTC e erra a data em qualquer horário noturno no Brasil (21h–03h). Usar SEMPRE que a data alimentar filtros, agregações, chave …",
@@ -107951,8 +107953,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 701,
-   "lines": 58482,
+   "files": 702,
+   "lines": 58503,
    "tables": [
     "user_permissions_cache"
    ],
@@ -114749,51 +114751,8 @@
     "supabase/functions/_shared/ai-gateway.ts"
    ],
    "LOVABLE_API_KEY": [
-    "supabase/functions/ai-agent-orchestrator/index.ts",
-    "supabase/functions/ai-copilot/index.ts",
-    "supabase/functions/ai-email-composer/index.ts",
-    "supabase/functions/analyze-call/index.ts",
-    "supabase/functions/analyze-conversation/index.ts",
-    "supabase/functions/analyze-pipeline-coverage/index.ts",
-    "supabase/functions/analyze-sentiment-timeline/index.ts",
-    "supabase/functions/analyze-skill-gaps/index.ts",
-    "supabase/functions/analyze-stage-conversion/index.ts",
-    "supabase/functions/analyze-win-loss/index.ts",
-    "supabase/functions/behavioral-analysis/index.ts",
-    "supabase/functions/calculate-deal-health/index.ts",
-    "supabase/functions/coaching-session-prep/index.ts",
-    "supabase/functions/detect-at-risk-deals/index.ts",
-    "supabase/functions/detect-coaching-opportunities/index.ts",
-    "supabase/functions/detect-critical-moments/index.ts",
-    "supabase/functions/diarize-call-recording/index.ts",
-    "supabase/functions/email-composer-bulk/index.ts",
-    "supabase/functions/extract-coaching-actions/index.ts",
-    "supabase/functions/extract-committee-from-call/index.ts",
-    "supabase/functions/extract-deal-stakeholders/index.ts",
-    "supabase/functions/forecast-narrative/index.ts",
-    "supabase/functions/generate-coaching-actions/index.ts",
-    "supabase/functions/generate-executive-briefing/index.ts",
-    "supabase/functions/generate-loss-coaching/index.ts",
-    "supabase/functions/generate-revenue-forecast/index.ts",
-    "supabase/functions/mine-win-loss-patterns/index.ts",
-    "supabase/functions/next-best-action/index.ts",
-    "supabase/functions/nlq-query/index.ts",
-    "supabase/functions/personal-assistant-stream/index.ts",
-    "supabase/functions/predict-deal-velocity/index.ts",
-    "supabase/functions/predict-quota-attainment/index.ts",
-    "supabase/functions/predictive-intelligence/index.ts",
-    "supabase/functions/predictive-scoring-explain/index.ts",
-    "supabase/functions/purchase-intelligence-forecast/index.ts",
-    "supabase/functions/qbr-generator/index.ts",
-    "supabase/functions/race-commentary/index.ts",
-    "supabase/functions/revenue-forecast-ai/index.ts",
-    "supabase/functions/sales-assistant-chat/index.ts",
-    "supabase/functions/salesperson-coaching/index.ts",
     "supabase/functions/semantic-index-entity/index.ts",
     "supabase/functions/semantic-search-universal/index.ts",
-    "supabase/functions/semantic-search/index.ts",
-    "supabase/functions/summarize-call-recording/index.ts",
-    "supabase/functions/transcribe-call-recording/index.ts",
     "supabase/functions/visual-search/index.ts"
    ],
    "LOVABLE_BROWSER_AUTH_STATUS": [
@@ -114836,6 +114795,56 @@
    "ONLY": [
     "scripts/bundle-edge-functions.ts",
     "supabase/functions/detect-winloss-at-risk/_dump_scenarios.ts"
+   ],
+   "OPENROUTER_API_KEY": [
+    "supabase/functions/ai-agent-orchestrator/index.ts",
+    "supabase/functions/ai-copilot/index.ts",
+    "supabase/functions/ai-email-composer/index.ts",
+    "supabase/functions/analyze-call/index.ts",
+    "supabase/functions/analyze-conversation/index.ts",
+    "supabase/functions/analyze-pipeline-coverage/index.ts",
+    "supabase/functions/analyze-sentiment-timeline/index.ts",
+    "supabase/functions/analyze-skill-gaps/index.ts",
+    "supabase/functions/analyze-stage-conversion/index.ts",
+    "supabase/functions/analyze-win-loss/index.ts",
+    "supabase/functions/behavioral-analysis/index.ts",
+    "supabase/functions/calculate-deal-health/index.ts",
+    "supabase/functions/coaching-session-prep/index.ts",
+    "supabase/functions/detect-at-risk-deals/index.ts",
+    "supabase/functions/detect-coaching-opportunities/index.ts",
+    "supabase/functions/detect-critical-moments/index.ts",
+    "supabase/functions/diarize-call-recording/index.ts",
+    "supabase/functions/email-composer-bulk/index.ts",
+    "supabase/functions/extract-coaching-actions/index.ts",
+    "supabase/functions/extract-committee-from-call/index.ts",
+    "supabase/functions/extract-deal-stakeholders/index.ts",
+    "supabase/functions/forecast-narrative/index.ts",
+    "supabase/functions/generate-coaching-actions/index.ts",
+    "supabase/functions/generate-executive-briefing/index.ts",
+    "supabase/functions/generate-loss-coaching/index.ts",
+    "supabase/functions/generate-revenue-forecast/index.ts",
+    "supabase/functions/mine-win-loss-patterns/index.ts",
+    "supabase/functions/next-best-action/index.ts",
+    "supabase/functions/nlq-query/index.ts",
+    "supabase/functions/personal-assistant-stream/index.ts",
+    "supabase/functions/predict-deal-velocity/index.ts",
+    "supabase/functions/predict-quota-attainment/index.ts",
+    "supabase/functions/predictive-intelligence/index.ts",
+    "supabase/functions/predictive-scoring-explain/index.ts",
+    "supabase/functions/purchase-intelligence-forecast/index.ts",
+    "supabase/functions/qbr-generator/index.ts",
+    "supabase/functions/race-commentary/index.ts",
+    "supabase/functions/revenue-forecast-ai/index.ts",
+    "supabase/functions/sales-assistant-chat/index.ts",
+    "supabase/functions/salesperson-coaching/index.ts",
+    "supabase/functions/semantic-search-universal/index.ts",
+    "supabase/functions/semantic-search/index.ts",
+    "supabase/functions/summarize-call-recording/index.ts",
+    "supabase/functions/transcribe-call-recording/index.ts",
+    "supabase/functions/visual-search/index.ts"
+   ],
+   "OPENROUTER_BASE_URL": [
+    "supabase/functions/_shared/ai-gateway.ts"
    ],
    "PATH": [
     "scripts/ci/contexto-publicacao.unit.mjs",
@@ -121154,7 +121163,7 @@
    },
    {
     "file": "supabase/functions/ai-copilot/index.ts",
-    "msg": "LOVABLE_API_KEY is not configured"
+    "msg": "OPENROUTER_API_KEY is not configured"
    },
    {
     "file": "supabase/functions/analyze-call/index.ts",
@@ -121210,7 +121219,7 @@
    },
    {
     "file": "supabase/functions/behavioral-analysis/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/bitrix24-oauth/index.ts",
@@ -121686,7 +121695,7 @@
    },
    {
     "file": "supabase/functions/sales-assistant-chat/index.ts",
-    "msg": "LOVABLE_API_KEY is not configured"
+    "msg": "OPENROUTER_API_KEY is not configured"
    },
    {
     "file": "supabase/functions/salesperson-coaching/index.ts",
@@ -121698,7 +121707,7 @@
    },
    {
     "file": "supabase/functions/salesperson-coaching/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/schedule-optimal-send/index.ts",
@@ -121750,7 +121759,7 @@
    },
    {
     "file": "supabase/functions/semantic-search/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
@@ -121878,15 +121887,11 @@
    },
    {
     "file": "supabase/functions/visual-search/index.ts",
-    "msg": "Failed to generate query embedding"
-   },
-   {
-    "file": "supabase/functions/visual-search/index.ts",
-    "msg": "Invalid embedding response from AI Gateway"
-   },
-   {
-    "file": "supabase/functions/visual-search/index.ts",
     "msg": "LOVABLE_API_KEY not configured"
+   },
+   {
+    "file": "supabase/functions/visual-search/index.ts",
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/wal-health-alert/index.ts",
@@ -154292,7 +154297,7 @@
     "file": "supabase/functions/mine-win-loss-patterns/index.ts",
     "name": "generateInsights",
     "params": "patterns: Array<Record<string, unknown>>, totalRows: number,",
-    "body": "if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( \"https://ai.gateway.lovable.dev/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, \"Content-Type\": \"application/json\", }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um analista de ve …"
+    "body": "if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( \"https://openrouter.ai/api/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, \"Content-Type\": \"application/json\", }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um analista de vendas …"
    },
    {
     "file": "supabase/functions/new-device-alert/index.ts",
@@ -154304,13 +154309,13 @@
     "file": "supabase/functions/predict-quota-attainment/index.ts",
     "name": "generateAdvancedActions",
     "params": "supabase: SupabaseClient, params: { forecastId: string; salespersonName: string; quota: number; p50: number; prob: numbe",
-    "body": "const apiKey = Deno.env.get(\"LOVABLE_API_KEY\"); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = \"Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.\"; const usr = `Vendedor: ${params.salespersonName}\\nMeta: R$ ${params.quota.toFixed(0)}\\nProjeção P50: R$ ${params.p50.toFixed(0)}\\nGap: R$ ${gap.toFixed(0)}\\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\\nRisco: ${params.risk}`; try …"
+    "body": "const apiKey = Deno.env.get('OPENROUTER_API_KEY'); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = \"Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.\"; const usr = `Vendedor: ${params.salespersonName}\\nMeta: R$ ${params.quota.toFixed(0)}\\nProjeção P50: R$ ${params.p50.toFixed(0)}\\nGap: R$ ${gap.toFixed(0)}\\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\\nRisco: ${params.risk}`; …"
    },
    {
     "file": "supabase/functions/predictive-scoring-explain/index.ts",
     "name": "generateNarrative",
     "params": "score: number, baseline: number, topDrivers: Driver[], recommendations: Recommendation[]",
-    "body": "const apiKey = Deno.env.get('LOVABLE_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} (${d …"
+    "body": "const apiKey = Deno.env.get('OPENROUTER_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} ( …"
    },
    {
     "file": "supabase/functions/process-race-event/index.ts",
@@ -154340,7 +154345,7 @@
     "file": "supabase/functions/semantic-search-universal/index.ts",
     "name": "generateAnswer",
     "params": "query: string, results: Array<{ entity_type: string; content: string }>, apiKey: string",
-    "body": "if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join(\"\\n\"); try { const res = await fetchWithTimeout(\"https://ai.gateway.lovable.dev/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um assistente de CRM. Responda em português, ci …"
+    "body": "if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join(\"\\n\"); try { const res = await fetchWithTimeout(\"https://openrouter.ai/api/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um assistente de CRM. Responda em português, citando …"
    },
    {
     "file": "supabase/functions/send-alert-notifications/index.ts",
@@ -274413,15 +274418,16 @@
   },
   "supabase/functions/_shared/ai-gateway.ts": {
    "path": "supabase/functions/_shared/ai-gateway.ts",
-   "lines": 10,
+   "lines": 21,
    "exports": [
     "const LOVABLE_AI_CHAT_COMPLETIONS_URL",
     "const LOVABLE_AI_EMBEDDINGS_URL"
    ],
    "env": [
-    "LOVABLE_AI_GATEWAY_URL"
+    "LOVABLE_AI_GATEWAY_URL",
+    "OPENROUTER_BASE_URL"
    ],
-   "doc": "URL do gateway de IA (Lovable AI Gateway) — ponto único de configuração. Para apontar outro gateway/proxy compatível com OpenAI, defina o env LOVABLE_AI_GATEWAY_URL no Supabase (ex.: \"https://meu-gateway.exemplo.com\")."
+   "doc": "Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat/completions aponta para o OpenRouter por padrão (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). A chave de autenticação das chamadas de chat é o env OPENROUTER_API_KEY ( …"
   },
   "supabase/functions/_shared/alert-escalation.ts": {
    "path": "supabase/functions/_shared/alert-escalation.ts",
@@ -276331,7 +276337,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -276588,14 +276594,14 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "AI gateway error: ${response.status}",
-    "LOVABLE_API_KEY is not configured"
+    "OPENROUTER_API_KEY is not configured"
    ],
    "status_values": [
     {
@@ -276664,7 +276670,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -276774,7 +276780,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -276830,7 +276836,7 @@
     }
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -276998,7 +277004,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -277136,7 +277142,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI error: ${aiRes.status} ${txt}",
@@ -277252,7 +277258,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -277372,7 +277378,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -277473,7 +277479,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -277801,11 +277807,11 @@
     }
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI gateway error: ${aiRes.status}",
-    "LOVABLE_API_KEY not configured"
+    "OPENROUTER_API_KEY not configured"
    ],
    "status_values": [
     {
@@ -278349,7 +278355,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -279082,7 +279088,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -280031,7 +280037,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI API error: ${aiResponse.status}",
@@ -280239,7 +280245,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -280359,7 +280365,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "LOVABLE_API_KEY ausente"
@@ -281024,7 +281030,7 @@
     "update_call_recording_diarization"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -281490,7 +281496,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -282063,7 +282069,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI gateway: ${aiResp.status} ${t}",
@@ -282194,7 +282200,7 @@
     "calculate-committee-coverage"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -282334,7 +282340,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -282504,7 +282510,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -282575,7 +282581,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -282636,7 +282642,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -282791,7 +282797,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -282888,7 +282894,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -283451,7 +283457,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -283522,7 +283528,7 @@
     {
      "name": "generateInsights",
      "params": "patterns: Array<Record<string, unknown>>, totalRows: number,",
-     "body": "if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( \"https://ai.gateway.lovable.dev/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, \"Content-Type\": \"application/json\", }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um analista de ve …"
+     "body": "if (!LOVABLE_API_KEY || patterns.length === 0) return []; try { const top = patterns .slice() .sort((a, b) => (b.frequency as number) - (a.frequency as number)) .slice(0, 20); const resp = await fetchWithTimeout( \"https://openrouter.ai/api/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, \"Content-Type\": \"application/json\", }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um analista de vendas …"
     }
    ],
    "pagination": [
@@ -283810,7 +283816,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI request failed: ${aiResponse.status}"
@@ -283959,7 +283965,7 @@
    "path": "supabase/functions/nlq-query/index.ts",
    "lines": 355,
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -284573,7 +284579,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "params": [
     {
@@ -284855,7 +284861,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "Sale not found"
@@ -285038,7 +285044,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -285109,7 +285115,7 @@
     {
      "name": "generateAdvancedActions",
      "params": "supabase: SupabaseClient, params: { forecastId: string; salespersonName: string; quota: number; p50: number; prob: numbe",
-     "body": "const apiKey = Deno.env.get(\"LOVABLE_API_KEY\"); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = \"Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.\"; const usr = `Vendedor: ${params.salespersonName}\\nMeta: R$ ${params.quota.toFixed(0)}\\nProjeção P50: R$ ${params.p50.toFixed(0)}\\nGap: R$ ${gap.toFixed(0)}\\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\\nRisco: ${params.risk}`; try …"
+     "body": "const apiKey = Deno.env.get('OPENROUTER_API_KEY'); if (!apiKey) return; const gap = Math.max(0, params.quota - params.p50); const sys = \"Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.\"; const usr = `Vendedor: ${params.salespersonName}\\nMeta: R$ ${params.quota.toFixed(0)}\\nProjeção P50: R$ ${params.p50.toFixed(0)}\\nGap: R$ ${gap.toFixed(0)}\\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\\nRisco: ${params.risk}`; …"
     }
    ],
    "percents": [
@@ -285167,7 +285173,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -285286,7 +285292,7 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -285307,7 +285313,7 @@
     {
      "name": "generateNarrative",
      "params": "score: number, baseline: number, topDrivers: Driver[], recommendations: Recommendation[]",
-     "body": "const apiKey = Deno.env.get('LOVABLE_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} (${d …"
+     "body": "const apiKey = Deno.env.get('OPENROUTER_API_KEY'); const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`; if (!apiKey) return fallback; try { const prompt = `Score do deal: ${score}/100. Baseline da carteira: ${baseline.toFixed(0)}. Top drivers: ${topDrivers.map(d => `${d.label} ( …"
     }
    ],
    "pagination": [
@@ -285908,7 +285914,7 @@
     "get_purchase_intelligence_summary"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -286043,7 +286049,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -286183,7 +286189,7 @@
    "path": "supabase/functions/race-commentary/index.ts",
    "lines": 181,
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "params": [
     {
@@ -286960,7 +286966,7 @@
     ]
    },
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -287426,13 +287432,13 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "Failed to get AI response",
-    "LOVABLE_API_KEY is not configured"
+    "OPENROUTER_API_KEY is not configured"
    ],
    "status_values": [
     {
@@ -287540,12 +287546,12 @@
     "is_admin_or_manager"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "AI API error: ${aiResponse.status}",
     "Invalid AI response structure",
-    "LOVABLE_API_KEY not configured"
+    "OPENROUTER_API_KEY not configured"
    ],
    "status_values": [
     {
@@ -288167,13 +288173,13 @@
     "search_products_semantic"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "AI gateway error",
-    "LOVABLE_API_KEY not configured"
+    "OPENROUTER_API_KEY not configured"
    ],
    "params": [
     {
@@ -288238,12 +288244,13 @@
   },
   "supabase/functions/semantic-search-universal/index.ts": {
    "path": "supabase/functions/semantic-search-universal/index.ts",
-   "lines": 152,
+   "lines": 157,
    "rpc": [
     "match_semantic"
    ],
    "env": [
     "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -288287,7 +288294,7 @@
     {
      "name": "generateAnswer",
      "params": "query: string, results: Array<{ entity_type: string; content: string }>, apiKey: string",
-     "body": "if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join(\"\\n\"); try { const res = await fetchWithTimeout(\"https://ai.gateway.lovable.dev/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um assistente de CRM. Responda em português, ci …"
+     "body": "if (!results.length) return null; const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join(\"\\n\"); try { const res = await fetchWithTimeout(\"https://openrouter.ai/api/v1/chat/completions\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/gemini-2.5-flash\", messages: [ { role: \"system\", content: \"Você é um assistente de CRM. Responda em português, citando …"
     }
    ],
    "temporal": [
@@ -289414,7 +289421,7 @@
     "update_call_recording_summary"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
@@ -289812,7 +289819,7 @@
     "call-recordings"
    ],
    "env": [
-    "LOVABLE_API_KEY"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -290059,21 +290066,21 @@
   },
   "supabase/functions/visual-search/index.ts": {
    "path": "supabase/functions/visual-search/index.ts",
-   "lines": 284,
+   "lines": 316,
    "rpc": [
     "search_products_semantic",
     "search_products_vector"
    ],
    "env": [
     "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "AI gateway error",
-    "Failed to generate query embedding",
-    "Invalid embedding response from AI Gateway",
-    "LOVABLE_API_KEY not configured"
+    "LOVABLE_API_KEY not configured",
+    "OPENROUTER_API_KEY not configured"
    ],
    "status_values": [
     {
@@ -295106,6 +295113,10 @@
    "path": "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
    "lines": 17
   },
+  "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql": {
+   "path": "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
+   "lines": 21
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297172,10 +297183,76 @@
   }
  },
  "git": {
-  "sha": "33b3f1c639462913279e1f85adea71f468a2e751",
+  "sha": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "6e92a51",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: corrige chave de chat e search_path da busca semantica (#604)",
+    "files": [
+     "supabase/functions/semantic-search-universal/index.ts",
+     "supabase/functions/visual-search/index.ts",
+     "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql"
+    ]
+   },
+   {
+    "sha": "b20af81",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "feat: troca IA de chat do Lovable para OpenRouter (#603)",
+    "files": [
+     "docs/DEPLOYMENT.md",
+     "docs/SECRETS_ROTATION.md",
+     "supabase/functions/_shared/ai-gateway.ts",
+     "supabase/functions/ai-agent-orchestrator/index.ts",
+     "supabase/functions/ai-copilot/index.ts",
+     "supabase/functions/ai-email-composer/index.ts",
+     "supabase/functions/analyze-call/index.ts",
+     "supabase/functions/analyze-conversation/index.ts",
+     "supabase/functions/analyze-pipeline-coverage/index.ts",
+     "supabase/functions/analyze-sentiment-timeline/index.ts",
+     "supabase/functions/analyze-skill-gaps/index.ts",
+     "supabase/functions/analyze-stage-conversion/index.ts",
+     "supabase/functions/analyze-win-loss/index.ts",
+     "supabase/functions/behavioral-analysis/index.ts",
+     "supabase/functions/calculate-deal-health/index.ts",
+     "supabase/functions/coaching-session-prep/index.ts",
+     "supabase/functions/detect-at-risk-deals/index.ts",
+     "supabase/functions/detect-coaching-opportunities/index.ts",
+     "supabase/functions/detect-critical-moments/index.ts",
+     "supabase/functions/diarize-call-recording/index.ts",
+     "supabase/functions/email-composer-bulk/index.ts",
+     "supabase/functions/extract-coaching-actions/index.ts",
+     "supabase/functions/extract-committee-from-call/index.ts",
+     "supabase/functions/extract-deal-stakeholders/index.ts",
+     "supabase/functions/forecast-narrative/index.ts",
+     "supabase/functions/generate-coaching-actions/index.ts",
+     "supabase/functions/generate-executive-briefing/index.ts",
+     "supabase/functions/generate-loss-coaching/index.ts",
+     "supabase/functions/generate-revenue-forecast/index.ts",
+     "supabase/functions/mine-win-loss-patterns/index.ts",
+     "supabase/functions/next-best-action/index.ts",
+     "supabase/functions/nlq-query/index.ts",
+     "supabase/functions/personal-assistant-stream/index.ts",
+     "supabase/functions/predict-deal-velocity/index.ts",
+     "supabase/functions/predict-quota-attainment/index.ts",
+     "supabase/functions/predictive-intelligence/index.ts",
+     "supabase/functions/predictive-scoring-explain/index.ts",
+     "supabase/functions/purchase-intelligence-forecast/index.ts",
+     "supabase/functions/qbr-generator/index.ts",
+     "supabase/functions/race-commentary/index.ts",
+     "supabase/functions/revenue-forecast-ai/index.ts",
+     "supabase/functions/sales-assistant-chat/index.ts",
+     "supabase/functions/salesperson-coaching/index.ts",
+     "supabase/functions/semantic-search-universal/index.ts",
+     "supabase/functions/semantic-search/index.ts",
+     "supabase/functions/summarize-call-recording/index.ts",
+     "supabase/functions/transcribe-call-recording/index.ts"
+    ]
+   },
    {
     "sha": "33b3f1c",
     "date": "2026-11-21",
@@ -297451,24 +297528,6 @@
     "files": [
      ".github/workflows/pr-checks.yml"
     ]
-   },
-   {
-    "sha": "54a8628",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: SLA de revisão deixa de cobrar PR de bot (#567)",
-    "files": [
-     ".github/workflows/pr-review-sla.yml"
-    ]
-   },
-   {
-    "sha": "cefd645",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)",
-    "files": [
-     "docs/agentes/telas-orfas-da-reescrita-261117.md"
-    ]
    }
   ],
   "hot_files": [
@@ -297497,59 +297556,59 @@
     4
    ],
    [
+    "docs/DEPLOYMENT.md",
+    3
+   ],
+   [
+    "supabase/functions/semantic-search-universal/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/personal-assistant-stream/index.ts",
+    2
+   ],
+   [
     "src/integrations/supabase/types.ts",
     2
    ],
    [
-    "docs/DEPLOYMENT.md",
-    2
-   ],
-   [
-    "scripts/supabase_snapshot/README.md",
+    "supabase/functions/visual-search/index.ts",
     1
    ],
    [
-    "src/components/win-loss/CompetitorBattleCardModal.tsx",
+    "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
     1
    ],
    [
-    "docs/pendencias/T15-multichannel-retry.md",
+    "docs/SECRETS_ROTATION.md",
     1
    ],
    [
-    "supabase/functions/process-scheduled-sends/authz_test.ts",
+    "supabase/functions/_shared/ai-gateway.ts",
     1
    ],
    [
-    "supabase/functions/process-scheduled-sends/index.ts",
+    "supabase/functions/ai-agent-orchestrator/index.ts",
     1
    ],
    [
-    "supabase/functions/send-multichannel-message/authz_test.ts",
+    "supabase/functions/ai-copilot/index.ts",
     1
    ],
    [
-    "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
+    "supabase/functions/ai-email-composer/index.ts",
     1
    ],
    [
-    "supabase/functions/process-race-event/index_test.ts",
+    "supabase/functions/analyze-call/index.ts",
     1
    ],
    [
-    "supabase/functions/race-commentary/index_test.ts",
+    "supabase/functions/analyze-conversation/index.ts",
     1
    ],
    [
-    "supabase/functions/personal-assistant-stream/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/export-winloss-pdf/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/receive-quote-webhook/index.ts",
+    "supabase/functions/analyze-pipeline-coverage/index.ts",
     1
    ]
   ]

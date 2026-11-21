@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (2492)",
-   "SQL (710)",
+   "SQL (711)",
    "Markdown (217)",
    "JavaScript (78)",
    "JSON (33)",
@@ -1300,7 +1300,7 @@
   {
    "arquivo": "docs/SECRETS_ROTATION.md",
    "titulo": "Rotação de Secrets — Inventário e Política",
-   "linhas": 133
+   "linhas": 134
   },
   {
    "arquivo": "docs/SECURITY.md",
@@ -1495,6 +1495,8 @@
    "METRICS_INGEST_TOKEN",
    "METRICS_INGEST_URL",
    "ONLY",
+   "OPENROUTER_API_KEY",
+   "OPENROUTER_BASE_URL",
    "PROMOGIFTS_WEBHOOK_SECRET",
    "QUOTE_CONVERSION_WEBHOOK_URL",
    "QUOTE_SYNC_API_KEY",
@@ -1618,7 +1620,7 @@
   ],
   "hosts_externos": [
    {
-    "host": "ai.gateway.lovable.dev",
+    "host": "openrouter.ai",
     "arquivos": 8
    },
    {
@@ -1647,6 +1649,10 @@
    },
    {
     "host": "a.test",
+    "arquivos": 2
+   },
+   {
+    "host": "ai.gateway.lovable.dev",
     "arquivos": 2
    },
    {
@@ -1830,6 +1836,7 @@
    "INTERCOM_ACCESS_TOKEN",
    "LOVABLE_API_KEY",
    "METRICS_INGEST_TOKEN",
+   "OPENROUTER_API_KEY",
    "PROMOGIFTS_WEBHOOK_SECRET",
    "QUOTE_CONVERSION_WEBHOOK_URL",
    "QUOTE_SYNC_API_KEY",
