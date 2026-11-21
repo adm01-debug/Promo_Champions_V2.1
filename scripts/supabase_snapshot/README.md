@@ -44,6 +44,41 @@ o `pg_dump` do runner pode ser mais antigo que o servidor e `types.ts` já vem d
 
 Neste repo o secret já existe (criado em 2026-09-28; também usado por `db-backup.yml` e `apply-migration.yml` — o `pg_dump` do `db-backup` conecta com ele do runner, run 41812589748).
 
+## Aplicar migrations e o fluxo de dry-run
+
+O caminho canônico de deploy de DDL deste repo é o workflow **`apply-migration.yml`**
+(Dispatch manual → Actions → Apply Migration). Ele usa a mesma `SUPABASE_DB_URL` (session pooler
+IPv4, usuário `postgres`) — por isso `db push` é proibido e o `apply-migration` só executa arquivo
+**já revisado na main**, não aceita SQL arbitrário por input.
+
+Uso (uma migration por dispatch):
+
+```sh
+gh workflow run "Apply Migration" -R adm01-debug/Promo_Champions_V2.1 \
+  -f migration_file="20261120000000_t15_multichannel_retry.sql" -f dry_run=false
+```
+
+O workflow é **idempotente**: primeiro confere `supabase_migrations.schema_migrations` pelo `version`
+da migration; se já registrada, avisa e pula. Depois aplica com `psql -v ON_ERROR_STOP=1 -f` e registra
+`(version, name)` no ledger (`INSERT ... ON CONFLICT DO NOTHING`). `concurrency: apply-migration-prod`
+com `cancel-in-progress: false` impede duas aplicações simultâneas no banco de produção.
+
+### Dry-run (validar sem aplicar)
+
+Marque `dry_run=true` no dispatch para **validar o arquivo sem tocar no banco**: o workflow confere o
+nome/padrão, verifica se a versão já está registrada e exibe as primeiras linhas da migration, sem rodar o
+DDL. Útil para provar que uma migration pendente já foi aplicada (ledger) ou checar o que um arquivo faz
+antes de aplicar em produção. Exemplo usado na verificacão das migrations pendentes:
+
+```sh
+gh workflow run "Apply Migration" -R adm01-debug/Promo_Champions_V2.1 \
+  -f migration_file="20261120000000_t15_multichannel_retry.sql" -f dry_run=true
+```
+
+Saída esperada de dry-run quando a versão já está no ledger:
+`::warning::versão … já registrada — pulando apply` seguido de `Migration … validada — nenhuma alteração aplicada.`
+Quando a versão ainda não foi aplicada, o dry-run não registra nada — apenas lista o head do arquivo.
+
 ## O que é coletado
 
 | Fonte | O que entra |
