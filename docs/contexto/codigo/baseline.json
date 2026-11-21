@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
+  "commit": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
   "branch": "main",
-  "data_commit": "2026-11-21T14:48:57-03:00",
+  "data_commit": "2026-11-21T15:09:43-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a122081",
+    "data": "2026-11-21",
+    "assunto": "chore(release): 1.7.0 (#605)"
+   },
    {
     "sha": "6e92a51",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "d7af709",
     "data": "2026-11-19",
     "assunto": "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)"
-   },
-   {
-    "sha": "f7722f0",
-    "data": "2026-11-19",
-    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#580)"
    }
   ],
   "arquivos_mudados_7d": 186,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "pasta": "package.json",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 42
+    "mudancas": 43
    },
    {
     "arquivo": "package.json",
-    "mudancas": 42
+    "mudancas": 43
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -230,11 +230,11 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 9
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 10
    },
    {
-    "arquivo": "CHANGELOG.md",
+    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 9
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 19
+    "commits": 20
    },
    {
     "autor": "devin-ai-integration[bot]",

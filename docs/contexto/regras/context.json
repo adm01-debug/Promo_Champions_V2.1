@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
+  "sha": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 17:49 UTC",
+  "generated_at": "2026-11-21 18:11 UTC",
   "files_total": 3627,
   "code_files": 3284,
   "code_lines": 476772
@@ -297183,10 +297183,22 @@
   }
  },
  "git": {
-  "sha": "6e92a516b02f4c98318ad7d6648180527bc2bf14",
+  "sha": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "a122081",
+    "date": "2026-11-21",
+    "author": "github-actions[bot]",
+    "subject": "chore(release): 1.7.0 (#605)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "6e92a51",
     "date": "2026-11-21",
@@ -297519,15 +297531,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "9591c26",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)",
-    "files": [
-     ".github/workflows/pr-checks.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -297537,19 +297540,19 @@
    ],
    [
     ".release-please-manifest.json",
-    4
+    5
    ],
    [
     "CHANGELOG.md",
-    4
+    5
    ],
    [
     "package-lock.json",
-    4
+    5
    ],
    [
     "package.json",
-    4
+    5
    ],
    [
     ".github/workflows/deploy.yml",
