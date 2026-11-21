@@ -4,7 +4,7 @@
  "stack": {
   "linguagens": [
    "TypeScript (2492)",
-   "SQL (711)",
+   "SQL (712)",
    "Markdown (217)",
    "JavaScript (78)",
    "JSON (33)",
@@ -1459,6 +1459,7 @@
   ],
   "usadas_nas_edges": [
    "ADMIN_NOTIFICATION_EMAIL",
+   "AI_EMBEDDING_MODEL",
    "ALERT_CONSECUTIVE_FAILURES",
    "ALERT_ESCALATION_EMAIL",
    "ALERT_FROM_EMAIL",
@@ -1490,13 +1491,12 @@
    "FRESHDESK_API_KEY",
    "FRESHDESK_DOMAIN",
    "INTERCOM_ACCESS_TOKEN",
-   "LOVABLE_AI_GATEWAY_URL",
-   "LOVABLE_API_KEY",
    "METRICS_INGEST_TOKEN",
    "METRICS_INGEST_URL",
    "ONLY",
    "OPENROUTER_API_KEY",
    "OPENROUTER_BASE_URL",
+   "OPENROUTER_EMBEDDINGS_BASE_URL",
    "PROMOGIFTS_WEBHOOK_SECRET",
    "QUOTE_CONVERSION_WEBHOOK_URL",
    "QUOTE_SYNC_API_KEY",
@@ -1649,10 +1649,6 @@
    },
    {
     "host": "a.test",
-    "arquivos": 2
-   },
-   {
-    "host": "ai.gateway.lovable.dev",
     "arquivos": 2
    },
    {
@@ -1834,7 +1830,6 @@
    "EVOLUTION_INSTANCE",
    "FRESHDESK_API_KEY",
    "INTERCOM_ACCESS_TOKEN",
-   "LOVABLE_API_KEY",
    "METRICS_INGEST_TOKEN",
    "OPENROUTER_API_KEY",
    "PROMOGIFTS_WEBHOOK_SECRET",

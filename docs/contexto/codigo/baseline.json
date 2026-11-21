@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
+  "commit": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
   "branch": "main",
-  "data_commit": "2026-11-21T15:09:43-03:00",
+  "data_commit": "2026-11-21T16:12:40-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "bff6aa6",
+    "data": "2026-11-21",
+    "assunto": "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)"
+   },
    {
     "sha": "a122081",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "9017094",
     "data": "2026-11-20",
     "assunto": "fix(db): dropa policies permissive de sales/activities (USING true) (#582)"
-   },
-   {
-    "sha": "d7af709",
-    "data": "2026-11-19",
-    "assunto": "fix(ci): deploy de edge functions por allowlist (100) em vez de todas (171) (#581)"
    }
   ],
-  "arquivos_mudados_7d": 186,
+  "arquivos_mudados_7d": 189,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -282,10 +282,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/send-multichannel-message/index.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "docs/DEPLOYMENT.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    }
   ],
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3612,
+  "arquivos_total": 3613,
   "arquivos_codigo": 2573,
-  "linhas_codigo": 442744,
+  "linhas_codigo": 442787,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -330,8 +330,8 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 702,
-  "cron_jobs": 31,
+  "migrations": 703,
+  "cron_jobs": 32,
   "testes": 246,
   "workflows": 27,
   "scripts": 78,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 320,
-   "linhas": 66607
+   "linhas": 66650
   },
   "tailwind.config.ts": {
    "arquivos": 1,

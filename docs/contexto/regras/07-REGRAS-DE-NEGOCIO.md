@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a122081e74` · branch `main` · 2026-11-21 18:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bff6aa63a8` · branch `main` · 2026-11-21 19:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2658,11 +2658,11 @@ _nenhum item encontrado_
   ```
 - **generateEmbedding(text: string, apiKey: string)** — `supabase/functions/semantic-index-entity/index.ts`
   ```
-  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'google/text-embedding-004', input: text.slice(0, 8000), }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embedding response'); return emb;
+  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …
   ```
 - **generateEmbedding(text: string, apiKey: string)** — `supabase/functions/semantic-search-universal/index.ts`
   ```
-  const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: "google/text-embedding-004", input: text.slice(0, 4000) }), }); if (!res.ok) { if (res.status === 429) throw new Error("RATE_LIMIT"); if (res.status === 402) throw new Error("CREDITS_EXHAUSTED"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json(); return …
+  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 4000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) { if (res.status === 429) throw new Error("RATE_LIMIT"); if (res.status === 402) throw new Error("CREDITS_EXHAUSTED"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json() …
   ```
 - **generateAnswer(query: string, results: Array<{ entity_type: string; content: string }>, apiKey: string)** — `supabase/functions/semantic-search-universal/index.ts`
   ```
@@ -3115,6 +3115,7 @@ _nenhum item encontrado_
 | `LEADERS_PERIOD_DAYS` | `30` | `src/pages/EvolutionCurvesPage.tsx` |
 | `PAGE_SIZE` | `10` | `src/pages/MinhasPremiacoes.tsx` |
 | `ROTATION_MS` | `30` | `src/pages/RaceArenaTV.tsx` |
+| `AI_EMBEDDING_DIMENSIONS` | `768` | `supabase/functions/_shared/ai-gateway.ts` |
 | `BUSINESS_TZ` | `"America/Sao_Paulo"` | `supabase/functions/_shared/business-date.ts` |
 | `CANONICAL_FILE` | `"_shared/cors.ts"` | `supabase/functions/_shared/cors_lint_test.ts` |
 | `MS_PER_DAY` | `1000` | `supabase/functions/_shared/deal-probability-calc.ts` |
@@ -4149,7 +4150,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +687 linhas — lista completa em `context.json` | |
+| … +690 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4730,6 +4731,7 @@ _nenhum item encontrado_
 | `notify_sale_completion` | `supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql` |
 | `notify_sale_completion` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `notify` | `supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql` |
+| `notify` | `supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código

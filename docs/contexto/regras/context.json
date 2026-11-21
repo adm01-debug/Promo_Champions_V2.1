@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
+  "sha": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 18:11 UTC",
-  "files_total": 3627,
-  "code_files": 3284,
-  "code_lines": 476772
+  "generated_at": "2026-11-21 19:14 UTC",
+  "files_total": 3628,
+  "code_files": 3285,
+  "code_lines": 476916
  },
  "version": "1.3.2",
- "facts_hash": "ff54020d29a190da",
+ "facts_hash": "4295aae8338317ad",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1115,
-   ".sql": 711,
+   ".sql": 712,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -66664,6 +66664,12 @@
     "schedule": "15 3 * * *",
     "body": "SELECT public.purge_old_telemetry(90)",
     "src": "supabase/migrations/20261117070000_reconcilia_objetos_orfaos_producao.sql"
+   },
+   {
+    "job": "semantic-reindex-daily",
+    "schedule": "0 5 * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
    }
   ],
   "views": {
@@ -67527,6 +67533,7 @@
    "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
    "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
    "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
+   "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -73074,6 +73081,22 @@
     "objkind": "table",
     "roles": "authenticated",
     "src": "supabase/migrations/20261117060000_revoke_grants_tabelas_webhook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
    },
    {
     "kind": "grant",
@@ -99625,7 +99648,7 @@
      "semantic_index"
     ],
     "env": [
-     "LOVABLE_API_KEY",
+     "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -99633,9 +99656,10 @@
     "invokes": [],
     "doc": "",
     "errors": [
+     "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
      "Embedding error ${res.status}: ${await res.text()}",
      "Invalid embedding response",
-     "LOVABLE_API_KEY not configured"
+     "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -99649,6 +99673,7 @@
     ],
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
+     "_internal_secrets",
      "sales",
      "semantic_index"
     ],
@@ -99674,7 +99699,6 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
      "OPENROUTER_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_URL"
@@ -99684,8 +99708,9 @@
     "doc": "",
     "errors": [
      "CREDITS_EXHAUSTED",
+     "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
      "Embedding error ${res.status}",
-     "LOVABLE_API_KEY not configured",
+     "OPENROUTER_API_KEY not configured",
      "RATE_LIMIT"
     ],
     "side_effects": [],
@@ -100330,7 +100355,6 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
      "OPENROUTER_API_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -100340,7 +100364,6 @@
     "doc": "",
     "errors": [
      "AI gateway error",
-     "LOVABLE_API_KEY not configured",
      "OPENROUTER_API_KEY not configured"
     ],
     "side_effects": [],
@@ -107604,7 +107627,7 @@
   {
    "module": "supabase/functions",
    "files": 320,
-   "lines": 66607,
+   "lines": 66650,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -107807,7 +107830,7 @@
     "workflows"
    ],
    "exports": [
-    "ai-gateway.ts: LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL",
+    "ai-gateway.ts: AI_EMBEDDING_MODEL, AI_EMBEDDING_DIMENSIONS, LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL",
     "alert-escalation.ts: runbookUrl, alertFromEmail, EscalationInput, EscalationResult, escalateCriticalAlert",
     "auth-client.ts: AuthenticatedContext, UnauthorizedError, getUserClient, getServiceClient, requireAdmin",
     "business-date.ts: BUSINESS_TZ, toBusinessDate, usecaseDate, toBusinessMonth, toBusinessMonthStart, businessMonthStartInstant",
@@ -107849,7 +107872,7 @@
     "webhook-validator.ts: WebhookValidationError, WebhookValidationResult, createValidationErrorResponse, validateWebhookPayload, WebhookContracts, EnterpriseWebhookSchemas"
    ],
    "docs": [
-    "ai-gateway.ts: Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat/completions aponta para o OpenRouter por padrão (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). A chave de autenticação das chamadas de chat é o env OPENROUTER_API_KEY ( …",
+    "ai-gateway.ts: Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat e embeddings apontam para o OpenRouter (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). Ambos usam o env OPENROUTER_API_KEY (sk-or-...).",
     "alert-escalation.ts: ALERT-ESCAL — Escalação de alertas operacionais críticos para canais externos. Quando um alerta tem severity=critical e um canal externo está configurado, além do fluxo interno (notifications/email aos admins) o alerta vai para: • Slack via SLACK_ALERT_WEBHOOK_URL (canal dedicado de escalação — não …",
     "auth-client.ts: SEC-08 — helper de client autenticado para edge functions. Objetivo: reduzir o uso desnecessário de `SUPABASE_SERVICE_ROLE_KEY` em edge functions que só precisam operar em nome do usuário chamador. Enforça as RLS policies como se fosse uma chamada do frontend. Regra de bolso: • Precisa executar em n …",
     "business-date.ts: Datas de negócio no fuso canônico da operação (America/Sao_Paulo). Substitui o antipadrão `new Date().toISOString().split('T')[0]` (ou `.slice(0, 10)`), que devolve o dia em UTC e erra a data em qualquer horário noturno no Brasil (21h–03h). Usar SEMPRE que a data alimentar filtros, agregações, chave …",
@@ -107953,8 +107976,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 702,
-   "lines": 58503,
+   "files": 703,
+   "lines": 58604,
    "tables": [
     "user_permissions_cache"
    ],
@@ -108200,6 +108223,7 @@
      "supabase/functions/process-call-recording-ingest/index.ts",
      "supabase/functions/scheduled-reports-runner/index.ts",
      "supabase/functions/sdr-consecutive-alerts/index.ts",
+     "supabase/functions/semantic-reindex-batch/index.ts",
      "supabase/functions/send-alert-notifications/index.ts",
      "supabase/functions/wal-health-alert/index.ts",
      "supabase/functions/webvitals-regression-alert/index.ts",
@@ -114529,6 +114553,9 @@
    "AI_CONTEXT_SCHEMA_SNAPSHOT": [
     "scripts/regras_negocio/generate.py"
    ],
+   "AI_EMBEDDING_MODEL": [
+    "supabase/functions/_shared/ai-gateway.ts"
+   ],
    "ALERT_CONSECUTIVE_FAILURES": [
     "supabase/functions/winloss-webhook-health-monitor/index.ts"
    ],
@@ -114747,14 +114774,6 @@
    "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
     "scripts/inventario/gerar-banco.mjs"
    ],
-   "LOVABLE_AI_GATEWAY_URL": [
-    "supabase/functions/_shared/ai-gateway.ts"
-   ],
-   "LOVABLE_API_KEY": [
-    "supabase/functions/semantic-index-entity/index.ts",
-    "supabase/functions/semantic-search-universal/index.ts",
-    "supabase/functions/visual-search/index.ts"
-   ],
    "LOVABLE_BROWSER_AUTH_STATUS": [
     "tests/a11y/axe-sweep.spec.ts"
    ],
@@ -114837,6 +114856,7 @@
     "supabase/functions/revenue-forecast-ai/index.ts",
     "supabase/functions/sales-assistant-chat/index.ts",
     "supabase/functions/salesperson-coaching/index.ts",
+    "supabase/functions/semantic-index-entity/index.ts",
     "supabase/functions/semantic-search-universal/index.ts",
     "supabase/functions/semantic-search/index.ts",
     "supabase/functions/summarize-call-recording/index.ts",
@@ -114844,6 +114864,9 @@
     "supabase/functions/visual-search/index.ts"
    ],
    "OPENROUTER_BASE_URL": [
+    "supabase/functions/_shared/ai-gateway.ts"
+   ],
+   "OPENROUTER_EMBEDDINGS_BASE_URL": [
     "supabase/functions/_shared/ai-gateway.ts"
    ],
    "PATH": [
@@ -121743,6 +121766,10 @@
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
+    "msg": "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}"
+   },
+   {
+    "file": "supabase/functions/semantic-index-entity/index.ts",
     "msg": "Embedding error ${res.status}: ${await res.text()}"
    },
    {
@@ -121751,7 +121778,7 @@
    },
    {
     "file": "supabase/functions/semantic-index-entity/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/semantic-search/index.ts",
@@ -121767,11 +121794,15 @@
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
+    "msg": "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}"
+   },
+   {
+    "file": "supabase/functions/semantic-search-universal/index.ts",
     "msg": "Embedding error ${res.status}"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
+    "msg": "OPENROUTER_API_KEY not configured"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
@@ -121884,10 +121915,6 @@
    {
     "file": "supabase/functions/visual-search/index.ts",
     "msg": "AI gateway error"
-   },
-   {
-    "file": "supabase/functions/visual-search/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
    },
    {
     "file": "supabase/functions/visual-search/index.ts",
@@ -122140,6 +122167,14 @@
    {
     "file": "supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql",
     "msg": ",\n      -- máquina de vendas (Onda 1)\n      "
+   },
+   {
+    "file": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+    "msg": ",\n      "
+   },
+   {
+    "file": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+    "msg": ",\n      -- maquina de vendas (Onda 1)\n      "
    },
    {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
@@ -139670,6 +139705,11 @@
     "value": "30"
    },
    {
+    "file": "supabase/functions/_shared/ai-gateway.ts",
+    "name": "AI_EMBEDDING_DIMENSIONS",
+    "value": "768"
+   },
+   {
     "file": "supabase/functions/_shared/business-date.ts",
     "name": "BUSINESS_TZ",
     "value": "\"America/Sao_Paulo\""
@@ -154333,13 +154373,13 @@
     "file": "supabase/functions/semantic-index-entity/index.ts",
     "name": "generateEmbedding",
     "params": "text: string, apiKey: string",
-    "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'google/text-embedding-004', input: text.slice(0, 8000), }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embedding response'); return emb;"
+    "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
     "name": "generateEmbedding",
     "params": "text: string, apiKey: string",
-    "body": "const res = await fetchWithTimeout(\"https://ai.gateway.lovable.dev/v1/embeddings\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/text-embedding-004\", input: text.slice(0, 4000) }), }); if (!res.ok) { if (res.status === 429) throw new Error(\"RATE_LIMIT\"); if (res.status === 402) throw new Error(\"CREDITS_EXHAUSTED\"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json(); return …"
+    "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 4000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) { if (res.status === 429) throw new Error(\"RATE_LIMIT\"); if (res.status === 402) throw new Error(\"CREDITS_EXHAUSTED\"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json() …"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
@@ -165305,6 +165345,10 @@
    },
    {
     "file": "supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql",
+    "call": "notify"
+   },
+   {
+    "file": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
     "call": "notify"
    },
    {
@@ -197724,6 +197768,7 @@
    "supabase/migrations/20261117050000_webhook_ssrf_e_rate_limit.sql",
    "supabase/migrations/20261117060000_revoke_grants_tabelas_webhook.sql",
    "supabase/migrations/20261117070000_reconcilia_objetos_orfaos_producao.sql",
+   "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
    "tests/migrations/canonical_hardening_contract_test.ts"
@@ -203171,6 +203216,22 @@
     "objkind": "table",
     "roles": "authenticated",
     "src": "supabase/migrations/20261117060000_revoke_grants_tabelas_webhook.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
    },
    {
     "kind": "grant",
@@ -274418,16 +274479,25 @@
   },
   "supabase/functions/_shared/ai-gateway.ts": {
    "path": "supabase/functions/_shared/ai-gateway.ts",
-   "lines": 21,
+   "lines": 23,
    "exports": [
+    "const AI_EMBEDDING_MODEL",
+    "const AI_EMBEDDING_DIMENSIONS",
     "const LOVABLE_AI_CHAT_COMPLETIONS_URL",
     "const LOVABLE_AI_EMBEDDINGS_URL"
    ],
    "env": [
-    "LOVABLE_AI_GATEWAY_URL",
-    "OPENROUTER_BASE_URL"
+    "AI_EMBEDDING_MODEL",
+    "OPENROUTER_BASE_URL",
+    "OPENROUTER_EMBEDDINGS_BASE_URL"
    ],
-   "doc": "Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat/completions aponta para o OpenRouter por padrão (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). A chave de autenticação das chamadas de chat é o env OPENROUTER_API_KEY ( …"
+   "params": [
+    {
+     "name": "AI_EMBEDDING_DIMENSIONS",
+     "value": "768"
+    }
+   ],
+   "doc": "Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat e embeddings apontam para o OpenRouter (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). Ambos usam o env OPENROUTER_API_KEY (sk-or-...)."
   },
   "supabase/functions/_shared/alert-escalation.ts": {
    "path": "supabase/functions/_shared/alert-escalation.ts",
@@ -288025,7 +288095,7 @@
   },
   "supabase/functions/semantic-index-entity/index.ts": {
    "path": "supabase/functions/semantic-index-entity/index.ts",
-   "lines": 306,
+   "lines": 314,
    "tables": [
     {
      "table": "semantic_index",
@@ -288057,14 +288127,15 @@
     "upsert_semantic_entry"
    ],
    "env": [
-    "LOVABLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
+    "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
     "Embedding error ${res.status}: ${await res.text()}",
     "Invalid embedding response",
-    "LOVABLE_API_KEY not configured"
+    "OPENROUTER_API_KEY not configured"
    ],
    "status_values": [
     {
@@ -288135,21 +288206,29 @@
     {
      "name": "generateEmbedding",
      "params": "text: string, apiKey: string",
-     "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'google/text-embedding-004', input: text.slice(0, 8000), }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embedding response'); return emb;"
+     "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 8000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`); const json = await res.json(); const emb = json?.data?.[0]?.embedding; if (!Array.isArray(emb)) throw new Error('Invalid embeddin …"
     }
    ],
    "uses_service_role": true
   },
   "supabase/functions/semantic-reindex-batch/index.ts": {
    "path": "supabase/functions/semantic-reindex-batch/index.ts",
-   "lines": 151,
+   "lines": 168,
    "tables": [
+    {
+     "table": "_internal_secrets",
+     "op": "select"
+    },
     {
      "table": "semantic_index",
      "op": "select"
     }
    ],
    "table_cols": {
+    "_internal_secrets": [
+     "key",
+     "value"
+    ],
     "semantic_index": [
      "entity_id",
      "entity_type"
@@ -288244,20 +288323,20 @@
   },
   "supabase/functions/semantic-search-universal/index.ts": {
    "path": "supabase/functions/semantic-search-universal/index.ts",
-   "lines": 157,
+   "lines": 170,
    "rpc": [
     "match_semantic"
    ],
    "env": [
-    "LOVABLE_API_KEY",
     "OPENROUTER_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "CREDITS_EXHAUSTED",
+    "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
     "Embedding error ${res.status}",
-    "LOVABLE_API_KEY not configured",
+    "OPENROUTER_API_KEY not configured",
     "RATE_LIMIT"
    ],
    "params": [
@@ -288289,7 +288368,7 @@
     {
      "name": "generateEmbedding",
      "params": "text: string, apiKey: string",
-     "body": "const res = await fetchWithTimeout(\"https://ai.gateway.lovable.dev/v1/embeddings\", { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: \"google/text-embedding-004\", input: text.slice(0, 4000) }), }); if (!res.ok) { if (res.status === 429) throw new Error(\"RATE_LIMIT\"); if (res.status === 402) throw new Error(\"CREDITS_EXHAUSTED\"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json(); return …"
+     "body": "const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, { method: \"POST\", headers: { Authorization: `Bearer ${apiKey}`, \"Content-Type\": \"application/json\" }, body: JSON.stringify({ model: AI_EMBEDDING_MODEL, input: text.slice(0, 4000), dimensions: AI_EMBEDDING_DIMENSIONS, }), }); if (!res.ok) { if (res.status === 429) throw new Error(\"RATE_LIMIT\"); if (res.status === 402) throw new Error(\"CREDITS_EXHAUSTED\"); throw new Error(`Embedding error ${res.status}`); } const json = await res.json() …"
     },
     {
      "name": "generateAnswer",
@@ -290066,20 +290145,18 @@
   },
   "supabase/functions/visual-search/index.ts": {
    "path": "supabase/functions/visual-search/index.ts",
-   "lines": 316,
+   "lines": 319,
    "rpc": [
     "search_products_semantic",
     "search_products_vector"
    ],
    "env": [
-    "LOVABLE_API_KEY",
     "OPENROUTER_API_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
     "AI gateway error",
-    "LOVABLE_API_KEY not configured",
     "OPENROUTER_API_KEY not configured"
    ],
    "status_values": [
@@ -295117,6 +295194,18 @@
    "path": "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql",
    "lines": 21
   },
+  "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql": {
+   "path": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
+   "lines": 101,
+   "errors": [
+    ",\n      ",
+    ",\n      -- maquina de vendas (Onda 1)\n      "
+   ],
+   "side_effects": [
+    "notify"
+   ],
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297183,10 +297272,24 @@
   }
  },
  "git": {
-  "sha": "a122081e74d4a4388dacce8b88d4170b3497bdc8",
+  "sha": "bff6aa63a8e78a1a4882ec77db881721ce18d005",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "bff6aa6",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)",
+    "files": [
+     "supabase/functions/_shared/ai-gateway.ts",
+     "supabase/functions/semantic-index-entity/index.ts",
+     "supabase/functions/semantic-reindex-batch/index.ts",
+     "supabase/functions/semantic-search-universal/index.ts",
+     "supabase/functions/visual-search/index.ts",
+     "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
+    ]
+   },
    {
     "sha": "a122081",
     "date": "2026-11-21",
@@ -297519,18 +297622,6 @@
     "files": [
      ".github/workflows/dependency-review.yml"
     ]
-   },
-   {
-    "sha": "998e3ad",
-    "date": "2026-11-17",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.5.0 (#485)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -297540,30 +297631,38 @@
    ],
    [
     ".release-please-manifest.json",
-    5
+    4
    ],
    [
     "CHANGELOG.md",
-    5
+    4
    ],
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     ".github/workflows/deploy.yml",
     4
    ],
    [
+    "supabase/functions/semantic-search-universal/index.ts",
+    3
+   ],
+   [
     "docs/DEPLOYMENT.md",
     3
    ],
    [
-    "supabase/functions/semantic-search-universal/index.ts",
+    "supabase/functions/_shared/ai-gateway.ts",
+    2
+   ],
+   [
+    "supabase/functions/visual-search/index.ts",
     2
    ],
    [
@@ -297575,7 +297674,15 @@
     2
    ],
    [
-    "supabase/functions/visual-search/index.ts",
+    "supabase/functions/semantic-index-entity/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/semantic-reindex-batch/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
     1
    ],
    [
@@ -297584,10 +297691,6 @@
    ],
    [
     "docs/SECRETS_ROTATION.md",
-    1
-   ],
-   [
-    "supabase/functions/_shared/ai-gateway.ts",
     1
    ],
    [
@@ -297600,18 +297703,6 @@
    ],
    [
     "supabase/functions/ai-email-composer/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/analyze-call/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/analyze-conversation/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/analyze-pipeline-coverage/index.ts",
     1
    ]
   ]

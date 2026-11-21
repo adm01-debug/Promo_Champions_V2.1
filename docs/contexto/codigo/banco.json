@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 702,
+ "migrations": 703,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -2368,6 +2368,11 @@
    "migration": "20261014000000_gamificacao_server_side.sql"
   },
   {
+   "nome": "semantic-reindex-daily",
+   "agenda": "0 5 * * *",
+   "migration": "20261122000000_schedule_semantic_reindex_cron.sql"
+  },
+  {
    "nome": "wal-health-alert-5min",
    "agenda": "*/5 * * * *",
    "migration": "20261001144000_schedule_wal_and_webhook_health_crons.sql"
@@ -2494,6 +2499,7 @@
     "process-call-recording-ingest",
     "scheduled-reports-runner",
     "sdr-consecutive-alerts",
+    "semantic-reindex-batch",
     "send-alert-notifications",
     "wal-health-alert",
     "webvitals-regression-alert",
