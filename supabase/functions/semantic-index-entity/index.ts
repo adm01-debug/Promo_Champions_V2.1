@@ -12,132 +12,54 @@ import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
 import {
+  buildSemanticContent,
+  SEMANTIC_TABLE_BY_TYPE,
+  sha256HexText,
+  type SemanticEntityType,
+} from '../_shared/semantic-content.ts';
+import {
   AI_EMBEDDING_DIMENSIONS,
   AI_EMBEDDING_MODEL,
   LOVABLE_AI_EMBEDDINGS_URL,
 } from '../_shared/ai-gateway.ts';
 
-type EntityType =
-  | 'client'
-  | 'lead'
-  | 'deal'
-  | 'activity'
-  | 'call_recording'
-  | 'note'
-  | 'email_message'
-  | 'whatsapp_message'
-  | 'proposal'
-  | 'task'
-  | 'playbook'
-  | 'product';
-
 interface IndexRequest {
-  entity_type: EntityType;
+  entity_type: SemanticEntityType;
   entity_id: string;
   force?: boolean;
 }
 
-const TABLE_BY_TYPE: Record<EntityType, { table: string; ownerCol: string | null }> = {
-  client: { table: 'clients', ownerCol: null },
-  lead: { table: 'sales', ownerCol: 'salesperson_id' },
-  deal: { table: 'sales', ownerCol: 'salesperson_id' },
-  activity: { table: 'activities', ownerCol: 'salesperson_id' },
-  call_recording: { table: 'call_recordings', ownerCol: 'salesperson_id' },
-  note: { table: 'notes', ownerCol: 'user_id' },
-  email_message: { table: 'email_messages', ownerCol: 'salesperson_id' },
-  whatsapp_message: { table: 'whatsapp_messages', ownerCol: 'salesperson_id' },
-  proposal: { table: 'proposals', ownerCol: 'salesperson_id' },
-  task: { table: 'tasks', ownerCol: 'salesperson_id' },
-  playbook: { table: 'playbooks', ownerCol: null },
-  product: { table: 'products', ownerCol: null },
-};
+const TABLE_BY_TYPE = SEMANTIC_TABLE_BY_TYPE;
+type EntityType = SemanticEntityType;
 
 function buildContent(type: EntityType, row: Record<string, unknown>): string {
-  const j = (xs: unknown[]) => xs.filter(Boolean).join(' • ');
-  switch (type) {
-    case 'client':
-      return j([
-        row.name,
-        row.email,
-        row.phone,
-        row.company,
-        row.notes,
-        row.industry,
-        row.address,
-      ]);
-    case 'lead':
-    case 'deal':
-      return j([
-        row.client_name,
-        row.product_name,
-        row.category,
-        row.source,
-        row.notes,
-        row.email,
-        row.phone,
-        row.amount ? `R$${row.amount}` : null,
-        row.status,
-      ]);
-    case 'activity':
-      return j([row.activity_type, row.contact_name, row.notes, row.outcome]);
-    case 'call_recording':
-      return j([
-        row.title,
-        row.summary,
-        row.transcript,
-        (row.key_topics as string[] | undefined)?.join(', '),
-      ]);
-    case 'note':
-      return j([row.title, row.content, row.body]);
-    case 'email_message':
-      return j([row.subject, row.from_email, row.to_email, row.body_text, row.snippet]);
-    case 'whatsapp_message':
-      return j([row.from_number, row.to_number, row.body, row.message_text]);
-    case 'proposal':
-      return j([
-        row.title,
-        row.client_name,
-        row.summary,
-        row.content,
-        row.notes,
-        row.amount ? `R$${row.amount}` : null,
-      ]);
-    case 'task':
-      return j([row.title, row.description, row.status, row.priority]);
-    case 'playbook':
-      return j([row.name, row.title, row.description, row.content, row.stage]);
-    case 'product':
-      return j([
-        row.name,
-        row.category,
-        row.sku,
-        row.description as string,
-        row.price ? `R$${row.price}` : null,
-      ]);
-    default:
-      return '';
-  }
+  return buildSemanticContent(type, row);
 }
 
 async function sha256Hex(text: string): Promise<string> {
-  const buf = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+  return sha256HexText(text);
 }
-
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: AI_EMBEDDING_MODEL,
-      input: text.slice(0, 8000),
-      dimensions: AI_EMBEDDING_DIMENSIONS,
-    }),
+  const payload = JSON.stringify({
+    model: AI_EMBEDDING_MODEL,
+    input: text.slice(0, 8000),
+    dimensions: AI_EMBEDDING_DIMENSIONS,
   });
-  if (!res.ok) throw new Error(`Embedding error ${res.status}: ${await res.text()}`);
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: payload,
+    });
+    // 429/5xx em reindexação em lote é transitório (limite de taxa do provider).
+    if (res.ok || (res.status !== 429 && res.status < 500)) break;
+    await res.body?.cancel();
+    await new Promise((r) => setTimeout(r, 400 * Math.pow(2, attempt)));
+  }
+  if (!res || !res.ok) {
+    throw new Error(`Embedding error ${res?.status ?? 'network'}: ${await res?.text() ?? ''}`);
+  }
   const json = await res.json();
   const emb = json?.data?.[0]?.embedding;
   if (!Array.isArray(emb)) throw new Error('Invalid embedding response');
@@ -154,13 +76,18 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
-    const rl = enforceRateLimit(req, {
-      name: 'semantic-index-entity',
-      limit: 20,
-      windowSeconds: 60,
-    });
-    if (rl) return rl;
+    // Rate limit por IP — endpoint de IA consome créditos. Chamadas internas
+    // (service_role, ex.: semantic-reindex-batch) partem sempre do mesmo IP do
+    // worker e seriam bloqueadas em massa; para elas a cadência já é controlada
+    // pelo `concurrency` do batch.
+    if (!isInternalServiceRequest(req)) {
+      const rl = enforceRateLimit(req, {
+        name: 'semantic-index-entity',
+        limit: 20,
+        windowSeconds: 60,
+      });
+      if (rl) return rl;
+    }
 
     try {
       // Autorização: chamada interna (service_role) ou usuário autenticado.
