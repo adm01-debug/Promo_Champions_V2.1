@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.2...promo-champions-v2-v1.7.0) (2026-11-21)
+
+
+### Funcionalidades
+
+* troca IA de chat do Lovable para OpenRouter ([#603](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/603)) ([b20af81](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b20af8177071b50c06561afdfb659ed38eb96229))
+
+
+### Correções
+
+* corrige chave de chat e search_path da busca semantica ([#604](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/604)) ([6e92a51](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/6e92a516b02f4c98318ad7d6648180527bc2bf14))
+
 ## [1.6.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.1...promo-champions-v2-v1.6.2) (2026-11-21)
 
 
