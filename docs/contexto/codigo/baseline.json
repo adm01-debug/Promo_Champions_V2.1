@@ -173,7 +173,7 @@
    },
    {
     "pasta": "RELATORIO_CI.md",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "pasta": "src/components/sales",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 199
+    "commits": 198
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 27
+    "commits": 25
    },
    {
     "autor": "github-actions[bot]",

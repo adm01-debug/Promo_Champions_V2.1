@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 12:48 UTC
+
+- Snapshot inicial.
+
+
 ## 2026-11-21 12:18 UTC
 
 - **colunas** adicionado (2): `public.scheduled_sends.attempts`, `public.scheduled_sends.next_retry_at`
