@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `de31d242328a82b5fb758ada0431d6d6970a1f33` (2026-11-21T10:02:32-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0f5601de1272c554d297d7faef90a1d54018375d` (2026-11-21T10:05:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -577,8 +577,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21776 nós · 66770 arestas · 1530 comunidades · grafo do commit `de31d242`
-- comunidades maiores: schema.sql (785), button.tsx (317), PageTransition (313), Índice (277), client.ts (274), CardHeader (269), lucide-react (263), getCorsHeaders (251), CardContent (238), vitest (232), ref_npm_supabase (216), Button (213)
+- 21778 nós · 66772 arestas · 1574 comunidades · grafo do commit `0f5601de`
+- comunidades maiores: schema.sql (785), Button (585), Card (574), Índice (348), client.ts (311), Skeleton (304), framer-motion (271), getCorsHeaders (236), cn (221), getUserClient (175), lazyPages.ts (168), Avatar (163)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -757,6 +757,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.6.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.0...promo-champions-v2-v1.6.1) (2026-11-21)
 
 ## Últimos commits
+- 2026-11-21 `0f5601d` docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)
 - 2026-11-21 `de31d24` fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)
 - 2026-11-21 `a9ec900` chore(main): release 1.6.1 (#579)
 - 2026-11-21 `f26c873` fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `a1377be` docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)
 - 2026-11-20 `8203561` docs: linha de base e regras de negocio da Fase 0 (#587)
 - 2026-11-20 `7bf29f5` fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)
-- 2026-11-20 `e7e7315` infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

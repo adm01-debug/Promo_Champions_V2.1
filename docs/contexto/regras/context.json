@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "de31d242328a82b5fb758ada0431d6d6970a1f33",
+  "sha": "0f5601de1272c554d297d7faef90a1d54018375d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 13:03 UTC",
+  "generated_at": "2026-11-21 13:06 UTC",
   "files_total": 3626,
   "code_files": 3283,
   "code_lines": 476703
@@ -297171,10 +297171,19 @@
   }
  },
  "git": {
-  "sha": "de31d242328a82b5fb758ada0431d6d6970a1f33",
+  "sha": "0f5601de1272c554d297d7faef90a1d54018375d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "0f5601d",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)",
+    "files": [
+     "scripts/supabase_snapshot/README.md"
+    ]
+   },
    {
     "sha": "de31d24",
     "date": "2026-11-21",
@@ -297463,18 +297472,6 @@
      "src/components/pipeline/dealTimelineConstants.tsx",
      "src/hooks/useDealTimeline.ts"
     ]
-   },
-   {
-    "sha": "eedadeb",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "feat(xp): extrato de XP do vendedor, lendo a tabela que já era gravada (#572)",
-    "files": [
-     "src/components/competitive/GamifiedProfile.tsx",
-     "src/components/gamification/XPHistoryTimeline.tsx",
-     "src/components/gamification/XPTimelineItem.tsx",
-     "src/hooks/gamification/useSalespersonXP.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -297505,6 +297502,10 @@
    [
     "docs/DEPLOYMENT.md",
     2
+   ],
+   [
+    "scripts/supabase_snapshot/README.md",
+    1
    ],
    [
     "src/components/win-loss/CompetitorBattleCardModal.tsx",
@@ -297552,10 +297553,6 @@
    ],
    [
     "docs/pendencias/_ordem.md",
-    1
-   ],
-   [
-    "docs/pendencias/_linha-de-base.md",
     1
    ]
   ]

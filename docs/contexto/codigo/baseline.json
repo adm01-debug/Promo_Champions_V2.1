@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "de31d242328a82b5fb758ada0431d6d6970a1f33",
+  "commit": "0f5601de1272c554d297d7faef90a1d54018375d",
   "branch": "main",
-  "data_commit": "2026-11-21T10:02:32-03:00",
+  "data_commit": "2026-11-21T10:05:26-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "0f5601d",
+    "data": "2026-11-21",
+    "assunto": "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)"
+   },
    {
     "sha": "de31d24",
     "data": "2026-11-21",
@@ -126,14 +131,9 @@
     "sha": "998e3ad",
     "data": "2026-11-17",
     "assunto": "chore(main): release 1.5.0 (#485)"
-   },
-   {
-    "sha": "9591c26",
-    "data": "2026-11-17",
-    "assunto": "fix(ci): gate passa a rodar os 17 testes do gerador de probes (#569)"
    }
   ],
-  "arquivos_mudados_7d": 203,
+  "arquivos_mudados_7d": 204,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 198
+    "commits": 199
    },
    {
     "autor": "dependabot[bot]",

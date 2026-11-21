@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)",
    "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)",
    "chore(main): release 1.6.1 (#579)",
    "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)",
-   "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)",
-   "chore: registra A5 como concluido no backlog (#595)"
+   "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
