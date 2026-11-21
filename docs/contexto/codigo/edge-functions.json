@@ -4309,8 +4309,8 @@
   {
    "nome": "process-scheduled-sends",
    "entrada": "supabase/functions/process-scheduled-sends/index.ts",
-   "arquivos": 1,
-   "linhas": 170,
+   "arquivos": 2,
+   "linhas": 270,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -4332,7 +4332,8 @@
    "usa_shared": [
     "cors.ts",
     "cron-job-auth.ts",
-    "request-id.ts"
+    "request-id.ts",
+    "retry-policy.ts"
    ],
    "chamada_pelo_front": [],
    "chamada_por_edges": [],
@@ -5487,7 +5488,7 @@
    "nome": "send-multichannel-message",
    "entrada": "supabase/functions/send-multichannel-message/index.ts",
    "arquivos": 2,
-   "linhas": 531,
+   "linhas": 533,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",

@@ -13171,7 +13171,8 @@
   "supabase/functions/process-scheduled-sends/index.ts": [
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/cron-job-auth.ts",
-   "supabase/functions/_shared/request-id.ts"
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/retry-policy.ts"
   ],
   "supabase/functions/purchase-intelligence-forecast/index.ts": [
    "supabase/functions/_shared/ai-gateway.ts",

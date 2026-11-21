@@ -3,9 +3,9 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2491)",
-   "SQL (709)",
-   "Markdown (216)",
+   "TypeScript (2492)",
+   "SQL (710)",
+   "Markdown (217)",
    "JavaScript (78)",
    "JSON (33)",
    "YAML (29)",
@@ -1413,7 +1413,7 @@
   },
   {
    "pasta": "docs/pendencias",
-   "arquivos_md": 4
+   "arquivos_md": 5
   },
   {
    "pasta": "docs/contexto",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d5e70798da27cb0816b32805550665bb900019b3",
+  "sha": "f26c87381ce97773d14255b80d1c590eadae8a0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-20 20:29 UTC",
-  "files_total": 3623,
-  "code_files": 3281,
-  "code_lines": 476584
+  "generated_at": "2026-11-21 11:36 UTC",
+  "files_total": 3626,
+  "code_files": 3283,
+  "code_lines": 476703
  },
  "version": "1.3.2",
- "facts_hash": "757cf86426e9b4d7",
+ "facts_hash": "32c99f89b641de53",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -399,8 +399,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1376,
-   ".ts": 1114,
-   ".sql": 709,
+   ".ts": 1115,
+   ".sql": 710,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -59306,6 +59306,22 @@
     "src": "supabase/migrations/20261117070000_reconcilia_objetos_orfaos_producao.sql"
    },
    {
+    "name": "idx_scheduled_sends_pending",
+    "table": "scheduled_sends",
+    "columns": "status, scheduled_for",
+    "unique": false,
+    "where": "WHERE status = 'pending'",
+    "src": "supabase/migrations/20261120000000_t15_multichannel_retry.sql"
+   },
+   {
+    "name": "idx_scheduled_sends_retry",
+    "table": "scheduled_sends",
+    "columns": "status, next_retry_at",
+    "unique": false,
+    "where": "WHERE status = 'failed'",
+    "src": "supabase/migrations/20261120000000_t15_multichannel_retry.sql"
+   },
+   {
     "name": "account_plans_account_id_key",
     "table": "account_plans",
     "columns": "account_id",
@@ -67495,6 +67511,7 @@
    "supabase/migrations/20261117200000_fix_match_reply_to_enrollment_sales_email.sql",
    "supabase/migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql",
    "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
+   "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -107570,8 +107587,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 319,
-   "lines": 66457,
+   "files": 320,
+   "lines": 66559,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -107920,8 +107937,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 700,
-   "lines": 58465,
+   "files": 701,
+   "lines": 58482,
    "tables": [
     "user_permissions_cache"
    ],
@@ -114010,12 +114027,14 @@
     "report_id"
    ],
    "scheduled_sends": [
+    "attempts",
     "channel",
+    "error",
     "id",
+    "next_retry_at",
     "owner_id",
     "payload",
     "sale_id",
-    "scheduled_for",
     "status"
    ],
    "score_change_logs": [
@@ -116673,6 +116692,14 @@
    {
     "table": "call_sentiment_timeline",
     "column": "sentiment_score"
+   },
+   {
+    "table": "scheduled_sends",
+    "column": "attempts"
+   },
+   {
+    "table": "scheduled_sends",
+    "column": "next_retry_at"
    }
   ]
  },
@@ -151329,8 +151356,8 @@
    {
     "file": "supabase/functions/process-scheduled-sends/index.ts",
     "field": "status",
-    "value": "pending",
-    "kind": "filtra"
+    "value": "failed",
+    "kind": "escreve"
    },
    {
     "file": "supabase/functions/process-scheduled-sends/index.ts",
@@ -151347,7 +151374,7 @@
    {
     "file": "supabase/functions/process-scheduled-sends/index.ts",
     "field": "status",
-    "value": "pending",
+    "value": "processing",
     "kind": "filtra"
    },
    {
@@ -152279,12 +152306,6 @@
     "field": "status",
     "value": "sent",
     "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/send-multichannel-message/authz_test.ts",
-    "field": "status",
-    "value": "pending",
-    "kind": "filtra"
    },
    {
     "file": "supabase/functions/send-multichannel-message/index.ts",
@@ -187808,6 +187829,10 @@
     "limit": "3"
    },
    {
+    "file": "supabase/functions/process-scheduled-sends/authz_test.ts",
+    "limit": "50"
+   },
+   {
     "file": "supabase/functions/process-scheduled-sends/index.ts",
     "limit": "50"
    },
@@ -190432,8 +190457,6 @@
       "filtra:supabase/functions/dialer-queue-builder/index.ts",
       "filtra:supabase/functions/extract-coaching-actions/index.ts",
       "filtra:supabase/functions/personal-assistant-stream/index.ts",
-      "filtra:supabase/functions/process-scheduled-sends/index.ts",
-      "filtra:supabase/functions/send-multichannel-message/authz_test.ts",
       "filtra:supabase/functions/snapshot-forecast/index.ts"
      ],
      "online": [
@@ -225239,6 +225262,16 @@
    {
     "kind": "coluna",
     "msg": "coluna `sentiment_score` usada no código não existe no schema de `call_sentiment_timeline`",
+    "where": []
+   },
+   {
+    "kind": "coluna",
+    "msg": "coluna `attempts` usada no código não existe no schema de `scheduled_sends`",
+    "where": []
+   },
+   {
+    "kind": "coluna",
+    "msg": "coluna `next_retry_at` usada no código não existe no schema de `scheduled_sends`",
     "where": []
    },
    {
@@ -285765,13 +285798,24 @@
     "VITE_SUPABASE_URL"
    ]
   },
+  "supabase/functions/process-scheduled-sends/authz_test.ts": {
+   "path": "supabase/functions/process-scheduled-sends/authz_test.ts",
+   "lines": 52,
+   "pagination": [
+    "50"
+   ]
+  },
   "supabase/functions/process-scheduled-sends/index.ts": {
    "path": "supabase/functions/process-scheduled-sends/index.ts",
-   "lines": 170,
+   "lines": 218,
    "tables": [
     {
      "table": "scheduled_sends",
      "op": "select,update"
+    },
+    {
+     "table": "scheduled_sends",
+     "op": "update"
     },
     {
      "table": "scheduled_sends",
@@ -285788,12 +285832,14 @@
    ],
    "table_cols": {
     "scheduled_sends": [
+     "attempts",
      "channel",
+     "error",
      "id",
+     "next_retry_at",
      "owner_id",
      "payload",
      "sale_id",
-     "scheduled_for",
      "status"
     ]
    },
@@ -285826,8 +285872,8 @@
     },
     {
      "field": "status",
-     "value": "pending",
-     "kind": "filtra"
+     "value": "failed",
+     "kind": "escreve"
     },
     {
      "field": "status",
@@ -285841,7 +285887,7 @@
     },
     {
      "field": "status",
-     "value": "pending",
+     "value": "processing",
      "kind": "filtra"
     }
    ],
@@ -288411,14 +288457,7 @@
   },
   "supabase/functions/send-multichannel-message/authz_test.ts": {
    "path": "supabase/functions/send-multichannel-message/authz_test.ts",
-   "lines": 103,
-   "status_values": [
-    {
-     "field": "status",
-     "value": "pending",
-     "kind": "filtra"
-    }
-   ],
+   "lines": 105,
    "uses_service_role": true
   },
   "supabase/functions/send-multichannel-message/index.ts": {
@@ -295062,6 +295101,10 @@
    "path": "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
    "lines": 46
   },
+  "supabase/migrations/20261120000000_t15_multichannel_retry.sql": {
+   "path": "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
+   "lines": 17
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297128,10 +297171,24 @@
   }
  },
  "git": {
-  "sha": "d5e70798da27cb0816b32805550665bb900019b3",
+  "sha": "f26c87381ce97773d14255b80d1c590eadae8a0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f26c873",
+    "date": "2026-11-21",
+    "author": "adm01-debug",
+    "subject": "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)",
+    "files": [
+     "docs/pendencias/T15-multichannel-retry.md",
+     "docs/pendencias/backlog-verificado.md",
+     "supabase/functions/process-scheduled-sends/authz_test.ts",
+     "supabase/functions/process-scheduled-sends/index.ts",
+     "supabase/functions/send-multichannel-message/authz_test.ts",
+     "supabase/migrations/20261120000000_t15_multichannel_retry.sql"
+    ]
+   },
    {
     "sha": "d5e7079",
     "date": "2026-11-20",
@@ -297419,21 +297476,12 @@
      "src/components/analytics/ABCMatrixShift.tsx",
      "src/hooks/bi/useABCAnalysis.ts"
     ]
-   },
-   {
-    "sha": "25f5950",
-    "date": "2026-11-17",
-    "author": "adm01-debug",
-    "subject": "fix: índice do contexto carimba a data absoluta da coleta (#566)",
-    "files": [
-     "scripts/regras_negocio/indice.py"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/pendencias/backlog-verificado.md",
-    5
+    6
    ],
    [
     ".github/workflows/deploy.yml",
@@ -297458,6 +297506,26 @@
    [
     "package.json",
     2
+   ],
+   [
+    "docs/pendencias/T15-multichannel-retry.md",
+    1
+   ],
+   [
+    "supabase/functions/process-scheduled-sends/authz_test.ts",
+    1
+   ],
+   [
+    "supabase/functions/process-scheduled-sends/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/send-multichannel-message/authz_test.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261120000000_t15_multichannel_retry.sql",
+    1
    ],
    [
     "supabase/functions/process-race-event/index_test.ts",
@@ -297489,26 +297557,6 @@
    ],
    [
     "docs/pendencias/_regras-de-negocio.md",
-    1
-   ],
-   [
-    "src/hooks/useEvolutionCurves.ts",
-    1
-   ],
-   [
-    ".github/workflows/main.yml",
-    1
-   ],
-   [
-    "scripts/db-audit/gen-migration-probes.mjs",
-    1
-   ],
-   [
-    "scripts/db-audit/gen-migration-probes.test.mjs",
-    1
-   ],
-   [
-    "supabase/migrations/20261119700000_fix_rls_sales_activities_using_true.sql",
     1
    ]
   ]

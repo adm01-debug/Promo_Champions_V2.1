@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 700,
+ "migrations": 701,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -38400,6 +38400,13 @@
   },
   "scheduled_sends": {
    "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
     "channel": {
      "tipo": "text",
      "nn": true,
@@ -38426,6 +38433,13 @@
      "nn": false,
      "pk": true,
      "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "next_retry_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     },
     "optimization_source": {
@@ -38508,6 +38522,11 @@
     {
      "nome": "idx_scheduled_sends_pending",
      "colunas": "status, scheduled_for",
+     "unico": false
+    },
+    {
+     "nome": "idx_scheduled_sends_retry",
+     "colunas": "status, next_retry_at",
      "unico": false
     }
    ],

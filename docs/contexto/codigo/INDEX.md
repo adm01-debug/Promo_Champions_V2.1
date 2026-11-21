@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d5e70798da27cb0816b32805550665bb900019b3` (2026-11-20T17:29:06-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f26c87381ce97773d14255b80d1c590eadae8a0c` (2026-11-21T08:35:24-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2491), SQL (709), Markdown (216), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2492), SQL (710), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3608 |
-| arquivos_codigo | 2572 |
-| linhas_codigo | 442588 |
+| arquivos_total | 3611 |
+| arquivos_codigo | 2573 |
+| linhas_codigo | 442690 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -46,12 +46,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 417 |
-| migrations | 700 |
+| migrations | 701 |
 | cron_jobs | 31 |
 | testes | 246 |
 | workflows | 27 |
 | scripts | 78 |
-| docs_md | 216 |
+| docs_md | 217 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -577,8 +577,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21760 nós · 66750 arestas · 1550 comunidades · grafo do commit `d5e70798`
-- comunidades maiores: schema.sql (785), cn (342), Card (328), Button (284), Índice (277), react (263), Badge (259), CardHeader (251), CardContent (237), SelectContent (229), getCorsHeaders (223), Skeleton (217)
+- 21774 nós · 66768 arestas · 1553 comunidades · grafo do commit `f26c8738`
+- comunidades maiores: schema.sql (785), Card (475), react (457), client.ts (324), Skeleton (307), getCorsHeaders (283), Índice (283), Button (260), vitest (234), DialogContent (226), date-fns (188), constants/index.ts (184)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -590,7 +590,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/codeql.yml (13)
 - PENDENCIAS.md (12)
 - .github/workflows/deploy.yml (11)
-- src/integrations/supabase/types.ts (11)
+- src/integrations/supabase/types.ts (10)
 - .github/workflows/pr-checks.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/ci-failure-alert.yml (7)
@@ -753,10 +753,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
-- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/pendencias (4), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
+- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/pendencias (5), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18)
 
 ## Últimos commits
+- 2026-11-21 `f26c873` fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)
 - 2026-11-20 `d5e7079` fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)
 - 2026-11-20 `66230ee` chore: registra A5 como concluido no backlog (#595)
 - 2026-11-20 `2ac2520` fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)
@@ -771,7 +772,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-20 `e7e7315` infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)
 - 2026-11-20 `d443a72` chore(config): documenta que a function health nao esta na allowlist do deploy (#584)
 - 2026-11-20 `de515ef` fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)
-- 2026-11-20 `9017094` fix(db): dropa policies permissive de sales/activities (USING true) (#582)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

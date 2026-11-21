@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d5e70798da27cb0816b32805550665bb900019b3",
+  "commit": "f26c87381ce97773d14255b80d1c590eadae8a0c",
   "branch": "main",
-  "data_commit": "2026-11-20T17:29:06-03:00",
+  "data_commit": "2026-11-21T08:35:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f26c873",
+    "data": "2026-11-21",
+    "assunto": "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)"
+   },
    {
     "sha": "d5e7079",
     "data": "2026-11-20",
@@ -126,14 +131,9 @@
     "sha": "cefd645",
     "data": "2026-11-17",
     "assunto": "docs(agentes): corrige o registro das telas órfãs após o #568 (#575)"
-   },
-   {
-    "sha": "58dbc25",
-    "data": "2026-11-17",
-    "assunto": "feat(sequências): melhor horário de envio por contato na inscrição da sequência (#574)"
    }
   ],
-  "arquivos_mudados_7d": 211,
+  "arquivos_mudados_7d": 202,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -227,7 +227,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -266,6 +266,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/pendencias/backlog-verificado.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "inventario/estado/edges.json",
     "mudancas": 6
    },
@@ -290,10 +294,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "docs/pendencias/backlog-verificado.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    }
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 198
+    "commits": 199
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3608,
-  "arquivos_codigo": 2572,
-  "linhas_codigo": 442588,
+  "arquivos_total": 3611,
+  "arquivos_codigo": 2573,
+  "linhas_codigo": 442690,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -334,12 +334,12 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 700,
+  "migrations": 701,
   "cron_jobs": 31,
   "testes": 246,
   "workflows": 27,
   "scripts": 78,
-  "docs_md": 216
+  "docs_md": 217
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -655,8 +655,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 319,
-   "linhas": 66457
+   "arquivos": 320,
+   "linhas": 66559
   },
   "tailwind.config.ts": {
    "arquivos": 1,

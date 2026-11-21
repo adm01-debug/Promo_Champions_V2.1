@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2332,
- "arestas": 9606,
+ "nos": 2333,
+ "arestas": 9607,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -220,6 +220,7 @@
   "supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts",
   "supabase/functions/pipeline-pulse-aggregator/contract_test.ts",
   "supabase/functions/process-race-event/index_test.ts",
+  "supabase/functions/process-scheduled-sends/authz_test.ts",
   "supabase/functions/race-commentary/index_test.ts",
   "supabase/functions/receive-quote-sync/security_test.ts",
   "supabase/functions/send-multichannel-message/authz_test.ts",

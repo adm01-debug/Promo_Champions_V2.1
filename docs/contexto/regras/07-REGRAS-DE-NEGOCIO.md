@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d5e70798da` · branch `main` · 2026-11-20 20:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f26c87381c` · branch `main` · 2026-11-21 11:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1560,7 +1560,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `passed` | compara, escreve | `src/hooks/useRetryTestRun.ts`<br>`src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
 | `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +59 |
+| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +57 |
 | `status` | `pending_approval` | compara, filtra | `supabase/functions/ai-agent-orchestrator/index.ts` |
 | `status` | `permanent` | compara | `src/hooks/email/failedDraftsHelpers.ts` |
 | `status` | `practiced` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
@@ -3829,6 +3829,7 @@ _nenhum item encontrado_
 | 5000 | `supabase/functions/pricing-intelligence/index.ts` |
 | 1 | `supabase/functions/process-race-event/index.ts` |
 | 3 | `supabase/functions/process-race-event/index.ts` |
+| 50 | `supabase/functions/process-scheduled-sends/authz_test.ts` |
 | 50 | `supabase/functions/process-scheduled-sends/index.ts` |
 | 10000 | `supabase/functions/qbr-generator/index.ts` |
 | 200 | `supabase/functions/qbr-scheduler/index.ts` |
@@ -3842,8 +3843,7 @@ _nenhum item encontrado_
 | 200 | `supabase/functions/revenue-intelligence/index.ts` |
 | 5000 | `supabase/functions/revenue-intelligence/index.ts` |
 | 10000 | `supabase/functions/revops-hub/index.ts` |
-| 5000 | `supabase/functions/revops-hub/index.ts` |
-| … +38 linhas — lista completa em `context.json` | |
+| … +39 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
