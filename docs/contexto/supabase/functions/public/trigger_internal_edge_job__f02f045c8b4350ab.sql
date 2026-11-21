@@ -12,7 +12,7 @@ DECLARE
 BEGIN
   IF p_function_name IS NULL OR NOT (
     p_function_name = ANY (ARRAY[
-      -- operacionais pré-existentes
+      -- operacionais pre-existentes
       'notify-v4-quote-status',
       'check-v4-callback-alerts',
       'cron-failure-alerter',
@@ -23,7 +23,7 @@ BEGIN
       'wal-health-alert',
       'winloss-webhook-health-monitor',
       'webvitals-regression-alert',
-      -- máquina de vendas (Onda 1)
+      -- maquina de vendas (Onda 1)
       'sequence-runner',
       'process-cadence-tasks',
       'process-scheduled-sends',
@@ -36,10 +36,12 @@ BEGIN
       'auto-reassign-inactive',
       'access-denied-alerts',
       'scheduled-reports-runner',
-      -- gamificação (Onda B)
+      -- gamificacao (Onda B)
       'rotate-daily-challenges',
-      -- integração Bitrix24
-      'bitrix24-sync'
+      -- integracao Bitrix24
+      'bitrix24-sync',
+      -- busca semantica
+      'semantic-reindex-batch'
     ]::text[])
   ) THEN
     RAISE EXCEPTION 'internal_edge_job_not_allowed';

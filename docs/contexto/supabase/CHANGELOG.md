@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 19:12 UTC
+
+- **cron jobs** adicionado (1): `95:semantic-reindex-daily`
+- **functions** alterado (1): `public.trigger_internal_edge_job(p_function_name text)`
+- **migrations** adicionado (1): `20261121000000_20261121000000_fix_search_path_similarity_e_pgvector`
+
 ## 2026-11-21 18:15 UTC
 
 - **functions** alterado (3): `public.match_semantic(_query_embedding vector, _match_count integer, _entity_types text[])`, `public.search_products_semantic(_keywords text[], _query text, _limit integer)`, `public.search_products_vector(_query_embedding vector, _limit integer)`

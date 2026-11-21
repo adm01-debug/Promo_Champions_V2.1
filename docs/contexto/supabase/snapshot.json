@@ -80723,6 +80723,15 @@
           "jobname": "scheduled-reports-runner-hourly",
           "schedule": "10 * * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "SELECT public.trigger_internal_edge_job('semantic-reindex-batch');",
+          "database": "postgres",
+          "jobid": 95,
+          "jobname": "semantic-reindex-daily",
+          "schedule": "0 5 * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -94680,7 +94689,8 @@
             "85:send-alert-notifications-5min",
             "86:auto-reassign-inactive-daily",
             "87:access-denied-alerts-hourly",
-            "88:scheduled-reports-runner-hourly"
+            "88:scheduled-reports-runner-hourly",
+            "95:semantic-reindex-daily"
           ],
           "db": [
             "public.admin_edge_cron_status"
@@ -94693,7 +94703,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "b99c5efc680cb1e4",
+        "definition_sha": "2a1d83f8eb4f474e",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -133404,6 +133414,11 @@
         "name": "20261120000000_t15_multichannel_retry",
         "statements": null,
         "version": "20261120000000"
+      },
+      {
+        "name": "20261121000000_fix_search_path_similarity_e_pgvector",
+        "statements": null,
+        "version": "20261121000000"
       }
     ],
     "policies": [

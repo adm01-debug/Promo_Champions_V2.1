@@ -49,3 +49,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`.
 | 86 | auto-reassign-inactive-daily | `0 9 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('auto-reassign-inactive');` |
 | 87 | access-denied-alerts-hourly | `0 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('access-denied-alerts');` |
 | 88 | scheduled-reports-runner-hourly | `10 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('scheduled-reports-runner');` |
+| 95 | semantic-reindex-daily | `0 5 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('semantic-reindex-batch');` |
