@@ -74,7 +74,9 @@ Deno.test("chamadores internos usam owner canônico e claim condicional", async 
   );
   assert(cadence.includes("ownerId,"), "cadência deve enviar ownerId canônico");
   assert(
-    scheduled.includes('.eq("status", "pending")'),
+    scheduled.includes(".or(") &&
+      scheduled.includes('status.eq.pending') &&
+      scheduled.includes('.eq("id", row.id)'),
     "agendados devem ter claim condicional",
   );
   assert(
