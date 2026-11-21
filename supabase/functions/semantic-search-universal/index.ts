@@ -100,7 +100,7 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
       });
     }
 
-    const embedding = await generateEmbedding(query, apiKey);
+    const embedding = await generateEmbedding(query, apiKey).catch(() => null);
 
     // Use user-context client so RLS + RPC see auth.uid()
     const supabase = createClient(
@@ -109,11 +109,13 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
       { global: { headers: { Authorization: authHeader } } },
     );
 
-    const { data: matches, error } = await supabase.rpc("match_semantic", {
-      _query_embedding: embedding as unknown as string,
-      _match_count: safeLimit,
-      _entity_types: entity_types ?? null,
-    });
+    const { data: matches, error } = embedding
+      ? await supabase.rpc("match_semantic", {
+        _query_embedding: embedding as unknown as string,
+        _match_count: safeLimit,
+        _entity_types: entity_types ?? null,
+      })
+      : { data: [], error: null } as { data: unknown[]; error: null };
     if (error) throw error;
 
     const results = (matches ?? []) as Array<{
@@ -127,8 +129,9 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
       if (chatApiKey) answer = await generateAnswer(query, results, chatApiKey);
     }
 
-    const payload = { query, results, count: results.length, answer };
-    cache.set(cacheKey, { ts: Date.now(), data: payload });
+    const payload = { query, results, count: results.length, answer, degraded: !embedding };
+    // Não cacheia resultado degradado: evita mascarar a recuperação do embedding.
+    if (embedding) cache.set(cacheKey, { ts: Date.now(), data: payload });
 
     return new Response(JSON.stringify(payload), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

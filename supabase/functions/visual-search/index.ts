@@ -235,14 +235,42 @@ Deno.serve(
 
       if (!embRes.ok) {
         console.error('Embedding error:', await embRes.text());
-        throw new Error('Failed to generate query embedding');
+        const { data: degradedProducts } = await supabase.rpc('search_products_semantic', {
+          _keywords: analysis.keywords,
+          _query: searchQuery,
+          _limit: limit,
+        });
+        return new Response(
+          JSON.stringify({
+            analysis,
+            results: degradedProducts ?? [],
+            count: (degradedProducts ?? []).length,
+            degraded: true,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
-      const embData = await embRes.json();
+      const embData = await embRes.json().catch(() => null);
       const queryEmbedding = embData?.data?.[0]?.embedding;
 
+      // Sem embedding a busca vetorial não roda: cai no índice textual (pg_trgm).
       if (!queryEmbedding) {
-        throw new Error('Invalid embedding response from AI Gateway');
+        console.warn('visual-search: sem embedding, usando busca textual');
+        const { data: legacyOnly } = await supabase.rpc('search_products_semantic', {
+          _keywords: analysis.keywords,
+          _query: searchQuery,
+          _limit: limit,
+        });
+        return new Response(
+          JSON.stringify({
+            analysis,
+            results: legacyOnly ?? [],
+            count: (legacyOnly ?? []).length,
+            degraded: true,
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const { data: products, error } = await supabase.rpc('search_products_vector', {
