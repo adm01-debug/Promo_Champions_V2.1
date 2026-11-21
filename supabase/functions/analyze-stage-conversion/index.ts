@@ -55,7 +55,7 @@ async function callAi(
   rate: number,
   lossReasons: { reason: string; count: number }[]
 ) {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!apiKey) return null;
   const tools = [
     {

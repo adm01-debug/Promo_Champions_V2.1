@@ -26,7 +26,7 @@ interface SaleRow {
   closed_at: string | null;
 }
 
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 async function classifyWithAI(
   notes: string,

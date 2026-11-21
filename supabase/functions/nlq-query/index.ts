@@ -191,7 +191,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     ]);
     if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
+    const apiKey = Deno.env.get('OPENROUTER_API_KEY');
     if (!apiKey) throw new Error('LOVABLE_API_KEY não configurada');
 
     const recentConversation: ChatMessage[] = Array.isArray(conversation)

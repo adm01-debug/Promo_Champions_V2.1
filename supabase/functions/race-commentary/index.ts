@@ -68,7 +68,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (!LOVABLE_API_KEY) {
       // Return 200 + skipped flag so the UI doesn't blank-screen when AI isn't configured
       return new Response(

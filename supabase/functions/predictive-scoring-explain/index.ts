@@ -92,7 +92,7 @@ async function generateNarrative(
   topDrivers: Driver[],
   recommendations: Recommendation[]
 ): Promise<string> {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   const fallback = `Score ${score} (${score >= baseline ? '+' : ''}${(score - baseline).toFixed(0)} pts vs média da carteira de ${baseline.toFixed(0)}). Principal alavanca: ${topDrivers[0]?.label ?? 'n/d'}. Próximo passo: ${recommendations[0]?.action ?? 'manter cadência'}.`;
 
   if (!apiKey) return fallback;

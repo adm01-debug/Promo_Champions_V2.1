@@ -170,9 +170,9 @@ Deno.serve(
       console.info('Coaching context:', JSON.stringify(context, null, 2));
 
       // Call AI for coaching insights
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
       if (!LOVABLE_API_KEY) {
-        throw new Error('LOVABLE_API_KEY not configured');
+        throw new Error('OPENROUTER_API_KEY not configured');
       }
 
       const systemPrompt = `Você é um coach de vendas experiente especializado em times de SDR e Closers. 

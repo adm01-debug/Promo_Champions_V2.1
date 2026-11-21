@@ -125,7 +125,7 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
     }));
 
     // Use a specific caching key based on salesperson_id and month
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     let ai_talking_points: string[] = [];
     
     // Optimization: Skip AI if data hasn't changed much or use short-circuit logic

@@ -23,7 +23,7 @@ interface PredictBody {
   limit?: number;
 }
 
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 // service_role necessário: lê/grava previsões de velocidade de deals de toda a carteira
 const admin = getServiceClient(

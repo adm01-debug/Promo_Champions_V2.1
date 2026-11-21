@@ -6,7 +6,7 @@ import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 interface Analysis {
   outcome: string;

@@ -49,7 +49,7 @@ async function generateAdvancedActions(supabase: SupabaseClient, params: {
   prob: number;
   risk: string;
 }): Promise<void> {
-  const apiKey = Deno.env.get("LOVABLE_API_KEY");
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!apiKey) return;
   const gap = Math.max(0, params.quota - params.p50);
   const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.";

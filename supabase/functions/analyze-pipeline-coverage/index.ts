@@ -199,7 +199,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       .slice(0, 8);
 
     const recommendations: Array<Record<string, unknown>> = [];
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (LOVABLE_API_KEY && worst.length > 0) {
       try {
         const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {

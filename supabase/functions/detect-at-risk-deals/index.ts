@@ -31,7 +31,7 @@ Deno.serve(
         });
       }
 
-      const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+      const lovableApiKey = Deno.env.get('OPENROUTER_API_KEY');
 
       // Análise read-only de um deal: o client do usuário aplica RLS, então o
       // chamador só analisa deals que ele pode ver.
