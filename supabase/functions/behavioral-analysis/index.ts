@@ -70,8 +70,8 @@ Deno.serve(
         );
       }
 
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+      const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+      if (!LOVABLE_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
 
       const systemPrompt = `Você é um analista comportamental sênior em vendas B2B. Analise a interação a seguir e retorne JSON estrito com:
 - disc: perfil DISC (Dominância, Influência, Estabilidade, Conformidade) — primary, secondary, scores 0-100, description curta

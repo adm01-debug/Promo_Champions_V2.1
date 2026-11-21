@@ -332,16 +332,16 @@ Deno.serve(
         { role: "user", content: message },
       ];
 
-      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+      const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
       if (!LOVABLE_API_KEY) {
-        return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
+        return new Response(JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
       const MODEL = "google/gemini-2.5-flash";
-      const upstream = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const upstream = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: MODEL, messages, stream: true }),

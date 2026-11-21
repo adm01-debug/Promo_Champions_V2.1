@@ -425,9 +425,9 @@ DIRETRIZES:
       },
     ];
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+      throw new Error('OPENROUTER_API_KEY is not configured');
     }
 
     const response = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {

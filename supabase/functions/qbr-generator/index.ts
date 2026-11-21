@@ -69,7 +69,7 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
     // AI narrative via Lovable AI Gateway
     let narrative = "";
     let recommendations: string[] = [];
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    const lovableKey = Deno.env.get('OPENROUTER_API_KEY');
     if (lovableKey) {
       const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
         method: "POST",

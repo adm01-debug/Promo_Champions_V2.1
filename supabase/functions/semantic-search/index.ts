@@ -81,8 +81,8 @@ Deno.serve(
         });
       }
 
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+      const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+      if (!LOVABLE_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
 
       // 1. Extract keywords + intent via Lovable AI (tool calling)
       const aiRes = await fetchWithTimeout(

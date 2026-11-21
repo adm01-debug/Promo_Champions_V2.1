@@ -99,7 +99,7 @@ Deno.serve(withRequestId('forecast-narrative', async (req, ctx) => {
     });
   }
 
-  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+  const lovableApiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!lovableApiKey) {
     return new Response(JSON.stringify({ error: 'AI service not configured' }), {
       status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

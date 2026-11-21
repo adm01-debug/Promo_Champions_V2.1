@@ -108,7 +108,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
+        Authorization: `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

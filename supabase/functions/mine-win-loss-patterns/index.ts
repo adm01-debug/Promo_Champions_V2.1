@@ -6,7 +6,7 @@ import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
 interface Analysis {
   outcome: string;
@@ -157,7 +157,7 @@ async function generateInsights(
       .sort((a, b) => (b.frequency as number) - (a.frequency as number))
       .slice(0, 20);
     const resp = await fetchWithTimeout(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {

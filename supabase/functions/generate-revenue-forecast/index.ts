@@ -163,7 +163,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     // AI summary via Lovable AI
     let ai_summary: string | null = null;
     let factors: unknown[] = [];
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get('OPENROUTER_API_KEY');
     if (apiKey && dealList.length > 0) {
       try {
         const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {

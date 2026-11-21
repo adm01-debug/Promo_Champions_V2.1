@@ -97,7 +97,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
     const userPrompt = `Analise o sentimento de cada janela da transcrição abaixo. Para cada janela retorne sentiment (very_negative|negative|neutral|positive|very_positive), score (-1.0 a 1.0), confidence (0-1) e excerpt (trecho mais representativo, máx 140 chars).\n\nJanelas:\n${windows

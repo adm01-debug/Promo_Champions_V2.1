@@ -233,7 +233,7 @@ Deno.serve(
 
         // AI recommendations
         let aiActions: string[] = [];
-        const apiKey = Deno.env.get('LOVABLE_API_KEY');
+        const apiKey = Deno.env.get('OPENROUTER_API_KEY');
         if (apiKey && topGaps.length > 0) {
           try {
             const prompt = `Vendedor: ${sp.name}. Top ${topGaps.length} gaps de performance vs equipe:\n${topGaps.map((g, i) => `${i + 1}. ${METRICS_META[g.key].label}: atual ${g.current.toFixed(2)}, equipe ${g.benchmark.toFixed(2)} (gap ${g.gap.toFixed(0)}%)`).join('\n')}\n\nGere uma ação de coaching curta e específica (máx 120 chars) para CADA gap. Responda em JSON: {"actions": ["ação 1", "ação 2", "ação 3"]}`;

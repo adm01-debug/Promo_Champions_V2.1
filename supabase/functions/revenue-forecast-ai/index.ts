@@ -144,7 +144,7 @@ Deno.serve(
       let risks: string[] = [];
       let opportunities: string[] = [];
 
-      if (includeAI && Deno.env.get('LOVABLE_API_KEY')) {
+      if (includeAI && Deno.env.get('OPENROUTER_API_KEY')) {
         try {
           const prompt = `Você é um analista de RevOps. Gere um resumo executivo curto (≤80 palavras) em PT-BR e 3 riscos + 3 oportunidades a partir destes dados de forecast (horizonte ${horizonDays}d):
 - Pipeline aberto: R$ ${agg.total_open_pipeline.toFixed(0)}
@@ -162,7 +162,7 @@ Deno.serve(
             {
               method: 'POST',
               headers: {
-                Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
+                Authorization: `Bearer ${Deno.env.get('OPENROUTER_API_KEY')}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({

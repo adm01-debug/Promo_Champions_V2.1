@@ -142,7 +142,7 @@ async function aiScore(ctx: DealContext): Promise<{
   recommended_actions: RecommendedAction[];
   recommendation: string;
 }> {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY');
+  const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   const fallback = () => {
     let score = 60;
     const factors: HealthFactor[] = [];

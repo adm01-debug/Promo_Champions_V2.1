@@ -250,7 +250,7 @@ Deno.serve(
 
       // AI INSIGHTS
       if (includeAI) {
-        const aiKey = Deno.env.get('LOVABLE_API_KEY');
+        const aiKey = Deno.env.get('OPENROUTER_API_KEY');
         if (aiKey) {
           try {
             const aiResp = await fetchWithTimeout(

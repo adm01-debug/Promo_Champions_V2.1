@@ -35,7 +35,7 @@ Deno.serve(withRequestId('generate-coaching-actions', async (req, _ctx) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const lovableKey = Deno.env.get('LOVABLE_API_KEY');
+  const lovableKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!lovableKey) {
     return new Response(JSON.stringify({ error: 'AI not configured' }), {
       status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -17,7 +17,7 @@ import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 import { businessMonthStartInstant } from '../_shared/business-date.ts';
 
-const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
+const lovableApiKey = Deno.env.get('OPENROUTER_API_KEY')!;
 
 const MAX_LIMIT = 10;
 

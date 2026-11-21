@@ -56,7 +56,7 @@ Deno.serve(
       const { recording_id } = await req.json();
       if (!recording_id) throw new Error("recording_id obrigatório");
 
-      const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+      const lovableKey = Deno.env.get('OPENROUTER_API_KEY');
       if (!lovableKey) throw new Error("LOVABLE_API_KEY ausente");
 
       // Escritas em coaching_actions exigem bypass de RLS; a leitura do recording
@@ -113,7 +113,7 @@ ${diarPreview}
 Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤120 chars) do trecho.`;
 
       const aiResp = await fetchWithTimeout(
-        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        "https://openrouter.ai/api/v1/chat/completions",
         {
           method: "POST",
           headers: {

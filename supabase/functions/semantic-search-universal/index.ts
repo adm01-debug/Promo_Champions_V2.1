@@ -38,7 +38,7 @@ async function generateAnswer(query: string, results: Array<{ entity_type: strin
   if (!results.length) return null;
   const ctx = results.slice(0, 5).map((r, i) => `[${i + 1}] (${r.entity_type}) ${r.content.slice(0, 400)}`).join("\n");
   try {
-    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({

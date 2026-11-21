@@ -124,10 +124,10 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
       );
     }
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get('OPENROUTER_API_KEY');
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
+        JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -189,7 +189,7 @@ ${body.custom_instructions ? `Instruções extras do vendedor: ${body.custom_ins
 
 Gere o e-mail agora chamando a tool emit_email.`;
 
-    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

@@ -178,7 +178,7 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
   try {
     const caller = await getUserClient(req);
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
 
     const body = await req.json().catch(() => ({}));
     const recording_id = body?.recording_id as string | undefined;

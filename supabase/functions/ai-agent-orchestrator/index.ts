@@ -8,7 +8,7 @@ import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY')!;
 
 const MAX_STEPS = 10;
 

@@ -42,7 +42,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+    const LOVABLE_API_KEY = Deno.env.get('OPENROUTER_API_KEY')!;
     // Escritas em stakeholders/committee_extraction_runs e a chamada interna a
     // calculate-committee-coverage exigem service_role; a leitura do recording
     // usa o client do usuário para garantir que o chamador só analise gravações
