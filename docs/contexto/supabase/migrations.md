@@ -704,3 +704,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261117200000 | [fix_match_reply_to_enrollment_sales_email](migrations/20261117200000_fix_match_reply_to_enrollment_sales_email.sql) | 0 |
 | 20261117210000 | [match_reply_to_enrollment_contato_de_conta](migrations/20261117210000_match_reply_to_enrollment_contato_de_conta.sql) | 0 |
 | 20261119700000 | [fix_rls_sales_activities_using_true](migrations/20261119700000_fix_rls_sales_activities_using_true.sql) | 2 |
+| 20261120000000 | [20261120000000_t15_multichannel_retry](migrations/20261120000000_20261120000000_t15_multichannel_retry.sql) | 0 |

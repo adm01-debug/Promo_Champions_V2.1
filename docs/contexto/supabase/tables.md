@@ -314,7 +314,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.saved_filters](tables/public/saved_filters.md) | table | sim | 8 | 8 | não | Filtros salvos por usuários para diferentes entidades |
 | [public.scheduled_report_runs](tables/public/scheduled_report_runs.md) | table | sim | 1 | 8 | não |  |
 | [public.scheduled_reports](tables/public/scheduled_reports.md) | table | sim | 4 | 15 | não |  |
-| [public.scheduled_sends](tables/public/scheduled_sends.md) | table | sim | 3 | 11 | não |  |
+| [public.scheduled_sends](tables/public/scheduled_sends.md) | table | sim | 3 | 13 | não |  |
 | [public.score_change_logs](tables/public/score_change_logs.md) | table | sim | 2 | 10 | não |  |
 | [public.sdr_alert_configs](tables/public/sdr_alert_configs.md) | table | sim | 1 | 7 | não |  |
 | [public.sdr_alert_history](tables/public/sdr_alert_history.md) | table | sim | 1 | 7 | não |  |

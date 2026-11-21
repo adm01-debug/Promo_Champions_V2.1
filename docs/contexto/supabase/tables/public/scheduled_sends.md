@@ -27,6 +27,8 @@
 | 9 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
 | 10 | `error` | `text` | sim |  |  |  |
 | 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 12 | `attempts` | `integer` | não | `0` |  |  |
+| 13 | `next_retry_at` | `timestamp with time zone` | sim |  |  |  |
 
 
 ## Constraints
@@ -37,7 +39,7 @@
 | scheduled_sends_optimization_source_check | CHECK | `CHECK (optimization_source = ANY (ARRAY['profile'::text, 'global'::text, 'manual'::text]))` |  |  | sim |
 | scheduled_sends_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | scheduled_sends_sale_id_fkey | FOREIGN KEY | `FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
-| scheduled_sends_status_check | CHECK | `CHECK (status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text, 'cancelled'::text]))` |  |  | sim |
+| scheduled_sends_status_check | CHECK | `CHECK (status = ANY (ARRAY['pending'::text, 'processing'::text, 'sent'::text, 'failed'::text, 'cancelled'::text]))` |  |  | sim |
 
 
 ## Índices
@@ -46,6 +48,7 @@
 |---|---|---|---|---|---|---|
 | idx_scheduled_sends_owner | btree | owner_id, created_at | não | sim |  | `CREATE INDEX idx_scheduled_sends_owner ON public.scheduled_sends USING btree (owner_id, created_at DESC)` |
 | idx_scheduled_sends_pending | btree | status, scheduled_for | não | sim | `(status = 'pending'::text)` | `CREATE INDEX idx_scheduled_sends_pending ON public.scheduled_sends USING btree (status, scheduled_for) WHERE (status = 'pending'::text)` |
+| idx_scheduled_sends_retry | btree | status, next_retry_at | não | sim | `(status = 'failed'::text)` | `CREATE INDEX idx_scheduled_sends_retry ON public.scheduled_sends USING btree (status, next_retry_at) WHERE (status = 'failed'::text)` |
 | idx_scheduled_sends_sale_id | btree | sale_id | não | sim |  | `CREATE INDEX idx_scheduled_sends_sale_id ON public.scheduled_sends USING btree (sale_id)` |
 | scheduled_sends_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX scheduled_sends_pkey ON public.scheduled_sends USING btree (id)` |
 

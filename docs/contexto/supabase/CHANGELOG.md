@@ -2,6 +2,15 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-21 12:18 UTC
+
+- **colunas** adicionado (2): `public.scheduled_sends.attempts`, `public.scheduled_sends.next_retry_at`
+- **constraints** alterado (1): `public.scheduled_sends.scheduled_sends_status_check`
+- **indexes** adicionado (1): `public.idx_scheduled_sends_retry`
+- **migrations** adicionado (1): `20261120000000_20261120000000_t15_multichannel_retry`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_24`
+- **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_17`
+
 ## 2026-11-20 20:15 UTC
 
 - **functions** alterado (2): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`

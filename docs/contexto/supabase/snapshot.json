@@ -42907,6 +42907,32 @@
       },
       {
         "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "attempts",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "scheduled_sends",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "next_retry_at",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "scheduled_sends",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -75331,7 +75357,7 @@
           "status"
         ],
         "deferrable": false,
-        "definition": "CHECK (status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text, 'cancelled'::text]))",
+        "definition": "CHECK (status = ANY (ARRAY['pending'::text, 'processing'::text, 'sent'::text, 'failed'::text, 'cancelled'::text]))",
         "name": "scheduled_sends_status_check",
         "on_delete": null,
         "on_update": null,
@@ -119589,6 +119615,21 @@
       },
       {
         "columns": [
+          "status",
+          "next_retry_at"
+        ],
+        "definition": "CREATE INDEX idx_scheduled_sends_retry ON public.scheduled_sends USING btree (status, next_retry_at) WHERE (status = 'failed'::text)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_scheduled_sends_retry",
+        "predicate": "(status = 'failed'::text)",
+        "schema": "public",
+        "table": "scheduled_sends"
+      },
+      {
+        "columns": [
           "sale_id"
         ],
         "definition": "CREATE INDEX idx_scheduled_sends_sale_id ON public.scheduled_sends USING btree (sale_id)",
@@ -133358,6 +133399,11 @@
         "statements": 2,
         "statements_sha": "0887620204acf077",
         "version": "20261119700000"
+      },
+      {
+        "name": "20261120000000_t15_multichannel_retry",
+        "statements": null,
+        "version": "20261120000000"
       }
     ],
     "policies": [
@@ -146174,11 +146220,6 @@
         {
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
-          "table": "messages_2026_11_17"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
           "table": "messages_2026_11_18"
         },
         {
@@ -146205,6 +146246,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_23"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_24"
         }
       ]
     },

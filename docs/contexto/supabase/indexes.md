@@ -1085,6 +1085,7 @@ Uso e tamanho em `stats.md`.
 | public.scheduled_reports | scheduled_reports_pkey | btree | id | sim | sim |  |
 | public.scheduled_sends | idx_scheduled_sends_owner | btree | owner_id, created_at | não | sim |  |
 | public.scheduled_sends | idx_scheduled_sends_pending | btree | status, scheduled_for | não | sim | `(status = 'pending'::text)` |
+| public.scheduled_sends | idx_scheduled_sends_retry | btree | status, next_retry_at | não | sim | `(status = 'failed'::text)` |
 | public.scheduled_sends | idx_scheduled_sends_sale_id | btree | sale_id | não | sim |  |
 | public.scheduled_sends | scheduled_sends_pkey | btree | id | sim | sim |  |
 | public.score_change_logs | idx_score_change_logs_api_token_id | btree | api_token_id | não | sim |  |
