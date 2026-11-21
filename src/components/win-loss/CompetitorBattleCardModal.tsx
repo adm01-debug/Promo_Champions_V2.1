@@ -124,7 +124,7 @@ export function CompetitorBattleCardModal({ open, onOpenChange, competitor }: Pr
             <Card className="border-border/50">
               <CardContent className="p-3">
                 <p className="text-xs font-medium flex items-center gap-1.5 mb-2">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" /> Objeções comuns &
+                  <Sparkles className="h-3.5 w-3.5 text-primary" /> Objeções comuns &amp;
                   resposta
                 </p>
                 <div className="space-y-3">
