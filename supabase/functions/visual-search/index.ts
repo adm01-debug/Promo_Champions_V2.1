@@ -59,6 +59,10 @@ Deno.serve(
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
       if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
+      // Chat multimodal roda no OpenRouter; embeddings continuam no Lovable.
+      const CHAT_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
+      if (!CHAT_API_KEY) throw new Error('OPENROUTER_API_KEY not configured');
+
       // Normalize to data URL
       const imageUrl = image.startsWith('data:')
         ? image
@@ -70,7 +74,7 @@ Deno.serve(
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${CHAT_API_KEY}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({

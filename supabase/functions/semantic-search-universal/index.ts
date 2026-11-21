@@ -122,7 +122,9 @@ Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
 
     let answer: string | null = null;
     if (with_answer && results.length > 0) {
-      answer = await generateAnswer(query, results, apiKey);
+      // Embeddings usam a chave Lovable; a geração de resposta roda no OpenRouter.
+      const chatApiKey = Deno.env.get("OPENROUTER_API_KEY");
+      if (chatApiKey) answer = await generateAnswer(query, results, chatApiKey);
     }
 
     const payload = { query, results, count: results.length, answer };
