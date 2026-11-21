@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.6.2 (#599)",
+   "chore(types): sincroniza types.ts com o banco oficial [auto] (#601)",
    "docs: documenta fluxo de dry-run do apply-migration no README do snapshot (#600)",
    "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)",
-   "chore(main): release 1.6.1 (#579)",
-   "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)",
-   "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)"
+   "chore(main): release 1.6.1 (#579)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

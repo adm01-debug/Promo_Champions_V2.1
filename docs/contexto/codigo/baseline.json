@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0f5601de1272c554d297d7faef90a1d54018375d",
+  "commit": "33b3f1c639462913279e1f85adea71f468a2e751",
   "branch": "main",
-  "data_commit": "2026-11-21T10:05:26-03:00",
+  "data_commit": "2026-11-21T10:31:54-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "33b3f1c",
+    "data": "2026-11-21",
+    "assunto": "chore(main): release 1.6.2 (#599)"
+   },
+   {
+    "sha": "f1b58e0",
+    "data": "2026-11-21",
+    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#601)"
+   },
    {
     "sha": "0f5601d",
     "data": "2026-11-21",
@@ -121,16 +131,6 @@
     "sha": "d960322",
     "data": "2026-11-18",
     "assunto": "chore(main): release 1.6.0 (#577)"
-   },
-   {
-    "sha": "cc8d2d2",
-    "data": "2026-11-18",
-    "assunto": "feat: dependency review nos PRs (#576)"
-   },
-   {
-    "sha": "998e3ad",
-    "data": "2026-11-17",
-    "assunto": "chore(main): release 1.5.0 (#485)"
    }
   ],
   "arquivos_mudados_7d": 204,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "pasta": "package.json",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 41
+    "mudancas": 42
    },
    {
     "arquivo": "package.json",
-    "mudancas": 41
+    "mudancas": 42
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -227,19 +227,19 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "arquivo": "CHANGELOG.md",
     "mudancas": 9
    },
    {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 8
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 9
    },
    {
     "arquivo": ".github/workflows/ci-failure-alert.yml",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 17
+    "commits": 19
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3611,
   "arquivos_codigo": 2573,
-  "linhas_codigo": 442690,
+  "linhas_codigo": 442696,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -620,7 +620,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25673
+   "linhas": 25679
   },
   "src/lib": {
    "arquivos": 80,
@@ -686,7 +686,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25604
+   "linhas": 25610
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",

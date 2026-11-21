@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0f5601de12` · branch `main` · 2026-11-21 13:21 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `33b3f1c639` · branch `main` · 2026-11-21 13:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -461,8 +461,6 @@
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_recordings` |  |
 | coluna | coluna `sale_id` usada no código não existe no schema de `coaching_actions` |  |
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_sentiment_timeline` |  |
-| coluna | coluna `attempts` usada no código não existe no schema de `scheduled_sends` |  |
-| coluna | coluna `next_retry_at` usada no código não existe no schema de `scheduled_sends` |  |
 | tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `alem_do_limite` usada no código não existe nas migrations/types do repo | `scripts/ci/inventario-rotas.unit.mjs` |
 | tabela | tabela `auth_users_view` usada no código não existe nas migrations/types do repo | `src/components/settings/FollowUpTerritoryRules.tsx` |
