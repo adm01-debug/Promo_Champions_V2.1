@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.1...promo-champions-v2-v1.6.2) (2026-11-21)
+
+
+### Correções
+
+* escapa ampersand em texto JSX no CompetitorBattleCardModal ([#598](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/598)) ([de31d24](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/de31d242328a82b5fb758ada0431d6d6970a1f33))
+
 ## [1.6.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.0...promo-champions-v2-v1.6.1) (2026-11-21)
 
 
