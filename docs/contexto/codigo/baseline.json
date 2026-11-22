@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a8961baf9fca307914e5f75d8f0e14514eb09723",
+  "commit": "67dc32ec63ec6f8438187f0cdfc3db0cec4ba7e8",
   "branch": "main",
-  "data_commit": "2026-11-22T09:43:39-03:00",
+  "data_commit": "2026-11-22T10:16:53-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "67dc32e",
+    "data": "2026-11-22",
+    "assunto": "fix: reconcilia retry do pg_net em transacao separada (#612)"
+   },
    {
     "sha": "a8961ba",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "8203561",
     "data": "2026-11-20",
     "assunto": "docs: linha de base e regras de negocio da Fase 0 (#587)"
-   },
-   {
-    "sha": "7bf29f5",
-    "data": "2026-11-20",
-    "assunto": "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)"
    }
   ],
-  "arquivos_mudados_7d": 196,
+  "arquivos_mudados_7d": 197,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -222,31 +222,27 @@
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 11
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 12
    },
    {
     "arquivo": "CHANGELOG.md",
     "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 9
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/ci-failure-alert.yml",
-    "mudancas": 7
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 8
    },
    {
-    "arquivo": ".github/workflows/db-backup.yml",
+    "arquivo": ".github/workflows/ci-failure-alert.yml",
     "mudancas": 7
    },
    {
@@ -260,6 +256,10 @@
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/db-backup.yml",
+    "mudancas": 6
    },
    {
     "arquivo": "docs/pendencias/backlog-verificado.md",
@@ -278,10 +278,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 5
-   },
-   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
@@ -296,12 +292,16 @@
    {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
+   },
+   {
+    "arquivo": "release-please-config.json",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 193
+    "commits": 194
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3617,
+  "arquivos_total": 3618,
   "arquivos_codigo": 2574,
-  "linhas_codigo": 442962,
+  "linhas_codigo": 442971,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -330,8 +330,8 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 706,
-  "cron_jobs": 32,
+  "migrations": 707,
+  "cron_jobs": 33,
   "testes": 246,
   "workflows": 27,
   "scripts": 78,
@@ -616,7 +616,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25679
+   "linhas": 25688
   },
   "src/lib": {
    "arquivos": 80,
@@ -682,7 +682,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25610
+   "linhas": 25619
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",

@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 706,
+ "migrations": 707,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -482,6 +482,7 @@
   "notify_sale_completion",
   "notify_salesperson_on_bonus_paid",
   "pick_step_variant",
+  "post_internal_edge_job",
   "private",
   "process_audit_log",
   "process_lead_intent_event",
@@ -516,6 +517,7 @@
   "resolve_weekly_matchups",
   "restore_deleted_record",
   "restore_record",
+  "retry_pending_internal_edge_jobs",
   "route_unassigned_client_portfolio",
   "schedule_next_qbrs",
   "search_call_library",
@@ -2361,6 +2363,11 @@
    "nome": "reset-pg-stat-statements-weekly",
    "agenda": "0 4 * * 1",
    "migration": "20260712212750_1c79fa22-b782-498b-a765-b4766cd0a61a.sql"
+  },
+  {
+   "nome": "retry-pending-internal-edge-jobs-2min",
+   "agenda": "*/2 * * * *",
+   "migration": "20261124130000_reconcilia_retry_edge_jobs.sql"
   },
   {
    "nome": "rotate-daily-challenges-daily",

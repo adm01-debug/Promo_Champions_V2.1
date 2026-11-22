@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a8961baf9f` · branch `main` · 2026-11-22 12:44 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `67dc32ec63` · branch `main` · 2026-11-22 13:19 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -929,6 +929,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Função | Mensagem | Origem |
 |---|---|---|
+| `post_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
+| `post_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
 | `compute_cohort_retention` | Cohort não encontrado ou sem permissão | `supabase/schema.sql` |
 | `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/schema.sql` |
 | `add_league_weekly_xp` | Not authorized | `supabase/schema.sql` |
@@ -3541,7 +3543,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +152 linhas — lista completa em `context.json` | |
+| … +153 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4153,7 +4155,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +697 linhas — lista completa em `context.json` | |
+| … +699 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4736,6 +4738,7 @@ _nenhum item encontrado_
 | `notify` | `supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql` |
 | `notify` | `supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql` |
 | `notify` | `supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql` |
+| `notify` | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código
