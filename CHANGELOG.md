@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.3](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.2...promo-champions-v2-v1.7.3) (2026-11-22)
+
+
+### Correções
+
+* bitrix24-sync responde 503 quando credenciais faltam ([#619](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/619)) ([8ed528b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8ed528beae80d3a1e37521719c218ea9f4ada21a))
+
+
+### Performance
+
+* elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs ([#620](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/620)) ([48c711b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/48c711b564653a41fc86a92a7ffe6070507e779d))
+
 ## [1.7.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.1...promo-champions-v2-v1.7.2) (2026-11-22)
 
 
