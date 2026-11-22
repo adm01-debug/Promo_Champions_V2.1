@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
+
+
+### Correções
+
+* timeout do pg_net para funcoes com DNS lento medido ([#618](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/618)) ([fc6f8f9](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fc6f8f9a9eb6610c4375653b36c89868a36fc346))
+
 ## [1.7.3](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.2...promo-champions-v2-v1.7.3) (2026-11-22)
 
 
