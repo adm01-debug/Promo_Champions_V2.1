@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 14:13 UTC
+
+- **cron jobs** adicionado (1): `98:retry-pending-internal-edge-jobs-2min`
+- **cron jobs** removido (1): `97:retry-pending-internal-edge-jobs-2min`
+- **functions** alterado (2): `public.post_internal_edge_job(p_function_name text, p_attempt integer, p_max_attempts integer)`, `public.retry_pending_internal_edge_jobs()`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_25`
+
 ## 2026-11-22 13:12 UTC
 
 - **cron jobs** adicionado (1): `97:retry-pending-internal-edge-jobs-2min`

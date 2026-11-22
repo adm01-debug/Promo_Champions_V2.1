@@ -50,4 +50,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`.
 | 87 | access-denied-alerts-hourly | `0 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('access-denied-alerts');` |
 | 88 | scheduled-reports-runner-hourly | `10 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('scheduled-reports-runner');` |
 | 95 | semantic-reindex-daily | `0 5 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('semantic-reindex-batch');` |
-| 97 | retry-pending-internal-edge-jobs-2min | `*/2 * * * *` | sim | postgres | postgres | `SELECT public.retry_pending_internal_edge_jobs();` |
+| 98 | retry-pending-internal-edge-jobs-2min | `*/2 * * * *` | sim | postgres | postgres | `SELECT public.retry_pending_internal_edge_jobs();` |
