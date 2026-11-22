@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b80439c466` · branch `main` · 2026-11-22 14:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `88f8cde54f` · branch `main` · 2026-11-22 15:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -929,8 +929,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Função | Mensagem | Origem |
 |---|---|---|
-| `post_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
-| `post_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
+| `post_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql` |
+| `post_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql` |
 | `compute_cohort_retention` | Cohort não encontrado ou sem permissão | `supabase/schema.sql` |
 | `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/schema.sql` |
 | `add_league_weekly_xp` | Not authorized | `supabase/schema.sql` |

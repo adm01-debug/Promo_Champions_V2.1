@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b80439c4668bb55fc989c8c3e3ed91099263c10b",
+  "commit": "88f8cde54f3b803b227b4aee3d6c01f535e0c7e6",
   "branch": "main",
-  "data_commit": "2026-11-22T11:46:12-03:00",
+  "data_commit": "2026-11-22T12:24:23-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "88f8cde",
+    "data": "2026-11-22",
+    "assunto": "fix: timeout do pg_net por funcao no dispatcher de crons (#616)"
+   },
    {
     "sha": "b80439c",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "be50d67",
     "data": "2026-11-20",
     "assunto": "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)"
-   },
-   {
-    "sha": "76bcae8",
-    "data": "2026-11-20",
-    "assunto": "fix: grava path do PDF de quote em bucket privado (#590)"
    }
   ],
-  "arquivos_mudados_7d": 207,
+  "arquivos_mudados_7d": 208,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 42
+    "mudancas": 41
    },
    {
     "arquivo": "package.json",
-    "mudancas": 42
+    "mudancas": 41
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -214,11 +214,11 @@
     "mudancas": 17
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 12
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 13
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 197
+    "commits": 198
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3622,
+  "arquivos_total": 3623,
   "arquivos_codigo": 2578,
-  "linhas_codigo": 443174,
+  "linhas_codigo": 443178,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -330,7 +330,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 707,
+  "migrations": 708,
   "cron_jobs": 33,
   "testes": 246,
   "workflows": 27,
@@ -616,7 +616,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25688
+   "linhas": 25692
   },
   "src/lib": {
    "arquivos": 80,
@@ -682,7 +682,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25619
+   "linhas": 25623
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
