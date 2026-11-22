@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `504a53e91c` · branch `main` · 2026-11-22 12:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a8961baf9f` · branch `main` · 2026-11-22 12:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4153,7 +4153,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +695 linhas — lista completa em `context.json` | |
+| … +697 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4735,6 +4735,7 @@ _nenhum item encontrado_
 | `notify_sale_completion` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `notify` | `supabase/migrations/20261112224500_fix_agenda_crons_maquina_vendas.sql` |
 | `notify` | `supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql` |
+| `notify` | `supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código

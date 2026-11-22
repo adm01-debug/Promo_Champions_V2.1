@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "504a53e91c5b60c7bd194b1a85c467e8ab3f508d",
+  "commit": "a8961baf9fca307914e5f75d8f0e14514eb09723",
   "branch": "main",
-  "data_commit": "2026-11-22T09:35:42-03:00",
+  "data_commit": "2026-11-22T09:43:39-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a8961ba",
+    "data": "2026-11-22",
+    "assunto": "fix: adiciona retry em trigger_internal_edge_job quando o pg_net falha no DNS (#609)"
+   },
    {
     "sha": "504a53e",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "7bf29f5",
     "data": "2026-11-20",
     "assunto": "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)"
-   },
-   {
-    "sha": "e7e7315",
-    "data": "2026-11-20",
-    "assunto": "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)"
    }
   ],
-  "arquivos_mudados_7d": 195,
+  "arquivos_mudados_7d": 196,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 45
+    "mudancas": 44
    },
    {
     "arquivo": "package.json",
-    "mudancas": 45
+    "mudancas": 44
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 192
+    "commits": 193
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3616,
+  "arquivos_total": 3617,
   "arquivos_codigo": 2574,
   "linhas_codigo": 442962,
   "rotas": 170,
@@ -330,7 +330,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 417,
-  "migrations": 705,
+  "migrations": 706,
   "cron_jobs": 32,
   "testes": 246,
   "workflows": 27,
