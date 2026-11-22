@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
+  "sha": "504a53e91c5b60c7bd194b1a85c467e8ab3f508d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-21 21:09 UTC",
+  "generated_at": "2026-11-22 12:36 UTC",
   "files_total": 3631,
   "code_files": 3288,
   "code_lines": 477147
@@ -297373,10 +297373,21 @@
   }
  },
  "git": {
-  "sha": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
+  "sha": "504a53e91c5b60c7bd194b1a85c467e8ab3f508d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "504a53e",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "374d7d8",
     "date": "2026-11-21",
@@ -297721,21 +297732,20 @@
     "files": [
      "src/integrations/supabase/types.ts"
     ]
-   },
-   {
-    "sha": "9f4dba8",
-    "date": "2026-11-19",
-    "author": "adm01-debug",
-    "subject": "fix: adiciona --yes no deploy de edge functions para CI (#578)",
-    "files": [
-     ".github/workflows/deploy.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/pendencias/backlog-verificado.md",
     6
+   ],
+   [
+    "package-lock.json",
+    5
+   ],
+   [
+    "package.json",
+    5
    ],
    [
     ".release-please-manifest.json",
@@ -297746,23 +297756,15 @@
     4
    ],
    [
-    "package-lock.json",
-    4
-   ],
-   [
-    "package.json",
-    4
-   ],
-   [
-    ".github/workflows/deploy.yml",
-    4
-   ],
-   [
     "supabase/functions/semantic-search-universal/index.ts",
     3
    ],
    [
     "docs/DEPLOYMENT.md",
+    3
+   ],
+   [
+    ".github/workflows/deploy.yml",
     3
    ],
    [
@@ -297790,6 +297792,10 @@
     2
    ],
    [
+    "deno.lock",
+    1
+   ],
+   [
     "src/hooks/semantic/useReindexBatch.ts",
     1
    ],
@@ -297807,10 +297813,6 @@
    ],
    [
     "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
-    1
-   ],
-   [
-    "supabase/seed.sql",
     1
    ]
   ]

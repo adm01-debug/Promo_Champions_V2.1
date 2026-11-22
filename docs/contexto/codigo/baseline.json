@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "374d7d80a26fa46ee41decd96e4077b69e6ac223",
+  "commit": "504a53e91c5b60c7bd194b1a85c467e8ab3f508d",
   "branch": "main",
-  "data_commit": "2026-11-21T18:08:54-03:00",
+  "data_commit": "2026-11-22T09:35:42-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "504a53e",
+    "data": "2026-11-22",
+    "assunto": "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)"
+   },
    {
     "sha": "374d7d8",
     "data": "2026-11-21",
@@ -126,11 +131,6 @@
     "sha": "e7e7315",
     "data": "2026-11-20",
     "assunto": "infra(ci): deploy de todas as edge functions (deploy dinamico) (#585)"
-   },
-   {
-    "sha": "d443a72",
-    "data": "2026-11-20",
-    "assunto": "chore(config): documenta que a function health nao esta na allowlist do deploy (#584)"
    }
   ],
   "arquivos_mudados_7d": 195,
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "src/components/race",
@@ -192,18 +192,18 @@
     "mudancas": 15
    },
    {
-    "pasta": "src/components/clients",
+    "pasta": "deno.lock",
     "mudancas": 14
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 44
+    "mudancas": 45
    },
    {
     "arquivo": "package.json",
-    "mudancas": 44
+    "mudancas": 45
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
@@ -262,10 +262,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 6
-   },
-   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
@@ -280,6 +276,10 @@
    {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 5
    },
    {
     "arquivo": ".github/workflows/release-please.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 195
+    "commits": 192
    },
    {
     "autor": "dependabot[bot]",

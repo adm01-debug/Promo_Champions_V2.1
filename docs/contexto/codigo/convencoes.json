@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)",
    "chore(main): release 1.7.1 (#607)",
    "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)",
    "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)",
-   "chore(release): 1.7.0 (#605)",
-   "fix: corrige chave de chat e search_path da busca semantica (#604)"
+   "chore(release): 1.7.0 (#605)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
