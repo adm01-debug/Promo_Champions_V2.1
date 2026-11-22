@@ -1021,8 +1021,8 @@
   {
    "nome": "bitrix24-sync",
    "entrada": "supabase/functions/bitrix24-sync/index.ts",
-   "arquivos": 1,
-   "linhas": 1184,
+   "arquivos": 2,
+   "linhas": 1241,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

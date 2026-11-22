@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1976a23ee0eed6e0eb961b2c8edec805449a90b9` (2026-11-22T13:35:44-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8ed528beae80d3a1e37521719c218ea9f4ada21a` (2026-11-22T15:34:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2497), SQL (718), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2498), SQL (718), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3624 |
-| arquivos_codigo | 2578 |
-| linhas_codigo | 443178 |
+| arquivos_total | 3625 |
+| arquivos_codigo | 2579 |
+| linhas_codigo | 443235 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -579,14 +579,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21830 nós · 66840 arestas · 1533 comunidades · grafo do commit `1976a23e`
-- comunidades maiores: schema.sql (785), CardContent (362), Input (287), Índice (277), vitest (256), Button (239), Skeleton (237), client.ts (234), getCorsHeaders (226), SelectContent (216), TableRow (213), ref_npm_supabase (201)
+- 21833 nós · 66842 arestas · 1508 comunidades · grafo do commit `8ed528be`
+- comunidades maiores: schema.sql (785), Card (619), lucide-react (429), Badge (370), Input (307), Índice (279), vitest (252), client.ts (247), button.tsx (238), AccountBasedSelling.tsx (212), TableRow (207), Button (206)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (40)
-- package.json (40)
+- package-lock.json (39)
+- package.json (39)
 - RELATORIO_CI.md (18)
 - deno.lock (17)
 - src/integrations/supabase/types.ts (13)
@@ -759,6 +759,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.1...promo-champions-v2-v1.7.2) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-22 `8ed528b` fix: bitrix24-sync responde 503 quando credenciais faltam (#619)
 - 2026-11-22 `1976a23` chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)
 - 2026-11-22 `aec099f` chore(main): release 1.7.2 (#611)
 - 2026-11-22 `88f8cde` fix: timeout do pg_net por funcao no dispatcher de crons (#616)
@@ -773,7 +774,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `bff6aa6` fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)
 - 2026-11-21 `a122081` chore(release): 1.7.0 (#605)
 - 2026-11-21 `6e92a51` fix: corrige chave de chat e search_path da busca semantica (#604)
-- 2026-11-21 `b20af81` feat: troca IA de chat do Lovable para OpenRouter (#603)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1976a23ee0eed6e0eb961b2c8edec805449a90b9",
+  "commit": "8ed528beae80d3a1e37521719c218ea9f4ada21a",
   "branch": "main",
-  "data_commit": "2026-11-22T13:35:44-03:00",
+  "data_commit": "2026-11-22T15:34:26-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "8ed528b",
+    "data": "2026-11-22",
+    "assunto": "fix: bitrix24-sync responde 503 quando credenciais faltam (#619)"
+   },
    {
     "sha": "1976a23",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "2ac2520",
     "data": "2026-11-20",
     "assunto": "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)"
-   },
-   {
-    "sha": "0e9fef2",
-    "data": "2026-11-20",
-    "assunto": "chore: registra T22 como consolidado na main (#593)"
    }
   ],
-  "arquivos_mudados_7d": 210,
+  "arquivos_mudados_7d": 212,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "package.json",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -278,6 +278,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 6
+   },
+   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
-   },
-   {
-    "arquivo": "release-please-config.json",
-    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 199
+    "commits": 200
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3624,
-  "arquivos_codigo": 2578,
-  "linhas_codigo": 443178,
+  "arquivos_total": 3625,
+  "arquivos_codigo": 2579,
+  "linhas_codigo": 443235,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 325,
-   "linhas": 67015
+   "arquivos": 326,
+   "linhas": 67072
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-   "linhas": 1184
+   "linhas": 1206
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",

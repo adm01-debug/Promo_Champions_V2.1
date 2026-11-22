@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2338,
+ "nos": 2339,
  "arestas": 9612,
  "hubs": [
   {
@@ -192,6 +192,7 @@
   "src/lib/orderTracking/stages.ts",
   "supabase/functions/access-denied-alerts/config_guard_test.ts",
   "supabase/functions/auto-reassign-inactive/contract_test.ts",
+  "supabase/functions/bitrix24-sync/config_guard_test.ts",
   "supabase/functions/campaign-health-alert/authz_test.ts",
   "supabase/functions/check-lead-sla/embed_fk_test.ts",
   "supabase/functions/detect-winloss-at-risk/_dump_scenarios.ts",
