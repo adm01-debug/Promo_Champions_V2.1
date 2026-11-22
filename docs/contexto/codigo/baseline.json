@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fe3bf20e32510b782c49c47bb694f5db02c896c0",
+  "commit": "b80439c4668bb55fc989c8c3e3ed91099263c10b",
   "branch": "main",
-  "data_commit": "2026-11-22T11:04:11-03:00",
+  "data_commit": "2026-11-22T11:46:12-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b80439c",
+    "data": "2026-11-22",
+    "assunto": "fix: guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes (#615)"
+   },
    {
     "sha": "fe3bf20",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "76bcae8",
     "data": "2026-11-20",
     "assunto": "fix: grava path do PDF de quote em bucket privado (#590)"
-   },
-   {
-    "sha": "bb4c144",
-    "data": "2026-11-20",
-    "assunto": "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)"
    }
   ],
-  "arquivos_mudados_7d": 204,
+  "arquivos_mudados_7d": 207,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 43
+    "mudancas": 42
    },
    {
     "arquivo": "package.json",
-    "mudancas": 43
+    "mudancas": 42
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 196
+    "commits": 197
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3621,
-  "arquivos_codigo": 2577,
-  "linhas_codigo": 443099,
+  "arquivos_total": 3622,
+  "arquivos_codigo": 2578,
+  "linhas_codigo": 443174,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 324,
-   "linhas": 66940
+   "arquivos": 325,
+   "linhas": 67015
   },
   "tailwind.config.ts": {
    "arquivos": 1,

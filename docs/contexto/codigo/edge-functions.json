@@ -1073,7 +1073,7 @@
    "nome": "broadcast-sale-notification",
    "entrada": "supabase/functions/broadcast-sale-notification/index.ts",
    "arquivos": 1,
-   "linhas": 248,
+   "linhas": 263,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3573,8 +3573,8 @@
   {
    "nome": "new-device-alert",
    "entrada": "supabase/functions/new-device-alert/index.ts",
-   "arquivos": 1,
-   "linhas": 302,
+   "arquivos": 2,
+   "linhas": 346,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5175,7 +5175,7 @@
    "nome": "sdr-consecutive-alerts",
    "entrada": "supabase/functions/sdr-consecutive-alerts/index.ts",
    "arquivos": 1,
-   "linhas": 530,
+   "linhas": 546,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

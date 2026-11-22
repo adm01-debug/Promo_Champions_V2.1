@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2337,
+ "nos": 2338,
  "arestas": 9612,
  "hubs": [
   {
@@ -218,6 +218,7 @@
   "supabase/functions/inbound-email-webhook/contract_test.ts",
   "supabase/functions/lead-scoring/lead-scoring_test.ts",
   "supabase/functions/log-web-vitals/security_test.ts",
+  "supabase/functions/new-device-alert/config_guard_test.ts",
   "supabase/functions/personal-assistant-stream/fallback_test.ts",
   "supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts",
   "supabase/functions/pipeline-pulse-aggregator/contract_test.ts",
