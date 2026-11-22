@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
+  "sha": "17e5d6db31719ac2a4b9d00d6a94549aae51c4d3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 19:51 UTC",
+  "generated_at": "2026-11-22 19:59 UTC",
   "files_total": 3643,
   "code_files": 3300,
   "code_lines": 478378
@@ -298110,10 +298110,22 @@
   }
  },
  "git": {
-  "sha": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
+  "sha": "17e5d6db31719ac2a4b9d00d6a94549aae51c4d3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "17e5d6d",
+    "date": "2026-11-22",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.7.4 (#623)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "fc6f8f9",
     "date": "2026-11-22",
@@ -298476,33 +298488,24 @@
     "files": [
      "supabase/functions/personal-assistant-stream/index.ts"
     ]
-   },
-   {
-    "sha": "0e9fef2",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: registra T22 como consolidado na main (#593)",
-    "files": [
-     "docs/pendencias/backlog-verificado.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    7
+    8
    ],
    [
     "package.json",
-    7
+    8
    ],
    [
     ".release-please-manifest.json",
-    6
+    7
    ],
    [
     "CHANGELOG.md",
-    6
+    7
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -298510,10 +298513,6 @@
    ],
    [
     "supabase/functions/semantic-search-universal/index.ts",
-    3
-   ],
-   [
-    "docs/pendencias/backlog-verificado.md",
     3
    ],
    [
@@ -298550,6 +298549,10 @@
    ],
    [
     "supabase/functions/personal-assistant-stream/index.ts",
+    2
+   ],
+   [
+    "docs/pendencias/backlog-verificado.md",
     2
    ],
    [

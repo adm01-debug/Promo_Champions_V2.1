@@ -43,7 +43,7 @@
  "workspaces": [],
  "package": {
   "nome": "promo-champions-v2",
-  "versao": "1.7.3",
+  "versao": "1.7.4",
   "scripts": {
    "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",
    "a11y:sweep": "playwright test -c playwright.a11y.config.ts",
@@ -1100,7 +1100,7 @@
   {
    "arquivo": "CHANGELOG.md",
    "titulo": "Changelog",
-   "linhas": 299
+   "linhas": 306
   },
   {
    "arquivo": "CLAUDE.md",
@@ -1440,7 +1440,7 @@
    "arquivos_md": 1
   }
  ],
- "changelog_topo": "[1.7.3](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.2...promo-champions-v2-v1.7.3) (2026-11-22)",
+ "changelog_topo": "[1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)",
  "env": {
   "declaradas_no_env_example": [
    "VITE_SUPABASE_PUBLISHABLE_KEY",

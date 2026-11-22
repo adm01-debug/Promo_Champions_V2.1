@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
+  "commit": "17e5d6db31719ac2a4b9d00d6a94549aae51c4d3",
   "branch": "main",
-  "data_commit": "2026-11-22T16:46:30-03:00",
+  "data_commit": "2026-11-22T16:58:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "17e5d6d",
+    "data": "2026-11-22",
+    "assunto": "chore(main): release 1.7.4 (#623)"
+   },
    {
     "sha": "fc6f8f9",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "de31d24",
     "data": "2026-11-21",
     "assunto": "fix: escapa ampersand em texto JSX no CompetitorBattleCardModal (#598)"
-   },
-   {
-    "sha": "a9ec900",
-    "data": "2026-11-21",
-    "assunto": "chore(main): release 1.6.1 (#579)"
    }
   ],
   "arquivos_mudados_7d": 215,
@@ -144,16 +144,16 @@
     "mudancas": 42
    },
    {
+    "pasta": "package.json",
+    "mudancas": 39
+   },
+   {
     "pasta": "src/components/competitive",
     "mudancas": 39
    },
    {
-    "pasta": "package.json",
-    "mudancas": 38
-   },
-   {
     "pasta": "package-lock.json",
-    "mudancas": 37
+    "mudancas": 38
    },
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "arquivo": "package.json",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -214,12 +214,12 @@
     "mudancas": 16
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "CHANGELOG.md",
     "mudancas": 14
    },
    {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 13
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 14
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 23
+    "commits": 24
    },
    {
     "autor": "devin-ai-integration[bot]",
