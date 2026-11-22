@@ -78,6 +78,10 @@ remote_checks() {
   psql "$SUPABASE_DB_URL" --single-transaction -v ON_ERROR_STOP=1 \
     -f supabase/tests/canonical_role_simulation.sql || return 1
 
+  echo "[sql-tests] remote -- retry_dispatcher_assertions.sql (contrato do dispatcher e do reconciler)"
+  psql "$SUPABASE_DB_URL" --single-transaction -v ON_ERROR_STOP=1 \
+    -f supabase/tests/retry_dispatcher_assertions.sql || return 1
+
   echo "[sql-tests] remote — quote-to-sale-stress.sql (auto-descobre admin + salesperson)"
   ADMIN=$(psql "$SUPABASE_DB_URL" -tAc \
     "SELECT user_id FROM public.user_roles WHERE role='admin' LIMIT 1") || return 1
