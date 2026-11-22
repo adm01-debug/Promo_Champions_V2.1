@@ -1,17 +1,17 @@
 # Graph Report - Promo_Champions_V2.1  (2026-11-22)
 
 ## Corpus Check
-- 3560 files · ~2,374,230 words
+- 3561 files · ~2,374,659 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 30 file(s) not represented in the graph (top: (none) 17, .toml 6, .lock 2)
 
 ## Summary
-- 21829 nodes · 66840 edges · 1532 communities (929 shown, 603 thin omitted)
+- 21830 nodes · 66840 edges · 1533 communities (929 shown, 604 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1434 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `aec099f2`
+- Built from commit: `1976a23e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1297,7 +1297,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1532 total, 603 thin omitted)
+## Communities (1533 total, 604 thin omitted)
 
 ### Community 0 - "schema.sql"
 Cohesion: 0.00
@@ -5017,8 +5017,8 @@ Nodes (3): public.webauthn_challenges, public.webauthn_credentials, auth.users
 
 ## Knowledge Gaps
 - **6443 isolated node(s):** `session-start.sh script`, `PATH`, `RUNTIME_ONLY_TO`, `semi`, `singleQuote` (+6438 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9181 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **603 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9182 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **604 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

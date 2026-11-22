@@ -685,7 +685,7 @@
   {
    "arquivo": "scripts/run-sql-tests.sh",
    "descricao": "Executor das suites SQL de RLS/contrato (supabase/tests/). Modos:",
-   "linhas": 106,
+   "linhas": 110,
    "env": [],
    "npm_scripts": [
     "test:sql"

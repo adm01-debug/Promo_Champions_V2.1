@@ -5,7 +5,7 @@
   "vitest",
   "playwright"
  ],
- "total": 246,
+ "total": 247,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
@@ -2090,6 +2090,7 @@
   "supabase/tests/canonical_role_simulation.sql",
   "supabase/tests/db01_default_acl_assertions.sql",
   "supabase/tests/quote-to-sale-stress.sql",
+  "supabase/tests/retry_dispatcher_assertions.sql",
   "supabase/tests/rls_test_suite.sql",
   "supabase/tests/role_helpers_matrix_assertions.sql"
  ],

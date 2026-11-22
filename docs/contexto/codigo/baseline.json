@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "aec099f2ee951d32f8b92c1a9ddd2742613c449b",
+  "commit": "1976a23ee0eed6e0eb961b2c8edec805449a90b9",
   "branch": "main",
-  "data_commit": "2026-11-22T12:53:23-03:00",
+  "data_commit": "2026-11-22T13:35:44-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "1976a23",
+    "data": "2026-11-22",
+    "assunto": "chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)"
+   },
    {
     "sha": "aec099f",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "0e9fef2",
     "data": "2026-11-20",
     "assunto": "chore: registra T22 como consolidado na main (#593)"
-   },
-   {
-    "sha": "56253c6",
-    "data": "2026-11-20",
-    "assunto": "chore: registra conclusão do A3 no backlog (#592)"
    }
   ],
-  "arquivos_mudados_7d": 208,
+  "arquivos_mudados_7d": 210,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "package.json",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 198
+    "commits": 199
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3623,
+  "arquivos_total": 3624,
   "arquivos_codigo": 2578,
   "linhas_codigo": 443178,
   "rotas": 170,
@@ -332,7 +332,7 @@
   "tabelas": 417,
   "migrations": 708,
   "cron_jobs": 33,
-  "testes": 246,
+  "testes": 247,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 217
