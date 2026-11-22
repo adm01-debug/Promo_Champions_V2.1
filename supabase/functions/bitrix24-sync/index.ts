@@ -930,12 +930,34 @@ Deno.serve(
     let syncLockHeld = false;
 
     try {
+      // Falha de configuracao e' permanente: 503 com o secret nomeado deixa o
+      // reconciler classificar como http_5xx_config (non_retryable) em vez de
+      // re-enfileirar 3x um 500 que nunca vai passar.
       if (!BITRIX24_DOMAIN || !BITRIX24_CLIENT_ID || !BITRIX24_CLIENT_SECRET) {
-        throw new Error('Bitrix24 credentials not configured');
+        console.error('bitrix24-sync credentials missing: BITRIX24_DOMAIN/CLIENT_ID/CLIENT_SECRET');
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'BITRIX24_DOMAIN not configured',
+            hint: 'Adicione os secrets BITRIX24_DOMAIN, BITRIX24_CLIENT_ID e BITRIX24_CLIENT_SECRET.',
+            duration_ms: 0,
+            timestamp: new Date().toISOString(),
+          }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-        throw new Error('Supabase credentials not configured');
+        console.error('bitrix24-sync credentials missing: SUPABASE_URL/SERVICE_ROLE_KEY');
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'SUPABASE_SERVICE_ROLE_KEY not configured',
+            duration_ms: 0,
+            timestamp: new Date().toISOString(),
+          }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
