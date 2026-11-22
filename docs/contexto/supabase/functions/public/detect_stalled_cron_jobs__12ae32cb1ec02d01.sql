@@ -13,6 +13,8 @@ DECLARE
   v_threshold interval;
   v_gap interval;
 BEGIN
+  PERFORM public.refresh_cron_job_last_run();
+
   FOR v_job IN
     SELECT jobid, jobname, schedule
     FROM cron.job
@@ -22,10 +24,10 @@ BEGIN
     v_expected_interval := public.fn_cron_expected_interval(v_job.schedule);
     v_threshold := public.fn_cron_stalled_threshold(v_job.schedule);
 
-    SELECT max(start_time)
+    SELECT c.last_start
       INTO v_last_run
-      FROM cron.job_run_details
-     WHERE jobid = v_job.jobid;
+      FROM public.cron_job_last_run AS c
+     WHERE c.jobid = v_job.jobid;
     IF v_last_run IS NULL THEN
       v_last_run := now() - interval '30 days';
     END IF;

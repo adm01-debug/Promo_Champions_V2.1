@@ -366,6 +366,8 @@ Uso e tamanho em `stats.md`.
 | public.cron_failure_alerts | cron_failure_alerts_unique | btree | jobid, start_time | sim | sim |  |
 | public.cron_failure_alerts | idx_cron_failure_alerts_alerted_at | btree | alerted_at | não | sim |  |
 | public.cron_failure_alerts | idx_cron_failure_alerts_jobname_alerted | btree | jobname, alerted_at | não | sim | `(jobname IS NOT NULL)` |
+| public.cron_job_last_run | cron_job_last_run_pkey | btree | jobid | sim | sim |  |
+| public.cron_job_last_run_cursor | cron_job_last_run_cursor_pkey | btree | id | sim | sim |  |
 | public.cs_tickets | cs_tickets_pkey | btree | id | sim | sim |  |
 | public.cs_tickets | idx_cs_tickets_assigned_to | btree | assigned_to | não | sim |  |
 | public.cs_tickets | idx_cs_tickets_client_id | btree | client_id | não | sim |  |

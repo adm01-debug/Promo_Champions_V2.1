@@ -105,6 +105,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.conversation_analyses](tables/public/conversation_analyses.md) | table | sim | 4 | 15 | não |  |
 | [public.critical_moment_notifications](tables/public/critical_moment_notifications.md) | table | sim | 4 | 6 | sim |  |
 | [public.cron_failure_alerts](tables/public/cron_failure_alerts.md) | table | sim | 1 | 9 | não |  |
+| [public.cron_job_last_run](tables/public/cron_job_last_run.md) | table | sim | 0 | 3 | não | Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs(). |
+| [public.cron_job_last_run_cursor](tables/public/cron_job_last_run_cursor.md) | table | sim | 0 | 3 | não | Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan. |
 | [public.cs_tickets](tables/public/cs_tickets.md) | table | sim | 1 | 11 | não |  |
 | [public.csat_ces_surveys](tables/public/csat_ces_surveys.md) | table | sim | 2 | 10 | não |  |
 | [public.custom_reports](tables/public/custom_reports.md) | table | sim | 2 | 9 | não |  |

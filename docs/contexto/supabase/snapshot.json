@@ -15347,6 +15347,84 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "jobid",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "cron_job_last_run",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_start",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "cron_job_last_run",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "cron_job_last_run",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor",
+        "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_runid",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -64253,6 +64331,57 @@
       },
       {
         "columns": [
+          "jobid"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (jobid)",
+        "name": "cron_job_last_run_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "cron_job_last_run",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (id)",
+        "name": "cron_job_last_run_cursor_id_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "cron_job_last_run_cursor_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "assigned_to"
         ],
         "deferrable": false,
@@ -85781,7 +85910,7 @@
           "search_path=public, cron"
         ],
         "definition": null,
-        "definition_sha": "41a2129ec9a79e16",
+        "definition_sha": "8db41e6d8ac578bf",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -92841,6 +92970,38 @@
       {
         "args": "",
         "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [
+            "public.detect_stalled_cron_jobs"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, cron"
+        ],
+        "definition": null,
+        "definition_sha": "b282dfb6fb53ff16",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "refresh_cron_job_last_run",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
           "code": [
             {
               "file": "supabase/migrations/20260104181000_materialized_views_enhanced.sql",
@@ -98463,6 +98624,18 @@
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "cron_failure_alerts"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "cron_job_last_run"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "cron_job_last_run_cursor"
         },
         {
           "grantee": "anon",
@@ -109538,6 +109711,34 @@
         "predicate": "(jobname IS NOT NULL)",
         "schema": "public",
         "table": "cron_failure_alerts"
+      },
+      {
+        "columns": [
+          "jobid"
+        ],
+        "definition": "CREATE UNIQUE INDEX cron_job_last_run_pkey ON public.cron_job_last_run USING btree (jobid)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "cron_job_last_run_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "cron_job_last_run"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX cron_job_last_run_cursor_pkey ON public.cron_job_last_run_cursor USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "cron_job_last_run_cursor_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "cron_job_last_run_cursor"
       },
       {
         "columns": [
@@ -124639,6 +124840,18 @@
       }
     ],
     "lints": [
+      {
+        "code": "rls_no_policies",
+        "detail": "RLS ligado sem policies: inacessível via API (só service_role).",
+        "object": "public.cron_job_last_run",
+        "severity": "MÉDIA"
+      },
+      {
+        "code": "rls_no_policies",
+        "detail": "RLS ligado sem policies: inacessível via API (só service_role).",
+        "object": "public.cron_job_last_run_cursor",
+        "severity": "MÉDIA"
+      },
       {
         "code": "rls_no_policies",
         "detail": "RLS ligado sem policies: inacessível via API (só service_role).",
@@ -148326,6 +148539,36 @@
         "is_partition": false,
         "kind": "table",
         "name": "cron_failure_alerts",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs().",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "cron_job_last_run",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": "Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "cron_job_last_run_cursor",
         "owner": "postgres",
         "parent": null,
         "partition_bound": null,

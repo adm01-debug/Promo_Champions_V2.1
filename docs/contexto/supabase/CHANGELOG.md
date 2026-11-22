@@ -2,6 +2,17 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 19:11 UTC
+
+- **colunas** adicionado (6): `public.cron_job_last_run.jobid`, `public.cron_job_last_run.last_start`, `public.cron_job_last_run.updated_at`, `public.cron_job_last_run_cursor.id`, `public.cron_job_last_run_cursor.last_runid`, `public.cron_job_last_run_cursor.updated_at`
+- **constraints** adicionado (3): `public.cron_job_last_run.cron_job_last_run_pkey`, `public.cron_job_last_run_cursor.cron_job_last_run_cursor_id_check`, `public.cron_job_last_run_cursor.cron_job_last_run_cursor_pkey`
+- **functions** adicionado (1): `public.refresh_cron_job_last_run()`
+- **functions** alterado (1): `public.detect_stalled_cron_jobs()`
+- **grants** adicionado (2): `public.cron_job_last_run:service_role`, `public.cron_job_last_run_cursor:service_role`
+- **indexes** adicionado (2): `public.cron_job_last_run_cursor_pkey`, `public.cron_job_last_run_pkey`
+- **lints** adicionado (2): `rls_no_policies:public.cron_job_last_run`, `rls_no_policies:public.cron_job_last_run_cursor`
+- **tabelas** adicionado (2): `public.cron_job_last_run`, `public.cron_job_last_run_cursor`
+
 ## 2026-11-22 18:15 UTC
 
 - **functions** alterado (1): `public.internal_edge_job_timeout_ms(p_function_name text)`

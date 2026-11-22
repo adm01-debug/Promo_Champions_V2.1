@@ -4,6 +4,8 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 
 | severidade | código | objeto | detalhe |
 |---|---|---|---|
+| MÉDIA | rls_no_policies | public.cron_job_last_run | RLS ligado sem policies: inacessível via API (só service_role). |
+| MÉDIA | rls_no_policies | public.cron_job_last_run_cursor | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.webhook_dispatch_rate | RLS ligado sem policies: inacessível via API (só service_role). |
 | BAIXA | fk_without_index | public.consent_records.consent_records_subject_client_id_fkey | FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | fk_without_index | public.data_subject_requests.data_subject_requests_subject_client_id_fkey | FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |

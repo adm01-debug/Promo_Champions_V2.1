@@ -331,6 +331,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.cron_failure_alerts | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.cron_failure_alerts | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.cron_failure_alerts | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.cron_job_last_run | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.cron_job_last_run_cursor | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.cs_tickets | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.cs_tickets | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.cs_tickets | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
