@@ -94711,7 +94711,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "2a1d83f8eb4f474e",
+        "definition_sha": "d67f04143c243e84",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,

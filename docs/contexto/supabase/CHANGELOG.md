@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 12:18 UTC
+
+- **functions** alterado (1): `public.trigger_internal_edge_job(p_function_name text)`
+
 ## 2026-11-21 20:46 UTC
 
 - **functions** alterado (2): `public.match_semantic(_query_embedding vector, _match_count integer, _entity_types text[])`, `public.upsert_semantic_entry(_entity_type text, _entity_id uuid, _salesperson_id uuid, _content text, _embedding vector, _metadata jsonb)`
