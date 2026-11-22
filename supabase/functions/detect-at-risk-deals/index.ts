@@ -43,7 +43,7 @@ Deno.serve(
         .select(
           `
         *,
-        salespeople (name, role)
+        salespeople:salespeople!sales_salesperson_id_fkey (name, role)
       `
         )
         .eq('id', dealId)

@@ -16,8 +16,14 @@ import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
-const resend = new Resend(RESEND_API_KEY);
+
+// Ausencia do secret e falha permanente de configuracao: devolver 503 com o
+// motivo evita o 500 generico (WORKER_ERROR) e permite ao reconciler marcar
+// como non_retryable em vez de re-enfileirar 3x.
+const RESEND_MISSING_BODY = JSON.stringify({
+  error: 'RESEND_API_KEY not configured',
+  hint: 'Adicione o secret RESEND_API_KEY para habilitar o envio de e-mails.',
+});
 
 interface Alert {
   type: string;
@@ -262,6 +268,16 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
       status,
       headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
     });
+
+  if (!RESEND_API_KEY) {
+    log('error', 'resend_key_missing');
+    return new Response(RESEND_MISSING_BODY, {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+    });
+  }
+
+  const resend = new Resend(RESEND_API_KEY);
 
   try {
     // Bypass de RLS necessário: alertas cobrem sales/metas de toda a equipe.
