@@ -9,6 +9,7 @@ DO $$
 DECLARE
   v_ms integer;
   v_def text;
+  v_fn text;
 BEGIN
   -- 1. Funções longas precisam de timeout explícito; o default do pg_net (5000ms)
   --    produz timed_out=true e o reconciler reexecuta a função.
@@ -27,6 +28,21 @@ BEGIN
   IF v_ms IS DISTINCT FROM 5000 THEN
     RAISE EXCEPTION 'default_timeout_expected_5000_got_%', v_ms;
   END IF;
+
+  -- Funções que sofreram timeout_dns medido em produção precisam de margem:
+  -- o erro real foi "DNS time: 5003.771000 ms" com handshake e HTTP em 0 ms,
+  -- ou seja, todo o orçamento de 5 s consumido só na resolução de nome.
+  FOREACH v_fn IN ARRAY ARRAY[
+    'cron-failure-alerter',
+    'wal-health-alert',
+    'send-alert-notifications',
+    'access-denied-alerts'
+  ] LOOP
+    SELECT public.internal_edge_job_timeout_ms(v_fn) INTO v_ms;
+    IF v_ms IS DISTINCT FROM 60000 THEN
+      RAISE EXCEPTION 'timeout_dns_%_expected_60000_got_%', v_fn, v_ms;
+    END IF;
+  END LOOP;
 
   -- 2. O timeout precisa chegar ao net.http_post — declará-lo na função de apoio
   --    sem usá-lo no dispatch deixa o bug ativo com aparência de corrigido.
