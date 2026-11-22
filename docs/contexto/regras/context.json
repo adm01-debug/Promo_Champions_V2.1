@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b488591e9261d238b56ade5ba2920e557fbadca7",
+  "sha": "56da98afa8e859aa96f2b46aea69d0eb6ac3a9a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 19:44 UTC",
+  "generated_at": "2026-11-22 19:47 UTC",
   "files_total": 3642,
   "code_files": 3299,
   "code_lines": 478306
@@ -298061,10 +298061,22 @@
   }
  },
  "git": {
-  "sha": "b488591e9261d238b56ade5ba2920e557fbadca7",
+  "sha": "56da98afa8e859aa96f2b46aea69d0eb6ac3a9a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "56da98a",
+    "date": "2026-11-22",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.7.3 (#621)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "b488591",
     "date": "2026-11-22",
@@ -298423,33 +298435,24 @@
     "files": [
      "docs/pendencias/backlog-verificado.md"
     ]
-   },
-   {
-    "sha": "be50d67",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: restringe export-winloss-pdf ao escopo do usuario (A3) (#591)",
-    "files": [
-     "supabase/functions/export-winloss-pdf/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    6
+    7
    ],
    [
     "package.json",
-    6
+    7
    ],
    [
     ".release-please-manifest.json",
-    5
+    6
    ],
    [
     "CHANGELOG.md",
-    5
+    6
    ],
    [
     "src/integrations/supabase/types.ts",
