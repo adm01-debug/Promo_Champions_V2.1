@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "67dc32ec63ec6f8438187f0cdfc3db0cec4ba7e8",
+  "commit": "fef4c7e47012a51197b23747e3c183369438cf68",
   "branch": "main",
-  "data_commit": "2026-11-22T10:16:53-03:00",
+  "data_commit": "2026-11-22T10:48:14-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "fef4c7e",
+    "data": "2026-11-22",
+    "assunto": "fix: nao re-enfileira 5xx por secret ausente (#613)"
+   },
    {
     "sha": "67dc32e",
     "data": "2026-11-22",
@@ -126,11 +131,6 @@
     "sha": "a1377be",
     "data": "2026-11-20",
     "assunto": "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)"
-   },
-   {
-    "sha": "8203561",
-    "data": "2026-11-20",
-    "assunto": "docs: linha de base e regras de negocio da Fase 0 (#587)"
    }
   ],
   "arquivos_mudados_7d": 197,
@@ -214,16 +214,16 @@
     "mudancas": 17
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 12
-   },
-   {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
+   },
+   {
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 11
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 194
+    "commits": 195
    },
    {
     "autor": "dependabot[bot]",
