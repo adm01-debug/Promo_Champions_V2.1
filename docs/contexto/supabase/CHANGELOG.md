@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 16:15 UTC
+
+- **functions** alterado (1): `public.internal_edge_job_timeout_ms(p_function_name text)`
+
 ## 2026-11-22 15:12 UTC
 
 - **functions** adicionado (1): `public.internal_edge_job_timeout_ms(p_function_name text)`
