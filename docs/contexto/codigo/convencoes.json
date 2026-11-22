@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)",
    "fix: nao re-enfileira 5xx por secret ausente (#613)",
    "fix: reconcilia retry do pg_net em transacao separada (#612)",
    "fix: adiciona retry em trigger_internal_edge_job quando o pg_net falha no DNS (#609)",
-   "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)",
-   "chore(main): release 1.7.1 (#607)"
+   "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

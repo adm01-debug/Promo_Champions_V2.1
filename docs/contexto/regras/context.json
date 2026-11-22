@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fef4c7e47012a51197b23747e3c183369438cf68",
+  "sha": "fe3bf20e32510b782c49c47bb694f5db02c896c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 13:48 UTC",
-  "files_total": 3633,
-  "code_files": 3290,
-  "code_lines": 477627
+  "generated_at": "2026-11-22 14:06 UTC",
+  "files_total": 3636,
+  "code_files": 3293,
+  "code_lines": 477755
  },
  "version": "1.3.2",
- "facts_hash": "ba47e4e40a7c3fbc",
+ "facts_hash": "612429ba9bbd9237",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -399,7 +399,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1376,
-   ".ts": 1116,
+   ".ts": 1119,
    ".sql": 716,
    ".mjs": 72,
    ".js": 6,
@@ -96301,8 +96301,7 @@
     "errors": [
      ", { recipients: allEmails.length });\n\n      // Send alert email\n      const subject = ",
      "Failed to fetch access denied logs: ${logsError.message}",
-     "Failed to fetch admin roles: ${rolesError.message}",
-     "RESEND_API_KEY is not configured"
+     "Failed to fetch admin roles: ${rolesError.message}"
     ],
     "side_effects": [
      "notify",
@@ -99860,7 +99859,6 @@
     "doc": "",
     "errors": [
      "Failed to fetch preferences: ${prefError.message}",
-     "RESEND_API_KEY is not configured",
      "recipientEmail is required for manual trigger"
     ],
     "side_effects": [
@@ -107722,8 +107720,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 321,
-   "lines": 66812,
+   "files": 324,
+   "lines": 66940,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -108060,14 +108058,14 @@
     "supabase/functions/_shared/webhook-integrity_test.ts",
     "supabase/functions/_shared/webhook-validator.ts",
     "supabase/functions/_shared/winloss-contract.ts",
+    "supabase/functions/access-denied-alerts/config_guard_test.ts",
     "supabase/functions/access-denied-alerts/index.ts",
     "supabase/functions/account-engagement-aggregator/index.ts",
     "supabase/functions/activity-goal-alerts/index.ts",
     "supabase/functions/admin-conversion-trail/index.ts",
     "supabase/functions/aggregate-coaching-scorecard/index.ts",
     "supabase/functions/ai-agent-orchestrator/index.ts",
-    "supabase/functions/ai-copilot/index.ts",
-    "supabase/functions/ai-email-composer/index.ts"
+    "supabase/functions/ai-copilot/index.ts"
    ]
   },
   {
@@ -115023,6 +115021,7 @@
     "supabase/functions/access-denied-alerts/index.ts",
     "supabase/functions/activity-goal-alerts/index.ts",
     "supabase/functions/broadcast-sale-notification/index.ts",
+    "supabase/functions/check-lead-sla/embed_fk_test.ts",
     "supabase/functions/check-lead-sla/index.ts",
     "supabase/functions/new-device-alert/index.ts",
     "supabase/functions/notify-critical-pattern/index.ts",
@@ -121269,10 +121268,6 @@
     "msg": "Failed to fetch admin roles: ${rolesError.message}"
    },
    {
-    "file": "supabase/functions/access-denied-alerts/index.ts",
-    "msg": "RESEND_API_KEY is not configured"
-   },
-   {
     "file": "supabase/functions/ai-agent-orchestrator/index.ts",
     "msg": "AI gateway: ${r.status} ${await r.text()}"
    },
@@ -121935,10 +121930,6 @@
    {
     "file": "supabase/functions/send-alert-notifications/index.ts",
     "msg": "Failed to fetch preferences: ${prefError.message}"
-   },
-   {
-    "file": "supabase/functions/send-alert-notifications/index.ts",
-    "msg": "RESEND_API_KEY is not configured"
    },
    {
     "file": "supabase/functions/send-alert-notifications/index.ts",
@@ -276283,9 +276274,13 @@
    ],
    "doc": "CONTRATO COMPARTILHADO front/edge — win-loss at-risk. Fonte única de verdade para as regras que antes existiam duplicadas em `supabase/functions/detect-winloss-at-risk/scoring.ts` (edge) e `src/lib/winloss/*` (frontend). Ambos os lados importam deste módulo; `src/lib/winloss/winlossContract.test.ts` …"
   },
+  "supabase/functions/access-denied-alerts/config_guard_test.ts": {
+   "path": "supabase/functions/access-denied-alerts/config_guard_test.ts",
+   "lines": 22
+  },
   "supabase/functions/access-denied-alerts/index.ts": {
    "path": "supabase/functions/access-denied-alerts/index.ts",
-   "lines": 443,
+   "lines": 458,
    "tables": [
     {
      "table": "security_alert_settings",
@@ -276355,8 +276350,7 @@
    "errors": [
     ", { recipients: allEmails.length });\n\n      // Send alert email\n      const subject = ",
     "Failed to fetch access denied logs: ${logsError.message}",
-    "Failed to fetch admin roles: ${rolesError.message}",
-    "RESEND_API_KEY is not configured"
+    "Failed to fetch admin roles: ${rolesError.message}"
    ],
    "params": [
     {
@@ -279069,6 +279063,13 @@
     "500"
    ],
    "uses_service_role": true
+  },
+  "supabase/functions/check-lead-sla/embed_fk_test.ts": {
+   "path": "supabase/functions/check-lead-sla/embed_fk_test.ts",
+   "lines": 38,
+   "env": [
+    "RESEND_API_KEY"
+   ]
   },
   "supabase/functions/check-lead-sla/index.ts": {
    "path": "supabase/functions/check-lead-sla/index.ts",
@@ -288662,9 +288663,13 @@
     "const TTL_MS = 2 * 60 * 1000;"
    ]
   },
+  "supabase/functions/send-alert-notifications/config_guard_test.ts": {
+   "path": "supabase/functions/send-alert-notifications/config_guard_test.ts",
+   "lines": 37
+  },
   "supabase/functions/send-alert-notifications/index.ts": {
    "path": "supabase/functions/send-alert-notifications/index.ts",
-   "lines": 530,
+   "lines": 546,
    "tables": [
     {
      "table": "sales",
@@ -288744,7 +288749,6 @@
    ],
    "errors": [
     "Failed to fetch preferences: ${prefError.message}",
-    "RESEND_API_KEY is not configured",
     "recipientEmail is required for manual trigger"
    ],
    "status_values": [
@@ -297588,10 +297592,26 @@
   }
  },
  "git": {
-  "sha": "fef4c7e47012a51197b23747e3c183369438cf68",
+  "sha": "fe3bf20e32510b782c49c47bb694f5db02c896c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "fe3bf20",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)",
+    "files": [
+     "supabase/functions/access-denied-alerts/config_guard_test.ts",
+     "supabase/functions/access-denied-alerts/index.ts",
+     "supabase/functions/broadcast-sale-notification/index.ts",
+     "supabase/functions/check-lead-sla/embed_fk_test.ts",
+     "supabase/functions/check-lead-sla/index.ts",
+     "supabase/functions/detect-at-risk-deals/index.ts",
+     "supabase/functions/send-alert-notifications/config_guard_test.ts",
+     "supabase/functions/send-alert-notifications/index.ts"
+    ]
+   },
    {
     "sha": "fef4c7e",
     "date": "2026-11-22",
@@ -297938,16 +297958,6 @@
      ".github/workflows/deploy.yml",
      "docs/DEPLOYMENT.md"
     ]
-   },
-   {
-    "sha": "de515ef",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix(db): gerador de probes materializa DDL dinamico DO..EXECUTE (#583)",
-    "files": [
-     "scripts/db-audit/gen-migration-probes.mjs",
-     "scripts/db-audit/gen-migration-probes.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -297978,6 +297988,10 @@
    [
     "docs/DEPLOYMENT.md",
     3
+   ],
+   [
+    "supabase/functions/detect-at-risk-deals/index.ts",
+    2
    ],
    [
     "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
@@ -298012,23 +298026,19 @@
     2
    ],
    [
-    "supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql",
+    "supabase/functions/access-denied-alerts/config_guard_test.ts",
     1
    ],
    [
-    "deno.lock",
+    "supabase/functions/access-denied-alerts/index.ts",
     1
    ],
    [
-    "src/hooks/semantic/useReindexBatch.ts",
+    "supabase/functions/broadcast-sale-notification/index.ts",
     1
    ],
    [
-    "supabase/functions/_shared/semantic-content.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql",
+    "supabase/functions/check-lead-sla/embed_fk_test.ts",
     1
    ]
   ]

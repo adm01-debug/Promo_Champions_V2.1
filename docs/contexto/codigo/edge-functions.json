@@ -105,8 +105,8 @@
   {
    "nome": "access-denied-alerts",
    "entrada": "supabase/functions/access-denied-alerts/index.ts",
-   "arquivos": 1,
-   "linhas": 443,
+   "arquivos": 2,
+   "linhas": 480,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1321,8 +1321,8 @@
   {
    "nome": "check-lead-sla",
    "entrada": "supabase/functions/check-lead-sla/index.ts",
-   "arquivos": 1,
-   "linhas": 244,
+   "arquivos": 2,
+   "linhas": 282,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5410,8 +5410,8 @@
   {
    "nome": "send-alert-notifications",
    "entrada": "supabase/functions/send-alert-notifications/index.ts",
-   "arquivos": 1,
-   "linhas": 530,
+   "arquivos": 2,
+   "linhas": 583,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

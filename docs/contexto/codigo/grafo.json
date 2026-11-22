@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2334,
+ "nos": 2337,
  "arestas": 9612,
  "hubs": [
   {
@@ -190,8 +190,10 @@
   "public/sw.js",
   "src/components/ui/level-up-celebration.tsx",
   "src/lib/orderTracking/stages.ts",
+  "supabase/functions/access-denied-alerts/config_guard_test.ts",
   "supabase/functions/auto-reassign-inactive/contract_test.ts",
   "supabase/functions/campaign-health-alert/authz_test.ts",
+  "supabase/functions/check-lead-sla/embed_fk_test.ts",
   "supabase/functions/detect-winloss-at-risk/_dump_scenarios.ts",
   "supabase/functions/detect-winloss-at-risk/_testHelpers_test.ts",
   "supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts",
@@ -223,6 +225,7 @@
   "supabase/functions/process-scheduled-sends/authz_test.ts",
   "supabase/functions/race-commentary/index_test.ts",
   "supabase/functions/receive-quote-sync/security_test.ts",
+  "supabase/functions/send-alert-notifications/config_guard_test.ts",
   "supabase/functions/send-multichannel-message/authz_test.ts",
   "supabase/functions/send-password-reset/authz_test.ts",
   "supabase/functions/send-quote-to-client/authz_test.ts",

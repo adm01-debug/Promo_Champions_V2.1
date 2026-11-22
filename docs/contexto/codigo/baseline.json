@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fef4c7e47012a51197b23747e3c183369438cf68",
+  "commit": "fe3bf20e32510b782c49c47bb694f5db02c896c0",
   "branch": "main",
-  "data_commit": "2026-11-22T10:48:14-03:00",
+  "data_commit": "2026-11-22T11:04:11-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "fe3bf20",
+    "data": "2026-11-22",
+    "assunto": "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)"
+   },
    {
     "sha": "fef4c7e",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "bb4c144",
     "data": "2026-11-20",
     "assunto": "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)"
-   },
-   {
-    "sha": "a1377be",
-    "data": "2026-11-20",
-    "assunto": "docs: backlog verificado e ordem de execucao (Fase 1 do GOAL) (#588)"
    }
   ],
-  "arquivos_mudados_7d": 197,
+  "arquivos_mudados_7d": 204,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 44
+    "mudancas": 43
    },
    {
     "arquivo": "package.json",
-    "mudancas": 44
+    "mudancas": 43
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 195
+    "commits": 196
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3618,
-  "arquivos_codigo": 2574,
-  "linhas_codigo": 442971,
+  "arquivos_total": 3621,
+  "arquivos_codigo": 2577,
+  "linhas_codigo": 443099,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 321,
-   "linhas": 66812
+   "arquivos": 324,
+   "linhas": 66940
   },
   "tailwind.config.ts": {
    "arquivos": 1,
