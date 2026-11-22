@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.7.2 (#611)",
    "fix: timeout do pg_net por funcao no dispatcher de crons (#616)",
    "fix: guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes (#615)",
    "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)",
-   "fix: nao re-enfileira 5xx por secret ausente (#613)",
-   "fix: reconcilia retry do pg_net em transacao separada (#612)"
+   "fix: nao re-enfileira 5xx por secret ausente (#613)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

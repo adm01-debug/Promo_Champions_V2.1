@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "88f8cde54f3b803b227b4aee3d6c01f535e0c7e6",
+  "sha": "aec099f2ee951d32f8b92c1a9ddd2742613c449b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 15:24 UTC",
+  "generated_at": "2026-11-22 15:54 UTC",
   "files_total": 3638,
   "code_files": 3295,
   "code_lines": 477917
@@ -297668,10 +297668,22 @@
   }
  },
  "git": {
-  "sha": "88f8cde54f3b803b227b4aee3d6c01f535e0c7e6",
+  "sha": "aec099f2ee951d32f8b92c1a9ddd2742613c449b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "aec099f",
+    "date": "2026-11-22",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.7.2 (#611)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "88f8cde",
     "date": "2026-11-22",
@@ -298026,37 +298038,28 @@
      "docs/pendencias/_linha-de-base.md",
      "docs/pendencias/_regras-de-negocio.md"
     ]
-   },
-   {
-    "sha": "7bf29f5",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: curva de evolução omite o dia atual em TZ a oeste de UTC (#586)",
-    "files": [
-     "src/hooks/useEvolutionCurves.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "package-lock.json",
+    6
+   ],
+   [
+    "package.json",
+    6
+   ],
    [
     "docs/pendencias/backlog-verificado.md",
     6
    ],
    [
-    "package-lock.json",
-    5
-   ],
-   [
-    "package.json",
-    5
-   ],
-   [
     ".release-please-manifest.json",
-    4
+    5
    ],
    [
     "CHANGELOG.md",
-    4
+    5
    ],
    [
     "src/integrations/supabase/types.ts",
