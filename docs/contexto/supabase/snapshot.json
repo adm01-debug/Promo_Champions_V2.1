@@ -90222,12 +90222,12 @@
           "triggers": [],
           "views": []
         },
-        "comment": null,
+        "comment": "Timeout do pg_net por funcao. Default 5000ms do net.http_post; elevado apenas para funcoes com custo real acima disso (embeddings) ou que sofreram timeout_dns medido em producao.",
         "config": [
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "edbf876fd485865d",
+        "definition_sha": "bcd0a20f3fe9e7b8",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
