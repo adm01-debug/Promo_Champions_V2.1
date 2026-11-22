@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.1...promo-champions-v2-v1.7.2) (2026-11-22)
+
+
+### Correções
+
+* adiciona retry em trigger_internal_edge_job quando o pg_net falha no DNS ([#609](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/609)) ([a8961ba](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a8961baf9fca307914e5f75d8f0e14514eb09723))
+* desambigua embed salespeople e expoe 503 quando falta secret de email ([#614](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/614)) ([fe3bf20](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fe3bf20e32510b782c49c47bb694f5db02c896c0))
+* guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes ([#615](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/615)) ([b80439c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b80439c4668bb55fc989c8c3e3ed91099263c10b))
+* nao re-enfileira 5xx por secret ausente ([#613](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/613)) ([fef4c7e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fef4c7e47012a51197b23747e3c183369438cf68))
+* reconcilia retry do pg_net em transacao separada ([#612](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/612)) ([67dc32e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/67dc32ec63ec6f8438187f0cdfc3db0cec4ba7e8))
+* timeout do pg_net por funcao no dispatcher de crons ([#616](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/616)) ([88f8cde](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/88f8cde54f3b803b227b4aee3d6c01f535e0c7e6))
+
 ## [1.7.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.0...promo-champions-v2-v1.7.1) (2026-11-21)
 
 
