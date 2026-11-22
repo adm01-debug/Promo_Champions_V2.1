@@ -97,7 +97,7 @@ Deno.serve(
       .select(
         `
       id, client_name, product_name, amount, status, created_at, salesperson_id,
-      salespeople ( id, name, email )
+      salespeople:salespeople!sales_salesperson_id_fkey ( id, name, email )
     `
       )
       .not('status', 'in', '(completed,won,closed,lost,cancelled)')

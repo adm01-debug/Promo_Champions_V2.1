@@ -61,7 +61,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     // client_name, or amount (content injection / social engineering prevention).
     const { data: sale, error: saleErr } = await supabase
       .from('sales')
-      .select('id, salesperson_id, client_name, amount, salespeople(name, auth_user_id)')
+      .select('id, salesperson_id, client_name, amount, salespeople:salespeople!sales_salesperson_id_fkey(name, auth_user_id)')
       .eq('id', sale_id)
       .maybeSingle();
 

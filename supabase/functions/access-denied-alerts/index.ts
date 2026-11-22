@@ -11,8 +11,13 @@ import { isAuthorizedCronJob } from '../_shared/cron-job-auth.ts';
 type LogFn = RequestIdContext['log'];
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
-const resend = new Resend(RESEND_API_KEY);
+
+// Ausencia do secret e falha permanente de configuracao: expor 503 com motivo
+// em vez de 500 generico (WORKER_ERROR) para nao mascarar a causa.
+const RESEND_MISSING_BODY = JSON.stringify({
+  error: 'RESEND_API_KEY not configured',
+  hint: 'Adicione o secret RESEND_API_KEY para habilitar o envio de e-mails.',
+});
 
 // Default configuration (used if DB fetch fails)
 const DEFAULT_SPIKE_THRESHOLD = 5;
@@ -153,6 +158,16 @@ const handler = withRequestId(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: getCorsHeaders(req) });
     }
+
+    if (!RESEND_API_KEY) {
+      log('error', 'resend_key_missing');
+      return new Response(RESEND_MISSING_BODY, {
+        status: 503,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+      });
+    }
+
+    const resend = new Resend(RESEND_API_KEY);
 
     try {
       // Logs de segurança de todos os usuários + disparo de e-mail aos admins:
