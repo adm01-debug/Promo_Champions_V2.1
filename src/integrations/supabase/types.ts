@@ -5867,7 +5867,42 @@ export type Database = {
         }
         Relationships: []
       }
-      cs_tickets: {
+      cron_job_last_run: {
+        Row: {
+          jobid: number
+          last_start: string
+          updated_at: string
+        }
+        Insert: {
+          jobid: number
+          last_start: string
+          updated_at?: string
+        }
+        Update: {
+          jobid?: number
+          last_start?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cron_job_last_run_cursor: {
+        Row: {
+          id: boolean
+          last_runid: number
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          last_runid?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          last_runid?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }      cs_tickets: {
         Row: {
           assigned_to: string | null
           client_id: string | null
@@ -25002,7 +25037,7 @@ export type Database = {
         Args: { p_user_agent?: string }
         Returns: undefined
       }
-      refresh_cron_job_last_run: { Args: { _window?: string }; Returns: number }
+      refresh_cron_job_last_run: { Args: never; Returns: number }
       refresh_materialized_views: { Args: never; Returns: undefined }
       refresh_session: { Args: { session_id: string }; Returns: boolean }
       regenerate_backup_codes: { Args: never; Returns: string[] }

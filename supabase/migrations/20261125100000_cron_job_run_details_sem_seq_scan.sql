@@ -4,22 +4,26 @@
 --
 -- cron.job_run_details NAO tem indice em jobid (so o pkey em runid) e cresce
 -- ~4.390 linhas/dia. Medido em producao em 2026-11-22:
---   269.138 linhas / 65 MB (3 dias = +13k linhas, piora ~6x por mes)
+--   269.138 linhas / 65 MB (worse por mes)
 --   EXPLAIN ANALYZE: Parallel Seq Scan, 156 ms, Rows Removed by Filter: 128.590
 --   45 jobs x 156 ms = ~7 s
 --   cron.job_run_details jobid=17: 9 runs consecutivos entre 6,3 s e 7,8 s,
 --   e 1 falha (2026-11-21 20:15) com
 --     'canceling statement due to statement timeout'
+--   Sob a contenção dos 47 jobs que disparam no mesmo minuto, um run chegou
+--   a 17,2 s.
 --
 -- Nao e' possivel criar indice na tabela: ela pertence a supabase_admin e o
 -- role de migration (postgres) recebe
 --   42501: must be owner of table job_run_details
 --
--- Solucao: tabela espelho public.cron_job_last_run mantendo o ultimo start_time
--- por job, atualizada incrementalmente (janela de 6 h) a cada execucao da funcao.
--- Medido: carga inicial 1,2 s (uma vez), depois 0,45 s por execucao; cada lookup
--- cai de 156 ms para 0,05 ms (btree no pkey de jobid), independente do tamanho
--- de cron.job_run_details.
+-- Solucao: tabela espelho public.cron_job_last_run com max(start_time) por job,
+-- atualizada INCREMENTALMENTE por runid -- que e' o pkey e portanto
+-- monotonico. Um marcador guarda o ultimo runid incorporado, entao cada
+-- execucao le apenas as linhas novas via Index Scan:
+--   Index Scan using job_run_details_pkey: 1,24 ms / 89 buffers / 211 linhas
+--   (contra Parallel Seq Scan: 60 ms / 7.583 buffers / 268k linhas)
+-- Custo constante, independente do tamanho de cron.job_run_details.
 -- Idempotente.
 
 CREATE TABLE IF NOT EXISTS public.cron_job_last_run (
@@ -35,7 +39,21 @@ ALTER TABLE public.cron_job_last_run ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.cron_job_last_run FROM PUBLIC, anon, authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.cron_job_last_run TO service_role;
 
--- Carga inicial: uma passada unica na tabela para semear o espelho.
+-- Marcador de progresso: ultimo runid ja incorporado ao espelho.
+CREATE TABLE IF NOT EXISTS public.cron_job_last_run_cursor (
+  id           boolean PRIMARY KEY DEFAULT true CHECK (id),
+  last_runid   bigint  NOT NULL DEFAULT 0,
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE public.cron_job_last_run_cursor IS
+  'Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan.';
+
+ALTER TABLE public.cron_job_last_run_cursor ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public.cron_job_last_run_cursor FROM PUBLIC, anon, authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.cron_job_last_run_cursor TO service_role;
+
+-- Carga inicial: uma unica passada completa, com o maior runid como cursor.
 INSERT INTO public.cron_job_last_run (jobid, last_start)
 SELECT jobid, max(start_time)
 FROM cron.job_run_details
@@ -44,32 +62,62 @@ ON CONFLICT (jobid) DO UPDATE
   SET last_start = GREATEST(public.cron_job_last_run.last_start, EXCLUDED.last_start),
       updated_at = now();
 
-CREATE OR REPLACE FUNCTION public.refresh_cron_job_last_run(_window interval DEFAULT interval '6 hours')
+INSERT INTO public.cron_job_last_run_cursor (id, last_runid)
+SELECT true, COALESCE(max(runid), 0) FROM cron.job_run_details
+ON CONFLICT (id) DO UPDATE
+  SET last_runid = GREATEST(public.cron_job_last_run_cursor.last_runid, EXCLUDED.last_runid),
+      updated_at = now();
+
+-- DROP necessario: a primeira versao desta funcao recebia um parametro
+-- interval; CREATE OR REPLACE nao altera a assinatura e deixaria as duas
+-- sobrecarregadas, quebrando a chamada sem argumentos (42725).
+DROP FUNCTION IF EXISTS public.refresh_cron_job_last_run(interval);
+
+CREATE OR REPLACE FUNCTION public.refresh_cron_job_last_run()
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path TO 'public', 'cron'
 AS $function$
 DECLARE
-  v_rows integer;
+  v_cursor bigint;
+  v_rows   integer;
 BEGIN
-  -- Janela de 6 h cobre com folga o intervalo de 15 min do job que chama isso,
-  -- mesmo apos uma pausa longa; o GREATEST garante que nunca retrocede.
-  INSERT INTO public.cron_job_last_run (jobid, last_start)
-  SELECT jobid, max(start_time)
-    FROM cron.job_run_details
-   WHERE start_time > now() - _window
-   GROUP BY jobid
-  ON CONFLICT (jobid) DO UPDATE
-    SET last_start = GREATEST(public.cron_job_last_run.last_start, EXCLUDED.last_start),
-        updated_at = now();
-  GET DIAGNOSTICS v_rows = ROW_COUNT;
+  -- Le e trava o cursor, para que duas execucoes concorrentes nao processem
+  -- o mesmo intervalo duas vezes.
+  SELECT c.last_runid INTO v_cursor
+    FROM public.cron_job_last_run_cursor AS c WHERE c.id
+     FOR UPDATE;
+
+  -- Filtro pelo pkey (runid e' monotonico): Index Scan, custo independente
+  -- do tamanho de cron.job_run_details.
+  WITH novos AS (
+    SELECT jobid, max(start_time) AS last_start
+      FROM cron.job_run_details
+     WHERE runid > v_cursor
+     GROUP BY jobid
+  ), up AS (
+    INSERT INTO public.cron_job_last_run (jobid, last_start)
+    SELECT jobid, last_start FROM novos
+    ON CONFLICT (jobid) DO UPDATE
+      SET last_start = GREATEST(public.cron_job_last_run.last_start, EXCLUDED.last_start),
+          updated_at = now()
+    RETURNING 1
+  )
+  SELECT count(*)::integer INTO v_rows FROM up;
+
+  -- Avanca o cursor so depois de incorporar; GREATEST impede retrocesso.
+  UPDATE public.cron_job_last_run_cursor
+     SET last_runid = GREATEST(last_runid, (SELECT COALESCE(max(runid), 0) FROM cron.job_run_details)),
+         updated_at = now()
+   WHERE id;
+
   RETURN v_rows;
 END;
 $function$;
 
-REVOKE ALL ON FUNCTION public.refresh_cron_job_last_run(interval) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.refresh_cron_job_last_run(interval) TO service_role;
+REVOKE ALL ON FUNCTION public.refresh_cron_job_last_run() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.refresh_cron_job_last_run() TO service_role;
 
 CREATE OR REPLACE FUNCTION public.detect_stalled_cron_jobs()
 RETURNS integer
@@ -86,7 +134,6 @@ DECLARE
   v_threshold interval;
   v_gap interval;
 BEGIN
-  -- Atualiza o espelho antes de ler (0,45 s), substituindo ~45 seq scans.
   PERFORM public.refresh_cron_job_last_run();
 
   FOR v_job IN
