@@ -80732,6 +80732,15 @@
           "jobname": "semantic-reindex-daily",
           "schedule": "0 5 * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "SELECT public.retry_pending_internal_edge_jobs();",
+          "database": "postgres",
+          "jobid": 97,
+          "jobname": "retry-pending-internal-edge-jobs-2min",
+          "schedule": "*/2 * * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -91919,6 +91928,39 @@
         "volatility": "stable"
       },
       {
+        "args": "p_function_name text, p_attempt integer, p_max_attempts integer",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [
+            "public.retry_pending_internal_edge_jobs",
+            "public.trigger_internal_edge_job"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, net"
+        ],
+        "definition": null,
+        "definition_sha": "ee239e541adccde0",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "post_internal_edge_job",
+        "owner": "postgres",
+        "returns": "bigint",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -93108,6 +93150,38 @@
         "name": "restore_record",
         "owner": "postgres",
         "returns": "void",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [
+            "97:retry-pending-internal-edge-jobs-2min"
+          ],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, net"
+        ],
+        "definition": null,
+        "definition_sha": "b537b0857648c2f4",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "retry_pending_internal_edge_jobs",
+        "owner": "postgres",
+        "returns": "jsonb",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -94711,7 +94785,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "d67f04143c243e84",
+        "definition_sha": "5133989b8ac74520",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,

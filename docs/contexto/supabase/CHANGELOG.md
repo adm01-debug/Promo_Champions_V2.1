@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 13:12 UTC
+
+- **cron jobs** adicionado (1): `97:retry-pending-internal-edge-jobs-2min`
+- **functions** adicionado (2): `public.post_internal_edge_job(p_function_name text, p_attempt integer, p_max_attempts integer)`, `public.retry_pending_internal_edge_jobs()`
+- **functions** alterado (1): `public.trigger_internal_edge_job(p_function_name text)`
+
 ## 2026-11-22 12:18 UTC
 
 - **functions** alterado (1): `public.trigger_internal_edge_job(p_function_name text)`
