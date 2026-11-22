@@ -139,6 +139,7 @@ DECLARE
   v_timed_out boolean;
   v_error_msg text;
   v_is_dns boolean;
+  v_body text;
   v_sucesso integer := 0;
   v_reenfileirado integer := 0;
   v_desistiu integer := 0;
@@ -219,6 +220,23 @@ BEGIN
        WHERE id = v_row.id;
       v_desistiu := v_desistiu + 1;
       CONTINUE;
+    END IF;
+
+    -- 5xx por configuracao ausente (secret nao definido) falha igual em toda
+    -- tentativa: re-enfileirar so gasta invocacao e infla a taxa de 5xx.
+    IF v_status IS NOT NULL AND v_status >= 500 AND v_status < 600 THEN
+      SELECT r.content INTO v_body
+        FROM net._http_response AS r
+       WHERE r.id = v_row.request_id::bigint
+       LIMIT 1;
+      IF v_body ~* '(not configured|not set|nao configurad|missing (env|secret)|no_webhook|RESEND_API_KEY|SLACK_WEBHOOK_URL)' THEN
+        UPDATE public.edge_retry_events
+           SET outcome = 'non_retryable', status_code = v_status, error_name = 'http_5xx_config',
+               error_message = left('falha de configuracao na edge function: ' || coalesce(v_body, ''), 500)
+         WHERE id = v_row.id;
+        v_desistiu := v_desistiu + 1;
+        CONTINUE;
+      END IF;
     END IF;
 
     -- DNS nunca resolveu ou 5xx: re-tenta enquanto houver tentativa disponivel.
