@@ -271,3 +271,7 @@ $do$;
 
 GRANT EXECUTE ON FUNCTION public.retry_pending_internal_edge_jobs() TO postgres;
 REVOKE ALL ON FUNCTION public.post_internal_edge_job(text, integer, integer) FROM PUBLIC, anon, authenticated;
+-- A reconciliacao e' SECURITY DEFINER e nao deve ser chamavel pela API publica:
+-- sem isso um visitante anonimo poderia disparar retries e reescrever a telemetria.
+REVOKE ALL ON FUNCTION public.retry_pending_internal_edge_jobs() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.retry_pending_internal_edge_jobs() TO postgres, service_role;
