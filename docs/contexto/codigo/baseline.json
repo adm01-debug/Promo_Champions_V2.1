@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "48c711b564653a41fc86a92a7ffe6070507e779d",
+  "commit": "b488591e9261d238b56ade5ba2920e557fbadca7",
   "branch": "main",
-  "data_commit": "2026-11-22T16:31:48-03:00",
+  "data_commit": "2026-11-22T16:43:59-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b488591",
+    "data": "2026-11-22",
+    "assunto": "fix: espalha schedules do cron para eliminar job startup timeout (#622)"
+   },
    {
     "sha": "48c711b",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "d5e7079",
     "data": "2026-11-20",
     "assunto": "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)"
-   },
-   {
-    "sha": "66230ee",
-    "data": "2026-11-20",
-    "assunto": "chore: registra A5 como concluido no backlog (#595)"
    }
   ],
-  "arquivos_mudados_7d": 213,
+  "arquivos_mudados_7d": 214,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -274,10 +274,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": ".github/workflows/release-please.yml",
     "mudancas": 5
    },
@@ -296,12 +292,16 @@
    {
     "arquivo": "release-please-config.json",
     "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 201
+    "commits": 202
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3626,
+  "arquivos_total": 3627,
   "arquivos_codigo": 2579,
   "linhas_codigo": 443272,
   "rotas": 170,
@@ -330,8 +330,8 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 419,
-  "migrations": 709,
-  "cron_jobs": 33,
+  "migrations": 710,
+  "cron_jobs": 39,
   "testes": 247,
   "workflows": 27,
   "scripts": 78,

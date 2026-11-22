@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "48c711b564653a41fc86a92a7ffe6070507e779d",
+  "sha": "b488591e9261d238b56ade5ba2920e557fbadca7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 19:32 UTC",
-  "files_total": 3641,
-  "code_files": 3298,
-  "code_lines": 478270
+  "generated_at": "2026-11-22 19:44 UTC",
+  "files_total": 3642,
+  "code_files": 3299,
+  "code_lines": 478306
  },
  "version": "1.3.2",
- "facts_hash": "bc0715159320915a",
+ "facts_hash": "d677c96c0fee4ea3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1121,
-   ".sql": 719,
+   ".sql": 720,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -66803,6 +66803,84 @@
     "schedule": "0 5 * * *",
     "body": "SELECT public.trigger_internal_edge_job(",
     "src": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
+   },
+   {
+    "job": "capture-rollback-snapshot-5min",
+    "schedule": "0-59/5 * * * *",
+    "body": "SELECT public.admin_capture_rollback_snapshot()",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "notify-v4-quote-status-every-5min",
+    "schedule": "1-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "check-v4-callback-alerts-every-5min",
+    "schedule": "2-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "wal-health-alert-5min",
+    "schedule": "3-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "sequence-runner-5min",
+    "schedule": "4-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "process-cadence-tasks-5min",
+    "schedule": "0-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "send-alert-notifications-5min",
+    "schedule": "2-59/5 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "detect-stalled-cron-15min",
+    "schedule": "0-59/15 * * * *",
+    "body": "SELECT public.detect_stalled_cron_jobs()",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "email-bulk-retry-15min",
+    "schedule": "1-59/15 * * * *",
+    "body": "SELECT net.http_post( url := (SELECT value FROM public._internal_secrets WHERE key=",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "edge-retry-threshold-alert-15min",
+    "schedule": "2-59/15 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "winloss-webhook-health-monitor-15min",
+    "schedule": "3-59/15 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "process-scheduled-sends-15min",
+    "schedule": "4-59/15 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "check-lead-sla-15min",
+    "schedule": "5-59/15 * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
    }
   ],
   "views": {
@@ -67673,6 +67751,7 @@
    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+   "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -108256,8 +108335,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 709,
-   "lines": 59429,
+   "files": 710,
+   "lines": 59465,
    "tables": [
     "user_permissions_cache"
    ],
@@ -165709,6 +165788,10 @@
    },
    {
     "file": "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
+    "call": "notify"
+   },
+   {
+    "file": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
     "call": "notify"
    },
    {
@@ -295899,6 +295982,13 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql": {
+   "path": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+   "lines": 36,
+   "side_effects": [
+    "notify"
+   ]
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297971,10 +298061,19 @@
   }
  },
  "git": {
-  "sha": "48c711b564653a41fc86a92a7ffe6070507e779d",
+  "sha": "b488591e9261d238b56ade5ba2920e557fbadca7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b488591",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: espalha schedules do cron para eliminar job startup timeout (#622)",
+    "files": [
+     "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+    ]
+   },
    {
     "sha": "48c711b",
     "date": "2026-11-22",
@@ -298333,15 +298432,6 @@
     "files": [
      "supabase/functions/export-winloss-pdf/index.ts"
     ]
-   },
-   {
-    "sha": "76bcae8",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: grava path do PDF de quote em bucket privado (#590)",
-    "files": [
-     "supabase/functions/receive-quote-webhook/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -298406,6 +298496,10 @@
     2
    ],
    [
+    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
     1
    ],
@@ -298419,10 +298513,6 @@
    ],
    [
     "scripts/run-sql-tests.sh",
-    1
-   ],
-   [
-    "supabase/tests/retry_dispatcher_assertions.sql",
     1
    ]
   ]

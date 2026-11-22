@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48c711b564` · branch `main` · 2026-11-22 19:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b488591e92` · branch `main` · 2026-11-22 19:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4739,6 +4739,7 @@ _nenhum item encontrado_
 | `notify` | `supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql` |
 | `notify` | `supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql` |
 | `notify` | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
+| `notify` | `supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código

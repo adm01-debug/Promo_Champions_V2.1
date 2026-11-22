@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 709,
+ "migrations": 710,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -2263,8 +2263,8 @@
   },
   {
    "nome": "capture-rollback-snapshot-5min",
-   "agenda": "*/5 * * * *",
-   "migration": "20261117070000_reconcilia_objetos_orfaos_producao.sql"
+   "agenda": "0-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "challenge-progress-sync",
@@ -2272,9 +2272,14 @@
    "migration": "20261019153000_lgpd_gamificacao_r2.sql"
   },
   {
+   "nome": "check-lead-sla-15min",
+   "agenda": "5-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+  },
+  {
    "nome": "check-v4-callback-alerts-every-5min",
-   "agenda": "*/5 * * * *",
-   "migration": "20260831170000_secure_operational_edge_crons.sql"
+   "agenda": "2-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "cleanup-stale-logs-daily",
@@ -2312,14 +2317,19 @@
    "migration": "20260831163000_secure_churn_and_task_crons.sql"
   },
   {
+   "nome": "detect-stalled-cron-15min",
+   "agenda": "0-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+  },
+  {
    "nome": "edge-retry-threshold-alert-15min",
-   "agenda": "*/15 * * * *",
-   "migration": "20260831170000_secure_operational_edge_crons.sql"
+   "agenda": "2-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "email-bulk-retry-15min",
-   "agenda": "*/15 * * * *",
-   "migration": "20260910153000_reconcile_operational_edge_crons.sql"
+   "agenda": "1-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "enforce-telemetry-retention-daily",
@@ -2333,13 +2343,23 @@
   },
   {
    "nome": "notify-v4-quote-status-every-5min",
-   "agenda": "*/5 * * * *",
-   "migration": "20260831170000_secure_operational_edge_crons.sql"
+   "agenda": "1-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+  },
+  {
+   "nome": "process-cadence-tasks-5min",
+   "agenda": "0-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "process-call-recording-ingest-1min",
    "agenda": "* * * * *",
    "migration": "20260831170000_secure_operational_edge_crons.sql"
+  },
+  {
+   "nome": "process-scheduled-sends-15min",
+   "agenda": "4-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "purge_old_telemetry_daily",
@@ -2382,9 +2402,19 @@
    "migration": "20261122000000_schedule_semantic_reindex_cron.sql"
   },
   {
+   "nome": "send-alert-notifications-5min",
+   "agenda": "2-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+  },
+  {
+   "nome": "sequence-runner-5min",
+   "agenda": "4-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+  },
+  {
    "nome": "wal-health-alert-5min",
-   "agenda": "*/5 * * * *",
-   "migration": "20261001144000_schedule_wal_and_webhook_health_crons.sql"
+   "agenda": "3-59/5 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
    "nome": "webvitals-regression-alert-daily",
@@ -2408,8 +2438,8 @@
   },
   {
    "nome": "winloss-webhook-health-monitor-15min",
-   "agenda": "*/15 * * * *",
-   "migration": "20261001144000_schedule_wal_and_webhook_health_crons.sql"
+   "agenda": "3-59/15 * * * *",
+   "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   }
  ],
  "buckets": [

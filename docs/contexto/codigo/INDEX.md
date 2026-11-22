@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `48c711b564653a41fc86a92a7ffe6070507e779d` (2026-11-22T16:31:48-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b488591e9261d238b56ade5ba2920e557fbadca7` (2026-11-22T16:43:59-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2498), SQL (719), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2498), SQL (720), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3626 |
+| arquivos_total | 3627 |
 | arquivos_codigo | 2579 |
 | linhas_codigo | 443272 |
 | rotas | 170 |
@@ -46,8 +46,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 171 |
 | tabelas | 419 |
-| migrations | 709 |
-| cron_jobs | 33 |
+| migrations | 710 |
+| cron_jobs | 39 |
 | testes | 247 |
 | workflows | 27 |
 | scripts | 78 |
@@ -518,9 +518,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `auto-task-queue-hourly` 0 * * * * (20260831163000_secure_churn_and_task_crons.sql)
 - `bitrix24-sync-hourly` 17 * * * * (20261013170000_bitrix24_sync_cron.sql)
 - `campaign-health-alert-30min` */30 * * * * → edge campaign-health-alert (20260726202421_0e6c60a8-07a3-4e75-9aa4-934a5fbafc09.sql)
-- `capture-rollback-snapshot-5min` */5 * * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
+- `capture-rollback-snapshot-5min` 0-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `challenge-progress-sync` 15 3 * * * (20261019153000_lgpd_gamificacao_r2.sql)
-- `check-v4-callback-alerts-every-5min` */5 * * * * (20260831170000_secure_operational_edge_crons.sql)
+- `check-lead-sla-15min` 5-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `check-v4-callback-alerts-every-5min` 2-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `cleanup-stale-logs-daily` 15 3 * * * (20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql)
 - `cleanup-webhook-dedupe` 0 */6 * * * (20260707114840_4586855c-9d65-4288-9eee-e06b1b311446.sql)
 - `cron-failure-alerter-10min` */10 * * * * (20260831170000_secure_operational_edge_crons.sql)
@@ -528,12 +529,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `deal-risk-digest-daily` 0 11 * * * (20260910153000_reconcile_operational_edge_crons.sql)
 - `detect_slow_queries_hourly` 20 * * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
 - `detect-client-churn-alerts-hourly` 15 * * * * (20260831163000_secure_churn_and_task_crons.sql)
-- `edge-retry-threshold-alert-15min` */15 * * * * (20260831170000_secure_operational_edge_crons.sql)
-- `email-bulk-retry-15min` */15 * * * * (20260910153000_reconcile_operational_edge_crons.sql)
+- `detect-stalled-cron-15min` 0-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `edge-retry-threshold-alert-15min` 2-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `email-bulk-retry-15min` 1-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `enforce-telemetry-retention-daily` 30 3 * * * (20260712213509_3b994669-1c3f-47ef-90fa-a5e71a1093b2.sql)
 - `gc-call-recording-ingest-jobs` 15 3 * * * (20260712232346_aec818ed-0486-4b47-8528-f607bf2d2811.sql)
-- `notify-v4-quote-status-every-5min` */5 * * * * (20260831170000_secure_operational_edge_crons.sql)
+- `notify-v4-quote-status-every-5min` 1-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `process-cadence-tasks-5min` 0-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `process-call-recording-ingest-1min` * * * * * (20260831170000_secure_operational_edge_crons.sql)
+- `process-scheduled-sends-15min` 4-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `purge_old_telemetry_daily` 15 3 * * * (20261117070000_reconcilia_objetos_orfaos_producao.sql)
 - `purge-quote-sync-inbound-log-30d` 15 3 * * * (20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f.sql)
 - `purge-telemetry-retention-daily` 30 3 * * * (20260712212417_ae1222eb-fbbd-453e-bc5f-b9c124c7af32.sql)
@@ -542,12 +546,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `retry-pending-internal-edge-jobs-2min` */2 * * * * (20261124130000_reconcilia_retry_edge_jobs.sql)
 - `rotate-daily-challenges-daily` 10 3 * * * (20261014000000_gamificacao_server_side.sql)
 - `semantic-reindex-daily` 0 5 * * * (20261122000000_schedule_semantic_reindex_cron.sql)
-- `wal-health-alert-5min` */5 * * * * (20261001144000_schedule_wal_and_webhook_health_crons.sql)
+- `send-alert-notifications-5min` 2-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `sequence-runner-5min` 4-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `wal-health-alert-5min` 3-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `webvitals-regression-alert-daily` 15 11 * * * (20261002010000_webvitals_regression_alert_cron.sql)
 - `weekly-league-reset` 0 0 * * 1 (20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql)
 - `weekly-matchmaking` 1 0 * * 1 (20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql)
 - `weekly-matchups-resolution` 5 0 * * 1 (20261018190100_gamificacao_claim_matchups_rotations.sql)
-- `winloss-webhook-health-monitor-15min` */15 * * * * (20261001144000_schedule_wal_and_webhook_health_crons.sql)
+- `winloss-webhook-health-monitor-15min` 3-59/15 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
@@ -579,7 +585,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21839 nós · 66848 arestas · 1523 comunidades · grafo do commit `48c711b5`
+- 21840 nós · 66848 arestas · 1524 comunidades · grafo do commit `b488591e`
 - comunidades maiores: schema.sql (785), Card (425), SelectContent (320), CardTitle (300), Índice (279), client.ts (276), DialogContent (262), Button (238), vitest (229), cn (228), request-id.ts (225), TableRow (222)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -759,6 +765,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.1...promo-champions-v2-v1.7.2) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-22 `b488591` fix: espalha schedules do cron para eliminar job startup timeout (#622)
 - 2026-11-22 `48c711b` perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)
 - 2026-11-22 `8ed528b` fix: bitrix24-sync responde 503 quando credenciais faltam (#619)
 - 2026-11-22 `1976a23` chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)
@@ -773,7 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-21 `374d7d8` chore(main): release 1.7.1 (#607)
 - 2026-11-21 `06e4384` fix: busca semantica retornando zero resultados e login quebrado (500) (#608)
 - 2026-11-21 `bff6aa6` fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)
-- 2026-11-21 `a122081` chore(release): 1.7.0 (#605)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
