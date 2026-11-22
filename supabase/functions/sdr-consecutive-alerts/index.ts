@@ -11,8 +11,13 @@ import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 type LogFn = RequestIdContext['log'];
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
-const resend = new Resend(RESEND_API_KEY);
+
+// Ausencia do secret e falha permanente de configuracao: 503 nomeando a causa
+// em vez de 500 generico (WORKER_ERROR) no import do modulo.
+const RESEND_MISSING_BODY = JSON.stringify({
+  error: 'RESEND_API_KEY not configured',
+  hint: 'Adicione o secret RESEND_API_KEY para habilitar o envio de e-mails.',
+});
 
 interface UnderperformingSDR {
   id: string;
@@ -236,7 +241,8 @@ interface EmailLogRow {
 
 async function sendNotificationToSDR(
   sdr: UnderperformingSDR,
-  log: LogFn
+  log: LogFn,
+  resend: Resend
 ): Promise<EmailLogRow | null> {
   if (!sdr.email) {
     log('info', 'sdr_no_email_skip', { sdr_id: sdr.id });
@@ -325,6 +331,16 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+
+  if (!RESEND_API_KEY) {
+    log('error', 'resend_key_missing');
+    return new Response(RESEND_MISSING_BODY, {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+    });
+  }
+
+  const resend = new Resend(RESEND_API_KEY);
 
   try {
     log('info', 'check_started');
@@ -491,7 +507,7 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
     // Send individual notifications to each underperforming SDR (sequential — external rate limits)
     const sdrEmailLogs: EmailLogRow[] = [];
     for (const sdr of underperformingSDRs) {
-      const logRow = await sendNotificationToSDR(sdr, log);
+      const logRow = await sendNotificationToSDR(sdr, log, resend);
       if (logRow) sdrEmailLogs.push(logRow);
     }
     if (sdrEmailLogs.length > 0) {

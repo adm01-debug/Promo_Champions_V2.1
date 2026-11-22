@@ -7,14 +7,29 @@ import { WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
-const resend = new Resend(RESEND_API_KEY);
+
+// Ausencia do secret e falha permanente de configuracao: 503 nomeando a causa
+// em vez de 500 generico (WORKER_ERROR) no import do modulo.
+const RESEND_MISSING_BODY = JSON.stringify({
+  error: 'RESEND_API_KEY not configured',
+  hint: 'Adicione o secret RESEND_API_KEY para habilitar o envio de e-mails.',
+});
 
 Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  if (!RESEND_API_KEY) {
+    ctx.log('error', 'resend_key_missing');
+    return new Response(RESEND_MISSING_BODY, {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
+
+  const resend = new Resend(RESEND_API_KEY);
 
   // ── Authentication ────────────────────────────────────────────────────
   // Exige JWT de usuário válido OU chamada interna autenticada (service_role

@@ -8,8 +8,13 @@ import { alertFromEmail } from "../_shared/alert-escalation.ts";
 import { maskEmail } from "../_shared/pii.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
-const resend = new Resend(RESEND_API_KEY);
+
+// Ausencia do secret e falha permanente de configuracao: 503 nomeando a causa
+// em vez de 500 generico (WORKER_ERROR) no import do modulo.
+const RESEND_MISSING_BODY = JSON.stringify({
+  error: "RESEND_API_KEY not configured",
+  hint: "Adicione o secret RESEND_API_KEY para habilitar o envio de e-mails.",
+});
 
 interface NewDeviceAlertRequest {
   user_id: string;
@@ -105,6 +110,16 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+
+  if (!RESEND_API_KEY) {
+    log('error', 'resend_key_missing');
+    return new Response(RESEND_MISSING_BODY, {
+      status: 503,
+      headers: { "Content-Type": "application/json", ...getCorsHeaders(req) },
+    });
+  }
+
+  const resend = new Resend(RESEND_API_KEY);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
