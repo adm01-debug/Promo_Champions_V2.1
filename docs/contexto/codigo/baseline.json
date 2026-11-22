@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "56da98afa8e859aa96f2b46aea69d0eb6ac3a9a9",
+  "commit": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
   "branch": "main",
-  "data_commit": "2026-11-22T16:44:10-03:00",
+  "data_commit": "2026-11-22T16:46:30-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "fc6f8f9",
+    "data": "2026-11-22",
+    "assunto": "fix: timeout do pg_net para funcoes com DNS lento medido (#618)"
+   },
    {
     "sha": "56da98a",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "a9ec900",
     "data": "2026-11-21",
     "assunto": "chore(main): release 1.6.1 (#579)"
-   },
-   {
-    "sha": "f26c873",
-    "data": "2026-11-21",
-    "assunto": "fix: retry com backoff nos envios agendados e CHECK de status quebrado (T15) (#596)"
    }
   ],
-  "arquivos_mudados_7d": 214,
+  "arquivos_mudados_7d": 215,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 17
+    "mudancas": 16
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 202
+    "commits": 203
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3627,
+  "arquivos_total": 3628,
   "arquivos_codigo": 2579,
   "linhas_codigo": 443272,
   "rotas": 170,
@@ -330,7 +330,7 @@
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 419,
-  "migrations": 710,
+  "migrations": 711,
   "cron_jobs": 39,
   "testes": 247,
   "workflows": 27,

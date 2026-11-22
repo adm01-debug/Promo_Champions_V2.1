@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `56da98afa8` · branch `main` · 2026-11-22 19:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fc6f8f9a9e` · branch `main` · 2026-11-22 19:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4155,7 +4155,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +692 linhas — lista completa em `context.json` | |
+| … +693 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

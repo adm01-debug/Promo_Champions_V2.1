@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: timeout do pg_net para funcoes com DNS lento medido (#618)",
    "chore(main): release 1.7.3 (#621)",
    "fix: espalha schedules do cron para eliminar job startup timeout (#622)",
    "perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)",
-   "fix: bitrix24-sync responde 503 quando credenciais faltam (#619)",
-   "chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)"
+   "fix: bitrix24-sync responde 503 quando credenciais faltam (#619)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

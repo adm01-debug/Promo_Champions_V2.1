@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "56da98afa8e859aa96f2b46aea69d0eb6ac3a9a9",
+  "sha": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 19:47 UTC",
-  "files_total": 3642,
-  "code_files": 3299,
-  "code_lines": 478306
+  "generated_at": "2026-11-22 19:51 UTC",
+  "files_total": 3643,
+  "code_files": 3300,
+  "code_lines": 478378
  },
  "version": "1.3.2",
- "facts_hash": "d677c96c0fee4ea3",
+ "facts_hash": "2939f779c603ca64",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1121,
-   ".sql": 720,
+   ".sql": 721,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -52340,10 +52340,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -67750,6 +67750,7 @@
    "supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql",
    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+   "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
    "supabase/schema.sql",
@@ -73382,6 +73383,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql"
    },
    {
     "kind": "revoke",
@@ -108335,8 +108352,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 710,
-   "lines": 59465,
+   "files": 711,
+   "lines": 59521,
    "tables": [
     "user_permissions_cache"
    ],
@@ -108436,7 +108453,7 @@
   {
    "module": "supabase/tests",
    "files": 7,
-   "lines": 768,
+   "lines": 784,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -122554,6 +122571,10 @@
    {
     "file": "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
     "msg": ",\n      "
+   },
+   {
+    "file": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+    "msg": " THEN 60000\n    WHEN "
    },
    {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
@@ -186042,10 +186063,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -198305,6 +198326,7 @@
    "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+   "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
@@ -203837,6 +203859,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql"
    },
    {
     "kind": "revoke",
@@ -295973,6 +296011,14 @@
    "lines": 87,
    "uses_service_role": true
   },
+  "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql": {
+   "path": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+   "lines": 56,
+   "errors": [
+    " THEN 60000\n    WHEN "
+   ],
+   "uses_service_role": true
+  },
   "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql": {
    "path": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "lines": 206,
@@ -296019,8 +296065,11 @@
   },
   "supabase/tests/retry_dispatcher_assertions.sql": {
    "path": "supabase/tests/retry_dispatcher_assertions.sql",
-   "lines": 90,
+   "lines": 106,
    "is_test": true,
+   "errors": [
+    ",\n    "
+   ],
    "uses_service_role": true
   },
   "supabase/tests/rls_test_suite.sql": {
@@ -298061,10 +298110,20 @@
   }
  },
  "git": {
-  "sha": "56da98afa8e859aa96f2b46aea69d0eb6ac3a9a9",
+  "sha": "fc6f8f9a9eb6610c4375653b36c89868a36fc346",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "fc6f8f9",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "fix: timeout do pg_net para funcoes com DNS lento medido (#618)",
+    "files": [
+     "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+     "supabase/tests/retry_dispatcher_assertions.sql"
+    ]
+   },
    {
     "sha": "56da98a",
     "date": "2026-11-22",
@@ -298426,15 +298485,6 @@
     "files": [
      "docs/pendencias/backlog-verificado.md"
     ]
-   },
-   {
-    "sha": "56253c6",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: registra conclusão do A3 no backlog (#592)",
-    "files": [
-     "docs/pendencias/backlog-verificado.md"
-    ]
    }
   ],
   "hot_files": [
@@ -298459,12 +298509,16 @@
     4
    ],
    [
-    "docs/pendencias/backlog-verificado.md",
-    4
-   ],
-   [
     "supabase/functions/semantic-search-universal/index.ts",
     3
+   ],
+   [
+    "docs/pendencias/backlog-verificado.md",
+    3
+   ],
+   [
+    "supabase/tests/retry_dispatcher_assertions.sql",
+    2
    ],
    [
     "supabase/functions/broadcast-sale-notification/index.ts",
@@ -298499,6 +298553,10 @@
     2
    ],
    [
+    "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
     1
    ],
@@ -298508,14 +298566,6 @@
    ],
    [
     "supabase/functions/bitrix24-sync/config_guard_test.ts",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-sync/index.ts",
-    1
-   ],
-   [
-    "scripts/run-sql-tests.sh",
     1
    ]
   ]
