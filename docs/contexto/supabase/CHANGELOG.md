@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-22 20:13 UTC
+
+- **cron jobs** alterado (13): `13:capture-rollback-snapshot-5min`, `17:detect-stalled-cron-15min`, `26:email-bulk-retry-15min`, `36:notify-v4-quote-status-every-5min`, `37:check-v4-callback-alerts-every-5min`, `40:edge-retry-threshold-alert-15min`, `41:wal-health-alert-5min`, `42:winloss-webhook-health-monitor-15min`, `77:sequence-runner-5min`, `78:process-cadence-tasks-5min`, `79:process-scheduled-sends-15min`, `81:check-lead-sla-15min`, `85:send-alert-notifications-5min`
+- **functions** alterado (7): `public.admin_capture_rollback_snapshot()`, `public.detect_stalled_cron_jobs()`, `public.fn_cron_expected_interval(_schedule text)`, `public.fn_cron_stalled_threshold(_schedule text)`, `public.internal_edge_job_timeout_ms(p_function_name text)`, `public.refresh_cron_job_last_run()`, `public.trigger_internal_edge_job(p_function_name text)`
+- **migrations** adicionado (4): `20261124160000_timeout_por_funcao_no_dispatcher`, `20261125000000_timeout_pgnet_funcoes_com_dns_lento`, `20261125100000_cron_job_run_details_sem_seq_scan`, `20261125110000_espalha_schedules_cron_evita_startup_timeout`
+
 ## 2026-11-22 19:11 UTC
 
 - **colunas** adicionado (6): `public.cron_job_last_run.jobid`, `public.cron_job_last_run.last_start`, `public.cron_job_last_run.updated_at`, `public.cron_job_last_run_cursor.id`, `public.cron_job_last_run_cursor.last_runid`, `public.cron_job_last_run_cursor.updated_at`

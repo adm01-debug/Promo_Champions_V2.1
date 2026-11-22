@@ -709,3 +709,7 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261122000000 | [20261122000000_schedule_semantic_reindex_cron](migrations/20261122000000_20261122000000_schedule_semantic_reindex_cron.sql) | 0 |
 | 20261123000000 | [semantic_index_hnsw_and_status_filters](migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql) | 0 |
 | 20261123000100 | [fix_auth_users_token_columns_and_identities](migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql) | 0 |
+| 20261124160000 | [timeout_por_funcao_no_dispatcher](migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql) | 0 |
+| 20261125000000 | [timeout_pgnet_funcoes_com_dns_lento](migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql) | 0 |
+| 20261125100000 | [cron_job_run_details_sem_seq_scan](migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql) | 0 |
+| 20261125110000 | [espalha_schedules_cron_evita_startup_timeout](migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql) | 0 |

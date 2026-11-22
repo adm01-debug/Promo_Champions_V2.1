@@ -80544,7 +80544,7 @@
           "database": "postgres",
           "jobid": 13,
           "jobname": "capture-rollback-snapshot-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "0-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80580,7 +80580,7 @@
           "database": "postgres",
           "jobid": 17,
           "jobname": "detect-stalled-cron-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "0-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80598,7 +80598,7 @@
           "database": "postgres",
           "jobid": 26,
           "jobname": "email-bulk-retry-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "1-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80625,7 +80625,7 @@
           "database": "postgres",
           "jobid": 36,
           "jobname": "notify-v4-quote-status-every-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "1-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80634,7 +80634,7 @@
           "database": "postgres",
           "jobid": 37,
           "jobname": "check-v4-callback-alerts-every-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "2-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80661,7 +80661,7 @@
           "database": "postgres",
           "jobid": 40,
           "jobname": "edge-retry-threshold-alert-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "2-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80670,7 +80670,7 @@
           "database": "postgres",
           "jobid": 41,
           "jobname": "wal-health-alert-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "3-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80679,7 +80679,7 @@
           "database": "postgres",
           "jobid": 42,
           "jobname": "winloss-webhook-health-monitor-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "3-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80751,7 +80751,7 @@
           "database": "postgres",
           "jobid": 77,
           "jobname": "sequence-runner-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "4-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80760,7 +80760,7 @@
           "database": "postgres",
           "jobid": 78,
           "jobname": "process-cadence-tasks-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "0-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -80769,7 +80769,7 @@
           "database": "postgres",
           "jobid": 79,
           "jobname": "process-scheduled-sends-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "4-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80787,7 +80787,7 @@
           "database": "postgres",
           "jobid": 81,
           "jobname": "check-lead-sla-15min",
-          "schedule": "*/15 * * * *",
+          "schedule": "5-59/15 * * * *",
           "username": "postgres"
         },
         {
@@ -80823,7 +80823,7 @@
           "database": "postgres",
           "jobid": 85,
           "jobname": "send-alert-notifications-5min",
-          "schedule": "*/5 * * * *",
+          "schedule": "2-59/5 * * * *",
           "username": "postgres"
         },
         {
@@ -82989,9 +82989,13 @@
             {
               "file": "supabase/migrations/20261117070000_reconcilia_objetos_orfaos_producao.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [
             "13:capture-rollback-snapshot-5min"
           ],
@@ -85896,8 +85900,17 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [
             "17:detect-stalled-cron-15min"
           ],
@@ -87021,9 +87034,13 @@
             {
               "file": "supabase/migrations/20261001203300_deny_dead_tables_revoke_anon_grants.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [
             "public.detect_stalled_cron_jobs",
@@ -87068,9 +87085,13 @@
             {
               "file": "supabase/migrations/20261001203300_deny_dead_tables_revoke_anon_grants.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "public.detect_stalled_cron_jobs",
@@ -90356,7 +90377,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "bcd0a20f3fe9e7b8",
+        "definition_sha": "8897682e0bc1a53b",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -92970,8 +92991,13 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [
             "public.detect_stalled_cron_jobs"
@@ -94954,9 +94980,13 @@
             {
               "file": "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+              "hits": 10
             }
           ],
-          "code_total_files": 10,
+          "code_total_files": 11,
           "cron": [
             "36:notify-v4-quote-status-every-5min",
             "37:check-v4-callback-alerts-every-5min",
@@ -133780,6 +133810,26 @@
         "name": "fix_auth_users_token_columns_and_identities",
         "statements": [],
         "version": "20261123000100"
+      },
+      {
+        "name": "timeout_por_funcao_no_dispatcher",
+        "statements": null,
+        "version": "20261124160000"
+      },
+      {
+        "name": "timeout_pgnet_funcoes_com_dns_lento",
+        "statements": null,
+        "version": "20261125000000"
+      },
+      {
+        "name": "cron_job_run_details_sem_seq_scan",
+        "statements": null,
+        "version": "20261125100000"
+      },
+      {
+        "name": "espalha_schedules_cron_evita_startup_timeout",
+        "statements": null,
+        "version": "20261125110000"
       }
     ],
     "policies": [
