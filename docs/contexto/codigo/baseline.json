@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8ed528beae80d3a1e37521719c218ea9f4ada21a",
+  "commit": "48c711b564653a41fc86a92a7ffe6070507e779d",
   "branch": "main",
-  "data_commit": "2026-11-22T15:34:26-03:00",
+  "data_commit": "2026-11-22T16:31:48-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "48c711b",
+    "data": "2026-11-22",
+    "assunto": "perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)"
+   },
    {
     "sha": "8ed528b",
     "data": "2026-11-22",
@@ -126,14 +131,9 @@
     "sha": "66230ee",
     "data": "2026-11-20",
     "assunto": "chore: registra A5 como concluido no backlog (#595)"
-   },
-   {
-    "sha": "2ac2520",
-    "data": "2026-11-20",
-    "assunto": "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)"
    }
   ],
-  "arquivos_mudados_7d": 212,
+  "arquivos_mudados_7d": 213,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -274,10 +274,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 6
    },
@@ -296,12 +292,16 @@
    {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
+   },
+   {
+    "arquivo": "release-please-config.json",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 200
+    "commits": 201
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3625,
+  "arquivos_total": 3626,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443235,
+  "linhas_codigo": 443272,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -329,8 +329,8 @@
   "componentes": 1289,
   "hooks": 483,
   "edge_functions": 171,
-  "tabelas": 417,
-  "migrations": 708,
+  "tabelas": 419,
+  "migrations": 709,
   "cron_jobs": 33,
   "testes": 247,
   "workflows": 27,
@@ -616,7 +616,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25692
+   "linhas": 25729
   },
   "src/lib": {
    "arquivos": 80,
@@ -682,7 +682,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25623
+   "linhas": 25660
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8ed528beae80d3a1e37521719c218ea9f4ada21a",
+  "sha": "48c711b564653a41fc86a92a7ffe6070507e779d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 18:37 UTC",
-  "files_total": 3640,
-  "code_files": 3297,
-  "code_lines": 478064
+  "generated_at": "2026-11-22 19:32 UTC",
+  "files_total": 3641,
+  "code_files": 3298,
+  "code_lines": 478270
  },
  "version": "1.3.2",
- "facts_hash": "eb5a55c9a2c996a5",
+ "facts_hash": "bc0715159320915a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -400,7 +400,7 @@
   "languages": {
    ".tsx": 1376,
    ".ts": 1121,
-   ".sql": 718,
+   ".sql": 719,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -32037,6 +32037,64 @@
     "src": "supabase/schema.sql",
     "comment": "",
     "origin": "migration"
+   },
+   "cron_job_last_run": {
+    "columns": [
+     {
+      "name": "jobid",
+      "type": "integer PRIMARY KEY",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     },
+     {
+      "name": "last_start",
+      "type": "timestamptz NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     }
+    ],
+    "constraints": [],
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "comment": "Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs().",
+    "origin": "migration"
+   },
+   "cron_job_last_run_cursor": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "boolean PRIMARY KEY DEFAULT true CHECK (id)",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     },
+     {
+      "name": "last_runid",
+      "type": "bigint NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+     }
+    ],
+    "constraints": [],
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "comment": "Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan.",
+    "origin": "migration"
    }
   },
   "policies": [
@@ -52289,6 +52347,26 @@
     "raises": [],
     "tables": []
    },
+   "refresh_cron_job_last_run": {
+    "args": "",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_cursor bigint; v_rows integer; BEGIN SELECT c.last_runid INTO v_cursor FROM public.cron_job_last_run_cursor AS c WHERE c.id FOR UPDATE; WITH novos AS ( SELECT jobid, max(start_time) AS last_start FROM cron.job_run_details WHERE runid > v_cursor GROUP BY jobid HAVING max(start_time) IS NOT NULL ), up AS ( INSERT INTO public.cron_job_last_run (jobid, last_start) SELECT jobid, last_start FROM novos ON CONFLICT (jobid) DO UPDATE SET last_start = GREATEST(public.cron_job_last_run.last_start, EXCLUDED.last_start), updated_at = now() RETURNING 1 ) SELECT count(*)::integer INTO v_rows FROM up; UPDATE public.cron_job_last_run_cursor SET last_runid = GREATEST(last_runid, COALESCE( (SELECT ma …",
+    "raises": [],
+    "tables": [
+     "SET",
+     "cron",
+     "cron_job_last_run",
+     "cron_job_last_run_cursor",
+     "novos",
+     "up",
+     "v_cursor",
+     "v_rows"
+    ]
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -67594,6 +67672,7 @@
    "supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql",
    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+   "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -68014,6 +68093,8 @@
    "geo_blocked_regions": "enabled",
    "geo_access_logs": "enabled",
    "plan_rollback_ddl": "enabled",
+   "cron_job_last_run": "enabled",
+   "cron_job_last_run_cursor": "enabled",
    "ab_tests": "enabled",
    "experiment_assignments": "enabled",
    "experiment_variants": "enabled",
@@ -73222,6 +73303,70 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "cron_job_last_run",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update",
+    "object": "cron_job_last_run",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "cron_job_last_run_cursor",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update",
+    "object": "cron_job_last_run_cursor",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_cron_job_last_run",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_cron_job_last_run",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "detect_stalled_cron_jobs",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "detect_stalled_cron_jobs",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
    },
    {
     "kind": "grant",
@@ -93279,6 +93424,8 @@
    "table:status_transitions": "Máquina de estados: transições de status válidas por entidade (sales, commissions).",
    "table:app_config": "Configuração de aplicação org-wide (SLA, XP, SLO burn-rate, etc). Chave estável, valor JSONB.",
    "table:webhook_allowed_domains": "Allowlist de hosts para webhook de saida. Vazia = nada e permitido (fail-closed). Gerida por admin. A blocklist de rede privada/metadata nao fica aqui: esta no corpo de is_webhook_host_allowed().",
+   "table:cron_job_last_run": "Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs().",
+   "table:cron_job_last_run_cursor": "Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan.",
    "column:activities.deleted_at": "Soft delete: preenchido marca o registro como excluído sem remoção física.",
    "column:client_portfolio.deleted_at": "Soft delete: preenchido marca o registro como excluído sem remoção física.",
    "column:products.deleted_at": "Soft delete: preenchido marca o registro como excluído sem remoção física.",
@@ -108109,8 +108256,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 708,
-   "lines": 59223,
+   "files": 709,
+   "lines": 59429,
    "tables": [
     "user_permissions_cache"
    ],
@@ -116717,6 +116864,8 @@
    "contact_send_time_profile",
    "critical_moment_notifications",
    "cron_failure_alerts",
+   "cron_job_last_run",
+   "cron_job_last_run_cursor",
    "data_access_log",
    "data_retention_policies",
    "db_rollback_snapshots",
@@ -139206,6 +139355,36 @@
     "table": "plan_rollback_ddl",
     "column": "captured_at",
     "rule": "default now()"
+   },
+   {
+    "table": "cron_job_last_run",
+    "column": "jobid",
+    "rule": "PK"
+   },
+   {
+    "table": "cron_job_last_run",
+    "column": "last_start",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "cron_job_last_run",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "cron_job_last_run_cursor",
+    "column": "id",
+    "rule": "PK; default true; CHECK id"
+   },
+   {
+    "table": "cron_job_last_run_cursor",
+    "column": "last_runid",
+    "rule": "default 0"
+   },
+   {
+    "table": "cron_job_last_run_cursor",
+    "column": "updated_at",
+    "rule": "default now()"
    }
   ],
   "params": [
@@ -156371,6 +156550,14 @@
    {
     "file": "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
     "line": "AND e.created_at > now() - interval '2 hours'"
+   },
+   {
+    "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "line": "AND alerted_at > now() - interval '6 hours'"
+   },
+   {
+    "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "line": "v_last_run := now() - interval '30 days';"
    }
   ],
   "percents": [
@@ -185779,6 +185966,26 @@
     "raises": [],
     "tables": []
    },
+   "refresh_cron_job_last_run": {
+    "args": "",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_cursor bigint; v_rows integer; BEGIN SELECT c.last_runid INTO v_cursor FROM public.cron_job_last_run_cursor AS c WHERE c.id FOR UPDATE; WITH novos AS ( SELECT jobid, max(start_time) AS last_start FROM cron.job_run_details WHERE runid > v_cursor GROUP BY jobid HAVING max(start_time) IS NOT NULL ), up AS ( INSERT INTO public.cron_job_last_run (jobid, last_start) SELECT jobid, last_start FROM novos ON CONFLICT (jobid) DO UPDATE SET last_start = GREATEST(public.cron_job_last_run.last_start, EXCLUDED.last_start), updated_at = now() RETURNING 1 ) SELECT count(*)::integer INTO v_rows FROM up; UPDATE public.cron_job_last_run_cursor SET last_runid = GREATEST(last_runid, COALESCE( (SELECT ma …",
+    "raises": [],
+    "tables": [
+     "SET",
+     "cron",
+     "cron_job_last_run",
+     "cron_job_last_run_cursor",
+     "novos",
+     "up",
+     "v_cursor",
+     "v_rows"
+    ]
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -193413,6 +193620,20 @@
     "UPDATE": [],
     "DELETE": []
    },
+   "cron_job_last_run": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
+   "cron_job_last_run_cursor": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "cs_tickets": {
     "rls": "enabled",
     "SELECT": [
@@ -198001,6 +198222,7 @@
    "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql",
    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
+   "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -198229,6 +198451,7 @@
    "record_sale_stage_transition",
    "record_successful_login_attempt",
    "refresh_competitive_ranking",
+   "refresh_cron_job_last_run",
    "refresh_monthly_sales_summary",
    "refresh_session",
    "regenerate_backup_codes",
@@ -203531,6 +203754,70 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "cron_job_last_run",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update",
+    "object": "cron_job_last_run",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "cron_job_last_run_cursor",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select, insert, update",
+    "object": "cron_job_last_run_cursor",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "refresh_cron_job_last_run",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "refresh_cron_job_last_run",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "detect_stalled_cron_jobs",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "detect_stalled_cron_jobs",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
    },
    {
     "kind": "grant",
@@ -224268,7 +224555,13 @@
    "geo_access_logs": [
     "created_at"
    ],
-   "plan_rollback_ddl": []
+   "plan_rollback_ddl": [],
+   "cron_job_last_run": [
+    "updated_at"
+   ],
+   "cron_job_last_run_cursor": [
+    "updated_at"
+   ]
   },
   "pii": [
    [
@@ -226320,7 +226613,7 @@
    "`status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "403/410 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
+   "403/412 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
  },
@@ -295597,6 +295890,15 @@
    "lines": 87,
    "uses_service_role": true
   },
+  "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql": {
+   "path": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+   "lines": 206,
+   "temporal": [
+    "AND alerted_at > now() - interval '6 hours'",
+    "v_last_run := now() - interval '30 days';"
+   ],
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -297669,10 +297971,20 @@
   }
  },
  "git": {
-  "sha": "8ed528beae80d3a1e37521719c218ea9f4ada21a",
+  "sha": "48c711b564653a41fc86a92a7ffe6070507e779d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "48c711b",
+    "date": "2026-11-22",
+    "author": "adm01-debug",
+    "subject": "perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)",
+    "files": [
+     "src/integrations/supabase/types.ts",
+     "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+    ]
+   },
    {
     "sha": "8ed528b",
     "date": "2026-11-22",
@@ -298030,15 +298342,6 @@
     "files": [
      "supabase/functions/receive-quote-webhook/index.ts"
     ]
-   },
-   {
-    "sha": "bb4c144",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: registra avaliacao das PRs fechadas 570/488 no backlog (#589)",
-    "files": [
-     "docs/pendencias/backlog-verificado.md"
-    ]
    }
   ],
   "hot_files": [
@@ -298059,12 +298362,12 @@
     5
    ],
    [
-    "docs/pendencias/backlog-verificado.md",
-    5
+    "src/integrations/supabase/types.ts",
+    4
    ],
    [
-    "src/integrations/supabase/types.ts",
-    3
+    "docs/pendencias/backlog-verificado.md",
+    4
    ],
    [
     "supabase/functions/semantic-search-universal/index.ts",
@@ -298103,6 +298406,10 @@
     2
    ],
    [
+    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    1
+   ],
+   [
     "supabase/functions/bitrix24-sync/config_guard_test.ts",
     1
    ],
@@ -298116,10 +298423,6 @@
    ],
    [
     "supabase/tests/retry_dispatcher_assertions.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ed528beae` · branch `main` · 2026-11-22 18:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48c711b564` · branch `main` · 2026-11-22 19:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chat_conversations` | `updated_at` | default now() |
 | `chat_messages` | `id` | default gen_random_uuid() |
 | `chat_messages` | `conversation_id` | obrigatório |
-| … +2646 linhas — lista completa em `context.json` | | |
+| … +2652 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -3543,7 +3543,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +153 linhas — lista completa em `context.json` | |
+| … +155 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 

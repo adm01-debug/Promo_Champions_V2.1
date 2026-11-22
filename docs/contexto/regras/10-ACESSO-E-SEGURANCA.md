@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ed528beae` · branch `main` · 2026-11-22 18:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48c711b564` · branch `main` · 2026-11-22 19:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -118,6 +118,8 @@
 | `conversation_analyses` | enabled | PUBLIC: (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (analyzed_by = auth.uid()) OR (EXISTS ( SEL | PUBLIC: ((auth.uid() IS NOT NULL) AND (analyzed_by = auth.uid())) | PUBLIC: (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (analyzed_by = auth.uid())) | PUBLIC: (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (analyzed_by = auth.uid())) |
 | `critical_moment_notifications` | enabled | authenticated: (auth.uid() = recipient_user_id)<br>PUBLIC: ((recipient_user_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)) | PUBLIC: (auth.uid() = recipient_user_id) | PUBLIC: (recipient_user_id = auth.uid()) | — |
 | `cron_failure_alerts` | enabled | authenticated: has_role(auth.uid(), 'admin'::app_role) | — | — | — |
+| `cron_job_last_run` | enabled | — | — | — | — |
+| `cron_job_last_run_cursor` | enabled | — | — | — | — |
 | `cs_tickets` | enabled | PUBLIC: (is_admin_or_manager(auth.uid()) OR (assigned_to = get_current_salesperson_id()) OR (client_id IN ( SELECT client_portfolio.client_i | — | — | — |
 | `csat_ces_surveys` | enabled | PUBLIC: is_admin_or_manager(auth.uid())<br>PUBLIC: (is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1 FROM accounts a WHERE ((a.id = csat_ces_surveys.account_id) AND (a.owner_id = | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
 | `custom_reports` | enabled | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid()))<br>authenticated: (is_shared = true) | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) |
@@ -314,13 +316,11 @@
 | `sales_battles` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>PUBLIC: (auth.uid() IS NOT NULL) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `sales_enablement_assets` | enabled | authenticated: ((is_active = true) OR is_admin_or_manager(auth.uid()))<br>authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `sales_goals` | enabled | PUBLIC: ((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
-| `sales_streaks` | enabled | authenticated: true | authenticated: (salesperson_id = get_current_salesperson_id()) | authenticated: is_admin_or_manager(auth.uid()) | — |
-| `sales_territories` | enabled | authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | — |
-| … +110 linhas — lista completa em `context.json` | | | | | |
+| … +112 linhas — lista completa em `context.json` | | | | | |
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 326 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 327 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -472,7 +472,7 @@
 - `supabase/functions/webauthn/index.ts`
 - `supabase/functions/webvitals-regression-alert/index.ts`
 - `supabase/functions/whatsapp-inbound-webhook/index.ts`
-- … +176 (lista completa em `context.json`)
+- … +177 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -698,6 +698,7 @@
 - `record_sale_stage_transition`
 - `record_successful_login_attempt`
 - `refresh_competitive_ranking`
+- `refresh_cron_job_last_run`
 - `refresh_monthly_sales_summary`
 - `refresh_session`
 - `regenerate_backup_codes`
@@ -850,8 +851,9 @@ Middleware matcher (Next.js): nenhum
 | grant | postgres | execute | `retry_pending_internal_edge_jobs` |
 | grant | postgres, service_role | execute | `log_audit_event`, `retry_pending_internal_edge_jobs` |
 | grant | service_role | all | `web_vitals_samples`, `password_reset_requests`, `mv_competitive_ranking`, `competitive_ranking`, `password_reset_requests`, `external_seller_map`, `v4_callback_dead_letters`, `v4_callback_metrics`, `v4_callback_alert_settings`, `v4_callback_alerts`, `webhook_inbound_dedupe`, `quote_sync_inbound_log`, `quotes_inbound`, `webhook_inbound_log`, `maintenance_log` … +28 |
-| grant | service_role | execute | `increment_race_car_wins`, `increment_race_car_overtakes`, `public`, `public`, `upsert_client_from_quote`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `increment_v4_callback_metric`, `fn_cleanup_webhook_dedupe`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale` … +449 |
+| grant | service_role | execute | `increment_race_car_wins`, `increment_race_car_overtakes`, `public`, `public`, `upsert_client_from_quote`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `increment_v4_callback_metric`, `fn_cleanup_webhook_dedupe`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale` … +451 |
 | grant | service_role | select | `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health`, `v_platform_slo`, `v_web_vitals_p75`, `sales_with_markup`, `v_deleted_clients`, `sales_with_markup`, `v_quote_to_sale_invariants` |
+| grant | service_role | select, insert, update | `cron_job_last_run`, `cron_job_last_run_cursor` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger, maintain | `_internal_secrets`, `ab_tests`, `access_denied_logs`, `account_activities`, `account_contacts`, `account_plans`, `accounts`, `achievements`, `active_power_ups`, `active_sessions`, `activities`, `activity_audit_logs`, `activity_goals`, `agenda_events`, `ai_agent_actions` … +429 |
 | grant | service_role | select, update, usage | `migration_log_id_seq`, `orders_conversion_seq`, `plan_rollback_ddl_id_seq` |
 | grant | service_role, authenticated | execute | `is_webhook_host_allowed` |
@@ -859,7 +861,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC | execute | `public`, `disable_totp`, `initialize_totp`, `disable_sms`, `has_pending_reset_request`, `get_mfa_status`, `public`, `public`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `detect_stalled_cron_jobs`, `verify_reauth_request`, `get_mfa_status`, `get_monthly_sales_benchmark`, `private.add_salesperson_xp` … +342 |
 | revoke | PUBLIC, anon | all | `get_dashboard_kpis`, `fn_test_cleanup_dedupe_privileges`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `orders_conversion_seq`, `fn_convert_quote_to_sale`, `fn_admin_platform_slo`, `fn_record_conversion_attempt`, `v_quote_conversion_history`, `v_quote_conversion_metrics_daily`, `fn_admin_conversion_trail`, `fn_admin_cleanup_stale_logs`, `fn_admin_web_vitals_p75`, `fn_admin_reset_circuit`, `admin_get_cron_job_stats` … +56 |
 | revoke | PUBLIC, anon | execute | `fn_list_cron_jobs`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_get_orders_conversion_seq_last`, `fn_backfill_orders_conversion_seq`, `fn_admin_security_definer_exposure`, `fn_admin_wal_health`, `compute_salesperson_retention_cohort`, `compute_salesperson_retention_cohort` |
-| revoke | PUBLIC, anon, authenticated | all | `private.add_salesperson_xp`, `private.refresh_competitive_ranking`, `private.refresh_monthly_sales_summary`, `private.snapshot_race_daily`, `private.award_achievement_if_not_exists`, `private.check_is_first_activation`, `private.update_performance_bet_progress`, `private.update_territory_conquests`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health` … +78 |
+| revoke | PUBLIC, anon, authenticated | all | `private.add_salesperson_xp`, `private.refresh_competitive_ranking`, `private.refresh_monthly_sales_summary`, `private.snapshot_race_daily`, `private.award_achievement_if_not_exists`, `private.check_is_first_activation`, `private.update_performance_bet_progress`, `private.update_territory_conquests`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health` … +82 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_battle_achievements`, `compute_scheduled_report_next_run`, `fn_calculate_icp_score`, `increment_asset_view_count`, `maintain_sales_streaks`, `manage_stock_on_sale`, `generate_mfa_backup_codes`, `get_current_user_email`, `record_engagement_signal`, `is_authenticated`, `backfill_orders_conversion_seq`, `fn_slo_burn_rate`, `fn_check_slo_burn_rate`, `increment_race_car_wins`, `increment_race_car_overtakes` … +6 |
 | revoke | PUBLIC, anon, authenticated | insert, update, delete | `maintenance_log` |
 | revoke | anon | all | `salespeople_public`, `salespeople_public`, `salespeople_public`, `fn_cleanup_webhook_dedupe`, `webhook_inbound_dedupe`, `fn_cleanup_webhook_dedupe`, `edge_call_failures`, `webhook_allowed_domains` |
@@ -1253,7 +1255,7 @@ Middleware matcher (Next.js): nenhum
 | `web_vitals_samples` | `created_at` |
 | `external_seller_map` | `created_at`, `updated_at` |
 | `v4_callback_dead_letters` | `created_at`, `updated_at` |
-| … +37 linhas — lista completa em `context.json` | |
+| … +39 linhas — lista completa em `context.json` | |
 
 ## Dados pessoais / sensíveis (LGPD — cuidado em logs, exports, prompts de IA)
 

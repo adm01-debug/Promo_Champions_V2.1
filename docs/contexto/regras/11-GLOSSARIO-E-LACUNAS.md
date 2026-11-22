@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8ed528beae` · branch `main` · 2026-11-22 18:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `48c711b564` · branch `main` · 2026-11-22 19:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -109,6 +109,8 @@
 | `conversation_analyses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `critical_moment_notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `cron_failure_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
+| `cron_job_last_run` | Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs(). | 3 colunas | migration |
+| `cron_job_last_run_cursor` | Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan. | 3 colunas | migration |
 | `cs_tickets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `csat_ces_surveys` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `custom_reports` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
@@ -305,9 +307,7 @@
 | `sales_battles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `sales_enablement_assets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `sales_streaks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `sales_territories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| … +320 linhas — lista completa em `context.json` | | | |
+| … +322 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -689,7 +689,7 @@
 - `status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 403/410 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
+- 403/412 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes

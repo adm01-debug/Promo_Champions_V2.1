@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 708,
+ "migrations": 709,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -507,6 +507,7 @@
   "record_sale_stage_transition",
   "record_successful_login_attempt",
   "refresh_competitive_ranking",
+  "refresh_cron_job_last_run",
   "refresh_materialized_views",
   "refresh_monthly_sales_summary",
   "refresh_session",
@@ -14904,6 +14905,76 @@
    ],
    "fks": [],
    "criada_em": "20260712214818_6474e22f-a332-4b40-928d-0e4b1c15ea6d.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "cron_job_last_run": {
+   "colunas": {
+    "jobid": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": true,
+     "default": null,
+     "ref": null
+    },
+    "last_start": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20261125100000_cron_job_run_details_sem_seq_scan.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "cron_job_last_run_cursor": {
+   "colunas": {
+    "id": {
+     "tipo": "boolean",
+     "nn": false,
+     "pk": true,
+     "default": "true",
+     "ref": null
+    },
+    "last_runid": {
+     "tipo": "bigint",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
