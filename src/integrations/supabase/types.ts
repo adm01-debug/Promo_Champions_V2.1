@@ -5867,24 +5867,6 @@ export type Database = {
         }
         Relationships: []
       }
-      cron_job_last_run: {
-        Row: {
-          jobid: number
-          last_start: string
-          updated_at: string
-        }
-        Insert: {
-          jobid: number
-          last_start: string
-          updated_at?: string
-        }
-        Update: {
-          jobid?: number
-          last_start?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       cron_job_last_run_cursor: {
         Row: {
           id: boolean
@@ -5902,7 +5884,8 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }      cs_tickets: {
+      }
+      cs_tickets: {
         Row: {
           assigned_to: string | null
           client_id: string | null
