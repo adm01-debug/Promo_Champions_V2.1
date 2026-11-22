@@ -32,7 +32,8 @@ BEGIN
       'Authorization', 'Bearer ' || v_anon_key,
       'X-Cron-Secret', v_cron_secret
     ),
-    body := jsonb_build_object('scheduled_at', now())
+    body := jsonb_build_object('scheduled_at', now()),
+    timeout_milliseconds := public.internal_edge_job_timeout_ms(p_function_name)
   )
   INTO v_request_id;
 
