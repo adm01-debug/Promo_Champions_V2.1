@@ -24753,6 +24753,10 @@ export type Database = {
           qr_url: string
         }[]
       }
+      internal_edge_job_timeout_ms: {
+        Args: { p_function_name: string }
+        Returns: number
+      }
       is_admin_or_manager:
         | { Args: never; Returns: boolean }
         | { Args: { _user_id: string }; Returns: boolean }
