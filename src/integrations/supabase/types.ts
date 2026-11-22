@@ -24874,6 +24874,14 @@ export type Database = {
           variant_id: string
         }[]
       }
+      post_internal_edge_job: {
+        Args: {
+          p_attempt: number
+          p_function_name: string
+          p_max_attempts: number
+        }
+        Returns: number
+      }
       process_lead_intent_event: {
         Args: {
           p_details?: Json
@@ -24994,6 +25002,7 @@ export type Database = {
         Args: { record_id: string; table_name: string }
         Returns: undefined
       }
+      retry_pending_internal_edge_jobs: { Args: never; Returns: Json }
       route_unassigned_client_portfolio: {
         Args: {
           p_client_id: string
