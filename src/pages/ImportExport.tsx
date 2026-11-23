@@ -15,6 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Upload, Download, Check, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLogAuditEvent } from '@/hooks/admin/useAuditLogs';
@@ -45,6 +55,7 @@ const ImportExport = () => {
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [mappings, setMappings] = useState<FieldMapping[]>([]);
   const [importedCount, setImportedCount] = useState(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const { mutate: logAudit } = useLogAuditEvent();
@@ -99,6 +110,15 @@ const ImportExport = () => {
       });
       return mapped;
     });
+  }, [rows, mappings]);
+
+  // O import so grava linhas com nome; o resto e descartado silenciosamente.
+  // A contagem abaixo torna o descarte visivel antes de confirmar.
+  const { acceptedCount, rejectedCount } = useMemo(() => {
+    const accepted = rows.filter(row =>
+      mappings.some(m => m.target === 'name' && (row[m.source] || '').trim())
+    ).length;
+    return { acceptedCount: accepted, rejectedCount: rows.length - accepted };
   }, [rows, mappings]);
 
   const importMutation = useMutation({
@@ -313,23 +333,54 @@ const ImportExport = () => {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Total: {rows.length} registros serão importados
-                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-border/40 p-3">
+                    <p className="text-xs text-muted-foreground">Serão importados</p>
+                    <p className="text-xl font-display font-bold">{acceptedCount}</p>
+                  </div>
+                  <div className="rounded-lg border border-border/40 p-3">
+                    <p className="text-xs text-muted-foreground">
+                      Descartados (sem nome)
+                    </p>
+                    <p className="text-xl font-display font-bold">{rejectedCount}</p>
+                  </div>
+                </div>
                 <div className="flex gap-2 justify-end">
                   <Button variant="outline" size="sm" onClick={() => setStep('mapping')}>
                     Voltar
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => importMutation.mutate()}
-                    disabled={importMutation.isPending}
+                    onClick={() => setConfirmOpen(true)}
+                    disabled={importMutation.isPending || acceptedCount === 0}
                   >
                     {importMutation.isPending
                       ? 'Importando...'
-                      : `Importar ${rows.length} registros`}
+                      : `Importar ${acceptedCount} registros`}
                   </Button>
                 </div>
+                <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Importar {acceptedCount} registros?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Confira o arquivo escolhido: a importação grava todos os{' '}
+                        {acceptedCount} registros na base de clientes e não pode ser
+                        desfeita pela tela.
+                        {rejectedCount > 0 &&
+                          ` ${rejectedCount} linha(s) sem nome serão descartadas.`}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => importMutation.mutate()}>
+                        Importar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </Card>
             </motion.div>
           )}
