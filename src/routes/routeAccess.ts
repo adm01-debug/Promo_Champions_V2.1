@@ -14,6 +14,7 @@ export const adminOnlyRoutes: readonly string[] = [
   '/admin/conexoes',
   '/admin/v4-callbacks',
   '/admin/quote-sync-inbound',
+  '/admin/design-inbound',
   '/admin/quote-conversions',
   '/admin/platform-slo',
   '/admin/web-vitals',
