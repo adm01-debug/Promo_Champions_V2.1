@@ -41,6 +41,11 @@ import {
   adminOnlyItems,
 } from '../layout/sidebar/sidebarMenuData';
 import { routePrefetchMap } from '@/routes/pagePrefetchMap';
+import {
+  filterGroupsByAccess,
+  filterItemsByAccess,
+  type RouteAccess,
+} from '@/routes/routeAccess';
 
 const userTypeAccentClasses = {
   sdr: 'bg-info/15 text-info',
@@ -89,26 +94,63 @@ export const AppSidebar = memo(function AppSidebar() {
     [userType]
   );
 
+  const routeAccess = useMemo((): RouteAccess => {
+    if (userType === 'admin') return { isAdmin: true, isManager: true };
+    if (userType === 'manager') return { isAdmin: false, isManager: true };
+    return { isAdmin: false, isManager: false };
+  }, [userType]);
+
+  /** Modos de visualização que o papel atual pode usar no seletor. */
+  const availableViewModes = useMemo((): ViewMode[] => {
+    if (isAdminOrManager) return ['gestao', 'sdr', 'closer'];
+    if (userType === 'hybrid') return ['sdr', 'closer'];
+    return [];
+  }, [isAdminOrManager, userType]);
+
   const defaultViewMode = useMemo((): ViewMode => {
     if (userType === 'sdr') return 'sdr';
     if (userType === 'closer' || userType === 'hybrid') return 'closer';
-    return 'gestao';
-  }, [userType]);
+    // Quem não tem `salespeople.role` conhecido cai no perfil mais restrito: o menu
+    // de vendas, cujos itens todo autenticado abre. `gestao` só é padrão para quem
+    // comprovadamente pode abrir as rotas de gestão.
+    if (isAdminOrManager) return 'gestao';
+    return 'closer';
+  }, [userType, isAdminOrManager]);
 
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    const saved = localStorage.getItem('sidebar_view_mode');
-    if (saved && ['gestao', 'sdr', 'closer'].includes(saved)) {
-      return saved as ViewMode;
-    }
+    const saved = localStorage.getItem('sidebar_view_mode') as ViewMode | null;
+    // Preferência salva só vale se o papel atual tiver permissão para o modo.
+    if (saved && availableViewModes.includes(saved)) return saved;
+    if (saved) localStorage.removeItem('sidebar_view_mode');
     return defaultViewMode;
   });
 
   useEffect(() => {
+    // O papel chega depois do primeiro render; sem isso, um gestor que abre a
+    // página como não-autorizado ficaria preso no modo padrão.
+    if (!availableViewModes.includes(viewMode)) {
+      setViewMode(defaultViewMode);
+      return;
+    }
     localStorage.setItem('sidebar_view_mode', viewMode);
-  }, [viewMode]);
+  }, [viewMode, availableViewModes, defaultViewMode]);
 
-  const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
-  const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
+  const mainItems = useMemo(
+    () => filterItemsByAccess(getMainItems(viewMode), routeAccess),
+    [viewMode, routeAccess]
+  );
+  const groupedItems = useMemo(
+    () => filterGroupsByAccess(getGroupedItems(viewMode), routeAccess),
+    [viewMode, routeAccess]
+  );
+  const filteredSystemItems = useMemo(
+    () => filterItemsByAccess(systemItems, routeAccess),
+    [routeAccess]
+  );
+  const filteredAdminItems = useMemo(
+    () => filterItemsByAccess(adminOnlyItems, routeAccess),
+    [routeAccess]
+  );
 
   const renderMenuItem = useCallback(
     (item: MenuItem) => {
@@ -208,52 +250,54 @@ export const AppSidebar = memo(function AppSidebar() {
               Modo de Visualização
             </p>
             <div className="flex gap-1 relative overflow-hidden">
-              {viewModes.map((vm: { mode: ViewMode; label: string }) => {
-                const isActive = viewMode === vm.mode;
-                const Icon =
-                  vm.mode === 'gestao'
-                    ? ShieldCheck
-                    : vm.mode === 'sdr'
-                      ? LayoutGrid
-                      : LayoutList;
-                return (
-                  <Button
-                    key={vm.mode}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      triggerHaptic('medium');
-                      setViewMode(vm.mode);
-                    }}
-                    className={cn(
-                      'flex-1 h-9 text-[10px] font-black rounded-xl transition-all duration-300 gap-1.5 px-2 relative z-10',
-                      isActive
-                        ? 'text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground'
-                    )}
-                  >
-                    <AnimatePresence>
-                      {isActive && (
-                        <motion.div
-                          layoutId="active-view-mode"
-                          className="absolute inset-0 bg-linear-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
-                          initial={false}
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                    </AnimatePresence>
-                    <Icon
+              {viewModes
+                .filter((vm: { mode: ViewMode }) => availableViewModes.includes(vm.mode))
+                .map((vm: { mode: ViewMode; label: string }) => {
+                  const isActive = viewMode === vm.mode;
+                  const Icon =
+                    vm.mode === 'gestao'
+                      ? ShieldCheck
+                      : vm.mode === 'sdr'
+                        ? LayoutGrid
+                        : LayoutList;
+                  return (
+                    <Button
+                      key={vm.mode}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        triggerHaptic('medium');
+                        setViewMode(vm.mode);
+                      }}
                       className={cn(
-                        'h-3.5 w-3.5',
-                        isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                        'flex-1 h-9 text-[10px] font-black rounded-xl transition-all duration-300 gap-1.5 px-2 relative z-10',
+                        isActive
+                          ? 'text-primary-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
                       )}
-                    />
-                    <span className="truncate uppercase tracking-tighter">
-                      {vm.label}
-                    </span>
-                  </Button>
-                );
-              })}
+                    >
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.div
+                            layoutId="active-view-mode"
+                            className="absolute inset-0 bg-linear-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
+                            initial={false}
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                      </AnimatePresence>
+                      <Icon
+                        className={cn(
+                          'h-3.5 w-3.5',
+                          isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                        )}
+                      />
+                      <span className="truncate uppercase tracking-tighter">
+                        {vm.label}
+                      </span>
+                    </Button>
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -280,11 +324,11 @@ export const AppSidebar = memo(function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
-                {systemItems.map((item: MenuItem) => renderMenuItem(item))}
+                {filteredSystemItems.map((item: MenuItem) => renderMenuItem(item))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          {userType === 'admin' && (
+          {filteredAdminItems.length > 0 && (
             <>
               <Separator className="my-2 bg-border/30" />
               <SidebarGroup>
@@ -293,7 +337,7 @@ export const AppSidebar = memo(function AppSidebar() {
                 </p>
                 <SidebarGroupContent>
                   <SidebarMenu className="space-y-1">
-                    {adminOnlyItems.map((item: MenuItem) => renderMenuItem(item))}
+                    {filteredAdminItems.map((item: MenuItem) => renderMenuItem(item))}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>

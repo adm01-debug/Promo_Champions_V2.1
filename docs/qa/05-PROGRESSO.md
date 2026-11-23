@@ -201,12 +201,12 @@ Exemplo:
 - [ ] 170 — Reduzir o peso das assinaturas em tempo real nos painéis mais abertos — onda 6 — Média
 
 ## Onda 7 — Experiência de uso e consistência
-- [ ] 171 — Filtrar o menu pelo papel do usuário — onda 7 — Alta
-- [ ] 172 — Corrigir o modo de visualização do menu lido do navegador — onda 7 — Média
+- [x] 171 — Filtrar o menu pelo papel do usuário — onda 7 — Alta — PR #675 - routeAccess derivado do roteador; menu e paleta filtrados
+- [x] 172 — Corrigir o modo de visualização do menu lido do navegador — onda 7 — Média — PR #675 - modo salvo validado contra o papel e removido quando invalido
 - [ ] 173 — Alinhar o rótulo "Administração" com quem realmente pode entrar — onda 7 — Média · **APROV**
-- [ ] 174 — Dar acesso à administração no celular — onda 7 — Alta
-- [ ] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta
-- [ ] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta
+- [x] 174 — Dar acesso à administração no celular — onda 7 — Alta — PR #675 - MobileDrawer renderiza adminOnlyItems em grupo colapsavel
+- [x] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta — PR #676 - AlertDialog com nome da chave e desativar como opcao reversivel
+- [x] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta — PR #676 - icone Trash2, aria-label e AlertDialog nomeando vendedor e premio
 - [ ] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média
 - [ ] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa
 - [ ] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa

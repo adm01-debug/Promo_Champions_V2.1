@@ -20,6 +20,16 @@ import { cn } from '@/lib/utils';
 import { Flag, Plus, Trash2, Users, Percent } from 'lucide-react';
 import { toast } from 'sonner';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -37,6 +47,10 @@ const FeatureFlagsAdmin = () => {
   const updateFlag = useUpdateFeatureFlag();
   const createFlag = useCreateFeatureFlag();
   const deleteFlag = useDeleteFeatureFlag();
+
+  const [flagToDelete, setFlagToDelete] = useState<{ id: string; key: string } | null>(
+    null
+  );
 
   const handleCreate = () => {
     if (!newKey.trim()) {
@@ -259,11 +273,7 @@ const FeatureFlagsAdmin = () => {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-destructive"
-                        onClick={() =>
-                          deleteFlag.mutate(flag.id, {
-                            onSuccess: () => toast.success('Feature flag removida'),
-                          })
-                        }
+                        onClick={() => setFlagToDelete({ id: flag.id, key: flag.key })}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -275,6 +285,55 @@ const FeatureFlagsAdmin = () => {
           )}
         </div>
       </PageTransition>
+
+      <AlertDialog
+        open={!!flagToDelete}
+        onOpenChange={open => !open && setFlagToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir a chave “{flagToDelete?.key}”?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Excluir é definitivo e afeta todos os usuários. Se o objetivo é só desligar
+              a funcionalidade, desative em vez de excluir — desativar é reversível.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-muted text-foreground hover:bg-muted/80"
+              onClick={() => {
+                if (!flagToDelete) return;
+                updateFlag.mutate(
+                  { id: flagToDelete.id, patch: { is_enabled: false } },
+                  {
+                    onSuccess: () => {
+                      toast.success(`Chave ${flagToDelete.key} desativada`);
+                      setFlagToDelete(null);
+                    },
+                  }
+                );
+              }}
+            >
+              Desativar
+            </AlertDialogAction>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (!flagToDelete) return;
+                deleteFlag.mutate(flagToDelete.id, {
+                  onSuccess: () => {
+                    toast.success('Feature flag removida');
+                    setFlagToDelete(null);
+                  },
+                });
+              }}
+            >
+              Excluir definitivamente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

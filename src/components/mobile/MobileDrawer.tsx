@@ -1,7 +1,7 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { PreloadLink } from '@/components/navigation/PreloadLink';
-import { ChevronRight, Crown, Settings, Bell, LogOut } from 'lucide-react';
+import { ChevronRight, Crown, Settings, Bell, LogOut, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Sheet,
@@ -23,10 +23,16 @@ import {
   getMainItems,
   getGroupedItems,
   viewModes,
+  adminOnlyItems,
   type ViewMode,
   type MenuItem,
   type MenuGroup,
 } from '@/components/layout/sidebar/sidebarMenuData';
+import {
+  filterGroupsByAccess,
+  filterItemsByAccess,
+  type RouteAccess,
+} from '@/routes/routeAccess';
 import { UserRoleBadge } from '@/components/molecules/UserRoleBadge';
 import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,7 +46,7 @@ interface MobileDrawerProps {
 export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { salesperson, signOut } = useAuth();
-  const { currentUserRole } = useUserRoles();
+  const { currentUserRole, isAdmin, isManager } = useUserRoles();
 
   const userType = useMemo((): 'admin' | 'manager' | 'sdr' | 'closer' | 'salesperson' => {
     const role = currentUserRole?.role;
@@ -57,16 +63,45 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
     [userType]
   );
 
+  const routeAccess = useMemo(
+    (): RouteAccess => ({ isAdmin, isManager }),
+    [isAdmin, isManager]
+  );
+
+  const availableViewModes = useMemo(
+    () => viewModes.filter(vm => vm.mode !== 'gestao' || isAdminOrManager),
+    [isAdminOrManager]
+  );
+
   const defaultViewMode = useMemo((): ViewMode => {
     if (userType === 'sdr') return 'sdr';
     if (userType === 'closer') return 'closer';
-    return 'gestao';
-  }, [userType]);
+    if (isAdminOrManager) return 'gestao';
+    return 'closer';
+  }, [userType, isAdminOrManager]);
 
   const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode);
 
-  const mainItems = useMemo(() => getMainItems(viewMode), [viewMode]);
-  const groupedItems = useMemo(() => getGroupedItems(viewMode), [viewMode]);
+  // O modo de visualizacao decide quais itens aparecem: quem nao e gestor
+  // nunca pode ficar preso em "gestao" (26 itens levariam a tela de acesso negado).
+  useEffect(() => {
+    if (viewMode === 'gestao' && !isAdminOrManager) {
+      setViewMode(defaultViewMode);
+    }
+  }, [viewMode, isAdminOrManager, defaultViewMode]);
+
+  const mainItems = useMemo(
+    () => filterItemsByAccess(getMainItems(viewMode), routeAccess),
+    [viewMode, routeAccess]
+  );
+  const groupedItems = useMemo(
+    () => filterGroupsByAccess(getGroupedItems(viewMode), routeAccess),
+    [viewMode, routeAccess]
+  );
+  const visibleAdminItems = useMemo(
+    () => filterItemsByAccess(adminOnlyItems, routeAccess),
+    [routeAccess]
+  );
 
   const renderMenuItem = (item: MenuItem) => {
     const isActive =
@@ -153,7 +188,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
         {isAdminOrManager && (
           <div className="px-4 py-4">
             <div className="flex gap-1 p-1 bg-muted/30 rounded-2xl border border-border/50 relative overflow-hidden">
-              {viewModes.map(vm => {
+              {availableViewModes.map(vm => {
                 const isActive = viewMode === vm.mode;
                 return (
                   <Button
@@ -206,6 +241,31 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
             <div className="px-2">
               {groupedItems.map(group => renderGroupedMenu(group))}
             </div>
+
+            {visibleAdminItems.length > 0 && (
+              <>
+                <Separator className="mx-4 my-4 bg-primary/5" />
+
+                <div className="px-2">
+                  <Collapsible className="w-full">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 text-muted-foreground/60 hover:text-foreground transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <div className="p-1.5 rounded-lg bg-muted/40 group-data-[state=open]:bg-primary/10 transition-colors">
+                          <Shield className="h-4 w-4 group-data-[state=open]:text-primary" />
+                        </div>
+                        <span className="text-[11px] uppercase tracking-[0.15em] font-black">
+                          Administração
+                        </span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-90" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-1 pl-4 mb-2">
+                      {visibleAdminItems.map(item => renderMenuItem(item))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              </>
+            )}
 
             <Separator className="mx-4 my-4 bg-primary/5" />
 

@@ -23,16 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Trophy, Download, LayoutList, Layers } from 'lucide-react';
 import {
-  Trophy,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Wallet,
-  Download,
-  LayoutList,
-  Layers,
-} from 'lucide-react';
+  AwardDestructiveDialogs,
+  AwardRowActions,
+} from '@/components/admin/AwardActions';
 import {
   useCommissionBonusAwards,
   useUpdateAwardStatus,
@@ -103,6 +98,8 @@ export default function AdminAuditoriaPremiacoes() {
   const [viewMode, setViewMode] = useState<ViewMode>('detailed');
   const [periodFilter, setPeriodFilter] = useState<string>('all'); // 'all' | 'YYYY-MM'
   const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
+const [awardToCancel, setAwardToCancel] = useState<AwardWithRefs | null>(null);
+  const [awardToDelete, setAwardToDelete] = useState<AwardWithRefs | null>(null);
   const {
     data: rawAwards = [],
     isLoading,
@@ -561,58 +558,17 @@ export default function AdminAuditoriaPremiacoes() {
                         <TableCell className="text-xs text-muted-foreground">
                           {awardedAt}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            {!isPaid && !isCancelled && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  updateStatus.mutate({ id: a.id, status: 'paid' })
-                                }
-                                disabled={updateStatus.isPending}
-                              >
-                                <Wallet className="h-3.5 w-3.5 mr-1" /> Marcar pago
-                              </Button>
-                            )}
-                            {isPaid && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                  updateStatus.mutate({ id: a.id, status: 'pending' })
-                                }
-                                disabled={updateStatus.isPending}
-                              >
-                                <Clock className="h-3.5 w-3.5 mr-1" /> Reabrir
-                              </Button>
-                            )}
-                            {!isCancelled && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                  updateStatus.mutate({ id: a.id, status: 'cancelled' })
-                                }
-                                disabled={updateStatus.isPending}
-                              >
-                                <XCircle className="h-3.5 w-3.5" />
-                              </Button>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                if (confirm('Remover este registro definitivamente?')) {
-                                  remove.mutate(a.id);
-                                }
-                              }}
-                              disabled={remove.isPending}
-                            >
-                              <CheckCircle2 className="h-3.5 w-3.5 rotate-45" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                        <AwardRowActions
+                          award={a}
+                          isPaid={isPaid}
+                          isCancelled={isCancelled}
+                          pending={updateStatus.isPending}
+                          removing={remove.isPending}
+                          onMarkPaid={id => updateStatus.mutate({ id, status: 'paid' })}
+                          onReopen={id => updateStatus.mutate({ id, status: 'pending' })}
+                          onAskCancel={setAwardToCancel}
+                          onAskDelete={setAwardToDelete}
+                        />
                       </TableRow>
                     );
                   })}
@@ -622,6 +578,27 @@ export default function AdminAuditoriaPremiacoes() {
           )}
         </CardContent>
       </Card>
+
+      <AwardDestructiveDialogs
+        awardToCancel={awardToCancel}
+        awardToDelete={awardToDelete}
+        onCloseCancel={() => setAwardToCancel(null)}
+        onCloseDelete={() => setAwardToDelete(null)}
+        onCancelConfirmed={id =>
+          updateStatus.mutate(
+            { id, status: 'cancelled' },
+            {
+              onSuccess: () => {
+                toast.success('Premiação cancelada');
+                setAwardToCancel(null);
+              },
+            }
+          )
+        }
+        onDeleteConfirmed={id =>
+          remove.mutate(id, { onSuccess: () => setAwardToDelete(null) })
+        }
+      />
     </div>
   );
 }
