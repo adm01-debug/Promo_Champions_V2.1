@@ -11,16 +11,22 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorId: string | null;
+}
+
+function newErrorId(): string {
+  return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
 
 export class GlobalErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
+    errorId: null,
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { hasError: true, error, errorId: newErrorId() };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -32,6 +38,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       component: 'GlobalErrorBoundary',
       metadata: {
         componentStack: errorInfo.componentStack,
+        errorId: this.state.errorId,
       },
     });
   }
@@ -64,9 +71,15 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                 Falha Crítica Detectada
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                O sistema encontrou uma instabilidade inesperada. A equipe técnica já foi
-                notificada automaticamente via Enterprise Error Monitor.
+                O sistema encontrou uma instabilidade inesperada. Recarregue a página; se
+                o problema continuar, avise o responsável pelo sistema e informe o código
+                abaixo.
               </p>
+              {this.state.errorId && (
+                <p className="text-xs font-mono text-muted-foreground/80">
+                  Código do erro: {this.state.errorId}
+                </p>
+              )}
             </div>
 
             {import.meta.env.DEV && this.state.error && (

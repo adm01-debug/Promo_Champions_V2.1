@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 export type CommissionStatus = 'pending' | 'approved' | 'paid' | 'cancelled';
@@ -30,8 +31,9 @@ export interface Commission {
 }
 
 export const useMyCommissions = () => {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['commissions', 'mine'],
+    queryKey: ['commissions', 'mine', user?.id ?? null],
     queryFn: async () => {
       const {
         data: { user },
