@@ -82,6 +82,7 @@ export function useGoalsDashboard() {
       if (salespeopleResult.error) throw salespeopleResult.error;
       if (goalsResult.error) throw goalsResult.error;
       if (salesResult.error) throw salesResult.error;
+      if (predictionsResult.error) throw predictionsResult.error;
 
       const salespeople = salespeopleResult.data || [];
       const goals = goalsResult.data || [];

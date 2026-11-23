@@ -66,6 +66,7 @@ export function useSalesReport(period: ReportPeriod, refDate: Date) {
 
       if (curRes.error) throw curRes.error;
       if (prevRes.error) throw prevRes.error;
+      if (spRes.error) throw spRes.error;
 
       const current = (curRes.data ?? []) as SaleRow[];
       const previous = (prevRes.data ?? []) as SaleRow[];
