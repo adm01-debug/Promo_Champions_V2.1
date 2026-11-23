@@ -1,9 +1,10 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+﻿import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 import {
   getServiceClient,
   getUserClient,
+  requireAdmin,
   UnauthorizedError,
 } from "../_shared/auth-client.ts";
 import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
@@ -39,8 +40,9 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
     // usuário autenticado (idempotente — o card do frontend também invoca
     // para garantir os desafios do dia).
     if (!(await isAuthorizedCronJob(req, supabase))) {
+      let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
       try {
-        await getUserClient(req);
+        callerCtx = await getUserClient(req);
       } catch (error) {
         if (error instanceof UnauthorizedError) {
           return new Response(JSON.stringify({ error: 'unauthorized' }), {
@@ -50,6 +52,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
         }
         throw error;
       }
+      await requireAdmin(callerCtx);
     }
 
     const today = toBusinessDate()
