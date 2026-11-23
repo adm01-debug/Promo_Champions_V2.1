@@ -25,7 +25,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 const args = process.argv.slice(2);
 if (args.includes('--version')) {
-  console.log('graphify ' + (process.env.GRAPHIFY_FIXTURE_VERSION || '0.9.70'));
+  console.log('graphify ' + (process.env.GRAPHIFY_FIXTURE_VERSION || '0.9.115'));
   process.exit(0);
 }
 if (process.env.GRAPHIFY_FIXTURE_ERROR === '1') {
@@ -64,7 +64,7 @@ test('publica somente snapshot validado com metadados de origem', () => {
   assert.equal(fs.existsSync(path.join(destination, 'graphify-out', 'graph.json')), true);
   assert.equal(fs.existsSync(path.join(destination, 'multigraph.json')), true);
   const snapshot = JSON.parse(fs.readFileSync(path.join(destination, 'snapshot.json'), 'utf8'));
-  assert.equal(snapshot.extractor.version, '0.9.70');
+  assert.equal(snapshot.extractor.version, '0.9.115');
   assert.equal(snapshot.source.scope, 'src');
   assert.equal(snapshot.source.totalBytes, Buffer.byteLength('export const exemplo = 1;\n'));
   assert.match(snapshot.source.digest, /^[a-f0-9]{64}$/);
@@ -136,7 +136,7 @@ test('recusa destino incompleto e versão apenas parcialmente igual', () => {
   fs.mkdirSync(path.join(fixture.repository, '.graphify-local', 'incompleto', 'graphify-out'), { recursive: true });
   fs.writeFileSync(path.join(fixture.repository, '.graphify-local', 'incompleto', 'graphify-out', 'manifest.json'), '{}');
   assert.notEqual(execute(fixture, ['--out', '.graphify-local/incompleto']).status, 0);
-  assert.notEqual(execute(fixture, ['--out', '.graphify-local/versao'], { GRAPHIFY_FIXTURE_VERSION: '0.9.480' }).status, 0);
+  assert.notEqual(execute(fixture, ['--out', '.graphify-local/versao'], { GRAPHIFY_FIXTURE_VERSION: '0.9.1150' }).status, 0);
 });
 
 test('não publica grafo vazio e redige erro sensível do subprocesso', () => {

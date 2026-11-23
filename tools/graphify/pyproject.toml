@@ -2,9 +2,9 @@
 name = "promo-champions-graphify-tools"
 version = "0.1.0"
 description = "Runtime isolado para a extração local do Graphify"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.11.5,<3.13"
 dependencies = [
-  "graphifyy[sql]==0.9.70",
+  "graphifyy[sql]==0.9.115",
 ]
 
 [tool.uv]
