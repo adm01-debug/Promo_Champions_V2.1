@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 249,
+ "total": 250,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 181
+  "unit": 182
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 164
+   "arquivos": 165
   },
   {
    "padrao": "tests/",
@@ -1677,6 +1677,15 @@
    "casos": 6
   },
   {
+   "arquivo": "supabase/functions/receive-design-sync/mapping.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "supabase/functions/receive-design-sync/mapping.ts"
+   ],
+   "casos": 12
+  },
+  {
    "arquivo": "supabase/functions/receive-quote-sync/index.test.ts",
    "tipo": "unit",
    "linhas": 92,
@@ -2295,7 +2304,8 @@
   "supabase/functions/check-v4-callback-alerts/alerts.ts": 1,
   "supabase/functions/detect-winloss-at-risk/scoring.ts": 1,
   "supabase/functions/execute-workflow/actions.ts": 1,
-  "supabase/functions/qbr-scheduler/agenda-event.ts": 1
+  "supabase/functions/qbr-scheduler/agenda-event.ts": 1,
+  "supabase/functions/receive-design-sync/mapping.ts": 1
  },
  "sem_teste": {
   "telas": [
@@ -2446,6 +2456,7 @@
    "src/pages/WorkflowsPage.tsx",
    "src/pages/admin/AdminComercial.tsx",
    "src/pages/admin/AdminConexoesPage.tsx",
+   "src/pages/admin/AdminDesignInboundPage.tsx",
    "src/pages/admin/AdminPlatformSLOPage.tsx",
    "src/pages/admin/AdminQuoteConversionsPage.tsx",
    "src/pages/admin/AdminQuoteSyncInboundPage.tsx",
@@ -2572,6 +2583,7 @@
    "src/hooks/deal-intelligence/useStageConversion.ts",
    "src/hooks/deal-intelligence/useStageVelocity.ts",
    "src/hooks/deal-intelligence/useWinLoss.ts",
+   "src/hooks/designs-inbound/useDesignsInbound.ts",
    "src/hooks/dialer/useClickToCall.ts",
    "src/hooks/email/useCampaignDeliveryStats.ts",
    "src/hooks/email/useCampaignHealthAlerts.ts",

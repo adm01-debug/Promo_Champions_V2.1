@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9098770bb4` · branch `main` · 2026-11-23 21:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8c02079096` · branch `main` · 2026-11-23 21:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -95,6 +95,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `storage.objects` | report_owners_can_write_exports | INSERT | authenticated | permissive |  | `bucket_id = 'report-exports' AND auth.uid()::text = (storage.foldername(name))[1]` |
 | `leads` | leads_authenticated_all | ALL | authenticated | permissive | `true` | `true` |
 | `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
+| `designs_inbound` | Admins e managers podem ler designs_inbound | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'` |  |
 | `_internal_secrets` | Deny all access to _internal_secrets | ALL | authenticated, anon | permissive | `false` | `false` |
 | `ab_tests` | Admins and managers can manage ab_tests | ALL | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `access_denied_logs` | Admins can view access logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))` |  |
@@ -310,8 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `commission_bonus_awards` | Admins insert awards | INSERT | authenticated | permissive |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | `commission_bonus_awards` | Admins update awards | UPDATE | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | `commission_bonus_awards` | Salespeople view own awards | SELECT | authenticated | permissive | `((salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
-| `commission_bonuses` | Admins and managers manage commission_bonuses | ALL | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
-| … +801 linhas — lista completa em `context.json` | | | | | | |
+| … +802 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chat_conversations` | `updated_at` | default now() |
 | `chat_messages` | `id` | default gen_random_uuid() |
 | `chat_messages` | `conversation_id` | obrigatório |
-| … +2652 linhas — lista completa em `context.json` | | |
+| … +2660 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -632,6 +632,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | audit_users | AFTER INSERT OR UPDATE OR DELETE | `users` | `audit_trigger_func` |  |
 | audit_sales_changes | AFTER UPDATE | `sales` | `handle_audit_logging` |  |
 | update_cadence_tasks_updated_at | BEFORE UPDATE | `cadence_tasks` | `update_updated_at_column` |  |
+| trg_designs_inbound_updated_at | BEFORE UPDATE | `designs_inbound` | `set_designs_inbound_updated_at` |  |
 | set_updated_at | BEFORE UPDATE | `account_contacts` | `handle_updated_at` |  |
 | trg_account_contacts_updated_at | BEFORE UPDATE | `account_contacts` | `update_updated_at_column` |  |
 | set_updated_at | BEFORE UPDATE | `account_plans` | `handle_updated_at` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | set_updated_at | BEFORE UPDATE | `salesperson_commission_configs` | `handle_updated_at` |  |
 | set_updated_at | BEFORE UPDATE | `salesperson_custom_field_values` | `handle_updated_at` |  |
 | set_updated_at | BEFORE UPDATE | `salesperson_leagues` | `handle_updated_at` |  |
-| set_updated_at | BEFORE UPDATE | `salesperson_preferences` | `handle_updated_at` |  |
-| … +87 linhas — lista completa em `context.json` | | | | |
+| … +88 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1508,7 +1508,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx` |
 | `status` | `done` | escreve | `src/hooks/dialer/usePowerDialer.ts` |
 | `status` | `draft` | compara, escreve | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/quotes/QuoteCard.tsx`<br>`src/components/quotes/QuoteDetailDialog.tsx`<br>`src/hooks/cadences/useABTests.ts`<br>`src/hooks/useDigitalSignatures.ts`<br>… +2 |
-| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
+| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
 | `status` | `erro` | compara | `src/components/admin/AdminSystemStatus.tsx` |
 | `status` | `error` | compara, escreve | `src/components/admin/BackendAutomationMonitor.tsx`<br>`src/components/admin/QuoteSyncLogsPanel.tsx`<br>`src/components/dashboard/DevKpiDebugPanel.tsx`<br>`src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/hooks/useQueryPerformance.ts`<br>… +5 |
 | `status` | `etapa_inexistente` | escreve | `supabase/functions/_shared/deal-probability-calc_test.ts` |
@@ -1567,7 +1567,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `permanent` | compara | `src/hooks/email/failedDraftsHelpers.ts` |
 | `status` | `practiced` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
 | `status` | `preparing` | compara | `src/components/orders/orderHelpers.ts` |
-| `status` | `processed` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
+| `status` | `processed` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `processing` | escreve, filtra | `supabase/functions/process-scheduled-sends/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
 | `status` | `proposal` | compara, escreve, filtra | `src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/sdr/SDRConversionRanking.tsx`<br>`src/hooks/useCloserMetrics.ts`<br>`src/hooks/useNextBestAction.ts`<br>`src/lib/winloss/atRiskFixtures.ts`<br>… +4 |
 | `status` | `proposed` | compara | `supabase/functions/customer-success-360/index.ts` |
@@ -1920,6 +1920,10 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 - **notificationRowSchema** (`supabase/functions/_shared/notification-categories.ts`, z.object):
   ```ts
   { user_id: z.string().uuid(), type: z.string().min(1).max(64), title: z.string().min(1).max(200), category: notificationCategorySchema.optional(), priority: notificationPrioritySchema.optional(), message: z.string().max(2000).nullish(), icon: z.string().max(64).nullish(), action_url: z.string().max(500).nullish(), action_label: z.string().max(100).nullish(), metadata: z.record(z.unknown()).nullish(), expires_at: z.string().nullish(), }
+  ```
+- **DesignPayloadSchema** (`supabase/functions/receive-design-sync/mapping.ts`, z.object):
+  ```ts
+  { design_id: z.string().uuid({ message: "expected_uuid" }), name: z.string().trim().min(1, { message: "required" }).max(300), product_name: optionalText, product_sku: optionalText, thumbnail_url: optionalText, seller_email: optionalText, updated_at: optionalText, }
   ```
 - **UUID** (`supabase/functions/winloss-webhook-dispatcher/schema.ts`, z.string):
   ```ts
@@ -3188,6 +3192,8 @@ _nenhum item encontrado_
 | `QBR_EVENT_TYPE` | `"meeting"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
 | `QBR_EVENT_STATUS` | `"pending"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
 | `COMMENTARY_CACHE_TTL_MS` | `60` | `supabase/functions/race-commentary/index.ts` |
+| `MAX_WEBHOOK_BODY_BYTES` | `240` | `supabase/functions/receive-design-sync/index.ts` |
+| `MAX_EVENT_LENGTH` | `120` | `supabase/functions/receive-design-sync/index.ts` |
 | `MAX_WEBHOOK_BODY_BYTES` | `240` | `supabase/functions/receive-quote-sync/index.ts` |
 | `MAX_EVENT_LENGTH` | `120` | `supabase/functions/receive-quote-sync/index.ts` |
 | `MAX_EXTERNAL_QUOTE_ID_LENGTH` | `128` | `supabase/functions/receive-quote-sync/index.ts` |
@@ -4267,7 +4273,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1690 testes em 214 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1702 testes em 215 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4314,6 +4320,7 @@ _nenhum item encontrado_
 | `src/lib/bi/markupOverviewHelpers.test.ts` | 12 | aggregateMarkupOverview · lista vazia → resumo zerado e sem vendedores · agrupa média por vendedor e ordena desc · conta vendas críticas abaixo do limiar … |
 | `src/lib/log/pii.test.ts` | 12 | maskEmail · preserva primeira e última letra do local + domínio · retorna vazio para entrada nula e *** para formato inválido · maskPhone … |
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
+| `supabase/functions/receive-design-sync/mapping.test.ts` | 12 | isUuid aceita uuid v4 minusculo · isUuid rejeita string vazia, null e uuid truncado · schema aceita o payload completo que o Promo Design emite · toDesignRow traduz todos os campos do payload … |
 | `scripts/lib/seguranca-processo.test.mjs` | 11 | resolverExecutavel devolve caminho absoluto existente igual ao do shell · resolverExecutavel lanca para comando inexistente · estaDentro aceita a raiz e subpastas · estaDentro recusa  … |
 | `src/components/pipeline/DealCard.test.tsx` | 11 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/hooks/useRunRateProjection.test.ts` | 11 | computeRunRateProjection · primeiro dia do mês: paceDaily = mtd, projeta para todos os dias do mês · meio do mês com bom ritmo: confidence media, projeção acima da meta · gap grande: dailyPaceRequired calculado corretamente … |
@@ -5054,4 +5061,4 @@ _nenhum item encontrado_
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
 | Marca APENAS a execução enviada mais recente — senão uma | `supabase/functions/inbound-email-webhook/index.ts` |
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
-| … +137 linhas — lista completa em `context.json` | |
+| … +138 linhas — lista completa em `context.json` | |

@@ -8478,6 +8478,9 @@
   "src/hooks/deal-intelligence/useWinLoss.ts": [
    "src/integrations/supabase/client.ts"
   ],
+  "src/hooks/designs-inbound/useDesignsInbound.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
   "src/hooks/dialer/useClickToCall.ts": [
    "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
@@ -11853,6 +11856,15 @@
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/tabs.tsx"
   ],
+  "src/pages/admin/AdminDesignInboundPage.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/transitions/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/hooks/designs-inbound/useDesignsInbound.ts"
+  ],
   "src/pages/admin/AdminPlatformSLOPage.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
@@ -12137,6 +12149,7 @@
    "src/pages/WorkflowsPage.tsx",
    "src/pages/admin/AdminComercial.tsx",
    "src/pages/admin/AdminConexoesPage.tsx",
+   "src/pages/admin/AdminDesignInboundPage.tsx",
    "src/pages/admin/AdminPlatformSLOPage.tsx",
    "src/pages/admin/AdminQuoteConversionsPage.tsx",
    "src/pages/admin/AdminQuoteSyncInboundPage.tsx",
@@ -13241,6 +13254,17 @@
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/rate-limit.ts",
    "supabase/functions/_shared/request-id.ts"
+  ],
+  "supabase/functions/receive-design-sync/contract_test.ts": [
+   "supabase/functions/receive-design-sync/mapping.ts"
+  ],
+  "supabase/functions/receive-design-sync/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/request-body.ts",
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/webhook-validator.ts",
+   "supabase/functions/receive-design-sync/mapping.ts"
   ],
   "supabase/functions/receive-quote-sync/index.ts": [
    "supabase/functions/_shared/cors.ts",

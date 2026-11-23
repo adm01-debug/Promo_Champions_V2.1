@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9098770bb4` · branch `main` · 2026-11-23 21:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8c02079096` · branch `main` · 2026-11-23 21:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -139,6 +139,7 @@
 | `deal_velocity_predictions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `deals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 1 colunas | migration |
 | `demand_forecasts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `designs_inbound` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `dialer_queue_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `dialer_queues` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `digital_signatures` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
@@ -306,8 +307,7 @@
 | `sales` | _(sem COMMENT ON TABLE — significado não documentado)_ | 49 colunas | migration |
 | `sales_battles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `sales_enablement_assets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| … +322 linhas — lista completa em `context.json` | | | |
+| … +323 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -389,7 +389,8 @@
 | status | valor `Fechado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/pricing-intelligence/index.ts` |
 | status | valor `fulfilled` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/process-call-recording-ingest/index.ts`<br>`compara:supabase/functions/send-push-notification/index.ts` |
 | status | valor `processing` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/process-scheduled-sends/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts`<br>`filtra:supabase/functions/process-scheduled-sends/index.ts` |
-| status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
+| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-design-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts` |
+| status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-design-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `server_misconfigured` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_signature` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_json` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
@@ -397,7 +398,6 @@
 | status | valor `correlation_key_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `data_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `external_quote_id_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
-| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts` |
 | status | valor `dedupe_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `lookup_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `upsert_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
@@ -690,7 +690,7 @@
 - `status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 403/412 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
+- 404/413 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes

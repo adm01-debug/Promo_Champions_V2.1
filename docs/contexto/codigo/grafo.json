@@ -1,24 +1,24 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2342,
- "arestas": 9637,
+ "nos": 2347,
+ "arestas": 9653,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 715
+   "importado_por": 716
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 554
+   "importado_por": 555
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 553
+   "importado_por": 554
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 542
+   "importado_por": 543
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -38,11 +38,11 @@
   },
   {
    "arquivo": "supabase/functions/_shared/request-id.ts",
-   "importado_por": 173
+   "importado_por": 174
   },
   {
    "arquivo": "supabase/functions/_shared/cors.ts",
-   "importado_por": 172
+   "importado_por": 173
   },
   {
    "arquivo": "src/components/ui/label.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/transitions/PageTransition.tsx",
-   "importado_por": 123
+   "importado_por": 124
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 103
+   "importado_por": 104
   },
   {
    "arquivo": "src/constants/index.ts",
@@ -101,11 +101,11 @@
    "importado_por": 64
   },
   {
-   "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 62
+   "arquivo": "supabase/functions/_shared/rate-limit.ts",
+   "importado_por": 63
   },
   {
-   "arquivo": "supabase/functions/_shared/rate-limit.ts",
+   "arquivo": "src/components/ui/textarea.tsx",
    "importado_por": 62
   },
   {
@@ -226,6 +226,7 @@
   "supabase/functions/process-race-event/index_test.ts",
   "supabase/functions/process-scheduled-sends/authz_test.ts",
   "supabase/functions/race-commentary/index_test.ts",
+  "supabase/functions/receive-design-sync/contract_test.ts",
   "supabase/functions/receive-quote-sync/security_test.ts",
   "supabase/functions/send-alert-notifications/config_guard_test.ts",
   "supabase/functions/send-multichannel-message/authz_test.ts",
@@ -274,7 +275,7 @@
   {
    "modulo": "integrations/supabase",
    "depende_de": 0,
-   "importado_por": 95
+   "importado_por": 96
   },
   {
    "modulo": "contexts",
@@ -347,9 +348,9 @@
    "importado_por": 2
   },
   {
-   "modulo": "components/cadences",
-   "depende_de": 12,
-   "importado_por": 3
+   "modulo": "pages/admin",
+   "depende_de": 15,
+   "importado_por": 1
   }
  ],
  "arestas_em": "docs/contexto/codigo/grafo-arestas.json"

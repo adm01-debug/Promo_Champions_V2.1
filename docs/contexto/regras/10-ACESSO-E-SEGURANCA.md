@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9098770bb4` · branch `main` · 2026-11-23 21:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8c02079096` · branch `main` · 2026-11-23 21:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -148,6 +148,7 @@
 | `deal_velocity_predictions` | enabled | authenticated: has_role(auth.uid(), 'admin'::app_role)<br>authenticated: (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (EXISTS ( SELECT 1 FROM (sales s JOI | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) |
 | `deals` | enabled | public: deleted_at IS NULL AND ( true )<br>public: deleted_at IS NOT NULL AND EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND is_admin = true)<br>public: has_permission(auth.uid(), 'deals', 'read') OR assigned_to = auth.uid()<br>public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role IN ('manager', 'admin') )<br>public: assigned_to = auth.uid() OR created_by = auth.uid() | public: has_permission(auth.uid(), 'deals', 'create')<br>public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: created_by = auth.uid() | public: has_permission(auth.uid(), 'deals', 'update') OR assigned_to = auth.uid()<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: assigned_to = auth.uid() OR created_by = auth.uid() | public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' ) |
 | `demand_forecasts` | enabled | PUBLIC: is_authenticated() | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
+| `designs_inbound` | enabled | authenticated: public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt | — | — | — |
 | `dialer_queue_items` | enabled | PUBLIC: (EXISTS ( SELECT 1 FROM dialer_queues q WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth.<br>PUBLIC: (EXISTS ( SELECT 1 FROM dialer_queues q WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth. | PUBLIC: (EXISTS ( SELECT 1 FROM dialer_queues q WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth. | PUBLIC: (EXISTS ( SELECT 1 FROM dialer_queues q WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth. | PUBLIC: (EXISTS ( SELECT 1 FROM dialer_queues q WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth. |
 | `dialer_queues` | enabled | PUBLIC: ((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))<br>PUBLIC: ((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role)) | PUBLIC: ((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)) | PUBLIC: ((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)) | PUBLIC: ((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)) |
 | `digital_signatures` | enabled | authenticated: ((created_by = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | authenticated: ((created_by = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | authenticated: ((created_by = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | PUBLIC: is_admin_or_manager(auth.uid()) |
@@ -315,12 +316,11 @@
 | `sales` | enabled | PUBLIC: is_admin_or_manager()<br>PUBLIC: (closer_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))<br>PUBLIC: (sdr_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid())))<br>PUBLIC: (EXISTS ( SELECT 1 FROM salespeople WHERE ((salespeople.auth_user_id = auth.uid()) AND (salespeople.id = sales.salesperson_id))))<br>PUBLIC: ((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | PUBLIC: is_admin_or_manager()<br>PUBLIC: (EXISTS ( SELECT 1 FROM salespeople WHERE ((salespeople.auth_user_id = auth.uid()) AND (salespeople.id = sales.salesperson_id))))<br>PUBLIC: ((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | PUBLIC: is_admin_or_manager()<br>authenticated: is_admin_or_manager(auth.uid())<br>PUBLIC: (EXISTS ( SELECT 1 FROM salespeople WHERE ((salespeople.auth_user_id = auth.uid()) AND (salespeople.id = sales.salesperson_id))))<br>PUBLIC: (auth.uid() = salesperson_id) | public: salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())<br>public: public.is_admin_or_manager()<br>authenticated: is_admin_or_manager(auth.uid()) |
 | `sales_battles` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>PUBLIC: (auth.uid() IS NOT NULL) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `sales_enablement_assets` | enabled | authenticated: ((is_active = true) OR is_admin_or_manager(auth.uid()))<br>authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
-| `sales_goals` | enabled | PUBLIC: ((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
-| … +112 linhas — lista completa em `context.json` | | | | | |
+| … +113 linhas — lista completa em `context.json` | | | | | |
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 329 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 331 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -433,6 +433,7 @@
 - `supabase/functions/process-race-event/index.ts`
 - `supabase/functions/process-scheduled-sends/index.ts`
 - `supabase/functions/ranking-api/index.ts`
+- `supabase/functions/receive-design-sync/index.ts`
 - `supabase/functions/receive-quote-sync/index.ts`
 - `supabase/functions/receive-quote-webhook/index.ts`
 - `supabase/functions/report-embed-public/index.ts`
@@ -471,8 +472,7 @@
 - `supabase/functions/visual-search/index.ts`
 - `supabase/functions/wal-health-alert/index.ts`
 - `supabase/functions/webauthn/index.ts`
-- `supabase/functions/webvitals-regression-alert/index.ts`
-- … +179 (lista completa em `context.json`)
+- … +181 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -832,7 +832,7 @@ Middleware matcher (Next.js): nenhum
 | grant | anon, authenticated, service_role | execute | `get_login_lockout_status`, `record_failed_login_attempt` |
 | grant | authenticated | execute | `compute_cohort_retention`, `get_semantic_coverage`, `mark_entity_for_reindex`, `auto_promote_sequence_winners`, `get_bulk_job_summary`, `get_client_purchase_heatmap`, `get_purchase_intelligence_summary`, `finalize_race_season`, `snapshot_race_daily`, `register_race_daily_checkin`, `log_audit_event`, `get_current_salesperson_id`, `has_role`, `is_admin_or_manager`, `public` … +355 |
 | grant | authenticated | insert | `email_opt_outs` |
-| grant | authenticated | select | `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `client_purchase_seasonality`, `coaching_impact_metrics`, `revenue_forecast_view`, `conversation_insights_summary`, `race_rivalries_view`, `mv_competitive_ranking`, `competitive_ranking`, `web_vitals_samples`, `web_vitals_p75_last7d` … +46 |
+| grant | authenticated | select | `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `salespeople_public`, `client_purchase_seasonality`, `coaching_impact_metrics`, `revenue_forecast_view`, `conversation_insights_summary`, `race_rivalries_view`, `mv_competitive_ranking`, `competitive_ranking`, `web_vitals_samples`, `web_vitals_p75_last7d` … +47 |
 | grant | authenticated | select, delete | `email_opt_outs` |
 | grant | authenticated | select, delete, references, trigger, maintain | `quotes_inbound` |
 | grant | authenticated | select, insert | `call_recording_ingest_jobs` |
@@ -850,7 +850,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated, service_role | usage, select | `orders_conversion_seq` |
 | grant | postgres | execute | `retry_pending_internal_edge_jobs` |
 | grant | postgres, service_role | execute | `log_audit_event`, `retry_pending_internal_edge_jobs` |
-| grant | service_role | all | `web_vitals_samples`, `password_reset_requests`, `mv_competitive_ranking`, `competitive_ranking`, `password_reset_requests`, `external_seller_map`, `v4_callback_dead_letters`, `v4_callback_metrics`, `v4_callback_alert_settings`, `v4_callback_alerts`, `webhook_inbound_dedupe`, `quote_sync_inbound_log`, `quotes_inbound`, `webhook_inbound_log`, `maintenance_log` … +28 |
+| grant | service_role | all | `web_vitals_samples`, `password_reset_requests`, `mv_competitive_ranking`, `competitive_ranking`, `password_reset_requests`, `external_seller_map`, `v4_callback_dead_letters`, `v4_callback_metrics`, `v4_callback_alert_settings`, `v4_callback_alerts`, `webhook_inbound_dedupe`, `quote_sync_inbound_log`, `quotes_inbound`, `webhook_inbound_log`, `maintenance_log` … +29 |
 | grant | service_role | execute | `increment_race_car_wins`, `increment_race_car_overtakes`, `public`, `public`, `upsert_client_from_quote`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `increment_v4_callback_metric`, `fn_cleanup_webhook_dedupe`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale` … +452 |
 | grant | service_role | select | `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health`, `v_platform_slo`, `v_web_vitals_p75`, `sales_with_markup`, `v_deleted_clients`, `sales_with_markup`, `v_quote_to_sale_invariants` |
 | grant | service_role | select, insert, update | `cron_job_last_run`, `cron_job_last_run_cursor` |
@@ -1255,7 +1255,7 @@ Middleware matcher (Next.js): nenhum
 | `web_vitals_samples` | `created_at` |
 | `external_seller_map` | `created_at`, `updated_at` |
 | `v4_callback_dead_letters` | `created_at`, `updated_at` |
-| … +39 linhas — lista completa em `context.json` | |
+| … +40 linhas — lista completa em `context.json` | |
 
 ## Dados pessoais / sensíveis (LGPD — cuidado em logs, exports, prompts de IA)
 

@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 711,
+ "migrations": 712,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -526,6 +526,7 @@
   "search_products_semantic",
   "search_products_vector",
   "send_notification",
+  "set_designs_inbound_updated_at",
   "set_mfa_preferred_method",
   "set_quotes_inbound_updated_at",
   "set_sdr_id_on_insert",
@@ -1150,6 +1151,13 @@
    "evento": "update",
    "tabela": "demand_forecasts",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_designs_inbound_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "designs_inbound",
+   "funcao": "set_designs_inbound_updated_at"
   },
   {
    "nome": "trg_dialer_queues_updated",
@@ -18157,6 +18165,152 @@
    ],
    "triggers": [
     "update_demand_forecasts_updated_at"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "designs_inbound": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "design_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_correlation_key": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "last_event": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "product_name": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "product_sku": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "raw_payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "received_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "seller_email": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "source": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'promo_design'",
+     "ref": null
+    },
+    "source_updated_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "thumbnail_url": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Admins e managers podem ler designs_inbound",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_designs_inbound_product_sku",
+     "colunas": "product_sku",
+     "unico": false
+    },
+    {
+     "nome": "idx_designs_inbound_received_at",
+     "colunas": "received_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_designs_inbound_seller_email",
+     "colunas": "seller_email",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20261125150000_designs_inbound.sql",
+   "usada_no_front": 1,
+   "usada_em_edges": [
+    "receive-design-sync"
+   ],
+   "triggers": [
+    "trg_designs_inbound_updated_at"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -46490,6 +46644,7 @@
    "usada_no_front": 0,
    "usada_em_edges": [
     "multichannel-status-webhook",
+    "receive-design-sync",
     "receive-quote-sync",
     "receive-quote-webhook",
     "twilio-call-status"

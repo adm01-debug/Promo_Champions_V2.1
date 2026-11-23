@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
+  "sha": "8c02079096a379bdbcff72de7cb20060785ddf4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 21:01 UTC",
-  "files_total": 3654,
-  "code_files": 3305,
-  "code_lines": 479550
+  "generated_at": "2026-11-23 21:16 UTC",
+  "files_total": 3661,
+  "code_files": 3312,
+  "code_lines": 480191
  },
  "version": "1.3.2",
- "facts_hash": "646e59150c4a707d",
+ "facts_hash": "392c2c761b3df8f4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,9 +398,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1378,
-   ".ts": 1124,
-   ".sql": 721,
+   ".tsx": 1379,
+   ".ts": 1129,
+   ".sql": 722,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -32095,6 +32095,119 @@
     "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
     "comment": "Ultimo runid de cron.job_run_details incorporado a public.cron_job_last_run. Permite leitura incremental via pkey em vez de seq scan.",
     "origin": "migration"
+   },
+   "designs_inbound": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "design_id",
+      "type": "UUID NOT NULL UNIQUE",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "name",
+      "type": "TEXT NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "product_name",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "product_sku",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "thumbnail_url",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "seller_email",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "last_event",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "last_correlation_key",
+      "type": "TEXT",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "source",
+      "type": "TEXT NOT NULL DEFAULT 'promo_design'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "source_updated_at",
+      "type": "TIMESTAMPTZ",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "raw_payload",
+      "type": "JSONB NOT NULL DEFAULT '{}'::jsonb",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "received_at",
+      "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "TIMESTAMPTZ NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+     }
+    ],
+    "constraints": [],
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql",
+    "comment": "",
+    "origin": "migration"
    }
   },
   "policies": [
@@ -32937,6 +33050,16 @@
     "using": "",
     "check": "(user_id IS NULL) OR (user_id = auth.uid())",
     "src": "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql"
+   },
+   {
+    "name": "Admins e managers podem ler designs_inbound",
+    "table": "designs_inbound",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'",
+    "check": "",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -43192,6 +43315,15 @@
     "src": "supabase/migrations/20261117160000_fix_500_cadence_tasks_updated_at.sql"
    },
    {
+    "name": "trg_designs_inbound_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "designs_inbound",
+    "function": "set_designs_inbound_updated_at",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -52367,6 +52499,17 @@
      "v_rows"
     ]
    },
+   "set_designs_inbound_updated_at": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN NEW.updated_at = now(); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -59467,6 +59610,30 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql"
+   },
+   {
+    "name": "idx_designs_inbound_received_at",
+    "table": "designs_inbound",
+    "columns": "received_at DESC",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "name": "idx_designs_inbound_product_sku",
+    "table": "designs_inbound",
+    "columns": "product_sku",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "name": "idx_designs_inbound_seller_email",
+    "table": "designs_inbound",
+    "columns": "seller_email",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
     "name": "account_plans_account_id_key",
@@ -67753,6 +67920,7 @@
    "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+   "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -68175,6 +68343,7 @@
    "plan_rollback_ddl": "enabled",
    "cron_job_last_run": "enabled",
    "cron_job_last_run_cursor": "enabled",
+   "designs_inbound": "enabled",
    "ab_tests": "enabled",
    "experiment_assignments": "enabled",
    "experiment_variants": "enabled",
@@ -73463,6 +73632,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "designs_inbound",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "designs_inbound",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
     "kind": "grant",
@@ -99563,6 +99748,30 @@
     "idempotency": false
    },
    {
+    "name": "receive-design-sync",
+    "file": "supabase/functions/receive-design-sync/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
+    "tables": [
+     "designs_inbound",
+     "webhook_inbound_dedupe"
+    ],
+    "env": [
+     "DESIGN_SYNC_WEBHOOK_SECRET",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "receive-design-sync Recebe os design.created / design.updated emitidos pelo Promo Design. Envelope identico ao fluxo PromoGifts do receive-quote-sync (decisao de arquitetura: um unico formato de webhook no CRM, para nao duplicar validador e dedupe): headers: x-webhook-signature: sha256=<hex>, x-webh …",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": true
+   },
+   {
     "name": "receive-quote-sync",
     "file": "supabase/functions/receive-quote-sync/index.ts",
     "methods": [
@@ -101268,6 +101477,13 @@
    },
    {
     "path": "/admin/conexoes",
+    "component": "Admin",
+    "guard": "",
+    "roles": [],
+    "file": "src/routes/AppRoutes.tsx"
+   },
+   {
+    "path": "/admin/design-inbound",
     "component": "Admin",
     "guard": "",
     "roles": [],
@@ -103838,6 +104054,10 @@
     "file": "src/hooks/deal-intelligence/useWinLoss.ts"
    },
    {
+    "name": "useDesignsInbound",
+    "file": "src/hooks/designs-inbound/useDesignsInbound.ts"
+   },
+   {
     "name": "useTwilioCredentialsCheck",
     "file": "src/hooks/dialer/useClickToCall.ts"
    },
@@ -106270,6 +106490,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/pages/admin/AdminDesignInboundPage.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/pages/admin/AdminQuoteSyncInboundPage.tsx"
    },
    {
@@ -106643,7 +106867,7 @@
   {
    "module": "src/components",
    "files": 1227,
-   "lines": 193334,
+   "lines": 193341,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106971,8 +107195,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 548,
-   "lines": 64748,
+   "files": 549,
+   "lines": 64783,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107605,8 +107829,8 @@
   },
   {
    "module": "src/pages",
-   "files": 180,
-   "lines": 44554,
+   "files": 181,
+   "lines": 44682,
    "tables": [
     "achievements",
     "activities",
@@ -107802,7 +108026,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1862,
+   "lines": 1875,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -108014,8 +108238,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 326,
-   "lines": 67296,
+   "files": 330,
+   "lines": 67695,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -108082,6 +108306,7 @@
     "deal_velocity_alerts",
     "deal_velocity_predictions",
     "demand_forecasts",
+    "designs_inbound",
     "dialer_queue_items",
     "dialer_queues",
     "edge_retry_events",
@@ -108364,8 +108589,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 711,
-   "lines": 59521,
+   "files": 712,
+   "lines": 59580,
    "tables": [
     "user_permissions_cache"
    ],
@@ -109974,6 +110199,11 @@
     ],
     "upsert": [
      "supabase/functions/demand-forecast/index.ts"
+    ]
+   },
+   "designs_inbound": {
+    "upsert": [
+     "supabase/functions/receive-design-sync/index.ts"
     ]
    },
    "dialer_queue_items": {
@@ -112715,17 +112945,20 @@
    "webhook_inbound_dedupe": {
     "delete": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts",
      "supabase/functions/twilio-call-status/index.ts"
     ],
     "insert": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts"
     ],
     "select": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts"
     ],
@@ -115041,6 +115274,9 @@
    "DB_URL": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
+   "DESIGN_SYNC_WEBHOOK_SECRET": [
+    "supabase/functions/receive-design-sync/index.ts"
+   ],
    "DEV": [
     "src/components/admin/PerformanceMonitor.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -115493,6 +115729,7 @@
     "supabase/functions/process-race-event/index.ts",
     "supabase/functions/process-scheduled-sends/index.ts",
     "supabase/functions/ranking-api/index.ts",
+    "supabase/functions/receive-design-sync/index.ts",
     "supabase/functions/receive-quote-sync/index.ts",
     "supabase/functions/receive-quote-webhook/index.ts",
     "supabase/functions/report-embed-public/index.ts",
@@ -115605,6 +115842,7 @@
     "supabase/functions/purchase-intelligence-forecast/index.ts",
     "supabase/functions/qbr-generator/index.ts",
     "supabase/functions/ranking-api/index.ts",
+    "supabase/functions/receive-design-sync/index.ts",
     "supabase/functions/receive-quote-sync/index.ts",
     "supabase/functions/receive-quote-webhook/index.ts",
     "supabase/functions/report-builder-execute/index.ts",
@@ -117423,6 +117661,14 @@
     "name": "notificationRowSchema",
     "kind": "object",
     "body": "{ user_id: z.string().uuid(), type: z.string().min(1).max(64), title: z.string().min(1).max(200), category: notificationCategorySchema.optional(), priority: notificationPrioritySchema.optional(), message: z.string().max(2000).nullish(), icon: z.string().max(64).nullish(), action_url: z.string().max(500).nullish(), action_label: z.string().max(100).nullish(), metadata: z.record(z.unknown()).nullish(), expires_at: z.string().nullish(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.ts",
+    "name": "DesignPayloadSchema",
+    "kind": "object",
+    "body": "{ design_id: z.string().uuid({ message: \"expected_uuid\" }), name: z.string().trim().min(1, { message: \"required\" }).max(300), product_name: optionalText, product_sku: optionalText, thumbnail_url: optionalText, seller_email: optionalText, updated_at: optionalText, }",
     "refines": [],
     "chain": []
    },
@@ -124353,6 +124599,10 @@
    {
     "file": "supabase/functions/race-commentary/index.ts",
     "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.ts",
+    "text": "(scripts/lint-input-validation.ts) exige que toda edge que grava importe um"
    },
    {
     "file": "supabase/functions/receive-quote-sync/index.ts",
@@ -139535,6 +139785,46 @@
     "table": "cron_job_last_run_cursor",
     "column": "updated_at",
     "rule": "default now()"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "design_id",
+    "rule": "obrigatório; único"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "name",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "source",
+    "rule": "default 'promo_design'"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "raw_payload",
+    "rule": "default '{}'::jsonb"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "received_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "designs_inbound",
+    "column": "updated_at",
+    "rule": "default now()"
    }
   ],
   "params": [
@@ -140517,6 +140807,16 @@
     "file": "supabase/functions/race-commentary/index.ts",
     "name": "COMMENTARY_CACHE_TTL_MS",
     "value": "60"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/index.ts",
+    "name": "MAX_WEBHOOK_BODY_BYTES",
+    "value": "240"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/index.ts",
+    "name": "MAX_EVENT_LENGTH",
+    "value": "120"
    },
    {
     "file": "supabase/functions/receive-quote-sync/index.ts",
@@ -152178,6 +152478,18 @@
     "kind": "compara"
    },
    {
+    "file": "supabase/functions/receive-design-sync/index.ts",
+    "field": "status",
+    "value": "duplicate_ignored",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/index.ts",
+    "field": "status",
+    "value": "processed",
+    "kind": "escreve"
+   },
+   {
     "file": "supabase/functions/receive-quote-sync/index.ts",
     "field": "status",
     "value": "ok",
@@ -163254,6 +163566,54 @@
     "name": "exhausted é calculado quando attempts+1 >= MAX_ATTEMPTS"
    },
    {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "isUuid aceita uuid v4 minusculo"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "isUuid rejeita string vazia, null e uuid truncado"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "schema aceita o payload completo que o Promo Design emite"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow traduz todos os campos do payload"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow aceita apenas o minimo e anula o resto"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow trata string vazia e whitespace como ausente"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow ignora campos de tipo errado sem lancar"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow rejeita design_id ausente com field=design_id"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow rejeita design_id que nao e uuid"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow rejeita name ausente com field=name"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow rejeita name vazio"
+   },
+   {
+    "file": "supabase/functions/receive-design-sync/mapping.test.ts",
+    "name": "toDesignRow faz trim do nome"
+   },
+   {
     "file": "supabase/functions/receive-quote-sync/index.test.ts",
     "name": "GET is not allowed"
    },
@@ -166822,6 +167182,16 @@
     "using": "",
     "check": "(user_id IS NULL) OR (user_id = auth.uid())",
     "src": "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql"
+   },
+   {
+    "name": "Admins e managers podem ler designs_inbound",
+    "table": "designs_inbound",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'",
+    "check": "",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -177077,6 +177447,15 @@
     "src": "supabase/migrations/20261117160000_fix_500_cadence_tasks_updated_at.sql"
    },
    {
+    "name": "trg_designs_inbound_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "designs_inbound",
+    "function": "set_designs_inbound_updated_at",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -186252,6 +186631,17 @@
      "v_rows"
     ]
    },
+   "set_designs_inbound_updated_at": {
+    "args": "",
+    "returns": "TRIGGER",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN NEW.updated_at = now(); RETURN NEW; END;",
+    "raises": [],
+    "tables": []
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -191770,7 +192160,13 @@
       "escreve:supabase/functions/receive-quote-webhook/index.ts",
       "filtra:supabase/functions/process-scheduled-sends/index.ts"
      ],
+     "duplicate_ignored": [
+      "escreve:supabase/functions/receive-design-sync/index.ts",
+      "escreve:supabase/functions/receive-quote-sync/index.ts",
+      "escreve:supabase/functions/receive-quote-webhook/index.ts"
+     ],
      "processed": [
+      "escreve:supabase/functions/receive-design-sync/index.ts",
       "escreve:supabase/functions/receive-quote-sync/index.ts"
      ],
      "server_misconfigured": [
@@ -191793,10 +192189,6 @@
      ],
      "external_quote_id_required": [
       "escreve:supabase/functions/receive-quote-sync/index.ts"
-     ],
-     "duplicate_ignored": [
-      "escreve:supabase/functions/receive-quote-sync/index.ts",
-      "escreve:supabase/functions/receive-quote-webhook/index.ts"
      ],
      "dedupe_failed": [
       "escreve:supabase/functions/receive-quote-sync/index.ts"
@@ -194296,6 +194688,15 @@
     "DELETE": [
      "PUBLIC: is_admin_or_manager(auth.uid())"
     ]
+   },
+   "designs_inbound": {
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt"
+    ],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
    },
    "dialer_queue_items": {
     "rls": "enabled",
@@ -198280,6 +198681,7 @@
    "supabase/functions/process-race-event/index.ts",
    "supabase/functions/process-scheduled-sends/index.ts",
    "supabase/functions/ranking-api/index.ts",
+   "supabase/functions/receive-design-sync/index.ts",
    "supabase/functions/receive-quote-sync/index.ts",
    "supabase/functions/receive-quote-webhook/index.ts",
    "supabase/functions/report-embed-public/index.ts",
@@ -198494,6 +198896,7 @@
    "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql",
    "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+   "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -204105,6 +204508,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "designs_inbound",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "all",
+    "object": "designs_inbound",
+    "objkind": "table",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
     "kind": "grant",
@@ -223234,6 +223653,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/pages/admin/AdminDesignInboundPage.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/pages/admin/AdminQuoteSyncInboundPage.tsx"
    },
    {
@@ -224848,6 +225271,10 @@
    ],
    "cron_job_last_run_cursor": [
     "updated_at"
+   ],
+   "designs_inbound": [
+    "created_at",
+    "updated_at"
    ]
   },
   "pii": [
@@ -225754,8 +226181,18 @@
    },
    {
     "kind": "status",
+    "msg": "valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:supabase/functions/receive-design-sync/index.ts",
+     "escreve:supabase/functions/receive-quote-sync/index.ts",
+     "escreve:supabase/functions/receive-quote-webhook/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
+     "escreve:supabase/functions/receive-design-sync/index.ts",
      "escreve:supabase/functions/receive-quote-sync/index.ts"
     ]
    },
@@ -225806,14 +226243,6 @@
     "msg": "valor `external_quote_id_required` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/receive-quote-sync/index.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:supabase/functions/receive-quote-sync/index.ts",
-     "escreve:supabase/functions/receive-quote-webhook/index.ts"
     ]
    },
    {
@@ -226906,7 +227335,7 @@
    "`status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "403/412 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
+   "404/413 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
  },
@@ -230385,7 +230814,7 @@
   },
   "src/components/admin/AdminQuickLinks.tsx": {
    "path": "src/components/admin/AdminQuickLinks.tsx",
-   "lines": 143,
+   "lines": 150,
    "exports": [
     "function AdminQuickLinks"
    ]
@@ -260260,6 +260689,17 @@
     "200"
    ]
   },
+  "src/hooks/designs-inbound/useDesignsInbound.ts": {
+   "path": "src/hooks/designs-inbound/useDesignsInbound.ts",
+   "lines": 35,
+   "exports": [
+    "interface DesignInboundRow",
+    "function useDesignsInbound"
+   ],
+   "hooks": [
+    "useDesignsInbound"
+   ]
+  },
   "src/hooks/dialer/useClickToCall.ts": {
    "path": "src/hooks/dialer/useClickToCall.ts",
    "lines": 83,
@@ -273209,6 +273649,16 @@
     "ProtectedRoute"
    ]
   },
+  "src/pages/admin/AdminDesignInboundPage.tsx": {
+   "path": "src/pages/admin/AdminDesignInboundPage.tsx",
+   "lines": 128,
+   "exports": [
+    "function AdminDesignInboundPage"
+   ],
+   "guards": [
+    "ProtectedRoute"
+   ]
+  },
   "src/pages/admin/AdminPlatformSLOPage.tsx": {
    "path": "src/pages/admin/AdminPlatformSLOPage.tsx",
    "lines": 276,
@@ -273358,7 +273808,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1156,
+   "lines": 1165,
    "exports": [
     "function AppRoutes"
    ],
@@ -274306,6 +274756,12 @@
      "roles": []
     },
     {
+     "path": "/admin/design-inbound",
+     "component": "Admin",
+     "guard": "",
+     "roles": []
+    },
+    {
      "path": "/admin/quote-conversions",
      "component": "Admin",
      "guard": "",
@@ -274451,7 +274907,7 @@
   },
   "src/routes/lazyPages.ts": {
    "path": "src/routes/lazyPages.ts",
-   "lines": 359,
+   "lines": 362,
    "exports": [
     "const Index",
     "const Auth",
@@ -274550,7 +275006,7 @@
   },
   "src/routes/routeAccess.ts": {
    "path": "src/routes/routeAccess.ts",
-   "lines": 165,
+   "lines": 166,
    "exports": [
     "const adminOnlyRoutes",
     "const managerOnlyRoutes",
@@ -287585,6 +288041,108 @@
    ],
    "uses_service_role": true
   },
+  "supabase/functions/receive-design-sync/contract_test.ts": {
+   "path": "supabase/functions/receive-design-sync/contract_test.ts",
+   "lines": 40,
+   "doc": "Contrato cruzado: o body que o integration-dispatcher do Promo Design monta precisa passar pelo schema do receive-design-sync. Se alguem mudar um lado sem o outro, isto quebra."
+  },
+  "supabase/functions/receive-design-sync/index.ts": {
+   "path": "supabase/functions/receive-design-sync/index.ts",
+   "lines": 182,
+   "tables": [
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "insert,select"
+    },
+    {
+     "table": "designs_inbound",
+     "op": "upsert"
+    },
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "delete"
+    }
+   ],
+   "table_cols": {
+    "webhook_inbound_dedupe": [
+     "id"
+    ]
+   },
+   "env": [
+    "DESIGN_SYNC_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "MAX_WEBHOOK_BODY_BYTES",
+     "value": "240"
+    },
+    {
+     "name": "MAX_EVENT_LENGTH",
+     "value": "120"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "duplicate_ignored",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "processed",
+     "kind": "escreve"
+    }
+   ],
+   "doc": "receive-design-sync Recebe os design.created / design.updated emitidos pelo Promo Design. Envelope identico ao fluxo PromoGifts do receive-quote-sync (decisao de arquitetura: um unico formato de webhook no CRM, para nao duplicar validador e dedupe): headers: x-webhook-signature: sha256=<hex>, x-webh …",
+   "uses_service_role": true
+  },
+  "supabase/functions/receive-design-sync/mapping.test.ts": {
+   "path": "supabase/functions/receive-design-sync/mapping.test.ts",
+   "lines": 106,
+   "is_test": true,
+   "tests": [
+    "isUuid aceita uuid v4 minusculo",
+    "isUuid rejeita string vazia, null e uuid truncado",
+    "schema aceita o payload completo que o Promo Design emite",
+    "toDesignRow traduz todos os campos do payload",
+    "toDesignRow aceita apenas o minimo e anula o resto",
+    "toDesignRow trata string vazia e whitespace como ausente",
+    "toDesignRow ignora campos de tipo errado sem lancar",
+    "toDesignRow rejeita design_id ausente com field=design_id",
+    "toDesignRow rejeita design_id que nao e uuid",
+    "toDesignRow rejeita name ausente com field=name",
+    "toDesignRow rejeita name vazio",
+    "toDesignRow faz trim do nome"
+   ]
+  },
+  "supabase/functions/receive-design-sync/mapping.ts": {
+   "path": "supabase/functions/receive-design-sync/mapping.ts",
+   "lines": 71,
+   "exports": [
+    "class DesignPayloadError",
+    "function isUuid",
+    "const DesignPayloadSchema",
+    "type DesignPayloadParsed",
+    "interface DesignRow",
+    "function toDesignRow",
+    "function rowFromParsed"
+   ],
+   "zod": [
+    {
+     "name": "DesignPayloadSchema",
+     "kind": "object",
+     "body": "{ design_id: z.string().uuid({ message: \"expected_uuid\" }), name: z.string().trim().min(1, { message: \"required\" }).max(300), product_name: optionalText, product_sku: optionalText, thumbnail_url: optionalText, seller_email: optionalText, updated_at: optionalText, }",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "rule_comments": [
+    "(scripts/lint-input-validation.ts) exige que toda edge que grava importe um"
+   ],
+   "doc": "Contrato e traducao do design emitido pelo Promo Design. O schema vive aqui (e nao no handler) porque o guard do repo (scripts/lint-input-validation.ts) exige que toda edge que grava importe um validador compartilhado, e a traducao para a linha do banco precisa ser testavel sem subir Deno.serve."
+  },
   "supabase/functions/receive-quote-sync/index.test.ts": {
    "path": "supabase/functions/receive-quote-sync/index.test.ts",
    "lines": 92,
@@ -296362,6 +296920,11 @@
     "notify"
    ]
   },
+  "supabase/migrations/20261125150000_designs_inbound.sql": {
+   "path": "supabase/migrations/20261125150000_designs_inbound.sql",
+   "lines": 59,
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -298437,10 +299000,29 @@
   }
  },
  "git": {
-  "sha": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
+  "sha": "8c02079096a379bdbcff72de7cb20060785ddf4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "8c02079",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)",
+    "files": [
+     "src/components/admin/AdminQuickLinks.tsx",
+     "src/hooks/designs-inbound/useDesignsInbound.ts",
+     "src/pages/admin/AdminDesignInboundPage.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/lazyPages.ts",
+     "src/routes/routeAccess.ts",
+     "supabase/functions/receive-design-sync/contract_test.ts",
+     "supabase/functions/receive-design-sync/index.ts",
+     "supabase/functions/receive-design-sync/mapping.test.ts",
+     "supabase/functions/receive-design-sync/mapping.ts",
+     "supabase/migrations/20261125150000_designs_inbound.sql"
+    ]
+   },
    {
     "sha": "9098770",
     "date": "2026-11-23",
@@ -298735,21 +299317,56 @@
     "files": [
      "supabase/functions/csat-ces-trigger/index.ts"
     ]
-   },
-   {
-    "sha": "e3600e9",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: escopar schedule-optimal-send a venda do chamador (QA-014) (#645)",
-    "files": [
-     "supabase/functions/schedule-optimal-send/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     4
+   ],
+   [
+    "src/routes/routeAccess.ts",
+    2
+   ],
+   [
+    "src/components/admin/AdminQuickLinks.tsx",
+    1
+   ],
+   [
+    "src/hooks/designs-inbound/useDesignsInbound.ts",
+    1
+   ],
+   [
+    "src/pages/admin/AdminDesignInboundPage.tsx",
+    1
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
+    1
+   ],
+   [
+    "src/routes/lazyPages.ts",
+    1
+   ],
+   [
+    "supabase/functions/receive-design-sync/contract_test.ts",
+    1
+   ],
+   [
+    "supabase/functions/receive-design-sync/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/receive-design-sync/mapping.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/receive-design-sync/mapping.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261125150000_designs_inbound.sql",
+    1
    ],
    [
     "src/components/admin/AwardActions.tsx",
@@ -298781,50 +299398,6 @@
    ],
    [
     "src/components/organisms/AppSidebar.tsx",
-    1
-   ],
-   [
-    "src/routes/routeAccess.test.ts",
-    1
-   ],
-   [
-    "src/routes/routeAccess.ts",
-    1
-   ],
-   [
-    "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
-    1
-   ],
-   [
-    "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
-    1
-   ],
-   [
-    "src/pages/admin/AdminV4CallbacksPage.tsx",
-    1
-   ],
-   [
-    "src/hooks/usePipeline.ts",
-    1
-   ],
-   [
-    "src/components/shared/GlobalErrorBoundary.tsx",
-    1
-   ],
-   [
-    "src/pages/ImportExport.tsx",
-    1
-   ],
-   [
-    "src/hooks/sales/useSalespersonCoaching.ts",
-    1
-   ],
-   [
-    "src/contexts/DashboardThemeContext.tsx",
-    1
-   ],
-   [
-    "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
     1
    ]
   ]

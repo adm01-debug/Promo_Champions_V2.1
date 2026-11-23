@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 171,
+ "total": 172,
  "verify_jwt_false": [
   "bitrix24-oauth",
   "campaign-health-alert",
@@ -4571,6 +4571,44 @@
    "chamada_por_sql_ou_cron": false,
    "orfa": true,
    "testes": 0
+  },
+  {
+   "nome": "receive-design-sync",
+   "entrada": "supabase/functions/receive-design-sync/index.ts",
+   "arquivos": 3,
+   "linhas": 293,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "designs_inbound",
+    "webhook_inbound_dedupe"
+   ],
+   "rpcs": [],
+   "env": [
+    "DESIGN_SYNC_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "cdn.example"
+   ],
+   "usa_shared": [
+    "cors.ts",
+    "rate-limit.ts",
+    "request-body.ts",
+    "request-id.ts",
+    "webhook-validator.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
   },
   {
    "nome": "receive-quote-sync",

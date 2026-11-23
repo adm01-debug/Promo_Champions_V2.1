@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 483,
+ "total": 484,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -3613,6 +3613,28 @@
     "src/components/deal-intelligence/winloss/WinLossSummaryCard.tsx",
     "src/components/win-loss/ActionableInsightsPanel.tsx",
     "src/pages/WinLossIntelligence.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/designs-inbound/useDesignsInbound.ts",
+   "hooks_exportados": [
+    "useDesignsInbound"
+   ],
+   "linhas": 35,
+   "dominio": "hooks/designs-inbound",
+   "tabelas": [
+    "designs_inbound"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/admin/AdminDesignInboundPage.tsx"
    ],
    "coberto_por_testes": 0
   },

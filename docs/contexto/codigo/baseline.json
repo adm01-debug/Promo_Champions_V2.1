@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
+  "commit": "8c02079096a379bdbcff72de7cb20060785ddf4a",
   "branch": "main",
-  "data_commit": "2026-11-23T21:00:45Z",
+  "data_commit": "2026-11-23T18:13:59-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "8c02079",
+    "data": "2026-11-23",
+    "assunto": "feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)"
+   },
    {
     "sha": "9098770",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "01065d8",
     "data": "2026-11-23",
     "assunto": "fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)"
-   },
-   {
-    "sha": "4fdd6dc",
-    "data": "2026-11-23",
-    "assunto": "fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)"
    }
   ],
-  "arquivos_mudados_7d": 284,
+  "arquivos_mudados_7d": 294,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -160,12 +160,12 @@
     "mudancas": 73
    },
    {
-    "pasta": "src/components/competitive",
+    "pasta": "src/components/admin",
     "mudancas": 72
    },
    {
-    "pasta": "src/components/admin",
-    "mudancas": 71
+    "pasta": "src/components/competitive",
+    "mudancas": 72
    },
    {
     "pasta": "src/components/ui",
@@ -286,22 +286,22 @@
     "mudancas": 5
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 5
-   },
-   {
     "arquivo": ".github/workflows/db-backup.yml",
     "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/types-sync.yml",
     "mudancas": 4
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 242
+    "commits": 243
    },
    {
     "autor": "dependabot[bot]",
@@ -313,26 +313,26 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 9
+    "commits": 8
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3639,
-  "arquivos_codigo": 2584,
-  "linhas_codigo": 444444,
-  "rotas": 170,
+  "arquivos_total": 3646,
+  "arquivos_codigo": 2590,
+  "linhas_codigo": 445026,
+  "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
-  "modulos": 174,
-  "componentes": 1290,
-  "hooks": 483,
-  "edge_functions": 171,
-  "tabelas": 419,
-  "migrations": 711,
+  "modulos": 175,
+  "componentes": 1291,
+  "hooks": 484,
+  "edge_functions": 172,
+  "tabelas": 420,
+  "migrations": 712,
   "cron_jobs": 39,
-  "testes": 249,
+  "testes": 250,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1227,
-   "linhas": 193335
+   "linhas": 193342
   },
   "src/config": {
    "arquivos": 4,
@@ -611,8 +611,8 @@
    "linhas": 610
   },
   "src/hooks": {
-   "arquivos": 548,
-   "linhas": 64748
+   "arquivos": 549,
+   "linhas": 64783
   },
   "src/integrations": {
    "arquivos": 4,
@@ -627,12 +627,12 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 180,
-   "linhas": 44554
+   "arquivos": 181,
+   "linhas": 44682
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1862
+   "linhas": 1875
   },
   "src/services": {
    "arquivos": 9,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 326,
-   "linhas": 67296
+   "arquivos": 330,
+   "linhas": 67695
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -710,7 +710,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1156
+   "linhas": 1165
   },
   {
    "arquivo": "scripts/graphify-local.mjs",
@@ -883,6 +883,7 @@
    "process-race-event",
    "process-scheduled-sends",
    "ranking-api",
+   "receive-design-sync",
    "run-retry-tests",
    "semantic-coverage",
    "semantic-index-entity",

@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 170,
+  "urls": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
-  "lazy": 233
+  "lazy": 234
  },
  "urls": [
   {
@@ -859,6 +859,64 @@
     "status"
    ],
    "arquivos_puxados": 68
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "Admin"
+   ],
+   "pai": null,
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
+   "caminho": "/admin/design-inbound",
+   "componente": "AdminDesignInboundPage",
+   "arquivo": "src/pages/admin/AdminDesignInboundPage.tsx",
+   "definida_em": "src/routes/AppRoutes.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useDesignsInbound",
+    "useEffect",
+    "useLocation",
+    "useMemo",
+    "useMutation",
+    "useNavigationType",
+    "usePageTransitionConfig",
+    "useQuery",
+    "useQueryClient",
+    "useReducedMotion",
+    "useRef",
+    "useState",
+    "useUserRoles"
+   ],
+   "hooks_locais": [
+    "useAuth",
+    "useDesignsInbound",
+    "useReducedMotion",
+    "useUserRoles"
+   ],
+   "tabelas": [
+    "access_denied_logs",
+    "designs_inbound",
+    "salespeople",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,
@@ -12803,6 +12861,7 @@
   "AdminComissoes": "src/pages/AdminComissoes.tsx",
   "AdminConexoesPage": "src/pages/admin/AdminConexoesPage.tsx",
   "AdminDashboard": "src/pages/AdminDashboard.tsx",
+  "AdminDesignInboundPage": "src/pages/admin/AdminDesignInboundPage.tsx",
   "AdminFilaTarefasAutomaticas": "src/pages/AdminFilaTarefasAutomaticas.tsx",
   "AdminHistoricoAlertasChurn": "src/pages/AdminHistoricoAlertasChurn.tsx",
   "AdminPlatformSLOPage": "src/pages/admin/AdminPlatformSLOPage.tsx",

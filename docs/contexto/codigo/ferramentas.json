@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2503)",
-   "SQL (721)",
+   "TypeScript (2509)",
+   "SQL (722)",
    "Markdown (223)",
    "JavaScript (78)",
    "JSON (33)",
@@ -1481,6 +1481,7 @@
    "BULK_EMAIL_FROM",
    "CAMPAIGN_ALERT_COOLDOWN_HOURS",
    "CAMPAIGN_ALERT_LOOKBACK_DAYS",
+   "DESIGN_SYNC_WEBHOOK_SECRET",
    "EDGE_BASE_URL",
    "EDGE_RETRY_ALERT_WINDOW_HOURS",
    "EDGE_RETRY_EXHAUSTED_THRESHOLD",
@@ -1716,6 +1717,10 @@
     "arquivos": 1
    },
    {
+    "host": "cdn.example",
+    "arquivos": 1
+   },
+   {
     "host": "champions.promobrindes.com.br",
     "arquivos": 1
    },
@@ -1828,6 +1833,7 @@
    "BITRIX24_CLIENT_ID",
    "BITRIX24_CLIENT_SECRET",
    "BITRIX24_STATE_SECRET",
+   "DESIGN_SYNC_WEBHOOK_SECRET",
    "ELEVENLABS_API_KEY",
    "EVOLUTION_API_KEY",
    "EVOLUTION_API_URL",
@@ -1903,7 +1909,7 @@
    },
    {
     "papel": "admin",
-    "ocorrencias": 19
+    "ocorrencias": 20
    },
    {
     "papel": "alert",
@@ -2136,7 +2142,7 @@
    "src/components/auth/ProtectedRoute.tsx",
    "src/components/navigation/NavigationGuard.tsx"
   ],
-  "rotas_protegidas": 36,
+  "rotas_protegidas": 37,
   "rotas_publicas": [
    "/*",
    "/abm",

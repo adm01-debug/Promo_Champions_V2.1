@@ -205,7 +205,7 @@
    "modulo": "components/admin",
    "arquivos": 60,
    "testes": 0,
-   "linhas": 8157,
+   "linhas": 8164,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -12647,6 +12647,52 @@
    ]
   },
   {
+   "modulo": "hooks/designs-inbound",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 35,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [
+    "useDesignsInbound"
+   ],
+   "hooks_definidos": [
+    "useDesignsInbound"
+   ],
+   "edges": [],
+   "tabelas": [
+    "designs_inbound"
+   ],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [
+     "designs_inbound"
+    ],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "pages/admin"
+   ],
+   "depende_de_modulos": [
+    "integrations/supabase"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query"
+   ]
+  },
+  {
    "modulo": "hooks/dialer",
    "arquivos": 2,
    "testes": 1,
@@ -15290,6 +15336,7 @@
     "hooks/customer-success",
     "hooks/dashboard",
     "hooks/deal-intelligence",
+    "hooks/designs-inbound",
     "hooks/dialer",
     "hooks/email",
     "hooks/engagement",
@@ -17791,15 +17838,16 @@
   },
   {
    "modulo": "pages/admin",
-   "arquivos": 12,
+   "arquivos": 13,
    "testes": 0,
-   "linhas": 4136,
+   "linhas": 4264,
    "itens_menu": [
     "Admin Race Circuito 🏎️"
    ],
    "telas": [
     "/admin/comercial",
     "/admin/conexoes",
+    "/admin/design-inbound",
     "/admin/platform-slo",
     "/admin/quote-conversions",
     "/admin/quote-sync-inbound",
@@ -17812,7 +17860,7 @@
     "/admin/webhooks-timeline"
    ],
    "rotas_http": [],
-   "componentes": 12,
+   "componentes": 13,
    "hooks_locais": [
     "useAsyncReplayQueue",
     "useAuth",
@@ -17831,6 +17879,7 @@
     "useDeadLettersCounts",
     "useDeleteConnection",
     "useDeleteWebhook",
+    "useDesignsInbound",
     "useFeatureFlag",
     "useFeatureFlags",
     "useFeatureGate",
@@ -17915,6 +17964,7 @@
     "bitrix24_sync_logs",
     "call_recording_ingest_jobs",
     "commercial_approval_requests",
+    "designs_inbound",
     "edge_retry_events",
     "feature_flags",
     "forecast_narrative_dead_letters",
@@ -18031,6 +18081,7 @@
     "components/win-loss",
     "hooks",
     "hooks/admin",
+    "hooks/designs-inbound",
     "hooks/race",
     "hooks/win-loss",
     "integrations/supabase",
@@ -18052,7 +18103,7 @@
    "modulo": "routes",
    "arquivos": 4,
    "testes": 1,
-   "linhas": 1722,
+   "linhas": 1735,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -18360,6 +18411,7 @@
     "useDeleteWorkflow",
     "useDeleteWorkflowRule",
     "useDemandForecast",
+    "useDesignsInbound",
     "useDetectCoachingOpportunities",
     "useDetectCompetitors",
     "useDetectCriticalMoments",
@@ -19137,6 +19189,7 @@
     "deal_velocity_alerts",
     "deal_velocity_predictions",
     "demand_forecasts",
+    "designs_inbound",
     "dialer_queue_items",
     "dialer_queues",
     "digital_signatures",

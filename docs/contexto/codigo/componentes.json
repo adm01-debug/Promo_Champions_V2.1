@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1290,
+ "total": 1291,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -504,7 +504,7 @@
     "AdminQuickLinks"
    ],
    "export_default": null,
-   "linhas": 143,
+   "linhas": 150,
    "dominio": "components/admin",
    "hooks_locais": [
     "useDeadLettersCounts"
@@ -2577,7 +2577,7 @@
     "access_denied_logs"
    ],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -15636,7 +15636,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 123,
+   "usado_por": 124,
    "orfao": false
   },
   {
@@ -15721,7 +15721,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 554,
+   "usado_por": 555,
    "orfao": false
   },
   {
@@ -15755,7 +15755,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 542,
+   "usado_por": 543,
    "orfao": false
   },
   {
@@ -15787,7 +15787,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 715,
+   "usado_por": 716,
    "orfao": false
   },
   {
@@ -16065,7 +16065,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 103,
+   "usado_por": 104,
    "orfao": false
   },
   {
@@ -17799,6 +17799,22 @@
    "linhas": 140,
    "dominio": "pages/admin",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/admin/AdminDesignInboundPage.tsx",
+   "exports": [
+    "AdminDesignInboundPage"
+   ],
+   "export_default": "AdminDesignInboundPage",
+   "linhas": 128,
+   "dominio": "pages/admin",
+   "hooks_locais": [
+    "useDesignsInbound"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -20617,7 +20633,7 @@
     "AppRoutes"
    ],
    "export_default": null,
-   "linhas": 1156,
+   "linhas": 1165,
    "dominio": "routes",
    "hooks_locais": [],
    "tabelas": [],
