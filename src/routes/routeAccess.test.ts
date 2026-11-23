@@ -34,10 +34,10 @@ function guardedRoutes(): { admin: string[]; manager: string[] } {
   matches.forEach((match, index) => {
     const start = (match.index ?? 0) + match[0].length;
     const end =
-      index + 1 < matches.length ? (matches[index + 1].index ?? 0) : source.length;
+      index + 1 < matches.length ? (matches[index + 1]?.index ?? 0) : source.length;
     const segment = source.slice(start, end);
-    if (segment.includes('</Admin>')) admin.push(match[1]);
-    else if (segment.includes('</Manager>')) manager.push(match[1]);
+    if (segment.includes('</Admin>')) admin.push(match[1] ?? '');
+    else if (segment.includes('</Manager>')) manager.push(match[1] ?? '');
   });
   return { admin, manager };
 }
@@ -110,7 +110,7 @@ describe('menu lateral — nenhum item oferecido a quem não pode abrir', () => 
     expect(start).toBeGreaterThan(-1);
     expect(end).toBeGreaterThan(start);
     return [...menuSource.slice(start, end).matchAll(/url: '([^']+)'/g)].map(
-      match => match[1]
+      match => match[1] ?? ''
     );
   }
 

@@ -112,7 +112,7 @@ function descendantOf(path: string, prefix: string): boolean {
  * capturado por `/admin` (exclusivo de admin).
  */
 export function requiredRoleFor(path: string): 'admin' | 'manager' | null {
-  const clean = path.split('?')[0].replace(/\/+$/, '') || '/';
+  const clean = (path.split('?')[0] ?? '').replace(/\/+$/, '') || '/';
   const adminHit = adminOnlyRoutes
     .filter(route => descendantOf(clean, route))
     .sort(byLength)[0];
