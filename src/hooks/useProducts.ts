@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+﻿import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
@@ -162,9 +162,11 @@ export const useUpdateProduct = () => {
     // Optimistic update
     onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['products'] });
-      const previousProducts = queryClient.getQueryData(['products']);
+      const previousProducts = queryClient.getQueriesData<Product[]>({
+        queryKey: ['products'],
+      });
 
-      queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
+      queryClient.setQueriesData<Product[]>({ queryKey: ['products'] }, old => {
         if (!old) return old;
         return old.map(product =>
           product.id === newData.id ? { ...product, ...newData } : product
@@ -177,7 +179,9 @@ export const useUpdateProduct = () => {
       toast.success('Produto atualizado!');
     },
     onError: (_err, _vars, context) => {
-      queryClient.setQueryData(['products'], context?.previousProducts);
+      context?.previousProducts?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data)
+      );
       toast.error('Erro ao atualizar produto');
     },
     onSettled: () => {
@@ -207,9 +211,11 @@ export const useDeleteProduct = () => {
     // Optimistic update
     onMutate: async productId => {
       await queryClient.cancelQueries({ queryKey: ['products'] });
-      const previousProducts = queryClient.getQueryData(['products']);
+      const previousProducts = queryClient.getQueriesData<Product[]>({
+        queryKey: ['products'],
+      });
 
-      queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
+      queryClient.setQueriesData<Product[]>({ queryKey: ['products'] }, old => {
         if (!old) return old;
         return old.filter(product => product.id !== productId);
       });
@@ -220,7 +226,9 @@ export const useDeleteProduct = () => {
       toast.success('Produto excluído');
     },
     onError: (_err, _productId, context) => {
-      queryClient.setQueryData(['products'], context?.previousProducts);
+      context?.previousProducts?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data)
+      );
       toast.error('Erro ao excluir produto');
     },
     onSettled: () => {
