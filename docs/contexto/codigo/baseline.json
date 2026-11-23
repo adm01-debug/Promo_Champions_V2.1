@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e5f9f64b80d99791042257ad85c0adaddd9d9abe",
+  "commit": "390db00491ca2dfbd7302e781256f43681aec9fd",
   "branch": "main",
-  "data_commit": "2026-11-23T10:57:06-03:00",
+  "data_commit": "2026-11-23T14:56:23Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "390db00",
+    "data": "2026-11-23",
+    "assunto": "fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)"
+   },
    {
     "sha": "e5f9f64",
     "data": "2026-11-23",
@@ -126,11 +131,6 @@
     "sha": "f9b3558",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump astral-sh/setup-uv (#627)"
-   },
-   {
-    "sha": "dfe85df",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump actions/dependency-review-action (#625)"
    }
   ],
   "arquivos_mudados_7d": 249,
@@ -199,34 +199,30 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "package.json",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 16
-   },
-   {
-    "arquivo": "CHANGELOG.md",
     "mudancas": 15
    },
    {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 13
+    "arquivo": "CHANGELOG.md",
+    "mudancas": 14
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "RELATORIO_CI.md",
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 10
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
@@ -234,27 +230,19 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/pr-checks.yml",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 7
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 8
+    "mudancas": 7
    },
    {
     "arquivo": ".github/workflows/migrations-drift.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 6
    },
    {
@@ -266,27 +254,11 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/hooks/bi/useABCAnalysis.ts",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "supabase/functions/next-best-action/index.ts",
+    "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 6
    },
    {
@@ -294,14 +266,42 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/db-backup.yml",
+    "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "inventario/estado/banco.json",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/hooks/bi/useABCAnalysis.ts",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 226
+    "commits": 227
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443554,
+  "linhas_codigo": 443547,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67242
+   "linhas": 67235
   },
   "tailwind.config.ts": {
    "arquivos": 1,

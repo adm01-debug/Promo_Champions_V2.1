@@ -5825,7 +5825,7 @@
    "nome": "sequence-record-reply",
    "entrada": "supabase/functions/sequence-record-reply/index.ts",
    "arquivos": 1,
-   "linhas": 114,
+   "linhas": 107,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5839,7 +5839,6 @@
     "record_engagement_signal"
    ],
    "env": [
-    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -5847,6 +5846,7 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "auth-client.ts",
     "cors.ts",
     "request-id.ts"
    ],

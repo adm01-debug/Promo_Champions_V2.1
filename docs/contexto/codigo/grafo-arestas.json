@@ -13463,6 +13463,7 @@
    "supabase/functions/_shared/request-id.ts"
   ],
   "supabase/functions/sequence-record-reply/index.ts": [
+   "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/request-id.ts"
   ],

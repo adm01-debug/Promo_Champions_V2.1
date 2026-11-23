@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e5f9f64b80d99791042257ad85c0adaddd9d9abe",
+  "sha": "390db00491ca2dfbd7302e781256f43681aec9fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 14:02 UTC",
+  "generated_at": "2026-11-23 14:57 UTC",
   "files_total": 3649,
   "code_files": 3300,
-  "code_lines": 478660
+  "code_lines": 478653
  },
  "version": "1.3.2",
- "facts_hash": "8a49a2f304c689ee",
+ "facts_hash": "01b318e5b9631482",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -100396,13 +100396,12 @@
     "methods": [
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
      "sequence_enrollments",
      "sequence_step_executions"
     ],
     "env": [
-     "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -108007,7 +108006,7 @@
   {
    "module": "supabase/functions",
    "files": 326,
-   "lines": 67242,
+   "lines": 67235,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -115402,7 +115401,6 @@
     "supabase/functions/send-push-notification/index.ts",
     "supabase/functions/sequence-ab-promote/index.ts",
     "supabase/functions/sequence-enroll/index.ts",
-    "supabase/functions/sequence-record-reply/index.ts",
     "supabase/functions/snapshot-forecast/index.ts",
     "supabase/functions/summarize-call-recording/index.ts",
     "supabase/functions/test-integration-connection/index.ts",
@@ -289943,7 +289941,7 @@
   },
   "supabase/functions/sequence-record-reply/index.ts": {
    "path": "supabase/functions/sequence-record-reply/index.ts",
-   "lines": 114,
+   "lines": 107,
    "tables": [
     {
      "table": "sequence_enrollments",
@@ -289984,7 +289982,6 @@
     "record_engagement_signal"
    ],
    "env": [
-    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -298264,10 +298261,19 @@
   }
  },
  "git": {
-  "sha": "e5f9f64b80d99791042257ad85c0adaddd9d9abe",
+  "sha": "390db00491ca2dfbd7302e781256f43681aec9fd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "390db00",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)",
+    "files": [
+     "supabase/functions/sequence-record-reply/index.ts"
+    ]
+   },
    {
     "sha": "e5f9f64",
     "date": "2026-11-23",
@@ -298551,19 +298557,13 @@
     "files": [
      "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
     ]
-   },
-   {
-    "sha": "48c711b",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)",
-    "files": [
-     "src/integrations/supabase/types.ts",
-     "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "supabase/functions/sequence-record-reply/index.ts",
+    2
+   ],
    [
     ".release-please-manifest.json",
     2
@@ -298638,10 +298638,6 @@
    ],
    [
     "supabase/functions/notify-v4-quote-status/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/test-integration-connection/index.ts",
     1
    ]
   ]
