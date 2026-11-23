@@ -1,4 +1,4 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+﻿import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -24,8 +24,9 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
 
   try {
     // Verify caller identity before consuming AI credits
+    let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
     try {
-      await getUserClient(req);
+      callerCtx = await getUserClient(req);
     } catch (authErr) {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
@@ -52,6 +53,11 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
     ]);
     if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
+    // Verify ownership before writing: RLS recusa se a gravacao nao for do chamador.
+    const { data: recOwner } = await callerCtx.client.from("call_recordings").select("id").eq("id", body.recording_id).maybeSingle();
+    if (!recOwner) {
+      return new Response(JSON.stringify({ error: "not_found_or_unauthorized" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     await supabase.from("call_recordings").update({ status: "analyzing" }).eq("id", body.recording_id);
 
     // Salva transcript
