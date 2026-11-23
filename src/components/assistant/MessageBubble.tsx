@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Bot, Loader2, User, Volume2 } from 'lucide-react';
+import { AlertTriangle, Bot, Loader2, User, Volume2 } from 'lucide-react';
 import { ChatMessage } from '@/hooks/sales/useSalesAssistant';
 import { cn } from '@/lib/utils';
 
@@ -49,6 +49,15 @@ export function MessageBubble({
         )}
       >
         <div className="whitespace-pre-wrap">{message.content || '...'}</div>
+        {message.notSaved && (
+          <div
+            className="mt-1 flex items-center gap-1 text-[10px] text-destructive"
+            role="status"
+          >
+            <AlertTriangle className="h-3 w-3 shrink-0" />
+            <span>Esta mensagem n?o foi salva ? ela some ao recarregar.</span>
+          </div>
+        )}
         <div
           className={cn(
             'flex items-center gap-2 mt-1',
