@@ -277,7 +277,7 @@ Exemplo:
 - [ ] 242 — Verificar e registrar o fechamento da Onda 3 — onda 8 — Alta
 - [ ] 243 — Verificar e registrar o fechamento das Ondas 4 a 8 — onda 8 — Média
 - [ ] 244 — Tornar o portão de cobertura honesto sobre o que protege — onda 8 — Alta · **APROV**
-- [ ] 245 — Fazer o verificador de tipos estritos falhar quando não conseguir rodar — onda 8 — Alta
+- [x] 245 — Fazer o verificador de tipos estritos falhar quando não conseguir rodar — onda 8 — Alta — PR #682 - config ausente, ENOENT/ENOBUFS, status nulo e status != 0 sem erro reconhecido saem com exit 1; os 4 caminhos foram forcados e provados
 - [ ] 246 — Corrigir o filtro de status do LTV por segmento — onda 8 — Média · **APROV**
 - [ ] 247 — Levar as escritas de sistema para a máquina de estados — onda 8 — Média · **APROV**
 - [ ] 248 — Resolver a contradição do `ranking-api` — onda 8 — Média · **APROV**

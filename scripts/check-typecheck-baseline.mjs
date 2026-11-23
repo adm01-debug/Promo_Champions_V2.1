@@ -26,11 +26,31 @@ if (!existsSync(BASELINE_PATH)) {
 }
 const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf-8'));
 
+const STRICT_CONFIG_PATH = join(process.cwd(), 'tsconfig.strict.json');
+if (!existsSync(STRICT_CONFIG_PATH)) {
+  console.error(
+    '❌ tsconfig.strict.json não encontrado. O ratchet não tem o que compilar.'
+  );
+  process.exit(1);
+}
+
 const result = spawnSync(
   'npx',
   ['tsc', '-p', 'tsconfig.strict.json', '--noEmit', '--pretty', 'false'],
   { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024 }
 );
+
+// O ratchet exige sinal positivo: não conseguir rodar o tsc é falha, não silêncio.
+if (result.error) {
+  const detail = result.error.code === 'ENOBUFS' ? ' (saída acima do maxBuffer)' : '';
+  console.error(`❌ Falha ao executar o tsc${detail}: ${result.error.message}`);
+  process.exit(1);
+}
+if (result.status === null) {
+  console.error('❌ O tsc terminou sem código de saída (processo interrompido).');
+  process.exit(1);
+}
+
 const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
 
 const errorRe = /^([^\s(]+\.tsx?)\((\d+),(\d+)\): error (TS\d+):/gm;
@@ -41,6 +61,17 @@ while ((m = errorRe.exec(output))) {
   const key = `${m[1]}|${m[4]}`;
   current.set(key, (current.get(key) ?? 0) + 1);
   if (!examples.has(key)) examples.set(key, m[0]);
+}
+
+// Sem erro reconhecido e com saída diferente de zero, o tsc falhou por outro motivo
+// (configuração inválida, versão errada) — não porque não havia erro nenhum.
+if (current.size === 0 && result.status !== 0) {
+  console.error(
+    `❌ O tsc saiu com código ${result.status} e nenhum erro no formato esperado.`
+  );
+  console.error('   Saída (2000 primeiros caracteres):');
+  console.error(output.slice(0, 2000));
+  process.exit(1);
 }
 
 const total = [...current.values()].reduce((a, b) => a + b, 0);
