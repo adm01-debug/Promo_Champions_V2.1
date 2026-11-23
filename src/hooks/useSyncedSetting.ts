@@ -85,6 +85,13 @@ export function useSyncedSetting<T>(opts: Options<T>) {
   const localUpdatedAtRef = useRef<string | null>(initial.updatedAt);
   const pendingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userIdRef = useRef<string | null>(null);
+  // Valor corrente por referencia: reconcile e estavel (roda na montagem, em
+  // renovacao de token e a cada foco) e nao pode capturar o estado da 1a render.
+  const valueRef = useRef<T>(initial.value);
+  // opts e um literal recriado a cada render; o ref guarda a versao mais nova
+  // sem torna-lo dependencia de reconcile.
+  const optsRef = useRef(opts);
+  optsRef.current = opts;
 
   /** Push current local value to server (debounced caller). */
   const pushToServer = useCallback(
@@ -116,6 +123,10 @@ export function useSyncedSetting<T>(opts: Options<T>) {
     [opts.key]
   );
 
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
   /** Initial server fetch + reconcile. */
   const reconcile = useCallback(async () => {
     setSyncStatus('loading');
@@ -138,9 +149,9 @@ export function useSyncedSetting<T>(opts: Options<T>) {
         return;
       }
       if (!data) {
-        // Server empty → push local snapshot (if any user changes ever happened).
+        // Server empty -> push local snapshot (if any user changes ever happened).
         if (localUpdatedAtRef.current) {
-          await pushToServer(value, localUpdatedAtRef.current);
+          await pushToServer(valueRef.current, localUpdatedAtRef.current);
         } else {
           setSyncStatus('synced');
         }
@@ -148,22 +159,28 @@ export function useSyncedSetting<T>(opts: Options<T>) {
       }
       const serverUpdatedAt = data.updated_at as string;
       const localUpdatedAt = localUpdatedAtRef.current;
+      // Carimbos iguais = ja em sincronia. Tratar isso como "local mais novo"
+      // disparava um upsert inutil a cada troca de aba.
+      if (localUpdatedAt && serverUpdatedAt === localUpdatedAt) {
+        setSyncStatus('synced');
+        return;
+      }
       const serverNewer = !localUpdatedAt || serverUpdatedAt > localUpdatedAt;
       if (serverNewer) {
-        const sanitized = opts.sanitize(data.value);
+        const sanitized = optsRef.current.sanitize(data.value);
         setValue(sanitized);
+        valueRef.current = sanitized;
         localUpdatedAtRef.current = serverUpdatedAt;
-        writeLocal(opts, sanitized, serverUpdatedAt);
+        writeLocal(optsRef.current, sanitized, serverUpdatedAt);
         setSyncStatus('synced');
       } else {
-        // Local newer → push.
-        await pushToServer(value, localUpdatedAt!);
+        // Local newer -> push.
+        await pushToServer(valueRef.current, localUpdatedAt!);
       }
     } catch {
       setSyncStatus('offline');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  }, [opts.key]);
+  }, [opts.key, pushToServer]);
 
   // Initial reconcile + listen for auth changes (login/logout triggers re-sync).
   useEffect(() => {
@@ -198,6 +215,7 @@ export function useSyncedSetting<T>(opts: Options<T>) {
             : opts.sanitize({ ...(prev as object), ...(partial as object) });
         const ts = new Date().toISOString();
         localUpdatedAtRef.current = ts;
+        valueRef.current = merged;
         writeLocal(opts, merged, ts);
         if (pendingTimerRef.current) clearTimeout(pendingTimerRef.current);
         pendingTimerRef.current = setTimeout(() => {
