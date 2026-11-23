@@ -4,6 +4,40 @@
  "descricao": "menu → módulo (pasta de domínio) → telas/rotas → hooks → edge functions → tabelas → dependências entre módulos. edges/tabelas/rpcs são TRANSITIVOS (tudo que os arquivos do módulo puxam); `diretos` tem só o que está escrito nos arquivos do próprio módulo.",
  "modulos": [
   {
+   "modulo": "components",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 51,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 1,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "pages"
+   ],
+   "depende_de_modulos": [
+    "components/ui"
+   ],
+   "pacotes_externos": [
+    "lucide-react"
+   ]
+  },
+  {
    "modulo": "components/accessibility",
    "arquivos": 1,
    "testes": 0,
@@ -9346,6 +9380,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components",
     "components/achievements",
     "components/activities",
     "components/admin",
@@ -9985,7 +10020,7 @@
    "modulo": "hooks",
    "arquivos": 148,
    "testes": 19,
-   "linhas": 20220,
+   "linhas": 20226,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -16020,7 +16055,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 7,
-   "linhas": 39662,
+   "linhas": 39717,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -17714,6 +17749,7 @@
     "routes"
    ],
    "depende_de_modulos": [
+    "components",
     "components/achievements",
     "components/activities",
     "components/admin",

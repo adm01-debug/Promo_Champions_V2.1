@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aef48e8d38` · branch `main` · 2026-11-23 22:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e328672023` · branch `main` · 2026-11-23 22:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2469,7 +2469,7 @@ _nenhum item encontrado_
   ```
 - **Comissoes()** — `src/pages/Comissoes.tsx`
   ```
-  const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { if (c.status !== 'cancelled') t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: Comm …
+  const { data: commissions = [], isLoading, isError, error, refetch, } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { if (c.status !== 'cancelled') t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const r …
   ```
 - **calculateStreak(dates: string[], grouped: Record<string, DailyChallengeWithProgress[]>)** — `src/pages/HistoricoDesafiosDiarios.tsx`
   ```

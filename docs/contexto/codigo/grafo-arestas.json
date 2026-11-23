@@ -82,6 +82,9 @@
    "src/lib/errorTracking.ts",
    "src/routes/AppRoutes.tsx"
   ],
+  "src/components/QueryErrorState.tsx": [
+   "src/components/ui/button.tsx"
+  ],
   "src/components/accessibility/SkipLinks.tsx": [
    "src/lib/utils.ts"
   ],
@@ -9939,6 +9942,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/pages/AdminAuditoriaPremiacoes.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/admin/AwardActions.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -9952,6 +9956,7 @@
    "src/lib/supabase/realtime.ts"
   ],
   "src/pages/AdminComissoes.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -10048,6 +10053,7 @@
    "src/hooks/admin/useDataSubjectRequests.ts"
   ],
   "src/pages/AdminSupressaoEmails.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/email/CampaignDeliveryLatencyCard.tsx",
    "src/components/email/CampaignHealthAlertsCard.tsx",
    "src/components/email/CampaignOptOutRateCard.tsx",
@@ -10200,6 +10206,7 @@
    "src/hooks/activities/useActivities.ts"
   ],
   "src/pages/AuditLogsPage.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -10462,6 +10469,7 @@
    "src/components/reporting/CohortHeatmap.tsx"
   ],
   "src/pages/Comissoes.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/financeiro/CommissionCalculator.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
@@ -10627,6 +10635,7 @@
    "src/hooks/sales/useSalespeopleMin.ts"
   ],
   "src/pages/Deduplication.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/admin/MergeConflictsResolver.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
@@ -10705,6 +10714,7 @@
    "src/lib/money.ts"
   ],
   "src/pages/FeatureFlagsAdmin.tsx": [
+   "src/components/QueryErrorState.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",

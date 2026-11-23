@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2346,
- "arestas": 9634,
+ "nos": 2347,
+ "arestas": 9642,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 542
+   "importado_por": 543
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -253,7 +253,7 @@
  "modulos_mais_acoplados": [
   {
    "modulo": "pages",
-   "depende_de": 126,
+   "depende_de": 127,
    "importado_por": 1
   },
   {
@@ -264,7 +264,7 @@
   {
    "modulo": "components/ui",
    "depende_de": 2,
-   "importado_por": 101
+   "importado_por": 102
   },
   {
    "modulo": "hooks",

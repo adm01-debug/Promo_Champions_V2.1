@@ -8710,7 +8710,7 @@
     "useFeatureFlags",
     "useFeatureGate"
    ],
-   "linhas": 114,
+   "linhas": 120,
    "dominio": "hooks",
    "tabelas": [
     "feature_flags"

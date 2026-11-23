@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "aef48e8d382947ce0fa2eaf9ac320018785984fd",
+  "commit": "e328672023e16a579726dd7361a03835ae399f6d",
   "branch": "main",
-  "data_commit": "2026-11-23T19:05:10-03:00",
+  "data_commit": "2026-11-23T22:08:18Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e328672",
+    "data": "2026-11-23",
+    "assunto": "feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)"
+   },
    {
     "sha": "aef48e8",
     "data": "2026-11-23",
@@ -126,18 +131,13 @@
     "sha": "23b32db",
     "data": "2026-11-23",
     "assunto": "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)"
-   },
-   {
-    "sha": "ed53bd4",
-    "data": "2026-11-23",
-    "assunto": "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)"
    }
   ],
-  "arquivos_mudados_7d": 288,
+  "arquivos_mudados_7d": 292,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
-    "mudancas": 129
+    "mudancas": 127
    },
    {
     "pasta": "src/components/analytics",
@@ -160,12 +160,12 @@
     "mudancas": 73
    },
    {
-    "pasta": "src/components/admin",
+    "pasta": "src/components/competitive",
     "mudancas": 72
    },
    {
-    "pasta": "src/components/competitive",
-    "mudancas": 72
+    "pasta": "src/components/admin",
+    "mudancas": 71
    },
    {
     "pasta": "src/components/ui",
@@ -173,23 +173,23 @@
    },
    {
     "pasta": "src/hooks/win-loss",
-    "mudancas": 59
+    "mudancas": 57
    },
    {
     "pasta": "src/components/deal-intelligence",
     "mudancas": 55
    },
    {
-    "pasta": "src/hooks/race",
-    "mudancas": 51
-   },
-   {
     "pasta": "src/components/bi",
     "mudancas": 46
    },
    {
+    "pasta": "src/hooks/race",
+    "mudancas": 44
+   },
+   {
     "pasta": "src/components/gamification",
-    "mudancas": 43
+    "mudancas": 42
    },
    {
     "pasta": "src/components/revenue-intelligence",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 245
+    "commits": 246
    },
    {
     "autor": "dependabot[bot]",
@@ -313,20 +313,20 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 6
+    "commits": 5
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3645,
-  "arquivos_codigo": 2589,
-  "linhas_codigo": 444878,
+  "arquivos_total": 3646,
+  "arquivos_codigo": 2590,
+  "linhas_codigo": 444990,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
-  "modulos": 175,
-  "componentes": 1290,
+  "modulos": 176,
+  "componentes": 1291,
   "hooks": 484,
   "edge_functions": 172,
   "tabelas": 420,
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1226,
-   "linhas": 193171
+   "arquivos": 1227,
+   "linhas": 193222
   },
   "src/config": {
    "arquivos": 4,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 549,
-   "linhas": 64783
+   "linhas": 64789
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 181,
-   "linhas": 44682
+   "linhas": 44737
   },
   "src/routes": {
    "arquivos": 5,

@@ -735,7 +735,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 18
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,
@@ -1063,7 +1063,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 16
+   "arquivos_puxados": 17
   },
   {
    "protegida": true,
@@ -1565,7 +1565,7 @@
    "papeis": [
     "img"
    ],
-   "arquivos_puxados": 37
+   "arquivos_puxados": 38
   },
   {
    "protegida": true,
@@ -3025,7 +3025,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 18
+   "arquivos_puxados": 19
   },
   {
    "protegida": true,
@@ -4170,7 +4170,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 16
+   "arquivos_puxados": 18
   },
   {
    "protegida": false,
@@ -5182,7 +5182,7 @@
    "papeis": [
     "admin"
    ],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,
@@ -5927,7 +5927,7 @@
     "experimental_ui"
    ],
    "papeis": [],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,

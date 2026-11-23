@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1290,
+ "total": 1291,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -10968,6 +10968,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/QueryErrorState.tsx",
+   "exports": [
+    "QueryErrorState"
+   ],
+   "export_default": null,
+   "linhas": 51,
+   "dominio": "components",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 7,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/quotes/QuoteCard.tsx",
    "exports": [
     "QuoteCard"
@@ -15755,7 +15769,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 542,
+   "usado_por": 543,
    "orfao": false
   },
   {
@@ -18002,7 +18016,7 @@
     "AdminAuditoriaPremiacoes"
    ],
    "export_default": "AdminAuditoriaPremiacoes",
-   "linhas": 594,
+   "linhas": 605,
    "dominio": "pages",
    "hooks_locais": [
     "useCommissionBonusAwards",
@@ -18020,7 +18034,7 @@
     "AdminComissoes"
    ],
    "export_default": "AdminComissoes",
-   "linhas": 401,
+   "linhas": 412,
    "dominio": "pages",
    "hooks_locais": [
     "useAllCommissions",
@@ -18144,7 +18158,7 @@
     "AdminSupressaoEmails"
    ],
    "export_default": "AdminSupressaoEmails",
-   "linhas": 376,
+   "linhas": 384,
    "dominio": "pages",
    "hooks_locais": [
     "useAddEmailOptOut",
@@ -18353,7 +18367,7 @@
     "AuditLogsPage"
    ],
    "export_default": "AuditLogsPage",
-   "linhas": 293,
+   "linhas": 302,
    "dominio": "pages",
    "hooks_locais": [
     "useAuditLogs"
@@ -18726,7 +18740,7 @@
     "Comissoes"
    ],
    "export_default": "Comissoes",
-   "linhas": 293,
+   "linhas": 303,
    "dominio": "pages",
    "hooks_locais": [
     "useMyCommissions"
@@ -18956,7 +18970,7 @@
     "Deduplication"
    ],
    "export_default": "Deduplication",
-   "linhas": 195,
+   "linhas": 198,
    "dominio": "pages",
    "hooks_locais": [
     "useDeduplicationScan"
@@ -19100,7 +19114,7 @@
     "FeatureFlagsAdmin"
    ],
    "export_default": "FeatureFlagsAdmin",
-   "linhas": 339,
+   "linhas": 342,
    "dominio": "pages",
    "hooks_locais": [
     "useCreateFeatureFlag",

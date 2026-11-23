@@ -6,7 +6,7 @@
    "src/pages (167)"
   ],
   "componentes": [
-   "src/components (1109)",
+   "src/components (1110)",
    "src/pages (174)",
    "src/contexts (5)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1290)"
+  ".tsx (1291)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)",
    "fix: receive-design-sync sem verify_jwt (webhook HMAC)",
    "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)",
    "feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)",
-   "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)",
-   "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)"
+   "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
