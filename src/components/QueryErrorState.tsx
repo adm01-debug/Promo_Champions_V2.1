@@ -1,25 +1,25 @@
-﻿import { AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+﻿import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface QueryErrorStateProps {
   error: unknown;
   onRetry?: () => void;
   /** Use "inline" for card sections, "full" for full-page placeholder */
-  variant?: "inline" | "full";
+  variant?: 'inline' | 'full';
   message?: string;
 }
 
 export function QueryErrorState({
   error,
   onRetry,
-  variant = "inline",
+  variant = 'inline',
   message,
 }: QueryErrorStateProps) {
   const errorMessage =
     message ??
-    (error instanceof Error ? error.message : "Erro desconhecido ao carregar dados.");
+    (error instanceof Error ? error.message : 'Erro desconhecido ao carregar dados.');
 
-  if (variant === "full") {
+  if (variant === 'full') {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-12 text-center">
         <AlertCircle className="h-10 w-10 text-destructive" />

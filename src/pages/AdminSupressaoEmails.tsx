@@ -92,7 +92,8 @@ function AdminSupressaoEmails() {
     [search, source, page]
   );
 
-  const { data, isLoading, isFetching, isError, error, refetch } = useEmailOptOuts(filters);
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    useEmailOptOuts(filters);
   const addMutation = useAddEmailOptOut();
   const removeMutation = useRemoveEmailOptOut();
 

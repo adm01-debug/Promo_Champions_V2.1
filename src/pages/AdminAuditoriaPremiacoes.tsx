@@ -103,7 +103,13 @@ export default function AdminAuditoriaPremiacoes() {
   const [viewMode, setViewMode] = useState<ViewMode>('detailed');
   const [periodFilter, setPeriodFilter] = useState<string>('all'); // 'all' | 'YYYY-MM'
   const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
-  const { data: rawAwards = [], isLoading, isError, error, refetch } = useCommissionBonusAwards({
+  const {
+    data: rawAwards = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
   const updateStatus = useUpdateAwardStatus();

@@ -31,7 +31,13 @@ const statusBadge: Record<
 };
 
 export default function Comissoes() {
-  const { data: commissions = [], isLoading, isError, error, refetch } = useMyCommissions();
+  const {
+    data: commissions = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useMyCommissions();
 
   const totals = useMemo(() => {
     const t = { pending: 0, approved: 0, paid: 0, all: 0 };

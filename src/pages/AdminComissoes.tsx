@@ -69,9 +69,13 @@ export default function AdminComissoes() {
   const [notes, setNotes] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: commissions = [], isLoading, isError, error, refetch } = useAllCommissions(
-    statusFilter === 'all' ? undefined : statusFilter
-  );
+  const {
+    data: commissions = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useAllCommissions(statusFilter === 'all' ? undefined : statusFilter);
   const updateStatus = useUpdateCommissionStatus();
 
   const filteredCommissions = commissions.filter(
