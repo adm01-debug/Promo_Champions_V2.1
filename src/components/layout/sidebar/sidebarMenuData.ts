@@ -162,7 +162,6 @@ const sdrGroupedItems: MenuGroup[] = [
       { title: 'Perguntar à IA', url: '/perguntar', icon: Sparkles },
       { title: 'Busca Inteligente', url: '/busca-inteligente', icon: Sparkles },
       { title: 'Busca Semântica', url: '/busca', icon: Sparkles },
-      { title: 'Business Intelligence', url: '/ferramentas/bi', icon: Sparkles },
       { title: 'Agentes IA', url: '/agentes', icon: Bot },
     ],
   },
@@ -173,7 +172,6 @@ const closerGroupedItems: MenuGroup[] = [
     label: 'Vendas',
     icon: DollarSign,
     items: [
-      { title: 'Assinatura Digital', url: '/assinatura-digital', icon: Target },
       { title: 'Aprovações', url: '/aprovacoes', icon: ShieldCheck },
       { title: 'Multichannel', url: '/multichannel', icon: MessageSquare },
       { title: 'Email Tracking', url: '/email-tracking', icon: MailSearch },
@@ -232,7 +230,6 @@ const closerGroupedItems: MenuGroup[] = [
       { title: 'Meu Assistente', url: '/meu-assistente', icon: Bot },
       { title: 'Minhas Premiações', url: '/minhas-premiacoes', icon: Trophy },
       { title: 'Assistente IA', url: '/assistente', icon: Bot },
-      { title: 'Business Intelligence', url: '/ferramentas/bi', icon: Sparkles },
       { title: 'Agentes IA', url: '/agentes', icon: Bot },
     ],
   },
