@@ -283,7 +283,7 @@ Exemplo:
 - [ ] 248 — Resolver a contradição do `ranking-api` — onda 8 — Média · **APROV**
 - [ ] 249 — Fazer o Deploy Pipeline falhar quando não deployar — onda 8 — Média · **APROV**
 - [x] 250 — Completar o `.env.example` com as variáveis que o sistema realmente lê — onda 8 — Média — PR #683 - inventário dos 3 destinos (Vite, GitHub Secrets, Supabase Secrets) cobre as 84 variáveis lidas; VITE_APP_URL, VITE_CANONICAL_URL e VITE_SUPABASE_TEST_MODE incluídas; nenhum valor sensível
-- [ ] 251 — Tornar explícita a ordem de precedência de papéis — onda 8 — Baixa
+- [x] 251 — Tornar explícita a ordem de precedência de papéis — onda 8 — Baixa — PR #684 - `pickHighestRole` com precedência explícita (admin > manager > salesperson) substitui `.order('role').limit(1)`; 10 testes novos provam que a escolha não depende do alfabeto e que sem o fix 6 falham
 - [ ] 252 — Decidir sobre o bucket público de fotos de perfil — onda 8 — Baixa · **APROV**
 - [ ] 253 — Fazer o guard-rail de `service_role` ser verificado — onda 8 — Baixa · **APROV**
 - [ ] 254 — Reduzir o risco do workflow com `pull_request_target` — onda 8 — Baixa · **APROV**
