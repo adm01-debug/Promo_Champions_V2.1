@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 13:16 UTC
+
+- **constraints** alterado (4): `public.external_seller_map.external_seller_map_external_source_external_id_key`, `public.maintenance_log.chk_maintenance_log_completed_after_started`, `public.stage_inactivity_rules.stage_inactivity_rules_check`, `public.stage_inactivity_rules.stage_inactivity_rules_check1`
+- **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_19`
+
 ## 2026-11-23 11:17 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_26`

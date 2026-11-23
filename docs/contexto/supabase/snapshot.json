@@ -66994,8 +66994,8 @@
       },
       {
         "columns": [
-          "external_source",
-          "external_id"
+          "external_id",
+          "external_source"
         ],
         "deferrable": false,
         "definition": "UNIQUE (external_source, external_id)",
@@ -69127,8 +69127,8 @@
       },
       {
         "columns": [
-          "completed_at",
-          "started_at"
+          "started_at",
+          "completed_at"
         ],
         "deferrable": false,
         "definition": "CHECK (completed_at IS NULL OR completed_at >= started_at)",
@@ -76847,8 +76847,8 @@
       },
       {
         "columns": [
-          "moderate_days",
-          "mild_days"
+          "mild_days",
+          "moderate_days"
         ],
         "deferrable": false,
         "definition": "CHECK (moderate_days > mild_days)",
@@ -76865,8 +76865,8 @@
       },
       {
         "columns": [
-          "critical_days",
-          "moderate_days"
+          "moderate_days",
+          "critical_days"
         ],
         "deferrable": false,
         "definition": "CHECK (critical_days > moderate_days)",
@@ -146642,11 +146642,6 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "win_probability_deal_calibrations"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_19"
         },
         {
           "publication": "supabase_realtime_messages_publication",
