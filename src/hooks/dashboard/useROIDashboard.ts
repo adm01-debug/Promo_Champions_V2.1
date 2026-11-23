@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
 import { isWonSaleStatus } from '@/constants';
@@ -95,7 +95,7 @@ export function useROIDashboard(periodMonths: number = 3) {
         const totalRevenue = wonSales.reduce((sum, s) => sum + (s.amount || 0), 0);
         const spActivities = activities.filter(a => a.salesperson_id === sp.id);
 
-        const commissionPaid = totalRevenue * (sp.commission_rate || 0.1);
+        const commissionPaid = totalRevenue * ((sp.commission_rate || 10) / 100);
         const estimatedCost = BASE_SALARY_MONTHLY * periodMonths + commissionPaid;
 
         const roi =
