@@ -214,6 +214,15 @@ async function bitrixApiCallJson(
     response = await callBitrixApi(url, accessToken, params, method, requestId);
   }
 
+  if (response.status === 429) {
+    const ra = response.headers.get("Retry-After");
+    const waitMs = ra && Number.isFinite(Number(ra)) && Number(ra) > 0
+      ? Number(ra) * 1000
+      : 60_000;
+    await new Promise((r) => setTimeout(r, waitMs));
+    response = await callBitrixApi(url, accessToken, params, method, requestId);
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Bitrix24 API error: ${response.status} - ${errorText}`);
