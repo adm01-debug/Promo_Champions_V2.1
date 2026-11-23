@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-23 11:17 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_26`
+
 ## 2026-11-22 20:13 UTC
 
 - **cron jobs** alterado (13): `13:capture-rollback-snapshot-5min`, `17:detect-stalled-cron-15min`, `26:email-bulk-retry-15min`, `36:notify-v4-quote-status-every-5min`, `37:check-v4-callback-alerts-every-5min`, `40:edge-retry-threshold-alert-15min`, `41:wal-health-alert-5min`, `42:winloss-webhook-health-monitor-15min`, `77:sequence-runner-5min`, `78:process-cadence-tasks-5min`, `79:process-scheduled-sends-15min`, `81:check-lead-sla-15min`, `85:send-alert-notifications-5min`
