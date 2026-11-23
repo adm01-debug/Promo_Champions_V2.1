@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 247,
+ "total": 248,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 179
+  "unit": 180
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 162
+   "arquivos": 163
   },
   {
    "padrao": "tests/",
@@ -870,6 +870,15 @@
     "src/hooks/reports/useMarkupMinSamplePreference.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/reports/useSalesReport.test.tsx",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "src/hooks/reports/useSalesReport.ts"
+   ],
+   "casos": 1
   },
   {
    "arquivo": "src/hooks/rolePermissions.test.ts",
@@ -2191,6 +2200,7 @@
   "src/hooks/race/useGhostCar.ts": 1,
   "src/hooks/reports/salesReportHelpers.ts": 1,
   "src/hooks/reports/useMarkupMinSamplePreference.ts": 1,
+  "src/hooks/reports/useSalesReport.ts": 1,
   "src/hooks/sales/useContactFrequencyRules.ts": 2,
   "src/hooks/sales/useSalesBattles.ts": 1,
   "src/hooks/sales/useSalesChartData.ts": 1,
@@ -2646,7 +2656,6 @@
    "src/hooks/reporting/useScheduledReports.ts",
    "src/hooks/reporting/useTriggerScheduledReport.ts",
    "src/hooks/reports/useMonthlySalesBenchmark.ts",
-   "src/hooks/reports/useSalesReport.ts",
    "src/hooks/revenue-intelligence/useForecastAccuracy.ts",
    "src/hooks/revenue-intelligence/useRevenueForecast.ts",
    "src/hooks/revenue/useQuotaAttainment.ts",

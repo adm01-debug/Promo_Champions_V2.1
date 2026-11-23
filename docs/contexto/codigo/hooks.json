@@ -3207,7 +3207,7 @@
    "hooks_exportados": [
     "useGoalsDashboard"
    ],
-   "linhas": 182,
+   "linhas": 183,
    "dominio": "hooks/dashboard",
    "tabelas": [
     "quota_attainment_predictions",
@@ -4448,7 +4448,7 @@
    "hooks_exportados": [
     "useGamifiedProfile"
    ],
-   "linhas": 136,
+   "linhas": 138,
    "dominio": "hooks/gamification",
    "tabelas": [
     "kudos",
@@ -6330,7 +6330,7 @@
    "hooks_exportados": [
     "useSalesReport"
    ],
-   "linhas": 92,
+   "linhas": 93,
    "dominio": "hooks/reports",
    "tabelas": [
     "sales_with_markup",
@@ -6344,7 +6344,7 @@
    "usado_por_arquivos": [
     "src/pages/SalesReportPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/revenue-intelligence/useForecastAccuracy.ts",
@@ -8581,7 +8581,7 @@
    "hooks_exportados": [
     "useEligibleBonuses"
    ],
-   "linhas": 171,
+   "linhas": 172,
    "dominio": "hooks",
    "tabelas": [
     "commission_bonuses",
@@ -9878,7 +9878,7 @@
     "useTopProducts",
     "useUpdateProduct"
    ],
-   "linhas": 231,
+   "linhas": 239,
    "dominio": "hooks",
    "tabelas": [
     "products"

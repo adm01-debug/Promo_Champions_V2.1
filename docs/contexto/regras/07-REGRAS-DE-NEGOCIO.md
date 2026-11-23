@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84b35eddf1` · branch `main` · 2026-11-23 16:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bdea3f7dd1` · branch `main` · 2026-11-23 16:19 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4262,7 +4262,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1672 testes em 212 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1674 testes em 213 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4450,6 +4450,7 @@ _nenhum item encontrado_
 | `src/hooks/bi/useChurnOverdueBySeller.test.tsx` | 2 | useChurnOverdueBySeller · particiona a consulta de vendedores quando há mais de 100 IDs |
 | `src/hooks/crm/useClientPortfolio.test.tsx` | 2 | useAssignClient · usa a RPC de atribuição manual, que é idempotente e registra auditoria no banco |
 | `src/hooks/dashboard/useDashboardKPIsPeriod.test.tsx` | 2 | useDashboardKPIsPeriod · deve buscar KPIs corretamente |
+| `src/hooks/reports/useSalesReport.test.tsx` | 2 | useSalesReport · propaga o erro do fetch de salespeople em vez de ranking vazio |
 | `src/lib/supabase/all-in-calls.test.ts` | 2 | chunkedInClient guard-rail · no high-cardinality .in() call escapes chunkedInClient |
 | `src/pages/DealVelocityPage.test.tsx` | 2 | DealVelocityPage · mostra o comparativo real e não exibe o botão Exportar sem ação |
 | `src/pages/EvolutionCurvesPage.test.tsx` | 2 | EvolutionCurvesPage · mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação |

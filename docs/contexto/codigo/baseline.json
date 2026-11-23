@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "84b35eddf100d375a64412382e6296f86bcdd569",
+  "commit": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
   "branch": "main",
-  "data_commit": "2026-11-23T16:13:22Z",
+  "data_commit": "2026-11-23T16:16:35Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "bdea3f7",
+    "data": "2026-11-23",
+    "assunto": "fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)"
+   },
+   {
+    "sha": "b0ac351",
+    "data": "2026-11-23",
+    "assunto": "fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)"
+   },
    {
     "sha": "84b35ed",
     "data": "2026-11-23",
@@ -121,19 +131,9 @@
     "sha": "e9e69b8",
     "data": "2026-11-23",
     "assunto": "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)"
-   },
-   {
-    "sha": "e4ffc93",
-    "data": "2026-11-23",
-    "assunto": "fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)"
-   },
-   {
-    "sha": "5aad0e0",
-    "data": "2026-11-23",
-    "assunto": "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)"
    }
   ],
-  "arquivos_mudados_7d": 253,
+  "arquivos_mudados_7d": 259,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -222,10 +222,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 9
-   },
-   {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
@@ -235,6 +231,10 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "RELATORIO_CI.md",
     "mudancas": 7
    },
    {
@@ -266,10 +266,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    },
@@ -296,12 +292,16 @@
    {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 5
+   },
+   {
+    "arquivo": "supabase/functions/next-best-action/index.ts",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 230
+    "commits": 232
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3635,
-  "arquivos_codigo": 2580,
-  "linhas_codigo": 443578,
+  "arquivos_total": 3636,
+  "arquivos_codigo": 2581,
+  "linhas_codigo": 443642,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 419,
   "migrations": 711,
   "cron_jobs": 39,
-  "testes": 247,
+  "testes": 248,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 547,
-   "linhas": 64663
+   "arquivos": 548,
+   "linhas": 64727
   },
   "src/integrations": {
    "arquivos": 4,

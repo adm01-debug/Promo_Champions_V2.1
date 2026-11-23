@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "84b35eddf100d375a64412382e6296f86bcdd569",
+  "sha": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 16:16 UTC",
-  "files_total": 3650,
-  "code_files": 3301,
-  "code_lines": 478684
+  "generated_at": "2026-11-23 16:19 UTC",
+  "files_total": 3651,
+  "code_files": 3302,
+  "code_lines": 478748
  },
  "version": "1.3.2",
- "facts_hash": "892b7f119c6417a0",
+ "facts_hash": "857257ac8d7032a4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1376,
+   ".tsx": 1377,
    ".ts": 1122,
    ".sql": 721,
    ".mjs": 72,
@@ -106971,8 +106971,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 547,
-   "lines": 64663,
+   "files": 548,
+   "lines": 64727,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -160744,6 +160744,14 @@
    {
     "file": "src/hooks/reports/useMarkupMinSamplePreference.test.tsx",
     "name": "sincroniza via CustomEvent entre componentes na mesma aba"
+   },
+   {
+    "file": "src/hooks/reports/useSalesReport.test.tsx",
+    "name": "useSalesReport"
+   },
+   {
+    "file": "src/hooks/reports/useSalesReport.test.tsx",
+    "name": "propaga o erro do fetch de salespeople em vez de ranking vazio"
    },
    {
     "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
@@ -249693,7 +249701,7 @@
   },
   "src/hooks/useEligibleBonuses.ts": {
    "path": "src/hooks/useEligibleBonuses.ts",
-   "lines": 171,
+   "lines": 172,
    "exports": [
     "interface EligibleBonus",
     "function evaluateBonus",
@@ -251930,7 +251938,7 @@
   },
   "src/hooks/useProducts.ts": {
    "path": "src/hooks/useProducts.ts",
-   "lines": 231,
+   "lines": 239,
    "exports": [
     "interface Product",
     "const useProducts",
@@ -259480,7 +259488,7 @@
   },
   "src/hooks/dashboard/useGoalsDashboard.ts": {
    "path": "src/hooks/dashboard/useGoalsDashboard.ts",
-   "lines": 182,
+   "lines": 183,
    "exports": [
     "function useGoalsDashboard"
    ],
@@ -261692,7 +261700,7 @@
   },
   "src/hooks/gamification/useGamifiedProfile.ts": {
    "path": "src/hooks/gamification/useGamifiedProfile.ts",
-   "lines": 136,
+   "lines": 138,
    "exports": [
     "interface GamifiedProfile",
     "function useGamifiedProfile"
@@ -264666,9 +264674,18 @@
     "useMonthlySalesBenchmark"
    ]
   },
+  "src/hooks/reports/useSalesReport.test.tsx": {
+   "path": "src/hooks/reports/useSalesReport.test.tsx",
+   "lines": 51,
+   "is_test": true,
+   "tests": [
+    "useSalesReport",
+    "propaga o erro do fetch de salespeople em vez de ranking vazio"
+   ]
+  },
   "src/hooks/reports/useSalesReport.ts": {
    "path": "src/hooks/reports/useSalesReport.ts",
-   "lines": 92,
+   "lines": 93,
    "exports": [
     "function useSalesReport"
    ],
@@ -298269,10 +298286,33 @@
   }
  },
  "git": {
-  "sha": "84b35eddf100d375a64412382e6296f86bcdd569",
+  "sha": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "bdea3f7",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)",
+    "files": [
+     "src/hooks/crm/useClients.ts",
+     "src/hooks/useProducts.ts"
+    ]
+   },
+   {
+    "sha": "b0ac351",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)",
+    "files": [
+     "src/hooks/dashboard/useGoalsDashboard.ts",
+     "src/hooks/gamification/useGamifiedProfile.ts",
+     "src/hooks/reports/useSalesReport.test.tsx",
+     "src/hooks/reports/useSalesReport.ts",
+     "src/hooks/useEligibleBonuses.ts"
+    ]
+   },
    {
     "sha": "84b35ed",
     "date": "2026-11-23",
@@ -298542,30 +298582,13 @@
      ".github/workflows/contexto.yml",
      ".github/workflows/graphify.yml"
     ]
-   },
-   {
-    "sha": "dfe85df",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump actions/dependency-review-action (#625)",
-    "files": [
-     ".github/workflows/dependency-review.yml"
-    ]
-   },
-   {
-    "sha": "17e5d6d",
-    "date": "2026-11-22",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.7.4 (#623)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "src/hooks/useEligibleBonuses.ts",
+    2
+   ],
    [
     "docs/qa/05-PROGRESSO.md",
     2
@@ -298573,6 +298596,30 @@
    [
     "supabase/functions/sequence-record-reply/index.ts",
     2
+   ],
+   [
+    "src/hooks/crm/useClients.ts",
+    1
+   ],
+   [
+    "src/hooks/useProducts.ts",
+    1
+   ],
+   [
+    "src/hooks/dashboard/useGoalsDashboard.ts",
+    1
+   ],
+   [
+    "src/hooks/gamification/useGamifiedProfile.ts",
+    1
+   ],
+   [
+    "src/hooks/reports/useSalesReport.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/reports/useSalesReport.ts",
+    1
    ],
    [
     "src/hooks/dashboard/useDashboardRedirect.ts",
@@ -298616,34 +298663,6 @@
    ],
    [
     "src/hooks/sales/useSalesEnablement.ts",
-    1
-   ],
-   [
-    "src/hooks/sales/useSalesRealtime.ts",
-    1
-   ],
-   [
-    "src/hooks/salesRealtimeUtils.ts",
-    1
-   ],
-   [
-    "src/pages/SecurityDashboard.tsx",
-    1
-   ],
-   [
-    "src/pages/Vendedores.tsx",
-    1
-   ],
-   [
-    "supabase/functions/cron-failure-alerter/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/receive-quote-webhook/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-sync/index.ts",
     1
    ]
   ]
