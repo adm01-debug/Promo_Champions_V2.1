@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "390db00491ca2dfbd7302e781256f43681aec9fd",
+  "commit": "e58a9dcdf9221fa95d4cd260bce21439695aa0eb",
   "branch": "main",
-  "data_commit": "2026-11-23T14:56:23Z",
+  "data_commit": "2026-11-23T12:00:20-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e58a9dc",
+    "data": "2026-11-23",
+    "assunto": "fix: assinar webhook Win/Loss com HMAC-SHA256 (QA-092) (#655)"
+   },
    {
     "sha": "390db00",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "1de569f",
     "data": "2026-11-23",
     "assunto": "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)"
-   },
-   {
-    "sha": "f9b3558",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump astral-sh/setup-uv (#627)"
    }
   ],
-  "arquivos_mudados_7d": 249,
+  "arquivos_mudados_7d": 250,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "RELATORIO_CI.md",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -238,11 +238,11 @@
     "mudancas": 7
    },
    {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 7
+    "arquivo": ".github/workflows/migrations-drift.yml",
+    "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/migrations-drift.yml",
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 6
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 227
+    "commits": 228
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443547,
+  "linhas_codigo": 443561,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67235
+   "linhas": 67249
   },
   "tailwind.config.ts": {
    "arquivos": 1,

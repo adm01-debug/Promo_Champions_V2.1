@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: assinar webhook Win/Loss com HMAC-SHA256 (QA-092) (#655)",
    "fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)",
    "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)",
    "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)",
-   "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)",
-   "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)"
+   "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
