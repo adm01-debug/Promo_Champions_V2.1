@@ -63,11 +63,6 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
         .is('deleted_at', null)
         .eq('salesperson_id', salespersonId);
 
-      // Get team average for comparison
-      const { data: _allTeamSales } = await supabase
-        .from('sales')
-        .select('amount, status, salesperson_id');
-
       const { data: allTeamOutcomes } = await supabase
         .from('deal_outcomes')
         .select('outcome, salesperson_id');
