@@ -793,7 +793,7 @@
   {
    "arquivo": "src/hooks/gamification/useLeagues.test.tsx",
    "tipo": "unit",
-   "linhas": 176,
+   "linhas": 180,
    "testa": [
     "src/hooks/gamification/useLeagues.ts"
    ],

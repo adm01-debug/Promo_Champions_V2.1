@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bdea3f7dd1dacf6983d6c947b9a3372e9f293bba` (2026-11-23T16:16:35Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843` (2026-11-23T16:19:45Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3636 |
 | arquivos_codigo | 2581 |
-| linhas_codigo | 443642 |
+| linhas_codigo | 443747 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -88,7 +88,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/customer-success | 0 | 0 | 12 | 4 | 6 | 0 |
 | components/dashboard | 0 | 0 | 57 | 103 | 9 | 77 |
 | components/deal-intelligence | 0 | 0 | 47 | 30 | 10 | 15 |
-| components/dialer | 0 | 0 | 7 | 10 | 2 | 7 |
+| components/dialer | 0 | 0 | 7 | 11 | 2 | 8 |
 | components/email | 0 | 0 | 10 | 15 | 3 | 5 |
 | components/engagement | 0 | 0 | 18 | 25 | 6 | 13 |
 | components/executive-briefing | 0 | 0 | 6 | 4 | 1 | 2 |
@@ -131,7 +131,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/admin | 0 | 0 | 10 | 34 | 2 | 22 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
-| hooks/cadences | 0 | 0 | 19 | 49 | 0 | 9 |
+| hooks/cadences | 0 | 0 | 19 | 50 | 0 | 9 |
 | hooks/conversational | 0 | 0 | 17 | 41 | 12 | 17 |
 | hooks/crm | 0 | 0 | 6 | 7 | 0 | 5 |
 | hooks/dashboard | 0 | 0 | 11 | 9 | 0 | 12 |
@@ -585,27 +585,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22385 nós · 67494 arestas · 1560 comunidades · grafo do commit `bdea3f7d`
-- comunidades maiores: schema.sql (785), react (320), Badge (318), Input (299), CardHeader (289), Índice (277), cn (267), client.ts (244), lucide-react (243), getCorsHeaders (235), badge.tsx (228), PageTransition (223)
+- 22386 nós · 67530 arestas · 1576 comunidades · grafo do commit `ff91ae9e`
+- comunidades maiores: schema.sql (785), Input (327), Button (325), client.ts (291), PageTransition (288), Índice (277), CardContent (274), CardHeader (267), Badge (265), vitest (263), Avatar (238), card.tsx (230)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (40)
-- package-lock.json (39)
-- deno.lock (15)
+- package.json (39)
+- package-lock.json (37)
 - CHANGELOG.md (14)
+- deno.lock (14)
 - src/integrations/supabase/types.ts (11)
 - .github/workflows/deploy.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
-- .github/workflows/codeql.yml (8)
 - .github/workflows/pr-checks.yml (7)
-- RELATORIO_CI.md (7)
+- .github/workflows/codeql.yml (6)
 - .github/workflows/migrations-drift.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
 - inventario/estado/edges.json (6)
 - src/components/pipeline/DealCard.tsx (6)
 - src/hooks/abm/useAccounts.ts (6)
+- .github/workflows/contexto.yml (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -765,6 +765,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `ff91ae9` fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)
+- 2026-11-23 `45b9b02` fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)
+- 2026-11-23 `d12f175` fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)
+- 2026-11-23 `6781397` feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)
+- 2026-11-23 `19fe244` perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)
+- 2026-11-23 `a7c2da3` fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)
 - 2026-11-23 `bdea3f7` fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)
 - 2026-11-23 `b0ac351` fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)
 - 2026-11-23 `84b35ed` fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)
@@ -774,12 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `e5f9f64` fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)
 - 2026-11-23 `96962bd` fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)
 - 2026-11-23 `d2006d2` fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)
-- 2026-11-23 `339d0fa` fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)
-- 2026-11-23 `23b32db` fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)
-- 2026-11-23 `ed53bd4` fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)
-- 2026-11-23 `f177678` fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)
-- 2026-11-23 `01065d8` fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)
-- 2026-11-23 `4fdd6dc` fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

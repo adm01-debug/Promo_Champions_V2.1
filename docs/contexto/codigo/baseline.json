@@ -2,11 +2,41 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
+  "commit": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
   "branch": "main",
-  "data_commit": "2026-11-23T16:16:35Z",
+  "data_commit": "2026-11-23T16:19:45Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ff91ae9",
+    "data": "2026-11-23",
+    "assunto": "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)"
+   },
+   {
+    "sha": "45b9b02",
+    "data": "2026-11-23",
+    "assunto": "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)"
+   },
+   {
+    "sha": "d12f175",
+    "data": "2026-11-23",
+    "assunto": "fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)"
+   },
+   {
+    "sha": "6781397",
+    "data": "2026-11-23",
+    "assunto": "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)"
+   },
+   {
+    "sha": "19fe244",
+    "data": "2026-11-23",
+    "assunto": "perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)"
+   },
+   {
+    "sha": "a7c2da3",
+    "data": "2026-11-23",
+    "assunto": "fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)"
+   },
    {
     "sha": "bdea3f7",
     "data": "2026-11-23",
@@ -101,116 +131,86 @@
     "sha": "9d455c9",
     "data": "2026-11-23",
     "assunto": "fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)"
-   },
-   {
-    "sha": "e3600e9",
-    "data": "2026-11-23",
-    "assunto": "fix: escopar schedule-optimal-send a venda do chamador (QA-014) (#645)"
-   },
-   {
-    "sha": "93abc97",
-    "data": "2026-11-23",
-    "assunto": "fix: escopar sequence-record-reply ao dono da cadencia (QA-013) (#644)"
-   },
-   {
-    "sha": "7213672",
-    "data": "2026-11-23",
-    "assunto": "fix: escopar analyze-call ao dono da gravacao via RLS (QA-012) (#643)"
-   },
-   {
-    "sha": "81455f3",
-    "data": "2026-11-23",
-    "assunto": "fix: corrigir custo de comissao no painel ROI (dividir por 100) (QA-041) (#642)"
-   },
-   {
-    "sha": "be74402",
-    "data": "2026-11-23",
-    "assunto": "fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)"
-   },
-   {
-    "sha": "e9e69b8",
-    "data": "2026-11-23",
-    "assunto": "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)"
    }
   ],
-  "arquivos_mudados_7d": 259,
+  "arquivos_mudados_7d": 272,
   "pastas_mais_mudadas_30d": [
    {
+    "pasta": "src/components/race",
+    "mudancas": 131
+   },
+   {
     "pasta": "src/components/analytics",
-    "mudancas": 51
+    "mudancas": 101
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 42
+    "mudancas": 98
    },
    {
-    "pasta": "package.json",
-    "mudancas": 39
-   },
-   {
-    "pasta": "src/components/competitive",
-    "mudancas": 39
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 38
-   },
-   {
-    "pasta": "src/components/race",
-    "mudancas": 29
-   },
-   {
-    "pasta": "src/components/gamification",
-    "mudancas": 24
-   },
-   {
-    "pasta": "src/components/pipeline",
-    "mudancas": 22
-   },
-   {
-    "pasta": "src/components/activities",
-    "mudancas": 19
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 79
    },
    {
     "pasta": "src/components/win-loss",
-    "mudancas": 18
-   },
-   {
-    "pasta": "src/components/sales",
-    "mudancas": 17
-   },
-   {
-    "pasta": "src/components/ui",
-    "mudancas": 17
-   },
-   {
-    "pasta": "src/hooks/sales",
-    "mudancas": 17
-   },
-   {
-    "pasta": "src/components/bi",
-    "mudancas": 16
+    "mudancas": 78
    },
    {
     "pasta": "src/components/conversational",
-    "mudancas": 15
+    "mudancas": 73
+   },
+   {
+    "pasta": "src/components/competitive",
+    "mudancas": 72
+   },
+   {
+    "pasta": "src/components/admin",
+    "mudancas": 71
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 63
+   },
+   {
+    "pasta": "src/hooks/win-loss",
+    "mudancas": 61
+   },
+   {
+    "pasta": "src/components/deal-intelligence",
+    "mudancas": 57
+   },
+   {
+    "pasta": "src/hooks/race",
+    "mudancas": 55
+   },
+   {
+    "pasta": "src/components/bi",
+    "mudancas": 46
+   },
+   {
+    "pasta": "src/components/gamification",
+    "mudancas": 45
+   },
+   {
+    "pasta": "src/components/revenue-intelligence",
+    "mudancas": 42
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 40
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 39
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 15
+    "arquivo": "package-lock.json",
+    "mudancas": 37
    },
    {
     "arquivo": "CHANGELOG.md",
+    "mudancas": 14
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 14
    },
    {
@@ -226,16 +226,12 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 8
-   },
-   {
     "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 7
    },
    {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 7
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/migrations-drift.yml",
@@ -296,16 +292,20 @@
    {
     "arquivo": "supabase/functions/next-best-action/index.ts",
     "mudancas": 5
+   },
+   {
+    "arquivo": ".github/workflows/db-backup.yml",
+    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 232
+    "commits": 238
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 27
+    "commits": 25
    },
    {
     "autor": "github-actions[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3636,
   "arquivos_codigo": 2581,
-  "linhas_codigo": 443642,
+  "linhas_codigo": 443747,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1226,
-   "linhas": 193013
+   "linhas": 193026
   },
   "src/config": {
    "arquivos": 4,
@@ -608,11 +608,11 @@
   },
   "src/contexts": {
    "arquivos": 6,
-   "linhas": 606
+   "linhas": 610
   },
   "src/hooks": {
    "arquivos": 548,
-   "linhas": 64727
+   "linhas": 64748
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44451
+   "linhas": 44518
   },
   "src/routes": {
    "arquivos": 3,

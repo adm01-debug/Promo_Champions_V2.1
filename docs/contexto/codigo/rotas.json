@@ -702,6 +702,7 @@
    "redireciona": null,
    "hooks": [
     "useAllCommissions",
+    "useAuth",
     "useCallback",
     "useContext",
     "useEffect",
@@ -719,6 +720,7 @@
    ],
    "hooks_locais": [
     "useAllCommissions",
+    "useAuth",
     "useReducedMotion",
     "useUpdateCommissionStatus"
    ],
@@ -733,7 +735,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 17
+   "arquivos_puxados": 18
   },
   {
    "protegida": true,
@@ -4084,13 +4086,19 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useEffect",
     "useMemo",
     "useMutation",
     "useMyCommissions",
     "useQuery",
-    "useQueryClient"
+    "useQueryClient",
+    "useState"
    ],
    "hooks_locais": [
+    "useAuth",
     "useMyCommissions"
    ],
    "tabelas": [
@@ -4104,7 +4112,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 15
+   "arquivos_puxados": 16
   },
   {
    "protegida": false,
@@ -6487,7 +6495,7 @@
    "papeis": [
     "admin"
    ],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,
@@ -8416,14 +8424,20 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
     "useMutation",
     "useMyCareer",
     "useMyRaceCar",
     "useQuery",
-    "useQueryClient"
+    "useQueryClient",
+    "useState"
    ],
    "hooks_locais": [
+    "useAuth",
     "useMyCareer",
     "useMyRaceCar"
    ],
@@ -8440,7 +8454,7 @@
    "papeis": [
     "list"
    ],
-   "arquivos_puxados": 15
+   "arquivos_puxados": 16
   },
   {
    "protegida": false,
@@ -8627,7 +8641,9 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
+    "useContext",
     "useEffect",
     "useMemo",
     "useMutation",
@@ -8637,9 +8653,11 @@
     "useRaceLeaderboard",
     "useRaceUnlocks",
     "useReducedMotion",
+    "useState",
     "useUnlockRaceItem"
    ],
    "hooks_locais": [
+    "useAuth",
     "useMyRaceCar",
     "useRaceLeaderboard",
     "useRaceUnlocks",
@@ -8664,7 +8682,7 @@
     "listitem",
     "presentation"
    ],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,

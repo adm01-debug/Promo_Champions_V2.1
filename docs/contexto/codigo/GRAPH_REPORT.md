@@ -1,290 +1,291 @@
 # Graph Report - Promo_Champions_V2.1  (2026-11-23)
 
 ## Corpus Check
-- 3573 files · ~2,486,374 words
+- 3573 files · ~2,486,755 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 30 file(s) not represented in the graph (top: (none) 17, .toml 6, .lock 2)
 
 ## Summary
-- 22385 nodes · 67494 edges · 1560 communities (958 shown, 602 thin omitted)
+- 22386 nodes · 67530 edges · 1576 communities (970 shown, 606 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1511 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bdea3f7d`
+- Built from commit: `ff91ae9e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - schema.sql
-- react
-- Badge
 - Input
-- CardHeader
-- Índice
-- cn
+- Button
 - client.ts
-- lucide-react
-- getCorsHeaders
-- badge.tsx
 - PageTransition
+- Índice
+- CardContent
+- CardHeader
+- Badge
 - vitest
-- useUserRoles
-- date-fns
-- Card
+- Avatar
+- card.tsx
+- withRequestId
 - utils.ts
-- ref_npm_supabase
+- sonner
+- date-fns
+- lucide-react
+- WinLossIntelligence.tsx
 - lazyPages.ts
 - AccountBasedSelling.tsx
-- useAuth
-- fetch-with-timeout.ts
-- CardContent
-- Button
 - isAuthorizedCronRequest
-- RaceArena.tsx
-- DealIntelligence.tsx
-- package.json
-- RecordingSummaryDrawer.tsx
-- sonner
-- ReplayStatusByIdPanel.tsx
-- MainLayout.tsx
-- winloss-webhook-dispatcher/retry.ts
-- whatsapp-inbound-webhook/index.ts
-- scoring.ts
-- NotificationCenter.tsx
+- getUserClient
+- cn
+- Orcamentos.tsx
+- react
+- Card
+- Slider
+- recharts
+- bitrix24-sync/index.ts
+- QuoteCadencesPage.tsx
+- ref_https
+- useWinLossData.ts
 - DealCard.tsx
-- VendedorDashboard.tsx
-- PageLoadingSkeleton.tsx
-- race/index.ts
-- Analytics.tsx
-- 📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)
-- winloss-webhook-dispatcher/index.ts
+- toBusinessDate
+- getLocalISODate
+- RecordingSummaryDrawer.tsx
+- DealIntelligence.tsx
+- enablement/SalesEnablementHub.tsx
+- chunked-in.ts
+- TodaysCadenceTasks.tsx
+- MainLayout.tsx
+- RaceArena.tsx
+- package.json
+- whatsapp-inbound-webhook/index.ts
 - dependencies
 - ref_node_fs
-- ActionableInsightsPanel.tsx
 - gerar.mjs
-- AppSidebar.tsx
-- RevenueIntelligenceHub.tsx
+- use-toast.ts
+- CoachingIntelligenceHub.tsx
 - ref_node_child_process
-- validation.ts
+- PageLoadingSkeleton.tsx
 - generate.py
-- src_components_ui_dialog_dialogtrigger
-- .metadata
-- send-transactional-email/index.ts
-- getLocalISODate
+- notification-categories.ts
 - ref_node_url
-- SequencesPage.tsx
-- toBusinessDate
-- ArenaCompetitiva.tsx
+- Index.tsx
+- raceTrackHelpers.ts
+- supabase/types.ts
+- IntelligenceCockpit.tsx
+- seed-fake-data.ts
+- test_snapshot.py
 - status
 - Onda 8 — Higiene, CI e observabilidade
 - scripts
-- @supabase/supabase-js
-- useRevenueIntelligenceHub.ts
-- RaceLeaderboardEntry
-- RankingCompetitivo.tsx
+- ActivityList.tsx
+- getCorsHeaders
 - ref_node_path
-- AcompanhamentoPedidoDetalhe.tsx
 - Onda 2 — Fluxos principais quebrados
-- AdminV4CallbacksPage.tsx
-- atRiskFixtures.ts
-- TaskQueue.tsx
-- SalesAssistantChat.tsx
-- lib.mjs
-- bi-helpers.ts
-- AtRiskSettingsPopover.tsx
-- CarCustomizer.tsx
-- deal-intelligence/BuyingCommitteeCard.tsx
-- RiskDebugPanel.tsx
-- snapshot.py
-- SemanticSearchDialog.tsx
-- Agenda.tsx
-- WebhookHealthPanel.tsx
-- navigationGuard.ts
-- @playwright/test
-- useWinLossAggregations.ts
-- requireSupabaseAdminEnv
-- ref_https
-- graphify-local.mjs
-- MeuAssistente.tsx
-- ABCAnalysis.tsx
+- useBICloser.ts
+- @supabase/supabase-js
+- race/index.ts
+- VendedorDashboard.tsx
 - RaceArenaHub.tsx
-- gen-migration-probes.mjs
-- main
-- Relatório de Análise Técnica de Back-End — Promo Champions v2
+- ArenaCompetitiva.tsx
+- ScenarioForecastChart.tsx
+- AcompanhamentoPedidoDetalhe.tsx
+- lib.mjs
+- BIGestor.tsx
+- 📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)
+- RaceLeaderboardEntry
+- CircuitBreakerDashboard.tsx
+- CoachingSessionPlanner.tsx
+- RaceLeaderboardSidebar.tsx
+- QuotaPredictorAdvancedPanel.tsx
+- deal-intelligence/BuyingCommitteeCard.tsx
+- computeDealRisk
+- .build
+- RevenueIntelligenceHub.tsx
+- snapshot.py
 - pages/SDRDashboard.tsx
-- AIEmailComposerDialog.tsx
-- SoundSettingsTabs.tsx
-- WinLossIntelligence.tsx
-- test_snapshot.py
-- SmokeTestChecklist.tsx
+- main
+- graphify-local.mjs
+- ABCAnalysis.tsx
+- gen-migration-probes.mjs
+- Relatório de Análise Técnica de Back-End — Promo Champions v2
+- send-transactional-email/index.ts
 - Changelog
-- webhook-auth.ts
 - Onda 5 — Robustez: erros, estados e concorrência
-- detect-client-churn-alerts/index.ts
 - automation.mjs
+- EngagementLeaderboardWidget.tsx
+- TemplateManager.tsx
+- email-bulk-retry/index.ts
 - run-retry-tests/retry_test.ts
 - 20251228000001_add_soft_delete.sql
-- RevenueForecastHub.tsx
-- TaskCatalogManager.tsx
-- QuestionQualityCard.tsx
-- TrackScenery.tsx
-- BusinessIntelligencePage.tsx
+- .metadata
+- HAS_AUTH
 - Status de execução — Plano de 100 etapas (v2, reescrita pós-revisão)
-- RELATORIO_CI.md — Promo Champions V2.1
-- ScenarioForecastChart.tsx
-- Frente 4 — Inteligência & Análise · BI / Forecast / IA / NLQ / Export (Módulos 16–21)
-- What You Must Do When Invoked
-- RevenueForecastCard.tsx
 - Onda 1 — Segurança e risco de perda de dado
-- ActivityList.tsx
-- QuoteCadencesPage.tsx
-- pricing/PricingIntelligenceHub.tsx
-- ConversationalIntelligence.tsx
+- lib/salesReportPdf.ts
+- env.ts
+- history_catalog_test.ts
+- webhook-auth.ts
+- RELATORIO_CI.md — Promo Champions V2.1
+- AtRiskDealsFromPatterns.tsx
+- useSalespersonXP.ts
+- Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito)
+- Frente 4 — Inteligência & Análise · BI / Forecast / IA / NLQ / Export (Módulos 16–21)
 - useInactiveDeals.ts
 - devDependencies
-- ref_jsr_std
-- README.md
-- SalesReportPage.tsx
-- errorTracking.ts
+- PurchaseIntelligenceHub.tsx
 - 03 — Achados, agrupados por causa raiz
 - 20260831130001_repair_cron_and_fk_indexes.sql
-- seed-fake-data.ts
-- CurrentCallCard.tsx
+- scoring.ts
+- salesService.ts
 - 20260416232618_f6dcab79-5212-4086-b46f-7ff5f3532a80.sql
 - 🌍 Análise de Gaps — Promo Champions vs CRMs de Classe Mundial
-- CS360Tabs.tsx
 - ObjectionHandlingCard.tsx
-- RevenueForecastV2.tsx
+- Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas
+- ConversionRateWidget.tsx
 - 20251214150351_b7c62695-6f80-4ce9-83cf-f6f4f12e50ca.sql
 - gerar-rotas.mjs
-- useDashboardKPIsPeriod.ts
+- ConversationalIntelligence.tsx
 - AccountDetail.tsx
-- FollowUpValueAtRisk.tsx
-- WinLossSavedViews.tsx
-- types/index.ts
-- detect-coaching-opportunities/index.ts
-- AIAgents.tsx
+- RaceCar.tsx
+- errorTracking.ts
+- stage
+- 🚀 Runbook Operacional — Promo Champions
 - FailedDraftsCard.tsx
-- BriefingHub.tsx
-- DealTimeline.tsx
 - 2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)
 - Runbook — Alertas operacionais (índice)
 - gerar-banco.mjs
-- .build
+- RaceAudioPreferences.tsx
+- 01 — FRONTEND: ROTAS E PÁGINAS (estado medido)
 - 📋 Levantamento Completo de Funcionalidades — Sales Arena
-- SkillMaturityMatrix.tsx
 - CoachingScorecardCard.tsx
-- useWinLossScenarios.ts
-- Fase 1 — As 20 Dimensões
+- atRiskFixtures.ts
+- Anexo C — Docs de estado, runbooks e postmortem: gaps verificados no código (HEAD 6f6b94a, 2026-10-11)
+- ConfidenceScoresTable.tsx
+- BusinessIntelligencePage.tsx
+- 3. Tabela de funcionalidades
 - 11 — DADOS E BANCO (evidência de runtime)
 - 2. Findings por Categoria
+- AIAgents.tsx
 - LeadRoutingPage.tsx
-- markupHelpers.ts
-- 01 — FRONTEND: ROTAS E PÁGINAS (estado medido)
-- useRetryMutation.ts
-- 20251214203613_0747efdb-aa79-4b67-96d1-43465422df9a.sql
-- Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas
+- winloss-webhook-dispatcher/retry.ts
 - 12 — INFRA, CI/CD, TESTES E QUALIDADE (estado medido)
+- Onda 4 — Funcionalidades incompletas
+- sdr/SDRDashboard.tsx
+- CoachingActionsList.tsx
+- useQueryPerformance.ts
+- 20251214203613_0747efdb-aa79-4b67-96d1-43465422df9a.sql
+- types/index.ts
+- Anexo A — Planos, auditorias e execução: estado real verificado
+- forecastEngine.ts
+- 05 — Progresso
 - gen-api-catalog.mjs
+- ref_jsr_std
 - cenarios.mjs
-- CoachingActionsPanel.tsx
-- PurchasePredictionCard.tsx
+- CS360Tabs.tsx
+- RevenueForecastCard.tsx
+- CadenceReportPanel.tsx
 - 20251214172514_c1966e7a-669e-4dd9-9967-5bc3a36a8192.sql
 - 20251231120039_b2152855-d5fa-4fa1-8557-b2884e44108d.sql
 - 20260530000001_add_missing_fk_indexes.sql
-- PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md
-- Execução — Onda 0 de estabilização
+- brDocuments.ts
 - 4. Mapa por domínio
 - Security Guidelines
-- 📊 Módulo de Telemetria de Queries — Documentação Completa
 - 20260706160203_849fd5c0-44df-47ae-8fe5-96a9dddd27e7.sql
-- RaceArenaHeader.tsx
-- CoachingActionsList.tsx
-- ProviderConnectionDialog.tsx
-- factories.ts
-- HelpdeskConnectorPanel
-- Anexo C — Docs de estado, runbooks e postmortem: gaps verificados no código (HEAD 6f6b94a, 2026-10-11)
+- CommandPalette.tsx
+- biService.ts
+- DispatchDeps
+- Fase 1 — As 20 Dimensões
 - Matriz forense dos bancos e contratos de integração
-- failure
 - static-contracts.mjs
+- App.tsx
+- SheetContent
+- DealTimeline.tsx
+- Client360View.tsx
 - Relatório Exaustivo de Falhas e Gaps — Promo Champions v2.1
-- stage
 - Plano de Recuperação de Desastres (DR Plan)
-- useQuotaAttainmentPredictor.ts
-- 05 — Domínio Gamificação / Race / Ranking
-- SnapshotDBStatsTests
 - Riscos estruturais, do mais grave ao menos
-- Prontidão para produção — Promo_Champions_V2.1
 - quoteErrorMessages.ts
 - 20260404191439_0af779d5-47f3-410e-8f9c-a11f66976bb2.sql
 - 20261027120000_sales_status_canonizacao_rpcs.sql
+- VirtualDealsList.tsx
 - 🔒 Política de Segurança
-- useBackNavigation.ts
-- useContactFrequencyRules.ts
+- StageBottleneckCard.tsx
+- ABTestPanel.tsx
+- RiskDebugPanel.tsx
 - 20260104144318_performance_indexes.sql
 - compilerOptions
+- indice.py
+- /graphify
 - 20260513192235_93150d83-cdca-468b-a5dd-4958b62e2a04.sql
+- README.md
 - Edge functions
-- campaign-health.ts
 - PENDÊNCIAS — Workflows com bloqueio externo
 - gen-data-dict.mjs
 - smoke-target-backend.ts
-- useCloserMetrics.ts
-- EngagementLeaderboardWidget.tsx
+- useEmailOptOuts.ts
 - LeadScoreExplainCard.tsx
-- salesReportHelpers.ts
+- TrackScenery.tsx
+- RiskSeverity
 - winloss-webhook-replay/index.ts
 - 20260416170135_cc109372-7eb4-4589-89a9-d89b0f3b3c00.sql
 - 20260416234424_66fbe1df-5677-4a6c-bea6-daf700e06009.sql
-- salespeople
+- Execução — Onda 0 de estabilização
+- test
 - 2. Matriz de paridade
 - Changelog - Sessão de Melhorias (Dezembro 2024)
 - Plano de implementação do Graphify — 50 etapas
 - Onda 7 — Experiência de uso e consistência
 - catalog-adapter.mjs
-- Client360View.tsx
 - DealVelocityCard.tsx
-- IntelligenceCockpit.tsx
+- RaceArenaGarage.tsx
 - CalibrationVarianceTable.tsx
-- sequence-runner/index.ts
-- useTaskMutations.ts
+- WebhookAttemptSliceDrawer.tsx
+- bitrix24-oauth/index.ts
+- PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md
 - graphify reference: extra exports and benchmark
+- As 22 migrations que só existem em branch fechada — 17/11/2026
 - Auditoria exaustiva do Promo Champions V2.1
-- 2. Stubs, parciais e quebradas em detalhe
 - useAuthForm.ts
-- 07 — Domínio Win/Loss, Competitivo, Pricing e Customer Success
 - 20261117070000_reconcilia_objetos_orfaos_producao.sql
+- PersonalAssistantSummaryCard.tsx
 - debt-report.mjs
 - run-win-loss-analysis.ts
-- CohortHeatmap.tsx
+- SDRActivityTrend.tsx
+- RiskCompareModal.tsx
+- navigationGuard.ts
 - 20260104182000_additional_tables.sql
+- salespeople
 - Handoff operacional para o Cline — execução do plano de 100 etapas
+- funcionalidades-pendentes-2026-10-12/README.md
 - Frente 5 — Backend Supabase · Edge Functions Segurança (Módulos 22–26)
 - Design System - Promo Champions
 - 33. Hooks Customizados (Catálogo Completo)
-- 🚀 Runbook Operacional — Promo Champions
+- 05 — Domínio Gamificação / Race / Ranking
+- 09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types)
 - 20260416231940_a82b593c-b778-454c-b3ac-97ab40286cfd.sql
 - 20261013152000_fix_kpis_auditoria_top25.sql
-- Release v2.1.0 — Mega-Jornada 10/10
 - check-migrations.mjs
 - deno-test-suite.mjs
-- ProtectedRoute
-- CoachingImpactTracker.tsx
+- SmokeTestChecklist.tsx
+- EmailEngagementScoring.tsx
 - nlqHelpers.ts
+- PodiumCard.tsx
+- WebhookHealthPanel.tsx
 - stages.ts
 - 20251220181739_63a312a6-4970-40fd-860b-04dbb14ddc2f.sql
 - 20260105000004_performance_indexes.sql
 - tasks
-- jsPDF
 - F — Camada de dados: funcionalidades planejadas no schema e não concluídas
 - Frente 6 — Qualidade Transversal · Testes / Build / Deps / CI (Módulo 30-B)
 - 03 — Domínio SDR / Prospecção / Engajamento Multicanal
 - reproduzir.mjs
-- Onda 4 — Funcionalidades incompletas
-- 05 — Progresso
 - staleAssetRecovery.ts
 - modulos
+- LeadScoringDashboard.tsx
+- AIEmailComposerPanel.tsx
+- bi-helpers.ts
 - Supabase Edge Functions — Conventions
 - 20251231120846_562120aa-f001-412e-8054-805485a4cfb6.sql
 - components.json
@@ -294,11 +295,12 @@
 - Anexo D — Frontend (src/): funcionalidades planejadas e não executadas ou parciais
 - Frente 2 — Núcleo Transacional · Comissões, Gamificação & Integrações (Módulos 07, 09 + integrações)
 - 04 — DOMÍNIO ANALYTICS / BI / RELATÓRIOS / FORECAST
+- ScheduledSendsPanel.tsx
 - Lote 14 — Verificação da própria auditoria
 - Hardening do Supabase canônico — 2026-08-31
 - Revisão do plano Graphify: implementação, lacunas e evidências
+- Onda 6 — Performance e escala
 - Hardening de Segurança — SECURITY DEFINER, RLS, Edge Functions & WAL
-- 10. Guia de Implementação Passo a Passo
 - 20261001150100_lgpd_consent_and_anonymization.sql
 - 20260513192406_ef2d75ae-77a0-44d8-be60-b4f1a6aba82b.sql
 - 20260512144912_b9041e04-0f44-49ce-978a-6f5b9e7acb90.sql
@@ -306,15 +308,12 @@
 - 20260417105640_f90fe72d-ce4d-4999-9ab0-239b02795e32.sql
 - uniq
 - codemod-money.mjs
-- campaignDeliveryHelpers.ts
 - 20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1.sql
 - 20261027210000_r3_db_kpis_fixes.sql
 - compilerOptions
 - 20260104184000_performance_indexes_additional.sql
 - 20260513192309_941ec5e7-0b44-4d26-94cf-210aec6bae9f.sql
-- docs/estado/README.md
-- ScheduledSendsPanel.tsx
-- 2. Plano em 100 etapas
+- Race Arena — Relatório de Testes Exaustivos
 - Workflows
 - 20260712212305_f2dce21f-f0e2-420b-a2c3-012503384c39.sql
 - public.fn_record_conversion_attempt
@@ -322,37 +321,36 @@
 - readText
 - check-domain-boundaries.mjs
 - flaky-report.mjs
-- FonteLeads.tsx
+- PermissionMatrix.tsx
 - Client360OrdersCard.tsx
 - useCriticalMoments.ts
-- SummarizeButton.tsx
-- logger.ts
+- campaignDeliveryHelpers.ts
 - 20260104183000_security_enhancements.sql
 - 20260418104126_4c039bef-e31d-4154-a40f-49b00f8164c2.sql
-- useUploadCallRecording.ts
-- Anexo G — Infraestrutura, CI, testes, scripts e integrações externas
+- 2. Stubs, parciais e quebradas em detalhe
 - Simulações e achados confirmados
-- 09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types)
+- 06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica
 - Plano de correção e melhoria dos workflows — Promo Champions V2.1
+- RUNBOOK.md
 - 01 — Inventário do sistema e registro de cobertura
 - 3. Findings Categorizados
 - 20260402214537_4c15af24-3450-4487-8fa2-ef631fed83b6.sql
 - 20260417193322_744fd297-7c0e-4c6d-8ce7-79fb68e00dca.sql
 - check-deno-types.mjs
-- useCadenceReport.ts
 - 20260104200100_audit_trail_complete.sql
 - 20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql
 - 20260417003056_5c5ebfb6-15ce-4df8-adf1-1fc58fbc4bb6.sql
 - 20260419004748_028ddcdb-272a-435e-ac03-134995a21ac3.sql
 - Relatório de Análise de PRs — Promo Champions V2.1
-- As 22 migrations que só existem em branch fechada — 17/11/2026
+- What You Must Do When Invoked
 - Reconciliação origem versus destino
-- Validação de sincronia GitHub × Supabase — 2026-09-10
+- webVitals.ts
+- useUploadCallRecording.ts
+- useWebAuthn.ts
 - Animações
-- 06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica
-- 2. RISCOS DE SEGURANÇA (ordenados por gravidade)
+- 01 — FRONTEND: ROTAS E PÁGINAS (estado medido)
+- docs/estado/README.md
 - ✅ Fully Implemented (100%)
-- 02 — Matriz de cenários por jornada
 - 20260514211409_31e2e007-b605-424b-bc77-9c42e830402b.sql
 - 20260416195006_fefd2801-b414-41e2-842c-1914a9fdb276.sql
 - 20260417163016_10247063-3375-460e-b955-9678367cde57.sql
@@ -361,13 +359,11 @@
 - bundle-edge-functions.ts
 - codemod-typography.mjs
 - supabase-snapshot
-- DbRollbackRatePanel.tsx
+- DevKpiDebugPanel.tsx
 - EmbedTokenManagerDialog.tsx
 - useFunnelComparison.ts
-- useWinLossViewPrefs.ts
-- useWinLossDigest.ts
-- recoveryRateHelpers.ts
-- useQueryPerformance.ts
+- RateLimitDashboard.tsx
+- factories.ts
 - non_empty_strings_test.ts
 - 20260105000001_2fa_system.sql
 - 20260105000002_audit_trail.sql
@@ -379,41 +375,40 @@
 - 20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694.sql
 - send-push-notification/index.ts
 - Achados da auditoria de 17/11/2026
+- Arquitetura — Promo Champions V2.1
+- useLeadRouting.ts
 - 🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0)
 - Frente 6 — Qualidade Transversal · Hooks / Estado / Realtime (Módulo 29)
+- reportDownload.ts
 - Relatório Final de Auditoria — Promo Champions V2.1
 - Validação exaustiva — onda 1
+- Validação de sincronia GitHub × Supabase — 2026-09-10
+- CustomFieldsDisplay.tsx
+- 02 — Matriz de cenários por jornada
 - CR-33 — Cache que não é invalidado e escrita duplicada
-- Etapas
 - 🌊 Ondas Executadas
+- Race Arena — Runbook Operacional
 - 20261112140200_activities_soft_delete_apostas_placar.sql
 - 20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0.sql
 - manifest.json
-- webVitals.ts
+- WorkflowsPage.tsx
 - build_function_callers
 - SendTimeOptimization.tsx
-- useReducedMotion
+- DealRow.tsx
 - RaceCarsLayer.tsx
-- chart.tsx
-- useFeatureFlags.ts
-- UsageAnalytics.tsx
-- SLATrackingPage.tsx
+- usePersonalAssistant.ts
 - 20251220181346_ade3d719-7ebf-4afa-9fa7-5a1a1578797b.sql
 - 20260404140006_c21c92b8-53e3-47ae-9d25-29d93dd7387e.sql
 - 20260417112931_1cd3847f-3cf1-44bb-853f-20cd0066df36.sql
 - 20260417150930_73c2611e-f064-4b26-94d2-c4095e49076d.sql
 - As 3 telas que a reescrita de `main` descartou — 17/11/2026
 - Veredicto das branches vivas — 2026-11-17
-- Onda 6 — Performance e escala
-- Arquitetura — Promo Champions V2.1
 - Banco origem — inventário profundo
-- Anexo A — Planos, auditorias e execução: estado real verificado
 - DATA RETENTION — Política de retenção e purge
-- 01 — FRONTEND: ROTAS E PÁGINAS (estado medido)
+- Componentes Atualizados (27+)
 - Reconciliação GitHub × Supabase canônico — 2026-08-31
 - CR-23 — O caminho até produção não tem freio humano
 - Queries de auditoria RLS / grants — executar no banco real
-- Race Arena — Runbook Operacional
 - pull_request_template.md
 - 20260420123930_76e7578c-8365-49dc-84a7-448a1307ab4f.sql
 - 20260417233223_364fa3d6-8e4f-4f76-8e5c-071358f29020.sql
@@ -427,15 +422,18 @@
 - CurrentSqlSourcesTests
 - update-coverage-baseline.mjs
 - 20260321195552_1a939365-b697-4a37-870b-c118281c25b2.sql
-- CredentialsSourceFilterContext.tsx
-- CoachingSessionPlanner.tsx
 - CompetitorMentionsCard.tsx
+- ClickToCallButton.tsx
 - GamificationCard.tsx
-- RiskCompareModal.tsx
+- useSDRMetrics.ts
+- semanticSearchHelpers.ts
+- SequenceBuilder.tsx
+- WebhookSubscriptionLatestList.tsx
+- useAccounts.test.tsx
 - useABCAnalysis.ts
-- lib/salesReportPdf.ts
-- reportDownload.ts
+- breakdown_invariants_test.ts
 - report-embed-public/index.ts
+- winloss-webhook-dispatcher/retry_test.ts
 - 20260417181059_373308ac-cd9e-4c9f-b695-1c5b3ba6d799.sql
 - 20260418020829_4d0d1ab4-bd8b-4e52-a36c-408838b4d77a.sql
 - 20260418102425_a99cbb4a-67de-402a-9ee4-09aab4e488e8.sql
@@ -447,6 +445,8 @@
 - Plano de melhorias e correções em 100 etapas
 - Plano de melhorias e correções em 100 etapas
 - Catálogo do banco de origem — leitura forense
+- Contrato de Integridade — Roteamento de Leads e Carteira
+- triggerRaceEvent
 - useIntelligenceZones.ts
 - Regras de negócio — preencha o que o código não diz
 - Componentes Atualizados
@@ -457,7 +457,6 @@
 - 4. Prospecção & SDR
 - Reporting & BI — estado em 2026-10-18
 - 5. Frontend — Dashboard de Monitoramento
-- reports/salesReportPdf.ts
 - Levantamento e Plano de Melhorias Técnicas - Auditoria de Excelência
 - 20251214103344_640296e4-5119-4bf4-aefe-f0749de6003f.sql
 - 20261014000000_gamificacao_server_side.sql
@@ -467,15 +466,13 @@
 - exists
 - check-test-spec-patterns.ts
 - mudou-conteudo.mjs
+- SnapshotDBStatsTests
 - SnapshotFunctionCallerTests
-- AnalyticsModule.tsx
-- SalesMarkupRankingTable.tsx
+- mergeTags.ts
+- useFollowUpData.ts
 - useAutomationWorkflows.test.tsx
 - useSalesEnablement.test.tsx
-- useMyBonusAwards.ts
-- useDigitalSignatures.ts
-- useLeadRouting.ts
-- oauth-state.ts
+- salesService.test.ts
 - 20260416181418_6d978eeb-e572-497a-be87-f6935ebd7af2.sql
 - public.lead_assignments
 - 20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c.sql
@@ -485,10 +482,8 @@
 - 20260418004622_d7fe1b7b-e43d-44b0-a0bf-ce1e7e8b4d74.sql
 - 20261018200000_fix_stage_history_views_e_forecast_category.sql
 - public.get_semantic_coverage
+- Regras de Negocio — Promo Champions V2.1
 - ♿ Accessibility Checklist — Promo Champions v2
-- Contrato de Integridade — Roteamento de Leads e Carteira
-- Frente 1 — Segurança de Fronteira & Identidade (Módulos 01–04)
-- Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A)
 - ADR-002: React Query como Gerenciador de Estado do Servidor
 - ADR-003: Row Level Security como Camada Primária de Segurança
 - Estado Real — Domínio CRM / Pipeline / Vendas
@@ -497,21 +492,25 @@
 - 13. Fila canônica das 100 etapas
 - Processos — rituais que sobrevivem a uma pessoa
 - 🔍 Auditoria Enterprise — 2026-07-13
+- 4. Edge Function — Coleta de Telemetria
 - .prettierrc.json
 - 20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf.sql
 - 20260511185728_8146716e-03a3-4ac2-864f-cf44bba951f7.sql
 - 20260417000949_a89d07df-24c2-4acf-9877-e041ba2414ef.sql
 - 20261001213000_status_transitions_state_machine.sql
 - 20260723122258_04332939-3a35-43e1-b47e-9ec896a02355.sql
+- winloss-webhook-dispatcher/retry_parametric_test.ts
 - check-data-layer.mjs
 - gerar-repo.mjs
-- ObjectionsLibrary.tsx
-- XPHistoryTimeline.tsx
+- seed-august-sales.ts
+- IntegrationHealthCard.tsx
+- DiarizationTimeline.tsx
+- useCohortRetention.ts
 - BestSendWindowCard.tsx
-- qbrSchedulerAgendaEvent.test.ts
+- useElevenLabsVoice.ts
 - auth
 - check-v4-callback-alerts/index.ts
-- deal-probability-calc_test.ts
+- fallback.ts
 - 20241231000000_saved_filters.sql
 - 20251213122333_bd6a3540-97c2-4bbf-98a8-1e4fc57436ee.sql
 - 20251227180749_ae9f1cfd-d5f2-4424-a6e6-9d36b9d6be1d.sql
@@ -533,13 +532,15 @@
 - 20261014000002_fix_concurrently_indexes.sql
 - public.anonymize_data_subject
 - 20261018190100_gamificacao_claim_matchups_rotations.sql
+- AGENTS.md — Promo_Champions_V2.1
 - Dossiê — PR #280: fix: gen-migration-probes (DROP, schemaname, cmd)
 - Dossiê — PR #344: chore(deps): lote 8 dependabot + deno.lock
-- AdminPlatformSLOPage.tsx
+- Mapa do sistema — Promo_Champions_V2.1
 - Achados de segurança
 - Reconciliação de migrations — evidência de segurança
+- Frente 5 — Backend Supabase · RLS / SECURITY DEFINER / Grants (Módulos 27–28)
+- Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A)
 - ADR-001: RBAC com 3 Roles
-- RUNBOOK.md
 - Deploy — Promo Champions V2.1
 - FAQ — Troubleshooting de integrações externas
 - 2. CRM Core
@@ -550,6 +551,7 @@
 - Auditoria Enterprise - Inventário e Análise Técnica 10/10
 - SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY`
 - Staging — Promo Champions V2.1
+- 📊 Módulo de Telemetria de Queries — Documentação Completa
 - Migrations sem downtime — disciplina expand-contract
 - 20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql
 - 20260106183941_1d5b39a6-d3ee-48cb-9840-c9a068f5d84b.sql
@@ -561,14 +563,15 @@
 - 20260509162133_733a25ba-0880-46cf-989d-48af7262f22b.sql
 - 20260420193304_97bb7cee-225d-4fca-a676-09ffb4c3a6ca.sql
 - axe-sweep.spec.ts
-- Client360HealthNbaSection.tsx
-- scoring-ui.tsx
-- ScoreBreakdownCard.tsx
+- useAutoPause.ts
 - gamified-toast.tsx
-- usePowerDialer.test.tsx
-- useAsyncReplayQueue.ts
-- mergeTags.ts
+- SalespersonScoreBadge.tsx
+- global.d.ts
+- AdminPlatformSLOPage.tsx
+- regressions.test.ts
 - test-integration-connection/index.ts
+- retry_delivery_before_sleep_test.ts
+- retry_log_counts_test.ts
 - 20251215011011_d75fbfee-b6cd-47e1-a6e5-a030ff0760af.sql
 - 20251231121413_c4826621-81ba-45f1-86f9-092fac5d9ee4.sql
 - 20260104180000_webhooks_complete.sql
@@ -589,15 +592,16 @@
 - public.anonymize_data_subject
 - Código de Conduta — Promo Champions
 - 20260511191456_bc24abbd-21b4-41a9-8be9-59725c8bd8c1.sql
+- Contribuindo com Promo Champions v2
 - 20251220142553_58df5395-4e0a-4a82-83ea-f398f8977013.sql
 - Achados bloqueadores de segurança
 - Checklist — Configuração server-side do Supabase Auth
 - ADR-009: Sessão em `localStorage` e o teto real da CSP via `<meta>`
-- 15 — Escada de cobertura por módulo crítico
+- ADR-010: Camada de dados — hooks, services e lib
+- 5. DRIFT DE MIGRATIONS — nos dois sentidos — `VERIFICADO` (com um achado bloqueante)
 - Identidade do banco de produção — prova reproduzível (2026-09-13)
 - 14. Integrações Externas
 - 15. Autenticação & Segurança
-- LGPD — Conformidade no Promo Champions V2.1
 - 🎨 Style Guide — Promo Champions v2
 - 6. Componente de Gráficos (Recharts)
 - Suítes de teste no CI — Deno, SQL, carga e flakes
@@ -617,9 +621,7 @@
 - 20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f.sql
 - 20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql
 - publish.sh
-- useSalesBattles.test.tsx
-- utils/csvExport.ts
-- report-builder-execute/index.ts
+- OutboundMessageLog.tsx
 - 20251212212817_64502cca-2836-4466-b62d-f7cafbb0801b.sql
 - 20251213105021_4b959b7c-d24d-49d8-80b6-2ef62bf588ec.sql
 - 20251220140346_1ac9eb9e-6f70-48c7-835f-345e7ba2f85a.sql
@@ -646,26 +648,23 @@
 - public.integration_secret_refs
 - 20261117040000_integridade_resgatada_rlx.sql
 - 📊 Relatório Real de Qualidade e Testes
-- triggerRaceEvent
-- Automação local — Promo_Champions_V2.1
+- 🏗 Component Guidelines — Promo Champions v2
 - 12. Gamificação
 - 11. Gestão de Times & Metas
 - 17. UX, PWA & Acessibilidade
 - 1. Dashboards & Visões
 - 3. Pipeline & Kanban
-- useAutomationRules.ts
 - Procedimento de hotfix
 - T15-multichannel-retry.md
 - CR-36 — Entrega de webhook sem reenvio e sem proteção de destino
 - CR-14 — Autentica que existe um usuário, mas não verifica se *aquele* usuário pode tocar *aquele* registro
-- Quote → Sale (`fn_convert_quote_to_sale`)
 - Quote-to-Sale — Diagnóstico de Invariantes
 - Runbook — Bitrix24 (bitrix24-oauth, bitrix24-sync)
 - Runbook — ElevenLabs (elevenlabs-voice, elevenlabs-tts, elevenlabs-stt)
-- Runbook — Email transacional e bulk (Resend / SendGrid)
 - Runbook — N8N (automações externas)
 - Runbook — Twilio Voz/Dialer (twilio-call-twiml, twilio-call-status, twilio-click-to-call)
 - Runbook — WhatsApp/Multichannel (send-multichannel-message, multichannel-status-webhook)
+- 10. Guia de Implementação Passo a Passo
 - feature_request.md
 - Promo_Champions_V2.1 — Regras da Casa (Hermes) — suplemento
 - 20260712215611_39d586d5-863d-4617-903b-cbfcc9f544a7.sql
@@ -684,15 +683,14 @@
 - 20260711153757_a957a586-25a5-45a6-8ace-6f4e9f859d0f.sql
 - regras_negocio — regras de negócio para agentes de IA
 - EdgeRetryTimeSeriesChart.tsx
+- admin/PerformanceMonitor.tsx
+- ErrorBoundary
 - Fireworks.tsx
-- RacePanelEmptyState.tsx
-- RaceViewModeToggle.tsx
 - AutoPausedBadge.tsx
-- executeWorkflowActions.test.ts
-- useRunRateProjection.ts
+- useWebhookReplayPersistence.ts
+- draftMigration.test.ts
 - cron-failure-alerter/index.test.ts
 - chunked_in_lint_test.ts
-- request-id-fuzz_test.ts
 - 20250102000001_audit_log.sql
 - 20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e.sql
 - public.tasks
@@ -733,23 +731,22 @@
 - Baseline — Estado do Repositorio
 - 20260712232718_6cfc1884-5c14-4d44-b3b3-ba91edde064a.sql
 - ECC for Codex CLI
-- Apêndice C — 343 objetos de rotina sem consumidor catalogável
 - Arquitetura e estado do frontend
+- ADR-004: Circuit Breaker em Edge Functions
 - ADR-008: SECURITY DEFINER funções executáveis por `anon`
 - 13. Dashboards Especializados (BI)
 - Catch-up de migrations no banco de produção — 20/10/2026
-- Validação adversarial pós-auditoria e correções — 2026-09-02
 - 16. Admin & Telemetria
 - Fase A — Escopo, riscos e contratos
 - Fase B — Fundação reproduzível e segura
+- Fase C — Extração estrutural do produto
 - Fase D — Integridade, proveniência e atualização
-- Fase E — Catálogo Supabase somente leitura
 - Fase F — Conhecimento e diagnóstico de lacunas
 - Fase G — Uso por desenvolvedores e agentes
 - Fase H — Integração contínua e governança
 - Fase I — Validação adversarial e de não regressão
 - CR-44 — Testes que passam sem provar nada
-- CR-25 — Controles publicados que não fazem nada
+- Instruções para o agente executor
 - Relatório de Stress e Prontidão 10/10
 - Procedimento de Rollback
 - Runbook — Picos de acesso negado (`access-denied-alerts`)
@@ -765,10 +762,12 @@
 - 20260422163009_2c772f27-0fbe-4eaa-a764-e0a4d67a0837.sql
 - 20260511200629_df60df51-532c-4ec5-b373-5dcf27a6ca76.sql
 - §12.7 — Runs do merge PR #321 (SHA `875838727`, 2026-10-22T20:48)
+- §13 — Inventário final verificado via API (2026-10-22T21:xx UTC) · Sessão 7
 - §14 — Verificação definitiva (2026-10-22T21:12 UTC) · Sessão 7 · Baseline fresco + is:failure reproduzido
-- usePermissions.ts
-- useEmailOptOuts.ts
+- §15 — Sessão 8 (2026-10-22) · Fix SQL na migration 20261014000002
+- Uso
 - useRecoveryRates.ts
+- useSeasonComparison.ts
 - entity_versions
 - public.achievements
 - 20251213172816_8f8793bd-13ad-4c30-b65a-1ee3123f793e.sql
@@ -802,6 +801,7 @@
 - public.create_agent_run
 - 20261125100000_cron_job_run_details_sem_seq_scan.sql
 - Banco oficial e conectores MCP — Promo_Champions_V2.1
+- GitHub (perímetro, CI, workflows) — referência para agentes
 - Vercel e deploy — referência para agentes
 - Ledger — auditoria funcionalidades-pendentes-2026-10-12 (resto após Onda 1)
 - DEAD TABLES — Tabelas sem referência no código
@@ -813,7 +813,6 @@
 - 10. Automações & Workflows
 - 5. Vendas & Comercial (Closer)
 - 12. Analytics & BI
-- 🚀 Módulos World-Class (10/10)
 - ✅ AUDITORIA DE IMPLEMENTAÇÃO (2026-03-15)
 - Execução Graphify — lote B: integridade, multigrafo e contratos estáticos
 - Execução Graphify — lote C: adaptador de catálogo descartável
@@ -824,13 +823,17 @@
 - CR-39 — O vocabulário de status não é o mesmo em todas as camadas
 - CR-42 — Controle que a tela promete e o sistema não aplica
 - CR-43 — Agregados que somam o que não deve ser somado
+- CR-9 — O portão de qualidade não segura o que promete
 - CR-13 — `verify_jwt = true` foi confiado como se autenticasse
 - CR-15 — Portões de qualidade que existem e não são verificados
 - CR-24 — O menu e a regra de permissão discordam entre si
-- Monitoramento Externo de Uptime
+- CR-29 — Filtros e páginas públicas que escondem dado
 - Deploy
 - Smoke Test do Backend de Destino (pós-migração)
+- 12. Troubleshooting
+- 9. Suíte de Testes
 - inventario/estado/README.md
+- overrides
 - extensions.rollback_extension_migration
 - public.ai_agent_runs
 - 20261112140100_activities_remove_triggers_audit_legados.sql
@@ -843,13 +846,11 @@
 - 20260512213243_8e4190b5-be17-4171-bb9c-614b97b107a7.sql
 - public.webhook_inbound_log
 - k6-smoke.js
+- 11. Sessão 4 (2026-10-22) — fix(db): guards de coluna na migration 20261014000002
 - 12. Sessão 5 (2026-10-22) — fix(db) clients.active + fix(deps) dompurify + docs §11.3
 - §12.6 — Sessão 6: baseline local + despachos confirmando bloqueios externos (2026-10-22)
+- lint-input-validation.ts
 - run-sql-tests.sh
-- DashboardSection.tsx
-- SalesMarkupTrendChart.tsx
-- draftMigration.test.ts
-- callFeedbackService.ts
 - public.entity_versions
 - 20251212201120_b81a2517-fcbe-47dd-abb5-ef80c7baf4ab.sql
 - 20251213112502_edf404a2-6f3f-4337-90ed-edf6d391bceb.sql
@@ -893,33 +894,38 @@
 - private.update_territory_conquests
 - public.auto_pause_enrollment
 - 20261116220000_lost_deals_benchmark.sql
+- mobile-auth-smoke.spec.ts
 - Promo Champions V2.1 — convenções
 - Fontes Examinadas
 - public.process_lead_intent_event
-- 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 - graphify reference: add a URL and watch a folder
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
 - Promo Champions V2.1 — convenções
 - Classificação das diferenças
 - Integridade funcional do frontend
+- Fase 4 — Progresso de Remediação dos CRÍTICOs
 - Padrões de Componentes
 - Efeitos de Hover
-- 21. Fornecedores & Comparador de Preços
+- 17. Orçamentos
+- 1. Visão Geral
+- 28. Desafios (Semanais & Diários)
 - 2. Arquitetura do Sistema
 - 3. Autenticação & Segurança
-- 1. Mapa hook → destino
+- 9. Atividades & Cadências
 - 12. Comissões & Financeiro
 - 1. Dashboards
 - 26. Autenticação & Segurança
+- 🚀 Módulos World-Class (10/10)
 - Execução Graphify — lote E: documentação rastreável
 - Execução Graphify — lote F P0: correções da auditoria adversarial
 - 5. Achados que definem a prioridade
 - 7. Estrutura obrigatória de branch, commit e PR
 - _ordem.md
+- CR-1 — Regra de negócio vive no cliente e o servidor confia nela
 - CR-34 — Segredo de integração tratado como assinatura e exposto ao navegador
+- CR-3 — Controle de acesso anunciado mas não aplicado
 - CR-40 — Estados terminais que não são terminais
-- CR-41 — "Quando" e "de quem" mudam de definição entre telas
 - CR-7 — Configuração de produção fora de sincronia com o código
 - CR-18 — Policy permissiva anula policy restritiva na mesma tabela
 - CR-21 — A cadeia de dinheiro não tem escala única nem restrições
@@ -932,12 +938,11 @@
 - public.calculate_deal_risk_score
 - public.scheduled_sends
 - 20260509160905_eec852a9-1ce0-419d-ade9-9065ab248d2d.sql
+- 9. Sessão 2 (2026-10-22) — PR #318: correções documentais pós-Codex Review
 - Rodada 2026-10-27 (branch `fix/ci-workflows`, HEAD base `cdfc74122`)
-- Rodada 2026-10-27 — 2ª passada (pós-merge das PRs de remediação, HEAD `1e3a191b2`)
 - isSrc
-- animated-counter.tsx
-- ProgressRing.tsx
-- FunnelReportPage.tsx
+- redact
+- CohortReportPage.tsx
 - email-unsubscribe/security_test.ts
 - 20251213010319_3edab12d-13d1-46fb-bdb6-e1a8edac611a.sql
 - 20251214025653_0cf4785a-e064-43d9-9147-8030f118c23c.sql
@@ -987,6 +992,7 @@
 - 20261117030000_fix_seasonality_extract_cast.sql
 - public.trigger_internal_edge_job
 - 20261124160000_timeout_por_funcao_no_dispatcher.sql
+- revenue-forecast-v2.spec.ts
 - rls-authorization-edge-cases.spec.ts
 - vercel.json
 - session-start.sh
@@ -996,17 +1002,24 @@
 - Isolamento por worktree (trabalho local)
 - route
 - rank
-- Cards
+- Tipografia
 - Efeitos de Glow
+- 32. Banco de Dados
+- 34. Componentes UI (Design System)
+- 44. Testes Automatizados
+- 46. Rotas da Aplicação
+- 47. Secrets & Variáveis de Ambiente
+- 8. Produtos
 - 27. Navegação & UX
 - 8. Desafios (Diários & Semanais) (`/desafios`)
 - CR-8 — Identidade e cadastro
 - CR-2 — Gravação derivada sem tolerância a repetição
 - CR-4 — `REVOKE ... FROM PUBLIC` não revoga de `anon`
 - CR-38 — "Comissão desta venda" não tem uma definição única
-- CR-45 — Módulos de dinheiro sem nenhum teste
-- CR-17 — O inventário gerado afirma o contrário da realidade
+- CR-19 — A única rede de segurança do schema está desatualizada
 - CR-28 — Entrada de dados sem validação de conteúdo
+- 1. Visão Geral
+- Apêndice: Formato dos Logs
 - account_plans_account_id_key
 - idx_deal_chat_history_question_type
 - idx_objections_library_tags
@@ -1017,11 +1030,13 @@
 - ai-context — contexto de código para agentes de IA
 - verify-dispatcher-request-id.sh
 - verify-quote-to-sale-invariants.ts
-- RaceTransitionWrapper.tsx
+- ABCAnalysisPage.tsx
 - pages/ConversationalIntelligenceHub.tsx
+- ForecastPonderado.tsx
 - PrevisaoDemanda.tsx
 - pages/PricingIntelligenceHub.tsx
 - PurchaseIntelligence.tsx
+- pages/RevenueForecast.tsx
 - pages/RevOpsHub.tsx
 - pages/SalesEnablementHub.tsx
 - pages/TerritoryOptimizationHub.tsx
@@ -1317,253 +1332,253 @@
   docs/AUTOMACAO_LOCAL.md → scripts/automation.mjs
 - `8. Comandos, segurança e contexto gerado` --references--> `test()`  [INFERRED]
   AGENTS.md → scripts/codemod-typography.test.mjs
-- `Gatilhos e ativação` --references--> `test()`  [INFERRED]
-  docs/AUTOMACAO_LOCAL.md → scripts/codemod-typography.test.mjs
+- `J2 — Venda: fechar, reabrir, refechar (gera comissão)` --references--> `status()`  [INFERRED]
+  docs/qa/02-CENARIOS.md → scripts/graphify-local.mjs
 
 ## Import Cycles
 - None detected.
 
-## Communities (1560 total, 602 thin omitted)
+## Communities (1576 total, 606 thin omitted)
 
 ### Community 0 - "schema.sql"
 Cohesion: 0.00
 Nodes (408): public.ab_tests, public.access_denied_logs, public.account_activities, public.account_contacts, public.account_plans, public.accounts, public.achievements, public.active_power_ups (+400 more)
 
-### Community 1 - "react"
+### Community 1 - "Input"
 Cohesion: 0.02
-Nodes (243): react, ChurnHistoryChart(), formatXp(), XpAdjustmentPanel(), CohortAnalysis(), CohortData, ChurnOverdueRankingCard, PERIOD_LABEL (+235 more)
+Nodes (262): Resultado por Módulo, Já cobertas por `chunkedIn` (client), @hookform/resolvers, @radix-ui/react-label, react-hook-form, zod, ActivityEditDialog(), ActivityEditDialogProps (+254 more)
 
-### Community 2 - "Badge"
-Cohesion: 0.02
-Nodes (238): 2. Autenticação — **5,0/10** (peso ×3), 1. Tabela de estado, 🟢 BAIXO 8 — Superfície morta de segurança, ActivityHeatmap(), ActivityList, AdminQuickLinks(), QUICK_LINKS, AdminQuickStats() (+230 more)
-
-### Community 3 - "Input"
+### Community 2 - "Button"
 Cohesion: 0.03
-Nodes (246): 6. O que NÃO consegui verificar, Resultado por Módulo, @hookform/resolvers, react-hook-form, zod, StreakRanking, ActivityEditDialog(), ActivityEditDialogProps (+238 more)
+Nodes (248): 6. O que NÃO consegui verificar, 🔴 RAIZ #5 — `nlq-query` NÃO COMPILA (erro de sintaxe), StreakRanking, ArenaAITips(), DailyActivityRanking, Client, MergeConflictsResolver(), MergeConflictsResolverProps (+240 more)
 
-### Community 4 - "CardHeader"
+### Community 3 - "client.ts"
+Cohesion: 0.01
+Nodes (171): 🔴 CRÍTICO — Envio duplicado por falta de claim atômico nas engines de cadência/sequência, @tanstack/react-query, LayoutRealtimeEffects(), MyRaceCarMiniCardProps, rankAccent(), rankIcon(), RankingPositionBanner(), MAP_PATHS (+163 more)
+
+### Community 4 - "PageTransition"
 Cohesion: 0.02
-Nodes (220): ADR-0010, ArenaPulseFeed(), PulseEvent, PredictiveVelocity(), formatBucketTime(), TelemetryCharts(), TelemetryChartsProps, TelemetryRow (+212 more)
+Nodes (220): ⚡ Performance, 2. Autenticação — **5,0/10** (peso ×3), G.4 Integrações externas, 🟠 ALTO — Default de role permissivo concede permissões sem role atribuída, 1. Tabela de estado, ⚡ Workflow Automation Builder (`/workflow-builder`) — Manager, react-helmet-async, ActivityHeatmap() (+212 more)
 
 ### Community 5 - "Índice"
 Cohesion: 0.01
 Nodes (277): `ab_tests`, `access_denied_logs`, `account_contacts`, `account_plans`, `accounts`, `achievements`, `active_power_ups`, `active_sessions` (+269 more)
 
-### Community 6 - "cn"
+### Community 6 - "CardContent"
 Cohesion: 0.02
-Nodes (205): 3.1 Causa-raiz do jobid 2 (falha silenciosa desde 2026-06-19), 3.3 Competitivo, 9.2 Gamificação, framer-motion, ActivityItemRowComponent(), ActivityLeaderboard(), ActivityVersusDuel(), ActivityVersusDuelProps (+197 more)
+Nodes (209): ADR-0010, 2. BI por papel (BISDR, BICloser, BIVendedor, BIGestor), SDR/Closer Dashboards (8 componentes), AdminQuickStats(), AdminQuickStatsProps, AIPerformanceInsights, ForecastDeal, ForecastTopDeals (+201 more)
 
-### Community 7 - "client.ts"
+### Community 7 - "CardHeader"
 Cohesion: 0.02
-Nodes (138): @tanstack/react-query, Props, Props, LayoutRealtimeEffects(), MyRaceCarMiniCard(), MyRaceCarMiniCardProps, MAP_PATHS, Props (+130 more)
+Nodes (198): 4. Forecast / BI / Relatórios, ESTADO_ATUAL.md (medição 2026-08-16), O que melhorou de fato desde a auditoria (só repo), Top 15 por impacto de negócio, Top 20 por impacto de negócio, Analytics (7 componentes), 7. TOP 8 CORREÇÕES POR IMPACTO (ordem de execução sugerida), ⬛ Os 9 mortos/abandonados (+190 more)
 
-### Community 8 - "lucide-react"
-Cohesion: 0.02
-Nodes (167): lucide-react, recharts, AchievementComparisonChart(), AchievementConfig, AchievementsHistory(), getAchievementConfig(), roleLabels, AchievementTrendChart() (+159 more)
-
-### Community 9 - "getCorsHeaders"
+### Community 8 - "Badge"
 Cohesion: 0.03
-Nodes (123): 2.1 CRÍTICOs (C1–C10) — Reconciliação Completa, chunk(), SENIORITY_WEIGHT, json(), Body, DIM_LABELS, RECS, Turn (+115 more)
+Nodes (200): AdminQuickLinks(), QUICK_LINKS, CommercialDiffViewer(), DiffValueProps, Bitrix24Tab(), ConnectionsOverviewTable(), KIND_COLOR, KIND_LABEL (+192 more)
 
-### Community 10 - "badge.tsx"
-Cohesion: 0.03
-Nodes (175): ConnectionsOverviewTable(), KIND_COLOR, KIND_LABEL, IntegrationHealthHistorySheet(), Props, fmt(), fmtNum(), TopQueriesPanel() (+167 more)
-
-### Community 11 - "PageTransition"
-Cohesion: 0.02
-Nodes (172): react-helmet-async, EditClientDialogProps, CloserStatCard, TopClosersRanking, CustomizableDashboard(), AIEmailComposerButton(), FollowUpHeader(), FollowUpHeaderProps (+164 more)
-
-### Community 12 - "vitest"
+### Community 9 - "vitest"
 Cohesion: 0.01
-Nodes (122): 4. Guardas de rota / RBAC, Achados de RBAC, ref_path, @testing-library/dom, @testing-library/react, vitest, activity, mocks (+114 more)
+Nodes (150): 4. Guardas de rota / RBAC, Achados de RBAC, react-router-dom, @testing-library/dom, @testing-library/react, vitest, activity, mocks (+142 more)
 
-### Community 13 - "useUserRoles"
+### Community 10 - "Avatar"
+Cohesion: 0.02
+Nodes (185): Gamificação (5 componentes), 3.1 Causa-raiz do jobid 2 (falha silenciosa desde 2026-06-19), 3.3 Competitivo, 9.2 Gamificação, 🎯 Top 10 Prioridades de UI a Construir, getRankBadge(), getRankStyle(), getStreakBadgeColor() (+177 more)
+
+### Community 11 - "card.tsx"
+Cohesion: 0.02
+Nodes (166): fuse.js, AchievementComparisonChart(), AchievementConfig, AchievementsHistory(), getAchievementConfig(), roleLabels, TeamAchievementStats(), CronAlertBreakdownChart() (+158 more)
+
+### Community 12 - "withRequestId"
 Cohesion: 0.03
-Nodes (173): DeadLetterIngestPanel(), DeadLetterJob, WorkflowRule, WorkflowRuleCard, WorkflowRuleCardProps, DeleteCadenceDialog(), DeleteCadenceDialogProps, actionIcon (+165 more)
+Nodes (132): 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90), 🔧 CI/Tooling, 🔒 Segurança, 🧪 Testes, 13. Operacionalidade — **5,0/10** (peso ×1), Roadmap em 3 Ondas, A.6 `docs/auditoria/AUDITORIA_TECNICA_EXAUSTIVA_2026-09-02.md` — top 10 por ROI e roadmap de 3 ondas, callAI() (+124 more)
 
-### Community 14 - "date-fns"
-Cohesion: 0.02
-Nodes (147): date-fns, Level, LEVEL_COLORS, LEVEL_LABEL, Props, Row, CATEGORY_CONFIG, ClientHealth (+139 more)
-
-### Community 15 - "Card"
-Cohesion: 0.02
-Nodes (150): SDR/Closer Dashboards (8 componentes), ActivityChannelEffectiveness(), ActivityEffectiveness(), ActivityStats(), KNOWN, metaFor(), SemanticReindexPanel(), ActivityOutcomesChart() (+142 more)
-
-### Community 16 - "utils.ts"
+### Community 13 - "utils.ts"
 Cohesion: 0.03
-Nodes (131): 09_HOOKS_SERVICES.md, AchievementBadgeDisplay(), DailyActivityRankingComponent(), getRankIcon(), getRankStyle(), getStatusBadge(), actionIcons, categoryLabels (+123 more)
+Nodes (138): AchievementBadgeDisplay(), ActivityData, ActivityHeatmapProps, getActivityLevel(), levelColors, levelGlow, MONTHS, WEEK_DAYS (+130 more)
 
-### Community 17 - "ref_npm_supabase"
+### Community 14 - "sonner"
+Cohesion: 0.03
+Nodes (136): 2. SDR / Cadências / E-mail, 🟢 BAIXO 8 — Superfície morta de segurança, sonner, SDRAlertSettings(), ChatInputArea(), ChatInputAreaProps, DEAL_CONTEXT_PROMPTS, detectQuestionType() (+128 more)
+
+### Community 15 - "date-fns"
 Cohesion: 0.02
-Nodes (118): A.5 `docs/auditoria/RELATORIO_FALHAS.md` — 129 achados (10 críticos, 32 altos, 87 médio/baixo/info), 🟡 MÉDIO — Loop de até 500 chamadas de IA sequenciais sem cap de custo/timeout, ref_npm_supabase, TOOLS, ContactContext, GOAL_LABEL, LENGTH_LABEL, RequestBody (+110 more)
+Nodes (132): date-fns, Level, LEVEL_COLORS, LEVEL_LABEL, Props, Row, ChurnPredictionItem, UseChurnPredictionOptions (+124 more)
+
+### Community 16 - "lucide-react"
+Cohesion: 0.02
+Nodes (128): framer-motion, lucide-react, ActivityEffectiveness(), KNOWN, metaFor(), SemanticReindexPanel(), CHART_COLORS, ChurnPrediction() (+120 more)
+
+### Community 17 - "WinLossIntelligence.tsx"
+Cohesion: 0.03
+Nodes (130): LossFactorsChart(), TooltipBox(), COLORS, LostStageBreakdown(), TooltipBox(), WinFactorsChart(), fmtBRL(), fmtDays() (+122 more)
 
 ### Community 18 - "lazyPages.ts"
 Cohesion: 0.04
-Nodes (161): AppRoutes(), LegacyAccountRedirect(), ABCAnalysisPage, AccessDenied, AccountBasedEngagement, AccountBasedSelling, AccountDetail, AcompanhamentoPedidoDetalhe (+153 more)
+Nodes (165): RaceTransitionWrapper(), Admin, AppRoutes(), LegacyAccountRedirect(), Manager, AccessDenied, AccountBasedEngagement, AccountBasedSelling (+157 more)
 
 ### Community 19 - "AccountBasedSelling.tsx"
-Cohesion: 0.03
-Nodes (137): Etapa 056 — Tornar transacional a mudança de status de orçamento, Convenções (fonte de verdade), CreateWorkflowDialog(), WorkflowBuilder(), QuoteCardProps, QuoteDetailDialog(), QuoteDetailDialogProps, Props (+129 more)
-
-### Community 20 - "useAuth"
-Cohesion: 0.03
-Nodes (116): ADR-010: WebAuthn/passkeys com verificação criptográfica real (SimpleWebAuthn), Consequências, Contexto, Decisão, Rollback, Etapa 109 — Esconder os botões de teste de gamificação em produção, Etapa 112 — Remover a página de teste de retentativa de produção, react-router-dom (+108 more)
-
-### Community 21 - "fetch-with-timeout.ts"
-Cohesion: 0.03
-Nodes (109): 2.1 N+1 Queries em `bitrix24-sync` (🟠 ALTA), 2.2 `getActivityStats`: Carrega Todos os Registros em Memória (🟠 ALTA), 2.3 `activityService.getRecentActivities`: Limite Hardcoded de 100 (🟡 MÉDIA), 2.4 Ausência de Índices em Colunas de Filtragem Críticas (🟡 MÉDIA), 2.5 `telemetry.ts`: Signature Incorreta (🟡 MÉDIA), 2. Performance, Diagnóstico, Escalação (+101 more)
-
-### Community 22 - "CardContent"
-Cohesion: 0.03
-Nodes (107): EdgeRetryEventsPanel(), fetchRetryEvents(), Outcome, outcomeLabel, outcomeVariant, RetryRow, EdgeRetryTimeSeriesChart(), currency() (+99 more)
-
-### Community 23 - "Button"
 Cohesion: 0.04
-Nodes (91): 🔴 RAIZ #5 — `nlq-query` NÃO COMPILA (erro de sintaxe), react-day-picker, Props, TelemetryStatsCards, TelemetryStatsCardsProps, Deal, DealContextSelectorProps, STATUS_LABELS (+83 more)
+Nodes (134): DeadLetterIngestPanel(), DeadLetterJob, WorkflowRule, WorkflowRuleCard, WorkflowRuleCardProps, DeleteCadenceDialog(), DeleteCadenceDialogProps, Battle (+126 more)
 
-### Community 24 - "isAuthorizedCronRequest"
-Cohesion: 0.03
-Nodes (90): Modelo de autenticação das functions, Etapa 005 — Autenticar `new-device-alert`, Etapa 007 — Autenticar `notify-critical-pattern` e escapar o HTML do e-mail, ref_npm_date_fns_3, ref_npm_resend_2, AccessDeniedLog, AlertSettings, buildSpikeAlertHtml() (+82 more)
-
-### Community 25 - "RaceArena.tsx"
-Cohesion: 0.03
-Nodes (90): BroadcastOverlay(), CommentaryBubble(), CommentaryBubbleProps, CommentaryLine, DRSZoneOverlay(), LapCounterBadge(), LapCounterBadgeProps, LeaderGapIndicator() (+82 more)
-
-### Community 26 - "DealIntelligence.tsx"
-Cohesion: 0.05
-Nodes (85): CommitteeInsightsPanel(), KpiCard(), RelationshipHealthGraph(), ConversionFunnelChart(), Props, severityFor(), formatPct(), impactLabel (+77 more)
-
-### Community 27 - "package.json"
+### Community 20 - "isAuthorizedCronRequest"
 Cohesion: 0.02
-Nodes (99): engines, node, lint-staged, *.{css,json,md}, *.{ts,tsx}, name, overrides, postcss-selector-parser (+91 more)
+Nodes (116): Modelo de autenticação das functions, Etapa 005 — Autenticar `new-device-alert`, Etapa 007 — Autenticar `notify-critical-pattern` e escapar o HTML do e-mail, ref_npm_date_fns_3, ref_npm_resend_2, AccessDeniedLog, AlertSettings, buildSpikeAlertHtml() (+108 more)
 
-### Community 28 - "RecordingSummaryDrawer.tsx"
-Cohesion: 0.04
-Nodes (80): Onda 8 — verdade funcional e integrações, ActionItemsList(), Props, CallFeedbackForm(), CallLibrarySearch(), formatDuration(), HighlightedSnippet(), Props (+72 more)
-
-### Community 29 - "sonner"
-Cohesion: 0.04
-Nodes (75): sonner, SDRAlertSettings(), Settings, useAutotestSettings(), CompetitorsAdminDialog(), EditingThreshold, frequencyLabels, NotificationPreferenceCard (+67 more)
-
-### Community 30 - "ReplayStatusByIdPanel.tsx"
+### Community 21 - "getUserClient"
 Cohesion: 0.03
-Nodes (68): Ciclo de vida da venda (`sales.status`), Convenções, Entidades principais (migrations), Markup / margens, RBAC / permissões, Timezone (regra de negócio crítica — bug real corrigido na #586), Já cobertas por `chunkedIn` (client), ABTestPanel() (+60 more)
+Nodes (101): 2.1 CRÍTICOs (C1–C10) — Reconciliação Completa, Status dos 10 CRÍTICOs, ref_npm_simplewebauthn, ref_npm_supabase, ContactContext, GOAL_LABEL, LENGTH_LABEL, RequestBody (+93 more)
 
-### Community 31 - "MainLayout.tsx"
+### Community 22 - "cn"
+Cohesion: 0.03
+Nodes (127): 3. Rotas inalcançáveis pela navegação (20), Link quebrado detectado, Rotas que só têm entrada frágil (não estão em nenhum menu), class-variance-authority, @radix-ui/react-toast, @radix-ui/react-toggle, @radix-ui/react-toggle-group, renderCustomTooltip() (+119 more)
+
+### Community 23 - "Orcamentos.tsx"
 Cohesion: 0.04
-Nodes (71): Como medi, Critério de classificação (aplicado mecanicamente, sem julgamento otimista), Como medi, Critério de classificação (aplicado mecanicamente, sem julgamento otimista), next-themes, defaultLinks, SkipLink, SkipLinks() (+63 more)
+Nodes (118): Etapa 056 — Tornar transacional a mudança de status de orçamento, Convenções (fonte de verdade), AutoTestIntervalCard(), Settings, useAutotestSettings(), FailureWindowCard(), Settings, CreateWorkflowDialog() (+110 more)
 
-### Community 32 - "winloss-webhook-dispatcher/retry.ts"
+### Community 24 - "react"
+Cohesion: 0.03
+Nodes (103): @radix-ui/react-slot, react, react-day-picker, Props, McpTab(), N8nTab(), SupabaseConnectionsTab(), ExternalDBSettings() (+95 more)
+
+### Community 25 - "Card"
 Cohesion: 0.04
-Nodes (64): sc(), alwaysAbort(), Harness, makeAbortError(), PAYLOAD, SUB, TimelineEvent, backoffDelay() (+56 more)
+Nodes (93): TelemetryStatsCards, TelemetryStatsCardsProps, currency(), Detail, Prod, ProductList, Props, RecentList (+85 more)
 
-### Community 33 - "whatsapp-inbound-webhook/index.ts"
+### Community 26 - "Slider"
+Cohesion: 0.03
+Nodes (88): leaflet, leaflet.markercluster, react-leaflet, CATEGORIES, CATEGORY_COLORS, ObjectionsLibrary(), Props, ClientsMap() (+80 more)
+
+### Community 27 - "recharts"
 Cohesion: 0.04
-Nodes (73): Prova por blob das 5 branches restantes — 17/11/2026, Bloqueio para deduplicação persistente, Cenários tratados localmente, Contenção de integridade — webhooks públicos, Evidência local, Observação fora do contrato transacional, escapeLikePattern(), extractClickLink() (+65 more)
+Nodes (85): recharts, AchievementTrendChart(), PERIOD_OPTIONS, ActivityTrendChart(), ActivityTrendChartProps, ActivitiesByDay, BISDRCharts, BISDRChartsProps (+77 more)
 
-### Community 34 - "scoring.ts"
+### Community 28 - "bitrix24-sync/index.ts"
+Cohesion: 0.04
+Nodes (82): 2.1 N+1 Queries em `bitrix24-sync` (🟠 ALTA), 2.2 `getActivityStats`: Carrega Todos os Registros em Memória (🟠 ALTA), 2.3 `activityService.getRecentActivities`: Limite Hardcoded de 100 (🟡 MÉDIA), 2.4 Ausência de Índices em Colunas de Filtragem Críticas (🟡 MÉDIA), 2.5 `telemetry.ts`: Signature Incorreta (🟡 MÉDIA), 2. Performance, Diagnóstico, Escalação (+74 more)
+
+### Community 29 - "QuoteCadencesPage.tsx"
+Cohesion: 0.04
+Nodes (82): BulkActionBar(), Props, PendingApprovalsQueue(), actionIcon, Props, QuoteCadenceDetailDrawer(), statusColor, QuoteCadenceEmptyState() (+74 more)
+
+### Community 30 - "ref_https"
+Cohesion: 0.03
+Nodes (54): 5.1 Aplicação Node/React, 5.2 Edge Functions — compilação real, 5.3 Testes Deno, 5.4 P0 encontrado pelo CI desta reconciliação, 5. Validação do código incorporado, Etapa 001 — Fechar o cadastro público do Supabase Auth, ref_https, ref_npm_zod_3 (+46 more)
+
+### Community 31 - "useWinLossData.ts"
+Cohesion: 0.03
+Nodes (67): ConversationHistoryProps, Props, QuoteCadenceBulkBar(), mockHook(), renderComponent(), Props, Props, DEFAULT_WL_FILTERS (+59 more)
+
+### Community 32 - "DealCard.tsx"
+Cohesion: 0.04
+Nodes (87): 🟠 ALTO — Listagens sem filtro por owner/team — vazamento entre times dependente de RLS frágil, 🟠 ALTO — Sem verificação de opt-out/consentimento antes de enviar WhatsApp/e-mail, 🔵 BAIXO — `createClient` permite atribuir cliente a `user_id` arbitrário, 🔵 BAIXO — `useFollowUpSettings` com `maybeSingle()` sem filtro, Frente 3 — CRM & Dados de Cliente (Módulos 10–15), ⚪ INFO — Migração de RLS com sintaxe inválida (`CREATE POLICY IF NOT EXISTS`), 🟡 MÉDIO — Inconsistência de timezone no agendamento vs. processamento de cadências, 🟡 MÉDIO — Mudança de stage sem validação de transição nem campos obrigatórios (+79 more)
+
+### Community 33 - "toBusinessDate"
+Cohesion: 0.03
+Nodes (62): Anexos A (planos não executados), PRs de outros agentes fechadas sem merge (verificado 2026-11-20), Top 25, Verificações pendentes (não executadas — dependem de banco/UI/runbooks p/ decidir), chunk(), aggregateOptOutMetrics(), OptOutDailyPoint, OptOutMetrics (+54 more)
+
+### Community 34 - "getLocalISODate"
+Cohesion: 0.03
+Nodes (69): 3. IA / Coaching, 9.3 IA & Automação, actionIcons, ActionItem(), categoryLabels, categoryStyles, FilterTab, NextBestActionCard() (+61 more)
+
+### Community 35 - "RecordingSummaryDrawer.tsx"
 Cohesion: 0.05
-Nodes (73): LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS, AGES_DAYS, allCombos(), AMOUNTS, assertInvariants(), mkDeal() (+65 more)
+Nodes (73): Onda 8 — verdade funcional e integrações, ActionItemsList(), Props, CallFeedbackForm(), CallLibrarySearch(), formatDuration(), HighlightedSnippet(), Props (+65 more)
 
-### Community 35 - "NotificationCenter.tsx"
+### Community 36 - "DealIntelligence.tsx"
 Cohesion: 0.05
-Nodes (75): LANGUAGES, LanguageToggle(), SystemHealthBadge(), QuoteCadenceCard(), statusVariant, StreakIndicator(), GlobalSearchHandle, BackButton (+67 more)
+Nodes (70): 5. Duplicatas e sobreposições (qual está viva), CommitteeInsightsPanel(), KpiCard(), RelationshipHealthGraph(), DealHealthCard(), Props, DealHealthFactorsList(), Props (+62 more)
 
-### Community 36 - "DealCard.tsx"
+### Community 37 - "enablement/SalesEnablementHub.tsx"
+Cohesion: 0.04
+Nodes (77): 5. Tabela de estado por funcionalidade, 🧠 Análise Comportamental Automática (DISC + EQ + Vieses), activityIcons, activityLabels, ClientTimeline(), ClientTimelineProps, outcomeColors, outcomeLabels (+69 more)
+
+### Community 38 - "chunked-in.ts"
+Cohesion: 0.03
+Nodes (57): A.5 `docs/auditoria/RELATORIO_FALHAS.md` — 129 achados (10 críticos, 32 altos, 87 médio/baixo/info), 🟠 ALTO — Runner agendado (service role) sem filtro de dono/tenant — vazamento de dados, SENIORITY_WEIGHT, ObjType, PATTERNS, Quality, Status, Turn (+49 more)
+
+### Community 39 - "TodaysCadenceTasks.tsx"
+Cohesion: 0.04
+Nodes (74): 4.3 SDR, cadências, sequências e e-mail, 🔴 CRÍTICO — Cadência pausada/cancelada continua enviando mensagens automáticas, ActivityGoalForm(), ActivityStats(), ABTestDialog(), ABTestResults(), actionColors, actionIcons (+66 more)
+
+### Community 40 - "MainLayout.tsx"
 Cohesion: 0.05
-Nodes (74): Pipeline (5 componentes), ICPRadarChartProps, ICPTableProps, DealCard(), DealCardProps, isHealthBelow(), SENTIMENT_TEXT_COLOR, deal (+66 more)
+Nodes (67): defaultLinks, SkipLink, SkipLinks(), SkipLinksProps, getPageTitle(), ROUTE_TITLES, RouteTracker, SearchTrigger (+59 more)
 
-### Community 37 - "VendedorDashboard.tsx"
+### Community 41 - "RaceArena.tsx"
 Cohesion: 0.04
-Nodes (74): ADR-010: Camada de dados — hooks, services e lib, Consequências, Contexto, Convenções dos hooks, Decisão, Enforcement — `scripts/check-data-layer.mjs`, O que vai onde, Atividades (3 componentes) (+66 more)
+Nodes (63): BroadcastEvent, BroadcastOverlay(), FLAG_ICON, KIND_BADGE, Props, CommentaryBubble(), CommentaryBubbleProps, CommentaryLine (+55 more)
 
-### Community 38 - "PageLoadingSkeleton.tsx"
-Cohesion: 0.09
-Nodes (72): 2. BI por papel (BISDR, BICloser, BIVendedor, BIGestor), @dnd-kit/utilities, BIFilterBar(), BIMetricCard, BIMetricsGrid(), calculateChange(), formatValue(), BIComparisonCard() (+64 more)
+### Community 42 - "package.json"
+Cohesion: 0.03
+Nodes (80): engines, node, lint-staged, *.{css,json,md}, *.{ts,tsx}, name, private, type (+72 more)
 
-### Community 39 - "race/index.ts"
-Cohesion: 0.06
-Nodes (65): 12.3 Código exportado e nunca usado (item 5), 9.1 Query de TTI (consumir após dias de telemetria), 9. Hardening Round 3 — observabilidade, performance e DX, Realtime não atualiza o leaderboard, Trigger rejeita inserção de evento, FloatingEventFeed(), Props, GhostCar() (+57 more)
-
-### Community 40 - "Analytics.tsx"
+### Community 43 - "whatsapp-inbound-webhook/index.ts"
 Cohesion: 0.04
-Nodes (67): ESTADO_ATUAL.md (medição 2026-08-16), O que melhorou de fato desde a auditoria (só repo), Top 15 por impacto de negócio, Top 20 por impacto de negócio, Analytics (7 componentes), 7. TOP 8 CORREÇÕES POR IMPACTO (ordem de execução sugerida), ⬛ Os 9 mortos/abandonados, 6. Dado fictício chegando à tela do usuário — `VERIFICADO` (+59 more)
+Nodes (68): Prova por blob das 5 branches restantes — 17/11/2026, Bloqueio para deduplicação persistente, Cenários tratados localmente, Contenção de integridade — webhooks públicos, Evidência local, Observação fora do contrato transacional, escapeLikePattern(), extractClickLink() (+60 more)
 
-### Community 41 - "📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)"
-Cohesion: 0.02
-Nodes (82): 10. Tarefas, 11. Metas & Objetivos, 14. SDR Dashboard, 15. Closer Dashboard, 17. Orçamentos, 18. Playbooks, 19. Portfólio de Clientes, 1. Visão Geral (+74 more)
-
-### Community 42 - "winloss-webhook-dispatcher/index.ts"
-Cohesion: 0.04
-Nodes (53): 5.1 Aplicação Node/React, 5.2 Edge Functions — compilação real, 5.3 Testes Deno, 5.4 P0 encontrado pelo CI desta reconciliação, 5. Validação do código incorporado, ref_npm_zod_3, IncomingQuote, IncomingQuoteItem (+45 more)
-
-### Community 43 - "dependencies"
+### Community 44 - "dependencies"
 Cohesion: 0.02
 Nodes (81): dependencies, canvas-confetti, class-variance-authority, clsx, cmdk, date-fns, @dnd-kit/core, @dnd-kit/sortable (+73 more)
 
-### Community 44 - "ref_node_fs"
+### Community 45 - "ref_node_fs"
 Cohesion: 0.03
 Nodes (57): ref_bun, ref_node_fs, ref_node_zlib, BUDGETS_KB, DIST_ASSETS, failures, files, results (+49 more)
-
-### Community 45 - "ActionableInsightsPanel.tsx"
-Cohesion: 0.06
-Nodes (60): ActivityTrendChart(), ActivityTrendChartProps, Props, LossFactorsChart(), TooltipBox(), COLORS, LostStageBreakdown(), TooltipBox() (+52 more)
 
 ### Community 46 - "gerar.mjs"
 Cohesion: 0.03
 Nodes (68): AGG_KEYS, aliasesByBase, ALL, allDocs, ambiguos, apiHttp, args, banco (+60 more)
 
-### Community 47 - "AppSidebar.tsx"
-Cohesion: 0.05
-Nodes (67): 3. Rotas inalcançáveis pela navegação (20), Link quebrado detectado, Rotas que só têm entrada frágil (não estão em nenhum menu), @radix-ui/react-collapsible, @radix-ui/react-separator, adminOnlyItems, closerGroupedItems, closerMainItems (+59 more)
+### Community 47 - "use-toast.ts"
+Cohesion: 0.04
+Nodes (67): CalendarTask(), CalendarTaskProps, PRIORITY_STYLES, TASK_ICONS, WEEKDAYS, Props, Props, composeFormSchema (+59 more)
 
-### Community 48 - "RevenueIntelligenceHub.tsx"
-Cohesion: 0.05
-Nodes (66): 1. TABELA DE FUNCIONALIDADES, FLAG_LABELS, InsightCard(), InsightCardProps, PipelineStrategicReview(), PipelineStrategicReviewProps, SummaryStat(), SummaryStatProps (+58 more)
+### Community 48 - "CoachingIntelligenceHub.tsx"
+Cohesion: 0.07
+Nodes (58): CoachingIntelligenceHub(), PRIORITY_STYLES, CoachingImpactTracker(), KpiCard(), deltaToneClass(), formatCurrency(), formatDelta(), heatmapShade() (+50 more)
 
 ### Community 49 - "ref_node_child_process"
 Cohesion: 0.04
 Nodes (57): ref_node_assert, ref_node_child_process, ref_node_module, ref_node_os, ref_node_test, fixture(), GERADOR, isolatedFixture() (+49 more)
 
-### Community 50 - "validation.ts"
-Cohesion: 0.05
-Nodes (53): ref_npm_simplewebauthn, AnalyzePayload, AnalysisRow, buildQuery(), AIResult, AISuggestion, AssistantFallbackContext, AssistantFallbackMode (+45 more)
+### Community 50 - "PageLoadingSkeleton.tsx"
+Cohesion: 0.10
+Nodes (65): @dnd-kit/sortable, @dnd-kit/utilities, PlaybookCard(), PlaybookCardProps, PlaybookEmptyState, PlaybookItemRow(), PlaybookItemRowProps, PlaybooksManager() (+57 more)
 
 ### Community 51 - "generate.py"
 Cohesion: 0.08
 Nodes (74): collections, hashlib, analyze_code_file(), balanced(), build_access(), build_audit(), build_dataflow(), chain() (+66 more)
 
-### Community 52 - "src_components_ui_dialog_dialogtrigger"
-Cohesion: 0.05
-Nodes (63): 🔴 CRÍTICO — Cadência pausada/cancelada continua enviando mensagens automáticas, BehavioralAnalysisDialog(), BehavioralAnalysisDialogProps, severityColor, ABTestDialog(), ABTestResults(), actionColors, actionIcons (+55 more)
-
-### Community 53 - ".metadata"
-Cohesion: 0.05
-Nodes (41): `account_activities`, `asset_usage_logs`, `audit_logs`, `call_recordings`, `channel_interactions`, `client_interactions`, `competitive_seasons`, `csat_ces_surveys` (+33 more)
-
-### Community 54 - "send-transactional-email/index.ts"
-Cohesion: 0.05
-Nodes (52): DraftRow, isAdminOrManagerRequest(), confirmationPage(), layout(), SERVICE_ROLE, SUPABASE_URL, RFC-8058, dispatchOne() (+44 more)
-
-### Community 55 - "getLocalISODate"
+### Community 52 - "notification-categories.ts"
 Cohesion: 0.04
-Nodes (52): 🟠 ALTO — Listagens sem filtro por owner/team — vazamento entre times dependente de RLS frágil, 🟠 ALTO — Sem verificação de opt-out/consentimento antes de enviar WhatsApp/e-mail, 🔵 BAIXO — `createClient` permite atribuir cliente a `user_id` arbitrário, 🔵 BAIXO — `useFollowUpSettings` com `maybeSingle()` sem filtro, 🔴 CRÍTICO — Envio duplicado por falta de claim atômico nas engines de cadência/sequência, Frente 3 — CRM & Dados de Cliente (Módulos 10–15), ⚪ INFO — Migração de RLS com sintaxe inválida (`CREATE POLICY IF NOT EXISTS`), 🟡 MÉDIO — Inconsistência de timezone no agendamento vs. processamento de cadências (+44 more)
+Nodes (59): Fase 1 — Descoberta e mapeamento, Fase 2B — Deno edge shared, Fase 2D / Fase 3 — Playwright runtime smoke (16 rotas), Fase 4 — Correções, Fase 5 — Guard-rails permanentes (novos nesta onda) ⭐, Fase 6 — Relatório, 🌊 Fases executadas, 🏆 Onda L — QA Exaustivo (PhD-Level) (+51 more)
 
-### Community 56 - "ref_node_url"
+### Community 53 - "ref_node_url"
 Cohesion: 0.03
 Nodes (50): ref_node_url, ref_node_util, compareBaseline(), eslintCommandArguments(), flattenReport(), main(), __dirname, generateSql() (+42 more)
 
-### Community 57 - "SequencesPage.tsx"
-Cohesion: 0.07
-Nodes (54): analyzeWinner(), normCdf(), WinnerAnalysis, AIEmailComposerPanel(), Props, EMAIL_VARIABLES, EmailGoal, EmailLanguage (+46 more)
-
-### Community 58 - "toBusinessDate"
+### Community 54 - "Index.tsx"
 Cohesion: 0.05
-Nodes (55): ⚪ INFO — NLQ (texto→dados) está corretamente defendido (padrão a replicar), aggregateOptOutMetrics(), OptOutDailyPoint, OptOutMetrics, OptOutRecordLite, SourceBreakdownItem, NOW, toDayKey() (+47 more)
+Nodes (54): DashboardEmptyState(), DashboardEmptyStateProps, EmptyIllustration(), emptyStates, DashboardHeader(), motivationalTips, MiniSparkline, MiniSparklineProps (+46 more)
 
-### Community 59 - "ArenaCompetitiva.tsx"
+### Community 55 - "raceTrackHelpers.ts"
 Cohesion: 0.06
-Nodes (54): ActivityHeatmap, ArenaCategory, ArenaCategoryHub, ArenaCategoryHubProps, ArenaCategoryId, BadgesGallery, BattleArena, Benchmarking (+46 more)
+Nodes (49): DRSZoneOverlay(), LeaderGapIndicator(), LeaderGapIndicatorProps, LeaderNeonTrail(), LeaderNeonTrailProps, NextCornerHUD(), NextCornerHUDProps, RaceCar (+41 more)
+
+### Community 56 - "supabase/types.ts"
+Cohesion: 0.05
+Nodes (49): hookState, saved, toastError, toastSuccess, AuditFilters, AuditLog, LeadDetailedLog, AchievementRecord (+41 more)
+
+### Community 57 - "IntelligenceCockpit.tsx"
+Cohesion: 0.07
+Nodes (50): 🟡 MÉDIO — Sanitizador de markdown caseiro é contornável (BriefingNarrative), BriefingActionsList(), Props, BriefingCard(), Props, asList(), asRecord(), asStr() (+42 more)
+
+### Community 58 - "seed-fake-data.ts"
+Cohesion: 0.03
+Nodes (57): requireEnv(), requireExplicitWriteConfirmation(), requireSupabaseAdminEnv(), SupabaseAdminEnv, validateSupabaseUrl(), LOSS_REASONS, pick(), rows (+49 more)
+
+### Community 59 - "test_snapshot.py"
+Cohesion: 0.06
+Nodes (27): contextlib, copy, io, os, re, db_stats_case(), function(), migration() (+19 more)
 
 ### Community 60 - "status"
 Cohesion: 0.03
@@ -1577,745 +1592,745 @@ Nodes (65): Etapa 191 — Revogar o grant anônimo — lote de gamificação e c
 Cohesion: 0.03
 Nodes (64): scripts, a11y:report, a11y:sweep, automation:check, automation:doctor, automation:graph, automation:heal, automation:install-hooks (+56 more)
 
-### Community 63 - "@supabase/supabase-js"
-Cohesion: 0.18
-Nodes (27): @supabase/supabase-js, AUTH_DIR, cached, __dirname, HAS_AUTH, SESSION_FILE, SESSION_JSON, skipReason() (+19 more)
+### Community 63 - "ActivityList.tsx"
+Cohesion: 0.07
+Nodes (53): activityIcons, activityLabels, activityTypeOptions, outcomeLabels, outcomeOptions, EditableActivity, ActivityItemRow, ActivityItemRowComponent() (+45 more)
 
-### Community 64 - "useRevenueIntelligenceHub.ts"
-Cohesion: 0.05
-Nodes (49): ConversationHistoryProps, Props, EmbeddedReportPayload, fileToBase64(), VisualSearchButton(), VisualSearchButtonProps, VisualSearchProduct, VisualSearchResponse (+41 more)
+### Community 64 - "getCorsHeaders"
+Cohesion: 0.04
+Nodes (42): Achados confirmados, NÃO corrigidos nesta sessão (motivo explícito), Achados corrigidos nesta sessão (aplicados e verificados ao vivo), Achados da auditoria original CORRIGIDOS/REFINADOS pela validação adversarial, Metodologia, Validação adversarial pós-auditoria e correções — 2026-09-02, json(), CLOSED_STARTS, DISCOVERY_KEYS (+34 more)
 
-### Community 65 - "RaceLeaderboardEntry"
-Cohesion: 0.05
-Nodes (49): DailyBriefingModal(), flameClass(), Props, Props, Props, Props, SlotProps, Props (+41 more)
-
-### Community 66 - "RankingCompetitivo.tsx"
-Cohesion: 0.06
-Nodes (49): Gamificação (5 componentes), canvas-confetti, getRankBadge(), getRankStyle(), getStreakBadgeColor(), getStreakIcon(), roleLabels, StreakRankingComponent() (+41 more)
-
-### Community 67 - "ref_node_path"
+### Community 65 - "ref_node_path"
 Cohesion: 0.08
 Nodes (46): ref_node_path, ref_node_process, reconcileStaticContracts(), classifyDocument(), indexDocuments(), lineAt(), markdownLinks(), resolveLink() (+38 more)
 
-### Community 68 - "AcompanhamentoPedidoDetalhe.tsx"
-Cohesion: 0.08
-Nodes (48): 1.1 Operação de venda (CRM core), 1.2 IA e coaching, 1.3 Gamificação de vendas, 1. Três camadas funcionais, 2. Edge Functions (171 funções Deno; plano Supabase limita a 100 deployadas), 3. Integrações externas, 4. Stack completa, 5. Arquitetura de componentes (src/) (+40 more)
-
-### Community 69 - "Onda 2 — Fluxos principais quebrados"
+### Community 66 - "Onda 2 — Fluxos principais quebrados"
 Cohesion: 0.03
 Nodes (60): Etapa 041 — Corrigir o custo de comissão do painel de ROI, Etapa 042 — Unificar "a comissão desta venda" numa única fonte, Etapa 043 — Separar "Arquivado" de "Ganho", Etapa 044 — Mapear "cotação expirada" para um status que não seja ganho, Etapa 045 — Fazer os outros três pipelines moverem card, Etapa 046 — Aplicar as regras de aprovação que a tela promete, Etapa 047 — Só marcar "aprovado" depois de a mudança ser aplicada, Etapa 048 — Decidir e resolver a entrada de cotações do parceiro (+52 more)
 
-### Community 70 - "AdminV4CallbacksPage.tsx"
-Cohesion: 0.08
-Nodes (50): @radix-ui/react-dialog, @xyflow/react, PersonalAssistantDrawer(), formatRunDuration(), Props, ScheduledReportRunsDrawer(), src_components_ui_sheet_sheet, SheetContent (+42 more)
-
-### Community 71 - "atRiskFixtures.ts"
+### Community 67 - "useBICloser.ts"
 Cohesion: 0.06
-Nodes (53): CHURN_GROUP, CHURN_LSE, COMPETITIVE_GROUP, DEAL_HISTORY_FIXTURES, DEAL_HISTORY_LSE_FIXTURES, DealHistoryFamily, DealHistoryLSEFamily, DOMINANT_PATTERNS_BY_FAMILY (+45 more)
+Nodes (46): BIFilterBarProps, isLostSaleStatus(), SALE_STATUS, BICloserData, useBICloser(), UseBICloserOptions, transformChartData(), transformClientInsights() (+38 more)
 
-### Community 72 - "TaskQueue.tsx"
+### Community 68 - "@supabase/supabase-js"
+Cohesion: 0.20
+Nodes (26): @supabase/supabase-js, AUTH_DIR, cached, __dirname, SESSION_FILE, SESSION_JSON, skipReason(), STORAGE_KEY (+18 more)
+
+### Community 69 - "race/index.ts"
 Cohesion: 0.07
-Nodes (43): @dnd-kit/core, @dnd-kit/sortable, ActivityGoalForm(), CalendarTask(), CalendarTaskProps, PRIORITY_STYLES, TASK_ICONS, WEEKDAYS (+35 more)
+Nodes (43): FloatingEventFeed(), GhostCar(), Props, GhostStatusBadge(), Props, fireConfetti(), LeaderTakeoverCelebration(), Props (+35 more)
 
-### Community 73 - "SalesAssistantChat.tsx"
+### Community 70 - "VendedorDashboard.tsx"
 Cohesion: 0.06
-Nodes (43): 3. IA / Coaching, 9.3 IA & Automação, 9.4 Operação & CRM, 9.5 Notificações & Engajamento, 9.6 Segurança, 9.7 Telemetria, 🧩 Funcionalidades com Backend/Hook prontos mas SEM UI Completa, 📊 Resumo Quantitativo (+35 more)
+Nodes (45): J3 — Premiações e bônus (dinheiro), A-07 · [Crítica] Erro de digitação ao cadastrar premiação paga o prêmio a todo vendedor, A-82 · [Média] `/vendedor/:id` não restringe papel e monta o filtro por concatenação, Etapa 009 — Trocar o fallback permissivo de `evaluateBonus` por recusa explícita, Etapa 115 — Restringir o painel de vendedor por papel e validar o identificador, Onda 1 — Segurança e risco de perda de dado, CoachingProgressCard(), ClientContactAlertsWidget (+37 more)
 
-### Community 74 - "lib.mjs"
+### Community 71 - "RaceArenaHub.tsx"
+Cohesion: 0.07
+Nodes (42): 9.1 Query de TTI (consumir após dias de telemetria), 9. Hardening Round 3 — observabilidade, performance e DX, Realtime não atualiza o leaderboard, Props, DailyBriefingModal(), flameClass(), Props, Props (+34 more)
+
+### Community 72 - "ArenaCompetitiva.tsx"
+Cohesion: 0.09
+Nodes (46): ActivityHeatmap, ArenaCategory, ArenaCategoryHub, ArenaCategoryHubProps, ArenaCategoryId, BadgesGallery, BattleArena, Benchmarking (+38 more)
+
+### Community 73 - "ScenarioForecastChart.tsx"
+Cohesion: 0.06
+Nodes (48): Props, ResidualsSparkline(), Row(), ScenarioForecastAuditPanel, ActiveFormulaBadge(), ActiveFormulaBadgeProps, CustomTooltip(), CustomTooltipProps (+40 more)
+
+### Community 74 - "AcompanhamentoPedidoDetalhe.tsx"
+Cohesion: 0.10
+Nodes (43): 1.1 Operação de venda (CRM core), OrderTrackingCard(), Props, CANCELLED_STEP, formatBRL(), formatDateTime(), OrderStatus, STATUS_STEPS (+35 more)
+
+### Community 75 - "lib.mjs"
 Cohesion: 0.12
 Nodes (49): ref_node_events, ref_node_string_decoder, acquire(), activeChildren, checked(), commitWithHooks(), dependencyFingerprint(), digest() (+41 more)
 
-### Community 75 - "bi-helpers.ts"
+### Community 76 - "BIGestor.tsx"
+Cohesion: 0.07
+Nodes (41): RFC-4180, BIGestorTeamSection, ABC_COLORS, AbcPieChart(), AbcPieChartProps, RevenueAreaChartProps, SourceBarChartProps, ChurnOverdueRankingCard (+33 more)
+
+### Community 77 - "📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)"
+Cohesion: 0.04
+Nodes (52): 10. Tarefas, 11. Metas & Objetivos, 14. SDR Dashboard, 15. Closer Dashboard, 18. Playbooks, 19. Portfólio de Clientes, 20. ICP (Ideal Customer Profile), 21.1 Fornecedores (+44 more)
+
+### Community 78 - "RaceLeaderboardEntry"
+Cohesion: 0.07
+Nodes (40): 12.3 Código exportado e nunca usado (item 5), Props, Props, SlotProps, Props, Props, Props, RaceArenaProps (+32 more)
+
+### Community 79 - "CircuitBreakerDashboard.tsx"
 Cohesion: 0.06
-Nodes (33): Props, ConversationAnalysis, ConvNextStep, ConvObjection, ConvSentiment, ConvSource, sentimentDistribution(), sentimentMeta (+25 more)
+Nodes (42): 08 · ADMIN / SEGURANÇA / AUTENTICAÇÃO / CONFIGURAÇÕES / TELEMETRIA, 0. Números crus (medidos), 2. RISCOS DE SEGURANÇA (ordenados por gravidade), 3. Dado fictício / sintético em campos de auditoria, 4. Contagem por classificação, 5. O que NÃO foi possível verificar, 🟠 ALTO 3 — Policies `anon-only` que impedem gravação por usuário logado (telemetria e rate-limit silenciosamente mortos), 🟠 ALTO 4 — Triggers de auditoria quebrados (+34 more)
 
-### Community 76 - "AtRiskSettingsPopover.tsx"
-Cohesion: 0.07
-Nodes (44): Critério canônico de "deal em risco", Definição canônica, Lentes por superfície (não são a definição canônica), Etapa 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting`, AtRiskDealsFromPatterns(), scoreLabel(), tone(), AtRiskSettingsPopover() (+36 more)
-
-### Community 77 - "CarCustomizer.tsx"
-Cohesion: 0.07
-Nodes (42): 1. Sumário executivo, 2. Cobertura por arquivo (estimada), 3. Verificações de integridade DB, 4. Bugs / observações encontrados — todos resolvidos ✅, 6. Status final, 7. Hardening Round 2 — 2026-04-19, 8. Query de auditoria de eventos órfãos (rodar semanalmente), B1 — Médio · `race_scoring_rules` vazia para temporada ativa ✅ RESOLVIDO (+34 more)
-
-### Community 78 - "deal-intelligence/BuyingCommitteeCard.tsx"
-Cohesion: 0.10
-Nodes (40): BuyingCommitteeCard(), Props, ROLE_ORDER, CommitteeCoverageSparkline(), Props, CommitteeExtractionBadge(), Props, RoleCoverageMatrix() (+32 more)
-
-### Community 79 - "RiskDebugPanel.tsx"
-Cohesion: 0.09
-Nodes (41): BadgeProps, CompRow, Bar(), ContribRow, highlightNumbers(), reasonFromLegacy(), renderCompetitorReason(), resolveReasons() (+33 more)
-
-### Community 80 - "snapshot.py"
-Cohesion: 0.12
-Nodes (46): Connection, decimal, psycopg, psycopg_rows, excluded_sql(), get_columns(), get_constraints(), get_cron() (+38 more)
-
-### Community 81 - "SemanticSearchDialog.tsx"
-Cohesion: 0.10
-Nodes (38): ClientSelector(), ClientSelectorProps, addRecent(), CommandItemData, CommandPalette(), getRecent(), GlobalSearch, SearchResult (+30 more)
-
-### Community 82 - "Agenda.tsx"
-Cohesion: 0.07
-Nodes (40): 5. Tabela de estado por funcionalidade, 🟢 Helpers/Utils sem consumidor, PlaybookExecutionDialog(), AgendaEvent, AgendaEventPriority, AgendaEventStatus, AgendaEventType, CreateAgendaEventInput (+32 more)
-
-### Community 83 - "WebhookHealthPanel.tsx"
+### Community 80 - "CoachingSessionPlanner.tsx"
 Cohesion: 0.08
-Nodes (40): Props, HealthTooltip(), loadThreshold(), rateClasses(), reasonColor(), ReasonTooltip(), WebhookHealthPanel(), WINDOW_LABEL (+32 more)
+Nodes (43): SessionRow(), Props, CalendarIcon, formatRelativeDate(), formatSessionDate(), SKILL_LABELS, STATUS_BADGE, STATUS_LABELS (+35 more)
 
-### Community 84 - "navigationGuard.ts"
-Cohesion: 0.10
-Nodes (38): 19. Validação — **5,5/10** (peso ×2), useFormGuard(), askConfirmation(), ConfirmHandler, DirtySource, dirtySources, firstDirtyMessage(), handleDocumentClick() (+30 more)
+### Community 81 - "RaceLeaderboardSidebar.tsx"
+Cohesion: 0.07
+Nodes (37): ComboStreakBadge(), getTier(), Props, Tier, fmt(), NextGoalPanel(), PitStopPanel(), Props (+29 more)
 
-### Community 85 - "@playwright/test"
+### Community 82 - "QuotaPredictorAdvancedPanel.tsx"
+Cohesion: 0.11
+Nodes (37): QuotaActionsPanel(), QuotaAttainmentAlertsPanel(), QuotaAttainmentPredictor(), Props, QuotaAttainmentSummaryCards(), QuotaForecastSummary(), ACTION_LABEL, fmtBRL() (+29 more)
+
+### Community 83 - "deal-intelligence/BuyingCommitteeCard.tsx"
+Cohesion: 0.11
+Nodes (39): BuyingCommitteeCard(), Props, ROLE_ORDER, CommitteeCoverageSparkline(), Props, CommitteeExtractionBadge(), Props, RoleCoverageMatrix() (+31 more)
+
+### Community 84 - "computeDealRisk"
+Cohesion: 0.07
+Nodes (38): LOSS_PATTERNS_REALISTIC, NOW, SCENARIOS, COMPETITOR_HEAVY_PATTERNS, cols, FORMAT, header, ONLY (+30 more)
+
+### Community 85 - ".build"
+Cohesion: 0.06
+Nodes (37): 1. Diagnóstico — o que está quebrado hoje, 2. Plano em 100 etapas, 3. Ordem recomendada de execução, Fase 0 — Estancar o sangramento (etapas 1–12) · P0, Fase 1 — Cadeia de suprimento e permissões (etapas 13–27) · P1, Fase 2 — Gates e ruleset (etapas 28–40), Fase 3 — Agendados confiáveis e alertas reais (etapas 41–52), Fase 4 — Velocidade e custo (etapas 53–65) (+29 more)
+
+### Community 86 - "RevenueIntelligenceHub.tsx"
+Cohesion: 0.08
+Nodes (41): FLAG_LABELS, InsightCard(), InsightCardProps, PipelineStrategicReviewProps, SummaryStat(), SummaryStatProps, Props, Props (+33 more)
+
+### Community 87 - "snapshot.py"
 Cohesion: 0.13
-Nodes (18): @playwright/test, page(), MOCK_SESSION, expect(), tests_e2e_helpers_page_helpers_has_auth, it, loadPage(), restoreSession() (+10 more)
+Nodes (42): Connection, decimal, psycopg, psycopg_rows, excluded_sql(), get_columns(), get_constraints(), get_cron() (+34 more)
 
-### Community 86 - "useWinLossAggregations.ts"
-Cohesion: 0.08
-Nodes (35): react-window, Props, cellShade(), ICPCorrelationMatrix, Props, Props, Props, Props (+27 more)
+### Community 88 - "pages/SDRDashboard.tsx"
+Cohesion: 0.09
+Nodes (33): exceljs, papaparse, react-intersection-observer, DefaultFallback(), LazySection(), LazySectionProps, CurrentCallCard(), Props (+25 more)
 
-### Community 87 - "requireSupabaseAdminEnv"
-Cohesion: 0.05
-Nodes (37): A.2.1 Itens próprios do handoff (fora da numeração P001–P100), A.2 `docs/auditoria/AUDITORIA_EXAUSTIVA_2026-08-30_ATUALIZACAO_PLANO_100_ETAPAS.md` (Fases 1–10) ≡ `docs/handoff/HANDOFF_CLINE_EXECUCAO_PLANO_100_ETAPAS_2026-08-30.md` §13 (P001–P100), requireEnv(), requireExplicitWriteConfirmation(), requireSupabaseAdminEnv(), SupabaseAdminEnv, validateSupabaseUrl(), ACTIVITY_TYPES (+29 more)
+### Community 89 - "main"
+Cohesion: 0.11
+Nodes (42): Any, Step 2 - Detect files, `sms_verification_codes`, Exception, api(), api_section(), approx(), banner() (+34 more)
 
-### Community 88 - "ref_https"
-Cohesion: 0.05
-Nodes (20): ref_https, SERVICE_KEY, KEYWORDS, OUTCOMES, SEVERITIES, STAGE_RE, TYPES, WIN_KEYWORDS (+12 more)
-
-### Community 89 - "graphify-local.mjs"
+### Community 90 - "graphify-local.mjs"
 Cohesion: 0.14
 Nodes (38): ref_node_crypto, acquire(), acquireGlobal(), active, adoptInitial(), assertResources(), atomic(), canonical() (+30 more)
-
-### Community 90 - "MeuAssistente.tsx"
-Cohesion: 0.10
-Nodes (33): react-markdown, AssistantTask, AssistantTodayTasks(), Props, BriefingHistoryTimeline(), escapeRegex(), Item(), labelForDate() (+25 more)
 
 ### Community 91 - "ABCAnalysis.tsx"
 Cohesion: 0.07
 Nodes (33): ABCActionableAutomations(), ABCActionableAutomationsProps, AbcAutomation, ABCItem, brl(), buildAbcAutomations(), CONCENTRATION_RISK_PCT, ICON (+25 more)
 
-### Community 92 - "RaceArenaHub.tsx"
-Cohesion: 0.07
-Nodes (30): ChampionsHistoryPanel(), EmptyState(), Props, SkeletonList(), Props, NextRaceActionCard(), Props, RacePanelErrorBoundary (+22 more)
-
-### Community 93 - "gen-migration-probes.mjs"
+### Community 92 - "gen-migration-probes.mjs"
 Cohesion: 0.08
 Nodes (38): #252 — bump React 18.3.1→19.3.1, #254 — bump TS 7 + vite-plugin-pwa 2 (major), #280 — fix: gen-migration-probes (DROP, schemaname, cmd), #281 — fix: 4 bugs em scripts de auditoria (DRAFT), #298 — bump eslint-plugin-react-refresh 0.4→0.5, #345 — bump React 19, #347 — dependabot build-tools (5 deps), Decisões Humanas Pendentes (+30 more)
 
-### Community 94 - "main"
-Cohesion: 0.11
-Nodes (41): Any, `sms_verification_codes`, Exception, api(), api_section(), approx(), banner(), callers_status_table() (+33 more)
-
-### Community 95 - "Relatório de Análise Técnica de Back-End — Promo Champions v2"
+### Community 93 - "Relatório de Análise Técnica de Back-End — Promo Champions v2"
 Cohesion: 0.05
 Nodes (41): 1.1 Credenciais Reais no Repositório (🔴 CRÍTICO), 1.2 SSRF sem Autenticação em `simulate-load` (🔴 CRÍTICO), 1.3 Edge Functions Críticas sem Autenticação (🔴 CRÍTICO), 1.4 `external-db-bridge`: Proxy de Banco Arbitrário (🔴 CRÍTICO), 1.5 Políticas RLS Permissivas em Tabelas Críticas (🔴 CRÍTICO), 1.6 CORS Wildcard (`*`) em Todas as Edge Functions (🟠 ALTA), 1.7 `ai-copilot`: Acesso Anônimo com Fuga de Dados CRM (🟠 ALTA), 1.8 Uso Excessivo de `SUPABASE_SERVICE_ROLE_KEY` (🟠 ALTA) (+33 more)
 
-### Community 96 - "pages/SDRDashboard.tsx"
-Cohesion: 0.08
-Nodes (30): jspdf, jspdf-autotable, react-intersection-observer, DefaultFallback(), LazySection(), LazySectionProps, CardVariant, CompactStatCard (+22 more)
-
-### Community 97 - "AIEmailComposerDialog.tsx"
+### Community 94 - "send-transactional-email/index.ts"
 Cohesion: 0.09
-Nodes (36): Props, Props, composeFormSchema, ComposeFormValues, ComposeGoal, ComposeLanguage, ComposeLength, ComposeTone (+28 more)
+Nodes (31): confirmationPage(), layout(), SERVICE_ROLE, SUPABASE_URL, RFC-8058, Payload, SendQuoteRequest, EmailPurpose (+23 more)
 
-### Community 98 - "SoundSettingsTabs.tsx"
-Cohesion: 0.09
-Nodes (33): CelebrationTab(), CelebrationTabProps, ConfettiFunction, SoundOption, SoundRadioGroup(), SoundRadioGroupProps, SystemSoundRow, SystemSoundRowProps (+25 more)
-
-### Community 99 - "WinLossIntelligence.tsx"
-Cohesion: 0.09
-Nodes (30): DashboardLayoutEditor(), Props, SortableRow(), ExportPdfButton(), Props, WinLossAnomalyBanner(), DrawerFilter, Props (+22 more)
-
-### Community 100 - "test_snapshot.py"
-Cohesion: 0.07
-Nodes (34): argparse, contextlib, copy, datetime, importlib_util, io, json, os (+26 more)
-
-### Community 101 - "SmokeTestChecklist.tsx"
-Cohesion: 0.11
-Nodes (31): isHistoryOpenPersisted(), readSet(), setHistoryOpenPersisted(), writeSet(), IntegrationHealthCard(), KIND_ICON, KIND_LABEL, truncate() (+23 more)
-
-### Community 102 - "Changelog"
+### Community 95 - "Changelog"
 Cohesion: 0.05
 Nodes (39): [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07), [1.2.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.1.0...promo-champions-v2-v1.2.0) (2026-11-12), [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12), [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14), [1.5.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.4.0...promo-champions-v2-v1.5.0) (2026-11-18), [1.6.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.5.0...promo-champions-v2-v1.6.0) (2026-11-18), [1.6.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.0...promo-champions-v2-v1.6.1) (2026-11-21), [1.6.2](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.6.1...promo-champions-v2-v1.6.2) (2026-11-21) (+31 more)
 
-### Community 103 - "webhook-auth.ts"
-Cohesion: 0.12
-Nodes (38): `20260727000007_twilio_webhook_security.sql` — SUPERADA, 16. Segurança — **4,5/10** (peso ×3), asArrayBuffer(), authenticateInboundEmailWebhook(), authenticateMultichannelStatusWebhook(), compareAscii(), configuredSecret(), derEcdsaSignatureToP1363() (+30 more)
-
-### Community 104 - "Onda 5 — Robustez: erros, estados e concorrência"
+### Community 96 - "Onda 5 — Robustez: erros, estados e concorrência"
 Cohesion: 0.05
 Nodes (40): Etapa 121 — Criar o tratamento padrão de erro de leitura, Etapa 122 — Mostrar erro em vez de "nenhuma comissão", Etapa 123 — Mostrar erro em vez de "nenhum registro" na trilha de auditoria, Etapa 124 — Mostrar erro em vez de "nenhuma premiação para auditar", Etapa 125 — Mostrar erro nas telas de deduplicação e de chaves de funcionalidade, Etapa 126 — Mostrar erro na tela de supressão de e-mails, Etapa 127 — Varrer o repositório por erro de leitura engolido, Etapa 128 — Impedir que uma seção inválida de painel trave a página inicial (+32 more)
 
-### Community 105 - "detect-client-churn-alerts/index.ts"
-Cohesion: 0.06
-Nodes (33): Fase 1 — Descoberta e mapeamento, Fase 2B — Deno edge shared, Fase 2D / Fase 3 — Playwright runtime smoke (16 rotas), Fase 4 — Correções, Fase 5 — Guard-rails permanentes (novos nesta onda) ⭐, Fase 6 — Relatório, 🌊 Fases executadas, 🏆 Onda L — QA Exaustivo (PhD-Level) (+25 more)
-
-### Community 106 - "automation.mjs"
+### Community 97 - "automation.mjs"
 Cohesion: 0.16
 Nodes (38): adapter(), appendExclude(), APPROVED, atomic(), digest(), doctor(), EVENTS, excludeFlags() (+30 more)
 
-### Community 107 - "run-retry-tests/retry_test.ts"
+### Community 98 - "EngagementLeaderboardWidget.tsx"
+Cohesion: 0.09
+Nodes (31): BenchmarkPanel, formatValue(), PERIOD_LABELS, CATEGORY_CONFIG, ClientHealth, ClientHealthPanel, computeHealthScore(), useClientHealthScores() (+23 more)
+
+### Community 99 - "TemplateManager.tsx"
+Cohesion: 0.11
+Nodes (32): AIEmailComposerButton(), ChannelCredentialsManager(), CHANNEL_CONFIG, MultichannelDashboard(), CHANNEL_LABEL, PROVIDER_FIELDS, PROVIDER_LABEL, Props (+24 more)
+
+### Community 100 - "email-bulk-retry/index.ts"
+Cohesion: 0.09
+Nodes (25): DraftRow, isAdminOrManagerRequest(), dispatchOne(), MultichannelResult, Scheduled, isAdminOrManagerRequest(), Payload, Settings (+17 more)
+
+### Community 101 - "run-retry-tests/retry_test.ts"
 Cohesion: 0.09
 Nodes (29): SUB, captureAndRun(), describeError(), backoffDelay(), DeadLetterEntry, DeliveryRow, describeError(), DispatchDeps (+21 more)
 
-### Community 108 - "20251228000001_add_soft_delete.sql"
+### Community 102 - "20251228000001_add_soft_delete.sql"
 Cohesion: 0.08
 Nodes (36): audit_soft_delete_activities, audit_soft_delete_clients, audit_soft_delete_deals, audit_soft_delete_products, audit_soft_delete_suppliers, audit_soft_delete_teams, hard_delete_record(), idx_activities_active (+28 more)
 
-### Community 109 - "RevenueForecastHub.tsx"
-Cohesion: 0.11
-Nodes (31): 5. Duplicatas e sobreposições (qual está viva), CategoryForecastCard(), CategoryItem(), CategoryItemProps, Props, confidenceLabel(), deltaPct(), ForecastHorizon (+23 more)
+### Community 103 - ".metadata"
+Cohesion: 0.05
+Nodes (37): `account_activities`, `asset_usage_logs`, `audit_logs`, `call_recordings`, `channel_interactions`, `client_interactions`, `competitive_seasons`, `csat_ces_surveys` (+29 more)
 
-### Community 110 - "TaskCatalogManager.tsx"
-Cohesion: 0.13
-Nodes (28): BulkActionBar(), Props, PendingApprovalsQueue(), SquadManager(), TaskAssignmentDialog(), emptyForm, DIFFICULTY_LABELS, DIFFICULTY_TONES (+20 more)
+### Community 104 - "HAS_AUTH"
+Cohesion: 0.18
+Nodes (13): @playwright/test, page(), MOCK_SESSION, HAS_AUTH, expect(), tests_e2e_helpers_page_helpers_has_auth, it, loadPage() (+5 more)
 
-### Community 111 - "QuestionQualityCard.tsx"
-Cohesion: 0.12
-Nodes (32): COLORS, Props, QuestionDepthChart(), ColProps, Column(), Props, CallQuestion, categoryHsl() (+24 more)
-
-### Community 112 - "TrackScenery.tsx"
-Cohesion: 0.10
-Nodes (30): RaceTrack(), RaceTrackProps, SCENE_VIEWBOX, TrackAsphalt(), BARRIER_POSITIONS, TrackBarriers(), TyreStack(), TrackBlimp() (+22 more)
-
-### Community 113 - "BusinessIntelligencePage.tsx"
-Cohesion: 0.09
-Nodes (27): 3.1 Arrays / objetos hardcoded alimentando UI, BIProductCard(), BIProductCardProps, ClientAffinityProducts(), ClientAffinityProductsProps, ClientOverview360(), Benchmark, ClientVsIndustryComparison() (+19 more)
-
-### Community 114 - "Status de execução — Plano de 100 etapas (v2, reescrita pós-revisão)"
+### Community 105 - "Status de execução — Plano de 100 etapas (v2, reescrita pós-revisão)"
 Cohesion: 0.06
 Nodes (36): 0. Linha do tempo e estado dos PRs (dependências explícitas), 10. Apêndice de evidências reproduzíveis (sanitizado), 11. Log da sessão (2026-08-30), 1. Resumo executivo, 2. Condição de parada acionada — identidade de ambiente (§17 do handoff), 3.1 Triagem dos 8 achados gitleaks no HEAD (`main` = `ce5dd16`), 3.2 Triagem das 32 ocorrências do histórico da `main` (baseline fixado em `ce5dd16`), 3. Revalidação dos achados P0 (somente leitura) (+28 more)
 
-### Community 115 - "RELATORIO_CI.md — Promo Champions V2.1"
+### Community 106 - "Onda 1 — Segurança e risco de perda de dado"
 Cohesion: 0.05
-Nodes (37): 10.1 Root cause descoberta e corrigida nesta sessão, 10.2 Baseline fresco após correção — Sessão 3, 10.3 Tabela completa — Baseline × Final para todos os workflows da lista `is:failure`, 10. Sessão 3 (2026-10-22) — fix package-lock.json + baseline completo, 11.1 Correção aplicada, 11.2 Anti-regressão — baseline × após commits (sessão 5), 11.3 Estado dos checks no PR #319 (commit `8079131`) — 2026-10-22T19:31Z, 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`) (+29 more)
+Nodes (38): Etapa 002 — Medir se a cadeia de ataque do `update_stage` está explorável hoje, Etapa 003 — Escopar o `update_stage` do `execute-workflow` ao dono da venda, Etapa 004 — Exigir aprovador humano no environment `Production`, Etapa 006 — Fazer `workflow-executor` respeitar o resultado da autenticação, Etapa 008 — Validar a condição da premiação no servidor, Etapa 010 — Desbloquear a criação de migrations (versões datadas no futuro), Etapa 011 — Ligar o ranking mensal à avaliação de premiação, Etapa 012 — Escopar `analyze-call` ao dono da gravação (+30 more)
 
-### Community 116 - "ScenarioForecastChart.tsx"
-Cohesion: 0.11
-Nodes (30): Client, MergeConflictsResolver(), MergeConflictsResolverProps, AssignClientDialog(), AssignClientDialogProps, AutoRouteDialog(), AutoRouteDialogProps, RoutingStrategy (+22 more)
+### Community 107 - "lib/salesReportPdf.ts"
+Cohesion: 0.09
+Nodes (30): html2canvas, jspdf, jspdf-autotable, QuoteItem, DossierClientData, DossierComparisonItem, DossierExpertItem, DossierSeasonalityData (+22 more)
 
-### Community 117 - "Frente 4 — Inteligência & Análise · BI / Forecast / IA / NLQ / Export (Módulos 16–21)"
-Cohesion: 0.06
-Nodes (35): 1. Multi-tenancy, 2. Campanhas e Status, 3. Tarefas de Cadencia (claim_pending_cadence_tasks), 4. Autenticacao e Acesso, 5. Exportacao de Dados, 6. Dependencias e Stack, 7. CI/CD, 8. Seguranca (+27 more)
+### Community 108 - "env.ts"
+Cohesion: 0.08
+Nodes (28): Props, EmbeddedReportPayload, fileToBase64(), VisualSearchButton(), VisualSearchButtonProps, VisualSearchProduct, VisualSearchResponse, CIData (+20 more)
 
-### Community 118 - "What You Must Do When Invoked"
-Cohesion: 0.05
-Nodes (34): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal, For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration (+26 more)
-
-### Community 119 - "RevenueForecastCard.tsx"
-Cohesion: 0.12
-Nodes (29): @radix-ui/react-toggle-group, ChartTooltip(), QuoteCadenceConversionChart(), Range, SalesReportHeader(), AIForecastPanel(), categoryColor, categoryLabel (+21 more)
-
-### Community 120 - "Onda 1 — Segurança e risco de perda de dado"
-Cohesion: 0.06
-Nodes (36): Etapa 001 — Fechar o cadastro público do Supabase Auth, Etapa 002 — Medir se a cadeia de ataque do `update_stage` está explorável hoje, Etapa 003 — Escopar o `update_stage` do `execute-workflow` ao dono da venda, Etapa 004 — Exigir aprovador humano no environment `Production`, Etapa 006 — Fazer `workflow-executor` respeitar o resultado da autenticação, Etapa 008 — Validar a condição da premiação no servidor, Etapa 010 — Desbloquear a criação de migrations (versões datadas no futuro), Etapa 012 — Escopar `analyze-call` ao dono da gravação (+28 more)
-
-### Community 121 - "ActivityList.tsx"
-Cohesion: 0.13
-Nodes (29): activityIcons, activityLabels, activityTypeOptions, outcomeLabels, outcomeOptions, EditableActivity, ActivityItemRow, ActivityItemRowProps (+21 more)
-
-### Community 122 - "QuoteCadencesPage.tsx"
-Cohesion: 0.12
-Nodes (27): Props, QuoteCadenceBulkBar(), Props, QuoteCadenceEmptyState(), emptyQuoteCadenceFilters, QuoteCadenceFilterValues, QuoteCadenceMetrics(), SkeletonCard() (+19 more)
-
-### Community 123 - "pricing/PricingIntelligenceHub.tsx"
-Cohesion: 0.12
-Nodes (27): CompetitorRadarCard(), CompetitorRadarCardProps, DiscountOptimizer(), MetricBlock(), MetricBlockProps, Props, MarginAlertsCard(), fmtCurrency() (+19 more)
-
-### Community 124 - "ConversationalIntelligence.tsx"
+### Community 109 - "history_catalog_test.ts"
 Cohesion: 0.10
-Nodes (27): A.13 `docs/auditoria_enterprise_v5.md`, CallRecordingUploader(), CallStatsPanel(), Props, DiarizationTurn, formatSeconds(), Props, DiarizeButton() (+19 more)
+Nodes (32): DEAL_HISTORY_FIXTURES, DealHistoryFamily, ScenarioGroup, supabase_functions_detect_winloss_at_risk_fixtures_deal_history_fixtures, supabase_functions_detect_winloss_at_risk_fixtures_dealhistoryfamily, supabase_functions_detect_winloss_at_risk_fixtures_scenariogroup, buildCaseReport(), CaseReport (+24 more)
 
-### Community 125 - "useInactiveDeals.ts"
+### Community 110 - "webhook-auth.ts"
+Cohesion: 0.13
+Nodes (36): asArrayBuffer(), authenticateInboundEmailWebhook(), authenticateMultichannelStatusWebhook(), compareAscii(), configuredSecret(), derEcdsaSignatureToP1363(), derInteger(), derLength() (+28 more)
+
+### Community 111 - "RELATORIO_CI.md — Promo Champions V2.1"
+Cohesion: 0.05
+Nodes (36): 10.1 Root cause descoberta e corrigida nesta sessão, 10.2 Baseline fresco após correção — Sessão 3, 10.3 Tabela completa — Baseline × Final para todos os workflows da lista `is:failure`, 10. Sessão 3 (2026-10-22) — fix package-lock.json + baseline completo, 12.5 Prova pós-merge PR #319 — SHA `18aadd0f` (2026-10-22T21:xxZ), 16.1 Merge do PR #322, 16.2 Apply Migration run #25, §16 — Sessão final: Apply Migration run #25 `conclusion=success` (+28 more)
+
+### Community 112 - "AtRiskDealsFromPatterns.tsx"
+Cohesion: 0.10
+Nodes (29): Critério canônico de "deal em risco", Definição canônica, Lentes por superfície (não são a definição canônica), AtRiskDealsFromPatterns(), scoreLabel(), tone(), useAtRiskFromPatterns(), AT_RISK_DEFAULTS (+21 more)
+
+### Community 113 - "useSalespersonXP.ts"
+Cohesion: 0.09
+Nodes (29): canvas-confetti, CelebrationOverlayProvider(), LevelUpData, _STREAK_MILESTONE_INFO, StreakData, VictoryData, CelebrationTestButtons(), LevelUpOverlay() (+21 more)
+
+### Community 114 - "Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito)"
+Cohesion: 0.06
+Nodes (31): 14. Performance — **5,5/10** (peso ×1), 10. A11y / UX / Design System, 11. Outros (débito técnico, docs, infra), 5. Gamificação, 6. Win-Loss, 7. Customer Success, 8. Integrações / Plataforma, Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito) (+23 more)
+
+### Community 115 - "Frente 4 — Inteligência & Análise · BI / Forecast / IA / NLQ / Export (Módulos 16–21)"
+Cohesion: 0.07
+Nodes (34): 🟠 ALTO — Export Excel (xlsx) sem neutralização de fórmula, 🟠 ALTO — `export-winloss-pdf` sem verificação de autorização, 🟠 ALTO — Injeção de fórmula CSV no export de Atividades (SDR), 🟠 ALTO — Injeção de mensagem `system` via `conversationHistory` no chat de vendas, 🟠 ALTO — "Neural Insights"/Matrix Shifts fabricados exibidos como análise de IA, 🟠 ALTO — Orquestrador executa ações privilegiadas a partir da saída da IA sem validação, 🟠 ALTO — Prompt injection de 2ª ordem (dados de BD no system prompt), 🔵 BAIXO — Escritas dirigidas por transcrição não confiável sem timeout (analyze-call/conversation) (+26 more)
+
+### Community 116 - "useInactiveDeals.ts"
 Cohesion: 0.08
 Nodes (28): 2.1 Critério usado — e sua taxa de falso-positivo medida, 2.2 ÓRFÃOS CONFIRMADOS — 49 de 857 símbolos (5,7%), 2.4 Resumo, 2. HOOKS ÓRFÃOS, InactivityPanel, SeverityConfig, emptySummary, HookResult (+20 more)
 
-### Community 126 - "devDependencies"
+### Community 117 - "devDependencies"
 Cohesion: 0.06
 Nodes (35): devDependencies, autoprefixer, @axe-core/playwright, @commitlint/cli, @commitlint/config-conventional, dependency-cruiser, eslint, eslint-plugin-react-hooks (+27 more)
 
-### Community 127 - "ref_jsr_std"
+### Community 118 - "PurchaseIntelligenceHub.tsx"
+Cohesion: 0.13
+Nodes (27): Alert, IntelligenceAlerts, IntelligenceAlertsProps, EmptyStateGuide(), buildMatrix(), MatrixCell, Props, PurchaseHeatmapGrid() (+19 more)
+
+### Community 119 - "03 — Achados, agrupados por causa raiz"
 Cohesion: 0.06
-Nodes (17): ref_jsr_std, FnScan, loadAllowlist(), main(), scanFunctions(), FnScan, loadAllowlist(), main() (+9 more)
+Nodes (33): 03 — Achados, agrupados por causa raiz, A-06 · [Alta] Consulta que falha vira lista vazia em telas de dinheiro e de auditoria, A-09 · [Alta] Excluir flag de produção e cancelar prêmio em um clique, A-131 · [Alta] "Quando a venda foi ganha" tem três definições e dois fusos horários, A-132 · [Média] Vendedor sem meta lançada aparece com zero numa tela e com a meta antiga em outra, A-133 · [Média] O mesmo vendedor tem dois níveis diferentes no mesmo card, A-147 · [Alta] Comissão não tem nenhum teste, A-148 · [Média] A prova de isolamento por papel só existe em testes que não rodam (+25 more)
 
-### Community 128 - "README.md"
-Cohesion: 0.06
-Nodes (24): 🏗 Component Guidelines — Promo Champions v2, displayName, forwardRef, Imports, Naming, TODO / FIXME Conventions, useState Lazy Initialization, Dicionário de Dados — Promo Champions V2.1 (+16 more)
-
-### Community 129 - "SalesReportPage.tsx"
-Cohesion: 0.11
-Nodes (27): RFC-4180, KpiCard(), KpiCardProps, Props, SalesReportKpis(), CustomTooltip(), SalesRevenueChart(), COLORS (+19 more)
-
-### Community 130 - "errorTracking.ts"
-Cohesion: 0.08
-Nodes (21): 🟡 MÉDIO — `ErrorBoundary` único envolve toda a árvore de rotas, 9. Testes e observabilidade — **revisado**, A-149 · [Alta] Erro de JavaScript em produção não chega a ninguém, e a tela diz o contrário, A-150 · [Média] O histórico de execução de rotina não diminui, e o job de limpeza passa, A-151 · [Média] Um quarto do esforço de teste de backend protege as funções erradas, CR-46 — O sistema avisa que notificou, e não notificou, Etapa 151 — Ligar o destino do registro de erro do front, @sentry/react (+13 more)
-
-### Community 131 - "03 — Achados, agrupados por causa raiz"
-Cohesion: 0.06
-Nodes (33): 03 — Achados, agrupados por causa raiz, A-06 · [Alta] Consulta que falha vira lista vazia em telas de dinheiro e de auditoria, A-09 · [Alta] Excluir flag de produção e cancelar prêmio em um clique, A-10 · [Alta] A lista de domínios do relatório público não impede ninguém de ler, A-11 · [Média] O limite de requisições do relatório público não limita, A-12 · [Média] O token do relatório público viaja na URL, A-21 · [Média] O histórico de execuções do cron cresce sem limpeza, A-22 · [Média] A política de segurança do site não protege contra script injetado (+25 more)
-
-### Community 132 - "20260831130001_repair_cron_and_fk_indexes.sql"
+### Community 120 - "20260831130001_repair_cron_and_fk_indexes.sql"
 Cohesion: 0.07
 Nodes (31): pg_catalog.pg_database, public.cadence_enrollments, public.experiment_assignments, public.experiment_variants, public.slow_query_alerts, cron_failure_alerts_unique, idx_activities_deleted_by_fk, idx_cadence_enrollments_cadence_id_fk (+23 more)
 
-### Community 133 - "seed-fake-data.ts"
-Cohesion: 0.06
-Nodes (31): allSellers, battleInserts, battleMap, battleRows, battleSeeds, callsBattleId, closerIds, closers (+23 more)
+### Community 121 - "scoring.ts"
+Cohesion: 0.11
+Nodes (29): BadgeProps, RiskReason, CODE_CONTRIB_MAX, CODE_TO_SOURCE, META_BY_SOURCE, ReasonKindMeta, NOW, PATTERNS (+21 more)
 
-### Community 134 - "CurrentCallCard.tsx"
-Cohesion: 0.10
-Nodes (26): CallStatusBadge(), STATUS_LABEL, STATUS_VARIANT, ClickToCallButton(), Props, CurrentCallCard(), Props, DISPOSITION_OPTIONS (+18 more)
+### Community 122 - "salesService.ts"
+Cohesion: 0.09
+Nodes (24): SALE_STATUS_LABELS, CriticalMarkupSale, Row, useMarkupOverview(), aggregateMarkupOverview(), CRITICAL_MARKUP_THRESHOLD, MarkupOverview, MarkupSaleRow (+16 more)
 
-### Community 135 - "20260416232618_f6dcab79-5212-4086-b46f-7ff5f3532a80.sql"
+### Community 123 - "20260416232618_f6dcab79-5212-4086-b46f-7ff5f3532a80.sql"
 Cohesion: 0.12
 Nodes (33): idx_csatces_account, idx_csatces_type, idx_expansion_opp_account, idx_expansion_opp_status, idx_onboarding_account, idx_onboarding_status, idx_onboarding_steps_journey, idx_pue_account_time (+25 more)
 
-### Community 136 - "🌍 Análise de Gaps — Promo Champions vs CRMs de Classe Mundial"
+### Community 124 - "🌍 Análise de Gaps — Promo Champions vs CRMs de Classe Mundial"
 Cohesion: 0.06
 Nodes (32): 10. Data Enrichment & Intelligence, 11. Colaboração Avançada, 12. Customização Enterprise, 13. Data Governance & Quality, 14. AI Generativo Avançado, 15. Reporting & BI, 16. Compliance & Privacidade, 17. Treinamento & Enablement (+24 more)
 
-### Community 137 - "CS360Tabs.tsx"
-Cohesion: 0.12
-Nodes (28): papaparse, CohortData, OrdersByStatus, daysUntil(), EXPANSION_TYPE_LABEL, ONBOARDING_STATUS_LABEL, RENEWAL_STATUS_LABEL, renewalSemaphore() (+20 more)
-
-### Community 138 - "ObjectionHandlingCard.tsx"
+### Community 125 - "ObjectionHandlingCard.tsx"
 Cohesion: 0.13
 Nodes (28): ObjectionHandlingCard(), Props, Stat(), CallObjection, fmtTime(), healthBadgeVariant(), healthLabel(), ObjectionAnalysis (+20 more)
 
-### Community 139 - "RevenueForecastV2.tsx"
-Cohesion: 0.14
-Nodes (26): Consulta de fumaça, useRevenueHistory(), buildRevenueForecastCsv(), escape(), num(), fixture, applyWhatIf(), computeRevenueForecast() (+18 more)
+### Community 126 - "Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas"
+Cohesion: 0.06
+Nodes (32): Apêndice A — 131 módulos de componentes não alcançados, Apêndice B — rotinas parciais e trigger functions órfãs na origem, Apêndice C — 343 objetos de rotina sem consumidor catalogável, Apêndice D — perguntas que o mapa estrutural deixa abertas, Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas, Banco destino — o que foi e não foi comprovado, Candidatos a limpeza — aprovação obrigatória, Catálogo profundo bloqueado (+24 more)
 
-### Community 140 - "20251214150351_b7c62695-6f80-4ce9-83cf-f6f4f12e50ca.sql"
+### Community 127 - "ConversionRateWidget.tsx"
+Cohesion: 0.08
+Nodes (23): Ciclo de vida da venda (`sales.status`), Convenções, Entidades principais (migrations), Markup / margens, RBAC / permissões, Timezone (regra de negócio crítica — bug real corrigido na #586), mockBaseline(), OPEN_SALE_STATUSES (+15 more)
+
+### Community 128 - "20251214150351_b7c62695-6f80-4ce9-83cf-f6f4f12e50ca.sql"
 Cohesion: 0.08
 Nodes (31): public.achievements, idx_achievements_date, idx_achievements_salesperson_id, idx_activities_created_at, idx_activities_salesperson_date, idx_activities_salesperson_id, idx_cadence_tasks_completed_at, idx_cadence_tasks_status (+23 more)
 
-### Community 141 - "gerar-rotas.mjs"
+### Community 129 - "gerar-rotas.mjs"
 Cohesion: 0.12
 Nodes (29): raiz, ./lazy, ARQ_LAZY, ARQ_MENU, ARQ_ROTAS, casa(), constantesDeString(), ehTeste() (+21 more)
 
-### Community 142 - "useDashboardKPIsPeriod.ts"
+### Community 130 - "ConversationalIntelligence.tsx"
 Cohesion: 0.11
-Nodes (25): PerformanceModule(), CustomTooltip(), formatCurrencyCompact(), isValidPeriod(), PeriodTrendChart(), StatPill(), StatPillProps, VALID (+17 more)
+Nodes (25): ACCEPTED, CallRecordingUploader(), DiarizeButton(), Props, TranscribeButton(), List(), VirtualizedList(), VirtualizedListProps (+17 more)
 
-### Community 143 - "AccountDetail.tsx"
+### Community 131 - "AccountDetail.tsx"
 Cohesion: 0.13
 Nodes (24): AccountCoverageBar(), Props, ACCOUNT_TIER_META, AccountTier, formatCoverage(), getTierMeta(), AccountScoreBadge(), Props (+16 more)
 
-### Community 144 - "FollowUpValueAtRisk.tsx"
+### Community 132 - "RaceCar.tsx"
 Cohesion: 0.11
-Nodes (24): FollowUpLeadCardProps, FollowUpStatsGridProps, statConfig, FollowUpValueAtRiskProps, ColdLead, getSuggestedAction(), getTemperature(), LeadTemperature (+16 more)
+Nodes (25): CarExhaust(), CarExhaustProps, CarHelmetTooltip(), EASE_BRAKE, getReadableTextColor(), Props, CarLiveryOverlay(), CarLiveryOverlayProps (+17 more)
 
-### Community 145 - "WinLossSavedViews.tsx"
-Cohesion: 0.14
-Nodes (24): Props, Props, Props, Props, DEFAULT_WL_FILTERS, filtersToParams(), paramsToFilters(), PERIOD_OPTIONS (+16 more)
-
-### Community 146 - "types/index.ts"
-Cohesion: 0.08
-Nodes (29): Escrita no GitHub, GitHub (perímetro, CI, workflows) — referência para agentes, Guards que você pode rodar antes do PR, Perímetro — estado medido (não há guard automático que compare isso), Workflows (25 arquivos em `.github/workflows/`), 41.1 Tipos Principais (`src/types/index.ts`), 41.2 Tipos Auto-gerados, 41. Tipos TypeScript (+21 more)
-
-### Community 147 - "detect-coaching-opportunities/index.ts"
+### Community 133 - "errorTracking.ts"
 Cohesion: 0.09
-Nodes (19): Anexos A (planos não executados), PRs de outros agentes fechadas sem merge (verificado 2026-11-20), Top 25, Verificações pendentes (não executadas — dependem de banco/UI/runbooks p/ decidir), Bucket, isLost(), isOpen(), isWon() (+11 more)
+Nodes (23): 🟡 MÉDIO — `ErrorBoundary` único envolve toda a árvore de rotas, 9. Testes e observabilidade — **revisado**, A-149 · [Alta] Erro de JavaScript em produção não chega a ninguém, e a tela diz o contrário, A-150 · [Média] O histórico de execução de rotina não diminui, e o job de limpeza passa, A-151 · [Média] Um quarto do esforço de teste de backend protege as funções erradas, CR-46 — O sistema avisa que notificou, e não notificou, Etapa 151 — Ligar o destino do registro de erro do front, @sentry/react (+15 more)
 
-### Community 148 - "AIAgents.tsx"
-Cohesion: 0.14
-Nodes (22): AgentApprovalBar(), Props, AGENT_META, AgentAction, AgentRun, AgentStatus, AgentTargetType, AgentType (+14 more)
+### Community 134 - "stage"
+Cohesion: 0.06
+Nodes (30): `channel_credentials`, `deal_stage_history`, `integration_connections`, `pipeline_coverage_snapshots`, `pipeline_inspection_snapshots`, `pipeline_stages`, `playbooks`, `race_scoring_rules` (+22 more)
 
-### Community 149 - "FailedDraftsCard.tsx"
+### Community 135 - "🚀 Runbook Operacional — Promo Champions"
+Cohesion: 0.06
+Nodes (31): Alertas, Auditoria, Build Falha, Callback V4 (Promo Gifts V4), Cenários de concorrência trigger × RPC, Cleanup determinístico em testes, Como ligar, Como reprocessar (+23 more)
+
+### Community 136 - "FailedDraftsCard.tsx"
 Cohesion: 0.12
 Nodes (24): FailedDraftsCard(), formatDate(), classifyDraft(), DraftFailureStatus, FailedDraftLike, FailureSummary, humanizeError(), isPermanentError() (+16 more)
 
-### Community 150 - "BriefingHub.tsx"
-Cohesion: 0.14
-Nodes (25): BriefingActionsList(), Props, BriefingCard(), Props, asList(), asRecord(), asStr(), BriefingAction (+17 more)
-
-### Community 151 - "DealTimeline.tsx"
-Cohesion: 0.12
-Nodes (27): ActivityHeader(), DealTimelineProps, EventDetail(), EventFooter(), EventHeader(), EventIcon(), eventStyle(), OutcomeHeader() (+19 more)
-
-### Community 152 - "2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)"
+### Community 137 - "2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)"
 Cohesion: 0.13
 Nodes (21): 2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%), Supplier, del, eq, from, toast, update, updateResult (+13 more)
 
-### Community 153 - "Runbook — Alertas operacionais (índice)"
+### Community 138 - "Runbook — Alertas operacionais (índice)"
 Cohesion: 0.07
 Nodes (25): Escalação externa, Métricas externas, Runbook — Alertas operacionais (índice), Runbooks por integração, SLO burn-rate, Trace (W3C), Diagnóstico, Escalação (+17 more)
 
-### Community 154 - "gerar-banco.mjs"
+### Community 139 - "gerar-banco.mjs"
 Cohesion: 0.13
 Nodes (28): base(), job(), raiz, tabela(), CAMPO_TODO, chamarApi(), compararEdges(), conferirOrigem() (+20 more)
 
-### Community 155 - ".build"
+### Community 140 - "RaceAudioPreferences.tsx"
 Cohesion: 0.11
-Nodes (20): Arquitetura, Contribuindo com Promo Champions v2, Convenção de Commits, Dúvidas?, Estilo de Código, Processo de Pull Request, Setup de Desenvolvimento, Testes (+12 more)
+Nodes (23): DEFAULT_PREFS, loadPrefs(), Prefs, RaceAudioPreferences(), SOUND_LABELS, RaceCalmContext, RaceCalmContextValue, useRaceCalm() (+15 more)
 
-### Community 156 - "📋 Levantamento Completo de Funcionalidades — Sales Arena"
+### Community 141 - "01 — FRONTEND: ROTAS E PÁGINAS (estado medido)"
+Cohesion: 0.07
+Nodes (28): 01 — FRONTEND: ROTAS E PÁGINAS (estado medido), 10. Síntese, 1. Rotas (174) — tabela completa, 2.1 O problema inverso, mais sério: webhooks que **não conseguem** ser chamados, 2. `supabase/config.toml` — apenas 3 funções públicas, 3. `_shared/` — o que é realmente compartilhado, 4. Segredos lidos por função (nomes apenas — nenhum valor foi impresso), 🔴 5.1 GRAVE — Chave `anon` JWT hard-coded no código-fonte e no banco (+20 more)
+
+### Community 142 - "📋 Levantamento Completo de Funcionalidades — Sales Arena"
 Cohesion: 0.07
 Nodes (28): 10. Tarefas (`/tarefas`), 11. Assistente IA (`/assistente`), 13. Relatórios (`/relatorios`), 14. Metas (`/metas`), 15. Times (Teams) (`/times`), 16. Vendedores (Salespeople) (`/vendedores`), 17. Portfólio de Clientes (`/portfolio`), 18. ICP (Ideal Customer Profile) (`/icp`) (+20 more)
 
-### Community 157 - "SkillMaturityMatrix.tsx"
-Cohesion: 0.19
-Nodes (21): SkillGapAnalyzerPanel(), LEVEL_BADGE, LEVEL_BG_CLASS, LEVEL_LABELS, SKILL_KEYS, SKILL_LABELS, SkillKey, SkillLevel (+13 more)
-
-### Community 158 - "CoachingScorecardCard.tsx"
+### Community 143 - "CoachingScorecardCard.tsx"
 Cohesion: 0.17
 Nodes (22): classifyHealth(), CoachingScorecard, DIMENSION_LABELS, HEALTH_LABELS, healthBadgeVariant(), healthHsl(), SalespersonAggregate, ScorecardHealth (+14 more)
 
-### Community 159 - "useWinLossScenarios.ts"
-Cohesion: 0.11
-Nodes (24): Props, ResidualsSparkline(), Row(), ScenarioForecastAuditPanel, ActiveFormulaBadgeProps, CustomTooltipProps, Stats, BandMode (+16 more)
+### Community 144 - "atRiskFixtures.ts"
+Cohesion: 0.08
+Nodes (25): CHURN_GROUP, CHURN_LSE, COMPETITIVE_GROUP, DEAL_HISTORY_LSE_FIXTURES, DealHistoryLSEFamily, DOMINANT_PATTERNS_BY_FAMILY, DominantPatternEntry, LossPattern (+17 more)
 
-### Community 160 - "Fase 1 — As 20 Dimensões"
+### Community 145 - "Anexo C — Docs de estado, runbooks e postmortem: gaps verificados no código (HEAD 6f6b94a, 2026-10-11)"
 Cohesion: 0.07
-Nodes (27): 10. Observabilidade — **5,5/10** (peso ×1), 11. Lógica de Negócio — **6,5/10** (peso ×1), 12. Manutenibilidade — **6,0/10** (peso ×1), 13. Operacionalidade — **5,0/10** (peso ×1), 15. Qualidade de Código — **7,5/10** (peso ×1), 17. Testes — **6,5/10** (peso ×2), 18. Tipagem / Type Safety — **7,0/10** (peso ×2), 1. Arquitetura — **7,0/10** (peso ×2) (+19 more)
+Nodes (27): 01_FRONTEND_ROTAS.md, 02_DOMINIO_CRM_PIPELINE.md, 03_DOMINIO_SDR_CADENCIAS.md, 04_DOMINIO_ANALYTICS_BI.md, 06_DOMINIO_IA_COACHING.md, 07_DOMINIO_WINLOSS_COMPETITIVE.md, 08_ADMIN_SEGURANCA.md, 09_HOOKS_SERVICES.md (+19 more)
 
-### Community 161 - "11 — DADOS E BANCO (evidência de runtime)"
+### Community 146 - "ConfidenceScoresTable.tsx"
+Cohesion: 0.18
+Nodes (21): 1. TABELA DE FUNCIONALIDADES, 3.4 Gráficos que renderizam vazios (sem empty-state explícito), ForecastAccuracySummary(), ForecastBiasChart(), biasColor, biasLabel, formatBRL(), formatMape() (+13 more)
+
+### Community 147 - "BusinessIntelligencePage.tsx"
+Cohesion: 0.14
+Nodes (20): 3.1 Arrays / objetos hardcoded alimentando UI, BIProductCard(), BIProductCardProps, ClientAffinityProducts(), ClientAffinityProductsProps, ClientOverview360(), ClientSeasonalityHeatmap(), ClientVsIndustryComparison() (+12 more)
+
+### Community 148 - "3. Tabela de funcionalidades"
+Cohesion: 0.07
+Nodes (27): 07 — Domínio Win/Loss, Competitivo, Pricing e Customer Success, 0. Sumário executivo (leia isto primeiro), 1.1 Quem importa, 1.2 Onde aparece na tela, 1.3 Prova de que os dados fictícios nunca casam com os reais, 1.4 Veredito, 1. VEREDITO — `src/lib/winloss/atRiskFixtures.ts`, 2.1 Medição de tráfego (banco de produção) (+19 more)
+
+### Community 149 - "11 — DADOS E BANCO (evidência de runtime)"
 Cohesion: 0.07
 Nodes (27): 0. Confirmação dos fatos previamente reportados — `VERIFICADO`, 10. Síntese dos achados por severidade, 11 — DADOS E BANCO (evidência de runtime), 11. Registro de método e limitações, 1.1 Veredito do censo, 1.2 Tabelas populadas — ordenado por contagem DESC (95 de 397), 1.3 LISTA COMPLETA — 302 tabelas com 0 linhas (de 397) — `VERIFICADO`, 1. CENSO DE USO REAL — contagem exata de linhas — `VERIFICADO` (+19 more)
 
-### Community 162 - "2. Findings por Categoria"
+### Community 150 - "2. Findings por Categoria"
 Cohesion: 0.07
 Nodes (27): 1. Sumário Executivo, 2.1 Segurança (Prioridade Alta), 2.2 Performance (Prioridade Média), 2.4 Observabilidade, 2.5 Manutenibilidade, 2.6 Custos, 2. Findings por Categoria, 3. Roadmap Priorizado (+19 more)
 
-### Community 163 - "LeadRoutingPage.tsx"
+### Community 151 - "AIAgents.tsx"
+Cohesion: 0.15
+Nodes (21): AgentApprovalBar(), Props, AGENT_META, AgentAction, AgentRun, AgentStatus, AgentTargetType, AgentType (+13 more)
+
+### Community 152 - "LeadRoutingPage.tsx"
 Cohesion: 0.17
 Nodes (19): CapacityDashboard(), LeadRoutingHub(), capacityHealth(), formatStrategy(), STRATEGY_LABELS, STRATEGY_TONES, strategyTone(), RoutingHistoryPanel() (+11 more)
 
-### Community 164 - "markupHelpers.ts"
-Cohesion: 0.12
-Nodes (20): renderCard(), CriticalMarkupSale, Row, useMarkupOverview(), aggregateMarkupOverview(), buildMarkupSellersCsv(), CRITICAL_MARKUP_THRESHOLD, MarkupOverview (+12 more)
+### Community 153 - "winloss-webhook-dispatcher/retry.ts"
+Cohesion: 0.11
+Nodes (21): alwaysAbort(), makeAbortError(), PAYLOAD, SUB, TimelineEvent, backoffDelay(), describeError(), dispatchOne() (+13 more)
 
-### Community 165 - "01 — FRONTEND: ROTAS E PÁGINAS (estado medido)"
+### Community 154 - "12 — INFRA, CI/CD, TESTES E QUALIDADE (estado medido)"
 Cohesion: 0.07
-Nodes (26): 01 — FRONTEND: ROTAS E PÁGINAS (estado medido), 10. Síntese, 1. Rotas (174) — tabela completa, 2.1 O problema inverso, mais sério: webhooks que **não conseguem** ser chamados, 2. `supabase/config.toml` — apenas 3 funções públicas, 3. `_shared/` — o que é realmente compartilhado, 4. Segredos lidos por função (nomes apenas — nenhum valor foi impresso), 🔴 5.1 GRAVE — Chave `anon` JWT hard-coded no código-fonte e no banco (+18 more)
+Nodes (26): 10. Outras ferramentas de qualidade, 11. Classificação consolidada, 12 — INFRA, CI/CD, TESTES E QUALIDADE (estado medido), 12. O QUE NÃO PUDE VERIFICAR, 1. Sumário executivo, 2. Inventário medido, 3. Workflows — o que roda, quando, e se é bloqueante de verdade, 4.1 `TEST_QUALITY_REPORT.md` é ficção literal (+18 more)
 
-### Community 166 - "useRetryMutation.ts"
-Cohesion: 0.13
-Nodes (20): CircuitBreakerConfig, CircuitBreakerError, circuitBreakers, CircuitBreakerState, CircuitState, DEFAULT_CONFIG, getAllCircuitStates(), getOrCreateCircuit() (+12 more)
+### Community 155 - "Onda 4 — Funcionalidades incompletas"
+Cohesion: 0.08
+Nodes (27): A-71 · [Média] Vinte botões sem ação em telas de gestão, preço e inteligência, A-72 · [Média] O diálogo "Configurar IA" não grava nada, A-73 · [Média] Campo de busca que não busca, A-74 · [Média] O painel de Segurança mostra números inventados, A-75 · [Média] Botões de teste de gamificação publicados em produção, CR-25 — Controles publicados que não fazem nada, Etapa 101 — Decidir o destino dos botões de exportação de Win/Loss, Etapa 102 — Decidir o destino dos botões de filtro e exportação da auditoria comercial (+19 more)
 
-### Community 167 - "20251214203613_0747efdb-aa79-4b67-96d1-43465422df9a.sql"
+### Community 156 - "sdr/SDRDashboard.tsx"
+Cohesion: 0.14
+Nodes (24): LazyVisible(), LazyVisibleProps, ActivityAuditTrail, ChartFallback(), MQLQualificationForm, PerformanceCoaching, PredictiveSuccessMap, ProspectingFunnel (+16 more)
+
+### Community 157 - "CoachingActionsList.tsx"
+Cohesion: 0.15
+Nodes (22): ActionRow(), CoachingActionsList(), Props, CATEGORY_ICONS, CATEGORY_LABELS, CoachingAction, CoachingCategory, CoachingSeverity (+14 more)
+
+### Community 158 - "useQueryPerformance.ts"
+Cohesion: 0.12
+Nodes (20): addMetric(), AlertConfig, alertedQueries, getQueryMetrics(), log, logQueryMetrics(), QueryMetrics, queryMetricsStore (+12 more)
+
+### Community 159 - "20251214203613_0747efdb-aa79-4b67-96d1-43465422df9a.sql"
 Cohesion: 0.13
 Nodes (26): idx_activities_outcome, idx_sales_source, public.get_current_user_email(), activities, auth.users, sales, update_updated_at_column, update_activity_goals_updated_at (+18 more)
 
-### Community 168 - "Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas"
-Cohesion: 0.08
-Nodes (26): Apêndice A — 131 módulos de componentes não alcançados, Apêndice B — rotinas parciais e trigger functions órfãs na origem, Apêndice D — perguntas que o mapa estrutural deixa abertas, Auditoria exaustiva do Promo Champions V2.1 e plano de 100 etapas, Banco destino — o que foi e não foi comprovado, Candidatos a limpeza — aprovação obrigatória, Catálogo profundo bloqueado, Classificação responsável da divergência (+18 more)
+### Community 160 - "types/index.ts"
+Cohesion: 0.10
+Nodes (25): Workflows (25 arquivos em `.github/workflows/`), 41.1 Tipos Principais (`src/types/index.ts`), 41.2 Tipos Auto-gerados, 41. Tipos TypeScript, SaleStatus, Tables, Achievement, Activity (+17 more)
 
-### Community 169 - "12 — INFRA, CI/CD, TESTES E QUALIDADE (estado medido)"
-Cohesion: 0.08
-Nodes (26): 10. Outras ferramentas de qualidade, 11. Classificação consolidada, 12 — INFRA, CI/CD, TESTES E QUALIDADE (estado medido), 12. O QUE NÃO PUDE VERIFICAR, 1. Sumário executivo, 2. Inventário medido, 3. Workflows — o que roda, quando, e se é bloqueante de verdade, 4.1 `TEST_QUALITY_REPORT.md` é ficção literal (+18 more)
+### Community 161 - "Anexo A — Planos, auditorias e execução: estado real verificado"
+Cohesion: 0.10
+Nodes (24): A.10 Documentos de onda e contrato de 26–27/08 (`EXECUCAO_ONDA_0`, `SIMULACAO_CENARIOS_ONDA_0`, `VALIDACAO_EXAUSTIVA_ONDA_0/1`, `CONTENCAO_INTEGRIDADE_WEBHOOKS`, `CONTRATO_ROTEAMENTO_LEADS`, `RECONCILIACAO_MIGRATIONS`, `MATRIZ_FORENSE…`, `CATALOGO_BANCO_ORIGEM`, `CANDIDATOS_DE_LIMPEZA`), A.11 `docs/execucao/MIGRATION_RENAME_MAP.md`, A.12 `docs/estado/15_PLANO_COBERTURA_MODULOS.md`, A.13 `docs/auditoria_enterprise_v5.md`, A.14 `docs/planos/PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md` + `docs/graphify/*`, A.15 Resumo numérico, A.16 Top 15 pendências de maior impacto de negócio, A.1 `docs/auditoria/AUDITORIA_EXAUSTIVA_2026-08-26_PLANO_100_ETAPAS.md` — plano canônico de 100 etapas (Fases A–J) (+16 more)
 
-### Community 170 - "gen-api-catalog.mjs"
+### Community 162 - "forecastEngine.ts"
+Cohesion: 0.15
+Nodes (21): Consulta de fumaça, buildRevenueForecastCsv(), escape(), num(), fixture, applyWhatIf(), computeRevenueForecast(), EnsembleOptions (+13 more)
+
+### Community 163 - "05 — Progresso"
+Cohesion: 0.09
+Nodes (24): Etapa 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting`, 05 — Progresso, Achados novos (não planejados), Divergências encontradas, Medições pedidas pelo plano, Onda 1 (etapa 240), Onda 2 (etapa 241), Onda 2 — Fluxos principais quebrados (+16 more)
+
+### Community 164 - "gen-api-catalog.mjs"
 Cohesion: 0.08
 Nodes (22): byDomain, CONFIG, configTxt, DOMAIN_RULES, FIELD_BLOCKLIST, FN_DIR, fns, jwtOff (+14 more)
 
-### Community 171 - "cenarios.mjs"
+### Community 165 - "ref_jsr_std"
+Cohesion: 0.08
+Nodes (11): ref_jsr_std, FnScan, loadAllowlist(), main(), scanFunctions(), sourceUrl, names, functions (+3 more)
+
+### Community 166 - "cenarios.mjs"
 Cohesion: 0.09
 Nodes (21): base(), comp(), fails, GERADOR, JS, KEEP, PKG(), scenarios (+13 more)
 
-### Community 172 - "CoachingActionsPanel.tsx"
-Cohesion: 0.20
-Nodes (19): CoachingActionsPanel(), SEVERITY_BADGE, SEVERITY_COLOR, SEVERITY_LABELS, SEVERITY_ORDER, SKILL_COLORS, SKILL_LABELS, CoachingOpportunityPanel() (+11 more)
-
-### Community 173 - "PurchasePredictionCard.tsx"
+### Community 167 - "CS360Tabs.tsx"
 Cohesion: 0.16
-Nodes (21): buildMatrix(), MatrixCell, Props, PurchaseHeatmapGrid(), CONTACT_WINDOW_LABELS, DOW_LABELS_PT, formatBRL(), formatDatePt() (+13 more)
+Nodes (22): CohortData, OrdersByStatus, daysUntil(), EXPANSION_TYPE_LABEL, ONBOARDING_STATUS_LABEL, RENEWAL_STATUS_LABEL, renewalSemaphore(), TICKET_STATUS_LABEL (+14 more)
 
-### Community 174 - "20251214172514_c1966e7a-669e-4dd9-9967-5bc3a36a8192.sql"
+### Community 168 - "RevenueForecastCard.tsx"
+Cohesion: 0.17
+Nodes (20): AIForecastPanel(), categoryColor, categoryLabel, formatBRL(), getCurrentPeriodStart(), periodLabel, shiftPeriod(), ForecastNarrative() (+12 more)
+
+### Community 169 - "CadenceReportPanel.tsx"
+Cohesion: 0.13
+Nodes (18): CadenceReportPanel(), CHANNEL_META, formatPct(), idle, mocks, CadenceMetrics, useCadenceMetrics(), aggregateCadenceReport() (+10 more)
+
+### Community 170 - "20251214172514_c1966e7a-669e-4dd9-9967-5bc3a36a8192.sql"
 Cohesion: 0.14
 Nodes (25): idx_client_portfolio_client_id, idx_client_portfolio_last_purchase, idx_client_portfolio_salesperson_id, idx_client_portfolio_status, idx_icp_data_bitrix_id, idx_icp_data_client_id, idx_icp_data_grupo, idx_icp_data_ramo (+17 more)
 
-### Community 175 - "20251231120039_b2152855-d5fa-4fa1-8557-b2884e44108d.sql"
+### Community 171 - "20251231120039_b2152855-d5fa-4fa1-8557-b2884e44108d.sql"
 Cohesion: 0.13
 Nodes (24): idx_active_sessions_activity, idx_active_sessions_user, idx_blocked_ips_address, idx_blocked_ips_expires, idx_login_attempts_created, idx_login_attempts_email, idx_login_attempts_ip, idx_rate_limit_identifier (+16 more)
 
-### Community 176 - "20260530000001_add_missing_fk_indexes.sql"
+### Community 172 - "20260530000001_add_missing_fk_indexes.sql"
 Cohesion: 0.12
 Nodes (24): achievements, activity_goals, idx_achievements_date, idx_achievements_salesperson_id, idx_achievements_sp_type_date, idx_achievements_type, idx_activities_created_at, idx_activities_salesperson_id (+16 more)
 
-### Community 177 - "PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md"
-Cohesion: 0.08
-Nodes (19): 1. Contexto, 2. Como trabalhar, 3. Bugs e funcionalidades, 4. Comunicação, 5. Fluxo Git (vários agentes nos mesmos repos) — detalhe em docs/agentes/github-ci.md, 6. Projeto, 7. Banco oficial e migrations, 8. Comandos, segurança e contexto gerado (+11 more)
+### Community 173 - "brDocuments.ts"
+Cohesion: 0.20
+Nodes (20): 19. Validação — **5,5/10** (peso ×2), calculateCheckDigit(), calculateCnpjCheckDigit(), CNPJ_WEIGHTS_FIRST, CNPJ_WEIGHTS_SECOND, hasAllSameDigits(), isValidCEP(), isValidCNPJ() (+12 more)
 
-### Community 178 - "Execução — Onda 0 de estabilização"
-Cohesion: 0.09
-Nodes (18): Candidatos de limpeza — aguardando autorização, Decisão solicitada, Itens explicitamente fora de limpeza, Bloqueios e autorizações necessárias para a próxima onda, CI remoto, Contenções efetivamente implementadas, Critério para deploy, Decisão de segurança (+10 more)
-
-### Community 179 - "4. Mapa por domínio"
+### Community 174 - "4. Mapa por domínio"
 Cohesion: 0.08
 Nodes (25): 1. Veredito em uma página, 2. Números consolidados, 3.1 Itens de alto impacto que vêm dos planos não executados (Anexo A), 3. Top 25 por impacto no negócio, 4.10 Customer Success, 4.11 Integrações e plataforma, 4.12 Segurança, acesso e LGPD, 4.13 Dados e banco (+17 more)
 
-### Community 180 - "Security Guidelines"
+### Community 175 - "Security Guidelines"
 Cohesion: 0.08
 Nodes (24): 2FA (Two-Factor Authentication), Access Control, Audit Trail, Authentication & Authorization, Best Practices, Compliance, Contact, CSRF Protection (+16 more)
 
-### Community 181 - "📊 Módulo de Telemetria de Queries — Documentação Completa"
-Cohesion: 0.08
-Nodes (24): 11. Configurações e Thresholds, 12. Troubleshooting, 1. Visão Geral, 3. Schema do Banco de Dados, 8. Políticas de Segurança (RLS), 9. Suíte de Testes, Ajustando Thresholds, Apêndice: Formato dos Logs (+16 more)
-
-### Community 182 - "20260706160203_849fd5c0-44df-47ae-8fe5-96a9dddd27e7.sql"
+### Community 176 - "20260706160203_849fd5c0-44df-47ae-8fe5-96a9dddd27e7.sql"
 Cohesion: 0.11
 Nodes (22): handle_updated_at, public.enqueue_v4_callback, public.quote_sync_logs, idx_orders_client_id, idx_orders_salesperson_id, idx_orders_status_created, idx_quote_sync_logs_source, idx_quotes_client_id (+14 more)
 
-### Community 183 - "RaceArenaHeader.tsx"
-Cohesion: 0.16
-Nodes (20): @radix-ui/react-slot, CheckeredFlag(), Props, MiniPodium(), RaceArenaHeader(), RaceCar, Props, RaceEmptyState() (+12 more)
+### Community 177 - "CommandPalette.tsx"
+Cohesion: 0.23
+Nodes (21): ClientSelector(), ClientSelectorProps, addRecent(), CommandItemData, CommandPalette(), getRecent(), GlobalSearch, SearchResult (+13 more)
 
-### Community 184 - "CoachingActionsList.tsx"
-Cohesion: 0.16
-Nodes (21): ActionRow(), CoachingActionsList(), Props, CATEGORY_ICONS, CATEGORY_LABELS, CoachingAction, CoachingCategory, CoachingSeverity (+13 more)
+### Community 178 - "biService.ts"
+Cohesion: 0.15
+Nodes (17): Props, ConversationAnalysis, ConvNextStep, ConvObjection, ConvSentiment, ConvSource, sentimentDistribution(), sentimentMeta (+9 more)
 
-### Community 185 - "ProviderConnectionDialog.tsx"
-Cohesion: 0.17
-Nodes (19): ChannelCredentialsManager(), CHANNEL_LABEL, PROVIDER_FIELDS, PROVIDER_LABEL, STATUS_LABEL, statusVariant(), OutboundMessageLog(), Props (+11 more)
+### Community 179 - "DispatchDeps"
+Cohesion: 0.15
+Nodes (17): Harness, DeadLetterEntry, Harness, DeliveryRow, DispatchDeps, Harness, PAYLOAD, SUB (+9 more)
 
-### Community 186 - "factories.ts"
-Cohesion: 0.11
-Nodes (22): sale(), TableRow, salesService, Chain, fromMock, insertMock, limitMock, orderMock (+14 more)
-
-### Community 187 - "HelpdeskConnectorPanel"
-Cohesion: 0.09
-Nodes (19): 10. A11y / UX / Design System, 11. Outros (débito técnico, docs, infra), 2. SDR / Cadências / E-mail, 4. Forecast / BI / Relatórios, 5. Gamificação, 6. Win-Loss, 7. Customer Success, Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito) (+11 more)
-
-### Community 188 - "Anexo C — Docs de estado, runbooks e postmortem: gaps verificados no código (HEAD 6f6b94a, 2026-10-11)"
+### Community 180 - "Fase 1 — As 20 Dimensões"
 Cohesion: 0.08
-Nodes (24): 01_FRONTEND_ROTAS.md, 02_DOMINIO_CRM_PIPELINE.md, 03_DOMINIO_SDR_CADENCIAS.md, 04_DOMINIO_ANALYTICS_BI.md, 06_DOMINIO_IA_COACHING.md, 07_DOMINIO_WINLOSS_COMPETITIVE.md, 08_ADMIN_SEGURANCA.md, 10_EDGE_FUNCTIONS.md (+16 more)
+Nodes (23): 10. Observabilidade — **5,5/10** (peso ×1), 11. Lógica de Negócio — **6,5/10** (peso ×1), 12. Manutenibilidade — **6,0/10** (peso ×1), 15. Qualidade de Código — **7,5/10** (peso ×1), 16. Segurança — **4,5/10** (peso ×3), 17. Testes — **6,5/10** (peso ×2), 18. Tipagem / Type Safety — **7,0/10** (peso ×2), 1. Arquitetura — **7,0/10** (peso ×2) (+15 more)
 
-### Community 189 - "Matriz forense dos bancos e contratos de integração"
+### Community 181 - "Matriz forense dos bancos e contratos de integração"
 Cohesion: 0.08
 Nodes (24): Achados confirmados, Apêndice A — funções no-op ou neutralizadas, Apêndice B — trigger functions sem trigger consumidor no catálogo, Apêndice C — relações tipadas sem .from() produtivo visível, Apêndice D — funções tipadas sem .rpc() produtivo visível, Apêndice E — tabelas vazias e colunas all-null, Apêndice F — objetos de migration sem ligação literal atual, Cadeia de evidência e limites (+16 more)
 
-### Community 190 - "failure"
-Cohesion: 0.08
-Nodes (24): 🔴 CRÍTICO — Relatório de qualidade/cobertura é fabricado (hardcoded), não medido, A-16 · [Média] Migrations datadas no futuro travam qualquer mudança de banco até 25/11, A-17 · [Alta] O único check obrigatório cobre 4 jobs de 19, A-18 · [Média] Job cancelado conta como aprovado, A-24 · [Alta] 26 dos 49 testes de ponta a ponta nunca rodam, inclusive as provas de isolamento por papel, CR-9 — O portão de qualidade não segura o que promete, Etapa 038 — Fazer o portão de CI exigir sucesso, não ausência de falha, 12.5 Prova pós-merge PR #319 — SHA `18aadd0f` (2026-10-22T21:xxZ) (+16 more)
-
-### Community 191 - "static-contracts.mjs"
+### Community 182 - "static-contracts.mjs"
 Cohesion: 0.14
 Nodes (20): appendMasked(), CODE_EXTENSIONS, CODE_REFERENCES, collectStaticContracts(), consumeBlockComment(), consumeCode(), consumeDollarQuote(), consumeLineComment() (+12 more)
 
-### Community 192 - "Relatório Exaustivo de Falhas e Gaps — Promo Champions v2.1"
-Cohesion: 0.09
-Nodes (22): 🟠 ALTO — `audit_logs`: policy de INSERT permite forjar `actor_id` de qualquer usuário, 🟠 ALTO — Funções SECURITY DEFINER sem `SET search_path` (risco de hijack), 🟠 ALTO — Itens do pedido vêm de fonte divergente da validada; quotes de webhook não convertem pela RPC, 🟠 ALTO — Três caminhos concorrentes e não coordenados de quote→sale/order, 🔵 BAIXO — `fn_test_cleanup_dedupe_privileges` re-concedida a `anon`, 🔵 BAIXO — Gamificação com escrita irrestrita entre usuários (`USING (true)`), Cobertura e limitações desta auditoria, 🔴 CRÍTICO — Trigger `tr_sync_quote_to_sale` reverte a venda recém-convertida para `lead` (+14 more)
+### Community 183 - "App.tsx"
+Cohesion: 0.13
+Nodes (20): App(), AppQueryError, queryClient, XPNotification, XPToastContainer(), XPToastContext, XPToastContextType, XPToastItem() (+12 more)
 
-### Community 193 - "stage"
-Cohesion: 0.09
-Nodes (22): `deal_stage_history`, `pipeline_coverage_snapshots`, `pipeline_inspection_snapshots`, `playbooks`, `sales`, `sla_policies`, `sla_violations`, `stage_bottleneck_insights` (+14 more)
+### Community 184 - "SheetContent"
+Cohesion: 0.18
+Nodes (19): PersonalAssistantDrawer(), formatRunDuration(), ScheduledReportRun, Props, ScheduledReportRunsDrawer(), src_components_ui_sheet_sheet, SheetContent, SheetContentProps (+11 more)
 
-### Community 194 - "Plano de Recuperação de Desastres (DR Plan)"
+### Community 185 - "DealTimeline.tsx"
+Cohesion: 0.16
+Nodes (21): ActivityHeader(), EventDetail(), EventFooter(), EventHeader(), EventIcon(), eventStyle(), OutcomeHeader(), StageChangeHeader() (+13 more)
+
+### Community 186 - "Client360View.tsx"
+Cohesion: 0.13
+Nodes (18): Os 2 caminhos que não existem na main, Client360Header(), Client360HeaderProps, Client360Skeleton(), Client360View(), Client360ViewProps, extractCategories(), filterOrders() (+10 more)
+
+### Community 187 - "Relatório Exaustivo de Falhas e Gaps — Promo Champions v2.1"
+Cohesion: 0.09
+Nodes (22): 🟠 ALTO — Itens do pedido vêm de fonte divergente da validada; quotes de webhook não convertem pela RPC, 🟠 ALTO — Três caminhos concorrentes e não coordenados de quote→sale/order, 🔵 BAIXO — Flags de role carregadas após `isLoading=false` (flash de role incorreta), 🔵 BAIXO — Resolução de role via ordenação alfabética é frágil, Cobertura e limitações desta auditoria, 🔴 CRÍTICO — Trigger `tr_sync_quote_to_sale` reverte a venda recém-convertida para `lead`, Frente 1 — Segurança de Fronteira & Identidade (Módulos 01–04), Frente 2 — Núcleo Transacional · Quote-to-Sale & Financeiro (Módulos 05–06) (+14 more)
+
+### Community 188 - "Plano de Recuperação de Desastres (DR Plan)"
 Cohesion: 0.09
 Nodes (21): 1. Estratégia de Backup (estado real — verificado 2026-10-18), 2.1 Falha Crítica no Banco de Dados, 2.2 Indisponibilidade Regional (Cloud Provider), 2.3 Perda de Acesso (Secrets/Auth), 2. Procedimentos de Recuperação, 3. Matriz de Contatos, 4. Testes de DR, Plano de Recuperação de Desastres (DR Plan) (+13 more)
 
-### Community 195 - "useQuotaAttainmentPredictor.ts"
-Cohesion: 0.20
-Nodes (17): 3.4 Gráficos que renderizam vazios (sem empty-state explícito), QuotaActionsPanel(), QuotaForecastSummary(), ACTION_LABEL, fmtBRL(), fmtPct(), RISK_BADGE, RISK_HSL (+9 more)
-
-### Community 196 - "05 — Domínio Gamificação / Race / Ranking"
-Cohesion: 0.09
-Nodes (22): 05 — Domínio Gamificação / Race / Ranking, 0. VEREDITO EXECUTIVO, 1.1 Tabelas com dados (7 de 36), 1.2 Tabelas VAZIAS — 0 linhas (26 tabelas), 1. MEDIÇÃO CRUA DO BANCO, 2.1 O gatilho existe e está corretamente ligado, 2.2 Mesmo se invocada, a função só produziria 1 dos 5 tipos de evento, 2.3 Um segundo portão fecha a porta para 10 dos 18 vendedores (+14 more)
-
-### Community 197 - "SnapshotDBStatsTests"
-Cohesion: 0.14
-Nodes (10): 5.1 Migrations aplicadas registradas no banco, 5.2 O achado, 5.3 Reforço — objetos VIVOS × objetos DECLARADOS, 5.4 Resposta direta: **o ambiente é reconstruível a partir do repositório?**, 5. DRIFT DE MIGRATIONS — nos dois sentidos — `VERIFICADO` (com um achado bloqueante), (a) Vivas em produção, criadas FORA do fluxo versionado — 3, (b) Declaradas no repo, ausentes do banco — 1, OfflineConnection (+2 more)
-
-### Community 198 - "Riscos estruturais, do mais grave ao menos"
+### Community 189 - "Riscos estruturais, do mais grave ao menos"
 Cohesion: 0.09
 Nodes (23): 10. A documentação anterior contém evidência fabricada — `VERIFICADO`, 1. O ambiente de produção não nasce do repositório — `VERIFICADO`, 2. Nenhum portão de qualidade executa há mais de 20 dias — `VERIFICADO`, 3. Dois arquivos não compilam — `VERIFICADO` pessoalmente, 4. Automação de backend praticamente não existe — `VERIFICADO`, 5. Três jobs agendados falhando em silêncio — `VERIFICADO`, 7. Métricas que mentem por raiz de dado — `VERIFICADO`, 8. Exposição anônima de dados — `VERIFICADO` (e corrigido em relação ao relato inicial) (+15 more)
 
-### Community 199 - "Prontidão para produção — Promo_Champions_V2.1"
-Cohesion: 0.09
-Nodes (22): 0. Linha de base (antes de qualquer mudança), 10. Correções, BLOQUEADOS e PRs aguardando decisão, 1. Workflows do GitHub Actions (`.github/workflows/`), 2. Telas / rotas (`src/routes/AppRoutes.tsx`), 3. Edge functions (`supabase/functions/`), 4. Tabelas (`public`, banco oficial `usyxfpqlsspldubptrdl`), 5. Integrações externas (segredos lidos pelas edge functions), 6. Banco (`usyxfpqlsspldubptrdl`) (+14 more)
-
-### Community 200 - "quoteErrorMessages.ts"
+### Community 190 - "quoteErrorMessages.ts"
 Cohesion: 0.11
 Nodes (18): 1. Resumo Executivo, 2.1 Unit (Vitest, config isolada `vitest.node.config.ts`), 2.2 Invariantes psql — Produção Live, 2.3 Type-check, 2.4 Stress SQL versionado, 2. Testes Executados Nesta Rodada, 3. Cenários Cobertos por E2E (22 specs), 4. Gaps, Falhas e Riscos (+10 more)
 
-### Community 201 - "20260404191439_0af779d5-47f3-410e-8f9c-a11f66976bb2.sql"
+### Community 191 - "20260404191439_0af779d5-47f3-410e-8f9c-a11f66976bb2.sql"
 Cohesion: 0.10
 Nodes (22): public.active_power_ups, public.deal_outcomes, public.password_reset_requests, public.weekly_challenges, idx_active_power_ups_active, idx_active_power_ups_salesperson, idx_cadence_steps_cadence, idx_deal_outcomes_created (+14 more)
 
-### Community 202 - "20261027120000_sales_status_canonizacao_rpcs.sql"
+### Community 192 - "20261027120000_sales_status_canonizacao_rpcs.sql"
 Cohesion: 0.12
 Nodes (15): public.sla_policies, public.compute_pipeline_inspection(), public.compute_salesperson_retention_cohort(), public.get_client_purchase_heatmap(), public.get_purchase_intelligence_summary(), public.is_salesperson_active(), public.notify_sale_completion(), public.revenue_forecast_view (+7 more)
 
-### Community 203 - "🔒 Política de Segurança"
+### Community 193 - "VirtualDealsList.tsx"
+Cohesion: 0.11
+Nodes (20): react-window, Props, DealTimelineExpand(), iconFor(), labelFor(), Props, Props, Props (+12 more)
+
+### Community 194 - "🔒 Política de Segurança"
 Cohesion: 0.09
 Nodes (22): Configurações de Segurança, Contato, Dependabot, Dependências e Atualizações, Headers de Segurança, 📋 Informações a Incluir, Melhores Práticas de Segurança, Para Desenvolvedores (+14 more)
 
-### Community 204 - "useBackNavigation.ts"
-Cohesion: 0.16
-Nodes (17): getPageTitle(), ROUTE_TITLES, RouteTracker, BackNavigationOptions, closeTopmostDialog(), HOME_PATHS, PARENT_OVERRIDES, resolveBackFallback() (+9 more)
+### Community 195 - "StageBottleneckCard.tsx"
+Cohesion: 0.17
+Nodes (19): ConversionFunnelChart(), Props, severityFor(), formatPct(), impactLabel, Severity, severityClasses, severityFillHsl (+11 more)
 
-### Community 205 - "useContactFrequencyRules.ts"
-Cohesion: 0.13
-Nodes (18): hookState, saved, toastError, toastSuccess, asObject(), contactFrequencyRulesKey(), DEFAULT_CONTACT_FREQUENCY, fetchRawRules() (+10 more)
+### Community 196 - "ABTestPanel.tsx"
+Cohesion: 0.15
+Nodes (17): analyzeWinner(), normCdf(), WinnerAnalysis, ABTestPanel(), Props, StepGroup, CHANNEL_META, ChannelKey (+9 more)
 
-### Community 206 - "20260104144318_performance_indexes.sql"
+### Community 197 - "RiskDebugPanel.tsx"
+Cohesion: 0.20
+Nodes (19): Bar(), ContribRow, highlightNumbers(), reasonFromLegacy(), renderCompetitorReason(), resolveReasons(), RiskDebugPanel(), getReasonKindMeta() (+11 more)
+
+### Community 198 - "20260104144318_performance_indexes.sql"
 Cohesion: 0.14
 Nodes (22): idx_activities_client_id, idx_activities_created_at, idx_activities_deal_id, idx_activities_user_date, idx_activities_user_id, idx_clients_created_at, idx_clients_email, idx_clients_phone (+14 more)
 
-### Community 207 - "compilerOptions"
+### Community 199 - "compilerOptions"
 Cohesion: 0.09
 Nodes (22): compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, lib, module, moduleResolution, noEmit (+14 more)
 
-### Community 208 - "20260513192235_93150d83-cdca-468b-a5dd-4958b62e2a04.sql"
+### Community 200 - "indice.py"
+Cohesion: 0.14
+Nodes (19): argparse, datetime, importlib_util, json, pathlib, entry_file(), git(), main() (+11 more)
+
+### Community 201 - "/graphify"
+Cohesion: 0.09
+Nodes (19): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal, For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration (+11 more)
+
+### Community 202 - "20260513192235_93150d83-cdca-468b-a5dd-4958b62e2a04.sql"
 Cohesion: 0.10
 Nodes (21): contact_send_time_profile, public.executive_briefings, public.pipeline_coverage_snapshots, race_events, public.client_purchase_seasonality, public.contact_best_send_window, public.conversation_insights_summary, public.latest_briefing_view (+13 more)
 
-### Community 209 - "Edge functions"
+### Community 203 - "README.md"
+Cohesion: 0.10
+Nodes (12): Dicionário de Dados — Promo Champions V2.1, ADR-005: Idempotência Quote → Sale, Consequências, Contexto, Decisão, Testes, ADR-006: Estratégia de X-Request-Id, Consequências (+4 more)
+
+### Community 204 - "Edge functions"
 Cohesion: 0.09
 Nodes (21): Alertas / Monitoramento (13), API — Promo Champions V2.1, Auth / Segurança (2), Cadências / Workflows (11), Coaching (8), CRM / Pipeline (29), Customer Success (6), Edge functions (+13 more)
 
-### Community 210 - "campaign-health.ts"
-Cohesion: 0.13
-Nodes (19): `channel_credentials`, `integration_connections`, `pipeline_stages`, `race_scoring_rules`, `sequence_step_variants`, `stage_inactivity_rules`, `win_loss_patterns`, CampaignAlert (+11 more)
-
-### Community 211 - "PENDÊNCIAS — Workflows com bloqueio externo"
+### Community 205 - "PENDÊNCIAS — Workflows com bloqueio externo"
 Cohesion: 0.09
 Nodes (21): 0. ✅ CI Failure Alert — CONCLUÍDO (2026-10-22), 10. Deploy Pipeline — tags do release-please não disparam o workflow (GITHUB_TOKEN), 11. Apply Migration — guard de coluna `products.active` ausente (SQL), 1. Cron Monitoring Regression — falta `SUPABASE_SERVICE_ROLE_KEY`, 1. Cron Monitoring Regression — secret `SUPABASE_SERVICE_ROLE_KEY` errado, 2. DB Backup (off-site) — 2 secrets, 2. DB Backup (off-site) — falta apenas `BACKUP_ENCRYPTION_KEY`, 3. Release Please — BLOQUEADO: Actions proibidas de criar PRs (+13 more)
 
-### Community 212 - "gen-data-dict.mjs"
+### Community 206 - "gen-data-dict.mjs"
 Cohesion: 0.11
 Nodes (17): core, degree, edges, er, files, getTable(), MIG_DIR, norm() (+9 more)
 
-### Community 213 - "smoke-target-backend.ts"
+### Community 207 - "smoke-target-backend.ts"
 Cohesion: 0.24
 Nodes (19): CORE_TABLES, main(), phaseAuth(), phaseConnectivity(), phaseData(), phaseRlsAnon(), phaseRlsAuthenticated(), record() (+11 more)
 
-### Community 214 - "useCloserMetrics.ts"
-Cohesion: 0.13
-Nodes (19): queryClient, CloserRevenueComparisonProps, calculateChange(), fetchPeriodData(), KPIData, KPIWithComparison, getPeriodRange(), PeriodFilter (+11 more)
+### Community 208 - "useEmailOptOuts.ts"
+Cohesion: 0.10
+Nodes (15): Props, SummarizeButton(), useSummarizeRecording(), EmailOptOut, EmailOptOutFilters, EmailOptOutsResult, sanitizeSearch(), useEmailOptOuts() (+7 more)
 
-### Community 215 - "EngagementLeaderboardWidget.tsx"
-Cohesion: 0.18
-Nodes (17): EngagementLeaderboardWidget(), Props, EngagementScoreBadge(), Props, formatScore(), TIER_META, TierMeta, EngagementBadgeForContact() (+9 more)
-
-### Community 216 - "LeadScoreExplainCard.tsx"
+### Community 209 - "LeadScoreExplainCard.tsx"
 Cohesion: 0.19
 Nodes (17): LeadScoreExplainCard, Props, directionBg(), directionColor(), formatDelta(), priorityBadge(), ScoreDriver, ScoreExplanation (+9 more)
 
-### Community 217 - "salesReportHelpers.ts"
-Cohesion: 0.25
-Nodes (19): Props, buildKpiDeltas(), buildKpis(), buildMarkupRanking(), buildMarkupSeries(), buildRevenueSeries(), buildStatusBreakdown(), buildTeamRanking() (+11 more)
+### Community 210 - "TrackScenery.tsx"
+Cohesion: 0.17
+Nodes (19): TrackBlimp(), BirdFlock(), BroadcastHelicopter(), Bush(), ControlTower(), CrowdCluster(), ExternalPitLane(), Grandstand() (+11 more)
 
-### Community 218 - "winloss-webhook-replay/index.ts"
+### Community 211 - "RiskSeverity"
+Cohesion: 0.10
+Nodes (18): Props, AT_RISK_PRESETS, AT_RISK_SEVERITY_PRESETS, AtRiskPreset, AtRiskPresetId, AtRiskSeverityPreset, AtRiskSettings, src_lib_winloss_severityfromscore_riskseverity (+10 more)
+
+### Community 212 - "winloss-webhook-replay/index.ts"
 Cohesion: 0.16
 Nodes (17): assertAdmin(), buildAuditEntry(), buildDlqUpdate(), describeError(), handler(), jlog(), jsonResponse(), persistInvocationAudit() (+9 more)
 
-### Community 219 - "20260416170135_cc109372-7eb4-4589-89a9-d89b0f3b3c00.sql"
+### Community 213 - "20260416170135_cc109372-7eb4-4589-89a9-d89b0f3b3c00.sql"
 Cohesion: 0.16
 Nodes (20): idx_agenda_events_sale, idx_agenda_events_salesperson, idx_agenda_events_scheduled, idx_agenda_events_status, idx_commission_rules_category, idx_commission_rules_priority, idx_commission_rules_salesperson, idx_commissions_created (+12 more)
 
-### Community 220 - "20260416234424_66fbe1df-5677-4a6c-bea6-daf700e06009.sql"
+### Community 214 - "20260416234424_66fbe1df-5677-4a6c-bea6-daf700e06009.sql"
 Cohesion: 0.16
 Nodes (21): idx_cohort_analyses_owner, idx_custom_reports_owner, idx_custom_reports_shared, idx_embedded_tokens_report, idx_embedded_tokens_token, idx_report_executions_report, idx_report_executions_schedule, idx_report_schedules_next_run (+13 more)
 
-### Community 221 - "salespeople"
+### Community 215 - "Execução — Onda 0 de estabilização"
 Cohesion: 0.10
-Nodes (16): asset_usage_logs, public.notify_asset_ai_status, public.notify_asset_influence_boost, public.set_sdr_id_on_insert, assignLeadRoundRobin(), salespeople, idx_salespeople_role, public.get_active_salespeople() (+8 more)
+Nodes (15): Bloqueios e autorizações necessárias para a próxima onda, CI remoto, Contenções efetivamente implementadas, Critério para deploy, Decisão de segurança, Evidências de validação local, Execução — Onda 0 de estabilização, O que foi deliberadamente preservado (+7 more)
 
-### Community 222 - "2. Matriz de paridade"
+### Community 216 - "test"
+Cohesion: 0.10
+Nodes (19): 🔴 CRÍTICO — Relatório de qualidade/cobertura é fabricado (hardcoded), não medido, Automação local — Promo_Champions_V2.1, Comandos, Gatilhos e ativação, Hooks e workflows anteriores, Registro exato dos demais scripts, Suites efetivamente executadas, 15 — Escada de cobertura por módulo crítico (+11 more)
+
+### Community 217 - "2. Matriz de paridade"
 Cohesion: 0.10
 Nodes (20): 1. Resumo executivo, 2.10 Gamificação, 2.1 Prospecção & listas, 2.2 Cadências & multicanal, 2.3 Deliverability & tracking, 2.4 Inbound / Marketing, 2.5 CRM & pipeline, 2.6 Relatórios & BI (+12 more)
 
-### Community 223 - "Changelog - Sessão de Melhorias (Dezembro 2024)"
+### Community 218 - "Changelog - Sessão de Melhorias (Dezembro 2024)"
 Cohesion: 0.10
 Nodes (21): 1. Melhorias no Light Mode, 2. Melhorias no Dark Mode, 3. Tipografia Consistente, 4. Transições de Tema, 5. Focus States Elegantes, 6. Micro-interações Polidas, 7. Glass Morphism Aprimorado, 8. Novas Animações (tailwind.config.ts) (+13 more)
 
-### Community 224 - "Plano de implementação do Graphify — 50 etapas"
+### Community 219 - "Plano de implementação do Graphify — 50 etapas"
 Cohesion: 0.10
-Nodes (21): Arquitetura proposta, Diagnóstico preparatório verificável, Etapa 11 — Executar piloto AST do frontend, Etapa 12 — Resolver aliases, lazy imports e fronteiras de módulos, Etapa 13 — Mapear Edge Functions e dependências Deno, Etapa 14 — Representar migrations como histórico, não como banco aplicado, Etapa 15 — Ligar frontend, Edge, RPC e entidades de dados, Etapa 46 — Pilotar em revisão real de mudança pequena (+13 more)
+Nodes (21): Arquitetura proposta, Diagnóstico preparatório verificável, Etapa 21 — Validar identidade, acesso e sessão de leitura, Etapa 22 — Coletar estrutura relacional completa, Etapa 23 — Coletar segurança e objetos programáveis, Etapa 24 — Coletar extensões, storage e automações, Etapa 25 — Comparar código, migrations e catálogo observado, Etapa 46 — Pilotar em revisão real de mudança pequena (+13 more)
 
-### Community 225 - "Onda 7 — Experiência de uso e consistência"
+### Community 220 - "Onda 7 — Experiência de uso e consistência"
 Cohesion: 0.10
 Nodes (21): Etapa 171 — Filtrar o menu pelo papel do usuário, Etapa 172 — Corrigir o modo de visualização do menu lido do navegador, Etapa 173 — Alinhar o rótulo "Administração" com quem realmente pode entrar, Etapa 174 — Dar acesso à administração no celular, Etapa 175 — Pedir confirmação antes de excluir chave de funcionalidade, Etapa 176 — Corrigir os dois botões destrutivos da auditoria de premiações, Etapa 177 — Varrer as demais ações destrutivas sem confirmação, Etapa 178 — Corrigir a rota de assinatura digital no menu do Closer (+13 more)
 
-### Community 226 - "catalog-adapter.mjs"
+### Community 221 - "catalog-adapter.mjs"
 Cohesion: 0.32
 Nodes (19): assertCollectionsUnique(), COLLECTIONS, mapBuckets(), mapEnums(), mapExtensions(), mapFunctions(), mapJobs(), mapRoles() (+11 more)
 
-### Community 227 - "Client360View.tsx"
-Cohesion: 0.15
-Nodes (16): Client360Header(), Client360HeaderProps, Client360Skeleton(), Client360View(), Client360ViewProps, extractCategories(), filterOrders(), ChurnJustificationRow (+8 more)
-
-### Community 228 - "DealVelocityCard.tsx"
+### Community 222 - "DealVelocityCard.tsx"
 Cohesion: 0.24
 Nodes (16): DealVelocityCard(), Props, VelocityForecastTimeline(), ConfidenceTier, confidenceTierLabel(), formatCloseDate(), formatDaysRemaining(), velocityRingColor() (+8 more)
 
-### Community 229 - "IntelligenceCockpit.tsx"
-Cohesion: 0.21
-Nodes (15): ActivityPulse(), ActionCard(), ExecutiveSummaryReport(), InsightRow(), Props, ShieldCheck(), SummaryStat(), HealthGauge() (+7 more)
+### Community 223 - "RaceArenaGarage.tsx"
+Cohesion: 0.16
+Nodes (16): LEAGUE_LABELS, LEAGUE_ORDER, RACE_UNLOCK_CATALOG, RaceLeague, RaceUnlockItem, UnlockCategory, getMySalespersonId(), RaceCar (+8 more)
 
-### Community 230 - "CalibrationVarianceTable.tsx"
+### Community 224 - "CalibrationVarianceTable.tsx"
 Cohesion: 0.26
 Nodes (16): CalibrationCurveChart(), CustomTooltip(), Props, STAGE_ORDER, colorByDelta(), confidenceBadgeVariant(), confidenceLabel(), formatCurrency() (+8 more)
 
-### Community 231 - "sequence-runner/index.ts"
+### Community 225 - "WebhookAttemptSliceDrawer.tsx"
+Cohesion: 0.15
+Nodes (18): DeliveryRow(), Props, shortUrl(), WebhookAttemptSliceDrawer(), WINDOW_LABEL, AttemptDeliveryRow, AttemptSliceData, useWebhookAttemptSlice() (+10 more)
+
+### Community 226 - "bitrix24-oauth/index.ts"
+Cohesion: 0.14
+Nodes (15): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_DOMAIN, BITRIX24_STATE_SECRET, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, base64UrlDecode(), base64UrlEncode() (+7 more)
+
+### Community 227 - "PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md"
 Cohesion: 0.10
-Nodes (15): AccountContactRow, AssignmentRow, ClientRow, ContactContext, DELIVERY_CONFIRMATION, DueRow, Enrollment, LeadRow (+7 more)
+Nodes (13): Candidatos de limpeza — aguardando autorização, Decisão solicitada, Itens explicitamente fora de limpeza, Controles adicionados, Execução Graphify — lote A, Limitações e próximos gates, Resultado do lote, Simulações executadas (+5 more)
 
-### Community 232 - "useTaskMutations.ts"
-Cohesion: 0.16
-Nodes (13): ⚡ Performance, TaskPriority, TaskStatus, TaskType, DbTaskPriority, DbTaskType, base, state (+5 more)
-
-### Community 233 - "graphify reference: extra exports and benchmark"
+### Community 228 - "graphify reference: extra exports and benchmark"
 Cohesion: 0.11
 Nodes (18): graphify reference: extra exports and benchmark, Step 6b - Wiki (only if --wiki flag), Step 7 - Neo4j export (only if --neo4j or --neo4j-push flag), Step 7a - FalkorDB export (only if --falkordb or --falkordb-push flag), Step 7b - SVG export (only if --svg flag), Step 7c - GraphML export (only if --graphml flag), Step 7d - MCP server (only if --mcp flag), Step 8 - Token reduction benchmark (only if total_words > 5000) (+10 more)
 
-### Community 234 - "Auditoria exaustiva do Promo Champions V2.1"
+### Community 229 - "As 22 migrations que só existem em branch fechada — 17/11/2026"
+Cohesion: 0.10
+Nodes (17): `20260725000002_audit_2fa_auth_fixes.sql` — SUPERADA, `20260725000008_audit_log_fixes.sql` — PARCIALMENTE_COBERTA, `20260727000003_audit_schema_unification.sql` e `20260727000004_uuid_consistency_cleanup.sql` — SUPERADAS, `20260727000007_twilio_webhook_security.sql` — SUPERADA, `20261019120000_bitrix24_sync_run_lock.sql` — SUPERADA, As 22 migrations que só existem em branch fechada — 17/11/2026, As 6 que eu tinha marcado PENDENTE, uma a uma, Como as 22 foram encontradas (+9 more)
+
+### Community 230 - "Auditoria exaustiva do Promo Champions V2.1"
 Cohesion: 0.10
 Nodes (20): Apêndice A — colunas integralmente nulas no destino, Apêndice B — catálogo completo das tabelas vazias no destino, Apêndice C — evidências reprodutíveis e limitações, Auditoria exaustiva do Promo Champions V2.1, Autorizações necessárias antes de executar o plano, Banco de dados — inventário vivo, Candidatos a limpeza — nenhuma exclusão autorizada, Colunas totalmente nulas em tabelas não vazias (+12 more)
 
-### Community 235 - "2. Stubs, parciais e quebradas em detalhe"
-Cohesion: 0.10
-Nodes (14): 0. Números, 1. Tabela completa, 2.1 STUB (2), 2.2 QUEBRADA (5, mais 2 mistas), 2.3 PARCIAL: feitas para cron, mas sem agendamento, 2.4 PARCIAL: metas e parâmetros inventados, 2.5 PARCIAL: a entrega prometida não acontece, 2.6 PARCIAL: tabela inexistente em parte do fluxo (+6 more)
-
-### Community 236 - "useAuthForm.ts"
+### Community 231 - "useAuthForm.ts"
 Cohesion: 0.15
 Nodes (14): 4. Drift do tipo TypeScript, @lovable.dev/cloud-auth-js, AuthBackground, AuthBrandPanel, emailSchema, passwordSchema, useAuthForm(), LockoutStatus (+6 more)
 
-### Community 237 - "07 — Domínio Win/Loss, Competitivo, Pricing e Customer Success"
-Cohesion: 0.10
-Nodes (19): 07 — Domínio Win/Loss, Competitivo, Pricing e Customer Success, 0. Sumário executivo (leia isto primeiro), 1.1 Quem importa, 1.2 Onde aparece na tela, 1.3 Prova de que os dados fictícios nunca casam com os reais, 1.4 Veredito, 1. VEREDITO — `src/lib/winloss/atRiskFixtures.ts`, 2.1 Medição de tráfego (banco de produção) (+11 more)
-
-### Community 238 - "20261117070000_reconcilia_objetos_orfaos_producao.sql"
+### Community 232 - "20261117070000_reconcilia_objetos_orfaos_producao.sql"
 Cohesion: 0.13
 Nodes (16): public.fn_quotes_inbound_ordering_guard, public.trg_recording_generate_coaching, public.trigger_auto_coaching_on_recording, idx_geo_access_logs_country_code, idx_geo_access_logs_created_at, idx_geo_blocked_regions_blocked_by, idx_geo_blocked_regions_country_code, public.geo_access_logs (+8 more)
 
-### Community 239 - "debt-report.mjs"
+### Community 233 - "PersonalAssistantSummaryCard.tsx"
+Cohesion: 0.18
+Nodes (15): react-markdown, AssistantTodayTasks(), BriefingHistoryTimeline(), escapeRegex(), Item(), labelForDate(), Props, Skeleton (+7 more)
+
+### Community 234 - "debt-report.mjs"
 Cohesion: 0.10
 Nodes (11): allowlist, breakdown, coverage, exhaustiveDeps, fns, JSON_OUT, QUICK, report (+3 more)
 
-### Community 240 - "run-win-loss-analysis.ts"
+### Community 235 - "run-win-loss-analysis.ts"
 Cohesion: 0.11
 Nodes (18): analysisRows, analyzedAt, COMPETITORS, inferSegment(), insights, LOSS_REASONS, lossFactors, patterns (+10 more)
 
-### Community 241 - "CohortHeatmap.tsx"
-Cohesion: 0.18
-Nodes (16): CohortHeatmap, KpiCard(), KpiCardProps, Props, avgRetentionAt(), buildCohortMatrix(), ClientLite, CohortRow (+8 more)
+### Community 236 - "SDRActivityTrend.tsx"
+Cohesion: 0.20
+Nodes (15): SDRActivityTrendProps, ACTIVITY_COLORS, ACTIVITY_LABELS, ActivityChartDataPoint, ActivityTypeFilter, COLORS, ComparisonChartDataPoint, PeriodFilter (+7 more)
 
-### Community 242 - "20260104182000_additional_tables.sql"
+### Community 237 - "RiskCompareModal.tsx"
+Cohesion: 0.16
+Nodes (18): buildCompareSummary(), COMP_ROWS, CompRow, ConfBadge(), DealHeader(), deltaCell(), diffKeywords(), MiniBar() (+10 more)
+
+### Community 238 - "navigationGuard.ts"
+Cohesion: 0.22
+Nodes (17): useFormGuard(), askConfirmation(), ConfirmHandler, DirtySource, dirtySources, firstDirtyMessage(), handleDocumentClick(), handlePopState() (+9 more)
+
+### Community 239 - "20260104182000_additional_tables.sql"
 Cohesion: 0.19
 Nodes (19): cadence_enrollments, cadence_steps, cadences, call_tracking, daily_challenges, experiment_assignments, experiment_variants, experiments (+11 more)
 
-### Community 243 - "Handoff operacional para o Cline — execução do plano de 100 etapas"
+### Community 240 - "salespeople"
+Cohesion: 0.11
+Nodes (15): asset_usage_logs, public.notify_asset_ai_status, public.notify_asset_influence_boost, public.set_sdr_id_on_insert, salespeople, idx_salespeople_role, public.get_active_salespeople(), salespeople_public (+7 more)
+
+### Community 241 - "Handoff operacional para o Cline — execução do plano de 100 etapas"
 Cohesion: 0.11
 Nodes (17): 10. Protocolo de código e Edge Functions, 11. Protocolo para mocks, IA e integrações, 12. Matriz mínima de verificações, 14. Estratégia recomendada de PRs iniciais, 15. Modelo de solicitação de autorização, 16. Modelo de evidência de conclusão, 17. Condições de parada obrigatória, 18. Definição final de pronto (+9 more)
 
-### Community 244 - "Frente 5 — Backend Supabase · Edge Functions Segurança (Módulos 22–26)"
+### Community 242 - "funcionalidades-pendentes-2026-10-12/README.md"
+Cohesion: 0.11
+Nodes (13): Anexo G — Infraestrutura, CI, testes, scripts e integrações externas, G.1.1 Workflows que falham todo dia em `main`, G.1.2 Gates que existem mas não bloqueiam, G.1.3 Falhas mascaradas (continue-on-error, steps comentados), G.1.4 Itens dos planos P100/PCI ainda não feitos, G.1 Workflows de CI: planejado vs existente, G.2.1 Testes pulados, auto-pulados e quarentena, G.2.2 Módulos sem nenhum teste (+5 more)
+
+### Community 243 - "Frente 5 — Backend Supabase · Edge Functions Segurança (Módulos 22–26)"
 Cohesion: 0.11
 Nodes (19): 🟠 ALTO — Endpoints "hub"/agregadores expõem dados financeiros da empresa sem auth, 🟠 ALTO — `enrich-lead`: escrita service-role sem auth em `clients` por `leadId` arbitrário, 🟠 ALTO — `execute-workflow`: escrita service-role sem auth com IDs controlados (IDOR), 🟠 ALTO — `ranking-api`: controle de acesso quebrado (sem escopo de time/empresa), 🟠 ALTO — `send-push-notification`: push arbitrário para usuários arbitrários (phishing), 🔵 BAIXO — Endpoints de IA/LLM sem rate limit (abuso de custo), 🔵 BAIXO — Rate limiter: bypass trivial e escopo por-isolate, 🔵 BAIXO — Vazamento de detalhes internos em mensagens de erro (+11 more)
 
-### Community 245 - "Design System - Promo Champions"
+### Community 244 - "Design System - Promo Champions"
 Cohesion: 0.11
-Nodes (18): Animações Específicas, Botões, Classes, Cores e Tokens, Cores Semânticas (use SEMPRE estas), Desabilitar Transições, Design System - Promo Champions, Focus Animado (+10 more)
+Nodes (18): Animações Específicas, Botões, Cards, Classes de Card Auxiliares, Cores e Tokens, Cores Semânticas (use SEMPRE estas), Desabilitar Transições, Design System - Promo Champions (+10 more)
 
-### Community 246 - "33. Hooks Customizados (Catálogo Completo)"
+### Community 245 - "33. Hooks Customizados (Catálogo Completo)"
 Cohesion: 0.11
 Nodes (19): 33.10 Portfólio & ICP, 33.11 Fornecedores & Preços, 33.12 Orçamentos, 33.13 Notificações, 33.14 Segurança, 33.15 Assistente IA & Voz, 33.16 Equipes, 33.17 Integração (+11 more)
 
-### Community 247 - "🚀 Runbook Operacional — Promo Champions"
+### Community 246 - "05 — Domínio Gamificação / Race / Ranking"
 Cohesion: 0.11
-Nodes (19): Build Falha, Callback V4 (Promo Gifts V4), Como ligar, Como reprocessar, Como verificar, Contatos, DB Lento, Edge Function Timeout (+11 more)
+Nodes (18): 05 — Domínio Gamificação / Race / Ranking, 0. VEREDITO EXECUTIVO, 1.1 Tabelas com dados (7 de 36), 1.2 Tabelas VAZIAS — 0 linhas (26 tabelas), 1. MEDIÇÃO CRUA DO BANCO, 3.2 `rotate-daily-challenges` NÃO tem cron, 3.3 Retenção de `cron.job_run_details`, 3. JOBS DE CRON — o que roda e o que quebrou (+10 more)
+
+### Community 247 - "09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types)"
+Cohesion: 0.11
+Nodes (18): 09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types), 0. Inventário bruto do escopo (VERIFICADO), 1.1 Por subpasta (VERIFICADO), 1.2 Totais de destinos referenciados pelo front (VERIFICADO), 1.3 Views do banco consumidas diretamente pelo front (VERIFICADO — 9/9 encontradas), 1. Mapa hook → destino, 3.1 Tabelas inexistentes — 1 de 323 (VERIFICADO), 3.2 RPCs inexistentes — 0 de 80 (VERIFICADO) (+10 more)
 
 ### Community 248 - "20260416231940_a82b593c-b778-454c-b3ac-97ab40286cfd.sql"
 Cohesion: 0.15
@@ -2325,49 +2340,49 @@ Nodes (16): public.auto_set_forecast_category, idx_bcm_sale, idx_pis_inspected, 
 Cohesion: 0.11
 Nodes (17): public.trg_deal_stage_history, public.trg_sales_stamp_closed_at, mv_competitive_ranking_id_idx, public.competitive_ranking, public.get_industry_top_products(), public.revenue_forecast_view, public.trg_deal_stage_history(), public.deal_stage_history (+9 more)
 
-### Community 250 - "Release v2.1.0 — Mega-Jornada 10/10"
-Cohesion: 0.12
-Nodes (16): 🔗 Breaking changes, 🧪 Cobertura Tier-1, 📋 Disciplina de release (vigente), 🔧 Migrações de banco (aplicadas), 🚀 Novos módulos funcionais, ⚡ Otimização de bundle, Release v2.1.0 — Mega-Jornada 10/10, 🛡️ Segurança (Hardening) (+8 more)
-
-### Community 251 - "check-migrations.mjs"
+### Community 250 - "check-migrations.mjs"
 Cohesion: 0.10
 Nodes (13): baseIndex, entries, errors, FORBIDDEN_LITERALS, versions, warnings, baseline, BASELINE_PATH (+5 more)
 
-### Community 252 - "deno-test-suite.mjs"
+### Community 251 - "deno-test-suite.mjs"
 Cohesion: 0.11
 Nodes (16): allFiles, args, FUNCTIONS_DIR, isCI, liveFiles, liveList, manifest, MANIFEST_PATH (+8 more)
 
-### Community 253 - "ProtectedRoute"
-Cohesion: 0.16
-Nodes (13): ProtectedRoute(), AdminTasksPage(), AutomacaoInteligente(), CoachingInteligente(), CustomerSuccess360Page(), CustomerSuccessHubPage(), Admin, Manager (+5 more)
+### Community 252 - "SmokeTestChecklist.tsx"
+Cohesion: 0.22
+Nodes (15): IntegrationHealthCard(), IntegrationHealthCardsGrid(), IntegrationsHealthCard(), SmokeTestChecklist(), buildMarkdownReport(), loadSnapshot(), saveSnapshot(), SmokeItemResult (+7 more)
 
-### Community 254 - "CoachingImpactTracker.tsx"
-Cohesion: 0.26
-Nodes (14): CoachingImpactTracker(), KpiCard(), deltaToneClass(), formatCurrency(), formatDelta(), heatmapShade(), DeltaPill(), ImpactSessionCard() (+6 more)
+### Community 253 - "EmailEngagementScoring.tsx"
+Cohesion: 0.21
+Nodes (14): EmailScoreBadge(), Props, EngagementLeaderboard(), Props, EngagementTier, formatPct(), TIER_META, TierMeta (+6 more)
 
-### Community 255 - "nlqHelpers.ts"
+### Community 254 - "nlqHelpers.ts"
 Cohesion: 0.19
 Nodes (16): Props, CustomTooltip(), NLQDataChart(), Props, ChartKind, decideChartKind(), formatBRL(), formatNumber() (+8 more)
 
-### Community 256 - "stages.ts"
+### Community 255 - "PodiumCard.tsx"
+Cohesion: 0.19
+Nodes (12): AnimatedValue, EnergyParticles, HexFrame, HexFrameProps, NeonText, PodiumCard, PodiumCardProps, PodiumPerson (+4 more)
+
+### Community 256 - "WebhookHealthPanel.tsx"
+Cohesion: 0.19
+Nodes (16): HealthTooltip(), loadThreshold(), rateClasses(), reasonColor(), ReasonTooltip(), WebhookHealthPanel(), WINDOW_LABEL, WINDOW_OPTIONS (+8 more)
+
+### Community 257 - "stages.ts"
 Cohesion: 0.16
 Nodes (17): ALL_STAGES, FINANCIAL_STAGES, FinancialStage, formatBRL(), formatDate(), formatDateTime(), getStage(), OPERATIONAL_STAGES (+9 more)
 
-### Community 257 - "20251220181739_63a312a6-4970-40fd-860b-04dbb14ddc2f.sql"
+### Community 258 - "20251220181739_63a312a6-4970-40fd-860b-04dbb14ddc2f.sql"
 Cohesion: 0.19
 Nodes (18): idx_supplier_orders_status, idx_supplier_orders_supplier, idx_supplier_products_product, idx_supplier_products_supplier, idx_supplier_risk_assessments_supplier, idx_suppliers_category, idx_suppliers_is_active, public.supplier_order_items (+10 more)
 
-### Community 258 - "20260105000004_performance_indexes.sql"
+### Community 259 - "20260105000004_performance_indexes.sql"
 Cohesion: 0.18
 Nodes (18): idx_activities_client_date, idx_activities_deal, idx_activities_type_date, idx_activities_user_date, idx_clients_active, idx_clients_company, idx_clients_created, idx_clients_email (+10 more)
 
-### Community 259 - "tasks"
+### Community 260 - "tasks"
 Cohesion: 0.11
 Nodes (17): fmt, include, lint, include, rules, exclude, tags, tasks (+9 more)
-
-### Community 260 - "jsPDF"
-Cohesion: 0.11
-Nodes (14): 14. Performance — **5,5/10** (peso ×1), 8. Integrações / Plataforma, 6. Documentos que afirmam o que o código não faz, 7. Exportação de Relatórios (CSV + PDF), Exportação CSV, Exportação PDF, 📌 Notas para o time, jsPDF (+6 more)
 
 ### Community 261 - "F — Camada de dados: funcionalidades planejadas no schema e não concluídas"
 Cohesion: 0.11
@@ -2385,665 +2400,665 @@ Nodes (17): 03 — Domínio SDR / Prospecção / Engajamento Multicanal, 0. Vere
 Cohesion: 0.11
 Nodes (15): base, bin, codificado, escape, fora, graphifyReal, invalido, jsonInvalido (+7 more)
 
-### Community 265 - "Onda 4 — Funcionalidades incompletas"
-Cohesion: 0.11
-Nodes (18): Etapa 101 — Decidir o destino dos botões de exportação de Win/Loss, Etapa 102 — Decidir o destino dos botões de filtro e exportação da auditoria comercial, Etapa 103 — Decidir o destino do botão de exportação de auditoria de preço, Etapa 104 — Decidir o destino dos cinco botões da inteligência de compras, Etapa 105 — Decidir o destino dos botões do guia de estado vazio, Etapa 106 — Fazer o campo de busca da auditoria de duplicados buscar, Etapa 107 — Fazer o diálogo "Configurar IA" salvar ou sair da tela, Etapa 108 — Tirar os números fabricados do painel de Segurança (+10 more)
-
-### Community 266 - "05 — Progresso"
-Cohesion: 0.11
-Nodes (17): 05 — Progresso, Achados novos (não planejados), Divergências encontradas, Medições pedidas pelo plano, Onda 1 (etapa 240), Onda 1 — Segurança e risco de perda de dado, Onda 2 (etapa 241), Onda 2 — Fluxos principais quebrados (+9 more)
-
-### Community 267 - "staleAssetRecovery.ts"
+### Community 265 - "staleAssetRecovery.ts"
 Cohesion: 0.20
 Nodes (14): react-dom, src_index, clearCaches(), installStaleAssetRecovery(), isRecoverableAssetError(), readAttemptState(), RECOVERABLE_ERROR_PATTERNS, recoverFromStaleAssetError() (+6 more)
 
-### Community 268 - "modulos"
+### Community 266 - "modulos"
 Cohesion: 0.18
 Nodes (18): aggregate(), anyFile(), camadaDe(), cap(), closure(), componentes, dominioDe(), enrich() (+10 more)
 
-### Community 269 - "Supabase Edge Functions — Conventions"
+### Community 267 - "LeadScoringDashboard.tsx"
+Cohesion: 0.18
+Nodes (14): LeadChurnAlertsPanelProps, LeadNeuralDossierProps, LeadRankingCardProps, LeadScoringDashboard(), LeadScoringHeader(), LeadScoringHeaderProps, LeadScoringSkeleton(), LeadConnectionStatus (+6 more)
+
+### Community 268 - "AIEmailComposerPanel.tsx"
+Cohesion: 0.24
+Nodes (14): Props, EMAIL_VARIABLES, EmailGoal, EmailLanguage, EmailLength, EmailTone, GOAL_OPTIONS, LENGTH_OPTIONS (+6 more)
+
+### Community 269 - "bi-helpers.ts"
+Cohesion: 0.13
+Nodes (8): ActivityRecord, buildABCAnalysis(), buildSalespeoplePerformance(), computeForecast(), computePipelineHealth(), GoalRecord, SaleRecord, SalespersonRecord
+
+### Community 270 - "Supabase Edge Functions — Conventions"
 Cohesion: 0.11
 Nodes (17): 1. `@supabase/supabase-js` — pinned `npm:` specifier, 2. CORS — single source of truth in `_shared/cors.ts`, 3. Other third-party imports, 4. Internal imports — relative paths only, 5. File layout per function, 6. `supabase/config.toml` — function flags, 7. CI enforcement, 8. Quick checklist for new functions (+9 more)
 
-### Community 270 - "20251231120846_562120aa-f001-412e-8054-805485a4cfb6.sql"
+### Community 271 - "20251231120846_562120aa-f001-412e-8054-805485a4cfb6.sql"
 Cohesion: 0.18
 Nodes (14): active_sessions, idx_mfa_attempts_user, idx_mfa_settings_user, idx_reauth_user, idx_sms_codes_user, public.generate_mfa_backup_codes(), public.mfa_verification_attempts, public.reauthentication_requests (+6 more)
 
-### Community 271 - "components.json"
+### Community 272 - "components.json"
 Cohesion: 0.12
 Nodes (16): aliases, components, hooks, lib, ui, utils, rsc, $schema (+8 more)
 
-### Community 272 - "Encerramento de branches — 2026-11-17"
+### Community 273 - "Encerramento de branches — 2026-11-17"
 Cohesion: 0.12
 Nodes (16): As 14 branches que ficaram, conferidas por conteúdo, As 8 branches do dependabot (encerradas em 17/11), Branches com conteúdo exclusivo, Branches retidas, Branches sem conteúdo exclusivo, `claude/auditoria-tecnica-sistema-t98xtr`, `claude/chore-ci-runner-test-261106-0320`, Conferência byte a byte (fecho da auditoria) (+8 more)
 
-### Community 273 - "Replay do repo: medição e decisão — 17/11/2026"
+### Community 274 - "Replay do repo: medição e decisão — 17/11/2026"
 Cohesion: 0.12
 Nodes (16): A prova que fecha as oito, A seção 92 não pode abortar a restauração, Como foi medido, Duas lacunas que invalidavam a própria receita de restauração, Erros por categoria, Estado de backup do banco oficial, O caso `deals`, em detalhe, O dump foi testado, não só gerado (+8 more)
 
-### Community 274 - "A) Divisão da missão em 30 módulos de auditoria"
+### Community 275 - "A) Divisão da missão em 30 módulos de auditoria"
 Cohesion: 0.12
 Nodes (16): A) Divisão da missão em 30 módulos de auditoria, B) Plano de execução em 50 etapas, Estado atual, Fase 0 — Preparação & Reconhecimento (etapas 1–6), Fase 1 — Descoberta paralela por domínio (etapas 7–20), Fase 2 — Verificação & Triagem (etapas 21–30), Fase 3 — Bateria de testes E2E dirigida (etapas 31–40), Fase 4 — Remediação priorizada (etapas 41–48) (+8 more)
 
-### Community 275 - "Anexo D — Frontend (src/): funcionalidades planejadas e não executadas ou parciais"
+### Community 276 - "Anexo D — Frontend (src/): funcionalidades planejadas e não executadas ou parciais"
 Cohesion: 0.12
 Nodes (17): 10. Gamificação: Race, Arena e badges, 11. Segurança, admin e plataforma, 12.1 Marcadores (item 1), 12.2 Rotas (item 4), 12.4 Edge functions, tabelas e RPCs (item 6), 12.5 Handlers vazios, `disabled` fixo e `Math.random` (itens 2 e 3), 12. Visão transversal, 1. CRM core: vendas, pipeline, clientes, pedidos, cotações (+9 more)
 
-### Community 276 - "Frente 2 — Núcleo Transacional · Comissões, Gamificação & Integrações (Módulos 07, 09 + integrações)"
+### Community 277 - "Frente 2 — Núcleo Transacional · Comissões, Gamificação & Integrações (Módulos 07, 09 + integrações)"
 Cohesion: 0.12
 Nodes (17): 🟠 ALTO — `broadcast-sale-notification` sem autorização e conteúdo 100% do chamador, 🟠 ALTO — Cálculo de comissão ignora faixa (`min_amount`/`max_amount`) e `category`, 🟠 ALTO — Power-ups auto-concedidos e replayáveis via RLS (ganho infinito), 🟠 ALTO — `process-race-event` concede power-ups sem idempotência nem autorização do dono, 🔵 BAIXO — `collect-race-powerup`: TOCTOU permite dupla coleta, 🔵 BAIXO — Comissão do SDR paga percentual cheio sobre o valor total (pagamento em dobro), 🔵 BAIXO — INSERT client-side de `salesperson_xp` sem validação do valor, 🔴 CRÍTICO — Tokens OAuth do Bitrix24 (access + refresh) legíveis por qualquer autenticado (+9 more)
 
-### Community 277 - "04 — DOMÍNIO ANALYTICS / BI / RELATÓRIOS / FORECAST"
+### Community 278 - "04 — DOMÍNIO ANALYTICS / BI / RELATÓRIOS / FORECAST"
 Cohesion: 0.12
 Nodes (16): 04 — DOMÍNIO ANALYTICS / BI / RELATÓRIOS / FORECAST, 0. SUMÁRIO EXECUTIVO — O QUE A MEDIÇÃO REVELOU, 2. CONTAGEM POR CLASSIFICAÇÃO, 3.2 Constantes de negócio inventadas apresentadas como cálculo/IA, 3.3 Mascaramento de ausência de dado (`|| 0`, `?? 0`, ternário → 0), 3. LISTA COMPLETA DE DADOS FICTÍCIOS (arquivo:linha), 4. TABELAS/VIEWS DO DOMÍNIO — CONTAGEM MEDIDA, 5. EDGE FUNCTIONS — QUEM CHAMA CADA UMA (medido por grep em `src/`, `supabase/migrations/`, `supabase/functions/` e `cron.job`) (+8 more)
 
-### Community 278 - "Lote 14 — Verificação da própria auditoria"
+### Community 279 - "ScheduledSendsPanel.tsx"
+Cohesion: 0.20
+Nodes (15): 6.2 O refactor abandonado real: 18 nomes de hook definidos em 2+ arquivos (VERIFICADO), 8. O que NÃO consegui verificar, INFERIDO (raciocínio, não medição), channelIcon(), Props, ScheduledSendsPanel(), SOURCE_LABEL, STATUS_LABEL (+7 more)
+
+### Community 280 - "Lote 14 — Verificação da própria auditoria"
 Cohesion: 0.12
 Nodes (17): 1.1 🔴 Contagem errada no meu próprio lote 13 — **propagada para todo lugar**, 1.2 Fase A: contei 169 Edge Functions — são **168**, 1.3 Fase A: contei 80 arquivos de teste — são **140**, 1.4 Recontagem publicada estava desatualizada, 1.5 Pontos cegos publicados estavam desatualizados, 1.6 Meu primeiro teste de exposição anônima usou filtro estreito demais, 1. Erros que eu mesmo cometi, 2. Erros nos lotes, corrigidos (+9 more)
 
-### Community 279 - "Hardening do Supabase canônico — 2026-08-31"
+### Community 281 - "Hardening do Supabase canônico — 2026-08-31"
 Cohesion: 0.12
 Nodes (16): Banco canônico, Cenários simulados antes da aplicação, Contratos de negócio conciliados no banco, Correções implementadas, Critério de 10/10, Estado real pós-implantação — 2026-08-31 11:28 BRT, Evidências locais, Gate de Edge Functions (+8 more)
 
-### Community 280 - "Revisão do plano Graphify: implementação, lacunas e evidências"
+### Community 282 - "Revisão do plano Graphify: implementação, lacunas e evidências"
 Cohesion: 0.12
 Nodes (17): 1. Baseline e método, 2. Defeitos confirmados e lacunas técnicas prioritárias, 3. Testes e qualidade da evidência, 4. GitHub e verificações externas, 5. Matriz completa das 50 etapas, 6. Correções necessárias no próprio plano, 7. Banco e vínculo com o plano geral de 100 etapas, 8. Ordem recomendada de execução após esta revisão (+9 more)
 
-### Community 281 - "Hardening de Segurança — SECURITY DEFINER, RLS, Edge Functions & WAL"
+### Community 283 - "Onda 6 — Performance e escala"
+Cohesion: 0.12
+Nodes (16): 04 — Plano de correção em etapas, Backlog — o que ficou fora das 255, Encerramento do plano, Etapa 162 — Corrigir o truncamento do relatório de atividades da equipe, Etapa 163 — Auditar as 101 consultas sem limite e classificar por risco, Etapa 164 — Agregar no banco os indicadores de BI de vendas, Etapa 165 — Agregar no banco as métricas de closer e de vendedor, Etapa 166 — Agregar no banco as análises de cliente (+8 more)
+
+### Community 284 - "Hardening de Segurança — SECURITY DEFINER, RLS, Edge Functions & WAL"
 Cohesion: 0.12
 Nodes (17): 10. Concessões aplicadas APÓS 2026-07-11 (revisão 2026-10-18), 1. Modelo de autorização — Roles, 2. Matriz esperada de EXECUTE em `SECURITY DEFINER` (149 funções), 3. Autorização esperada por role de aplicação, 4. Edge Functions — SEC-03, 5. RLS — cenários cobertos por teste, 6. PERF-01 — Alertas de WAL / replicação, 7. Como interpretar `v_security_definer_exposure` (+9 more)
 
-### Community 282 - "10. Guia de Implementação Passo a Passo"
-Cohesion: 0.12
-Nodes (17): 10. Guia de Implementação Passo a Passo, 2. Arquitetura, 4. Edge Function — Coleta de Telemetria, Como Classificar o Status, Componentes, Constantes de Threshold, Diagrama de Dependências, Função `emitTelemetry()` (+9 more)
-
-### Community 283 - "20261001150100_lgpd_consent_and_anonymization.sql"
+### Community 285 - "20261001150100_lgpd_consent_and_anonymization.sql"
 Cohesion: 0.20
 Nodes (16): public.fn_website_visitor_log_consent, public.website_visitor_logs, idx_consent_records_purpose, idx_consent_records_subject_email, idx_consent_records_subject_id, idx_dsr_status_due, idx_dsr_subject_email, idx_website_visitor_logs_retention (+8 more)
 
-### Community 284 - "20260513192406_ef2d75ae-77a0-44d8-be60-b4f1a6aba82b.sql"
+### Community 286 - "20260513192406_ef2d75ae-77a0-44d8-be60-b4f1a6aba82b.sql"
 Cohesion: 0.12
 Nodes (11): public.lead_source_configs, public.auto_enroll_in_cadence(), public.calculate_source_roi(), public.maintain_sales_streaks(), public.refresh_monthly_sales_summary(), public.trigger_recalculate_deal_health(), public.cadence_enrollment_rules, public.call_recordings (+3 more)
 
-### Community 285 - "20260512144912_b9041e04-0f44-49ce-978a-6f5b9e7acb90.sql"
+### Community 287 - "20260512144912_b9041e04-0f44-49ce-978a-6f5b9e7acb90.sql"
 Cohesion: 0.13
 Nodes (15): public.maintain_sales_streaks, public.sync_battle_score, public.maintain_sales_streaks(), public.sync_battle_score(), public.activities, public.auto_victory_post, public.battle_participants, public.sales (+7 more)
 
-### Community 286 - "20261019153000_lgpd_gamificacao_r2.sql"
+### Community 288 - "20261019153000_lgpd_gamificacao_r2.sql"
 Cohesion: 0.12
 Nodes (11): public.race_cars_guard_counters, public.anonymize_data_subject(), public.compute_challenge_progress_value(), public.clients, public.consent_records, public.email_opt_outs, public.follow_up_audit_logs, public.quotes (+3 more)
 
-### Community 287 - "20260417105640_f90fe72d-ce4d-4999-9ab0-239b02795e32.sql"
+### Community 289 - "20260417105640_f90fe72d-ce4d-4999-9ab0-239b02795e32.sql"
 Cohesion: 0.18
 Nodes (14): public.trg_recompute_engagement, idx_ces_contact, idx_ces_score_tier, idx_esh_contact_date, public.bulk_recompute_engagement(), public.contact_engagement_score, public.engagement_score_history, public.engagement_score_leaderboard (+6 more)
 
-### Community 288 - "uniq"
+### Community 290 - "uniq"
 Cohesion: 0.20
 Nodes (17): baseOf(), byCount(), convencoes, flags, git(), gitInfo, gitInfoCommit(), graphify (+9 more)
 
-### Community 289 - "codemod-money.mjs"
+### Community 291 - "codemod-money.mjs"
 Cohesion: 0.20
 Nodes (16): applySpans(), brlCall(), callEnd(), changed, decimalsFrom(), defEndAt(), DRY, exprStart() (+8 more)
 
-### Community 290 - "campaignDeliveryHelpers.ts"
-Cohesion: 0.24
-Nodes (14): CampaignDeliveryStatRow, classifyDelivery(), completionRate(), DELIVERY_THRESHOLDS, DeliveryHealth, DeliverySummary, failureRate(), formatDuration() (+6 more)
-
-### Community 291 - "20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1.sql"
+### Community 292 - "20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1.sql"
 Cohesion: 0.13
 Nodes (10): public.match_weekly_players(), public.notify_asset_ai_status(), public.update_performance_bet_progress(), public.update_territory_conquests(), public.activities, public.performance_bets, public.sales, public.salespeople (+2 more)
 
-### Community 292 - "20261027210000_r3_db_kpis_fixes.sql"
+### Community 293 - "20261027210000_r3_db_kpis_fixes.sql"
 Cohesion: 0.14
 Nodes (12): public.get_client_purchase_heatmap(), public.get_purchase_intelligence_summary(), public.get_semantic_coverage(), ordered, public.activities, public.broadcast_sale_completed, public.call_recordings, public.clients (+4 more)
 
-### Community 293 - "compilerOptions"
+### Community 294 - "compilerOptions"
 Cohesion: 0.12
 Nodes (16): compilerOptions, composite, declaration, declarationDir, isolatedModules, lib, module, moduleDetection (+8 more)
 
-### Community 294 - "20260104184000_performance_indexes_additional.sql"
+### Community 295 - "20260104184000_performance_indexes_additional.sql"
 Cohesion: 0.17
 Nodes (14): audit_log, idx_activities_created_brin, idx_activities_user_type_date, idx_audit_log_created_brin, idx_clients_email_trgm, idx_clients_name_trgm, idx_deals_active, idx_deals_client_status_date (+6 more)
 
-### Community 295 - "20260513192309_941ec5e7-0b44-4d26-94cf-210aec6bae9f.sql"
+### Community 296 - "20260513192309_941ec5e7-0b44-4d26-94cf-210aec6bae9f.sql"
 Cohesion: 0.14
 Nodes (15): call_coaching_scorecards, call_sentiment_timeline, client_portfolio, coaching_sessions, contact_engagement_score, follow_up_audit_logs, sequence_step_executions, sequence_step_variants (+7 more)
 
-### Community 296 - "docs/estado/README.md"
-Cohesion: 0.13
-Nodes (10): Evidência de runtime — a base de todas as classificações abaixo, Integrações mencionadas em documentação/configuração mas **inexistentes no código**, Lote 13 — Integrações Externas, O que este lote **não** cobriu, Riscos ordenados por gravidade, Tabela de estado por integração, Veredito do lote, Auditoria de Estado — Promo Champions v2.1 (+2 more)
+### Community 297 - "Race Arena — Relatório de Testes Exaustivos"
+Cohesion: 0.14
+Nodes (15): 1. Sumário executivo, 2. Cobertura por arquivo (estimada), 3. Verificações de integridade DB, 4. Bugs / observações encontrados — todos resolvidos ✅, 6. Status final, 7. Hardening Round 2 — 2026-04-19, 8. Query de auditoria de eventos órfãos (rodar semanalmente), B1 — Médio · `race_scoring_rules` vazia para temporada ativa ✅ RESOLVIDO (+7 more)
 
-### Community 297 - "ScheduledSendsPanel.tsx"
-Cohesion: 0.22
-Nodes (14): 6.2 O refactor abandonado real: 18 nomes de hook definidos em 2+ arquivos (VERIFICADO), 8. O que NÃO consegui verificar, INFERIDO (raciocínio, não medição), channelIcon(), Props, ScheduledSendsPanel(), SOURCE_LABEL, STATUS_LABEL (+6 more)
-
-### Community 298 - "2. Plano em 100 etapas"
-Cohesion: 0.12
-Nodes (15): 1. Diagnóstico — o que está quebrado hoje, 2. Plano em 100 etapas, 3. Ordem recomendada de execução, Fase 0 — Estancar o sangramento (etapas 1–12) · P0, Fase 1 — Cadeia de suprimento e permissões (etapas 13–27) · P1, Fase 2 — Gates e ruleset (etapas 28–40), Fase 3 — Agendados confiáveis e alertas reais (etapas 41–52), Fase 5 — E2E e qualidade que valem alguma coisa (etapas 66–78) (+7 more)
-
-### Community 299 - "Workflows"
+### Community 298 - "Workflows"
 Cohesion: 0.12
 Nodes (15): CI/CD — GitHub Actions, `codeql.yml` — Análise de segurança, `contexto-testes.yml` — Testes das automações de contexto, `contexto.yml` — Contexto para agentes de IA (10 min), `cron-monitoring.yml` — Regressão do alarme de crons, `edge-functions-bundle.yml` — Bundle de Edge Functions, `edge-functions-request-id.yml` — Lint de X-Request-Id, `graphify.yml` — Foundation do grafo de código (+7 more)
 
-### Community 300 - "20260712212305_f2dce21f-f0e2-420b-a2c3-012503384c39.sql"
+### Community 299 - "20260712212305_f2dce21f-f0e2-420b-a2c3-012503384c39.sql"
 Cohesion: 0.13
 Nodes (15): public.call_sentiment_timeline, public.integration_health_checks, public.mood_entries, public.outbound_messages, public.report_executions, idx_call_sentiment_timeline_recording_id, idx_integration_health_checks_connection_id, idx_mood_entries_salesperson_id (+7 more)
 
-### Community 301 - "public.fn_record_conversion_attempt"
+### Community 300 - "public.fn_record_conversion_attempt"
 Cohesion: 0.17
 Nodes (14): public.follow_up_notifications, idx_quote_conversion_audit_created, idx_quote_conversion_audit_quote, idx_quote_conversion_audit_request, idx_quote_conversion_audit_sale, public.fn_record_conversion_attempt(), public.quote_conversion_audit, public.follow_up_audit_logs (+6 more)
 
-### Community 302 - "20260513192524_0d483376-feda-4a3b-8407-4904a6a0b6d1.sql"
+### Community 301 - "20260513192524_0d483376-feda-4a3b-8407-4904a6a0b6d1.sql"
 Cohesion: 0.12
 Nodes (9): public.forecast_snapshots, public.whatsapp_template_versions, public.check_battle_achievements(), public.generate_cadence_tasks(), public.handle_template_versioning(), public.reconcile_forecast_accuracy(), public.cadence_steps, public.sales (+1 more)
 
-### Community 303 - "readText"
+### Community 302 - "readText"
 Cohesion: 0.15
 Nodes (16): allMatches(), changelogTopo, composes, countLines(), dockerfiles, docsRaiz, docTitle(), envExample (+8 more)
 
-### Community 304 - "check-domain-boundaries.mjs"
+### Community 303 - "check-domain-boundaries.mjs"
 Cohesion: 0.14
 Nodes (14): baseline, BASELINE_PATH, domainOf(), edgeKey(), fresh, isSharedTarget(), legacy, ROOT (+6 more)
 
-### Community 305 - "flaky-report.mjs"
+### Community 304 - "flaky-report.mjs"
 Cohesion: 0.12
 Nodes (14): args, expiredQuarantine, failedQuarantined, failedReal, flakies, hoje, input, isCI (+6 more)
 
-### Community 306 - "FonteLeads.tsx"
-Cohesion: 0.34
-Nodes (11): LeadSourceDistribution(), LeadSourceMetrics(), LeadSourceTrendChart(), LeadSource, SourceAnalysis, sourceColors, sourceLabels, SourceMetrics (+3 more)
+### Community 305 - "PermissionMatrix.tsx"
+Cohesion: 0.26
+Nodes (13): ProtectedRouteProps, Permission, PermissionComparisonTable, PermissionComparisonTableProps, Permission, PermissionMatrix(), RolePermission, actionLabels (+5 more)
 
-### Community 307 - "Client360OrdersCard.tsx"
-Cohesion: 0.23
-Nodes (12): Client360KpiCards(), Client360KpiCardsProps, DiffBadge(), Client360OrdersCardProps, computeSegmentDiff(), FilterArgs, formatCurrency(), SelectedOrder (+4 more)
+### Community 306 - "Client360OrdersCard.tsx"
+Cohesion: 0.24
+Nodes (12): Client360KpiCards(), DiffBadge(), Client360OrdersCard(), Client360OrdersCardProps, computeSegmentDiff(), FilterArgs, formatCurrency(), SelectedOrder (+4 more)
 
-### Community 308 - "useCriticalMoments.ts"
+### Community 307 - "useCriticalMoments.ts"
 Cohesion: 0.23
 Nodes (13): Props, CriticalMoment, MOMENT_ICONS, MOMENT_LABELS, MomentSeverity, MomentStatus, MomentType, SEVERITY_LABELS (+5 more)
 
-### Community 309 - "SummarizeButton.tsx"
-Cohesion: 0.16
-Nodes (11): Props, SummarizeButton(), useSummarizeRecording(), DuplicateGroup, levenshtein(), nameSimilarity(), useDeduplicationScan(), classifyDeadLetterError() (+3 more)
+### Community 308 - "campaignDeliveryHelpers.ts"
+Cohesion: 0.25
+Nodes (13): CampaignDeliveryStatRow, classifyDelivery(), DELIVERY_THRESHOLDS, DeliveryHealth, DeliverySummary, failureRate(), formatDuration(), normalizeDeliveryRow() (+5 more)
 
-### Community 310 - "logger.ts"
-Cohesion: 0.23
-Nodes (12): log, PushSubscriptionState, emit(), LogEntry, logger, LogLevel, redact(), ScopedLogger (+4 more)
-
-### Community 311 - "20260104183000_security_enhancements.sql"
+### Community 309 - "20260104183000_security_enhancements.sql"
 Cohesion: 0.22
 Nodes (15): check_failed_attempts(), data_access_log, idx_data_access_table, idx_data_access_user, idx_login_attempts_email, idx_login_attempts_ip, idx_password_history_user, idx_session_activity_user (+7 more)
 
-### Community 312 - "20260418104126_4c039bef-e31d-4154-a40f-49b00f8164c2.sql"
+### Community 310 - "20260418104126_4c039bef-e31d-4154-a40f-49b00f8164c2.sql"
 Cohesion: 0.24
 Nodes (15): idx_race_badges_sp, idx_race_events_season, idx_race_powerups_sp, idx_race_seasons_status, public.race_badges, public.race_cars, public.race_events, public.race_leaderboard_view (+7 more)
 
-### Community 313 - "useUploadCallRecording.ts"
-Cohesion: 0.19
-Nodes (11): A.1 `docs/auditoria/AUDITORIA_EXAUSTIVA_2026-08-26_PLANO_100_ETAPAS.md` — plano canônico de 100 etapas (Fases A–J), 9. Segurança / LGPD / Retenção / ADRs, CallRecordingPlayer(), Props, getCallRecordingSignedUrl(), sha256(), UploadInput, useUploadCallRecording() (+3 more)
-
-### Community 314 - "Anexo G — Infraestrutura, CI, testes, scripts e integrações externas"
+### Community 311 - "2. Stubs, parciais e quebradas em detalhe"
 Cohesion: 0.13
-Nodes (14): Anexo G — Infraestrutura, CI, testes, scripts e integrações externas, G.1.1 Workflows que falham todo dia em `main`, G.1.2 Gates que existem mas não bloqueiam, G.1.3 Falhas mascaradas (continue-on-error, steps comentados), G.1.4 Itens dos planos P100/PCI ainda não feitos, G.1 Workflows de CI: planejado vs existente, G.2.1 Testes pulados, auto-pulados e quarentena, G.2.2 Módulos sem nenhum teste (+6 more)
+Nodes (14): 0. Números, 1. Tabela completa, 2.1 STUB (2), 2.2 QUEBRADA (5, mais 2 mistas), 2.3 PARCIAL: feitas para cron, mas sem agendamento, 2.4 PARCIAL: metas e parâmetros inventados, 2.5 PARCIAL: a entrega prometida não acontece, 2.6 PARCIAL: tabela inexistente em parte do fluxo (+6 more)
 
-### Community 315 - "Simulações e achados confirmados"
+### Community 312 - "Simulações e achados confirmados"
 Cohesion: 0.13
 Nodes (14): Evidências de execução, Limites preservados, P0 — impede reprodução confiável do banco local, P1 — acessibilidade do login, P1 — autorização incompleta no portfólio de clientes, P1 — duplicação em alertas e webhooks, P2 — cobertura insuficiente em funcionalidades novas, P2 — proteção temporária de WebAuthn (+6 more)
 
-### Community 316 - "09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types)"
+### Community 313 - "06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica"
 Cohesion: 0.13
-Nodes (14): 09 — Estado da Camada Lógica (hooks / services / lib / utils / config / constants / types), 0. Inventário bruto do escopo (VERIFICADO), 3.1 Tabelas inexistentes — 1 de 323 (VERIFICADO), 3.2 RPCs inexistentes — 0 de 80 (VERIFICADO), 3.3 Edge functions inexistentes — 0 de 104 literais (VERIFICADO), 3. Referências quebradas (FIO QUEBRADO), 4.1 Tabelas no banco sem nenhum consumidor no front — 110 de 432 (25,5%) — VERIFICADO, 4.2 RPCs no banco sem consumidor no front — 198 de 278 (71,2%) — VERIFICADO (+6 more)
+Nodes (14): 06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica, 10. O QUE NÃO CONSEGUI VERIFICAR, 1. RESPOSTA À PERGUNTA CENTRAL, 2. PROVEDOR DE IA (item 1 do escopo), 3. OS SECRETS EXISTEM? (item 2 do escopo) — `NAO_VERIFICADO`, 4. AS TABELAS TÊM LINHAS? (item 3 do escopo) — TODAS ZERO, 5. BUSCA SEMÂNTICA — O CANDIDATO A ✅ É **NEGADO**, 6. QUEM CHAMA CADA EDGE FUNCTION (+6 more)
 
-### Community 317 - "Plano de correção e melhoria dos workflows — Promo Champions V2.1"
+### Community 314 - "Plano de correção e melhoria dos workflows — Promo Champions V2.1"
 Cohesion: 0.13
 Nodes (14): Diagnóstico — o que está quebrado hoje (evidência real), Execução sugerida (PRs pequenas, uma por assunto), FASE 0 — Coordenação (antes de qualquer commit), FASE 10 — Dependabot e manutenção (P2), FASE 11 — Deploy e pós-merge (P2/P3), FASE 1 — Destravar a `main` (P0, mesmo dia), FASE 2 — Proteção de branch e governança (P0), FASE 3 — Segurança da supply chain de Actions (P1) (+6 more)
 
-### Community 318 - "01 — Inventário do sistema e registro de cobertura"
+### Community 315 - "RUNBOOK.md"
+Cohesion: 0.13
+Nodes (11): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — Email transacional e bulk (Resend / SendGrid), Sinais de falha, Contatos (preencher), Escala mínima (+3 more)
+
+### Community 316 - "01 — Inventário do sistema e registro de cobertura"
 Cohesion: 0.13
 Nodes (14): 01 — Inventário do sistema e registro de cobertura, 0. Suposições declaradas, 10. Resumo da cobertura, 1. Stack, entrada, build e ambientes, 2.1 Papéis que realmente mudam permissão, 2.2 Papéis que só a UI reconhece (não mudam permissão), 2.3 Jornadas principais (RASTREADO), 2. Atores, papéis e jornadas (+6 more)
 
-### Community 319 - "3. Findings Categorizados"
+### Community 317 - "3. Findings Categorizados"
 Cohesion: 0.13
 Nodes (14): 1. Sumário Executivo, 2. Snapshot de Saúde (2026-07-11 14:27 UTC), 3.1 Segurança — 🟢 Sem críticos, 3.2 Performance — 🟢 Estável, 3.3 Reliability — 🟢, 3.4 Observabilidade — 🟢, 3.5 Manutenibilidade, 3.6 Custos — 🟢 (+6 more)
 
-### Community 320 - "20260402214537_4c15af24-3450-4487-8fa2-ef631fed83b6.sql"
+### Community 318 - "20260402214537_4c15af24-3450-4487-8fa2-ef631fed83b6.sql"
 Cohesion: 0.13
 Nodes (14): public.daily_challenges, idx_activities_salesperson_created, idx_client_portfolio_salesperson_status, idx_daily_challenges_date_active, idx_deal_stage_history_sale, idx_sales_salesperson_status, idx_tasks_salesperson_status, idx_victory_feed_created (+6 more)
 
-### Community 321 - "20260417193322_744fd297-7c0e-4c6d-8ce7-79fb68e00dca.sql"
+### Community 319 - "20260417193322_744fd297-7c0e-4c6d-8ce7-79fb68e00dca.sql"
 Cohesion: 0.19
 Nodes (13): public.update_call_recording_tsv, idx_call_recordings_transcript_tsv, idx_competitor_mentions_competitor, idx_competitor_mentions_recording, idx_competitors_registry_active, public.competitor_mentions, public.competitors_registry, public.search_call_library() (+5 more)
 
-### Community 322 - "check-deno-types.mjs"
+### Community 320 - "check-deno-types.mjs"
 Cohesion: 0.13
 Nodes (13): baseline, BASELINE_PATH, baselineCount, diagnostics, found, FUNCTIONS_DIR, newDiagnostics, output (+5 more)
 
-### Community 323 - "useCadenceReport.ts"
-Cohesion: 0.16
-Nodes (9): CadenceMetrics, CADENCE_CHANNELS, CADENCE_REPORT_PERIOD_DAYS, CadenceChannel, CadenceChannelExecution, CadenceReportPeriod, CadenceReportTotals, Filters (+1 more)
-
-### Community 324 - "20260104200100_audit_trail_complete.sql"
+### Community 321 - "20260104200100_audit_trail_complete.sql"
 Cohesion: 0.24
 Nodes (14): audit_activities, audit_clients, audit_deals, audit_log, audit_trigger(), audit_users, idx_audit_action, idx_audit_record (+6 more)
 
-### Community 325 - "20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
+### Community 322 - "20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
 Cohesion: 0.27
 Nodes (14): idx_account_activities_account, idx_account_contacts_account, idx_account_contacts_role, idx_accounts_owner, idx_accounts_parent, idx_accounts_tier, public.account_activities, public.account_contacts (+6 more)
 
-### Community 326 - "20260417003056_5c5ebfb6-15ce-4df8-adf1-1fc58fbc4bb6.sql"
+### Community 323 - "20260417003056_5c5ebfb6-15ce-4df8-adf1-1fc58fbc4bb6.sql"
 Cohesion: 0.25
 Nodes (14): idx_seq_enrollments_contact, idx_seq_enrollments_runner, idx_seq_enrollments_seq, idx_sequence_steps_seq, idx_sequences_enabled, idx_sequences_owner, idx_step_executions_enrollment, public.sequence_enrollments (+6 more)
 
-### Community 327 - "20260419004748_028ddcdb-272a-435e-ac03-134995a21ac3.sql"
+### Community 324 - "20260419004748_028ddcdb-272a-435e-ac03-134995a21ac3.sql"
 Cohesion: 0.23
 Nodes (14): idx_race_rivalries_persistent_car, idx_race_rivalries_persistent_season, idx_race_team_members_car, idx_race_team_members_car_per_season, idx_race_team_members_team, idx_race_teams_season, public.race_rivalries_persistent, public.race_team_members (+6 more)
 
-### Community 328 - "Relatório de Análise de PRs — Promo Champions V2.1"
+### Community 325 - "Relatório de Análise de PRs — Promo Champions V2.1"
 Cohesion: 0.14
 Nodes (13): 🟡 #252 — bump React 18.3.1→19.3.1, 🟡 #254 — bump TS 7 + vite-plugin-pwa 2 (major), 🟡 #280 — fix: gen-migration-probes (DROP, schemaname, cmd) — CONFLITO, 🟡 #281 — fix: 4 bugs em scripts de auditoria (DRAFT), 🟡 #298 — bump eslint-plugin-react-refresh 0.4→0.5, Decisões Humanas (5 PRs pendentes), ✅ Merge de #344 — chore(deps): lote 8 dependabot + deno.lock, O que Foi Feito (+5 more)
 
-### Community 329 - "As 22 migrations que só existem em branch fechada — 17/11/2026"
+### Community 326 - "What You Must Do When Invoked"
 Cohesion: 0.14
-Nodes (13): `20260725000002_audit_2fa_auth_fixes.sql` — SUPERADA, `20260725000008_audit_log_fixes.sql` — PARCIALMENTE_COBERTA, `20260727000003_audit_schema_unification.sql` e `20260727000004_uuid_consistency_cleanup.sql` — SUPERADAS, `20261019120000_bitrix24_sync_run_lock.sql` — SUPERADA, As 22 migrations que só existem em branch fechada — 17/11/2026, As 6 que eu tinha marcado PENDENTE, uma a uma, Como as 22 foram encontradas, Método (+5 more)
+Nodes (14): Part A - Structural extraction for code files, Part B - Semantic extraction (parallel subagents), Part C - Merge AST + semantic into final extraction, Step 0 - GitHub repos and multi-path merge (only if a URL or several paths), Step 1 - Ensure graphify is installed, Step 2.5 - Video and audio (only if video files detected), Step 3 - Extract entities and relationships, Step 4.5 - Graph health check (read-only integrity gate) (+6 more)
 
-### Community 330 - "Reconciliação origem versus destino"
+### Community 327 - "Reconciliação origem versus destino"
 Cohesion: 0.14
 Nodes (14): Colunas, Constraints, Enums e extensões, Funções, Jobs, Migrations, Policies e privilégios, Realtime (+6 more)
 
-### Community 331 - "Validação de sincronia GitHub × Supabase — 2026-09-10"
-Cohesion: 0.14
-Nodes (13): 1. Escopo e conclusão, 2. GitHub e validação local, 3. Inventário estrutural vivo, 5. Ledger de migrations, 6. Edge Functions, 7. Advisors oficiais, 8. Decisões e gates, 9. Estado final desta rodada (+5 more)
+### Community 328 - "webVitals.ts"
+Cohesion: 0.22
+Nodes (12): 9. Logging / Monitoring — **7,0/10** (peso ×1), web-vitals, flushQueue(), getConnectionType(), getSessionId(), log, normalizeRoute(), queue (+4 more)
 
-### Community 332 - "Animações"
+### Community 329 - "useUploadCallRecording.ts"
+Cohesion: 0.21
+Nodes (10): 9. Segurança / LGPD / Retenção / ADRs, CallRecordingPlayer(), Props, getCallRecordingSignedUrl(), sha256(), UploadInput, useUploadCallRecording(), MIME_BY_EXTENSION (+2 more)
+
+### Community 330 - "useWebAuthn.ts"
+Cohesion: 0.22
+Nodes (11): ADR-010: WebAuthn/passkeys com verificação criptográfica real (SimpleWebAuthn), Consequências, Contexto, Decisão, Rollback, useWebAuthn(), WebAuthnCredential, base64urlToBuffer() (+3 more)
+
+### Community 331 - "Animações"
 Cohesion: 0.14
 Nodes (14): Accordion, Animações, Animações de Atenção, Animações de Cards, Animações de Entrada, Animações de Feedback, Animações de Glow, Animações de Loading (+6 more)
 
-### Community 333 - "06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica"
+### Community 332 - "01 — FRONTEND: ROTAS E PÁGINAS (estado medido)"
 Cohesion: 0.14
-Nodes (14): 06 — Domínio IA / Coaching / Inteligência Conversacional / Busca Semântica, 10. O QUE NÃO CONSEGUI VERIFICAR, 1. RESPOSTA À PERGUNTA CENTRAL, 2. PROVEDOR DE IA (item 1 do escopo), 3. OS SECRETS EXISTEM? (item 2 do escopo) — `NAO_VERIFICADO`, 4. AS TABELAS TÊM LINHAS? (item 3 do escopo) — TODAS ZERO, 5. BUSCA SEMÂNTICA — O CANDIDATO A ✅ É **NEGADO**, 6. QUEM CHAMA CADA EDGE FUNCTION (+6 more)
+Nodes (13): 01 — FRONTEND: ROTAS E PÁGINAS (estado medido), 1. Rotas (174) — tabela completa, 2. Páginas órfãs (não referenciadas por nenhuma rota nem por nenhum import), 5. Contagem por classificação (denominador = 174 rotas), 6. Dados fictícios encontrados (com `arquivo:linha`), 7. Uso real medido no banco de produção, 8. O que eu NÃO consegui verificar, Buscas que voltaram limpas (+5 more)
 
-### Community 334 - "2. RISCOS DE SEGURANÇA (ordenados por gravidade)"
-Cohesion: 0.14
-Nodes (13): 08 · ADMIN / SEGURANÇA / AUTENTICAÇÃO / CONFIGURAÇÕES / TELEMETRIA, 0. Números crus (medidos), 2. RISCOS DE SEGURANÇA (ordenados por gravidade), 3. Dado fictício / sintético em campos de auditoria, 4. Contagem por classificação, 5. O que NÃO foi possível verificar, 🟠 ALTO 3 — Policies `anon-only` que impedem gravação por usuário logado (telemetria e rate-limit silenciosamente mortos), 🟠 ALTO 4 — Triggers de auditoria quebrados (+5 more)
+### Community 333 - "docs/estado/README.md"
+Cohesion: 0.15
+Nodes (10): Evidência de runtime — a base de todas as classificações abaixo, Integrações mencionadas em documentação/configuração mas **inexistentes no código**, Lote 13 — Integrações Externas, O que este lote **não** cobriu, Riscos ordenados por gravidade, Tabela de estado por integração, Veredito do lote, Auditoria de Estado — Promo Champions v2.1 (+2 more)
 
-### Community 335 - "✅ Fully Implemented (100%)"
+### Community 334 - "✅ Fully Implemented (100%)"
 Cohesion: 0.14
 Nodes (13): Advanced Features, Analytics, Core CRM, 📈 Coverage Metrics, ✅ Fully Implemented (100%), Gamification, Implementation Status, Infrastructure (+5 more)
 
-### Community 336 - "02 — Matriz de cenários por jornada"
-Cohesion: 0.14
-Nodes (13): 02 — Matriz de cenários por jornada, Cobertura da matriz, J10 — Premiação: do cadastro ao pagamento, J11 — Operação e observabilidade, J1 — Acesso e identidade (anônimo → autenticado), J2 — Venda: fechar, reabrir, refechar (gera comissão), J3 — Premiações e bônus (dinheiro), J4 — Relatório público por link (embed) (+5 more)
-
-### Community 337 - "20260514211409_31e2e007-b605-424b-bc77-9c42e830402b.sql"
+### Community 335 - "20260514211409_31e2e007-b605-424b-bc77-9c42e830402b.sql"
 Cohesion: 0.15
 Nodes (13): public.access_denied_logs, idx_access_denied_created_at, idx_cadence_tasks_status_date, idx_daily_metrics_date, idx_prospect_cadences_active_status, idx_sales_client_name_trgm, idx_sales_product_name_trgm, idx_security_alerts_created_at (+5 more)
 
-### Community 338 - "20260416195006_fefd2801-b414-41e2-842c-1914a9fdb276.sql"
+### Community 336 - "20260416195006_fefd2801-b414-41e2-842c-1914a9fdb276.sql"
 Cohesion: 0.22
 Nodes (13): public.message_templates, idx_ab_assignments_test, idx_message_templates_stage, public.assign_cadence_variant(), public.cadence_ab_assignments, public.cadence_ab_tests, public.get_ab_test_results(), public.cadences (+5 more)
 
-### Community 339 - "20260417163016_10247063-3375-460e-b955-9678367cde57.sql"
+### Community 337 - "20260417163016_10247063-3375-460e-b955-9678367cde57.sql"
 Cohesion: 0.21
 Nodes (12): public.record_lead_score_history, idx_lead_score_explanations_calculated, idx_lead_score_explanations_sale, idx_lead_score_history_sale_time, public.get_score_trend(), public.lead_score_explanations, public.lead_score_history, public.sales (+4 more)
 
-### Community 340 - "20251227180950_1c4db781-f1ed-4c0e-8e5a-feed06d3270d.sql"
+### Community 338 - "20251227180950_1c4db781-f1ed-4c0e-8e5a-feed06d3270d.sql"
 Cohesion: 0.22
 Nodes (12): public.record_price_history, public.supplier_products, idx_price_alerts_product, idx_price_alerts_unread, idx_price_history_product, idx_price_history_recorded_at, idx_price_history_supplier_product, public.price_alerts (+4 more)
 
-### Community 341 - "20260418122352_0616b0f7-20cd-4165-b811-f996899f13df.sql"
+### Community 339 - "20260418122352_0616b0f7-20cd-4165-b811-f996899f13df.sql"
 Cohesion: 0.22
 Nodes (12): public.record_sale_stage_transition, idx_dst_open, idx_dst_sale_entered, idx_dst_to_stage, idx_dva_severity, idx_dva_stage, idx_svb_stage, public.deal_stage_transitions (+4 more)
 
-### Community 342 - "bundle-edge-functions.ts"
+### Community 340 - "bundle-edge-functions.ts"
 Cohesion: 0.21
 Nodes (12): checkFunction(), CheckResult, classifyFailure(), encoder, extractFailingImport(), importFailed, ONLY, results (+4 more)
 
-### Community 343 - "codemod-typography.mjs"
+### Community 341 - "codemod-typography.mjs"
 Cohesion: 0.16
 Nodes (12): arquivosTsx(), files, limpar(), reescrever(), stripLabel, stripPage, stripSection, tagRules (+4 more)
 
-### Community 344 - "supabase-snapshot"
+### Community 342 - "supabase-snapshot"
 Cohesion: 0.14
 Nodes (13): Aplicar migrations e o fluxo de dry-run, Como interpretar referências a funções, Comportamento, Dry-run (validar sem aplicar), Estatísticas de consultas, O que é coletado, Onde está o resultado (neste repo), Rodar localmente (+5 more)
 
-### Community 345 - "DbRollbackRatePanel.tsx"
-Cohesion: 0.21
-Nodes (11): CronAlertMetricsPanel(), Stat(), StatProps, DbRollbackRatePanel(), StatTile(), CronAlertBreakdownRow, CronAlertMetrics, CronRun (+3 more)
+### Community 343 - "DevKpiDebugPanel.tsx"
+Cohesion: 0.16
+Nodes (13): chipStyle, closeBtnStyle, DevKpiDebugPanel(), dlStyle, getPreviewRole(), headerStyle, panelButtonStyle, panelStyle (+5 more)
 
-### Community 346 - "EmbedTokenManagerDialog.tsx"
+### Community 344 - "EmbedTokenManagerDialog.tsx"
 Cohesion: 0.35
 Nodes (11): buildEmbedUrl(), buildIframeSnippet(), generateEmbedToken(), ReportEmbedToken, tokenStatus(), EmbedTokenManagerDialog(), Props, useCreateReportEmbedToken() (+3 more)
 
-### Community 347 - "useFunnelComparison.ts"
+### Community 345 - "useFunnelComparison.ts"
 Cohesion: 0.27
 Nodes (11): computeStageDeltas(), formatDelta(), FunnelStageBasic, getStageColor(), getStageWidth(), StageDelta, fetchFunnelSnapshot(), FunnelComparison (+3 more)
 
-### Community 348 - "useWinLossViewPrefs.ts"
-Cohesion: 0.19
-Nodes (13): Props, Props, TrendPoint, ALLOWED_GRAN, ALLOWED_HORIZON, read(), sanitize(), useWinLossViewPrefs() (+5 more)
+### Community 346 - "RateLimitDashboard.tsx"
+Cohesion: 0.25
+Nodes (11): ACTION_LABELS, formatSeconds(), RateLimitDashboard(), RateLimitStatsCards, RateLimitStatsCardsProps, STATS_CONFIG, RateLimitLog, RateLimitSetting (+3 more)
 
-### Community 349 - "useWinLossDigest.ts"
-Cohesion: 0.20
-Nodes (12): Props, Cell(), Props, WinLossPrintLayout(), KpiDelta, WLKpis, fmtDelta(), fmtPct() (+4 more)
+### Community 347 - "factories.ts"
+Cohesion: 0.23
+Nodes (13): sale(), TableRow, buildClient(), buildCommission(), buildDeal(), buildDomainClient(), buildQuote(), buildSale() (+5 more)
 
-### Community 350 - "recoveryRateHelpers.ts"
-Cohesion: 0.24
-Nodes (12): campaignLabel(), FAILURE_TYPE_LABELS, failureTypeLabel(), formatRecoveryDuration(), isPermanentFailureType(), PERMANENT_TYPES, RECOVERY_RISK_THRESHOLD, recoveryHealth (+4 more)
-
-### Community 351 - "useQueryPerformance.ts"
-Cohesion: 0.18
-Nodes (10): addMetric(), AlertConfig, alertedQueries, getQueryMetrics(), log, logQueryMetrics(), QueryMetrics, queryMetricsStore (+2 more)
-
-### Community 352 - "non_empty_strings_test.ts"
+### Community 348 - "non_empty_strings_test.ts"
 Cohesion: 0.14
 Nodes (11): AGES_DAYS, ALL_BLANK, AMOUNTS, NOW, NULL_FIELDS, PATTERN_SETS, REALISTIC, SOURCES (+3 more)
 
-### Community 353 - "20260105000001_2fa_system.sql"
+### Community 349 - "20260105000001_2fa_system.sql"
 Cohesion: 0.25
 Nodes (13): check_2fa_failed_attempts(), idx_2fa_log_created, idx_2fa_log_user, idx_backup_codes_used, idx_backup_codes_user, idx_user_2fa_enabled, idx_user_2fa_user_id, auth.users (+5 more)
 
-### Community 354 - "20260105000002_audit_trail.sql"
+### Community 350 - "20260105000002_audit_trail.sql"
 Cohesion: 0.23
 Nodes (10): audit_log, idx_audit_action, idx_audit_created, idx_audit_table, idx_audit_user, idx_security_events_severity, idx_security_events_type, idx_security_events_user (+2 more)
 
-### Community 355 - "20260416195445_1055a333-92bf-4deb-93aa-d42127aa91fa.sql"
+### Community 351 - "20260416195445_1055a333-92bf-4deb-93aa-d42127aa91fa.sql"
 Cohesion: 0.22
 Nodes (13): idx_call_insights_recording, idx_call_recordings_recorded_at, idx_call_recordings_sale, idx_call_recordings_salesperson, idx_call_transcripts_recording, public.call_insights, public.call_recordings, public.call_transcripts (+5 more)
 
-### Community 356 - "20260418123231_479e5dde-c713-4e98-8e3e-8561e9395b0e.sql"
+### Community 352 - "20260418123231_479e5dde-c713-4e98-8e3e-8561e9395b0e.sql"
 Cohesion: 0.24
 Nodes (13): idx_wla_analyzed_at, idx_wla_competitor, idx_wla_outcome, idx_wla_segment, idx_wli_created, idx_wli_severity, idx_wlp_freq, idx_wlp_type (+5 more)
 
-### Community 357 - "20260418131113_cbce1b9b-ac76-479d-8b86-cb0601c74bf6.sql"
+### Community 353 - "20260418131113_cbce1b9b-ac76-479d-8b86-cb0601c74bf6.sql"
 Cohesion: 0.24
 Nodes (13): idx_skill_assessments_assessed, idx_skill_assessments_score, idx_skill_assessments_skill, idx_skill_assessments_sp, idx_skill_tracks_created, idx_skill_tracks_priority, idx_skill_tracks_sp, public.skill_assessments (+5 more)
 
-### Community 358 - "20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql"
+### Community 354 - "20260418150311_9352a6b4-c8a3-4503-a0ff-c3fc0f22d8f3.sql"
 Cohesion: 0.23
 Nodes (11): idx_task_assignments_assigned_to, idx_task_assignments_catalog, idx_task_assignments_status, idx_xp_adjustments_created, idx_xp_adjustments_user, public.task_assignments, public.task_catalog, public.xp_adjustments (+3 more)
 
-### Community 359 - "Auditorias Anteriores — Reconciliação com Código Atual"
+### Community 355 - "Auditorias Anteriores — Reconciliação com Código Atual"
 Cohesion: 0.15
 Nodes (12): 1.1 `docs/auditoria/00_PLANO_MESTRE_AUDITORIA.md`, 1.2 `docs/auditoria/RELATORIO_FALHAS.md`, 1.3 Fontes Inacessíveis, 1. Documentos Examinados, 2.2 ALTOs (A1–A33) — Não Reconciliados Individualmente, 2.3 MÉDIOs, BAIXOs e INFOs, 2. Reconciliação por Finding, 3. Contradições e Decisões Pendentes (+4 more)
 
-### Community 360 - "20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694.sql"
+### Community 356 - "20260522142405_6778f36e-85b5-459c-86da-b477c1f1e694.sql"
 Cohesion: 0.19
 Nodes (12): daily_metrics, deal_stage_history, idx_daily_metrics_date, idx_deal_stage_history_entered_at, idx_sales_created_at, idx_sales_status_is_first_sale, public.get_dashboard_kpis(), public.get_detailed_kpis() (+4 more)
 
-### Community 361 - "send-push-notification/index.ts"
+### Community 357 - "send-push-notification/index.ts"
 Cohesion: 0.31
 Nodes (11): RFC-8291, RFC-8292, base64UrlDecode(), base64UrlEncode(), buildVapidAuthorization(), concatBytes(), encryptPushPayload(), hkdfBlock() (+3 more)
 
-### Community 362 - "Achados da auditoria de 17/11/2026"
+### Community 358 - "Achados da auditoria de 17/11/2026"
 Cohesion: 0.15
 Nodes (12): 1. Receita reportada é dominada por dado de teste, 2. Agrupamento de clientes por nome colapsa 42 em 5, 3. Curva ABC não tem dado para sustentar painéis por período, 4. Replay cronológico do repo quebra em julho (BUG_0002), 5. Registro de migrations divergente (causa do Supabase Preview vermelho), 6. Endurecimento pendente nas funções resgatadas, 7. Cobertura da varredura, A tabela `deals` é fantasma: o conjunto de migrations não é autoconsistente (+4 more)
 
-### Community 363 - "🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0)"
+### Community 359 - "Arquitetura — Promo Champions V2.1"
+Cohesion: 0.15
+Nodes (13): Arquitetura — Promo Champions V2.1, Camada de dados (ADR-010), Camadas funcionais, Deploy, Edge Functions (173 — verificado 2026-10-18), Fronteiras entre domínios, Grafo de conhecimento, Integrações externas (+5 more)
+
+### Community 360 - "useLeadRouting.ts"
+Cohesion: 0.27
+Nodes (12): Interface e autorização, 2. GitHub e validação local, invalidateRoutingQueries(), PortfolioRoutingResult, routeClientPortfolio(), RoutingStrategy, ServerRoutingStrategy, toServerStrategy() (+4 more)
+
+### Community 361 - "🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0)"
 Cohesion: 0.15
 Nodes (12): 1. RESUMO EXECUTIVO, 2.1 Módulo: Neural Dashboard & BI, 2.2 Módulo: CRM & Prospecção de Elite, 2.3 Módulo: Race Arena (Gamificação), 2.4 Módulo: Admin & System Core, 2. INVENTÁRIO DE FUNCIONALIDADES (IMPLEMENTADAS), 3. INVENTÁRIO A IMPLEMENTAR (BACKLOG CRÍTICO), 4. MATRIZ DE RISCO (AUDITORIA ENTERPRISE) (+4 more)
 
-### Community 364 - "Frente 6 — Qualidade Transversal · Hooks / Estado / Realtime (Módulo 29)"
+### Community 362 - "Frente 6 — Qualidade Transversal · Hooks / Estado / Realtime (Módulo 29)"
 Cohesion: 0.15
 Nodes (13): 🟠 ALTO — Double-spend no giro da roleta (read-modify-write sem atomicidade), 🟠 ALTO — Lost-update ao reagir a mensagens (read-modify-write de JSON), 🔵 BAIXO — Criação de sessão duplicada por corrida render↔persistência, 🔵 BAIXO — `handleAuth` engole erro não-Zod e prossegue o login, 🔵 BAIXO — Reconhecimento de voz recriado a cada tecla e não abortado no unmount, 🔵 BAIXO — `setState` após `await import()` sem checar montagem, Frente 6 — Qualidade Transversal · Hooks / Estado / Realtime (Módulo 29), ⚪ INFO — Assinaturas `event:'*'` sem `filter` → invalidação excessiva (+5 more)
 
-### Community 365 - "Relatório Final de Auditoria — Promo Champions V2.1"
+### Community 363 - "reportDownload.ts"
+Cohesion: 0.27
+Nodes (12): 🔴 CRÍTICO — Injeção de fórmula CSV em relatórios de Vendas/Clientes, Relatorios(), CategoryRecord, downloadClientsReport(), downloadFile(), downloadProductsReport(), downloadSalesReport(), fetchReportData() (+4 more)
+
+### Community 364 - "Relatório Final de Auditoria — Promo Champions V2.1"
 Cohesion: 0.15
 Nodes (12): 1. Resumo Executivo, 2. Status dos 10 CRÍTICOs, 3. Análise das 14 PRs, 4. Merges Realizados, 5. Decisões Pendentes para o Owner, 6. Documentos Produzidos, 7. Conclusão, C3 — E2E Gate Vazio (+4 more)
 
-### Community 366 - "Validação exaustiva — onda 1"
+### Community 365 - "Validação exaustiva — onda 1"
 Cohesion: 0.15
 Nodes (12): Conclusão, Correções confirmadas no commit, Limites e reconciliação de escopo, Matriz de evidências, P0 — preview de produção com tela branca, P1 — histórico de migrations, P1 — notificações e idempotência, P1 — RLS do portfólio (+4 more)
 
-### Community 367 - "CR-33 — Cache que não é invalidado e escrita duplicada"
+### Community 366 - "Validação de sincronia GitHub × Supabase — 2026-09-10"
+Cohesion: 0.15
+Nodes (12): 1. Escopo e conclusão, 3. Inventário estrutural vivo, 5. Ledger de migrations, 6. Edge Functions, 7. Advisors oficiais, 8. Decisões e gates, 9. Estado final desta rodada, Não executado no banco/runtime (+4 more)
+
+### Community 367 - "CustomFieldsDisplay.tsx"
+Cohesion: 0.21
+Nodes (11): 9.4 Operação & CRM, 9.5 Notificações & Engajamento, 9.6 Segurança, 9.7 Telemetria, 🟠 Tier 2 — UI parcial / hook usado em apenas 1 componente, CustomFieldsDisplay(), CustomFieldsDisplayProps, FieldBadge() (+3 more)
+
+### Community 368 - "02 — Matriz de cenários por jornada"
+Cohesion: 0.15
+Nodes (12): 02 — Matriz de cenários por jornada, Cobertura da matriz, J10 — Premiação: do cadastro ao pagamento, J11 — Operação e observabilidade, J1 — Acesso e identidade (anônimo → autenticado), J2 — Venda: fechar, reabrir, refechar (gera comissão), J4 — Relatório público por link (embed), J5 — Integrações de entrada (webhooks) (+4 more)
+
+### Community 369 - "CR-33 — Cache que não é invalidado e escrita duplicada"
 Cohesion: 0.15
 Nodes (13): A-100 · [Baixa] `useClients` declara na chave um filtro que a consulta ignora, A-89 · [Média] O contador de tarefas de follow-up cobra trabalho já feito, A-90 · [Média] Dois ganchos diferentes marcam a mesma etapa de playbook e invalidam caches distintos, A-91 · [Média] O aviso de XP anuncia um valor que pode não ter sido creditado, A-92 · [Média] Recompensa de cadência é promessa morta: falta o provedor de contexto, A-93 · [Média] A conversa do assistente pode não ser gravada, e o usuário não sabe, A-94 · [Média] "Probabilidade de fechamento" pode ser a análise do servidor ou um palpite local, A-95 · [Média] Cinquenta supressões da regra de dependências, todas com a mesma justificativa (+5 more)
 
-### Community 368 - "Etapas"
-Cohesion: 0.15
-Nodes (12): 04 — Plano de correção em etapas, Armadilha geral desta base de código, Backlog — o que ficou fora das 255, Como ler cada etapa, Convenções deste repositório que você deve seguir, Encerramento do plano, Etapas, Instruções para o agente executor (+4 more)
-
-### Community 369 - "🌊 Ondas Executadas"
+### Community 370 - "🌊 Ondas Executadas"
 Cohesion: 0.15
 Nodes (12): Onda B — Lint Cleanup Final (79 → 0 warnings), Onda C — Erradicação de `any` (36 → 0), Onda D — Auditoria RLS/Segurança, Onda E — Performance / Slow Queries, Onda F — SEO / PWA / A11y, Onda G — Expansão de Testes, Onda H — Consolidação, 🌊 Ondas Executadas (+4 more)
 
-### Community 370 - "20261112140200_activities_soft_delete_apostas_placar.sql"
+### Community 371 - "Race Arena — Runbook Operacional"
+Cohesion: 0.15
+Nodes (12): 1. Criar uma nova temporada, 1a. Via Admin UI (recomendado), 1b. Fallback via SQL (uso emergencial), 2. Reprocessar eventos órfãos, 3. Invalidar cache da edge function `race-commentary`, 4. Troubleshooting, 5. Telemetria de TTI, "Carro não encontrado" ao tentar coletar power-up (+4 more)
+
+### Community 372 - "20261112140200_activities_soft_delete_apostas_placar.sql"
 Cohesion: 0.22
 Nodes (10): private.guard_activity_soft_delete, guard_activity_soft_delete, private.handle_performance_update(), private.update_performance_bet_progress(), public.sync_performance_bets(), public.activities, public.performance_bets, public.sales (+2 more)
 
-### Community 371 - "20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0.sql"
+### Community 373 - "20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0.sql"
 Cohesion: 0.22
 Nodes (10): public.log_order_creation, public.log_order_status_change, idx_order_items_order, idx_order_status_events_order, idx_orders_user, public.order_items, public.order_status_events, public.orders (+2 more)
 
-### Community 372 - "manifest.json"
+### Community 374 - "manifest.json"
 Cohesion: 0.15
 Nodes (12): background_color, categories, description, display, icons, name, orientation, screenshots (+4 more)
 
-### Community 373 - "webVitals.ts"
-Cohesion: 0.24
-Nodes (11): web-vitals, flushQueue(), getConnectionType(), getSessionId(), log, normalizeRoute(), queue, reportWebVitals() (+3 more)
+### Community 375 - "WorkflowsPage.tsx"
+Cohesion: 0.31
+Nodes (11): @xyflow/react, useDeleteWorkflow(), useExecuteWorkflow(), useSaveWorkflow(), useWorkflowExecutions(), useWorkflows(), Workflow, WorkflowExecution (+3 more)
 
-### Community 374 - "build_function_callers"
+### Community 376 - "build_function_callers"
 Cohesion: 0.17
 Nodes (13): build_function_callers(), is_caller_source(), looks_like_own_output(), Path, Histórico, testes e fixtures não demonstram uso atual pela aplicação., Ignora nomes em assinaturas DDL sem apagar chamadas no corpo de CREATE FUNCTION., Lê arquivos do repo elegíveis como callers (caminho relativo, conteúdo)., Atualiza cada categoria disponível e informa a origem atual/anterior das… (+5 more)
 
-### Community 375 - "SendTimeOptimization.tsx"
+### Community 377 - "SendTimeOptimization.tsx"
 Cohesion: 0.26
 Nodes (10): DOW, Props, SendTimeHeatmap(), BestSendWindow, ScheduledSend, SendTimeProfile, useGlobalSendTimeStats(), useOptimizeSendTime() (+2 more)
 
-### Community 376 - "useReducedMotion"
-Cohesion: 0.21
-Nodes (9): BroadcastEvent, FLAG_ICON, KIND_BADGE, Props, PitLane(), Props, KONAMI, Props (+1 more)
+### Community 378 - "DealRow.tsx"
+Cohesion: 0.29
+Nodes (10): AtRiskDealsPanel(), DealRow, DealRowProps, formatCurrency(), RISK_COLORS, RISK_LABELS, AtRiskAnalysis, AtRiskDeal (+2 more)
 
-### Community 377 - "RaceCarsLayer.tsx"
+### Community 379 - "RaceCarsLayer.tsx"
 Cohesion: 0.26
 Nodes (10): PATTERN_BY_NUMBER, RaceCarsLayer(), RaceCarsLayerProps, Props, ReactionBar(), Props, ReactionFloater(), RaceReaction (+2 more)
 
-### Community 378 - "chart.tsx"
-Cohesion: 0.22
-Nodes (12): ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent, ChartStyle(), ChartTooltipContent, ChartTooltipContentCustomProps (+4 more)
+### Community 380 - "usePersonalAssistant.ts"
+Cohesion: 0.37
+Nodes (10): StreamOptions, streamRequest(), usePersonalAssistant(), UsePersonalAssistantResult, AssistantChatMessage, AssistantMode, drainSSEChunk(), getAssistantErrorMessage() (+2 more)
 
-### Community 379 - "useFeatureFlags.ts"
-Cohesion: 0.26
-Nodes (10): CONFIG_QUERY_OPTIONS, getRaceNotificationsEnabled(), isEnabled(), Opts, useRaceSmartNotifications(), FeatureFlag, hashUserFlag(), useFeatureFlag() (+2 more)
-
-### Community 380 - "UsageAnalytics.tsx"
-Cohesion: 0.31
-Nodes (9): useUsageAnalytics(), aggregatePageViews(), aggregateUserActivity(), AnalyticsEvent, PageView, events, UserActivity, COLORS (+1 more)
-
-### Community 381 - "SLATrackingPage.tsx"
-Cohesion: 0.28
-Nodes (11): SLAPolicy, SLAViolation, useResolveSLAViolation(), useScanSLAViolations(), useSLAPolicies(), useSLAViolations(), useUpdateSLAPolicy(), containerVariants (+3 more)
-
-### Community 382 - "20251220181346_ade3d719-7ebf-4afa-9fa7-5a1a1578797b.sql"
+### Community 381 - "20251220181346_ade3d719-7ebf-4afa-9fa7-5a1a1578797b.sql"
 Cohesion: 0.26
 Nodes (12): idx_demand_forecasts_date, idx_demand_forecasts_product_id, idx_inventory_levels_product_id, idx_stock_movements_created_at, idx_stock_movements_product_id, public.demand_forecasts, public.inventory_levels, public.stock_movements (+4 more)
 
-### Community 383 - "20260404140006_c21c92b8-53e3-47ae-9d25-29d93dd7387e.sql"
+### Community 382 - "20260404140006_c21c92b8-53e3-47ae-9d25-29d93dd7387e.sql"
 Cohesion: 0.26
 Nodes (12): idx_channel_interactions_channel, idx_channel_interactions_created, idx_channel_interactions_deal, idx_channel_interactions_salesperson, idx_message_templates_channel, idx_message_templates_salesperson, public.channel_interactions, public.message_templates (+4 more)
 
-### Community 384 - "20260417112931_1cd3847f-3cf1-44bb-853f-20cd0066df36.sql"
+### Community 383 - "20260417112931_1cd3847f-3cf1-44bb-853f-20cd0066df36.sql"
 Cohesion: 0.22
 Nodes (11): idx_channel_credentials_owner, idx_outbound_messages_enrollment, idx_outbound_messages_owner, idx_outbound_messages_provider_msg, public.channel_credentials, public.outbound_messages, public.sequence_enrollments, public.sequence_steps (+3 more)
 
-### Community 385 - "20260417150930_73c2611e-f064-4b26-94d2-c4095e49076d.sql"
+### Community 384 - "20260417150930_73c2611e-f064-4b26-94d2-c4095e49076d.sql"
 Cohesion: 0.24
 Nodes (10): idx_ai_agent_actions_run, idx_ai_agent_runs_salesperson, idx_ai_agent_runs_status, idx_ai_agent_runs_target, public.ai_agent_actions, public.ai_agent_runs, public.append_agent_step(), public.approve_agent_run() (+2 more)
 
-### Community 386 - "As 3 telas que a reescrita de `main` descartou — 17/11/2026"
+### Community 385 - "As 3 telas que a reescrita de `main` descartou — 17/11/2026"
 Cohesion: 0.17
 Nodes (11): `ABCActionableAutomations` — recuperada e refeita (PR #545), `ABCMatrixShift` — remontado sobre dado real (PR #568, 17/11), As 3 telas que a reescrita de `main` descartou — 17/11/2026, `Client360PredictiveCards` — preservada, não remontada, Como os arquivos foram encontrados, Correção de um alarme meu, Eram montadas? Sim, Nada foi perdido (+3 more)
 
-### Community 387 - "Veredicto das branches vivas — 2026-11-17"
+### Community 386 - "Veredicto das branches vivas — 2026-11-17"
 Cohesion: 0.17
 Nodes (11): Achado do caminho de engajamento (trabalho completo que nunca foi ligado), As 9 branches remotas (fora da `main`), Branches, segunda verificação (main em `2a3a8ca1d`), Censo das edge functions — 2026-11-17 16:45Z (corrige o número que publiquei antes), Contexto que explica vários destes casos: o teto de 100 edge functions, Método, Os 2 únicos arquivos que existem numa branch e não na `main`, Outros pendentes medidos nesta passada (+3 more)
 
-### Community 388 - "Onda 6 — Performance e escala"
-Cohesion: 0.17
-Nodes (12): Os 2 caminhos que não existem na main, Etapa 162 — Corrigir o truncamento do relatório de atividades da equipe, Etapa 163 — Auditar as 101 consultas sem limite e classificar por risco, Etapa 164 — Agregar no banco os indicadores de BI de vendas, Etapa 165 — Agregar no banco as métricas de closer e de vendedor, Etapa 166 — Agregar no banco as análises de cliente, Etapa 167 — Remover a consulta de 957 linhas cujo resultado é descartado, Etapa 168 — Medir as consultas lentas em produção antes de otimizar mais (+4 more)
-
-### Community 389 - "Arquitetura — Promo Champions V2.1"
-Cohesion: 0.17
-Nodes (12): Arquitetura — Promo Champions V2.1, Camada de dados (ADR-010), Camadas funcionais, Deploy, Edge Functions (173 — verificado 2026-10-18), Fronteiras entre domínios, Grafo de conhecimento, Integrações externas (+4 more)
-
-### Community 390 - "Banco origem — inventário profundo"
+### Community 387 - "Banco origem — inventário profundo"
 Cohesion: 0.17
 Nodes (12): Banco origem — inventário profundo, Colunas, constraints e índices no public, Enums e extensões, Funções, stubs e triggers, Jobs, Migrations na origem, Objetos por schema, Privilégios e default ACLs (+4 more)
 
-### Community 391 - "Anexo A — Planos, auditorias e execução: estado real verificado"
-Cohesion: 0.17
-Nodes (12): A.10 Documentos de onda e contrato de 26–27/08 (`EXECUCAO_ONDA_0`, `SIMULACAO_CENARIOS_ONDA_0`, `VALIDACAO_EXAUSTIVA_ONDA_0/1`, `CONTENCAO_INTEGRIDADE_WEBHOOKS`, `CONTRATO_ROTEAMENTO_LEADS`, `RECONCILIACAO_MIGRATIONS`, `MATRIZ_FORENSE…`, `CATALOGO_BANCO_ORIGEM`, `CANDIDATOS_DE_LIMPEZA`), A.11 `docs/execucao/MIGRATION_RENAME_MAP.md`, A.12 `docs/estado/15_PLANO_COBERTURA_MODULOS.md`, A.14 `docs/planos/PLANO_GRAPHIFY_50_ETAPAS_2026-09-11.md` + `docs/graphify/*`, A.15 Resumo numérico, A.16 Top 15 pendências de maior impacto de negócio, A.3 `docs/execucao/STATUS_100_ETAPAS_2026-08-30.md` — itens próprios (§6–§8), A.4 `docs/auditoria/00_PLANO_MESTRE_AUDITORIA.md` — plano de 50 etapas (+4 more)
-
-### Community 392 - "DATA RETENTION — Política de retenção e purge"
+### Community 388 - "DATA RETENTION — Política de retenção e purge"
 Cohesion: 0.17
 Nodes (10): 1. Decisão: purge vs particionamento, 2. Política-alvo (versionada em `data_retention_policies`), 3. Queries de medição (rodar em produção antes/depois do purge), 4. Operação, DATA RETENTION — Política de retenção e purge, ADR-007: Retenção de Logs Operacionais, Consequências, Contexto (+2 more)
 
-### Community 393 - "01 — FRONTEND: ROTAS E PÁGINAS (estado medido)"
+### Community 389 - "Componentes Atualizados (27+)"
 Cohesion: 0.17
-Nodes (11): 01 — FRONTEND: ROTAS E PÁGINAS (estado medido), 1. Rotas (174) — tabela completa, 2. Páginas órfãs (não referenciadas por nenhuma rota nem por nenhum import), 5. Contagem por classificação (denominador = 174 rotas), 6. Dados fictícios encontrados (com `arquivo:linha`), 7. Uso real medido no banco de produção, 8. O que eu NÃO consegui verificar, Buscas que voltaram limpas (+3 more)
+Nodes (11): Atividades (3 componentes), Cadências (2 componentes), Componentes Atualizados (27+), Metas (4 componentes), Páginas (2 componentes), Tarefas (3 componentes), AnimatedTabContent, AnimatedTabContentProps (+3 more)
 
-### Community 394 - "Reconciliação GitHub × Supabase canônico — 2026-08-31"
+### Community 390 - "Reconciliação GitHub × Supabase canônico — 2026-08-31"
 Cohesion: 0.17
 Nodes (11): 1. Escopo e regra de decisão, 2. Veredito executivo, 3. Rastreabilidade do pacote funcional, 4.1 Evidências positivas, 4.2 Bloqueios reproduzidos, 4.3 Motivo para não aplicar as migrations, 4. Identidade e acesso ao banco, 6. CI do PR #69 (+3 more)
 
-### Community 395 - "CR-23 — O caminho até produção não tem freio humano"
+### Community 391 - "CR-23 — O caminho até produção não tem freio humano"
 Cohesion: 0.17
 Nodes (12): A-55 · [Crítica] Deploy de estrutura de banco e de todas as funções roda sem ninguém autorizar, A-57 · [Alta] O verificador de tipos estritos passa verde se o `tsc` não rodar, A-58 · [Alta] A chave que ignora a RLS entra no runner de um job que executa código da própria PR, A-59 · [Média] Credenciais JWT versionadas em repositório público, e o gate não as detecta, A-60 · [Média] O Deploy Pipeline fica verde sem ter feito deploy, e o health check pós-deploy só avisa, A-61 · [Média] O teto de complexidade "que só desce" subiu, A-62 · [Baixa] `pull_request_target` com permissão de escrita e checkout do código da PR, A-63 · [Média] Auto-merge do Dependabot entra pela mesma porta estreita do portão (+4 more)
 
-### Community 396 - "Queries de auditoria RLS / grants — executar no banco real"
+### Community 392 - "Queries de auditoria RLS / grants — executar no banco real"
 Cohesion: 0.17
 Nodes (11): 10. Grants residuais em tabelas do pacote, 1. Policies permissivas `USING (true)` / `WITH CHECK (true)`, 2. Grants de tabela/view para `anon` e `PUBLIC`, 3. Grants de EXECUTE de funções para `anon` / `PUBLIC`, 4. SECURITY DEFINER sem `search_path` fixado (CWE-426), 5. RLS habilitado sem nenhuma policy (deny-all efetivo), 6. Tabelas `public` SEM RLS, 7. Pré-voo do DROP de `has_permission` / `roles` / `user_permissions_cache` (+3 more)
 
-### Community 397 - "Race Arena — Runbook Operacional"
-Cohesion: 0.17
-Nodes (11): 1. Criar uma nova temporada, 1a. Via Admin UI (recomendado), 1b. Fallback via SQL (uso emergencial), 2. Reprocessar eventos órfãos, 3. Invalidar cache da edge function `race-commentary`, 4. Troubleshooting, 5. Telemetria de TTI, "Carro não encontrado" ao tentar coletar power-up (+3 more)
-
-### Community 398 - "pull_request_template.md"
+### Community 393 - "pull_request_template.md"
 Cohesion: 0.17
 Nodes (11): ♿ Checklist de Acessibilidade, ⚡ Checklist de Performance, 🔒 Checklist de Segurança, ✅ Checklist Obrigatório, 🧪 Como Testar, 📝 Descrição, 🗄️ Evidência Pós-Aplicação, 🎯 Issue Relacionada (+3 more)
 
-### Community 399 - "20260420123930_76e7578c-8365-49dc-84a7-448a1307ab4f.sql"
+### Community 394 - "20260420123930_76e7578c-8365-49dc-84a7-448a1307ab4f.sql"
 Cohesion: 0.20
 Nodes (11): public.auto_enroll_quote_cadence, idx_cadences_type, idx_prospect_cadences_quote_id, public.auto_enroll_quote_cadence(), public.enroll_quote_in_cadence(), public.cadence_steps, public.cadences, public.prospect_cadences (+3 more)
 
-### Community 400 - "20260417233223_364fa3d6-8e4f-4f76-8e5c-071358f29020.sql"
+### Community 395 - "20260417233223_364fa3d6-8e4f-4f76-8e5c-071358f29020.sql"
 Cohesion: 0.20
 Nodes (10): public.deal_health_scores, public.track_deal_health_change, idx_deal_health_history_sale_time, idx_deal_health_scores_owner_tier, idx_deal_health_scores_sale, public.deal_health_history, public.sales, public.update_updated_at_column (+2 more)
 
-### Community 401 - "20260417174827_5d14e75f-67d1-4c4d-b663-cac1ab830b39.sql"
+### Community 396 - "20260417174827_5d14e75f-67d1-4c4d-b663-cac1ab830b39.sql"
 Cohesion: 0.21
 Nodes (10): public.email_engagement_scores, accounts_name_lower_uniq, idx_account_contacts_sale_id, idx_sales_account_id, public.auto_link_sale_to_account(), public.get_top_accounts(), public.account_contacts, public.accounts (+2 more)
 
-### Community 402 - "20260416215425_1ba06426-5891-47eb-bac8-3f8aea6119f4.sql"
+### Community 397 - "20260416215425_1ba06426-5891-47eb-bac8-3f8aea6119f4.sql"
 Cohesion: 0.24
 Nodes (10): public.increment_asset_view_count, idx_aul_asset, idx_aul_user, idx_sea_category, idx_sea_funnel_stage, public.asset_usage_logs, public.sales_enablement_assets, public.update_updated_at_column (+2 more)
 
-### Community 403 - "20260831130000_harden_public_access_and_privileged_rpcs.sql"
+### Community 398 - "20260831130000_harden_public_access_and_privileged_rpcs.sql"
 Cohesion: 0.18
 Nodes (3): public.login_attempts, public.get_login_lockout_status(), public.record_failed_login_attempt()
 
-### Community 404 - "20260417174122_6ffab81c-1745-49c8-9551-aa285faf02f3.sql"
+### Community 399 - "20260417174122_6ffab81c-1745-49c8-9551-aa285faf02f3.sql"
 Cohesion: 0.26
 Nodes (10): public.snapshot_engagement_score, idx_ees_score, idx_ees_tier, idx_eesh_sale_date, public.email_engagement_score_history, public.email_engagement_scores, public.get_engagement_leaderboard(), public.sales (+2 more)
 
-### Community 405 - "🏆 Promo Champions v2 — Sales Performance Platform"
+### Community 400 - "🏆 Promo Champions v2 — Sales Performance Platform"
 Cohesion: 0.17
 Nodes (12): 🤝 Contribuindo, Dashboards admin de observabilidade, 📁 Estrutura, Interpretando warns do linter Supabase, 📄 Licença, 🏆 Promo Champions v2 — Sales Performance Platform, Pré-requisitos, 🚀 Quick Start (+4 more)
 
-### Community 406 - "types-sync.unit.mjs"
+### Community 401 - "types-sync.unit.mjs"
 Cohesion: 0.29
 Nodes (9): atual, raiz, chavesDoBloco(), COBERTURA_MINIMA, comparar(), diferenca(), main(), resumoMarkdown() (+1 more)
 
-### Community 407 - "multigraph.mjs"
+### Community 402 - "multigraph.mjs"
 Cohesion: 0.32
 Nodes (10): collectMultiGraphNodeIds(), compareArrays(), createMultiGraphDocument(), edgeSignature(), findPotentialImpact(), stableHash(), UNRESOLVED_IMPORT_RELATIONS, validateMultiGraphDocument() (+2 more)
 
-### Community 409 - "update-coverage-baseline.mjs"
+### Community 404 - "update-coverage-baseline.mjs"
 Cohesion: 0.17
 Nodes (10): baselinePath, ladder, LADDER_MODULES, ladderPath, modules, next, previous, previousLadder (+2 more)
 
-### Community 410 - "20260321195552_1a939365-b697-4a37-870b-c118281c25b2.sql"
+### Community 405 - "20260321195552_1a939365-b697-4a37-870b-c118281c25b2.sql"
 Cohesion: 0.20
 Nodes (5): sms_verification_codes, public.verify_and_enable_sms(), public.verify_and_enable_totp(), public.verify_mfa_code(), user_mfa_settings
 
-### Community 411 - "CredentialsSourceFilterContext.tsx"
-Cohesion: 0.26
-Nodes (9): CredentialsSource, CredentialsSourceContext, Ctx, HealthStatusFilter, CredentialsSourceFilterProvider(), readSource(), readStatus(), VALID_SOURCES (+1 more)
-
-### Community 412 - "CoachingSessionPlanner.tsx"
-Cohesion: 0.30
-Nodes (10): CoachingSessionPlanner(), SessionRow(), CalendarIcon, formatRelativeDate(), formatSessionDate(), SKILL_LABELS, STATUS_BADGE, STATUS_LABELS (+2 more)
-
-### Community 413 - "CompetitorMentionsCard.tsx"
+### Community 406 - "CompetitorMentionsCard.tsx"
 Cohesion: 0.27
 Nodes (9): AssetSummary, BattleCardSuggestion(), Props, CompetitorMentionsCard(), formatTimestamp(), Props, CompetitorMention, useCompetitorMentions() (+1 more)
 
-### Community 414 - "GamificationCard.tsx"
+### Community 407 - "ClickToCallButton.tsx"
+Cohesion: 0.29
+Nodes (9): CallStatusBadge(), STATUS_LABEL, STATUS_VARIANT, ClickToCallButton(), Props, TwilioSession, useCallSession(), useInitiateCall() (+1 more)
+
+### Community 408 - "GamificationCard.tsx"
 Cohesion: 0.24
 Nodes (10): CompactGamificationCard(), CompactGamificationCardProps, getRankBadgeColor(), avatarSizes, GamificationCardImpl(), GamificationCardProps, getRankBadgeColor(), getRankIcon() (+2 more)
 
-### Community 415 - "RiskCompareModal.tsx"
-Cohesion: 0.29
-Nodes (11): buildCompareSummary(), COMP_ROWS, ConfBadge(), DealHeader(), deltaCell(), diffKeywords(), MiniBar(), Props (+3 more)
+### Community 409 - "useSDRMetrics.ts"
+Cohesion: 0.24
+Nodes (11): SDRConversionRankingProps, fetchPeriodData(), getPeriodRange(), PeriodFilter, SDRComparison, SDRMetrics, useHourlySuccessProbability(), useLeadTemperatureDistribution() (+3 more)
 
-### Community 416 - "useABCAnalysis.ts"
+### Community 410 - "semanticSearchHelpers.ts"
+Cohesion: 0.30
+Nodes (9): ENTITY_META, formatScore(), getSnippet(), SemanticEntityType, SemanticResult, SemanticSearchResponse, Props, SemanticSearchResultRow() (+1 more)
+
+### Community 411 - "SequenceBuilder.tsx"
+Cohesion: 0.29
+Nodes (10): SendTimeOptimizationToggle(), Props, SequenceBuilder(), Props, SequenceStepCard(), Props, useSequence(), SequenceStep (+2 more)
+
+### Community 412 - "WebhookSubscriptionLatestList.tsx"
+Cohesion: 0.27
+Nodes (10): copy(), relativeTime(), Row(), statusToneClass(), WebhookSubscriptionLatestList(), WINDOW_LABEL, RawRow, SubscriptionLatestRow (+2 more)
+
+### Community 413 - "useAccounts.test.tsx"
+Cohesion: 0.17
+Nodes (8): calls, currentUser, nextResult, queuedResults, Result, rpcResult, toastError, toastSuccess
+
+### Community 414 - "useABCAnalysis.ts"
 Cohesion: 0.23
 Nodes (11): ABC_WINDOW_DAYS, ABCAnalysisResult, ABCItem, ABCSummary, classifyABC(), clientItemsInWindow(), CONCENTRATION_WARNING_THRESHOLD_PCT, NeuralInsight (+3 more)
 
-### Community 417 - "lib/salesReportPdf.ts"
-Cohesion: 0.27
-Nodes (11): addFooter(), addHeader(), addKPISection(), addTeamRanking(), addTopDeals(), BRAND_DARK, BRAND_GREEN, generateSalesReport() (+3 more)
+### Community 415 - "breakdown_invariants_test.ts"
+Cohesion: 0.20
+Nodes (11): AGES_DAYS, allCombos(), AMOUNTS, assertInvariants(), mkDeal(), NOW, PATTERNS, SOURCES (+3 more)
 
-### Community 418 - "reportDownload.ts"
-Cohesion: 0.30
-Nodes (11): Relatorios(), CategoryRecord, downloadClientsReport(), downloadFile(), downloadProductsReport(), downloadSalesReport(), fetchReportData(), generateCSV() (+3 more)
-
-### Community 419 - "report-embed-public/index.ts"
+### Community 416 - "report-embed-public/index.ts"
 Cohesion: 0.17
 Nodes (8): ALLOWED_ENTITIES, ALLOWED_OPS, baseCors, DEFAULT_VISIBLE_FIELDS, HIDDEN_FIELDS, JOIN_MAP, rateLimit, RateLimitEntry
 
-### Community 420 - "20260417181059_373308ac-cd9e-4c9f-b695-1c5b3ba6d799.sql"
+### Community 417 - "winloss-webhook-dispatcher/retry_test.ts"
+Cohesion: 0.18
+Nodes (9): FANOUT_PAYLOAD, FANOUT_SUBS, makeAllOkFanout(), makeFanoutHarness(), PAYLOAD, SUB, SUB_A, SUB_B (+1 more)
+
+### Community 418 - "20260417181059_373308ac-cd9e-4c9f-b695-1c5b3ba6d799.sql"
 Cohesion: 0.27
 Nodes (10): idx_call_logs_owner_created, idx_call_logs_sale, idx_dialer_queue_items_queue_status_pos, public.call_logs, public.dialer_queue_items, public.dialer_queues, public.next_dialer_item(), public.sales (+2 more)
 
-### Community 421 - "20260418020829_4d0d1ab4-bd8b-4e52-a36c-408838b4d77a.sql"
+### Community 419 - "20260418020829_4d0d1ab4-bd8b-4e52-a36c-408838b4d77a.sql"
 Cohesion: 0.27
 Nodes (11): idx_stage_bottleneck_owner, idx_stage_bottleneck_severity, idx_stage_conversion_from, idx_stage_conversion_owner, public.stage_bottleneck_insights, public.stage_conversion_metrics, public.update_updated_at_column, stage_bottleneck_insights_unique (+3 more)
 
-### Community 422 - "20260418102425_a99cbb4a-67de-402a-9ee4-09aab4e488e8.sql"
+### Community 420 - "20260418102425_a99cbb4a-67de-402a-9ee4-09aab4e488e8.sql"
 Cohesion: 0.26
 Nodes (11): idx_forecast_contrib_forecast, idx_forecast_contrib_sale, idx_revenue_forecasts_owner, idx_revenue_forecasts_period, public.forecast_deal_contributions, public.revenue_forecasts, revenue_forecasts_unique, public.sales (+3 more)
 
-### Community 423 - "20260425134635_3ac0d5c6-a014-4bf2-bc93-adde2f5969d8.sql"
+### Community 421 - "20260425134635_3ac0d5c6-a014-4bf2-bc93-adde2f5969d8.sql"
 Cohesion: 0.26
 Nodes (11): idx_autotest_jobs_started, idx_health_conn_time, idx_integration_connections_enabled, idx_integration_connections_kind, public.integration_autotest_jobs, public.integration_autotest_settings, public.integration_connections, public.integration_health_checks (+3 more)
 
-### Community 424 - "20260619145322_df537bec-72b5-4e50-8778-17637a1e009d.sql"
+### Community 422 - "20260619145322_df537bec-72b5-4e50-8778-17637a1e009d.sql"
 Cohesion: 0.18
 Nodes (5): private.award_xp_on_quote_cadence_task_complete(), public.check_battle_achievements(), public.register_race_daily_checkin(), public.prospect_cadences, public.weekly_matchups
 
-### Community 425 - "20261117050000_webhook_ssrf_e_rate_limit.sql"
+### Community 423 - "20261117050000_webhook_ssrf_e_rate_limit.sql"
 Cohesion: 0.24
 Nodes (11): idx_webhook_dispatch_rate_sub_ts, public.check_webhook_rate_limit(), public.is_webhook_host_allowed(), public.webhook_allowed_domains, public.webhook_dispatch_rate, set_updated_at_webhook_allowed_domains, set_updated_at_webhook_dispatch_rate, auth.users (+3 more)
 
-### Community 426 - "Como executar"
+### Community 424 - "Como executar"
 Cohesion: 0.17
 Nodes (11): Cobertura, Como executar, Debugging, E2E Test Suite — Promo Champions, Estrutura, Executar por domínio, Executar todos os testes de página, Padrão dos testes de página (+3 more)
 
-### Community 427 - "Dossiê — PR #281: fix: 4 bugs em scripts de auditoria"
+### Community 425 - "Dossiê — PR #281: fix: 4 bugs em scripts de auditoria"
 Cohesion: 0.18
 Nodes (10): 1. RegExp g-flag lastIndex, 2. CREATE_TABLE before stripComments, 3. SQL Injection em Probe Literals (pgLit), 4. Views vs BASE TABLE, Avaliação do Fix, Ação Necessária, Bugs Fixados (4), Dossiê — PR #281: fix: 4 bugs em scripts de auditoria (+2 more)
 
-### Community 428 - "Plano de melhorias e correções em 100 etapas"
+### Community 426 - "Plano de melhorias e correções em 100 etapas"
 Cohesion: 0.18
 Nodes (11): Fase A — contenção, custódia e linha de base, Fase B — acesso auditável e identidade dos ambientes, Fase C — reconciliação integral dos bancos, Fase D — hardening de banco, Fase E — estabilização das Edge Functions, Fase F — integridade do frontend e produto, Fase G — completar funcionalidades parciais, Fase H — dados, performance e confiabilidade (+3 more)
 
-### Community 429 - "Plano de melhorias e correções em 100 etapas"
+### Community 427 - "Plano de melhorias e correções em 100 etapas"
 Cohesion: 0.18
 Nodes (11): Fase 10 — validação, release e tráfego real, Fase 1 — contenção dos riscos críticos, Fase 2 — governança de ambientes e fonte de verdade, Fase 3 — reconciliação de dados origem/destino, Fase 4 — segurança do banco e autorização, Fase 5 — integridade, performance e operação do banco, Fase 6 — migrations, schema e tipos, Fase 7 — Edge Functions e contratos de backend (+3 more)
 
-### Community 430 - "Catálogo do banco de origem — leitura forense"
+### Community 428 - "Catálogo do banco de origem — leitura forense"
 Cohesion: 0.18
 Nodes (11): Catálogo do banco de origem — leitura forense, Classificação de diferenças e pontos de atenção, Cruzamento estático com o repositório, Escopo e método, Extensões presentes, Functions `SECURITY DEFINER`, Inventário consolidado do schema `public`, Jobs (+3 more)
+
+### Community 429 - "Contrato de Integridade — Roteamento de Leads e Carteira"
+Cohesion: 0.18
+Nodes (9): Cenários simulados localmente, Contrato de Integridade — Roteamento de Leads e Carteira, Invariantes implementados, Limites do domínio, Pendências que exigem decisão ou reconciliação, Pré-condições para aplicar em qualquer banco, 1. CRM, assignLeadRoundRobin() (+1 more)
+
+### Community 430 - "triggerRaceEvent"
+Cohesion: 0.18
+Nodes (11): 05_DOMINIO_GAMIFICACAO_RACE.md, 2.1 O gatilho existe e está corretamente ligado, 2.2 Mesmo se invocada, a função só produziria 1 dos 5 tipos de evento, 2.3 Um segundo portão fecha a porta para 10 dos 18 vendedores, 2. O FIO PARTIDO: por que `race_events` está vazia, 2.3 Confiabilidade / Contratos, 🟢 [REL-01] Suíte quote-to-sale — 10/10 alcançado, 🟡 [REL-02] Edge Functions sem circuit breaker global (+3 more)
 
 ### Community 431 - "useIntelligenceZones.ts"
 Cohesion: 0.24
@@ -3085,53 +3100,49 @@ Nodes (10): Adicionar widget de relatório no dashboard, Arquitetura, Edge Funct
 Cohesion: 0.18
 Nodes (11): 5. Frontend — Dashboard de Monitoramento, Arquivo Principal, Cálculo de Estatísticas, Cálculo de Top Offenders, Dependências, Filtros Suportados, Formatadores, Interface de Dados (+3 more)
 
-### Community 441 - "reports/salesReportPdf.ts"
-Cohesion: 0.27
-Nodes (9): html2canvas, addImage(), BRAND_DARK, BRAND_GREEN, captureChart(), footer(), generateSalesReportPdf(), header() (+1 more)
-
-### Community 442 - "Levantamento e Plano de Melhorias Técnicas - Auditoria de Excelência"
+### Community 441 - "Levantamento e Plano de Melhorias Técnicas - Auditoria de Excelência"
 Cohesion: 0.18
 Nodes (10): 1. Eliminação de Dívida Técnica (Tipagem), 2. Otimização de Performance e Estabilidade, 3. Robustez na Camada de Dados, 4. Auditoria e Logs, Detalhes Técnicos para Implementação, Etapa 1: Tipagem de AdminComercial, Etapa 2: Estabilização de Cadências, Etapa 3: Exportação Segura (+2 more)
 
-### Community 443 - "20251214103344_640296e4-5119-4bf4-aefe-f0749de6003f.sql"
+### Community 442 - "20251214103344_640296e4-5119-4bf4-aefe-f0749de6003f.sql"
 Cohesion: 0.24
 Nodes (9): public.handle_new_user_role, on_auth_user_created_role, public.get_user_role(), public.has_role(), public.is_admin_or_manager(), public.user_roles, auth.users, public.update_updated_at_column (+1 more)
 
-### Community 444 - "20261014000000_gamificacao_server_side.sql"
+### Community 443 - "20261014000000_gamificacao_server_side.sql"
 Cohesion: 0.18
 Nodes (8): public.process_race_event_on_sale, public.trigger_internal_edge_job(), race_events_sale_dedup_idx, race_powerups_source_sale_dedup_idx, public._internal_secrets, public.race_events, public.race_powerups, trg_process_race_event_on_sale
 
-### Community 445 - "20260418121800_50392e48-27b4-44b2-a825-26ca2f846981.sql"
+### Community 444 - "20260418121800_50392e48-27b4-44b2-a825-26ca2f846981.sql"
 Cohesion: 0.25
 Nodes (9): public.snapshot_committee_coverage, idx_cch_sale_snapshot, idx_cer_recording, idx_cer_sale, public.committee_coverage_history, public.committee_extraction_runs, public.call_recordings, public.sales (+1 more)
 
-### Community 446 - "20260418151200_f3721bce-9ab4-4188-aacd-524d2fbc3ffe.sql"
+### Community 445 - "20260418151200_f3721bce-9ab4-4188-aacd-524d2fbc3ffe.sql"
 Cohesion: 0.24
 Nodes (8): public.task_assignments, idx_squad_members_user, idx_task_assignments_parent_recurrence, idx_task_assignments_squad, public.squad_members, public.squads, public.update_updated_at_column, trg_squads_updated_at
 
-### Community 447 - "20260802150910_dbc250ba-8d86-47fb-8b72-f7ce31d58576.sql"
+### Community 446 - "20260802150910_dbc250ba-8d86-47fb-8b72-f7ce31d58576.sql"
 Cohesion: 0.25
 Nodes (8): public.track_bulk_draft_recovery, idx_email_bulk_drafts_ever_failed, idx_email_bulk_drafts_recovered, public.get_campaign_recovery_rates(), public.get_recovery_by_failure_type(), public.email_bulk_drafts, public.email_bulk_jobs, trg_email_bulk_drafts_recovery
 
-### Community 448 - "exists"
+### Community 447 - "exists"
 Cohesion: 0.18
 Nodes (11): aliasesFor(), componentFile(), dirOf(), edges, exists(), isAliasSpec(), isCurrentSql(), migDir (+3 more)
 
-### Community 449 - "check-test-spec-patterns.ts"
+### Community 448 - "check-test-spec-patterns.ts"
 Cohesion: 0.25
 Nodes (8): checkPlaywright(), failures, literalPatterns(), pathLiteral(), readConfig(), ROOT, srcFiles, walk()
 
-### Community 450 - "mudou-conteudo.mjs"
+### Community 449 - "mudou-conteudo.mjs"
 Cohesion: 0.27
 Nodes (8): CARIMBOS, IGNORADOS, limparHistoricoCron(), mudou(), normalizarAlerta(), PADRAO, semCarimbos(), TELEMETRIA
 
-### Community 452 - "AnalyticsModule.tsx"
+### Community 452 - "mergeTags.ts"
 Cohesion: 0.27
-Nodes (9): BenchmarkPanel, formatValue(), PERIOD_LABELS, TeamActivityFeed, AnalyticsModule(), getConfidenceConfig(), SalesForecast, BenchmarkPeriod (+1 more)
+Nodes (9): MergeTagPickerProps, applyMergeTags(), AVAILABLE_MERGE_TAGS, extractMergeTags(), formatDateBR(), MergeTagContext, MergeTagDefinition, resolveTag() (+1 more)
 
-### Community 453 - "SalesMarkupRankingTable.tsx"
-Cohesion: 0.31
-Nodes (8): currency(), Props, SalesMarkupRankingTable, MarkupRankingRow, MIN_SAMPLE_OPTIONS, MinSample, readStored(), useMarkupMinSamplePreference()
+### Community 453 - "useFollowUpData.ts"
+Cohesion: 0.27
+Nodes (9): FollowUpLeadCardProps, FollowUpStatsGridProps, FollowUpValueAtRiskProps, ColdLead, getSuggestedAction(), getTemperature(), LeadTemperature, temperatureConfig (+1 more)
 
 ### Community 454 - "useAutomationWorkflows.test.tsx"
 Cohesion: 0.18
@@ -3141,249 +3152,249 @@ Nodes (9): del, eq, from, select, selectResult, singleResult, toastError, toastS
 Cohesion: 0.18
 Nodes (9): changes, eq, from, insert, mutationResult, rpc, toastError, toastSuccess (+1 more)
 
-### Community 456 - "useMyBonusAwards.ts"
-Cohesion: 0.27
-Nodes (9): AWARDS_KEY, AwardStatus, AwardWithRefs, CommissionBonusAward, KEY, MyAwardRow, MyAwardsPage, UseMyBonusAwardsOptions (+1 more)
-
-### Community 457 - "useDigitalSignatures.ts"
+### Community 456 - "salesService.test.ts"
 Cohesion: 0.18
-Nodes (8): CreateDocumentInput, DIGITAL_SIGNATURE_INTEGRATION_MESSAGE, DigitalSignature, DocumentSigner, nextResult, remove, toast, update
+Nodes (9): salesService, Chain, fromMock, insertMock, limitMock, orderMock, orMock, rpcMock (+1 more)
 
-### Community 458 - "useLeadRouting.ts"
-Cohesion: 0.35
-Nodes (10): invalidateRoutingQueries(), PortfolioRoutingResult, routeClientPortfolio(), RoutingStrategy, ServerRoutingStrategy, toServerStrategy(), useAutoRouteToTopPerformer(), useLeadRouting() (+2 more)
-
-### Community 459 - "oauth-state.ts"
-Cohesion: 0.31
-Nodes (8): base64UrlDecode(), base64UrlEncode(), createSignedOAuthState(), decoder, encoder, hmacSha256(), SignedOAuthState, verifySignedOAuthState()
-
-### Community 460 - "20260416181418_6d978eeb-e572-497a-be87-f6935ebd7af2.sql"
+### Community 457 - "20260416181418_6d978eeb-e572-497a-be87-f6935ebd7af2.sql"
 Cohesion: 0.31
 Nodes (10): idx_sla_violations_detected, idx_sla_violations_sale_id, idx_sla_violations_status, public.check_sla_violations(), public.sla_policies, public.sla_violations, public.sales, public.update_updated_at_column (+2 more)
 
-### Community 461 - "public.lead_assignments"
+### Community 458 - "public.lead_assignments"
 Cohesion: 0.33
 Nodes (10): idx_lead_assignments_at, idx_lead_assignments_sale, idx_lead_assignments_sp, public.auto_assign_lead(), public.lead_assignments, public.lead_routing_rules, public.sales, public.salespeople (+2 more)
 
-### Community 462 - "20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c.sql"
+### Community 459 - "20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c.sql"
 Cohesion: 0.29
 Nodes (9): idx_deal_health_sale, idx_risk_signals_sale, idx_risk_signals_unresolved, public.calculate_deal_health(), public.deal_health_scores, public.deal_risk_signals, public.channel_interactions, public.sales (+1 more)
 
-### Community 463 - "20260417004724_5b69c678-9bcb-4757-afa3-c7f08a0bd49c.sql"
+### Community 460 - "20260417004724_5b69c678-9bcb-4757-afa3-c7f08a0bd49c.sql"
 Cohesion: 0.25
 Nodes (8): idx_sequence_step_executions_variant, idx_sequence_step_variants_step, public.sequence_step_variants, public.sequence_variant_performance, public.user_owns_sequence_step(), public.sequence_step_executions, public.sequence_steps, public.sequences
 
-### Community 464 - "20260417172401_58a897ab-98e9-45fb-a275-94c9112b6be4.sql"
+### Community 461 - "20260417172401_58a897ab-98e9-45fb-a275-94c9112b6be4.sql"
 Cohesion: 0.31
 Nodes (10): idx_email_bulk_drafts_job, idx_email_bulk_drafts_pending, idx_email_bulk_jobs_owner, idx_email_bulk_jobs_status, public.email_bulk_drafts, public.email_bulk_jobs, public.get_bulk_job_summary(), public.update_updated_at_column (+2 more)
 
-### Community 465 - "20260417202813_6803938d-e003-42c1-8b38-f8515132e8f5.sql"
+### Community 462 - "20260417202813_6803938d-e003-42c1-8b38-f8515132e8f5.sql"
 Cohesion: 0.25
 Nodes (9): idx_ccm_owner_status_sev, idx_ccm_recording, idx_cmn_recipient, public.call_critical_moments, public.critical_moment_notifications, public.call_recordings, public.salespeople, public.update_updated_at_column (+1 more)
 
-### Community 466 - "20260418004622_d7fe1b7b-e43d-44b0-a0bf-ce1e7e8b4d74.sql"
+### Community 463 - "20260418004622_d7fe1b7b-e43d-44b0-a0bf-ce1e7e8b4d74.sql"
 Cohesion: 0.29
 Nodes (10): idx_committee_coverage_owner_tier, idx_deal_stakeholders_owner, idx_deal_stakeholders_sale_role, idx_deal_stakeholders_unique_name, public.deal_committee_coverage, public.deal_stakeholders, public.sales, public.update_updated_at_column (+2 more)
 
-### Community 467 - "20261018200000_fix_stage_history_views_e_forecast_category.sql"
+### Community 464 - "20261018200000_fix_stage_history_views_e_forecast_category.sql"
 Cohesion: 0.20
 Nodes (9): mv_competitive_ranking_id_idx, public.competitive_ranking, public.revenue_forecast_view, public.trg_deal_stage_history(), public.deal_stage_history, public.mv_competitive_ranking, public.sales, public.stage_probabilities (+1 more)
 
-### Community 468 - "public.get_semantic_coverage"
+### Community 465 - "public.get_semantic_coverage"
 Cohesion: 0.24
 Nodes (8): public.calculate_deal_health(), public.get_semantic_coverage(), public.activities, public.call_recordings, public.channel_interactions, public.clients, public.sales, public.semantic_index
 
-### Community 469 - "♿ Accessibility Checklist — Promo Champions v2"
+### Community 466 - "Regras de Negocio — Promo Champions V2.1"
+Cohesion: 0.20
+Nodes (9): 1. Multi-tenancy, 2. Campanhas e Status, 3. Tarefas de Cadencia (claim_pending_cadence_tasks), 4. Autenticacao e Acesso, 5. Exportacao de Dados, 6. Dependencias e Stack, 7. CI/CD, 8. Seguranca (+1 more)
+
+### Community 467 - "♿ Accessibility Checklist — Promo Champions v2"
 Cohesion: 0.20
 Nodes (9): ♿ Accessibility Checklist — Promo Champions v2, Buttons, Color & Contrast, Component Guidelines, Forms, Keyboard Navigation, Modals, Motion (+1 more)
 
-### Community 470 - "Contrato de Integridade — Roteamento de Leads e Carteira"
-Cohesion: 0.20
-Nodes (9): Cenários simulados localmente, Contrato de Integridade — Roteamento de Leads e Carteira, Interface e autorização, Invariantes implementados, Limites do domínio, Pendências que exigem decisão ou reconciliação, Pré-condições para aplicar em qualquer banco, 1. CRM (+1 more)
-
-### Community 471 - "Frente 1 — Segurança de Fronteira & Identidade (Módulos 01–04)"
-Cohesion: 0.20
-Nodes (10): 🟠 ALTO — Default de role permissivo concede permissões sem role atribuída, 🔵 BAIXO — Flags de role carregadas após `isLoading=false` (flash de role incorreta), 🔵 BAIXO — Resolução de role via ordenação alfabética é frágil, Frente 1 — Segurança de Fronteira & Identidade (Módulos 01–04), ⚪ INFO — `.env.example` diverge do código (`ANON_KEY` vs `PUBLISHABLE_KEY`), ⚪ INFO — Mensagem de política de senha inconsistente, 🟡 MÉDIO — Autorização/roteamento puramente client-side (sem enforcement por ação no servidor), 🟡 MÉDIO — Query de permissões não escopada ao usuário (cache cross-user) (+2 more)
-
-### Community 472 - "Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A)"
-Cohesion: 0.20
-Nodes (10): 🟠 ALTO — XSS armazenado em snippet de busca de calls (`ts_headline` renderizado como HTML cru), 🔵 BAIXO — `aria-label` estático não reflete estado (ThemeToggle), 🔵 BAIXO — Chaves de lista com `index` em listas de dados/interativas, 🔵 BAIXO — Virtualização inconsistente em listas grandes, Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A), ⚪ INFO — 3 `dangerouslySetInnerHTML` em `<style>` avaliadas como seguras, ⚪ INFO — Console no client (168 ocorrências) — sem vazamento de PII/segredo confirmado, 🟡 MÉDIO — `level-up-celebration` (modal custom) sem role/aria-modal/Escape/foco (+2 more)
-
-### Community 473 - "ADR-002: React Query como Gerenciador de Estado do Servidor"
+### Community 468 - "ADR-002: React Query como Gerenciador de Estado do Servidor"
 Cohesion: 0.20
 Nodes (9): ADR-002: React Query como Gerenciador de Estado do Servidor, Alternativas Consideradas, Configuração padrão:, Consequências, Contexto, Decisão, Negativas, Positivas (+1 more)
 
-### Community 474 - "ADR-003: Row Level Security como Camada Primária de Segurança"
+### Community 469 - "ADR-003: Row Level Security como Camada Primária de Segurança"
 Cohesion: 0.20
 Nodes (9): ADR-003: Row Level Security como Camada Primária de Segurança, Consequências, Contexto, Decisão, Negativas, Padrões adotados:, Positivas, Referências (+1 more)
 
-### Community 475 - "Estado Real — Domínio CRM / Pipeline / Vendas"
+### Community 470 - "Estado Real — Domínio CRM / Pipeline / Vendas"
 Cohesion: 0.20
 Nodes (9): 1. Tabela de rastreamento (UI → hook/service → tabela → dado real), 2. Contagem por classificação, 3. Componentes mortos (nenhum importador em todo `src/`), 4. Dados fictícios / hardcoded encontrados (com arquivo:linha), 5. Tabelas do domínio com **0 linhas** (prova mais barata de feature dormente), Críticos — métrica de negócio fabricada apresentada como real, Estado Real — Domínio CRM / Pipeline / Vendas, Heurísticas hardcoded rotuladas como inteligência/predição (+1 more)
 
-### Community 476 - "swUpdater.ts"
+### Community 471 - "swUpdater.ts"
 Cohesion: 0.33
 Nodes (9): 8. PWA (`vite-plugin-pwa`), APP_SW_PATHS, clearAllCaches(), installSwAutoUpdate(), isNonProductionContext(), killAppServiceWorkers(), refreshServiceWorker(), RefreshSwOptions (+1 more)
 
-### Community 477 - "8. Gamificação"
+### Community 472 - "8. Gamificação"
 Cohesion: 0.20
 Nodes (10): 8.1 Ranking Competitivo (`/ranking` — `RankingCompetitivo.tsx`), 8.2 Arena Competitiva (`/arena` — `ArenaCompetitiva.tsx`), 8.3 Desafios, 8.4 Sales Battles, 8.5 Victory Feed (`/victory-feed`), 8.6 Team Activity Feed (`/team-activity`), 8.7 Competitive Seasons Admin (`/competitive-seasons`), 8.8 Streaks & Heatmap (+2 more)
 
-### Community 478 - "13. Fila canônica das 100 etapas"
+### Community 473 - "13. Fila canônica das 100 etapas"
 Cohesion: 0.20
 Nodes (10): 13. Fila canônica das 100 etapas, Onda 10 — validação e produção, Onda 1 — contenção crítica, Onda 2 — governança e fonte de verdade, Onda 3 — reconciliação de dados, Onda 4 — segurança do banco, Onda 5 — integridade e operação do banco, Onda 6 — migrations, schema e tipos (+2 more)
 
-### Community 479 - "Processos — rituais que sobrevivem a uma pessoa"
+### Community 474 - "Processos — rituais que sobrevivem a uma pessoa"
 Cohesion: 0.20
 Nodes (9): 1. Post-mortem de incidente, 2. Revisão de segurança, 3. SLA de revisão de PR, 4. Triagem semanal de PRs, 5. Revisão mensal de dependências, 6. Revisão mensal de SLOs, Como saber que um ritual está funcionando, Processos — rituais que sobrevivem a uma pessoa (+1 more)
 
-### Community 480 - "🔍 Auditoria Enterprise — 2026-07-13"
+### Community 475 - "🔍 Auditoria Enterprise — 2026-07-13"
 Cohesion: 0.20
 Nodes (9): 1. Sumário Executivo, 2. Falhas & Lacunas Priorizadas, 3. Backlog de Execução (ordenado por ROI), 4. Ausência de "Gambiarra", 5. Recomendação Final, 🔍 Auditoria Enterprise — 2026-07-13, 🔴 P0 — Bloqueadores de CI/qualidade, 🟡 P1 — Débito arquitetural (+1 more)
 
-### Community 481 - ".prettierrc.json"
+### Community 476 - "4. Edge Function — Coleta de Telemetria"
+Cohesion: 0.20
+Nodes (10): 2. Arquitetura, 4. Edge Function — Coleta de Telemetria, Como Classificar o Status, Componentes, Constantes de Threshold, Diagrama de Dependências, Função `emitTelemetry()`, Padrão Completo de Uso (Select com Telemetria) (+2 more)
+
+### Community 477 - ".prettierrc.json"
 Cohesion: 0.20
 Nodes (9): arrowParens, bracketSpacing, endOfLine, printWidth, semi, singleQuote, tabWidth, trailingComma (+1 more)
 
-### Community 482 - "20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf.sql"
+### Community 478 - "20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf.sql"
 Cohesion: 0.20
 Nodes (6): public.auto_create_sale_followup, public.handle_client_ltv_update, public.handle_stock_management, tr_auto_followup_on_sale, tr_handle_stock_on_sale, tr_update_client_total_value
 
-### Community 483 - "20260511185728_8146716e-03a3-4ac2-864f-cf44bba951f7.sql"
+### Community 479 - "20260511185728_8146716e-03a3-4ac2-864f-cf44bba951f7.sql"
 Cohesion: 0.20
 Nodes (9): public.auto_enroll_in_cadence, public.generate_cadence_tasks, public.auto_enroll_in_cadence(), public.generate_cadence_tasks(), public.cadence_enrollment_rules, public.cadence_steps, public.prospect_cadences, trg_auto_enroll_on_sale (+1 more)
 
-### Community 484 - "20260417000949_a89d07df-24c2-4acf-9877-e041ba2414ef.sql"
+### Community 480 - "20260417000949_a89d07df-24c2-4acf-9877-e041ba2414ef.sql"
 Cohesion: 0.29
 Nodes (8): public.compute_scheduled_report_next_run, idx_sched_reports_created_by, idx_sched_reports_next_run, idx_sched_runs_schedule, public.scheduled_report_runs, public.scheduled_reports, public.custom_reports, trg_compute_next_run
 
-### Community 485 - "20261001213000_status_transitions_state_machine.sql"
+### Community 481 - "20261001213000_status_transitions_state_machine.sql"
 Cohesion: 0.20
 Nodes (7): public.enforce_status_transition, public.status_transitions, public.transition_commission_status(), public.transition_sale_status(), public.commissions, public.sales, trg_enforce_status_transition
 
-### Community 486 - "20260723122258_04332939-3a35-43e1-b47e-9ec896a02355.sql"
+### Community 482 - "20260723122258_04332939-3a35-43e1-b47e-9ec896a02355.sql"
 Cohesion: 0.24
 Nodes (8): public.protect_pa_nudge_content, idx_pa_nudges_feedback, idx_pa_nudges_sp_created, public.personal_assistant_nudges, public.salespeople, public.update_updated_at_column, trg_pa_nudges_protect, trg_pa_nudges_updated_at
 
-### Community 487 - "check-data-layer.mjs"
+### Community 483 - "winloss-webhook-dispatcher/retry_parametric_test.ts"
+Cohesion: 0.20
+Nodes (6): sc(), Event, PAYLOAD, Scenario, SCENARIOS, SUB
+
+### Community 484 - "check-data-layer.mjs"
 Cohesion: 0.20
 Nodes (9): ALLOWED_PREFIXES, baseline, BASELINE_PATH, newViolations, offenders, ROOT, SRC, staleEntries (+1 more)
 
-### Community 488 - "gerar-repo.mjs"
+### Community 485 - "gerar-repo.mjs"
 Cohesion: 0.24
 Nodes (8): edges, executarRg(), FDIR, inventario, OUT, rgCount(), rgFiles(), semChamador
 
-### Community 489 - "ObjectionsLibrary.tsx"
+### Community 486 - "seed-august-sales.ts"
+Cohesion: 0.20
+Nodes (9): ACTIVITY_TYPES, actRows, log(), PRODUCTS, real, rows, sb, { supabaseUrl: url, serviceRoleKey: key } (+1 more)
+
+### Community 487 - "IntegrationHealthCard.tsx"
 Cohesion: 0.31
-Nodes (8): CATEGORIES, CATEGORY_COLORS, NewObjection, Objection, useAddObjection(), useDeleteObjection(), useIncrementObjectionUsage(), useUpdateObjection()
+Nodes (8): isHistoryOpenPersisted(), readSet(), setHistoryOpenPersisted(), writeSet(), KIND_ICON, KIND_LABEL, truncate(), IntegrationConnection
 
-### Community 490 - "XPHistoryTimeline.tsx"
-Cohesion: 0.33
-Nodes (8): getSourceConfig(), SOURCE_CONFIG, XPHistoryCompact(), XPHistoryTimeline(), XPHistoryTimelineProps, XPTimelineItem, XPTimelineItemProps, useXPHistory()
+### Community 488 - "DiarizationTimeline.tsx"
+Cohesion: 0.38
+Nodes (7): CallStatsPanel(), Props, DiarizationTurn, formatSeconds(), speakerLabel(), DiarizationTimeline(), Props
 
-### Community 491 - "BestSendWindowCard.tsx"
+### Community 489 - "useCohortRetention.ts"
+Cohesion: 0.27
+Nodes (8): avgRetentionAt(), buildCohortMatrix(), ClientLite, CohortRow, getHeatmapColor(), SaleLite, useCohortRetention(), UseCohortRetentionOptions
+
+### Community 490 - "BestSendWindowCard.tsx"
 Cohesion: 0.38
 Nodes (7): BestSendWindowCard(), Props, DOW_PT, formatOptimizedFor(), formatWindow(), normalizeScore(), useContactSendProfile()
 
-### Community 492 - "qbrSchedulerAgendaEvent.test.ts"
+### Community 491 - "useElevenLabsVoice.ts"
 Cohesion: 0.27
-Nodes (8): EVENT_TYPES, PRIORITIES, schedule, STATUSES, buildQbrAgendaEvent(), QBR_EVENT_STATUS, QBR_EVENT_TYPE, QBR_TITLE_PREFIX
+Nodes (6): SpeechRecognition, SpeechRecognitionConstructor, useElevenLabsVoice(), UseElevenLabsVoiceOptions, VOICE_OPTIONS, Window
 
-### Community 493 - "auth"
+### Community 492 - "auth"
 Cohesion: 0.33
 Nodes (8): auth, idx_saved_filters_user, saved_filters, auth.users, has_permission(), roles, user_permissions_cache, user_roles
 
-### Community 494 - "check-v4-callback-alerts/index.ts"
+### Community 493 - "check-v4-callback-alerts/index.ts"
 Cohesion: 0.27
 Nodes (7): AlertContext, AlertKind, evaluateAlerts(), log(), supabaseServiceKey, supabaseUrl, base
 
-### Community 495 - "deal-probability-calc_test.ts"
+### Community 494 - "fallback.ts"
 Cohesion: 0.29
-Nodes (6): computeDealProbability(), DealProbabilityInput, DealProbabilityResult, STAGE_PROBABILITIES, StageHistoryEntry, NOW
+Nodes (8): AssistantFallbackContext, AssistantFallbackMode, buildFallbackContent(), createSseResponse(), firstName(), formatBRL(), isAiDisabledError(), context
 
-### Community 496 - "20241231000000_saved_filters.sql"
+### Community 495 - "20241231000000_saved_filters.sql"
 Cohesion: 0.31
 Nodes (8): ensure_single_default_filter(), idx_saved_filters_default, idx_saved_filters_entity_type, idx_saved_filters_user_entity, idx_saved_filters_user_id, public.saved_filters, auth.users, trigger_single_default_filter
 
-### Community 497 - "20251213122333_bd6a3540-97c2-4bbf-98a8-1e4fc57436ee.sql"
+### Community 496 - "20251213122333_bd6a3540-97c2-4bbf-98a8-1e4fc57436ee.sql"
 Cohesion: 0.31
 Nodes (9): public.cadence_steps, public.cadence_tasks, public.cadences, public.prospect_cadences, public.sales, public.salespeople, public.update_updated_at_column, update_cadences_updated_at (+1 more)
 
-### Community 498 - "20251227180749_ae9f1cfd-d5f2-4424-a6e6-9d36b9d6be1d.sql"
+### Community 497 - "20251227180749_ae9f1cfd-d5f2-4424-a6e6-9d36b9d6be1d.sql"
 Cohesion: 0.31
 Nodes (9): idx_digital_signatures_created_by, idx_digital_signatures_status, idx_document_signers_document, idx_document_signers_email, public.digital_signatures, public.document_signers, public.salespeople, public.update_updated_at_column (+1 more)
 
-### Community 499 - "20260104170152_additional_indexes.sql"
+### Community 498 - "20260104170152_additional_indexes.sql"
 Cohesion: 0.27
 Nodes (9): idx_activities_user_date, idx_clients_name_search, idx_clients_user_active, idx_deals_created_status, idx_deals_title_search, idx_deals_user_status, activities, clients (+1 more)
 
-### Community 500 - "20260104210000_soft_delete_enhanced.sql"
+### Community 499 - "20260104210000_soft_delete_enhanced.sql"
 Cohesion: 0.20
 Nodes (7): activities_active, clients_active, deals_active, activities, clients, deals, tasks_active
 
-### Community 501 - "20260224131348_057440fe-994a-4e43-84a5-c5f70ae14743.sql"
+### Community 500 - "20260224131348_057440fe-994a-4e43-84a5-c5f70ae14743.sql"
 Cohesion: 0.33
 Nodes (9): idx_quote_sync_logs_created_at, idx_quote_sync_logs_external_id, idx_quotes_external_quote_id, idx_quotes_quote_number, idx_quotes_sale_id, idx_quotes_source, idx_quotes_sync_status, public.quote_sync_logs (+1 more)
 
-### Community 502 - "20260416194432_c11a9419-4322-4cbb-a68e-c82a354b1440.sql"
+### Community 501 - "20260416194432_c11a9419-4322-4cbb-a68e-c82a354b1440.sql"
 Cohesion: 0.27
 Nodes (9): idx_enrollment_rules_active, idx_enrollment_rules_cadence, public.cadence_enrollment_rules, public.find_matching_cadence_rule(), public.cadences, public.prospect_cadences, public.sales, public.update_updated_at_column (+1 more)
 
-### Community 503 - "20260416200128_9a349ada-690b-440b-b745-6f94b7e4160e.sql"
+### Community 502 - "20260416200128_9a349ada-690b-440b-b745-6f94b7e4160e.sql"
 Cohesion: 0.29
 Nodes (8): idx_automation_runs_status, idx_automation_runs_workflow, idx_automation_workflows_trigger, public.automation_runs, public.automation_workflows, auth.users, public.update_updated_at_column, trg_automation_workflows_updated_at
 
-### Community 504 - "20260418011827_7fcfe507-9c73-47df-a4ee-fefafbd84866.sql"
+### Community 503 - "20260418011827_7fcfe507-9c73-47df-a4ee-fefafbd84866.sql"
 Cohesion: 0.29
 Nodes (9): idx_dvp_calculated_at, idx_dvp_owner_status, public.deal_velocity_predictions, public.stage_velocity_baselines, public.sales, public.update_updated_at_column, trg_dvp_updated_at, trg_svb_updated_at (+1 more)
 
-### Community 505 - "20260418123911_58f252ff-e7e8-4938-8e82-8b83bfdedb14.sql"
+### Community 504 - "20260418123911_58f252ff-e7e8-4938-8e82-8b83bfdedb14.sql"
 Cohesion: 0.36
 Nodes (9): idx_fcs_owner, idx_fcs_source, idx_forecast_accuracy_bias, idx_forecast_snapshots_owner, idx_forecast_snapshots_period, idx_forecast_snapshots_source, public.forecast_accuracy, public.forecast_confidence_scores (+1 more)
 
-### Community 506 - "20260418125713_5de7c565-1eb7-4067-bf9f-0e03adca9628.sql"
+### Community 505 - "20260418125713_5de7c565-1eb7-4067-bf9f-0e03adca9628.sql"
 Cohesion: 0.33
 Nodes (9): idx_quota_actions_forecast, idx_quota_actions_priority, idx_quota_forecasts_computed, idx_quota_forecasts_risk, idx_quota_forecasts_salesperson, public.quota_attainment_actions, public.quota_attainment_forecasts, public (+1 more)
 
-### Community 507 - "20260418182126_59dea17a-40da-48e8-9327-fe84ef6d6194.sql"
+### Community 506 - "20260418182126_59dea17a-40da-48e8-9327-fe84ef6d6194.sql"
 Cohesion: 0.27
 Nodes (8): idx_race_daily_snapshots_lookup, idx_race_user_daily_checkins_user, public.race_daily_snapshots, public.race_user_daily_checkins, public.snapshot_race_daily(), auth.users, public.race_leaderboard_view, public.race_seasons
 
-### Community 508 - "20260508124844_c86da704-a5d0-486b-bf52-afc741508ded.sql"
+### Community 507 - "20260508124844_c86da704-a5d0-486b-bf52-afc741508ded.sql"
 Cohesion: 0.29
 Nodes (9): public.follow_up_notifications, public.follow_up_templates, public.follow_up_territory_rules, auth.users, public.follow_up_audit_logs, public.sales, update_updated_at_column, update_follow_up_templates_updated_at (+1 more)
 
-### Community 509 - "20260509153607_6ed3db5a-aaaf-4fe4-b1af-94fc3fd7846d.sql"
+### Community 508 - "20260509153607_6ed3db5a-aaaf-4fe4-b1af-94fc3fd7846d.sql"
 Cohesion: 0.29
 Nodes (9): idx_client_interactions_client_id, idx_clients_coords, idx_clients_total_value, idx_products_sku, public.client_interactions, public.product_stock_log, auth.users, public.clients (+1 more)
 
-### Community 510 - "20260512162448_b9eaf42a-cff1-4a89-97f7-ef4de13a96e7.sql"
+### Community 509 - "20260512162448_b9eaf42a-cff1-4a89-97f7-ef4de13a96e7.sql"
 Cohesion: 0.22
 Nodes (9): public.fn_notify_victory(), public.sync_battle_score(), public.activities, public.battle_participants, public.fn_notify_victory, public.sales_battles, public.salespeople, tr_notify_battle_victory (+1 more)
 
-### Community 511 - "20260514211202_a6925846-148b-41a2-a354-f5391d6c5051.sql"
+### Community 510 - "20260514211202_a6925846-148b-41a2-a354-f5391d6c5051.sql"
 Cohesion: 0.24
 Nodes (8): idx_deal_stage_history_sale_id, idx_sales_created_at, idx_sales_status, idx_tasks_due_date, idx_tasks_sale_id, public.deal_stage_history, public.sales, public.tasks
 
-### Community 512 - "20260712230117_598d71a5-beaa-46b3-876a-df1bde70d0f7.sql"
+### Community 511 - "20260712230117_598d71a5-beaa-46b3-876a-df1bde70d0f7.sql"
 Cohesion: 0.27
 Nodes (8): call_recording_ingest_jobs_pending_idx, call_recording_ingest_jobs_salesperson_idx, call_recording_ingest_jobs_updated_at, call_recordings_uniq_sp_audio, public.call_recording_ingest_jobs, public.complete_call_recording_ingest_job(), public.call_recordings, public.update_updated_at_column
 
-### Community 513 - "20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020.sql"
+### Community 512 - "20260712230734_420fceb1-d58c-42bb-bf6e-5b61c50d6020.sql"
 Cohesion: 0.22
 Nodes (5): public.detect_stalled_cron_jobs(), public.fn_test_simulate_stalled_check(), cron.job, cron.job_run_details, public.cron_failure_alerts
 
-### Community 514 - "20261014000002_fix_concurrently_indexes.sql"
+### Community 513 - "20261014000002_fix_concurrently_indexes.sql"
 Cohesion: 0.31
 Nodes (9): idx_activities_created_at, idx_activities_deal_id, idx_clients_created_at, idx_clients_email, idx_clients_name_search, idx_clients_phone, idx_clients_user_id, activities (+1 more)
 
-### Community 515 - "public.anonymize_data_subject"
+### Community 514 - "public.anonymize_data_subject"
 Cohesion: 0.27
 Nodes (8): public.anonymize_data_subject(), public.has_phone_consent(), public.is_recipient_opted_out(), public.account_contacts, public.clients, public.consent_records, public.email_opt_outs, public.sales
 
-### Community 516 - "20261018190100_gamificacao_claim_matchups_rotations.sql"
+### Community 515 - "20261018190100_gamificacao_claim_matchups_rotations.sql"
 Cohesion: 0.20
 Nodes (6): public.claim_weekly_challenge_reward(), public.daily_challenge_rotations, race_events_sale_dedup_idx, public.race_events, public.weekly_matchups, public.xp_history
+
+### Community 516 - "AGENTS.md — Promo_Champions_V2.1"
+Cohesion: 0.22
+Nodes (9): 1. Contexto, 2. Como trabalhar, 3. Bugs e funcionalidades, 4. Comunicação, 5. Fluxo Git (vários agentes nos mesmos repos) — detalhe em docs/agentes/github-ci.md, 6. Projeto, 7. Banco oficial e migrations, 8. Comandos, segurança e contexto gerado (+1 more)
 
 ### Community 517 - "Dossiê — PR #280: fix: gen-migration-probes (DROP, schemaname, cmd)"
 Cohesion: 0.22
@@ -3393,9 +3404,9 @@ Nodes (8): 1. DROP Reconciliation, 2. `schemaname` Ausente, 3. `policy cmd` Inco
 Cohesion: 0.22
 Nodes (8): Arquivos Tocados (3), Checks que Passaram (13/13), Dependências Atualizadas, Deploy Vercel, Dossiê — PR #344: chore(deps): lote 8 dependabot + deno.lock, Impacto no Negócio, Motivação, PRs Encerradas com Este Merge
 
-### Community 519 - "AdminPlatformSLOPage.tsx"
-Cohesion: 0.33
-Nodes (8): Stack real, SLORow, usePlatformSLO(), AdminPlatformSLOPage(), pct(), SLODefinition, SLOS, statusFor()
+### Community 519 - "Mapa do sistema — Promo_Champions_V2.1"
+Cohesion: 0.22
+Nodes (8): 1.2 IA e coaching, 1.3 Gamificação de vendas, 1. Três camadas funcionais, 2. Edge Functions (171 funções Deno; plano Supabase limita a 100 deployadas), 3. Integrações externas, 4. Stack completa, 5. Arquitetura de componentes (src/), Mapa do sistema — Promo_Champions_V2.1
 
 ### Community 520 - "Achados de segurança"
 Cohesion: 0.22
@@ -3405,469 +3416,469 @@ Nodes (9): Achados de segurança, P0 — chave service_role versionada e ativa, 
 Cohesion: 0.22
 Nodes (9): Arquivos sem prefixo reconhecível, Conclusão executiva, Defeitos locais bloqueadores de replay, Diferença entre perda real e diferença intencional, Estado desta onda, Evidências medidas, Plano seguro de reconciliação, antes de qualquer alteração de schema, Prefixos duplicados (+1 more)
 
-### Community 522 - "ADR-001: RBAC com 3 Roles"
+### Community 522 - "Frente 5 — Backend Supabase · RLS / SECURITY DEFINER / Grants (Módulos 27–28)"
+Cohesion: 0.22
+Nodes (9): 🟠 ALTO — `audit_logs`: policy de INSERT permite forjar `actor_id` de qualquer usuário, 🟠 ALTO — Funções SECURITY DEFINER sem `SET search_path` (risco de hijack), 🔵 BAIXO — `fn_test_cleanup_dedupe_privileges` re-concedida a `anon`, 🔵 BAIXO — Gamificação com escrita irrestrita entre usuários (`USING (true)`), Frente 5 — Backend Supabase · RLS / SECURITY DEFINER / Grants (Módulos 27–28), ⚪ INFO — Policies PERMISSIVE sobrepostas e `DROP POLICY` com nomes incorretos, 🟡 MÉDIO — Desempenho de vendas por vendedor nominal exposto a `anon`, 🟡 MÉDIO — `icp_parameters`: qualquer autenticado altera a config de scoring (+1 more)
+
+### Community 523 - "Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A)"
+Cohesion: 0.22
+Nodes (9): 🟠 ALTO — XSS armazenado em snippet de busca de calls (`ts_headline` renderizado como HTML cru), 🔵 BAIXO — `aria-label` estático não reflete estado (ThemeToggle), 🔵 BAIXO — Chaves de lista com `index` em listas de dados/interativas, 🔵 BAIXO — Virtualização inconsistente em listas grandes, Frente 6 — Qualidade Transversal · UI / Acessibilidade / Performance (Módulo 30-A), ⚪ INFO — 3 `dangerouslySetInnerHTML` em `<style>` avaliadas como seguras, ⚪ INFO — Console no client (168 ocorrências) — sem vazamento de PII/segredo confirmado, 🟡 MÉDIO — `level-up-celebration` (modal custom) sem role/aria-modal/Escape/foco (+1 more)
+
+### Community 524 - "ADR-001: RBAC com 3 Roles"
 Cohesion: 0.22
 Nodes (8): ADR-001: RBAC com 3 Roles, Alternativas Consideradas, Consequências, Contexto, Decisão, Negativas, Positivas, Status
 
-### Community 523 - "RUNBOOK.md"
-Cohesion: 0.22
-Nodes (5): Contatos (preencher), Escala mínima, Fluxo quando algo cai, Links de emergência, Runbook de plantão — Promo Champions V2.1
-
-### Community 524 - "Deploy — Promo Champions V2.1"
+### Community 525 - "Deploy — Promo Champions V2.1"
 Cohesion: 0.22
 Nodes (9): 1. Componentes de produção, 2. Deploy do frontend (Vercel), 3. Migrations (manual — não automático), 4. Edge Functions, 5. Secrets e variáveis (configuração manual), 6. Checklist de deploy completo, 7. Rollback, 8. Monitoramento pós-deploy (+1 more)
 
-### Community 525 - "FAQ — Troubleshooting de integrações externas"
+### Community 526 - "FAQ — Troubleshooting de integrações externas"
 Cohesion: 0.22
 Nodes (9): Bitrix24, ElevenLabs (voz da assistente), Email (Resend / SendGrid), FAQ — Troubleshooting de integrações externas, N8N, Regra geral, Supabase / plataforma, Twilio (voz/dialer) (+1 more)
 
-### Community 526 - "2. CRM Core"
+### Community 527 - "2. CRM Core"
 Cohesion: 0.22
 Nodes (9): 2.1 Clientes (`/clientes` — `Clientes.tsx`), 2.2 Kanban Clientes (`/kanban-clientes`), 2.3 Mapa de Clientes (`/mapa-clientes` — `MapaClientes.tsx`), 2.4 Portfólio (`/portfolio` — `Portfolio.tsx`), 2.5 Calendário & Agenda (`/calendario`, `/agenda`), 2.6 Vendas (`/vendas` — `Vendas.tsx`), 2.7 Produtos (`/produtos`), 2.8 Smart Search (`/busca-inteligente` — `SmartSearch.tsx`) (+1 more)
 
-### Community 527 - "6. Analytics & Business Intelligence"
+### Community 528 - "6. Analytics & Business Intelligence"
 Cohesion: 0.22
 Nodes (9): 6.1 Analytics Geral (`/analytics` — 16+ abas), 6.2 BI Hub (`/bi-gestor`, `/bi-sdr`, `/bi-closer`, `/bi-vendedor`), 6.3 Forecast Ponderado (`/forecast`), 6.4 Previsão de Demanda (`/previsao-demanda`), 6.5 Top Products (`/top-produtos`), 6.6 Price Evolution (`/evolucao-precos`), 6.7 Category Metrics (`/metricas-categoria`), 6.8 Historical Benchmark (`/benchmarking`) (+1 more)
 
-### Community 528 - "9. Inteligência Artificial"
+### Community 529 - "9. Inteligência Artificial"
 Cohesion: 0.22
 Nodes (9): 9.1 AI Sales Assistant (`/assistente` — `Assistente.tsx`), 9.2 AI Copilot (`ai-copilot` Edge Function), 9.3 Lead Scoring & Deal Probability, 9.4 Next Best Action, 9.5 Detect At-Risk Deals, 9.6 Salesperson Coaching, 9.7 Demand Forecasting, 9.8 Semantic & Visual Search (+1 more)
 
-### Community 529 - "00 — Resumo para o dono"
+### Community 530 - "00 — Resumo para o dono"
 Cohesion: 0.22
 Nodes (8): 00 — Resumo para o dono, Contagem por severidade, Estado geral, em quatro frases, O que não foi coberto, e por quê, O que o plano faz, Onde estão os arquivos, Os 10 maiores riscos, em linguagem de negócio, Sobre o alvo de 300 etapas
 
-### Community 530 - "CR-37 — Documentação e configuração que descrevem outro sistema"
+### Community 531 - "CR-37 — Documentação e configuração que descrevem outro sistema"
 Cohesion: 0.22
 Nodes (9): A-114 · [Média] O `config.toml` não descreve a superfície pública real: 64 funções a mais sem JWT, A-115 · [Média] O documento de integrações foi medido em outro banco e afirma o oposto da realidade, A-116 · [Baixa] Duas retenções contraditórias para a deduplicação de webhook, A-117 · [Baixa] A proteção de `portfolio_settings` é uma lista de nomes proibidos, A-118 · [Baixa] Duas migrations com marca de ordem de bytes, e o gate não reclama, A-119 · [Média] A allowlist de destino do webhook de Win/Loss está vazia e não tem tela, A-120 · [Média] A deduplicação de entrada pode não estar gravando, A-121 · [Baixa] Doze crons da máquina de vendas dependem de migrations cuja aplicação não foi confirmada (+1 more)
 
-### Community 531 - "Auditoria Enterprise - Inventário e Análise Técnica 10/10"
+### Community 532 - "Auditoria Enterprise - Inventário e Análise Técnica 10/10"
 Cohesion: 0.22
 Nodes (8): 1.1 Vendas e Cadência (Sales & Cadence), 1.2 CRM e Inteligência, 1.3 Administração e Segurança, 1. Módulos e Funcionalidades Implementadas, 2. Inventário Técnico de Código (Paths & Hooks), 3. Matriz de Riscos (Segurança e Conformidade), 4. Status Final de Prontidão, Auditoria Enterprise - Inventário e Análise Técnica 10/10
 
-### Community 532 - "SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY`"
+### Community 533 - "SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY`"
 Cohesion: 0.22
 Nodes (8): Categorização das ~122 funções que usam `service_role`, Legítimo (mantém service_role) — ~35 funções, Migração — Playbook, Padrão a seguir, Rastreio, Refatorar para `getUserClient` — ~50 funções (priorizar), Riscos e mitigação, SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY`
 
-### Community 533 - "Staging — Promo Champions V2.1"
+### Community 534 - "Staging — Promo Champions V2.1"
 Cohesion: 0.22
 Nodes (8): 1. Criar o projeto Supabase de staging, 2. Provisionar o schema, 3. Deploy das edge functions em staging, 4. Variáveis de ambiente (frontend), 5. Secrets de edge functions em staging, 6. Dados de teste, 7. CI com staging (futuro), Staging — Promo Champions V2.1
 
-### Community 534 - "Migrations sem downtime — disciplina expand-contract"
+### Community 535 - "📊 Módulo de Telemetria de Queries — Documentação Completa"
+Cohesion: 0.22
+Nodes (8): 11. Configurações e Thresholds, 3. Schema do Banco de Dados, 8. Políticas de Segurança (RLS), Ajustando Thresholds, Migração SQL completa, 📊 Módulo de Telemetria de Queries — Documentação Completa, Tabela: `query_telemetry`, Índice
+
+### Community 536 - "Migrations sem downtime — disciplina expand-contract"
 Cohesion: 0.22
 Nodes (8): Anti-padrões já vistos (evitar), Checklist antes de mergear uma migration, Migrations sem downtime — disciplina expand-contract, O ciclo em 3 releases, Regras específicas deste repo, Release 1 — Expand (só aditivo), Release 2 — Backfill + troca de leitura, Release 3 — Contract (remoção)
 
-### Community 535 - "20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql"
+### Community 537 - "20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql"
 Cohesion: 0.22
 Nodes (6): public.check_battle_achievements, public.check_battle_achievements(), public.match_weekly_players(), public.salespeople, public.weekly_matchups, tr_check_battle_achievements
 
-### Community 536 - "20260106183941_1d5b39a6-d3ee-48cb-9840-c9a068f5d84b.sql"
+### Community 538 - "20260106183941_1d5b39a6-d3ee-48cb-9840-c9a068f5d84b.sql"
 Cohesion: 0.25
 Nodes (7): public.ensure_single_default_filter, trigger_saved_filters_updated_at, ensure_single_default_filter_trigger, idx_saved_filters_user_entity, public.saved_filters, public.update_updated_at_column, update_saved_filters_updated_at
 
-### Community 537 - "20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql"
+### Community 539 - "20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql"
 Cohesion: 0.25
 Nodes (7): public.handle_performance_update, public.handle_performance_update(), public.activities, public.performance_bets, public.sales, tr_performance_update_activities, tr_performance_update_sales
 
-### Community 538 - "20260706215158_5ff9ab03-a44a-40de-a023-912020d1cb3e.sql"
+### Community 540 - "20260706215158_5ff9ab03-a44a-40de-a023-912020d1cb3e.sql"
 Cohesion: 0.28
 Nodes (7): public.set_updated_at, public.webhook_inbound_log, quotes_inbound_updated_at, public.webhook_inbound_dedupe, webhook_inbound_dedupe_first_seen_idx, webhook_inbound_log_outcome_idx, webhook_inbound_log_received_idx
 
-### Community 539 - "20260512174528_edb98a5b-cb15-451f-928c-7bb53757cd11.sql"
+### Community 541 - "20260512174528_edb98a5b-cb15-451f-928c-7bb53757cd11.sql"
 Cohesion: 0.25
 Nodes (8): public.sync_performance_bets, public.settle_performance_bets(), public.sync_performance_bets(), public.activities, public.performance_bets, public.sales, tr_sync_bets_activities, tr_sync_bets_sales
 
-### Community 540 - "20260512175415_c1f6c125-1386-4a39-8c56-001ce8e7dbb3.sql"
+### Community 542 - "20260512175415_c1f6c125-1386-4a39-8c56-001ce8e7dbb3.sql"
 Cohesion: 0.25
 Nodes (7): public.trigger_update_performance_bets, public.update_performance_bet_progress(), public.activities, public.performance_bets, public.sales, update_bets_on_activity, update_bets_on_sale
 
-### Community 541 - "20260512175533_78cf979e-7c54-47b9-9938-7690639d0ad3.sql"
+### Community 543 - "20260512175533_78cf979e-7c54-47b9-9938-7690639d0ad3.sql"
 Cohesion: 0.25
 Nodes (7): public.trigger_update_territories, public.territories, public.update_territory_conquests(), public.sales, public.salespeople, top_revenue, update_territories_on_sale
 
-### Community 542 - "20260509162133_733a25ba-0880-46cf-989d-48af7262f22b.sql"
+### Community 544 - "20260509162133_733a25ba-0880-46cf-989d-48af7262f22b.sql"
 Cohesion: 0.22
 Nodes (6): public.update_product_stock, public.client_interactions, public.clients, public.update_client_total_value, tr_update_client_total_value, tr_update_product_stock
 
-### Community 543 - "20260420193304_97bb7cee-225d-4fca-a676-09ffb4c3a6ca.sql"
+### Community 545 - "20260420193304_97bb7cee-225d-4fca-a676-09ffb4c3a6ca.sql"
 Cohesion: 0.28
 Nodes (8): public.win_loss_analyses, public.win_loss_patterns, idx_wla_analyzed_at, idx_wla_competitor, idx_wla_outcome_segment, idx_wli_created_at, idx_wlp_pattern_type, public.win_loss_insights
 
-### Community 544 - "axe-sweep.spec.ts"
+### Community 546 - "axe-sweep.spec.ts"
 Cohesion: 0.25
 Nodes (5): @axe-core/playwright, AxeViolation, AxeViolationNode, A11Y_ROUTES, A11yRoute
 
-### Community 545 - "Client360HealthNbaSection.tsx"
-Cohesion: 0.36
-Nodes (6): Client360HealthNbaSection(), Client360HealthNbaSectionProps, baseData, mutate, Client360Data, Client360Order
-
-### Community 546 - "scoring-ui.tsx"
-Cohesion: 0.36
-Nodes (6): LeadScoringHeaderProps, LeadScoringKpis(), LeadScoringKpisProps, LEAD_CATEGORY_CONFIG, LeadConnectionStatus, ScoreRing()
-
-### Community 547 - "ScoreBreakdownCard.tsx"
-Cohesion: 0.33
-Nodes (7): Props, Props, rawValueFor(), METRIC_LABELS, MetricCode, ROLE_METRICS, ScoringRule
+### Community 547 - "useAutoPause.ts"
+Cohesion: 0.31
+Nodes (6): AutoPauseSettingsCard(), Props, Props, InboundReplyEvent, useResumeEnrollment(), useUpdateAutoPauseSettings()
 
 ### Community 548 - "gamified-toast.tsx"
 Cohesion: 0.28
 Nodes (7): gamifiedToast, GamifiedToastOptions, ToastContent(), toastStyles, ToastType, GamificationContext, GamificationContextType
 
-### Community 549 - "usePowerDialer.test.tsx"
-Cohesion: 0.22
-Nodes (7): del, eq, from, result, select, toast, update
-
-### Community 550 - "useAsyncReplayQueue.ts"
-Cohesion: 0.28
-Nodes (8): ASYNC_REPLAY_CHUNK_SIZE, AsyncReplayState, ChunkResult, ChunkStatus, initialState(), invokeReplayChunk(), InvokeResult, useAsyncReplayQueue()
-
-### Community 551 - "mergeTags.ts"
+### Community 549 - "SalespersonScoreBadge.tsx"
 Cohesion: 0.36
-Nodes (7): applyMergeTags(), AVAILABLE_MERGE_TAGS, extractMergeTags(), formatDateBR(), MergeTagDefinition, resolveTag(), ctx
+Nodes (7): Props, SalespersonScore, ScoreTier, tierClasses, tierFor(), tierLabel, useWinLossSalespersonScore()
 
-### Community 552 - "test-integration-connection/index.ts"
+### Community 550 - "global.d.ts"
+Cohesion: 0.22
+Nodes (6): jspdf-autotable, react-dom/client, Root, SpeechRecognitionErrorEvent, SpeechRecognitionEvent, UserOptions
+
+### Community 551 - "AdminPlatformSLOPage.tsx"
+Cohesion: 0.39
+Nodes (7): SLORow, usePlatformSLO(), AdminPlatformSLOPage(), pct(), SLODefinition, SLOS, statusFor()
+
+### Community 552 - "regressions.test.ts"
+Cohesion: 0.53
+Nodes (6): formatXP(), getLevelFromXP(), getLevelInfo(), getXPForNextLevel(), LevelInfo, LEVELS
+
+### Community 553 - "test-integration-connection/index.ts"
 Cohesion: 0.33
 Nodes (7): Body, ConnectionRow, isSafeExternalUrl(), probeDatabase(), probeMcp(), probeN8n(), probeWebhook()
 
-### Community 553 - "20251215011011_d75fbfee-b6cd-47e1-a6e5-a030ff0760af.sql"
+### Community 554 - "retry_delivery_before_sleep_test.ts"
+Cohesion: 0.25
+Nodes (6): assertDeliveryBeforeSleepInvariant(), Event, indexByAttempt(), PAYLOAD, Scenario, SUB
+
+### Community 555 - "retry_log_counts_test.ts"
+Cohesion: 0.25
+Nodes (5): LogEntry, LogHarness, PAYLOAD, SUB, LogLevel
+
+### Community 556 - "20251215011011_d75fbfee-b6cd-47e1-a6e5-a030ff0760af.sql"
 Cohesion: 0.33
 Nodes (8): idx_chat_conversations_salesperson, idx_chat_messages_conversation, idx_chat_messages_created, public.chat_conversations, public.chat_messages, public.salespeople, public.update_updated_at_column, update_chat_conversations_updated_at
 
-### Community 554 - "20251231121413_c4826621-81ba-45f1-86f9-092fac5d9ee4.sql"
+### Community 557 - "20251231121413_c4826621-81ba-45f1-86f9-092fac5d9ee4.sql"
 Cohesion: 0.36
 Nodes (7): idx_known_devices_fingerprint, idx_known_devices_user, idx_login_alerts_user, public.is_known_device(), public.known_devices, public.login_alerts, auth.users
 
-### Community 555 - "20260104180000_webhooks_complete.sql"
+### Community 558 - "20260104180000_webhooks_complete.sql"
 Cohesion: 0.39
 Nodes (8): idx_webhook_events_retry, idx_webhook_events_status, idx_webhooks_active, idx_webhooks_user_id, auth.users, webhook_events, webhook_logs, webhooks
 
-### Community 556 - "20260317201136_8691bb82-5602-424a-aa93-68a498faae1d.sql"
+### Community 559 - "20260317201136_8691bb82-5602-424a-aa93-68a498faae1d.sql"
 Cohesion: 0.44
 Nodes (8): public.active_power_ups, public.battle_participants, public.competitive_seasons, public.feed_comments, public.feed_reactions, public.sales_battles, public.victory_feed, public.salespeople
 
-### Community 557 - "20260330135126_2e3c42f1-5cc7-4566-8e0b-2196a312249f.sql"
+### Community 560 - "20260330135126_2e3c42f1-5cc7-4566-8e0b-2196a312249f.sql"
 Cohesion: 0.33
 Nodes (6): public.api_tokens, public.salesperson_custom_field_values, public.score_change_logs, public.team_custom_fields, public.salespeople, public.teams
 
-### Community 558 - "20260416180351_66d853e8-c85a-4648-8a3b-316312dd6361.sql"
+### Community 561 - "20260416180351_66d853e8-c85a-4648-8a3b-316312dd6361.sql"
 Cohesion: 0.36
 Nodes (8): public.approval_decisions, public.approval_requests, public.approval_workflows, auth.users, public.sales, public.update_updated_at_column, update_approval_requests_updated_at, update_approval_workflows_updated_at
 
-### Community 559 - "20260416183440_f56efa12-55aa-464a-aa49-9a6f12a46db1.sql"
+### Community 562 - "20260416183440_f56efa12-55aa-464a-aa49-9a6f12a46db1.sql"
 Cohesion: 0.36
 Nodes (8): idx_wf_exec_status, idx_wf_exec_workflow, idx_workflows_active, idx_workflows_trigger, public.workflow_executions, public.workflows, public.update_updated_at_column, workflows_updated_at
 
-### Community 560 - "public.get_semantic_coverage"
+### Community 563 - "public.get_semantic_coverage"
 Cohesion: 0.25
 Nodes (7): idx_semantic_index_content_hash, public.get_semantic_coverage(), public.activities, public.call_recordings, public.clients, public.sales, public.semantic_index
 
-### Community 561 - "public.twilio_call_sessions"
+### Community 564 - "public.twilio_call_sessions"
 Cohesion: 0.31
 Nodes (8): idx_call_logs_call_sid, idx_twilio_sessions_call_sid, idx_twilio_sessions_owner_created, idx_twilio_sessions_sale, public.twilio_call_sessions, public.call_logs, public.dialer_queue_items, public.sales
 
-### Community 562 - "public.coaching_actions"
+### Community 565 - "public.coaching_actions"
 Cohesion: 0.31
 Nodes (8): idx_coaching_actions_recording, idx_coaching_actions_sp_status, public.coaching_actions, public.coaching_progress_by_salesperson(), public.call_recordings, public.salespeople, public.update_updated_at_column, trg_coaching_actions_updated_at
 
-### Community 563 - "20260418112030_67e99465-ae26-4a3c-babd-deda5c803bdc.sql"
+### Community 566 - "20260418112030_67e99465-ae26-4a3c-babd-deda5c803bdc.sql"
 Cohesion: 0.42
 Nodes (8): idx_pcr_priority, idx_pcr_snapshot, idx_pcs_calculated_at, idx_pcs_health, idx_pcs_period_owner_stage, public.pipeline_coverage_recommendations, public.pipeline_coverage_snapshots, public.v_pipeline_coverage_summary
 
-### Community 564 - "public.race_leaderboard_view"
+### Community 567 - "public.race_leaderboard_view"
 Cohesion: 0.33
 Nodes (8): idx_race_scoring_rules_season, idx_race_seasons_role_status, public.race_leaderboard_view, public.race_scoring_rules, public.activities, public.race_seasons, public.sales, public.salespeople
 
-### Community 565 - "20260509154326_23f5e628-df2b-4ed2-a657-6c547412df4d.sql"
+### Community 568 - "20260509154326_23f5e628-df2b-4ed2-a657-6c547412df4d.sql"
 Cohesion: 0.28
 Nodes (8): idx_sales_client_id, idx_sales_product_id, idx_tasks_client_id, public.update_client_total_value(), public.sales, public.tasks, public.update_client_total_value, tr_update_client_total_value
 
-### Community 566 - "20260513175936_7ba0ca9a-0007-4c14-89c3-01228fd1e6c9.sql"
+### Community 569 - "20260513175936_7ba0ca9a-0007-4c14-89c3-01228fd1e6c9.sql"
 Cohesion: 0.31
 Nodes (8): public.client_renewals, public.cs_tickets, public.product_usage, auth.users, public.clients, public.update_updated_at_column, update_client_renewals_updated_at, update_cs_tickets_updated_at
 
-### Community 567 - "20260513194107_bb8ad733-bca3-4702-82b3-f9eeffc3cd1a.sql"
+### Community 570 - "20260513194107_bb8ad733-bca3-4702-82b3-f9eeffc3cd1a.sql"
 Cohesion: 0.31
 Nodes (8): public.buying_committee, public.calculate_deal_risk_score(), public.pipeline_inspections, public.revenue_forecast_view, auth.users, public.sales, sales, sales_goals
 
-### Community 568 - "20260515122056_74ffbc26-39b1-44bf-a020-8fee46859b6f.sql"
+### Community 571 - "20260515122056_74ffbc26-39b1-44bf-a020-8fee46859b6f.sql"
 Cohesion: 0.22
 Nodes (8): idx_activities_created_at, idx_audit_logs_created_at, idx_error_logs_created_at, idx_sales_created_at, public.activities, public.audit_logs, public.error_logs, public.sales
 
-### Community 569 - "public.sync_battle_score"
+### Community 572 - "public.sync_battle_score"
 Cohesion: 0.22
 Nodes (7): public.fn_notify_victory(), public.sync_battle_score(), public.activities, public.battle_participants, public.sales, public.sales_battles, public.salespeople
 
-### Community 570 - "public.anonymize_data_subject"
+### Community 573 - "public.anonymize_data_subject"
 Cohesion: 0.22
 Nodes (6): public.anonymize_data_subject(), public.clients, public.consent_records, public.email_opt_outs, public.sales, public.salespeople
 
-### Community 571 - "Código de Conduta — Promo Champions"
+### Community 574 - "Código de Conduta — Promo Champions"
 Cohesion: 0.25
 Nodes (7): Aplicação, Atribuição, Código de Conduta — Promo Champions, Escopo, Nossas Responsabilidades, Nosso Compromisso, Nossos Padrões
 
-### Community 572 - "20260511191456_bc24abbd-21b4-41a9-8be9-59725c8bd8c1.sql"
+### Community 575 - "20260511191456_bc24abbd-21b4-41a9-8be9-59725c8bd8c1.sql"
 Cohesion: 0.32
 Nodes (7): competitors_registry, public.check_price_threats, on_competitor_price_update, public.check_price_threats(), public.competitors_pricing, public.price_protection_rules, products
 
-### Community 573 - "20251220142553_58df5395-4e0a-4a82-83ea-f398f8977013.sql"
+### Community 576 - "Contribuindo com Promo Champions v2"
+Cohesion: 0.25
+Nodes (8): Arquitetura, Contribuindo com Promo Champions v2, Convenção de Commits, Dúvidas?, Estilo de Código, Processo de Pull Request, Setup de Desenvolvimento, Testes
+
+### Community 577 - "20251220142553_58df5395-4e0a-4a82-83ea-f398f8977013.sql"
 Cohesion: 0.29
 Nodes (7): daily_challenge_progress, public.daily_challenge_progress, idx_daily_challenge_progress_completed, idx_daily_streak_achievements_salesperson, public.calculate_daily_challenge_streak(), public.daily_streak_achievements, public.salespeople
 
-### Community 574 - "Achados bloqueadores de segurança"
+### Community 578 - "Achados bloqueadores de segurança"
 Cohesion: 0.25
 Nodes (8): Achados bloqueadores de segurança, P0 — migrate-helper foi reintroduzida e continua implantada na origem, P0/P1 — 30 funções SECURITY DEFINER executáveis por anon, P0 — views adicionais do destino podem contornar RLS e estão abertas a anon, P1 — CORS e contratos públicos inconsistentes, P1 — Edge Functions com service_role sem autorização de recurso, P1 — papel administrativo baseado em raw_user_meta_data, P1 — RLS existe, porém policies permissivas expõem dados
 
-### Community 575 - "Checklist — Configuração server-side do Supabase Auth"
+### Community 579 - "Checklist — Configuração server-side do Supabase Auth"
 Cohesion: 0.25
 Nodes (7): Checklist — Configuração server-side do Supabase Auth, E-mail (SMTP), Proteção de bots, Rate limits do Auth (anti-abuse), Rotação e auditoria, Senhas, Tokens e sessões
 
-### Community 576 - "ADR-009: Sessão em `localStorage` e o teto real da CSP via `<meta>`"
+### Community 580 - "ADR-009: Sessão em `localStorage` e o teto real da CSP via `<meta>`"
 Cohesion: 0.25
 Nodes (7): ADR-009: Sessão em `localStorage` e o teto real da CSP via `<meta>`, Contexto, Decisão 1 — manter `localStorage`, não migrar para cookie agora, Decisão 2 — remover `'unsafe-inline'` de `script-src`; manter em `style-src`, Decisão 3 — manter `'unsafe-eval'`; não é especulativo, Descoberta técnica que revisa o plano de 50 etapas, Pendências
 
-### Community 577 - "15 — Escada de cobertura por módulo crítico"
+### Community 581 - "ADR-010: Camada de dados — hooks, services e lib"
 Cohesion: 0.25
-Nodes (7): 15 — Escada de cobertura por módulo crítico, Como funciona, Histórico de redefinições de piso, Módulos cobertos, Plano de subida gradual, Por que existe, Verificação local
+Nodes (7): ADR-010: Camada de dados — hooks, services e lib, Consequências, Contexto, Convenções dos hooks, Decisão, Enforcement — `scripts/check-data-layer.mjs`, O que vai onde
 
-### Community 578 - "Identidade do banco de produção — prova reproduzível (2026-09-13)"
+### Community 582 - "5. DRIFT DE MIGRATIONS — nos dois sentidos — `VERIFICADO` (com um achado bloqueante)"
+Cohesion: 0.25
+Nodes (7): 5.1 Migrations aplicadas registradas no banco, 5.2 O achado, 5.3 Reforço — objetos VIVOS × objetos DECLARADOS, 5.4 Resposta direta: **o ambiente é reconstruível a partir do repositório?**, 5. DRIFT DE MIGRATIONS — nos dois sentidos — `VERIFICADO` (com um achado bloqueante), (a) Vivas em produção, criadas FORA do fluxo versionado — 3, (b) Declaradas no repo, ausentes do banco — 1
+
+### Community 583 - "Identidade do banco de produção — prova reproduzível (2026-09-13)"
 Cohesion: 0.25
 Nodes (7): §1 — O gateway MCP aponta para usyxf (prova direta), §2 — Laço completo: escrever pela API pública, ler pelo MCP, §3 — O cruzamento com o projeto antigo, §4 — Frontends publicados, Consequências para o plano de 50 etapas, Identidade do banco de produção — prova reproduzível (2026-09-13), Veredito
 
-### Community 579 - "14. Integrações Externas"
+### Community 584 - "14. Integrações Externas"
 Cohesion: 0.25
 Nodes (8): 14.1 Bitrix24 (`/bitrix24` — `Bitrix24.tsx`), 14.2 GIFT STORE Quote Sync, 14.3 ElevenLabs, 14.4 Push Notifications, 14.5 Resend (E-mail), 14.6 Import/Export (`/importar-exportar`), 14.7 Deduplication (`/deduplicacao`), 14. Integrações Externas
 
-### Community 580 - "15. Autenticação & Segurança"
+### Community 585 - "15. Autenticação & Segurança"
 Cohesion: 0.25
 Nodes (8): 15.1 Autenticação (`/auth` — `Auth.tsx`), 15.2 MFA & Passkeys, 15.3 Security Dashboard (`/seguranca`), 15.4 RBAC, 15.5 RLS & Auditoria, 15.6 Notificações de Segurança, 15.7 Rate Limiting, 15. Autenticação & Segurança
 
-### Community 581 - "LGPD — Conformidade no Promo Champions V2.1"
-Cohesion: 0.25
-Nodes (7): 1. Tabela de retenção por tabela, 2. Consentimento (`consent_records`), 3. Solicitações do titular (`data_subject_requests`), 4. Fluxo de esquecimento (erasure), 5. Base legal resumida, 6. Passo manual de aplicação e verificação (produção), LGPD — Conformidade no Promo Champions V2.1
-
-### Community 582 - "🎨 Style Guide — Promo Champions v2"
+### Community 586 - "🎨 Style Guide — Promo Champions v2"
 Cohesion: 0.25
 Nodes (8): Accessibility Checklist, Design Tokens, ✅ DO, ❌ DON'T, Exceptions, Golden Rule, 🎨 Style Guide — Promo Champions v2, transform()
 
-### Community 583 - "6. Componente de Gráficos (Recharts)"
+### Community 587 - "6. Componente de Gráficos (Recharts)"
 Cohesion: 0.25
 Nodes (8): 1. Alertas ao Longo do Tempo (AreaChart empilhado), 2. Duração Média / Máxima (AreaChart), 3. Alertas por Tabela (BarChart horizontal), 6. Componente de Gráficos (Recharts), Arquivo, Formatação de Tempo nos Eixos, Gráficos Incluídos, Props
 
-### Community 584 - "Suítes de teste no CI — Deno, SQL, carga e flakes"
+### Community 588 - "Suítes de teste no CI — Deno, SQL, carga e flakes"
 Cohesion: 0.25
 Nodes (7): Carga (k6), Edge functions (Deno), Flaky tests e quarentena, Novos smokes E2E, Suites SQL (RLS/contrato), Suítes de teste no CI — Deno, SQL, carga e flakes, Sweep de acessibilidade em PRs de UI
 
-### Community 585 - "TYPE_DEBT — débito de tipagem do frontend"
+### Community 589 - "TYPE_DEBT — débito de tipagem do frontend"
 Cohesion: 0.25
 Nodes (7): Baseline `as unknown`, Baseline de flags estritas, Literais de status ainda soltos (~35), Plano, Plano para o restante (~155 ocorrências), TYPE_DEBT — débito de tipagem do frontend, queryResult()
 
-### Community 586 - "GitHub Environments — Modelo de Segurança"
+### Community 590 - "GitHub Environments — Modelo de Segurança"
 Cohesion: 0.25
 Nodes (7): Comportamento por tipo de PR, `deno-tests` e `sql-tests` — Comportamento intencional com forks, GitHub Environments — Modelo de Segurança, Histórico de mudanças, Onde ficam os secrets de CI?, Por que está vazio?, `pr-preview`
 
-### Community 587 - "public.slow_query_alerts"
+### Community 591 - "public.slow_query_alerts"
 Cohesion: 0.36
 Nodes (7): pg_database, idx_slow_query_alerts_last_detected, public.detect_slow_queries(), public.slow_query_alerts, slow_query_alerts_active_uk, auth.users, extensions.pg_stat_statements
 
-### Community 588 - "20260509161205_431304a3-a756-49a8-bc14-dc5eafc61d83.sql"
+### Community 592 - "20260509161205_431304a3-a756-49a8-bc14-dc5eafc61d83.sql"
 Cohesion: 0.25
 Nodes (4): public.auto_add_client_to_portfolio, public.handle_stock_on_sale, tr_auto_add_client_portfolio, tr_handle_stock_on_sale
 
-### Community 589 - "20260420164159_cf92ebaa-ec97-47bc-8050-148172459663.sql"
+### Community 593 - "20260420164159_cf92ebaa-ec97-47bc-8050-148172459663.sql"
 Cohesion: 0.29
 Nodes (7): public.award_xp_on_quote_approved_via_cadence, public.award_xp_on_quote_cadence_task_complete, public.award_xp_on_quote_approved_via_cadence(), public.award_xp_on_quote_cadence_task_complete(), public.prospect_cadences, trg_award_xp_on_quote_approved_via_cadence, trg_award_xp_on_quote_cadence_task_complete
 
-### Community 590 - "20260418134600_e77c9969-4ad9-49a2-b8aa-407c9fc0cb85.sql"
+### Community 594 - "20260418134600_e77c9969-4ad9-49a2-b8aa-407c9fc0cb85.sql"
 Cohesion: 0.36
 Nodes (7): public.call_coaching_scorecards, idx_ccs_sp_calc, idx_coaching_sessions_completed_sp, idx_sales_sp_created_status, public.coaching_impact_metrics, public.coaching_sessions, public.sales
 
-### Community 591 - "public.commission_bonus_awards"
+### Community 595 - "public.commission_bonus_awards"
 Cohesion: 0.32
 Nodes (7): public.commission_bonuses, idx_cba_salesperson_period, idx_cba_status_pending, public.commission_bonus_awards, public.salespeople, public.update_updated_at_column, update_commission_bonus_awards_updated_at
 
-### Community 592 - "20260417173508_8c5e3567-b605-4680-883e-e4e336d4b305.sql"
+### Community 596 - "20260417173508_8c5e3567-b605-4680-883e-e4e336d4b305.sql"
 Cohesion: 0.36
 Nodes (7): public.email_tracking_events, idx_scheduled_sends_owner, idx_scheduled_sends_pending, public.get_global_send_time_stats(), public.scheduled_sends, public.send_time_profiles, public.sales
 
-### Community 593 - "20261001190000_dedupe_unique_constraints.sql"
+### Community 597 - "20261001190000_dedupe_unique_constraints.sql"
 Cohesion: 0.29
 Nodes (7): public.icp_data, public.upsert_client_from_quote(), public.clients, public.sales, ux_clients_email, ux_icp_data_bitrix_id, ux_sales_source_external_deal
 
-### Community 594 - "public.league_history"
+### Community 598 - "public.league_history"
 Cohesion: 0.29
 Nodes (6): public.league_members, public.leagues, public.league_history, public.process_weekly_league_reset(), public, public.salespeople
 
-### Community 595 - "public.sequence_step_assignments"
+### Community 599 - "public.sequence_step_assignments"
 Cohesion: 0.32
 Nodes (6): public.sequence_step_variants, idx_ssa_step, idx_ssa_variant, public.sequence_step_assignments, public.sequence_enrollments, public.sequence_steps
 
-### Community 596 - "20260706211719_475beda8-d84e-451f-b5f1-b6f483b8a782.sql"
+### Community 600 - "20260706211719_475beda8-d84e-451f-b5f1-b6f483b8a782.sql"
 Cohesion: 0.36
 Nodes (6): public.set_quotes_inbound_updated_at, idx_quotes_inbound_client_id, idx_quotes_inbound_received_at, idx_quotes_inbound_status, public.quotes_inbound, trg_quotes_inbound_updated_at
 
-### Community 597 - "20260712232606_1587a3f1-2450-4a43-acc5-c7d6b47ad17b.sql"
+### Community 601 - "20260712232606_1587a3f1-2450-4a43-acc5-c7d6b47ad17b.sql"
 Cohesion: 0.25
 Nodes (6): public.trg_invalidate_forecast_narrative_cache, idx_call_recording_ingest_jobs_status_updated, idx_cron_failure_alerts_jobname_alerted, public.call_recording_ingest_jobs, public.cron_failure_alerts, trg_forecast_cache_invalidate
 
-### Community 598 - "20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f.sql"
+### Community 602 - "20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f.sql"
 Cohesion: 0.25
 Nodes (5): public.trigger_refresh_monthly_summary, public.monthly_sales_summary, public.refresh_monthly_sales_summary(), refresh_monthly_summary_on_sale, public.sales
 
-### Community 599 - "20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql"
+### Community 603 - "20260419145440_18e5089e-576c-497e-8cb9-3fce68746a1b.sql"
 Cohesion: 0.25
 Nodes (7): public.validate_race_event, public.validate_race_event(), race_events_season_salesperson_idx, public.race_cars, public.race_events, public.race_seasons, validate_race_event_trigger
 
-### Community 600 - "publish.sh"
+### Community 604 - "publish.sh"
 Cohesion: 0.46
 Nodes (7): assert_no_foreign_staged_changes(), discard_generated_output_commit(), generated_commit_is_head(), generated_output_conflict_is_recoverable(), remember_generated_head(), publish.sh script, stage()
 
-### Community 601 - "useSalesBattles.test.tsx"
-Cohesion: 0.25
-Nodes (6): changes, del, eq, from, mutationResult, update
+### Community 605 - "OutboundMessageLog.tsx"
+Cohesion: 0.36
+Nodes (6): STATUS_LABEL, statusVariant(), OutboundMessageLog(), Props, OutboundMessage, useOutboundMessages()
 
-### Community 602 - "utils/csvExport.ts"
-Cohesion: 0.61
-Nodes (5): useWinLossExport(), exportToCSV(), formatCurrencyForExport(), formatDateForExport(), formatPercentForExport()
-
-### Community 603 - "report-builder-execute/index.ts"
-Cohesion: 0.25
-Nodes (6): ALLOWED_ENTITIES, ALLOWED_OPS, JOIN_MAP, ReportConfig, ReportFilter, ReportJoin
-
-### Community 604 - "20251212212817_64502cca-2836-4466-b62d-f7cafbb0801b.sql"
+### Community 606 - "20251212212817_64502cca-2836-4466-b62d-f7cafbb0801b.sql"
 Cohesion: 0.32
 Nodes (7): public.deal_outcomes, public.deal_stage_history, public.objections_library, public.sales, public.salespeople, public.update_updated_at_column, update_objections_library_updated_at
 
-### Community 605 - "20251213105021_4b959b7c-d24d-49d8-80b6-2ef62bf588ec.sql"
+### Community 607 - "20251213105021_4b959b7c-d24d-49d8-80b6-2ef62bf588ec.sql"
 Cohesion: 0.32
 Nodes (7): public.playbook_items, public.playbook_progress, public.playbooks, public.sales, public.salespeople, public.update_updated_at_column, update_playbooks_updated_at
 
-### Community 606 - "20251220140346_1ac9eb9e-6f70-48c7-835f-345e7ba2f85a.sql"
+### Community 608 - "20251220140346_1ac9eb9e-6f70-48c7-835f-345e7ba2f85a.sql"
 Cohesion: 0.43
 Nodes (7): idx_daily_challenge_progress_challenge, idx_daily_challenge_progress_salesperson, idx_daily_challenges_active, idx_daily_challenges_date, public.daily_challenge_progress, public.daily_challenges, public.salespeople
 
-### Community 607 - "20260104143930_audit_trail.sql"
+### Community 609 - "20260104143930_audit_trail.sql"
 Cohesion: 0.39
 Nodes (6): audit_log, idx_audit_log_created_at, idx_audit_log_resource_id, idx_audit_log_resource_type, idx_audit_log_user_id, auth.users
 
-### Community 608 - "20260104181001_stored_procedures_additional.sql"
+### Community 610 - "20260104181001_stored_procedures_additional.sql"
 Cohesion: 0.29
 Nodes (4): calculate_deal_health_score(), generate_sales_forecast(), activities, deals
 
-### Community 609 - "20260317215431_2cc79944-6a99-47c8-b348-bae816d9eda7.sql"
+### Community 611 - "20260317215431_2cc79944-6a99-47c8-b348-bae816d9eda7.sql"
 Cohesion: 0.54
 Nodes (7): public.performance_bets, public.sales_territories, public.territory_history, public.tournament_matches, public.tournament_participants, public.tournaments, public.salespeople
 
-### Community 610 - "20260416180740_8f30bfcc-c013-4df1-9dd9-4c7ed8b2621e.sql"
+### Community 612 - "20260416180740_8f30bfcc-c013-4df1-9dd9-4c7ed8b2621e.sql"
 Cohesion: 0.36
 Nodes (7): idx_webhook_deliveries_created_at, idx_webhook_deliveries_webhook_id, public.webhook_deliveries, public.webhooks, auth.users, public.update_updated_at_column, update_webhooks_updated_at
 
-### Community 611 - "20260416181124_7ac5204a-43b3-4cdc-aa9e-70b44426c96b.sql"
+### Community 613 - "20260416181124_7ac5204a-43b3-4cdc-aa9e-70b44426c96b.sql"
 Cohesion: 0.39
 Nodes (7): idx_audit_logs_action, idx_audit_logs_actor_id, idx_audit_logs_created_at, idx_audit_logs_entity, public.audit_logs, public.log_audit_event(), auth.users
 
-### Community 612 - "20260417110613_75829d1b-cd98-4ce9-b51b-2c0ba819bf43.sql"
+### Community 614 - "20260417110613_75829d1b-cd98-4ce9-b51b-2c0ba819bf43.sql"
 Cohesion: 0.36
 Nodes (5): idx_inbound_reply_events_from_email, idx_inbound_reply_events_received_at, public.auto_pause_enrollment(), public.inbound_reply_events, public.sequence_enrollments
 
-### Community 613 - "20260418112504_c05cff67-eb09-48f3-ad0a-0fdfb2851533.sql"
+### Community 615 - "20260418112504_c05cff67-eb09-48f3-ad0a-0fdfb2851533.sql"
 Cohesion: 0.39
 Nodes (7): idx_dps_calculated_at, idx_dps_sale_calculated, idx_wpc_calculated_at, idx_wpc_scope_stage, public.deal_probability_scores, public.win_probability_calibrations, public.sales
 
-### Community 614 - "20260418112932_6567da58-7721-4de2-9741-a368e8c274b7.sql"
+### Community 616 - "20260418112932_6567da58-7721-4de2-9741-a368e8c274b7.sql"
 Cohesion: 0.46
 Nodes (7): idx_qaa_salesperson, idx_qaa_unack, idx_qap_calculated, idx_qap_salesperson_period, public.quota_attainment_alerts, public.quota_attainment_predictions, public.salespeople
 
-### Community 615 - "20260418114042_d907ed8f-14d2-4e96-bdc4-9ae344af97e4.sql"
+### Community 617 - "20260418114042_d907ed8f-14d2-4e96-bdc4-9ae344af97e4.sql"
 Cohesion: 0.43
 Nodes (7): idx_call_question_analysis_health, idx_call_question_analysis_recording, idx_call_questions_category, idx_call_questions_recording, public.call_question_analysis, public.call_questions, public.call_recordings
 
-### Community 616 - "20260418114540_be4880c4-39d7-4eec-ba72-106428258b1d.sql"
+### Community 618 - "20260418114540_be4880c4-39d7-4eec-ba72-106428258b1d.sql"
 Cohesion: 0.43
 Nodes (7): idx_call_objections_recording, idx_call_objections_type, idx_objection_library_type_seen, public.call_objection_analysis, public.call_objections, public.objection_library, public.call_recordings
 
-### Community 617 - "20260418115119_5b57b9ab-4471-47b9-b63b-bf86ef3f59eb.sql"
+### Community 619 - "20260418115119_5b57b9ab-4471-47b9-b63b-bf86ef3f59eb.sql"
 Cohesion: 0.39
 Nodes (7): idx_ccs_recording, idx_ccs_salesperson, idx_sca_avg_overall, idx_sca_salesperson, public.call_coaching_scorecards, public.salesperson_coaching_aggregates, public.call_recordings
 
-### Community 618 - "20260418125205_353e42ff-a04d-4094-aff2-5aae8049e83c.sql"
+### Community 620 - "20260418125205_353e42ff-a04d-4094-aff2-5aae8049e83c.sql"
 Cohesion: 0.39
 Nodes (7): idx_win_calibration_buckets_stage_segment, idx_wpdc_flag, idx_wpdc_sale, idx_wpdc_stage_segment, public.win_calibration_buckets, public.win_probability_deal_calibrations, public.sales
 
-### Community 619 - "20260418130551_ca97fbcf-269b-4188-a615-9dfd0b78707f.sql"
+### Community 621 - "20260418130551_ca97fbcf-269b-4188-a615-9dfd0b78707f.sql"
 Cohesion: 0.39
 Nodes (7): coaching_opportunities_unique_per_day, idx_coaching_opp_detected, idx_coaching_opp_salesperson, idx_coaching_opp_severity, public.coaching_opportunities, public.coaching_skill_benchmarks, public.salespeople
 
-### Community 620 - "20260418133954_5b3abeb3-5848-4edc-9926-47d9f23308a5.sql"
+### Community 622 - "20260418133954_5b3abeb3-5848-4edc-9926-47d9f23308a5.sql"
 Cohesion: 0.36
 Nodes (7): idx_coaching_sessions_coach, idx_coaching_sessions_salesperson, idx_coaching_sessions_status, public.coaching_sessions, public.salespeople, public.update_updated_at_column, update_coaching_sessions_updated_at
 
-### Community 621 - "public.conversation_analyses"
+### Community 623 - "public.conversation_analyses"
 Cohesion: 0.43
 Nodes (7): idx_conv_analyses_analyzed_by, idx_conv_analyses_created, idx_conv_analyses_sale, idx_conv_analyses_sentiment, public.conversation_analyses, public.conversation_insights_summary, public.sales
 
-### Community 622 - "20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
+### Community 624 - "20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
 Cohesion: 0.29
 Nodes (6): audit_activities_trigger, public.activity_audit_logs, public.sdr_alert_configs, auth.users, public.activities, public.audit_activity_changes
 
-### Community 623 - "20260513164208_76631815-da68-40a2-a7f0-fa104eb5901f.sql"
+### Community 625 - "20260513164208_76631815-da68-40a2-a7f0-fa104eb5901f.sql"
 Cohesion: 0.32
 Nodes (7): public.buying_signals, public.enriched_company_intelligence, public.person_intelligence, public.website_visitor_logs, public.update_updated_at_column, update_enriched_company_intelligence_updated_at, update_person_intelligence_updated_at
 
-### Community 624 - "20260712222949_56531d44-d326-4545-84ff-2aafdde2d2a3.sql"
+### Community 626 - "20260712222949_56531d44-d326-4545-84ff-2aafdde2d2a3.sql"
 Cohesion: 0.36
 Nodes (6): idx_ai_narrative_cache_expires, idx_ai_narrative_cache_key, idx_ai_narrative_cache_type, public.ai_narrative_cache, public.update_updated_at_column, trg_ai_narrative_cache_updated_at
 
-### Community 625 - "20261001160000_centralize_internal_edge_calls.sql"
+### Community 627 - "20261001160000_centralize_internal_edge_calls.sql"
 Cohesion: 0.29
 Nodes (6): idx_edge_call_failures_created_at, public.edge_call_failures, public.trigger_campaign_health_alert(), public.broadcast_sale_completed, public._internal_secrets, trg_broadcast_sale_completed
 
-### Community 626 - "20261001193100_audit_log_canonical.sql"
+### Community 628 - "20261001193100_audit_log_canonical.sql"
 Cohesion: 0.32
 Nodes (6): idx_audit_logs_record_id, idx_audit_logs_table_name, public.audit_log_row_change(), public.log_audit_event(), auth.users, public.audit_logs
 
-### Community 627 - "public.integration_secret_refs"
+### Community 629 - "public.integration_secret_refs"
 Cohesion: 0.32
 Nodes (7): idx_integration_secret_refs_credential, idx_integration_secret_refs_owner, public.integration_secret_refs, public, public.channel_credentials, public.update_updated_at_column, trg_integration_secret_refs_updated_at
 
-### Community 628 - "20261117040000_integridade_resgatada_rlx.sql"
+### Community 630 - "20261117040000_integridade_resgatada_rlx.sql"
 Cohesion: 0.29
 Nodes (7): public.quotes, public.suppliers, public.teams, ux_quotes_quote_number_ativo, ux_suppliers_cnpj_ativo, ux_suppliers_email_ativo, ux_teams_name_ativo
 
-### Community 629 - "📊 Relatório Real de Qualidade e Testes"
+### Community 631 - "📊 Relatório Real de Qualidade e Testes"
 Cohesion: 0.25
 Nodes (7): Cobertura real (`vitest run --coverage`), E2E (Playwright), Edge Functions (Deno), Gates locais (execução completa, sem cortes), Próximos gaps de teste (por prioridade), 📊 Relatório Real de Qualidade e Testes, Type Safety
 
-### Community 630 - "triggerRaceEvent"
+### Community 632 - "🏗 Component Guidelines — Promo Champions v2"
 Cohesion: 0.29
-Nodes (7): 05_DOMINIO_GAMIFICACAO_RACE.md, 2.3 Confiabilidade / Contratos, 🟢 [REL-01] Suíte quote-to-sale — 10/10 alcançado, 🟡 [REL-02] Edge Functions sem circuit breaker global, 🟢 [REL-03] Idempotência, 5. Checklist E2E manual, triggerRaceEvent()
+Nodes (7): 🏗 Component Guidelines — Promo Champions v2, displayName, forwardRef, Imports, Naming, TODO / FIXME Conventions, useState Lazy Initialization
 
-### Community 631 - "Automação local — Promo_Champions_V2.1"
-Cohesion: 0.29
-Nodes (6): Automação local — Promo_Champions_V2.1, Comandos, Gatilhos e ativação, Hooks e workflows anteriores, Registro exato dos demais scripts, Suites efetivamente executadas
-
-### Community 632 - "12. Gamificação"
+### Community 633 - "12. Gamificação"
 Cohesion: 0.29
 Nodes (7): 12.1 Sistema de XP e Níveis, 12.2 Conquistas, 12.3 Streaks, 12.4 Competição & Rankings, 12.5 Celebrações, 12.6 Desafios, 12. Gamificação
 
-### Community 633 - "11. Gestão de Times & Metas"
+### Community 634 - "11. Gestão de Times & Metas"
 Cohesion: 0.29
 Nodes (7): 11.1 Times (`/times`), 11.2 Vendedores (`/vendedores`), 11.3 Metas (`/metas`), 11.4 Metas de Atividades (`/metas-atividades`), 11.5 Territórios (`/territorios`), 11.6 Onboarding Tracking (`/onboarding-tracking`), 11. Gestão de Times & Metas
 
-### Community 634 - "17. UX, PWA & Acessibilidade"
+### Community 635 - "17. UX, PWA & Acessibilidade"
 Cohesion: 0.29
 Nodes (7): 17.1 Design System, 17.2 Microinterações, 17.3 PWA, 17.4 Navegação, 17.5 Acessibilidade, 17.6 Resiliência, 17. UX, PWA & Acessibilidade
 
-### Community 635 - "1. Dashboards & Visões"
+### Community 636 - "1. Dashboards & Visões"
 Cohesion: 0.29
 Nodes (7): 1.1 Dashboard Gestão (`/` — `Index.tsx`), 1.2 Dashboard SDR (`/sdr` — `SDRDashboard.tsx`), 1.3 Dashboard Closer (`/closer` — `CloserDashboard.tsx`), 1.4 Dashboard Vendedor (`/vendedor/:id` — `VendedorDashboard.tsx`), 1.5 Dashboard Custom (`/dashboard-custom` — `DashboardCustom.tsx`), 1.6 Dashboards Especializados, 1. Dashboards & Visões
 
-### Community 636 - "3. Pipeline & Kanban"
+### Community 637 - "3. Pipeline & Kanban"
 Cohesion: 0.29
 Nodes (7): 3.1 Pipeline Visual (`/pipeline` — `Pipeline.tsx`), 3.2 Lead Scoring (`/lead-scoring` — `LeadScoring.tsx`), 3.3 Lead Routing Engine (`/lead-routing`), 3.4 SLA Tracking (`/sla-tracking`), 3.5 Funnel Analysis (`/funil`), 3.6 Histórico & Stagnant Detection, 3. Pipeline & Kanban
-
-### Community 637 - "useAutomationRules.ts"
-Cohesion: 0.38
-Nodes (6): ⚡ Workflow Automation Builder (`/workflow-builder`) — Manager, AutomationRule, AutomationRunLog, useAutomationLogs(), useAutomationRules(), useToggleAutomationRule()
 
 ### Community 638 - "Procedimento de hotfix"
 Cohesion: 0.29
@@ -3885,509 +3896,509 @@ Nodes (7): A-108 · [Média] Webhook de saída tem entrega única, sem reenvio e
 Cohesion: 0.29
 Nodes (7): A-30 · [Crítica] Qualquer usuário logado move qualquer negócio de estágio, A-31 · [Alta] Transcrição e "insights de IA" falsos em qualquer gravação de chamada, A-32 · [Alta] Qualquer usuário pausa a cadência de qualquer vendedor e falsifica engajamento, A-33 · [Média] Envio agendado amarrado a venda de terceiro, A-34 · [Média] Pesquisa de satisfação e rotação de desafios disparadas por qualquer usuário, A-35 · [Média] Recalculo em massa de score de lead por qualquer usuário, CR-14 — Autentica que existe um usuário, mas não verifica se *aquele* usuário pode tocar *aquele* registro
 
-### Community 642 - "Quote → Sale (`fn_convert_quote_to_sale`)"
-Cohesion: 0.29
-Nodes (7): Auditoria, Cenários de concorrência trigger × RPC, Cleanup determinístico em testes, Códigos de erro padronizados, Idempotência, Quote → Sale (`fn_convert_quote_to_sale`), Realidade dupla das orders
-
-### Community 643 - "Quote-to-Sale — Diagnóstico de Invariantes"
+### Community 642 - "Quote-to-Sale — Diagnóstico de Invariantes"
 Cohesion: 0.29
 Nodes (7): Cenários de teste cobertos (E2E), Execução rápida, Invariante 1 — Zero `order_number` duplicados, Invariante 2 — Zero `sales` órfãos, Invariante 3 — Zero quotes com múltiplas orders, Invariante 4 — `orders_conversion_seq` monotônica, Quote-to-Sale — Diagnóstico de Invariantes
 
-### Community 644 - "Runbook — Bitrix24 (bitrix24-oauth, bitrix24-sync)"
+### Community 643 - "Runbook — Bitrix24 (bitrix24-oauth, bitrix24-sync)"
 Cohesion: 0.29
 Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — Bitrix24 (bitrix24-oauth, bitrix24-sync), Sinais de falha
 
-### Community 645 - "Runbook — ElevenLabs (elevenlabs-voice, elevenlabs-tts, elevenlabs-stt)"
+### Community 644 - "Runbook — ElevenLabs (elevenlabs-voice, elevenlabs-tts, elevenlabs-stt)"
 Cohesion: 0.29
 Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — ElevenLabs (elevenlabs-voice, elevenlabs-tts, elevenlabs-stt), Sinais de falha
 
-### Community 646 - "Runbook — Email transacional e bulk (Resend / SendGrid)"
-Cohesion: 0.29
-Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — Email transacional e bulk (Resend / SendGrid), Sinais de falha
-
-### Community 647 - "Runbook — N8N (automações externas)"
+### Community 645 - "Runbook — N8N (automações externas)"
 Cohesion: 0.29
 Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — N8N (automações externas), Sinais de falha
 
-### Community 648 - "Runbook — Twilio Voz/Dialer (twilio-call-twiml, twilio-call-status, twilio-click-to-call)"
+### Community 646 - "Runbook — Twilio Voz/Dialer (twilio-call-twiml, twilio-call-status, twilio-click-to-call)"
 Cohesion: 0.29
 Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — Twilio Voz/Dialer (twilio-call-twiml, twilio-call-status, twilio-click-to-call), Sinais de falha
 
-### Community 649 - "Runbook — WhatsApp/Multichannel (send-multichannel-message, multichannel-status-webhook)"
+### Community 647 - "Runbook — WhatsApp/Multichannel (send-multichannel-message, multichannel-status-webhook)"
 Cohesion: 0.29
 Nodes (6): Configuração, Mitigação / rollback, O que faz, Onde olhar, Runbook — WhatsApp/Multichannel (send-multichannel-message, multichannel-status-webhook), Sinais de falha
 
-### Community 650 - "feature_request.md"
+### Community 648 - "10. Guia de Implementação Passo a Passo"
+Cohesion: 0.29
+Nodes (7): 10. Guia de Implementação Passo a Passo, Passo 1: Criar a tabela `query_telemetry`, Passo 2: Adicionar a função `has_role()` (se não existir), Passo 4: Instalar dependências do frontend, Passo 5: Criar a página do dashboard, Passo 6: Configurar secrets na Edge Function, Passo 7: Executar testes
+
+### Community 649 - "feature_request.md"
 Cohesion: 0.29
 Nodes (6): 🔄 Alternativas Consideradas, 📝 Contexto Adicional, ✅ Definição de Pronto, 📊 Impacto, 🎯 Problema, 💡 Solução Proposta
 
-### Community 651 - "Promo_Champions_V2.1 — Regras da Casa (Hermes) — suplemento"
+### Community 650 - "Promo_Champions_V2.1 — Regras da Casa (Hermes) — suplemento"
 Cohesion: 0.29
 Nodes (6): Barreiras (cadeado físico), Comandos usuais, Identidade, Padrão de Chat (Hermes) — subpasta por sessão, Promo_Champions_V2.1 — Regras da Casa (Hermes) — suplemento, Regra de Ouro (casa do Joaquim)
 
-### Community 652 - "20260712215611_39d586d5-863d-4617-903b-cbfcc9f544a7.sql"
+### Community 651 - "20260712215611_39d586d5-863d-4617-903b-cbfcc9f544a7.sql"
 Cohesion: 0.38
 Nodes (5): pg_stat_database, idx_db_rollback_snapshots_captured_at, public.admin_capture_rollback_snapshot(), public.admin_get_rollback_rate_series(), public.db_rollback_snapshots
 
-### Community 653 - "public.v_platform_slo"
+### Community 652 - "public.v_platform_slo"
 Cohesion: 0.29
 Nodes (5): public.circuit_breaker_events, public.v4_callback_metrics, public.v_platform_slo, public.error_logs, public.winloss_webhook_deliveries
 
-### Community 654 - "20261124130000_reconcilia_retry_edge_jobs.sql"
+### Community 653 - "20261124130000_reconcilia_retry_edge_jobs.sql"
 Cohesion: 0.29
 Nodes (5): public.edge_retry_events, public.post_internal_edge_job(), public.retry_pending_internal_edge_jobs(), net._http_response, public._internal_secrets
 
-### Community 655 - "20260517132342_8859b5fc-de51-484f-ada7-1992f48a62c7.sql"
+### Community 654 - "20260517132342_8859b5fc-de51-484f-ada7-1992f48a62c7.sql"
 Cohesion: 0.29
 Nodes (6): public.handle_sale_commissions, public.check_is_first_sale(), public.handle_sale_commissions(), public.commission_rules, public.sales, tr_handle_sale_commissions
 
-### Community 656 - "20260511141928_1b5f75d8-ab43-4b45-bed6-e81c3d0a4169.sql"
+### Community 655 - "20260511141928_1b5f75d8-ab43-4b45-bed6-e81c3d0a4169.sql"
 Cohesion: 0.29
 Nodes (5): public.handle_updated_at, public.mql_qualifications, public.sales, public.salespeople, update_mql_qualifications_updated_at
 
-### Community 657 - "20260508141126_292b6f0c-6a25-4221-b648-8a5e4e4f3585.sql"
+### Community 656 - "20260508141126_292b6f0c-6a25-4221-b648-8a5e4e4f3585.sql"
 Cohesion: 0.29
 Nodes (5): public.log_lead_stage_transition, public.lead_detailed_logs, auth.users, public.clients, tr_log_lead_stage_transition
 
-### Community 658 - "20260509154657_5cdef2cc-6259-4e75-955e-9002a1c54be1.sql"
+### Community 657 - "20260509154657_5cdef2cc-6259-4e75-955e-9002a1c54be1.sql"
 Cohesion: 0.29
 Nodes (4): public.manage_stock_on_sale, public.update_client_total_value, tr_manage_stock, tr_update_client_value
 
-### Community 659 - "20260512192931_a3224c81-646c-41f5-9efe-bf59c6850c9c.sql"
+### Community 658 - "20260512192931_a3224c81-646c-41f5-9efe-bf59c6850c9c.sql"
 Cohesion: 0.38
 Nodes (6): public.notify_sale_completion, public.notify_sale_completion(), public.sale_notifications_audit, public.sales, public.salespeople, tr_notify_sale_completion
 
-### Community 660 - "20260513192039_fd28a7be-6453-4c57-8641-e230e85db2f5.sql"
+### Community 659 - "20260513192039_fd28a7be-6453-4c57-8641-e230e85db2f5.sql"
 Cohesion: 0.29
 Nodes (4): public.price_protection_rules, public.calculate_lead_distribution(), public.check_price_threats(), public.lead_scores
 
-### Community 661 - "20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
+### Community 660 - "20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
 Cohesion: 0.38
 Nodes (6): public.process_performance_bet_event, public.check_performance_bets_completion(), public.process_performance_bet_event(), public.performance_bets, tr_update_bets_on_activity, tr_update_bets_on_sale
 
-### Community 662 - "20260512174635_d8463aa2-20ec-4b60-afa0-3be56d306bca.sql"
+### Community 661 - "20260512174635_d8463aa2-20ec-4b60-afa0-3be56d306bca.sql"
 Cohesion: 0.33
 Nodes (6): public.sync_territory_ownership, public.sync_territory_ownership(), public.territories, public.sales, public.salespeople, tr_sync_territory
 
-### Community 663 - "20260512163542_0c29a7c7-0fd3-4850-9a7d-aac29b82dcba.sql"
+### Community 662 - "20260512163542_0c29a7c7-0fd3-4850-9a7d-aac29b82dcba.sql"
 Cohesion: 0.29
 Nodes (4): public.sync_total_xp, public.maintain_sales_streaks(), public.sales_streaks, tr_sync_total_xp
 
-### Community 664 - "20260517113746_ba2cd7eb-24e5-40ef-a0e6-2b2a233dedb2.sql"
+### Community 663 - "20260517113746_ba2cd7eb-24e5-40ef-a0e6-2b2a233dedb2.sql"
 Cohesion: 0.29
 Nodes (4): public.trg_refresh_ranking_on_sale, mv_competitive_ranking_id_idx, public.mv_competitive_ranking, trg_refresh_ranking_on_sale_change
 
-### Community 666 - "regras_negocio — regras de negócio para agentes de IA"
+### Community 665 - "regras_negocio — regras de negócio para agentes de IA"
 Cohesion: 0.29
 Nodes (6): Arquivos, Fontes SQL, Regras humanas, regras_negocio — regras de negócio para agentes de IA, Rodar local, Testes de regressão
 
-### Community 667 - "EdgeRetryTimeSeriesChart.tsx"
+### Community 666 - "EdgeRetryTimeSeriesChart.tsx"
 Cohesion: 0.29
 Nodes (6): colors, labels, Outcome, OUTCOMES, Props, Row
 
-### Community 668 - "Fireworks.tsx"
+### Community 667 - "admin/PerformanceMonitor.tsx"
+Cohesion: 0.43
+Nodes (6): getFpsColor(), getMemoryColor(), PerfMetrics, PerformanceMonitor, PerformanceMonitorProps, usePerfMetrics()
+
+### Community 669 - "Fireworks.tsx"
 Cohesion: 0.33
 Nodes (6): Burst, COLORS, Fireworks(), FireworksProps, makeBurst(), Particle
 
-### Community 669 - "RacePanelEmptyState.tsx"
-Cohesion: 0.29
-Nodes (3): PRESETS, Props, Variant
-
-### Community 670 - "RaceViewModeToggle.tsx"
-Cohesion: 0.43
-Nodes (5): OPTIONS, Props, RaceViewMode, read(), useRaceViewMode()
-
-### Community 671 - "AutoPausedBadge.tsx"
+### Community 670 - "AutoPausedBadge.tsx"
 Cohesion: 0.48
 Nodes (5): AutoPausedBadge(), Props, AUTO_PAUSE_REASON_LABEL, autoPauseLabel(), autoPauseVariant()
 
-### Community 672 - "executeWorkflowActions.test.ts"
-Cohesion: 0.43
-Nodes (5): NOW, Constants, buildActivityRow(), buildTaskRow(), WORKFLOW_ACTIVITY_OUTCOME
+### Community 671 - "useWebhookReplayPersistence.ts"
+Cohesion: 0.52
+Nodes (6): readStoredRetention(), readStoredSelection(), ReplayableDelivery, selectionKey(), useWebhookReplayPersistence(), writeStoredSelection()
 
-### Community 673 - "useRunRateProjection.ts"
+### Community 672 - "draftMigration.test.ts"
 Cohesion: 0.33
-Nodes (4): computeRunRateProjection(), ProjectionConfidence, RunRateProjection, UseRunRateProjectionOptions
+Nodes (4): migrateLegacyDraft(), EMPTY_DRAFT, LEGACY_DRAFT, REAL_DRAFT
 
-### Community 674 - "cron-failure-alerter/index.test.ts"
+### Community 673 - "cron-failure-alerter/index.test.ts"
 Cohesion: 0.38
 Nodes (4): backdate(), cleanup(), JOB, rpc()
 
-### Community 675 - "chunked_in_lint_test.ts"
+### Community 674 - "chunked_in_lint_test.ts"
 Cohesion: 0.38
 Nodes (6): FUNCTIONS_ROOT, isChunkParam(), isLiteralArrayArg(), Offense, scan(), WHITELIST_COLUMNS
 
-### Community 677 - "20250102000001_audit_log.sql"
+### Community 675 - "20250102000001_audit_log.sql"
 Cohesion: 0.43
 Nodes (5): audit_log, idx_audit_created, idx_audit_table, idx_audit_user, auth.users
 
-### Community 678 - "20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e.sql"
+### Community 676 - "20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e.sql"
 Cohesion: 0.29
 Nodes (5): public.category_metrics, public.daily_metrics, public.sales, public.update_updated_at_column, update_sales_updated_at
 
-### Community 679 - "public.tasks"
+### Community 677 - "public.tasks"
 Cohesion: 0.29
 Nodes (6): public.tasks, public, public.sales, public.salespeople, public.update_updated_at_column, update_tasks_updated_at
 
-### Community 680 - "public.activities"
+### Community 678 - "public.activities"
 Cohesion: 0.43
 Nodes (6): idx_activities_created_at, idx_activities_sale_id, idx_activities_salesperson_id, public.activities, public.sales, public.salespeople
 
-### Community 681 - "20251220134342_08bca4e6-70f7-4f15-a505-bc1d60b6b323.sql"
+### Community 679 - "20251220134342_08bca4e6-70f7-4f15-a505-bc1d60b6b323.sql"
 Cohesion: 0.38
 Nodes (6): public.challenge_progress, public.weekly_challenges, public.salespeople, public.update_updated_at_column, update_challenge_progress_updated_at, update_weekly_challenges_updated_at
 
-### Community 682 - "20251231124536_b90feb11-36b2-4de9-bfb5-ca04c1638a98.sql"
+### Community 680 - "20251231124536_b90feb11-36b2-4de9-bfb5-ca04c1638a98.sql"
 Cohesion: 0.48
 Nodes (6): idx_webauthn_challenges_expires, idx_webauthn_challenges_user_id, idx_webauthn_credentials_credential_id, idx_webauthn_credentials_user_id, public.webauthn_challenges, public.webauthn_credentials
 
-### Community 683 - "20251231131342_a0f87441-d86b-49d8-a197-f97973da46fc.sql"
+### Community 681 - "20251231131342_a0f87441-d86b-49d8-a197-f97973da46fc.sql"
 Cohesion: 0.38
 Nodes (6): public.count_reset_requests_24h(), public.has_pending_reset_request(), public.password_reset_requests, auth.users, update_updated_at_column, update_password_reset_requests_updated_at
 
-### Community 684 - "20260104143931_webhooks_system.sql"
+### Community 682 - "20260104143931_webhooks_system.sql"
 Cohesion: 0.52
 Nodes (6): idx_webhook_logs_created_at, idx_webhook_logs_status, idx_webhook_logs_webhook_id, idx_webhooks_enabled, webhook_logs, webhooks
 
-### Community 685 - "update_lead_score"
+### Community 683 - "update_lead_score"
 Cohesion: 0.33
 Nodes (5): calculate_deal_probability(), activities, clients, deals, update_lead_score()
 
-### Community 686 - "20260104200000_2fa_complete.sql"
+### Community 684 - "20260104200000_2fa_complete.sql"
 Cohesion: 0.48
 Nodes (6): idx_2fa_log_user, idx_backup_codes_user, auth.users, user_2fa, user_2fa_backup_codes, user_2fa_log
 
-### Community 687 - "20260105000005_stored_procedures.sql"
+### Community 685 - "20260105000005_stored_procedures.sql"
 Cohesion: 0.33
 Nodes (4): calculate_deal_probability(), activities, deals, update_client_score()
 
-### Community 688 - "20260317205046_fb209f26-f880-47ae-b7bf-f31db1831418.sql"
+### Community 686 - "20260317205046_fb209f26-f880-47ae-b7bf-f31db1831418.sql"
 Cohesion: 0.48
 Nodes (6): public.available_spins, public.prize_wheel_spins, public.sales_streaks, public.salesperson_leagues, public.weekly_matchups, public.salespeople
 
-### Community 689 - "20260317213028_11b8943a-3509-425a-83fb-13f4f5379360.sql"
+### Community 687 - "20260317213028_11b8943a-3509-425a-83fb-13f4f5379360.sql"
 Cohesion: 0.43
 Nodes (6): public.collectible_badges, public.competitive_chat_messages, public.progressive_goals, public.salesperson_badges, public.salespeople, public.weekly_matchups
 
-### Community 690 - "public.page_analytics"
+### Community 688 - "public.page_analytics"
 Cohesion: 0.48
 Nodes (6): idx_page_analytics_entered, idx_page_analytics_route, idx_page_analytics_salesperson, idx_page_analytics_salesperson_route, public.page_analytics, public.salespeople
 
-### Community 692 - "public.get_cadence_metrics"
+### Community 690 - "public.get_cadence_metrics"
 Cohesion: 0.29
 Nodes (6): public.get_cadence_metrics(), public.cadence_tasks, public.cadences, public.channel_interactions, public.prospect_cadences, public.sales
 
-### Community 693 - "20260416204457_1d50cec8-6696-4792-9bd7-9c8aec65f8b2.sql"
+### Community 691 - "20260416204457_1d50cec8-6696-4792-9bd7-9c8aec65f8b2.sql"
 Cohesion: 0.43
 Nodes (4): idx_notifications_category, idx_notifications_user_created, idx_notifications_user_unread, public.notifications
 
-### Community 694 - "20260417011542_fc8fac96-2267-42a9-83f9-fde79549238b.sql"
+### Community 692 - "20260417011542_fc8fac96-2267-42a9-83f9-fde79549238b.sql"
 Cohesion: 0.48
 Nodes (5): idx_cstp_contact, idx_cstp_score, public.compute_optimal_send_time(), public.contact_best_send_window, public.contact_send_time_profile
 
-### Community 695 - "20260417123624_68ec9996-f000-46cf-958d-418554185750.sql"
+### Community 693 - "20260417123624_68ec9996-f000-46cf-958d-418554185750.sql"
 Cohesion: 0.43
 Nodes (4): idx_semantic_index_embedding, idx_semantic_index_entity, idx_semantic_index_salesperson, public.semantic_index
 
-### Community 696 - "20260421114942_f301ed0b-9066-4674-9ed9-70a0b1fb4466.sql"
+### Community 694 - "20260421114942_f301ed0b-9066-4674-9ed9-70a0b1fb4466.sql"
 Cohesion: 0.38
 Nodes (6): idx_winloss_dlq_status_created, idx_winloss_dlq_subscription, public.winloss_webhook_dead_letters, public.update_updated_at_column, public.winloss_webhook_subscriptions, update_winloss_dlq_updated_at
 
-### Community 697 - "public.winloss_webhook_replay_audit"
+### Community 695 - "public.winloss_webhook_replay_audit"
 Cohesion: 0.48
 Nodes (6): idx_wh_replay_audit_created, idx_wh_replay_audit_dead_letter, idx_wh_replay_audit_delivery, idx_wh_replay_audit_request, public.winloss_webhook_replay_audit, public.winloss_webhook_dead_letters
 
-### Community 698 - "public.follow_up_audit_view"
+### Community 696 - "public.follow_up_audit_view"
 Cohesion: 0.33
 Nodes (6): public.follow_up_audit_view, public.handle_template_versioning(), public.whatsapp_template_versions, public.follow_up_audit_logs, public.sales, public.salespeople
 
-### Community 699 - "20260511192130_c4275dc5-b910-48d1-b4ac-77964f83aaee.sql"
+### Community 697 - "20260511192130_c4275dc5-b910-48d1-b4ac-77964f83aaee.sql"
 Cohesion: 0.29
 Nodes (6): public.calculate_performance_pace(), public.performance_impact_factors, public.quota_attainment_predictions, public.salesperson_performance_telemetry, sales, sales_goals
 
-### Community 700 - "20260524193748_25f26b22-820e-47be-8a11-773c0244c033.sql"
+### Community 698 - "20260524193748_25f26b22-820e-47be-8a11-773c0244c033.sql"
 Cohesion: 0.29
 Nodes (3): public.get_industry_seasonality(), public.clients, public.quotes
 
-### Community 702 - "20260706221948_d57f86fe-ce75-48f4-93f8-d9568da023b0.sql"
+### Community 700 - "20260706221948_d57f86fe-ce75-48f4-93f8-d9568da023b0.sql"
 Cohesion: 0.38
 Nodes (6): idx_quotes_inbound_last_event, idx_quotes_inbound_seller_email, idx_quotes_inbound_source_status, idx_salespeople_auth_user_id, public.quotes_inbound, public.salespeople
 
-### Community 703 - "public.fn_convert_quote_to_sale"
+### Community 701 - "public.fn_convert_quote_to_sale"
 Cohesion: 0.33
 Nodes (6): public.fn_convert_quote_to_sale(), public.orders, public.quote_items, public.quotes, public.salespeople, ux_orders_quote_id
+
+### Community 702 - "public.fn_convert_quote_to_sale"
+Cohesion: 0.29
+Nodes (6): public.fn_convert_quote_to_sale(), public.order_items, public.orders, public.quote_items, public.quotes, public.salespeople
+
+### Community 703 - "public.fn_convert_quote_to_sale"
+Cohesion: 0.29
+Nodes (6): public.fn_convert_quote_to_sale(), public.order_items, public.orders, public.quote_items, public.quotes, public.salespeople
 
 ### Community 704 - "public.fn_convert_quote_to_sale"
 Cohesion: 0.29
 Nodes (6): public.fn_convert_quote_to_sale(), public.order_items, public.orders, public.quote_items, public.quotes, public.salespeople
 
-### Community 705 - "public.fn_convert_quote_to_sale"
-Cohesion: 0.29
-Nodes (6): public.fn_convert_quote_to_sale(), public.order_items, public.orders, public.quote_items, public.quotes, public.salespeople
-
-### Community 706 - "public.fn_convert_quote_to_sale"
-Cohesion: 0.29
-Nodes (6): public.fn_convert_quote_to_sale(), public.order_items, public.orders, public.quote_items, public.quotes, public.salespeople
-
-### Community 707 - "20260723130329_184b0dbd-6049-4c29-acfe-ee1fcf9fc7eb.sql"
+### Community 705 - "20260723130329_184b0dbd-6049-4c29-acfe-ee1fcf9fc7eb.sql"
 Cohesion: 0.38
 Nodes (6): idx_commission_bonuses_active, idx_commission_bonuses_salesperson, public.commission_bonuses, public.salespeople, public.update_updated_at_column, update_commission_bonuses_updated_at
 
-### Community 708 - "public.get_campaign_optout_rates"
+### Community 706 - "public.get_campaign_optout_rates"
 Cohesion: 0.38
 Nodes (6): idx_email_bulk_drafts_sent_email, idx_email_opt_outs_email_lower_created, public.get_campaign_optout_rates(), public.email_bulk_drafts, public.email_bulk_jobs, public.email_opt_outs
 
-### Community 709 - "20260726202149_6fc1d93a-adf2-458c-946e-87a93d62a8b7.sql"
+### Community 707 - "20260726202149_6fc1d93a-adf2-458c-946e-87a93d62a8b7.sql"
 Cohesion: 0.38
 Nodes (6): idx_campaign_health_alerts_job_type, idx_campaign_health_alerts_owner_created, public.campaign_health_alerts, public.email_bulk_jobs, public.update_updated_at_column, trg_campaign_health_alerts_updated
 
-### Community 710 - "public.race_leaderboard_view"
+### Community 708 - "public.race_leaderboard_view"
 Cohesion: 0.33
 Nodes (6): public.race_leaderboard_view, public.race_spectator_view, activities, race_scoring_rules, race_seasons, scored
 
-### Community 711 - "20261001220100_sales_status_canonico.sql"
+### Community 709 - "20261001220100_sales_status_canonico.sql"
 Cohesion: 0.29
 Nodes (6): public.auto_victory_post, public.broadcast_sale_completed, public.fn_notify_victory, tr_notify_sale_victory, tr_victory_sale, trg_broadcast_sale_completed
 
-### Community 712 - "rls-scope-salesperson.spec.ts"
+### Community 710 - "rls-scope-salesperson.spec.ts"
 Cohesion: 0.29
 Nodes (3): ADMIN_ONLY_TABLES, CASES, TableCase
 
-### Community 713 - "security-definer-rpc-access.spec.ts"
+### Community 711 - "security-definer-rpc-access.spec.ts"
 Cohesion: 0.29
 Nodes (3): HAS_HTTP, HAS_PG, Row
 
-### Community 714 - "Baseline — Estado do Repositorio"
+### Community 712 - "Baseline — Estado do Repositorio"
 Cohesion: 0.33
 Nodes (5): Baseline — Estado do Repositorio, Falhas Herdadas (nao introduzidas nesta sessao), Notas, Resumo, Stack Verificada
 
-### Community 715 - "20260712232718_6cfc1884-5c14-4d44-b3b3-ba91edde064a.sql"
+### Community 713 - "20260712232718_6cfc1884-5c14-4d44-b3b3-ba91edde064a.sql"
 Cohesion: 0.40
 Nodes (5): candidate, idx_dlq_replay_audit_job_created, public.dead_letter_replay_audit, public.fn_admin_replay_dead_letter_ingest_job(), public.call_recording_ingest_jobs
 
-### Community 716 - "ECC for Codex CLI"
+### Community 714 - "ECC for Codex CLI"
 Cohesion: 0.33
 Nodes (5): ECC for Codex CLI, MCP Baseline, Multi-Agent Support, Repo Skill, Workflow Files
 
-### Community 717 - "Apêndice C — 343 objetos de rotina sem consumidor catalogável"
-Cohesion: 0.33
-Nodes (6): Apêndice C — 343 objetos de rotina sem consumidor catalogável, Gerais, Prefixos fn_a a fn_c, Prefixos fn_d a fn_h, Prefixos fn_i a fn_p, Prefixos fn_q a fn_z
-
-### Community 718 - "Arquitetura e estado do frontend"
+### Community 715 - "Arquitetura e estado do frontend"
 Cohesion: 0.33
 Nodes (6): Arquitetura e estado do frontend, Ações visíveis sem efeito, Consultas, performance e acessibilidade, Contratos e fluxos quebrados, Código não alcançado — candidato, não lixo, Dados fabricados ou apresentados como reais
 
-### Community 719 - "ADR-008: SECURITY DEFINER funções executáveis por `anon`"
+### Community 716 - "ADR-004: Circuit Breaker em Edge Functions"
+Cohesion: 0.33
+Nodes (5): ADR-004: Circuit Breaker em Edge Functions, Alternativas consideradas, Consequências, Contexto, Decisão
+
+### Community 717 - "ADR-008: SECURITY DEFINER funções executáveis por `anon`"
 Cohesion: 0.33
 Nodes (5): ADR-008: SECURITY DEFINER funções executáveis por `anon`, Consequências, Contexto, Decisão, Regra para novas funções
 
-### Community 720 - "13. Dashboards Especializados (BI)"
+### Community 718 - "13. Dashboards Especializados (BI)"
 Cohesion: 0.33
 Nodes (6): 13.1 BI Vendedor, 13.2 BI Gestor, 13.3 BI SDR, 13.4 BI Closer, 13. Dashboards Especializados (BI), Componentes BI Comuns
 
-### Community 721 - "Catch-up de migrations no banco de produção — 20/10/2026"
+### Community 719 - "Catch-up de migrations no banco de produção — 20/10/2026"
 Cohesion: 0.33
 Nodes (5): A migration que não entra: `20261014000002_fix_concurrently_indexes`, Catch-up de migrations no banco de produção — 20/10/2026, Como foi conferido (sem confiar só no "success" do workflow), Efeito colateral conhecido (não corrigido aqui), O que aconteceu
 
-### Community 722 - "Validação adversarial pós-auditoria e correções — 2026-09-02"
-Cohesion: 0.33
-Nodes (5): Achados confirmados, NÃO corrigidos nesta sessão (motivo explícito), Achados corrigidos nesta sessão (aplicados e verificados ao vivo), Achados da auditoria original CORRIGIDOS/REFINADOS pela validação adversarial, Metodologia, Validação adversarial pós-auditoria e correções — 2026-09-02
-
-### Community 723 - "16. Admin & Telemetria"
+### Community 720 - "16. Admin & Telemetria"
 Cohesion: 0.33
 Nodes (6): 16.1 Admin Dashboard (`/admin`), 16.2 Telemetria (`/admin/telemetria`), 16.3 Usage Analytics (`/usage-analytics`), 16.4 Feature Flags (`/feature-flags`), 16.5 API Tokens, 16. Admin & Telemetria
 
-### Community 724 - "Fase A — Escopo, riscos e contratos"
+### Community 721 - "Fase A — Escopo, riscos e contratos"
 Cohesion: 0.33
 Nodes (6): Etapa 01 — Fixar baseline e preservar o trabalho existente, Etapa 02 — Mapear domínios e inventariar a integração existente, Etapa 03 — Definir perguntas de negócio técnico e sucesso mensurável, Etapa 04 — Registrar decisão de arquitetura local-first, Etapa 05 — Modelar ameaças e definir classificação de conteúdo, Fase A — Escopo, riscos e contratos
 
-### Community 725 - "Fase B — Fundação reproduzível e segura"
+### Community 722 - "Fase B — Fundação reproduzível e segura"
 Cohesion: 0.33
 Nodes (6): Etapa 06 — Fixar ferramenta e dependências em ambiente isolado, Etapa 07 — Criar wrapper com preflight e contratos de erro, Etapa 08 — Fortalecer seleção e exclusão de arquivos, Etapa 09 — Isolar snapshots por worktree e revisão, Etapa 10 — Construir corpus sintético de referência, Fase B — Fundação reproduzível e segura
 
-### Community 726 - "Fase D — Integridade, proveniência e atualização"
+### Community 723 - "Fase C — Extração estrutural do produto"
+Cohesion: 0.33
+Nodes (6): Etapa 11 — Executar piloto AST do frontend, Etapa 12 — Resolver aliases, lazy imports e fronteiras de módulos, Etapa 13 — Mapear Edge Functions e dependências Deno, Etapa 14 — Representar migrations como histórico, não como banco aplicado, Etapa 15 — Ligar frontend, Edge, RPC e entidades de dados, Fase C — Extração estrutural do produto
+
+### Community 724 - "Fase D — Integridade, proveniência e atualização"
 Cohesion: 0.33
 Nodes (6): Etapa 16 — Definir identidade estável e relações múltiplas, Etapa 17 — Anexar proveniência e confiança verificáveis, Etapa 18 — Implementar publicação atômica e diagnóstico, Etapa 19 — Validar cache e atualização incremental, Etapa 20 — Estabelecer cobertura e escala por domínio, Fase D — Integridade, proveniência e atualização
 
-### Community 727 - "Fase E — Catálogo Supabase somente leitura"
-Cohesion: 0.33
-Nodes (6): Etapa 21 — Validar identidade, acesso e sessão de leitura, Etapa 22 — Coletar estrutura relacional completa, Etapa 23 — Coletar segurança e objetos programáveis, Etapa 24 — Coletar extensões, storage e automações, Etapa 25 — Comparar código, migrations e catálogo observado, Fase E — Catálogo Supabase somente leitura
-
-### Community 728 - "Fase F — Conhecimento e diagnóstico de lacunas"
+### Community 725 - "Fase F — Conhecimento e diagnóstico de lacunas"
 Cohesion: 0.33
 Nodes (6): Etapa 26 — Indexar documentação e decisões com rastreabilidade, Etapa 27 — Avaliar enriquecimento semântico opcional, Etapa 28 — Montar matriz de funcionalidades e ligações, Etapa 29 — Priorizar achados sem aplicar correções automáticas, Etapa 30 — Gerar relatório coerente e auditável, Fase F — Conhecimento e diagnóstico de lacunas
 
-### Community 729 - "Fase G — Uso por desenvolvedores e agentes"
+### Community 726 - "Fase G — Uso por desenvolvedores e agentes"
 Cohesion: 0.33
 Nodes (6): Etapa 31 — Expor comandos de consulta reproduzíveis, Etapa 32 — Implementar análise conservadora de impacto por diff, Etapa 33 — Integrar instruções dos agentes sem sobrescrever regras, Etapa 34 — Avaliar interface MCP local e coexistência com Husky, Etapa 35 — Publicar visualização privada e utilizável, Fase G — Uso por desenvolvedores e agentes
 
-### Community 730 - "Fase H — Integração contínua e governança"
+### Community 727 - "Fase H — Integração contínua e governança"
 Cohesion: 0.33
 Nodes (6): Etapa 36 — Criar workflow informativo sem credenciais de produção, Etapa 37 — Proteger caches, artefatos e retenção no CI, Etapa 38 — Atualizar após merge e verificar obsolescência, Etapa 39 — Calibrar alertas antes de criar bloqueios, Etapa 40 — Definir manutenção e atualização de dependências, Fase H — Integração contínua e governança
 
-### Community 731 - "Fase I — Validação adversarial e de não regressão"
+### Community 728 - "Fase I — Validação adversarial e de não regressão"
 Cohesion: 0.33
 Nodes (6): Etapa 41 — Exercitar cenários hostis de arquivos e conteúdo, Etapa 42 — Validar adaptador de catálogo e permissões em banco descartável, Etapa 43 — Testar recuperação, concorrência e equivalência, Etapa 44 — Medir qualidade das respostas e benefício operacional, Etapa 45 — Executar gates existentes e provar ausência de impacto no produto, Fase I — Validação adversarial e de não regressão
 
-### Community 732 - "CR-44 — Testes que passam sem provar nada"
+### Community 729 - "CR-44 — Testes que passam sem provar nada"
 Cohesion: 0.33
 Nodes (6): A-142 · [Alta] Três casos de teste de fluxo principal passam sem verificar nada, A-143 · [Alta] O teste de navegação de autenticação simula justamente a regra que deveria testar, A-144 · [Alta] Os testes de "segurança" verificam o texto da migration, não o banco, A-145 · [Média] A guarda de `console` não guarda, A-146 · [Baixa] Duplicação de execução por configuração de projetos do Playwright, CR-44 — Testes que passam sem provar nada
 
-### Community 733 - "CR-25 — Controles publicados que não fazem nada"
+### Community 730 - "Instruções para o agente executor"
 Cohesion: 0.33
-Nodes (6): A-71 · [Média] Vinte botões sem ação em telas de gestão, preço e inteligência, A-72 · [Média] O diálogo "Configurar IA" não grava nada, A-73 · [Média] Campo de busca que não busca, A-74 · [Média] O painel de Segurança mostra números inventados, A-75 · [Média] Botões de teste de gamificação publicados em produção, CR-25 — Controles publicados que não fazem nada
+Nodes (6): Armadilha geral desta base de código, Como ler cada etapa, Convenções deste repositório que você deve seguir, Instruções para o agente executor, Limitações do ambiente desta auditoria (importantes para você), Padrões de referência do repositório (use estes, não invente)
 
-### Community 734 - "Relatório de Stress e Prontidão 10/10"
+### Community 731 - "Relatório de Stress e Prontidão 10/10"
 Cohesion: 0.33
 Nodes (5): 1. Testes de Integração e Fuzzing, 2. Simulações E2E de Negócio, 3. Melhorias de Segurança (Edge Functions), 4. Auditoria de Código, Relatório de Stress e Prontidão 10/10
 
-### Community 735 - "Procedimento de Rollback"
+### Community 732 - "Procedimento de Rollback"
 Cohesion: 0.33
 Nodes (5): 1. Frontend (Vite + Lovable/Vercel), 2. Banco de Dados (Supabase Migrations), 3. Edge Functions, 4. Variáveis de Ambiente, Procedimento de Rollback
 
-### Community 736 - "Runbook — Picos de acesso negado (`access-denied-alerts`)"
+### Community 733 - "Runbook — Picos de acesso negado (`access-denied-alerts`)"
 Cohesion: 0.33
 Nodes (5): Diagnóstico, Escalação, Gatilhos, Mitigação, Runbook — Picos de acesso negado (`access-denied-alerts`)
 
-### Community 737 - "SCHEMA CONVENTIONS — Convenções de banco (Promo Champions V2.1)"
+### Community 734 - "SCHEMA CONVENTIONS — Convenções de banco (Promo Champions V2.1)"
 Cohesion: 0.33
 Nodes (5): Migrations, SCHEMA CONVENTIONS — Convenções de banco (Promo Champions V2.1), Segurança (obrigatório em toda tabela nova), Tabelas e colunas, updated_at obrigatório
 
-### Community 738 - "Sizing — gatilhos de upgrade de plano (Supabase + Vercel)"
+### Community 735 - "Sizing — gatilhos de upgrade de plano (Supabase + Vercel)"
 Cohesion: 0.33
 Nodes (5): Regra de bolso, Sinais práticos (verificar no dashboard do projeto), Sizing — gatilhos de upgrade de plano (Supabase + Vercel), Supabase, Vercel (frontend)
 
-### Community 739 - "20260416194617_15964d76-f47d-46e4-8278-553b2a12f680.sql"
+### Community 736 - "20260416194617_15964d76-f47d-46e4-8278-553b2a12f680.sql"
 Cohesion: 0.40
 Nodes (5): public.auto_pause_cadence_on_response, public.auto_pause_cadence_on_response(), public.get_auto_paused_count(), public.prospect_cadences, trg_auto_pause_cadence_on_response
 
-### Community 740 - "20260827000001_harden_webhooks_portfolio_and_idempotency.sql"
+### Community 737 - "20260827000001_harden_webhooks_portfolio_and_idempotency.sql"
 Cohesion: 0.33
 Nodes (4): public.campaign_health_alerts, public.inbound_reply_events, uq_campaign_health_alerts_dedupe_bucket, uq_inbound_reply_events_provider_message_id
 
-### Community 741 - "public.engagement_score_leaderboard"
+### Community 738 - "public.engagement_score_leaderboard"
 Cohesion: 0.33
 Nodes (5): public.contact_engagement_score, public.engagement_score_leaderboard, public.client_portfolio, public.clients, public.sales
 
-### Community 742 - "20261002000100_slo_burn_rate.sql"
+### Community 739 - "20261002000100_slo_burn_rate.sql"
 Cohesion: 0.40
 Nodes (5): public.email_logs, public.app_config, public.fn_check_slo_burn_rate(), public.fn_slo_burn_rate(), public.winloss_webhook_deliveries
 
-### Community 743 - "20260517164212_34ed2f20-28ad-4b7b-8602-d1aa2b9aa499.sql"
+### Community 740 - "20260517164212_34ed2f20-28ad-4b7b-8602-d1aa2b9aa499.sql"
 Cohesion: 0.33
 Nodes (4): public.handle_client_activation, idx_clients_is_activated, public.clients, tr_on_sale_activation
 
-### Community 744 - "20260707114811_d822e9a5-1228-463e-8a65-0d22f4db82bd.sql"
+### Community 741 - "20260707114811_d822e9a5-1228-463e-8a65-0d22f4db82bd.sql"
 Cohesion: 0.40
 Nodes (5): public.quote_sync_inbound_log, idx_maintenance_log_started_at, idx_maintenance_log_status, idx_qs_inbound_log_source_status_time, public.maintenance_log
 
-### Community 745 - "private.update_territory_conquests"
+### Community 742 - "private.update_territory_conquests"
 Cohesion: 0.33
 Nodes (5): public.territory_history, private.update_territory_conquests(), public.sales, public.territories, top_revenue
 
-### Community 746 - "20260422163009_2c772f27-0fbe-4eaa-a764-e0a4d67a0837.sql"
+### Community 743 - "20260422163009_2c772f27-0fbe-4eaa-a764-e0a4d67a0837.sql"
 Cohesion: 0.33
 Nodes (4): public.touch_winloss_alert_settings, public.winloss_alert_settings, auth.users, trg_touch_winloss_alert_settings
 
-### Community 747 - "20260511200629_df60df51-532c-4ec5-b373-5dcf27a6ca76.sql"
+### Community 744 - "20260511200629_df60df51-532c-4ec5-b373-5dcf27a6ca76.sql"
 Cohesion: 0.40
 Nodes (5): public.trigger_recalculate_deal_health, public.trigger_recalculate_deal_health(), public.call_recordings, tr_competitor_mention_health, tr_critical_moment_health
 
-### Community 748 - "§12.7 — Runs do merge PR #321 (SHA `875838727`, 2026-10-22T20:48)"
+### Community 745 - "§12.7 — Runs do merge PR #321 (SHA `875838727`, 2026-10-22T20:48)"
 Cohesion: 0.33
 Nodes (6): §12.7 — Runs do merge PR #321 (SHA `875838727`, 2026-10-22T20:48), Comparação baseline × final, Cron Monitoring dispatch `39851033561` (SHA `75e34f69`), Runs disparados pelo merge (SHA `875838727`), Runs externos confirmados por PENDENCIAS (mais antigos), Tabela final de prova — estado pós-merge SHA `875838727`
 
-### Community 749 - "§14 — Verificação definitiva (2026-10-22T21:12 UTC) · Sessão 7 · Baseline fresco + is:failure reproduzido"
+### Community 746 - "§13 — Inventário final verificado via API (2026-10-22T21:xx UTC) · Sessão 7"
+Cohesion: 0.33
+Nodes (6): 13.1 Inventário — última execução por workflow na main, 13.2 Baseline registrado ANTES das alterações, 13.3 Cobertura total: todos os is:failure cobertos em PENDENCIAS.md, 13.4 Comparação baseline × final (prova formal de não-regressão), 13.5 Confirmação: workflows verdes antes das correções permanecem verdes, §13 — Inventário final verificado via API (2026-10-22T21:xx UTC) · Sessão 7
+
+### Community 747 - "§14 — Verificação definitiva (2026-10-22T21:12 UTC) · Sessão 7 · Baseline fresco + is:failure reproduzido"
 Cohesion: 0.33
 Nodes (6): 14.1 Baseline fresco — coletado em HEAD `c4b3d49` (2026-10-22T21:12 UTC), 14.2 Filtro is:failure reproduzido via API — `list_workflow_runs(branch=main, status=failure, per_page=100)`, 14.3 Cobertura PENDENCIAS.md — 4/4 workflows ainda em falha, 14.4 Comparação baseline × final — formal, 14.5 Confirmação dos workflows antes verdes continuam verdes, §14 — Verificação definitiva (2026-10-22T21:12 UTC) · Sessão 7 · Baseline fresco + is:failure reproduzido
 
-### Community 750 - "usePermissions.ts"
+### Community 748 - "§15 — Sessão 8 (2026-10-22) · Fix SQL na migration 20261014000002"
 Cohesion: 0.33
-Nodes (5): src_config_role_permissions, Permission, Role, ROLE_PERMISSIONS, UserPermissions
+Nodes (6): 15.1 Confirmações da sessão anterior (Sessão 7), 15.2 Root cause identificada — `products.active` sem guard, 15.3 Correção aplicada, 15.4 Anti-regressão pós-commit (SHA `5a19201`), 15.5 Resultado final (pós-merge + re-dispatch), §15 — Sessão 8 (2026-10-22) · Fix SQL na migration 20261014000002
 
-### Community 751 - "useEmailOptOuts.ts"
+### Community 749 - "Uso"
 Cohesion: 0.40
-Nodes (5): EmailOptOut, EmailOptOutFilters, EmailOptOutsResult, sanitizeSearch(), useEmailOptOuts()
+Nodes (5): Ciclo de correção, Manutenção local sem IA, Relatórios e códigos de saída, Uso, check()
 
-### Community 752 - "useRecoveryRates.ts"
+### Community 750 - "useRecoveryRates.ts"
 Cohesion: 0.47
 Nodes (5): CampaignRecoveryRate, FailureTypeRecoveryRate, num(), useCampaignRecoveryRates(), useRecoveryByFailureType()
 
-### Community 753 - "entity_versions"
+### Community 751 - "useSeasonComparison.ts"
+Cohesion: 0.47
+Nodes (5): computeStats(), inRange(), SeasonComparison, SeasonStats, useSeasonComparison()
+
+### Community 752 - "entity_versions"
 Cohesion: 0.53
 Nodes (5): create_version(), entity_versions, idx_versions_date, idx_versions_entity, auth.users
 
-### Community 754 - "public.achievements"
+### Community 753 - "public.achievements"
 Cohesion: 0.47
 Nodes (5): idx_achievements_date, idx_achievements_salesperson, public.achievements, public, public.salespeople
 
-### Community 755 - "20251213172816_8f8793bd-13ad-4c30-b65a-1ee3123f793e.sql"
+### Community 754 - "20251213172816_8f8793bd-13ad-4c30-b65a-1ee3123f793e.sql"
 Cohesion: 0.40
 Nodes (5): public.salesperson_xp, public.xp_history, public.salespeople, public.update_updated_at_column, update_salesperson_xp_updated_at
 
-### Community 756 - "20251214012659_3118d383-73c6-4815-a245-4105e62cb87b.sql"
+### Community 755 - "20251214012659_3118d383-73c6-4815-a245-4105e62cb87b.sql"
 Cohesion: 0.40
 Nodes (5): public.clients, public.products, public.update_updated_at_column, update_clients_updated_at, update_products_updated_at
 
-### Community 757 - "public.deal_chat_history"
+### Community 756 - "public.deal_chat_history"
 Cohesion: 0.47
 Nodes (5): idx_deal_chat_history_created_at, idx_deal_chat_history_deal_id, public.deal_chat_history, public.sales, public.salespeople
 
-### Community 758 - "20251231125636_26067a0b-d8f7-4c1e-9081-28906716994d.sql"
+### Community 757 - "20251231125636_26067a0b-d8f7-4c1e-9081-28906716994d.sql"
 Cohesion: 0.73
 Nodes (5): public.get_user_permissions(), public.has_permission(), public.permissions, public.role_permissions, user_roles
 
-### Community 759 - "public.quotes"
+### Community 758 - "public.quotes"
 Cohesion: 0.33
 Nodes (5): public.quotes, public.sales, public.salespeople, public.update_updated_at_column, update_quotes_updated_at
 
-### Community 760 - "20260317184958_063ceb86-e16c-46bd-9b5c-abfe93a6ba14.sql"
+### Community 759 - "20260317184958_063ceb86-e16c-46bd-9b5c-abfe93a6ba14.sql"
 Cohesion: 0.47
 Nodes (5): public.dashboard_layouts, public.email_tracking_events, public.workflow_rules, public.sales, public.salespeople
 
-### Community 761 - "20260330160529_7fb0479f-39a2-452b-9254-65b7714d38d1.sql"
+### Community 760 - "20260330160529_7fb0479f-39a2-452b-9254-65b7714d38d1.sql"
 Cohesion: 0.40
 Nodes (5): check_mood_value, public.mood_entries, public, public.salespeople, validate_mood_value()
 
-### Community 762 - "20260330181929_7bd6f520-5bb7-4669-b3bd-5fa7d2af218b.sql"
+### Community 761 - "20260330181929_7bd6f520-5bb7-4669-b3bd-5fa7d2af218b.sql"
 Cohesion: 0.47
 Nodes (5): public.combo_tracking, public.league_members, public.leagues, public, public.salespeople
 
-### Community 763 - "20260416104458_a8fc916a-0907-4aa4-92a7-42a4bf4ed461.sql"
+### Community 762 - "20260416104458_a8fc916a-0907-4aa4-92a7-42a4bf4ed461.sql"
 Cohesion: 0.47
 Nodes (5): idx_pipeline_stages_pipeline_id, idx_sales_pipeline_id, public.pipeline_stages, public.pipelines, public.sales
 
-### Community 764 - "public.nps_surveys"
+### Community 763 - "public.nps_surveys"
 Cohesion: 0.47
 Nodes (5): idx_nps_surveys_sale_id, idx_nps_surveys_salesperson_id, public.nps_surveys, public.sales, public.salespeople
 
-### Community 765 - "20260418113523_148a16ea-d7a6-46cf-9ffc-ef8c5560b462.sql"
+### Community 764 - "20260418113523_148a16ea-d7a6-46cf-9ffc-ef8c5560b462.sql"
 Cohesion: 0.47
 Nodes (5): idx_ccm_health_calc, idx_ccm_recording, public.call_conversation_metrics, public.call_metric_benchmarks, public.call_recordings
 
-### Community 766 - "public.user_app_settings"
+### Community 765 - "public.user_app_settings"
 Cohesion: 0.40
 Nodes (5): idx_user_app_settings_user_key, public.user_app_settings, auth.users, public.update_updated_at_column, user_app_settings_touch_updated_at
 
-### Community 767 - "20260508113718_7744bc51-2cd5-4750-968f-870bab57625d.sql"
+### Community 766 - "20260508113718_7744bc51-2cd5-4750-968f-870bab57625d.sql"
 Cohesion: 0.33
 Nodes (4): public.commercial_approval_requests, public.salesperson_commission_configs, auth.users, public.salespeople
 
-### Community 768 - "20260508140136_6cd38f9d-2630-4357-a3b8-ea51ad311a1f.sql"
+### Community 767 - "20260508140136_6cd38f9d-2630-4357-a3b8-ea51ad311a1f.sql"
 Cohesion: 0.33
 Nodes (4): public.cadence_funnel_rules, public.cadences, public.update_updated_at_column, update_cadence_funnel_rules_updated_at
 
-### Community 769 - "20260511203820_d51ad6cb-e025-448f-a7fb-6ae7ed0e13c3.sql"
+### Community 768 - "20260511203820_d51ad6cb-e025-448f-a7fb-6ae7ed0e13c3.sql"
 Cohesion: 0.33
 Nodes (5): public.calculate_lead_distribution(), public.lead_churn_risk, public.lead_intelligence_metrics, public.lead_scores, public.sales
 
-### Community 770 - "20260512135333_6f3119ea-d7e7-4507-a613-fd6b5d04ae74.sql"
+### Community 769 - "20260512135333_6f3119ea-d7e7-4507-a613-fd6b5d04ae74.sql"
 Cohesion: 0.47
 Nodes (4): idx_quotes_external_quote_id, idx_quotes_status, idx_quotes_valid_until, public.quotes
 
-### Community 771 - "public.account_plans"
+### Community 770 - "public.account_plans"
 Cohesion: 0.33
 Nodes (5): public.account_plans, auth.users, public.accounts, public.update_updated_at_column, update_account_plans_updated_at
+
+### Community 771 - "public.fn_convert_quote_to_sale"
+Cohesion: 0.33
+Nodes (5): public.fn_convert_quote_to_sale(), public.orders, public.quote_items, public.quotes, public.salespeople
 
 ### Community 772 - "public.fn_convert_quote_to_sale"
 Cohesion: 0.33
@@ -4401,49 +4412,49 @@ Nodes (5): public.fn_convert_quote_to_sale(), public.orders, public.quote_items,
 Cohesion: 0.33
 Nodes (5): public.fn_convert_quote_to_sale(), public.orders, public.quote_items, public.quotes, public.salespeople
 
-### Community 775 - "public.fn_convert_quote_to_sale"
-Cohesion: 0.33
-Nodes (5): public.fn_convert_quote_to_sale(), public.orders, public.quote_items, public.quotes, public.salespeople
-
-### Community 776 - "public.v_quote_to_sale_invariants"
+### Community 775 - "public.v_quote_to_sale_invariants"
 Cohesion: 0.33
 Nodes (5): public.v_quote_to_sale_invariants, public.orders, public.orders_conversion_seq, public.quotes, public.sales
 
-### Community 777 - "20260715185200_9fc1d221-0437-4d45-a3fb-cb782be8c945.sql"
+### Community 776 - "20260715185200_9fc1d221-0437-4d45-a3fb-cb782be8c945.sql"
 Cohesion: 0.40
 Nodes (5): idx_sales_status_created_at_desc, idx_tasks_created_at, idx_tasks_salesperson_created_at, public.sales, public.tasks
 
-### Community 778 - "20260723121427_efc04139-5ade-4a2c-8afb-300dc30157c4.sql"
+### Community 777 - "20260723121427_efc04139-5ade-4a2c-8afb-300dc30157c4.sql"
 Cohesion: 0.47
 Nodes (5): idx_pab_salesperson_date_desc, public.personal_assistant_briefings, public.update_updated_at_column, trg_pab_updated_at, uq_pab_salesperson_date
+
+### Community 778 - "public.sync_battle_score"
+Cohesion: 0.33
+Nodes (5): public.sync_battle_score(), public.activities, public.battle_participants, public.sales, public.sales_battles
 
 ### Community 779 - "public.sync_battle_score"
 Cohesion: 0.33
 Nodes (5): public.sync_battle_score(), public.activities, public.battle_participants, public.sales, public.sales_battles
 
-### Community 780 - "public.sync_battle_score"
-Cohesion: 0.33
-Nodes (5): public.sync_battle_score(), public.activities, public.battle_participants, public.sales, public.sales_battles
-
-### Community 781 - "public.v_quote_to_sale_invariants"
+### Community 780 - "public.v_quote_to_sale_invariants"
 Cohesion: 0.33
 Nodes (5): public.v_quote_to_sale_invariants, public.orders, public.orders_conversion_seq, public.quotes, public.sales
 
-### Community 782 - "public.has_phone_consent"
+### Community 781 - "public.has_phone_consent"
 Cohesion: 0.40
 Nodes (5): public.has_phone_consent(), public.is_recipient_opted_out(), public.account_contacts, public.clients, public.consent_records
 
-### Community 783 - "public.create_agent_run"
+### Community 782 - "public.create_agent_run"
 Cohesion: 0.33
 Nodes (5): public.create_agent_run(), public.activities, public.client_portfolio, public.clients, public.sales
 
-### Community 784 - "20261125100000_cron_job_run_details_sem_seq_scan.sql"
+### Community 783 - "20261125100000_cron_job_run_details_sem_seq_scan.sql"
 Cohesion: 0.40
 Nodes (4): public.cron_job_last_run, public.cron_job_last_run_cursor, public.refresh_cron_job_last_run(), cron.job_run_details
 
-### Community 785 - "Banco oficial e conectores MCP — Promo_Champions_V2.1"
+### Community 784 - "Banco oficial e conectores MCP — Promo_Champions_V2.1"
 Cohesion: 0.40
 Nodes (4): Banco oficial e conectores MCP — Promo_Champions_V2.1, Bancos que NÃO são deste projeto, Identidade do banco, Regras de migration (cópia integral)
+
+### Community 785 - "GitHub (perímetro, CI, workflows) — referência para agentes"
+Cohesion: 0.40
+Nodes (4): Escrita no GitHub, GitHub (perímetro, CI, workflows) — referência para agentes, Guards que você pode rodar antes do PR, Perímetro — estado medido (não há guard automático que compare isso)
 
 ### Community 786 - "Vercel e deploy — referência para agentes"
 Cohesion: 0.40
@@ -4489,49 +4500,49 @@ Nodes (5): 5.1 Orçamentos (`/orcamentos` — `Orcamentos.tsx`), 5.2 Assinatura 
 Cohesion: 0.40
 Nodes (5): 12.1 Analytics (`/analytics`), 12.2 BI SDR (`/bi-sdr`), 12.3 BI Closer (`/bi-closer`), 12.4 BI Gestão (`/bi-gestor`), 12. Analytics & BI
 
-### Community 797 - "🚀 Módulos World-Class (10/10)"
-Cohesion: 0.40
-Nodes (5): 🏢 Account-Based Selling (`/abm`), 🧠 Análise Comportamental Automática (DISC + EQ + Vieses), 🎙️ Conversational Intelligence (`/conversational-intelligence`), 🚀 Módulos World-Class (10/10), 📈 Revenue Intelligence (`/revenue-intelligence`) — Manager
-
-### Community 798 - "✅ AUDITORIA DE IMPLEMENTAÇÃO (2026-03-15)"
+### Community 797 - "✅ AUDITORIA DE IMPLEMENTAÇÃO (2026-03-15)"
 Cohesion: 0.40
 Nodes (5): ✅ AUDITORIA DE IMPLEMENTAÇÃO (2026-03-15), Edge Functions (26 verificadas), Hooks Customizados (100+ verificados), Quick Wins (5/5), 🏆 RESULTADO FINAL DA AUDITORIA (2026-03-15)
 
-### Community 799 - "Execução Graphify — lote B: integridade, multigrafo e contratos estáticos"
+### Community 798 - "Execução Graphify — lote B: integridade, multigrafo e contratos estáticos"
 Cohesion: 0.40
 Nodes (4): Cenários simulados e resultados, Entregas, Execução Graphify — lote B: integridade, multigrafo e contratos estáticos, Limites que permanecem
 
-### Community 800 - "Execução Graphify — lote C: adaptador de catálogo descartável"
+### Community 799 - "Execução Graphify — lote C: adaptador de catálogo descartável"
 Cohesion: 0.40
 Nodes (4): Entregas, Execução Graphify — lote C: adaptador de catálogo descartável, Limites, Simulações
 
-### Community 801 - "Execução Graphify — lote D: integridade do escopo"
+### Community 800 - "Execução Graphify — lote D: integridade do escopo"
 Cohesion: 0.40
 Nodes (4): Correções verificadas, Execução Graphify — lote D: integridade do escopo, Limite remanescente, Simulações
 
-### Community 802 - "9. Protocolo de banco de dados"
+### Community 801 - "9. Protocolo de banco de dados"
 Cohesion: 0.40
 Nodes (5): 9. Protocolo de banco de dados, Diagnóstico somente leitura, Execução autorizada, Migrations, Pacote `AUTH-DB`
 
-### Community 803 - "_linha-de-base.md"
+### Community 802 - "_linha-de-base.md"
 Cohesion: 0.40
 Nodes (4): Backlog de governança (itens já decididos, aguardando execução), Comandos de verificação usados, Erros herdados conhecidos (NÃO são regressão desta base), Inventário do sistema (HEAD `7bf29f5`)
 
-### Community 804 - "CR-35 — Falha de integração é invisível"
+### Community 803 - "CR-35 — Falha de integração é invisível"
 Cohesion: 0.40
 Nodes (5): A-104 · [Alta] O cron nunca vê o resultado da função que chama, A-105 · [Alta] "Reprocessar" anuncia sucesso e não reenvia o evento esgotado, A-106 · [Média] Bitrix24 sincroniza de hora em hora e nenhuma falha é alertada, A-107 · [Média] A escalação de alerta crítico usa o remetente de testes do provedor, CR-35 — Falha de integração é invisível
 
-### Community 805 - "CR-39 — O vocabulário de status não é o mesmo em todas as camadas"
+### Community 804 - "CR-39 — O vocabulário de status não é o mesmo em todas as camadas"
 Cohesion: 0.40
 Nodes (5): A-124 · [Crítica] Arrastar o card para "Arquivado" registra a venda como ganha, gera comissão e XP, A-125 · [Crítica] Cotação expirada vira venda ganha por um caminho, e venda ganha é rebaixada por outro, A-126 · [Média] `quotes.status` é texto livre, fora da máquina de estados, A-127 · [Média] Vendas com dois dos status de ganho somem do LTV por segmento, CR-39 — O vocabulário de status não é o mesmo em todas as camadas
 
-### Community 806 - "CR-42 — Controle que a tela promete e o sistema não aplica"
+### Community 805 - "CR-42 — Controle que a tela promete e o sistema não aplica"
 Cohesion: 0.40
 Nodes (5): A-134 · [Alta] Três dos quatro pipelines não movem nenhum card, A-135 · [Alta] As regras de aprovação são configuráveis, aparecem na tela e nunca são aplicadas, A-136 · [Alta] Aprovação comercial marca "aprovado" mesmo quando a mudança não foi aplicada, A-137 · [Alta] Funções do banco deixam o vendedor conceder a si mesmo XP, sequência e progresso de meta, CR-42 — Controle que a tela promete e o sistema não aplica
 
-### Community 807 - "CR-43 — Agregados que somam o que não deve ser somado"
+### Community 806 - "CR-43 — Agregados que somam o que não deve ser somado"
 Cohesion: 0.40
 Nodes (5): A-138 · [Média] "Markup médio" é média simples de percentuais, A-139 · [Média] O total de premiações soma reais com percentuais, A-140 · [Baixa] O "Total Geral" de comissões do vendedor inclui as canceladas, A-141 · [Média] O simulador de ganhos mostra números inventados com selo de real, CR-43 — Agregados que somam o que não deve ser somado
+
+### Community 807 - "CR-9 — O portão de qualidade não segura o que promete"
+Cohesion: 0.40
+Nodes (5): A-16 · [Média] Migrations datadas no futuro travam qualquer mudança de banco até 25/11, A-17 · [Alta] O único check obrigatório cobre 4 jobs de 19, A-18 · [Média] Job cancelado conta como aprovado, A-24 · [Alta] 26 dos 49 testes de ponta a ponta nunca rodam, inclusive as provas de isolamento por papel, CR-9 — O portão de qualidade não segura o que promete
 
 ### Community 808 - "CR-13 — `verify_jwt = true` foi confiado como se autenticasse"
 Cohesion: 0.40
@@ -4545,9 +4556,9 @@ Nodes (5): A-36 · [Baixa] A regra do `service_role` é contornada em 90 de 142 
 Cohesion: 0.40
 Nodes (5): A-67 · [Alta] SDR e Closer veem atalhos que sempre terminam em "Acesso Negado", A-68 · [Média] O modo "Gestão" do menu é escolhido pelo navegador, sem checar papel, A-69 · [Média] Nove telas rotuladas "Administração" também aceitam gestor, A-70 · [Alta] No celular o administrador não alcança nenhuma tela de administração, CR-24 — O menu e a regra de permissão discordam entre si
 
-### Community 811 - "Monitoramento Externo de Uptime"
+### Community 811 - "CR-29 — Filtros e páginas públicas que escondem dado"
 Cohesion: 0.40
-Nodes (5): Alertas, Monitoramento Externo de Uptime, Monitores a cadastrar (intervalo 60s), Runbook quando o externo dispara, Verificação do monitor
+Nodes (5): A-80 · [Baixa] Comissão sem nome de vendedor desaparece da tela de aprovação, A-81 · [Média] A página pública da corrida não mostra nada para quem não está logado, A-83 · [Baixa] Assinatura digital: ação principal é um esboço, e quem precisa não abre a página, A-84 · [Baixa] Duas listas manuais de pré-carregamento de rota e um componente órfão, CR-29 — Filtros e páginas públicas que escondem dado
 
 ### Community 812 - "Deploy"
 Cohesion: 0.40
@@ -4557,625 +4568,677 @@ Nodes (5): Deploy, Deploy de Edge Functions, Deploy Padrão (via Vercel — atua
 Cohesion: 0.40
 Nodes (4): Como rodar, Garantias e limites, Smoke Test do Backend de Destino (pós-migração), Testes unitários dos helpers
 
-### Community 814 - "inventario/estado/README.md"
+### Community 814 - "12. Troubleshooting"
+Cohesion: 0.40
+Nodes (5): 12. Troubleshooting, Dashboard vazio (nenhuma query registrada), Gráficos não aparecem, Insert de telemetria falhando, Performance do dashboard
+
+### Community 815 - "9. Suíte de Testes"
+Cohesion: 0.40
+Nodes (5): 9. Suíte de Testes, Executar Todos os Testes, Padrão de Teste: Componentes React, Padrão de Teste: Lógica Pura, Visão Geral
+
+### Community 816 - "inventario/estado/README.md"
 Cohesion: 0.40
 Nodes (3): Como ler `banco.json`, Estado real do projeto — inventário gerado, inventario — estado real do sistema para agentes de IA
 
-### Community 815 - "extensions.rollback_extension_migration"
+### Community 817 - "overrides"
+Cohesion: 0.40
+Nodes (5): overrides, postcss-selector-parser, uuid, workbox-build, glob
+
+### Community 818 - "extensions.rollback_extension_migration"
 Cohesion: 0.40
 Nodes (4): pg_extension, pg_namespace, extensions.rollback_extension_migration(), public.migration_log
 
-### Community 816 - "public.ai_agent_runs"
+### Community 819 - "public.ai_agent_runs"
 Cohesion: 0.60
 Nodes (4): public.ai_agent_runs, public.append_agent_step(), public.approve_agent_run(), public.complete_agent_run()
 
-### Community 817 - "20261112140100_activities_remove_triggers_audit_legados.sql"
+### Community 820 - "20261112140100_activities_remove_triggers_audit_legados.sql"
 Cohesion: 0.40
 Nodes (4): public.audit_log_row_change, audit_activities_trigger, audit_business_changes, public.audit_activity_changes
 
-### Community 818 - "20260511203112_2dd0b918-e14b-411d-bfd7-1c4018d0432d.sql"
+### Community 821 - "20260511203112_2dd0b918-e14b-411d-bfd7-1c4018d0432d.sql"
 Cohesion: 0.50
 Nodes (4): public.fn_calculate_icp_score, public.fn_calculate_icp_score(), public.icp_parameters, trig_update_icp_score
 
-### Community 820 - "20260511142015_6c8cb361-ec2c-4387-9718-d90205a9fb1b.sql"
+### Community 823 - "20260511142015_6c8cb361-ec2c-4387-9718-d90205a9fb1b.sql"
 Cohesion: 0.50
 Nodes (3): public.handle_audit_logging, audit_sales_changes, audit_tasks_changes
 
-### Community 821 - "public.query_telemetry"
+### Community 824 - "public.query_telemetry"
 Cohesion: 0.60
 Nodes (4): public.query_telemetry, idx_query_telemetry_created_at, idx_query_telemetry_severity, idx_query_telemetry_table
 
-### Community 822 - "public.sync_territory_ownership"
+### Community 825 - "public.sync_territory_ownership"
 Cohesion: 0.40
 Nodes (4): public.sales_territories, public.sync_territory_ownership(), public.sales, public.territories
 
-### Community 823 - "20260512134826_aafe105e-6916-46dd-8bca-e3222480ef9c.sql"
+### Community 826 - "20260512134826_aafe105e-6916-46dd-8bca-e3222480ef9c.sql"
 Cohesion: 0.40
 Nodes (3): public.sync_quote_to_sale_status, public.quote_sync_logs, tr_sync_quote_to_sale
 
-### Community 825 - "public.webhook_inbound_log"
+### Community 828 - "public.webhook_inbound_log"
 Cohesion: 0.60
 Nodes (4): public.webhook_inbound_log, idx_webhook_inbound_log_correlation_key, idx_webhook_inbound_log_received_at, idx_webhook_inbound_log_source_outcome_time
 
-### Community 826 - "k6-smoke.js"
+### Community 829 - "k6-smoke.js"
 Cohesion: 0.40
 Nodes (4): ref_k6, EDGE_FUNCTIONS, options, unexpectedStatus
 
-### Community 827 - "12. Sessão 5 (2026-10-22) — fix(db) clients.active + fix(deps) dompurify + docs §11.3"
+### Community 830 - "11. Sessão 4 (2026-10-22) — fix(db): guards de coluna na migration 20261014000002"
+Cohesion: 0.40
+Nodes (5): 11.1 Correção aplicada, 11.2 Anti-regressão — baseline × após commits (sessão 5), 11.3 Estado dos checks no PR #319 (commit `8079131`) — 2026-10-22T19:31Z, 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`), 11. Sessão 4 (2026-10-22) — fix(db): guards de coluna na migration 20261014000002
+
+### Community 831 - "12. Sessão 5 (2026-10-22) — fix(db) clients.active + fix(deps) dompurify + docs §11.3"
 Cohesion: 0.40
 Nodes (5): 12.1 Correções aplicadas, 12.2 Baseline local — executado em HEAD `869e299` (2026-10-22T19:50Z), 12.3 Checks CI no PR #319 HEAD `869e299` — conclusão confirmada 2026-10-22T19:55Z, 12.4 Inventário completo da main — estado esperado pós-merge PR #319, 12. Sessão 5 (2026-10-22) — fix(db) clients.active + fix(deps) dompurify + docs §11.3
 
-### Community 828 - "§12.6 — Sessão 6: baseline local + despachos confirmando bloqueios externos (2026-10-22)"
+### Community 832 - "§12.6 — Sessão 6: baseline local + despachos confirmando bloqueios externos (2026-10-22)"
 Cohesion: 0.40
 Nodes (5): §12.6 — Sessão 6: baseline local + despachos confirmando bloqueios externos (2026-10-22), Baseline local no HEAD `75e34f69` (sessão 6), Despachos manuais (prova de bloqueio externo), Inventário is:failure atualizado — SHA `75e34f69`, Runs disparados pelo push do PR #320 (SHA `75e34f69`)
 
-### Community 829 - "run-sql-tests.sh"
+### Community 833 - "lint-input-validation.ts"
+Cohesion: 0.60
+Nodes (4): FnScan, loadAllowlist(), main(), scanFunctions()
+
+### Community 834 - "run-sql-tests.sh"
 Cohesion: 0.70
 Nodes (4): remote_checks(), remote_suite_psql(), run-sql-tests.sh script, static_checks()
 
-### Community 830 - "DashboardSection.tsx"
-Cohesion: 0.70
-Nodes (4): DashboardSection(), DashboardSectionProps, getPersistedStates(), persistSectionState()
-
-### Community 831 - "SalesMarkupTrendChart.tsx"
-Cohesion: 0.60
-Nodes (4): CustomTooltip(), Props, SalesMarkupTrendChart(), MarkupPoint
-
-### Community 832 - "draftMigration.test.ts"
-Cohesion: 0.40
-Nodes (3): EMPTY_DRAFT, LEGACY_DRAFT, REAL_DRAFT
-
-### Community 833 - "callFeedbackService.ts"
-Cohesion: 0.50
-Nodes (3): callFeedbackService, fromMock, insertMock
-
-### Community 834 - "public.entity_versions"
+### Community 835 - "public.entity_versions"
 Cohesion: 0.60
 Nodes (4): idx_versions_date, idx_versions_entity, public.entity_versions, auth.users
 
-### Community 835 - "20251212201120_b81a2517-fcbe-47dd-abb5-ef80c7baf4ab.sql"
+### Community 836 - "20251212201120_b81a2517-fcbe-47dd-abb5-ef80c7baf4ab.sql"
 Cohesion: 0.50
 Nodes (4): public.sales_goals, public.salespeople, public.update_updated_at_column, update_salespeople_updated_at
 
-### Community 836 - "20251213112502_edf404a2-6f3f-4337-90ed-edf6d391bceb.sql"
+### Community 837 - "20251213112502_edf404a2-6f3f-4337-90ed-edf6d391bceb.sql"
 Cohesion: 0.40
 Nodes (4): public.lead_scores, public.sales, public.update_updated_at_column, update_lead_scores_updated_at
 
-### Community 837 - "20251213124609_9d267bf3-6850-4109-8709-b4a7065de928.sql"
+### Community 838 - "20251213124609_9d267bf3-6850-4109-8709-b4a7065de928.sql"
 Cohesion: 0.40
 Nodes (4): public.activity_goals, public.salespeople, public.update_updated_at_column, update_activity_goals_updated_at
 
-### Community 838 - "20251214170231_bc7e9f48-3331-445c-b4a6-4deab326cb28.sql"
+### Community 839 - "20251214170231_bc7e9f48-3331-445c-b4a6-4deab326cb28.sql"
 Cohesion: 0.70
 Nodes (4): idx_circuit_breaker_events_circuit_name, idx_circuit_breaker_events_created_at, idx_circuit_breaker_events_event_type, public.circuit_breaker_events
 
-### Community 839 - "20251214213427_7cc1560e-eeac-4425-a7e7-20bf56cc21a1.sql"
+### Community 840 - "20251214213427_7cc1560e-eeac-4425-a7e7-20bf56cc21a1.sql"
 Cohesion: 0.70
 Nodes (4): idx_email_logs_created_at, idx_email_logs_function_name, idx_email_logs_status, public.email_logs
 
-### Community 840 - "20251220151233_db2268bd-0f54-4da8-8433-99249eae31c0.sql"
+### Community 841 - "20251220151233_db2268bd-0f54-4da8-8433-99249eae31c0.sql"
 Cohesion: 0.40
 Nodes (4): public.push_subscriptions, auth.users, public.update_updated_at_column, update_push_subscriptions_updated_at
 
-### Community 841 - "20260103201133_44db697a-4db6-4a32-9d5f-434672cac928.sql"
+### Community 842 - "20260103201133_44db697a-4db6-4a32-9d5f-434672cac928.sql"
 Cohesion: 0.40
 Nodes (4): public.salesperson_preferences, public.salespeople, public.update_updated_at_column, update_salesperson_preferences_updated_at
 
-### Community 842 - "user_2fa"
+### Community 843 - "user_2fa"
 Cohesion: 0.60
 Nodes (4): idx_user_2fa_enabled, idx_user_2fa_user_id, auth.users, user_2fa
 
-### Community 843 - "20260404154431_3b3a3256-8798-4d00-baf9-b4ded08b6100.sql"
+### Community 844 - "20260404154431_3b3a3256-8798-4d00-baf9-b4ded08b6100.sql"
 Cohesion: 0.70
 Nodes (4): idx_error_logs_category, idx_error_logs_created_at, idx_error_logs_severity, public.error_logs
 
-### Community 844 - "20260416182649_6e133557-89ac-41bc-b1b9-0f6b89b01f1c.sql"
+### Community 845 - "20260416182649_6e133557-89ac-41bc-b1b9-0f6b89b01f1c.sql"
 Cohesion: 0.50
 Nodes (3): idx_products_category_trgm, idx_products_name_trgm, public.products
 
-### Community 845 - "public.report_embed_tokens"
+### Community 846 - "public.report_embed_tokens"
 Cohesion: 0.60
 Nodes (4): idx_report_embed_tokens_report_id, idx_report_embed_tokens_token, public.report_embed_tokens, public.custom_reports
 
-### Community 846 - "public.create_activities_from_action_items"
+### Community 847 - "public.create_activities_from_action_items"
 Cohesion: 0.50
 Nodes (4): public.create_activities_from_action_items(), public.update_call_recording_summary(), public.activities, public.call_recordings
 
-### Community 847 - "public.call_sentiment_timeline"
+### Community 848 - "public.call_sentiment_timeline"
 Cohesion: 0.60
 Nodes (4): idx_sentiment_timeline_recording, public.call_sentiment_summary, public.call_sentiment_timeline, public.call_recordings
 
-### Community 848 - "public.race_leaderboard_view"
+### Community 849 - "public.race_leaderboard_view"
 Cohesion: 0.40
 Nodes (4): public.race_leaderboard_view, public.race_seasons, public.sales, public.salespeople
 
-### Community 849 - "public.ranking_notifications"
+### Community 850 - "public.ranking_notifications"
 Cohesion: 0.60
 Nodes (4): idx_ranking_notif_salesperson, idx_ranking_notif_unread, public.ranking_notifications, public.salespeople
 
-### Community 850 - "20260419022222_1e3af362-5ee7-465a-b3a4-247f2c0611f1.sql"
+### Community 851 - "20260419022222_1e3af362-5ee7-465a-b3a4-247f2c0611f1.sql"
 Cohesion: 0.50
 Nodes (4): idx_race_user_preferences_user, public.race_user_preferences, public.update_updated_at_column, trg_race_user_preferences_updated_at
 
-### Community 851 - "public.enroll_quote_in_cadence"
+### Community 852 - "public.enroll_quote_in_cadence"
 Cohesion: 0.40
 Nodes (4): public.enroll_quote_in_cadence(), public.cadence_steps, public.quotes, public.salespeople
 
-### Community 852 - "20260420210849_5e5fd280-33bb-4015-9d44-9aea02b83b83.sql"
+### Community 853 - "20260420210849_5e5fd280-33bb-4015-9d44-9aea02b83b83.sql"
 Cohesion: 0.50
 Nodes (3): idx_wl_insight_comments_insight, public.win_loss_insight_comments, public.win_loss_insights
 
-### Community 853 - "public.winloss_webhook_deliveries"
+### Community 854 - "public.winloss_webhook_deliveries"
 Cohesion: 0.60
 Nodes (4): idx_winloss_webhook_deliveries_event, idx_winloss_webhook_deliveries_sub, public.winloss_webhook_deliveries, public.winloss_webhook_subscriptions
 
-### Community 854 - "public.winloss_webhook_alerts"
+### Community 855 - "public.winloss_webhook_alerts"
 Cohesion: 0.60
 Nodes (4): idx_winloss_webhook_alerts_fired_at, idx_winloss_webhook_alerts_sub, public.winloss_webhook_alerts, public.winloss_webhook_subscriptions
 
-### Community 855 - "20260422161607_7cfce110-f9a6-493a-b035-44ddfffda298.sql"
+### Community 856 - "20260422161607_7cfce110-f9a6-493a-b035-44ddfffda298.sql"
 Cohesion: 0.40
 Nodes (4): idx_winloss_webhook_alerts_request_id, idx_winloss_webhook_dlq_last_replay_request_id, public.winloss_webhook_alerts, public.winloss_webhook_dead_letters
 
-### Community 856 - "20260422165926_54a42181-7747-49b1-a67d-8627e2e4ace2.sql"
+### Community 857 - "20260422165926_54a42181-7747-49b1-a67d-8627e2e4ace2.sql"
 Cohesion: 0.70
 Nodes (4): idx_wh_replay_inv_actor, idx_wh_replay_inv_created, idx_wh_replay_inv_request, public.winloss_webhook_replay_invocations
 
-### Community 857 - "public.follow_up_audit_logs"
+### Community 858 - "public.follow_up_audit_logs"
 Cohesion: 0.40
 Nodes (4): public.follow_up_audit_logs, public.follow_up_settings, auth.users, public.sales
 
-### Community 858 - "20260508143713_3072990b-098d-4ce2-83af-b83c9bfd7bed.sql"
+### Community 859 - "20260508143713_3072990b-098d-4ce2-83af-b83c9bfd7bed.sql"
 Cohesion: 0.40
 Nodes (4): idx_cadence_outcome_rules_outcome, idx_intent_audit_logs_lead_id, public.cadence_outcome_rules, public.intent_audit_logs
 
-### Community 859 - "20260509115652_088f7d98-dabd-43e6-b438-b1e778e04fac.sql"
+### Community 860 - "20260509115652_088f7d98-dabd-43e6-b438-b1e778e04fac.sql"
 Cohesion: 0.70
 Nodes (4): idx_integration_logs_status, idx_integration_logs_timestamp, idx_integration_logs_type, public.integration_logs
 
-### Community 860 - "20260511191606_e5367d8a-02a8-4386-ab33-15d3e47a2342.sql"
+### Community 861 - "20260511191606_e5367d8a-02a8-4386-ab33-15d3e47a2342.sql"
 Cohesion: 0.50
 Nodes (4): public.forecast_accuracy, public.forecast_snapshots, public.reconcile_forecast_accuracy(), sales
 
-### Community 861 - "public.quote_items"
+### Community 862 - "public.quote_items"
 Cohesion: 0.50
 Nodes (4): public.pricing_rules, public.quote_items, public.products, public.quotes
 
-### Community 863 - "public.whatsapp_conversations"
+### Community 864 - "public.whatsapp_conversations"
 Cohesion: 0.50
 Nodes (4): public.ai_sales_insights, public.whatsapp_conversations, auth.users, public.sales
 
-### Community 864 - "20260619183452_9f6193ae-9180-49c1-adc4-786bce4c64ca.sql"
+### Community 865 - "20260619183452_9f6193ae-9180-49c1-adc4-786bce4c64ca.sql"
 Cohesion: 0.70
 Nodes (4): idx_web_vitals_created_at, idx_web_vitals_route_metric_created, public.web_vitals_p75_last7d, public.web_vitals_samples
 
-### Community 865 - "20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f.sql"
+### Community 866 - "20260706211149_514488f9-74ea-402d-bfc2-4d30ee7ef21f.sql"
 Cohesion: 0.70
 Nodes (4): idx_qs_inbound_log_correlation, idx_qs_inbound_log_received_at, idx_qs_inbound_log_status, public.quote_sync_inbound_log
 
-### Community 866 - "20260706222315_b970d946-38ec-491c-bac6-5a86d333fcf4.sql"
+### Community 867 - "20260706222315_b970d946-38ec-491c-bac6-5a86d333fcf4.sql"
 Cohesion: 0.50
 Nodes (4): idx_maintenance_log_job_started, public.fn_cleanup_webhook_dedupe(), public.maintenance_log, public.webhook_inbound_dedupe
 
-### Community 867 - "20260712214818_6474e22f-a332-4b40-928d-0e4b1c15ea6d.sql"
+### Community 868 - "20260712214818_6474e22f-a332-4b40-928d-0e4b1c15ea6d.sql"
 Cohesion: 0.60
 Nodes (3): idx_cron_failure_alerts_alerted_at, public.cron_failure_alerts, public.fn_admin_get_new_cron_failures()
 
-### Community 868 - "public.detect_stalled_cron_jobs"
+### Community 869 - "public.detect_stalled_cron_jobs"
 Cohesion: 0.40
 Nodes (4): public.detect_stalled_cron_jobs(), cron.job, cron.job_run_details, public.cron_failure_alerts
 
-### Community 869 - "20260723172148_0351fc97-c155-4187-9650-3494c0c2fd87.sql"
+### Community 870 - "20260723172148_0351fc97-c155-4187-9650-3494c0c2fd87.sql"
 Cohesion: 0.60
 Nodes (4): idx_sales_cost_source, idx_sales_markup_pct, public.sales_with_markup, public.sales
 
-### Community 870 - "20260726200015_4da82c03-38f9-4478-b6f8-5ba0e25d9cbe.sql"
+### Community 871 - "20260726200015_4da82c03-38f9-4478-b6f8-5ba0e25d9cbe.sql"
 Cohesion: 0.60
 Nodes (3): public.email_opt_outs, public.is_email_opted_out(), uq_email_opt_outs_email
 
-### Community 871 - "public.get_campaign_delivery_stats"
+### Community 872 - "public.get_campaign_delivery_stats"
 Cohesion: 0.50
 Nodes (4): idx_email_bulk_drafts_job_sent_at, public.get_campaign_delivery_stats(), public.email_bulk_drafts, public.email_bulk_jobs
 
-### Community 872 - "public.sync_quote_from_webhook"
+### Community 873 - "public.sync_quote_from_webhook"
 Cohesion: 0.40
 Nodes (4): public.sync_quote_from_webhook(), public.external_seller_map, public.products, public.quotes
 
-### Community 874 - "20261005160000_restrict_role_helpers_to_self.sql"
+### Community 875 - "20261005160000_restrict_role_helpers_to_self.sql"
 Cohesion: 0.60
 Nodes (4): public.get_user_role(), public.has_role(), public.is_admin_or_manager(), public.user_roles
 
-### Community 875 - "private.update_territory_conquests"
+### Community 876 - "private.update_territory_conquests"
 Cohesion: 0.40
 Nodes (4): private.update_territory_conquests(), public.sales, public.territories, top_revenue
 
-### Community 876 - "public.auto_pause_enrollment"
+### Community 877 - "public.auto_pause_enrollment"
 Cohesion: 0.40
 Nodes (3): public.auto_pause_enrollment(), public.sequence_enrollments, public.sequences
 
-### Community 878 - "Promo Champions V2.1 — convenções"
+### Community 879 - "mobile-auth-smoke.spec.ts"
+Cohesion: 0.40
+Nodes (3): mobileDevices, MOCK_SESSION, MOCK_USER
+
+### Community 880 - "Promo Champions V2.1 — convenções"
 Cohesion: 0.50
 Nodes (3): Commits, Código, Promo Champions V2.1 — convenções
 
-### Community 879 - "Fontes Examinadas"
+### Community 881 - "Fontes Examinadas"
 Cohesion: 0.50
 Nodes (3): Fontes Acessíveis, Fontes Examinadas, Fontes Inacessíveis
 
-### Community 880 - "public.process_lead_intent_event"
+### Community 882 - "public.process_lead_intent_event"
 Cohesion: 0.50
 Nodes (3): cadence_funnel_rules, prospect_cadences, public.process_lead_intent_event()
 
-### Community 881 - "2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)"
-Cohesion: 0.50
-Nodes (4): 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90), 🔧 CI/Tooling, 🔒 Segurança, 🧪 Testes
-
-### Community 882 - "graphify reference: add a URL and watch a folder"
+### Community 883 - "graphify reference: add a URL and watch a folder"
 Cohesion: 0.50
 Nodes (3): For /graphify add, For --watch, graphify reference: add a URL and watch a folder
 
-### Community 883 - "graphify reference: commit hook and native CLAUDE.md integration"
+### Community 884 - "graphify reference: commit hook and native CLAUDE.md integration"
 Cohesion: 0.50
 Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify reference: commit hook and native CLAUDE.md integration
 
-### Community 884 - "graphify reference: incremental update and cluster-only"
+### Community 885 - "graphify reference: incremental update and cluster-only"
 Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
-### Community 885 - "Promo Champions V2.1 — convenções"
+### Community 886 - "Promo Champions V2.1 — convenções"
 Cohesion: 0.50
 Nodes (3): Commits, Código, Promo Champions V2.1 — convenções
 
-### Community 886 - "Classificação das diferenças"
+### Community 887 - "Classificação das diferenças"
 Cohesion: 0.50
 Nodes (4): Classificação das diferenças, Divergências que exigem decisão de negócio, Intencionais ou fortemente justificadas, Perdas ou regressões reais/prováveis
 
-### Community 887 - "Integridade funcional do frontend"
+### Community 888 - "Integridade funcional do frontend"
 Cohesion: 0.50
 Nodes (4): Contratos quebrados no código, Dados fabricados apresentados como reais, Funcionalidades parciais adicionais, Integridade funcional do frontend
 
-### Community 888 - "Padrões de Componentes"
+### Community 889 - "Fase 4 — Progresso de Remediação dos CRÍTICOs"
+Cohesion: 0.50
+Nodes (3): Fase 4 — Progresso de Remediação dos CRÍTICOs, Itens que Permanecem como DECISÃO HUMANA, Resumo
+
+### Community 890 - "Padrões de Componentes"
 Cohesion: 0.50
 Nodes (4): Card Header com Ícone, Metric Card, Padrões de Componentes, Summary Cards (3 colunas)
 
-### Community 889 - "Efeitos de Hover"
+### Community 891 - "Efeitos de Hover"
 Cohesion: 0.50
 Nodes (4): Efeitos de Hover, Hover Border Glow, Hover Lift, Hover Scale
 
-### Community 890 - "21. Fornecedores & Comparador de Preços"
+### Community 892 - "17. Orçamentos"
 Cohesion: 0.50
-Nodes (4): 21.1 Fornecedores, 21.2 Comparador de Preços, 21. Fornecedores & Comparador de Preços, Modelo de Dados
+Nodes (4): 17. Orçamentos, Funcionalidades, Modelo de Dados, Status do Orçamento
 
-### Community 891 - "2. Arquitetura do Sistema"
+### Community 893 - "1. Visão Geral"
+Cohesion: 0.50
+Nodes (4): 1. Visão Geral, Evolução do Projeto, Objetivo Principal, Perfis de Usuário
+
+### Community 894 - "28. Desafios (Semanais & Diários)"
+Cohesion: 0.50
+Nodes (4): 28.1 Desafios Semanais, 28.2 Histórico de Desafios Diários, 28. Desafios (Semanais & Diários), Modelo de Dados
+
+### Community 895 - "2. Arquitetura do Sistema"
 Cohesion: 0.50
 Nodes (4): 2. Arquitetura do Sistema, Diagrama de Alto Nível, Padrão de Camadas, Stack Técnico
 
-### Community 892 - "3. Autenticação & Segurança"
+### Community 896 - "3. Autenticação & Segurança"
 Cohesion: 0.50
 Nodes (4): 3.1 Autenticação, 3.2 Segurança, 3.3 RBAC (Controle de Acesso), 3. Autenticação & Segurança
 
-### Community 893 - "1. Mapa hook → destino"
+### Community 897 - "9. Atividades & Cadências"
 Cohesion: 0.50
-Nodes (4): 1.1 Por subpasta (VERIFICADO), 1.2 Totais de destinos referenciados pelo front (VERIFICADO), 1.3 Views do banco consumidas diretamente pelo front (VERIFICADO — 9/9 encontradas), 1. Mapa hook → destino
+Nodes (4): 9.1 Atividades, 9.2 Cadências, 9.3 Relatório de Atividades, 9. Atividades & Cadências
 
-### Community 894 - "12. Comissões & Financeiro"
+### Community 898 - "12. Comissões & Financeiro"
 Cohesion: 0.50
 Nodes (4): 12.1 Comissões (`/comissoes`), 12.2 Admin Comissões (`/admin/comissoes`), 12.3 Commission Rules, 12. Comissões & Financeiro
 
-### Community 895 - "1. Dashboards"
+### Community 899 - "1. Dashboards"
 Cohesion: 0.50
 Nodes (4): 1.1 Dashboard Gestão (Home `/`), 1.2 Dashboard SDR (`/sdr`), 1.3 Dashboard Closer (`/closer`), 1. Dashboards
 
-### Community 896 - "26. Autenticação & Segurança"
+### Community 900 - "26. Autenticação & Segurança"
 Cohesion: 0.50
 Nodes (4): 26.1 Autenticação, 26.2 Segurança, 26.3 Integrações de Segurança, 26. Autenticação & Segurança
 
-### Community 897 - "Execução Graphify — lote E: documentação rastreável"
+### Community 901 - "🚀 Módulos World-Class (10/10)"
+Cohesion: 0.50
+Nodes (4): 🏢 Account-Based Selling (`/abm`), 🎙️ Conversational Intelligence (`/conversational-intelligence`), 🚀 Módulos World-Class (10/10), 📈 Revenue Intelligence (`/revenue-intelligence`) — Manager
+
+### Community 902 - "Execução Graphify — lote E: documentação rastreável"
 Cohesion: 0.50
 Nodes (3): Entregas, Execução Graphify — lote E: documentação rastreável, Simulações
 
-### Community 898 - "Execução Graphify — lote F P0: correções da auditoria adversarial"
+### Community 903 - "Execução Graphify — lote F P0: correções da auditoria adversarial"
 Cohesion: 0.50
 Nodes (3): Controles implementados, Execução Graphify — lote F P0: correções da auditoria adversarial, Limites remanescentes
 
-### Community 899 - "5. Achados que definem a prioridade"
+### Community 904 - "5. Achados que definem a prioridade"
 Cohesion: 0.50
 Nodes (4): 5. Achados que definem a prioridade, Estado de preservação do banco, P0 — contenção imediata, sem ação remota não autorizada, P1 — segurança e integridade
 
-### Community 900 - "7. Estrutura obrigatória de branch, commit e PR"
+### Community 905 - "7. Estrutura obrigatória de branch, commit e PR"
 Cohesion: 0.50
 Nodes (4): 7. Estrutura obrigatória de branch, commit e PR, Branch, Commit, Corpo da PR
 
-### Community 901 - "_ordem.md"
+### Community 906 - "_ordem.md"
 Cohesion: 0.50
 Nodes (3): Dependem de decisão do dono (regra 8 — não mergear sem você), Executáveis por código (sem banco/secret), Não é backlog (já resolvido nesta linha de base)
 
-### Community 902 - "CR-34 — Segredo de integração tratado como assinatura e exposto ao navegador"
+### Community 907 - "CR-1 — Regra de negócio vive no cliente e o servidor confia nela"
+Cohesion: 0.50
+Nodes (4): A-03 · [Alta] Comissão cai para 5% fixo, em silêncio, quando nenhuma regra casa, A-08 · [Alta] Premiação por ranking nunca é paga, A-20 · [Média] Parceiro externo grava status de venda sem passar pela máquina de estado, CR-1 — Regra de negócio vive no cliente e o servidor confia nela
+
+### Community 908 - "CR-34 — Segredo de integração tratado como assinatura e exposto ao navegador"
 Cohesion: 0.50
 Nodes (4): A-101 · [Crítica] O webhook de Win/Loss envia o segredo do assinante como se fosse assinatura, A-102 · [Alta] O segredo do webhook chega ao navegador, e a tela nunca cria segredo nenhum, A-103 · [Alta] Credenciais de Twilio, Meta e Z-API em texto puro, legíveis por qualquer gestor, CR-34 — Segredo de integração tratado como assinatura e exposto ao navegador
 
-### Community 903 - "CR-40 — Estados terminais que não são terminais"
+### Community 909 - "CR-3 — Controle de acesso anunciado mas não aplicado"
+Cohesion: 0.50
+Nodes (4): A-10 · [Alta] A lista de domínios do relatório público não impede ninguém de ler, A-11 · [Média] O limite de requisições do relatório público não limita, A-12 · [Média] O token do relatório público viaja na URL, CR-3 — Controle de acesso anunciado mas não aplicado
+
+### Community 910 - "CR-40 — Estados terminais que não são terminais"
 Cohesion: 0.50
 Nodes (4): A-128 · [Alta] Comissão paga volta a pendente e venda cancelada volta a ganha, A-129 · [Alta] A comissão nunca é revista quando a venda é desfeita, alterada ou excluída, A-130 · [Alta] A exclusão lógica não vale para receita, meta, ranking nem premiação, CR-40 — Estados terminais que não são terminais
 
-### Community 904 - "CR-41 — "Quando" e "de quem" mudam de definição entre telas"
-Cohesion: 0.50
-Nodes (4): A-131 · [Alta] "Quando a venda foi ganha" tem três definições e dois fusos horários, A-132 · [Média] Vendedor sem meta lançada aparece com zero numa tela e com a meta antiga em outra, A-133 · [Média] O mesmo vendedor tem dois níveis diferentes no mesmo card, CR-41 — "Quando" e "de quem" mudam de definição entre telas
-
-### Community 905 - "CR-7 — Configuração de produção fora de sincronia com o código"
+### Community 911 - "CR-7 — Configuração de produção fora de sincronia com o código"
 Cohesion: 0.50
 Nodes (4): A-14 · [Alta] A entrada de cotações do parceiro responde erro 500 em produção, A-15 · [Baixa] Não dá para saber qual versão está no ar, A-23 · [Baixa] Bucket de fotos de perfil é público, CR-7 — Configuração de produção fora de sincronia com o código
 
-### Community 906 - "CR-18 — Policy permissiva anula policy restritiva na mesma tabela"
+### Community 912 - "CR-18 — Policy permissiva anula policy restritiva na mesma tabela"
 Cohesion: 0.50
 Nodes (4): A-43 · [Crítica] Dados de desempenho, previsão e aprovação comercial são legíveis por qualquer usuário logado, A-44 · [Média] Qualquer usuário logado forja a trilha de auditoria de intenção, A-45 · [Baixa] Defesa em profundidade desigual entre tabelas "negar tudo", CR-18 — Policy permissiva anula policy restritiva na mesma tabela
 
-### Community 907 - "CR-21 — A cadeia de dinheiro não tem escala única nem restrições"
+### Community 913 - "CR-21 — A cadeia de dinheiro não tem escala única nem restrições"
 Cohesion: 0.50
 Nodes (4): A-49 · [Alta] Valores monetários convivem em três escalas e o orçamento usa `numeric` livre, A-50 · [Média] As três restrições de valor entraram sem validar o histórico, e as tabelas centrais não têm nenhuma, A-51 · [Baixa] Trilha de conversão orçamento → venda → pedido sem chave estrangeira, CR-21 — A cadeia de dinheiro não tem escala única nem restrições
 
-### Community 908 - "CR-22 — Peso morto acumulado no banco"
+### Community 914 - "CR-22 — Peso morto acumulado no banco"
 Cohesion: 0.50
 Nodes (4): A-52 · [Média] Catorze grupos de índice exatamente duplicado, A-53 · [Média] Cento e onze tabelas carregam dois gatilhos idênticos de `updated_at`, A-54 · [Baixa] Trinta e uma tabelas vazias e sem uso, com 55 policies e 15 gatilhos, CR-22 — Peso morto acumulado no banco
 
-### Community 909 - "Matriz RLS — tabela × papel"
+### Community 915 - "Matriz RLS — tabela × papel"
 Cohesion: 0.50
 Nodes (3): Matriz RLS — tabela × papel, Regras, Tabelas de maior risco e dono da linha
 
-### Community 910 - "Headers de segurança — hosting e edge functions"
+### Community 916 - "Headers de segurança — hosting e edge functions"
 Cohesion: 0.50
 Nodes (3): 1. Headers recomendados no hosting, 2. Respostas HTML das edge functions (já em código), Headers de segurança — hosting e edge functions
 
-### Community 911 - "Entidades de negócio — soft delete obrigatório"
+### Community 917 - "Entidades de negócio — soft delete obrigatório"
 Cohesion: 0.50
 Nodes (3): Entidades de negócio — soft delete obrigatório, Soft delete — política por tabela, Tabelas voláteis — hard delete permitido
 
-### Community 912 - "Quadro de débito técnico — Promo Champions V2.1"
+### Community 918 - "Quadro de débito técnico — Promo Champions V2.1"
 Cohesion: 0.50
 Nodes (3): Como operar, Notas de governança, Quadro de débito técnico — Promo Champions V2.1
 
-### Community 914 - "public.calculate_deal_risk_score"
+### Community 920 - "public.calculate_deal_risk_score"
 Cohesion: 0.50
 Nodes (3): public.buying_committee_members, public.calculate_deal_risk_score(), public.sales
 
-### Community 915 - "public.scheduled_sends"
+### Community 921 - "public.scheduled_sends"
 Cohesion: 0.67
 Nodes (3): public.scheduled_sends, idx_scheduled_sends_pending, idx_scheduled_sends_retry
 
-### Community 917 - "Rodada 2026-10-27 (branch `fix/ci-workflows`, HEAD base `cdfc74122`)"
+### Community 923 - "9. Sessão 2 (2026-10-22) — PR #318: correções documentais pós-Codex Review"
+Cohesion: 0.50
+Nodes (4): 9.1 Por que o baseline local não pôde ser reexecutado nesta sessão, 9.2 CI pós-merge do PR #318 (SHA `875e58f6`) — confirmado via API GitHub em 2026-10-22, 9.3 Prova de não-regressão — Sessão 1 × Sessão 2, 9. Sessão 2 (2026-10-22) — PR #318: correções documentais pós-Codex Review
+
+### Community 924 - "Rodada 2026-10-27 (branch `fix/ci-workflows`, HEAD base `cdfc74122`)"
 Cohesion: 0.50
 Nodes (4): Baseline local (antes de alterar, HEAD `cdfc74122`), Correções aplicadas, Inventário — última run na main, Rodada 2026-10-27 (branch `fix/ci-workflows`, HEAD base `cdfc74122`)
 
-### Community 918 - "Rodada 2026-10-27 — 2ª passada (pós-merge das PRs de remediação, HEAD `1e3a191b2`)"
-Cohesion: 0.50
-Nodes (4): Baseline local (HEAD `1e3a191b2`), Inventário — última run na main (27/10 ~12:15 UTC), Merges desta rodada, Rodada 2026-10-27 — 2ª passada (pós-merge das PRs de remediação, HEAD `1e3a191b2`)
-
-### Community 919 - "isSrc"
+### Community 925 - "isSrc"
 Cohesion: 0.50
 Nodes (4): appFiles, envUsadas, isSrc(), routeFiles
 
-### Community 920 - "animated-counter.tsx"
+### Community 926 - "redact"
 Cohesion: 0.50
-Nodes (3): AnimatedCounterProps, AnimatedCurrencyProps, AnimatedPercentageProps
+Nodes (4): Redige segredos em texto vindo do banco (comandos de cron, corpos de função,…, redact(), scrub(), scrub_value()
 
-### Community 921 - "ProgressRing.tsx"
-Cohesion: 0.50
-Nodes (3): ProgressRingProps, trackColors, variantColors
-
-### Community 922 - "FunnelReportPage.tsx"
+### Community 927 - "CohortReportPage.tsx"
 Cohesion: 0.67
-Nodes (3): FunnelReportPage(), PageTransition(), FunnelReport
+Nodes (3): CohortReportPage(), PageTransition(), CohortReport
 
-### Community 924 - "20251213010319_3edab12d-13d1-46fb-bdb6-e1a8edac611a.sql"
+### Community 929 - "20251213010319_3edab12d-13d1-46fb-bdb6-e1a8edac611a.sql"
 Cohesion: 0.50
 Nodes (3): public.notification_preferences, public.update_updated_at_column, update_notification_preferences_updated_at
 
-### Community 926 - "20251214113854_f02c2aac-633d-4d0a-aaa3-6a1cc5d5dbf3.sql"
+### Community 931 - "20251214113854_f02c2aac-633d-4d0a-aaa3-6a1cc5d5dbf3.sql"
 Cohesion: 0.83
 Nodes (3): idx_access_denied_logs_created_at, idx_access_denied_logs_user_id, public.access_denied_logs
 
-### Community 927 - "20251214115240_39838550-4d02-4097-93ca-e3ec8060c387.sql"
+### Community 932 - "20251214115240_39838550-4d02-4097-93ca-e3ec8060c387.sql"
 Cohesion: 0.50
 Nodes (3): public.security_alert_settings, public.update_updated_at_column, update_security_alert_settings_updated_at
 
-### Community 928 - "20260323120713_191479e2-2f2a-4336-b5c5-85b819457578.sql"
+### Community 933 - "20260323120713_191479e2-2f2a-4336-b5c5-85b819457578.sql"
 Cohesion: 0.83
 Nodes (3): idx_query_telemetry_created_at, idx_query_telemetry_severity, public.query_telemetry
 
-### Community 930 - "20260404154338_8884326f-3a3b-4ab1-83da-b474e45f84ec.sql"
+### Community 935 - "20260404154338_8884326f-3a3b-4ab1-83da-b474e45f84ec.sql"
 Cohesion: 0.50
 Nodes (3): public.feature_flags, public.update_updated_at_column, update_feature_flags_updated_at
 
-### Community 932 - "public.revenue_forecast_view"
+### Community 937 - "public.revenue_forecast_view"
 Cohesion: 0.50
 Nodes (3): public.revenue_forecast_view, public.sales, public.sales_goals
 
-### Community 933 - "20260418145810_12bb184d-4a92-4f48-852e-7c8c4ba91e92.sql"
+### Community 938 - "20260418145810_12bb184d-4a92-4f48-852e-7c8c4ba91e92.sql"
 Cohesion: 0.83
 Nodes (3): idx_executive_briefings_date_desc, public.executive_briefings, public.latest_briefing_view
 
-### Community 935 - "20260418184853_ad5313bf-7691-4632-acdb-47ecbfad7709.sql"
+### Community 940 - "20260418184853_ad5313bf-7691-4632-acdb-47ecbfad7709.sql"
 Cohesion: 0.83
 Nodes (3): idx_race_reactions_season, idx_race_reactions_target_created, public.race_reactions
 
-### Community 936 - "20260419013547_f104315c-909b-4f00-83d2-da0adabf7082.sql"
+### Community 941 - "20260419013547_f104315c-909b-4f00-83d2-da0adabf7082.sql"
 Cohesion: 0.83
 Nodes (3): idx_race_overlay_telemetry_overlay, idx_race_overlay_telemetry_user, public.race_overlay_telemetry
 
-### Community 937 - "20260421101729_9e60825c-1009-48b4-93e3-79030c85f9cd.sql"
+### Community 942 - "20260421101729_9e60825c-1009-48b4-93e3-79030c85f9cd.sql"
 Cohesion: 0.67
 Nodes (3): idx_winloss_webhook_active, public.user_winloss_preferences, public.winloss_webhook_subscriptions
 
-### Community 938 - "20260422162601_55953e33-9b8c-47d5-b503-b11bbdd12d4c.sql"
+### Community 943 - "20260422162601_55953e33-9b8c-47d5-b503-b11bbdd12d4c.sql"
 Cohesion: 0.67
 Nodes (3): idx_winloss_webhook_alerts_fired_at, idx_winloss_webhook_alerts_sub_kind_fired, public.winloss_webhook_alerts
 
-### Community 939 - "20260422171002_a15ec08b-e711-4031-ba8c-3366e1131005.sql"
+### Community 944 - "20260422171002_a15ec08b-e711-4031-ba8c-3366e1131005.sql"
 Cohesion: 0.83
 Nodes (3): idx_winloss_webhook_dispatch_metrics_event_created, idx_winloss_webhook_dispatch_metrics_metric_created, public.winloss_webhook_dispatch_metrics
 
-### Community 940 - "20260508134301_7ab33b60-c0d0-45ec-bb02-1821ac71c3aa.sql"
+### Community 945 - "20260508134301_7ab33b60-c0d0-45ec-bb02-1821ac71c3aa.sql"
 Cohesion: 0.50
 Nodes (3): public.cadence_advanced_stats, public.intent_audit_logs, public.cadences
 
-### Community 941 - "20260511141834_310eb6b0-f9b9-4a42-bac2-39a65a44f0e4.sql"
+### Community 946 - "20260511141834_310eb6b0-f9b9-4a42-bac2-39a65a44f0e4.sql"
 Cohesion: 0.50
 Nodes (3): public.sdr_alert_history, public.sdr_performance_settings, auth.users
 
-### Community 942 - "20260511191111_91594c2a-9d38-44bd-b643-27866aa1433e.sql"
+### Community 947 - "20260511191111_91594c2a-9d38-44bd-b643-27866aa1433e.sql"
 Cohesion: 0.67
 Nodes (3): public.calculate_source_roi(), public.lead_score_trends, public.lead_source_configs
 
-### Community 943 - "20260511191805_e49c3187-79d7-47b1-8a93-24c9c11ca33b.sql"
+### Community 948 - "20260511191805_e49c3187-79d7-47b1-8a93-24c9c11ca33b.sql"
 Cohesion: 0.50
 Nodes (3): public.call_intelligence_triggers, public.coaching_scorecard_config, sales_enablement_assets
 
-### Community 945 - "public.merge_clients"
+### Community 950 - "public.merge_clients"
 Cohesion: 0.50
 Nodes (3): public.merge_clients(), public.clients, public.sales
 
-### Community 948 - "20260706190052_ed4cf967-52bc-437a-9d49-60c29505a5ef.sql"
+### Community 953 - "20260706190052_ed4cf967-52bc-437a-9d49-60c29505a5ef.sql"
 Cohesion: 0.67
 Nodes (3): idx_v4_callback_alerts_fired_at, public.v4_callback_alert_settings, public.v4_callback_alerts
 
-### Community 949 - "20260706205446_8a1a4355-b3d3-4f4d-89ba-4d42810487ee.sql"
+### Community 954 - "20260706205446_8a1a4355-b3d3-4f4d-89ba-4d42810487ee.sql"
 Cohesion: 0.83
 Nodes (3): idx_webhook_inbound_dedupe_received_at, public.webhook_inbound_dedupe, ux_webhook_inbound_dedupe_key
 
-### Community 951 - "public.fn_convert_quote_to_sale"
+### Community 956 - "public.fn_convert_quote_to_sale"
 Cohesion: 0.50
 Nodes (3): public.fn_convert_quote_to_sale(), public.quotes, public.salespeople
 
-### Community 952 - "private.auto_enroll_in_cadence"
+### Community 957 - "private.auto_enroll_in_cadence"
 Cohesion: 0.50
 Nodes (3): private.auto_enroll_in_cadence(), public.cadence_enrollment_rules, public.prospect_cadences
 
-### Community 953 - "public.backfill_orders_conversion_seq"
+### Community 958 - "public.backfill_orders_conversion_seq"
 Cohesion: 0.50
 Nodes (3): public.backfill_orders_conversion_seq(), public.orders, public.orders_conversion_seq
 
-### Community 955 - "20260712232817_1d446366-555f-48f3-b5c8-845283da3b06.sql"
+### Community 960 - "20260712232817_1d446366-555f-48f3-b5c8-845283da3b06.sql"
 Cohesion: 0.83
 Nodes (3): idx_fnd_dlq_created, idx_fnd_dlq_reason, public.forecast_narrative_dead_letters
 
-### Community 956 - "20260713104701_2c01ec2b-2b38-4391-b376-cd3fa754d17f.sql"
+### Community 961 - "20260713104701_2c01ec2b-2b38-4391-b376-cd3fa754d17f.sql"
 Cohesion: 0.83
 Nodes (3): idx_edge_retry_events_fn_created, idx_edge_retry_events_outcome_created, public.edge_retry_events
 
-### Community 958 - "public.claim_pending_cadence_tasks"
+### Community 963 - "public.claim_pending_cadence_tasks"
 Cohesion: 0.50
 Nodes (3): public.claim_pending_cadence_tasks(), public.cadence_tasks, public.prospect_cadences
 
-### Community 959 - "20260723144816_6bf3d2f3-d07e-4c6a-a431-6cd90711ca95.sql"
+### Community 964 - "20260723144816_6bf3d2f3-d07e-4c6a-a431-6cd90711ca95.sql"
 Cohesion: 0.50
 Nodes (3): public.auto_task_queue_settings, public.update_updated_at_column, trg_auto_task_queue_settings_updated_at
 
-### Community 960 - "20260723145227_59cdd465-92b4-4e16-9b3d-34d0ebf83267.sql"
+### Community 965 - "20260723145227_59cdd465-92b4-4e16-9b3d-34d0ebf83267.sql"
 Cohesion: 0.50
 Nodes (3): public.stage_inactivity_rules, public.update_updated_at_column, trg_stage_inactivity_rules_updated
 
-### Community 961 - "20260723145549_1d9beb05-6f0b-4c9e-8f9f-985fc1c9d301.sql"
+### Community 966 - "20260723145549_1d9beb05-6f0b-4c9e-8f9f-985fc1c9d301.sql"
 Cohesion: 0.67
 Nodes (3): idx_churn_alerts_state_salesperson, public.churn_alert_settings, public.client_churn_alerts_state
 
-### Community 962 - "20260726200751_2012c381-c742-419d-88ed-27f5a8969775.sql"
+### Community 967 - "20260726200751_2012c381-c742-419d-88ed-27f5a8969775.sql"
 Cohesion: 0.67
 Nodes (3): idx_email_opt_outs_created_at, idx_email_opt_outs_source, public.email_opt_outs
 
-### Community 965 - "20260831163000_secure_churn_and_task_crons.sql"
+### Community 970 - "20260831163000_secure_churn_and_task_crons.sql"
 Cohesion: 0.67
 Nodes (3): public.trigger_detect_client_churn_alerts(), public.trigger_generate_urgent_client_tasks(), public._internal_secrets
 
-### Community 966 - "20261005140000_restore_anon_execute_rls_helpers.sql"
+### Community 971 - "20261005140000_restore_anon_execute_rls_helpers.sql"
 Cohesion: 0.67
 Nodes (3): public.get_user_role(), public.is_admin_or_manager(), public.user_roles
 
-### Community 968 - "public.fn_notify_victory"
+### Community 973 - "public.fn_notify_victory"
 Cohesion: 0.50
 Nodes (3): public.fn_notify_victory(), public.salespeople, public.victory_feed
 
-### Community 971 - "public.trigger_internal_edge_job"
+### Community 976 - "public.trigger_internal_edge_job"
 Cohesion: 0.50
 Nodes (3): public.trigger_internal_edge_job(), net._http_response, public._internal_secrets
 
-### Community 974 - "vercel.json"
+### Community 978 - "revenue-forecast-v2.spec.ts"
+Cohesion: 0.67
+Nodes (3): MOCK_SESSION, primeForecastRoute(), syntheticHistoryRows()
+
+### Community 980 - "vercel.json"
 Cohesion: 0.50
 Nodes (3): headers, rewrites, $schema
 
-### Community 980 - "route"
+### Community 986 - "route"
 Cohesion: 0.67
 Nodes (3): `page_analytics`, `web_vitals_samples`, route()
 
-### Community 981 - "rank"
+### Community 987 - "rank"
 Cohesion: 0.67
 Nodes (3): `race_daily_snapshots`, `ranking_notifications`, rank()
 
-### Community 982 - "Cards"
+### Community 988 - "Tipografia"
 Cohesion: 0.67
-Nodes (3): Cards, Classes de Card Auxiliares, Variantes de Card
+Nodes (3): Classes, Fontes, Tipografia
 
-### Community 983 - "Efeitos de Glow"
+### Community 989 - "Efeitos de Glow"
 Cohesion: 0.67
 Nodes (3): Efeitos de Glow, Glow Estático (sempre visível), Hover Glow (aplica no hover)
 
-### Community 984 - "27. Navegação & UX"
+### Community 990 - "32. Banco de Dados"
+Cohesion: 0.67
+Nodes (3): 32.1 Tabelas (Lovable Cloud), 32.2 Funções do Banco, 32. Banco de Dados
+
+### Community 991 - "34. Componentes UI (Design System)"
+Cohesion: 0.67
+Nodes (3): 34.1 Shadcn/Radix (60+ componentes), 34.2 Componente UI Especial, 34. Componentes UI (Design System)
+
+### Community 992 - "44. Testes Automatizados"
+Cohesion: 0.67
+Nodes (3): 44.1 Testes de Hooks (17 testes), 44.2 Infraestrutura de Testes, 44. Testes Automatizados
+
+### Community 993 - "46. Rotas da Aplicação"
+Cohesion: 0.67
+Nodes (3): 46.1 Rotas Públicas, 46.2 Rotas Protegidas (Todas), 46. Rotas da Aplicação
+
+### Community 994 - "47. Secrets & Variáveis de Ambiente"
+Cohesion: 0.67
+Nodes (3): 47.1 Secrets Configurados, 47.2 Variáveis de Ambiente (Frontend), 47. Secrets & Variáveis de Ambiente
+
+### Community 995 - "8. Produtos"
+Cohesion: 0.67
+Nodes (3): 8. Produtos, Funcionalidades, Modelo de Dados
+
+### Community 996 - "27. Navegação & UX"
 Cohesion: 0.67
 Nodes (3): 27.1 Sidebar (AppSidebar), 27.2 Layout Principal, 27. Navegação & UX
 
-### Community 985 - "8. Desafios (Diários & Semanais) (`/desafios`)"
+### Community 997 - "8. Desafios (Diários & Semanais) (`/desafios`)"
 Cohesion: 0.67
 Nodes (3): 8.1 Desafios Diários, 8.2 Desafios Semanais, 8. Desafios (Diários & Semanais) (`/desafios`)
 
-### Community 986 - "CR-8 — Identidade e cadastro"
+### Community 998 - "CR-8 — Identidade e cadastro"
 Cohesion: 0.67
 Nodes (3): A-01 · [Crítica] Qualquer pessoa cria conta no CRM e recebe papel de vendedor, A-19 · [Baixa] O papel do usuário é escolhido por ordem alfabética, CR-8 — Identidade e cadastro
 
-### Community 987 - "CR-2 — Gravação derivada sem tolerância a repetição"
+### Community 999 - "CR-2 — Gravação derivada sem tolerância a repetição"
 Cohesion: 0.67
 Nodes (3): A-02 · [Alta] Reabrir e refechar uma venda trava a venda, A-13 · [Baixa] Contador de visualizações do relatório público perde acessos simultâneos, CR-2 — Gravação derivada sem tolerância a repetição
 
-### Community 988 - "CR-4 — `REVOKE ... FROM PUBLIC` não revoga de `anon`"
+### Community 1000 - "CR-4 — `REVOKE ... FROM PUBLIC` não revoga de `anon`"
 Cohesion: 0.67
 Nodes (3): A-04 · [Alta] 400 tabelas concedem leitura **e escrita** ao papel anônimo; só a RLS segura, A-05 · [Média] Uma view de telemetria é legível sem login, contra o que a migration declara, CR-4 — `REVOKE ... FROM PUBLIC` não revoga de `anon`
 
-### Community 989 - "CR-38 — "Comissão desta venda" não tem uma definição única"
+### Community 1001 - "CR-38 — "Comissão desta venda" não tem uma definição única"
 Cohesion: 0.67
 Nodes (3): A-122 · [Crítica] A comissão mostrada ao vendedor usa percentual e base diferentes da que o banco grava, A-123 · [Crítica] O painel de ROI calcula o custo de comissão 100 vezes maior, CR-38 — "Comissão desta venda" não tem uma definição única
 
-### Community 990 - "CR-45 — Módulos de dinheiro sem nenhum teste"
+### Community 1002 - "CR-19 — A única rede de segurança do schema está desatualizada"
 Cohesion: 0.67
-Nodes (3): A-147 · [Alta] Comissão não tem nenhum teste, A-148 · [Média] A prova de isolamento por papel só existe em testes que não rodam, CR-45 — Módulos de dinheiro sem nenhum teste
+Nodes (3): A-46 · [Alta] Restaurar o banco hoje traz de volta um bug conhecido e perde 19 correções, A-47 · [Média] O ledger afirma que uma migration rodou, e o objeto não existe, CR-19 — A única rede de segurança do schema está desatualizada
 
-### Community 991 - "CR-17 — O inventário gerado afirma o contrário da realidade"
-Cohesion: 0.67
-Nodes (3): A-40 · [Alta] O inventário marca 71 funções vivas como "sem deploy", A-41 · [Baixa] Quatro formatos de erro e uma configuração morta na camada de funções, CR-17 — O inventário gerado afirma o contrário da realidade
-
-### Community 992 - "CR-28 — Entrada de dados sem validação de conteúdo"
+### Community 1003 - "CR-28 — Entrada de dados sem validação de conteúdo"
 Cohesion: 0.67
 Nodes (3): A-78 · [Alta] Importação de clientes embaralha colunas e não valida e-mail, A-79 · [Baixa] Valor zero de venda é barrado só no navegador, CR-28 — Entrada de dados sem validação de conteúdo
 
-### Community 998 - "auth.users"
+### Community 1004 - "1. Visão Geral"
+Cohesion: 0.67
+Nodes (3): 1. Visão Geral, Características Principais, Fluxo de Dados
+
+### Community 1005 - "Apêndice: Formato dos Logs"
+Cohesion: 0.67
+Nodes (3): Apêndice: Formato dos Logs, Formato:, Log no Console da Edge Function
+
+### Community 1011 - "auth.users"
 Cohesion: 0.67
 Nodes (3): public.webauthn_challenges, public.webauthn_credentials, auth.users
 
 ## Knowledge Gaps
 - **6848 isolated node(s):** `session-start.sh script`, `PATH`, `RUNTIME_ONLY_TO`, `semi`, `singleQuote` (+6843 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9594 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **602 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9593 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **606 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `Badge`, `Input`, `CardHeader`, `cn`, `client.ts`, `lucide-react`, `AdminPlatformSLOPage.tsx`, `badge.tsx`, `PageTransition`, `vitest`, `useUserRoles`, `date-fns`, `Card`, `utils.ts`, `lazyPages.ts`, `AccountBasedSelling.tsx`, `useAuth`, `CardContent`, `Button`, `RaceArena.tsx`, `DealIntelligence.tsx`, `package.json`, `RecordingSummaryDrawer.tsx`, `sonner`, `ReplayStatusByIdPanel.tsx`, `MainLayout.tsx`, `Client360HealthNbaSection.tsx`, `NotificationCenter.tsx`, `DealCard.tsx`, `VendedorDashboard.tsx`, `PageLoadingSkeleton.tsx`, `race/index.ts`, `Analytics.tsx`, `gamified-toast.tsx`, `usePowerDialer.test.tsx`, `ScoreBreakdownCard.tsx`, `useAsyncReplayQueue.ts`, `ActionableInsightsPanel.tsx`, `AppSidebar.tsx`, `RevenueIntelligenceHub.tsx`, `src_components_ui_dialog_dialogtrigger`, `getLocalISODate`, `SequencesPage.tsx`, `ArenaCompetitiva.tsx`, `useRevenueIntelligenceHub.ts`, `RaceLeaderboardEntry`, `RankingCompetitivo.tsx`, `AcompanhamentoPedidoDetalhe.tsx`, `AdminV4CallbacksPage.tsx`, `TaskQueue.tsx`, `SalesAssistantChat.tsx`, `bi-helpers.ts`, `AtRiskSettingsPopover.tsx`, `CarCustomizer.tsx`, `deal-intelligence/BuyingCommitteeCard.tsx`, `SemanticSearchDialog.tsx`, `Agenda.tsx`, `WebhookHealthPanel.tsx`, `navigationGuard.ts`, `useWinLossAggregations.ts`, `useSalesBattles.test.tsx`, `MeuAssistente.tsx`, `ABCAnalysis.tsx`, `RaceArenaHub.tsx`, `utils/csvExport.ts`, `pages/SDRDashboard.tsx`, `AIEmailComposerDialog.tsx`, `SoundSettingsTabs.tsx`, `WinLossIntelligence.tsx`, `SmokeTestChecklist.tsx`, `RevenueForecastHub.tsx`, `TaskCatalogManager.tsx`, `QuestionQualityCard.tsx`, `BusinessIntelligencePage.tsx`, `Status de execução — Plano de 100 etapas (v2, reescrita pós-revisão)`, `ScenarioForecastChart.tsx`, `RevenueForecastCard.tsx`, `ActivityList.tsx`, `QuoteCadencesPage.tsx`, `pricing/PricingIntelligenceHub.tsx`, `ConversationalIntelligence.tsx`, `useInactiveDeals.ts`, `SalesReportPage.tsx`, `CurrentCallCard.tsx`, `CS360Tabs.tsx`, `ObjectionHandlingCard.tsx`, `RevenueForecastV2.tsx`, `useDashboardKPIsPeriod.ts`, `WinLossSavedViews.tsx`, `AIAgents.tsx`, `FailedDraftsCard.tsx`, `BriefingHub.tsx`, `DealTimeline.tsx`, `2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)`, `EdgeRetryTimeSeriesChart.tsx`, `Fireworks.tsx`, `SkillMaturityMatrix.tsx`, `CoachingScorecardCard.tsx`, `RacePanelEmptyState.tsx`, `useWinLossScenarios.ts`, `RaceViewModeToggle.tsx`, `LeadRoutingPage.tsx`, `useRetryMutation.ts`, `CoachingActionsPanel.tsx`, `PurchasePredictionCard.tsx`, `RaceArenaHeader.tsx`, `CoachingActionsList.tsx`, `ProviderConnectionDialog.tsx`, `useQuotaAttainmentPredictor.ts`, `useBackNavigation.ts`, `useContactFrequencyRules.ts`, `useCloserMetrics.ts`, `LeadScoreExplainCard.tsx`, `Client360View.tsx`, `DealVelocityCard.tsx`, `IntelligenceCockpit.tsx`, `CalibrationVarianceTable.tsx`, `useTaskMutations.ts`, `useAuthForm.ts`, `CohortHeatmap.tsx`, `ProtectedRoute`, `nlqHelpers.ts`, `jsPDF`, `staleAssetRecovery.ts`, `ScheduledSendsPanel.tsx`, `useCriticalMoments.ts`, `logger.ts`, `useUploadCallRecording.ts`, `DashboardSection.tsx`, `SalesMarkupTrendChart.tsx`, `useCadenceReport.ts`, `DbRollbackRatePanel.tsx`, `EmbedTokenManagerDialog.tsx`, `useFunnelComparison.ts`, `useWinLossViewPrefs.ts`, `useWinLossDigest.ts`, `useQueryPerformance.ts`, `useReducedMotion`, `RaceCarsLayer.tsx`, `chart.tsx`, `useFeatureFlags.ts`, `UsageAnalytics.tsx`, `SLATrackingPage.tsx`, `animated-counter.tsx`, `ProgressRing.tsx`, `CredentialsSourceFilterContext.tsx`, `CoachingSessionPlanner.tsx`, `CompetitorMentionsCard.tsx`, `GamificationCard.tsx`, `RiskCompareModal.tsx`, `AnalyticsModule.tsx`, `SalesMarkupRankingTable.tsx`, `useAutomationWorkflows.test.tsx`, `useSalesEnablement.test.tsx`, `useMyBonusAwards.ts`, `useDigitalSignatures.ts`, `ObjectionsLibrary.tsx`, `XPHistoryTimeline.tsx`, `RaceTransitionWrapper.tsx`?**
-  _High betweenness centrality (0.091) - this node is a cross-community bridge._
-- **Why does `cn()` connect `cn` to `react`, `Badge`, `Input`, `CardHeader`, `client.ts`, `lucide-react`, `badge.tsx`, `PageTransition`, `useUserRoles`, `date-fns`, `Card`, `utils.ts`, `AccountBasedSelling.tsx`, `useAuth`, `CardContent`, `Button`, `DealIntelligence.tsx`, `package.json`, `RecordingSummaryDrawer.tsx`, `sonner`, `MainLayout.tsx`, `Client360HealthNbaSection.tsx`, `scoring-ui.tsx`, `NotificationCenter.tsx`, `DealCard.tsx`, `VendedorDashboard.tsx`, `PageLoadingSkeleton.tsx`, `race/index.ts`, `Analytics.tsx`, `📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)`, `gamified-toast.tsx`, `ActionableInsightsPanel.tsx`, `AppSidebar.tsx`, `src_components_ui_dialog_dialogtrigger`, `getLocalISODate`, `ArenaCompetitiva.tsx`, `RaceLeaderboardEntry`, `RankingCompetitivo.tsx`, `AcompanhamentoPedidoDetalhe.tsx`, `AdminV4CallbacksPage.tsx`, `TaskQueue.tsx`, `SalesAssistantChat.tsx`, `AtRiskSettingsPopover.tsx`, `CarCustomizer.tsx`, `SemanticSearchDialog.tsx`, `WebhookHealthPanel.tsx`, `MeuAssistente.tsx`, `RaceArenaHub.tsx`, `pages/SDRDashboard.tsx`, `RevenueForecastHub.tsx`, `QuestionQualityCard.tsx`, `BusinessIntelligencePage.tsx`, `ScenarioForecastChart.tsx`, `RevenueForecastCard.tsx`, `ActivityList.tsx`, `QuoteCadencesPage.tsx`, `pricing/PricingIntelligenceHub.tsx`, `ConversationalIntelligence.tsx`, `useInactiveDeals.ts`, `CurrentCallCard.tsx`, `useDashboardKPIsPeriod.ts`, `AccountDetail.tsx`, `FailedDraftsCard.tsx`, `DealTimeline.tsx`, `RacePanelEmptyState.tsx`, `RaceViewModeToggle.tsx`, `PurchasePredictionCard.tsx`, `RaceArenaHeader.tsx`, `CoachingActionsList.tsx`, `gen-data-dict.mjs`, `EngagementLeaderboardWidget.tsx`, `LeadScoreExplainCard.tsx`, `Client360View.tsx`, `IntelligenceCockpit.tsx`, `FonteLeads.tsx`, `Client360OrdersCard.tsx`, `useCriticalMoments.ts`, `DashboardSection.tsx`, `DbRollbackRatePanel.tsx`, `SendTimeOptimization.tsx`, `chart.tsx`, `SLATrackingPage.tsx`, `animated-counter.tsx`, `ProgressRing.tsx`, `GamificationCard.tsx`, `RiskCompareModal.tsx`, `reportDownload.ts`, `AnalyticsModule.tsx`, `SalesMarkupRankingTable.tsx`, `XPHistoryTimeline.tsx`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
-- **Why does `Card` connect `Card` to `react`, `Badge`, `Input`, `CardHeader`, `cn`, `client.ts`, `lucide-react`, `AdminPlatformSLOPage.tsx`, `badge.tsx`, `PageTransition`, `useUserRoles`, `date-fns`, `utils.ts`, `AccountBasedSelling.tsx`, `useAuth`, `CardContent`, `Button`, `DealIntelligence.tsx`, `RecordingSummaryDrawer.tsx`, `sonner`, `ReplayStatusByIdPanel.tsx`, `MainLayout.tsx`, `Client360HealthNbaSection.tsx`, `scoring-ui.tsx`, `NotificationCenter.tsx`, `DealCard.tsx`, `VendedorDashboard.tsx`, `PageLoadingSkeleton.tsx`, `race/index.ts`, `Analytics.tsx`, `ScoreBreakdownCard.tsx`, `ActionableInsightsPanel.tsx`, `AppSidebar.tsx`, `RevenueIntelligenceHub.tsx`, `src_components_ui_dialog_dialogtrigger`, `SequencesPage.tsx`, `ArenaCompetitiva.tsx`, `RaceLeaderboardEntry`, `RankingCompetitivo.tsx`, `AcompanhamentoPedidoDetalhe.tsx`, `AdminV4CallbacksPage.tsx`, `TaskQueue.tsx`, `SalesAssistantChat.tsx`, `AtRiskSettingsPopover.tsx`, `deal-intelligence/BuyingCommitteeCard.tsx`, `Agenda.tsx`, `WebhookHealthPanel.tsx`, `useWinLossAggregations.ts`, `MeuAssistente.tsx`, `ABCAnalysis.tsx`, `RaceArenaHub.tsx`, `pages/SDRDashboard.tsx`, `WinLossIntelligence.tsx`, `SmokeTestChecklist.tsx`, `RevenueForecastHub.tsx`, `TaskCatalogManager.tsx`, `QuestionQualityCard.tsx`, `BusinessIntelligencePage.tsx`, `ScenarioForecastChart.tsx`, `RevenueForecastCard.tsx`, `ActivityList.tsx`, `QuoteCadencesPage.tsx`, `pricing/PricingIntelligenceHub.tsx`, `ConversationalIntelligence.tsx`, `SalesReportPage.tsx`, `CurrentCallCard.tsx`, `CS360Tabs.tsx`, `ObjectionHandlingCard.tsx`, `RevenueForecastV2.tsx`, `AccountDetail.tsx`, `FollowUpValueAtRisk.tsx`, `WinLossSavedViews.tsx`, `AIAgents.tsx`, `FailedDraftsCard.tsx`, `BriefingHub.tsx`, `SkillMaturityMatrix.tsx`, `CoachingScorecardCard.tsx`, `LeadRoutingPage.tsx`, `CoachingActionsPanel.tsx`, `PurchasePredictionCard.tsx`, `RaceArenaHeader.tsx`, `CoachingActionsList.tsx`, `ProviderConnectionDialog.tsx`, `HelpdeskConnectorPanel`, `useQuotaAttainmentPredictor.ts`, `EngagementLeaderboardWidget.tsx`, `LeadScoreExplainCard.tsx`, `DealVelocityCard.tsx`, `IntelligenceCockpit.tsx`, `CalibrationVarianceTable.tsx`, `CohortHeatmap.tsx`, `CoachingImpactTracker.tsx`, `ScheduledSendsPanel.tsx`, `FonteLeads.tsx`, `Client360OrdersCard.tsx`, `SalesMarkupTrendChart.tsx`, `DbRollbackRatePanel.tsx`, `EmbedTokenManagerDialog.tsx`, `SendTimeOptimization.tsx`, `UsageAnalytics.tsx`, `SLATrackingPage.tsx`, `CoachingSessionPlanner.tsx`, `CompetitorMentionsCard.tsx`, `AnalyticsModule.tsx`, `SalesMarkupRankingTable.tsx`, `ObjectionsLibrary.tsx`, `XPHistoryTimeline.tsx`, `BestSendWindowCard.tsx`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `Input`, `Button`, `client.ts`, `PageTransition`, `CardContent`, `CardHeader`, `Badge`, `vitest`, `Avatar`, `card.tsx`, `utils.ts`, `sonner`, `date-fns`, `lucide-react`, `WinLossIntelligence.tsx`, `lazyPages.ts`, `AccountBasedSelling.tsx`, `cn`, `Orcamentos.tsx`, `Card`, `Slider`, `recharts`, `QuoteCadencesPage.tsx`, `useWinLossData.ts`, `DealCard.tsx`, `getLocalISODate`, `RecordingSummaryDrawer.tsx`, `DealIntelligence.tsx`, `enablement/SalesEnablementHub.tsx`, `gamified-toast.tsx`, `TodaysCadenceTasks.tsx`, `MainLayout.tsx`, `RaceArena.tsx`, `package.json`, `global.d.ts`, `SalespersonScoreBadge.tsx`, `AdminPlatformSLOPage.tsx`, `use-toast.ts`, `CoachingIntelligenceHub.tsx`, `PageLoadingSkeleton.tsx`, `Index.tsx`, `raceTrackHelpers.ts`, `supabase/types.ts`, `IntelligenceCockpit.tsx`, `ActivityList.tsx`, `useBICloser.ts`, `race/index.ts`, `VendedorDashboard.tsx`, `RaceArenaHub.tsx`, `ArenaCompetitiva.tsx`, `ScenarioForecastChart.tsx`, `AcompanhamentoPedidoDetalhe.tsx`, `BIGestor.tsx`, `RaceLeaderboardEntry`, `CircuitBreakerDashboard.tsx`, `CoachingSessionPlanner.tsx`, `RaceLeaderboardSidebar.tsx`, `QuotaPredictorAdvancedPanel.tsx`, `deal-intelligence/BuyingCommitteeCard.tsx`, `RevenueIntelligenceHub.tsx`, `pages/SDRDashboard.tsx`, `ABCAnalysis.tsx`, `EngagementLeaderboardWidget.tsx`, `TemplateManager.tsx`, `Status de execução — Plano de 100 etapas (v2, reescrita pós-revisão)`, `env.ts`, `AtRiskDealsFromPatterns.tsx`, `useSalespersonXP.ts`, `useInactiveDeals.ts`, `PurchaseIntelligenceHub.tsx`, `ObjectionHandlingCard.tsx`, `ConversionRateWidget.tsx`, `ConversationalIntelligence.tsx`, `RaceCar.tsx`, `errorTracking.ts`, `FailedDraftsCard.tsx`, `2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)`, `RaceAudioPreferences.tsx`, `CoachingScorecardCard.tsx`, `ConfidenceScoresTable.tsx`, `BusinessIntelligencePage.tsx`, `AIAgents.tsx`, `LeadRoutingPage.tsx`, `EdgeRetryTimeSeriesChart.tsx`, `admin/PerformanceMonitor.tsx`, `sdr/SDRDashboard.tsx`, `CoachingActionsList.tsx`, `Fireworks.tsx`, `useQueryPerformance.ts`, `useWebhookReplayPersistence.ts`, `Anexo A — Planos, auditorias e execução: estado real verificado`, `05 — Progresso`, `CS360Tabs.tsx`, `RevenueForecastCard.tsx`, `CadenceReportPanel.tsx`, `CommandPalette.tsx`, `biService.ts`, `App.tsx`, `SheetContent`, `DealTimeline.tsx`, `Client360View.tsx`, `VirtualDealsList.tsx`, `LeadScoreExplainCard.tsx`, `DealVelocityCard.tsx`, `CalibrationVarianceTable.tsx`, `WebhookAttemptSliceDrawer.tsx`, `useAuthForm.ts`, `PersonalAssistantSummaryCard.tsx`, `SDRActivityTrend.tsx`, `RiskCompareModal.tsx`, `navigationGuard.ts`, `useSeasonComparison.ts`, `SmokeTestChecklist.tsx`, `nlqHelpers.ts`, `PodiumCard.tsx`, `WebhookHealthPanel.tsx`, `staleAssetRecovery.ts`, `LeadScoringDashboard.tsx`, `AIEmailComposerPanel.tsx`, `ScheduledSendsPanel.tsx`, `PermissionMatrix.tsx`, `useCriticalMoments.ts`, `useUploadCallRecording.ts`, `useWebAuthn.ts`, `DevKpiDebugPanel.tsx`, `EmbedTokenManagerDialog.tsx`, `useFunnelComparison.ts`, `RateLimitDashboard.tsx`, `WorkflowsPage.tsx`, `DealRow.tsx`, `RaceCarsLayer.tsx`, `usePersonalAssistant.ts`, `Componentes Atualizados (27+)`, `CompetitorMentionsCard.tsx`, `ClickToCallButton.tsx`, `GamificationCard.tsx`, `semanticSearchHelpers.ts`, `SequenceBuilder.tsx`, `useAccounts.test.tsx`, `useAutomationWorkflows.test.tsx`, `useSalesEnablement.test.tsx`, `IntegrationHealthCard.tsx`, `useElevenLabsVoice.ts`?**
+  _High betweenness centrality (0.089) - this node is a cross-community bridge._
+- **Why does `cn()` connect `cn` to `Input`, `Button`, `client.ts`, `PageTransition`, `CardContent`, `CardHeader`, `Badge`, `Avatar`, `card.tsx`, `utils.ts`, `sonner`, `lucide-react`, `AccountBasedSelling.tsx`, `Orcamentos.tsx`, `react`, `Card`, `Slider`, `recharts`, `QuoteCadencesPage.tsx`, `DealCard.tsx`, `getLocalISODate`, `RecordingSummaryDrawer.tsx`, `DealIntelligence.tsx`, `enablement/SalesEnablementHub.tsx`, `gamified-toast.tsx`, `TodaysCadenceTasks.tsx`, `MainLayout.tsx`, `use-toast.ts`, `CoachingIntelligenceHub.tsx`, `PageLoadingSkeleton.tsx`, `Index.tsx`, `IntelligenceCockpit.tsx`, `ActivityList.tsx`, `race/index.ts`, `VendedorDashboard.tsx`, `ArenaCompetitiva.tsx`, `AcompanhamentoPedidoDetalhe.tsx`, `BIGestor.tsx`, `📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)`, `RaceLeaderboardEntry`, `CircuitBreakerDashboard.tsx`, `CoachingSessionPlanner.tsx`, `RaceLeaderboardSidebar.tsx`, `EngagementLeaderboardWidget.tsx`, `TemplateManager.tsx`, `useSalespersonXP.ts`, `useInactiveDeals.ts`, `PurchaseIntelligenceHub.tsx`, `ConversionRateWidget.tsx`, `ConversationalIntelligence.tsx`, `AccountDetail.tsx`, `RaceCar.tsx`, `FailedDraftsCard.tsx`, `BusinessIntelligencePage.tsx`, `CoachingActionsList.tsx`, `CommandPalette.tsx`, `App.tsx`, `SheetContent`, `DealTimeline.tsx`, `Client360View.tsx`, `gen-data-dict.mjs`, `LeadScoreExplainCard.tsx`, `PersonalAssistantSummaryCard.tsx`, `SDRActivityTrend.tsx`, `RiskCompareModal.tsx`, `EmailEngagementScoring.tsx`, `PodiumCard.tsx`, `WebhookHealthPanel.tsx`, `LeadScoringDashboard.tsx`, `Race Arena — Relatório de Testes Exaustivos`, `Client360OrdersCard.tsx`, `useCriticalMoments.ts`, `reportDownload.ts`, `SendTimeOptimization.tsx`, `Componentes Atualizados (27+)`, `ClickToCallButton.tsx`, `GamificationCard.tsx`, `semanticSearchHelpers.ts`, `WebhookSubscriptionLatestList.tsx`, `DiarizationTimeline.tsx`?**
+  _High betweenness centrality (0.072) - this node is a cross-community bridge._
+- **Why does `withRequestId()` connect `withRequestId` to `errorTracking.ts`, `Deploy — Promo Champions V2.1`, `01 — FRONTEND: ROTAS E PÁGINAS (estado medido)`, `isAuthorizedCronRequest`, `getUserClient`, `bitrix24-sync/index.ts`, `ref_https`, `report-embed-public/index.ts`, `toBusinessDate`, `chunked-in.ts`, `test-integration-connection/index.ts`, `Workflows`, `whatsapp-inbound-webhook/index.ts`, `Fase 1 — As 20 Dimensões`, `notification-categories.ts`, `getCorsHeaders`, `webVitals.ts`, `README.md`, `winloss-webhook-replay/index.ts`, `🔍 Auditoria Enterprise — 2026-07-13`, `send-transactional-email/index.ts`, `bitrix24-oauth/index.ts`, `email-bulk-retry/index.ts`, `send-push-notification/index.ts`, `check-v4-callback-alerts/index.ts`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **What connects `session-start.sh script`, `PATH`, `RUNTIME_ONLY_TO` to the rest of the system?**
   _6848 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `schema.sql` be split into smaller, more focused modules?**
   _Cohesion score 0.0025477707006369425 - nodes in this community are weakly interconnected._
-- **Should `react` be split into smaller, more focused modules?**
-  _Cohesion score 0.022061128526645768 - nodes in this community are weakly interconnected._
-- **Should `Badge` be split into smaller, more focused modules?**
-  _Cohesion score 0.020296410927920956 - nodes in this community are weakly interconnected._
+- **Should `Input` be split into smaller, more focused modules?**
+  _Cohesion score 0.02225098966248288 - nodes in this community are weakly interconnected._
+- **Should `Button` be split into smaller, more focused modules?**
+  _Cohesion score 0.02573599240265907 - nodes in this community are weakly interconnected._

@@ -8243,6 +8243,7 @@
    "src/utils/dateHelpers.ts"
   ],
   "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts",
    "src/utils/dateHelpers.ts"
   ],
@@ -8468,6 +8469,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/dialer/useClickToCall.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/dialer/usePowerDialer.ts": [
@@ -8594,6 +8596,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/gamification/useLeagues.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/gamification/useLevelUpCelebration.ts": [
@@ -8704,6 +8707,7 @@
    "src/lib/supabase/fetchAllRows.ts"
   ],
   "src/hooks/race/useMyRaceCar.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/race/useMyRival.ts": [
@@ -8787,6 +8791,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/race/useRaceUnlocks.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/race/useRaceViewTelemetry.ts": [
@@ -9128,6 +9133,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/useCommissions.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/useCompetencyData.ts": [
@@ -10861,6 +10867,7 @@
   ],
   "src/pages/ImportExport.tsx": [
    "src/components/transitions/PageTransition.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",

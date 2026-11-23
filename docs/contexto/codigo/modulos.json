@@ -2693,6 +2693,7 @@
    "rotas_http": [],
    "componentes": 6,
    "hooks_locais": [
+    "useAuth",
     "useCallLogsForSale",
     "useCallSession",
     "useCreateQueue",
@@ -2716,6 +2717,7 @@
     "dialer_queue_items",
     "dialer_queues",
     "sales",
+    "salespeople",
     "twilio_call_sessions"
    ],
    "rpcs": [
@@ -8103,7 +8105,7 @@
    "modulo": "components/shared",
    "arquivos": 8,
    "testes": 0,
-   "linhas": 923,
+   "linhas": 936,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9847,7 +9849,7 @@
    "modulo": "contexts",
    "arquivos": 6,
    "testes": 0,
-   "linhas": 606,
+   "linhas": 610,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9918,8 +9920,11 @@
     "hooks/admin",
     "hooks/auth",
     "hooks/bi",
+    "hooks/cadences",
     "hooks/dashboard",
+    "hooks/dialer",
     "hooks/gamification",
+    "hooks/race",
     "hooks/sales",
     "hooks/sequences",
     "pages"
@@ -9937,7 +9942,7 @@
    "modulo": "hooks",
    "arquivos": 148,
    "testes": 19,
-   "linhas": 20209,
+   "linhas": 20220,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -11649,7 +11654,7 @@
    "modulo": "hooks/cadences",
    "arquivos": 19,
    "testes": 2,
-   "linhas": 1881,
+   "linhas": 1884,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -11658,6 +11663,7 @@
     "useABTestResults",
     "useABTests",
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
@@ -11813,6 +11819,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "contexts",
     "integrations/supabase",
     "lib/supabase",
     "utils"
@@ -12622,12 +12629,13 @@
    "modulo": "hooks/dialer",
    "arquivos": 2,
    "testes": 1,
-   "linhas": 381,
+   "linhas": 383,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 0,
    "hooks_locais": [
+    "useAuth",
     "useToast"
    ],
    "hooks_definidos": [
@@ -12654,6 +12662,7 @@
     "channel_credentials",
     "dialer_queue_items",
     "dialer_queues",
+    "salespeople",
     "twilio_call_sessions"
    ],
    "rpcs": [
@@ -12691,6 +12700,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "contexts",
     "hooks",
     "integrations/supabase"
    ],
@@ -13117,7 +13127,7 @@
    "modulo": "hooks/gamification",
    "arquivos": 17,
    "testes": 3,
-   "linhas": 2479,
+   "linhas": 2481,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13758,7 +13768,7 @@
    "modulo": "hooks/race",
    "arquivos": 41,
    "testes": 1,
-   "linhas": 3615,
+   "linhas": 3619,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13932,6 +13942,7 @@
    "depende_de_modulos": [
     "components/race",
     "constants",
+    "contexts",
     "hooks",
     "integrations/supabase",
     "lib",
@@ -14310,7 +14321,7 @@
    "modulo": "hooks/sales",
    "arquivos": 16,
    "testes": 4,
-   "linhas": 2409,
+   "linhas": 2404,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -15918,7 +15929,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 7,
-   "linhas": 39575,
+   "linhas": 39626,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -17763,7 +17774,7 @@
    "modulo": "pages/admin",
    "arquivos": 12,
    "testes": 0,
-   "linhas": 4120,
+   "linhas": 4136,
    "itens_menu": [
     "Admin Race Circuito 🏎️"
    ],

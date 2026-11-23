@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 89,
+   "usado_por": 95,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -217,7 +217,7 @@
    "hooks_exportados": [
     "useDashboardTheme"
    ],
-   "linhas": 67,
+   "linhas": 71,
    "dominio": "contexts",
    "tabelas": [],
    "rpcs": [],
@@ -2085,7 +2085,7 @@
    "hooks_exportados": [
     "useTodaysQuoteCadenceTasks"
    ],
-   "linhas": 66,
+   "linhas": 69,
    "dominio": "hooks/cadences",
    "tabelas": [
     "cadence_tasks",
@@ -2094,6 +2094,7 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useQuery"
    ],
    "canais_realtime": [],
@@ -3622,7 +3623,7 @@
     "useInitiateCall",
     "useTwilioCredentialsCheck"
    ],
-   "linhas": 81,
+   "linhas": 83,
    "dominio": "hooks/dialer",
    "tabelas": [
     "channel_credentials",
@@ -3633,6 +3634,7 @@
     "twilio-click-to-call"
    ],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -4479,7 +4481,7 @@
     "useLeagueEnrollment",
     "useLeagues"
    ],
-   "linhas": 208,
+   "linhas": 210,
    "dominio": "hooks/gamification",
    "tabelas": [
     "league_members",
@@ -4489,6 +4491,7 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -5250,7 +5253,7 @@
    "hooks_exportados": [
     "useMyRaceCar"
    ],
-   "linhas": 80,
+   "linhas": 82,
    "dominio": "hooks/race",
    "tabelas": [
     "race_cars",
@@ -5259,6 +5262,7 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -5880,7 +5884,7 @@
     "useRaceUnlocks",
     "useUnlockRaceItem"
    ],
-   "linhas": 69,
+   "linhas": 71,
    "dominio": "hooks/race",
    "tabelas": [
     "race_unlocks"
@@ -5890,6 +5894,7 @@
    ],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -6910,7 +6915,7 @@
    "hooks_exportados": [
     "useSalespersonCoaching"
    ],
-   "linhas": 220,
+   "linhas": 215,
    "dominio": "hooks/sales",
    "tabelas": [
     "activities",
@@ -8143,7 +8148,7 @@
     "useMyCommissions",
     "useUpdateCommissionStatus"
    ],
-   "linhas": 121,
+   "linhas": 123,
    "dominio": "hooks",
    "tabelas": [
     "commissions",
@@ -8154,6 +8159,7 @@
    ],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -9663,7 +9669,7 @@
     "useMoveDeal",
     "usePipelineDeals"
    ],
-   "linhas": 226,
+   "linhas": 235,
    "dominio": "hooks",
    "tabelas": [
     "sales"

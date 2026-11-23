@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
+  "sha": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 16:19 UTC",
+  "generated_at": "2026-11-23 16:22 UTC",
   "files_total": 3651,
   "code_files": 3302,
-  "code_lines": 478748
+  "code_lines": 478853
  },
  "version": "1.3.2",
- "facts_hash": "857257ac8d7032a4",
+ "facts_hash": "8f273a121c6daab6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -93598,7 +93598,7 @@
     "rpc_transitive": [
      "transition_commission_status"
     ],
-    "deps_count": 16
+    "deps_count": 17
    },
    {
     "path": "",
@@ -94271,7 +94271,7 @@
      "log_audit_event",
      "merge_clients"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "",
@@ -94548,7 +94548,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 14
+    "deps_count": 15
    },
    {
     "path": "",
@@ -94592,7 +94592,7 @@
     "rpc_transitive": [
      "unlock_race_item"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "",
@@ -95422,7 +95422,7 @@
     "rpc_transitive": [
      "transition_commission_status"
     ],
-    "deps_count": 14
+    "deps_count": 15
    },
    {
     "path": "/competencias",
@@ -96265,7 +96265,7 @@
     "rpc_transitive": [
      "register_race_daily_checkin"
     ],
-    "deps_count": 158
+    "deps_count": 159
    },
    {
     "path": "/ranking",
@@ -106643,7 +106643,7 @@
   {
    "module": "src/components",
    "files": 1226,
-   "lines": 193012,
+   "lines": 193025,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106938,7 +106938,7 @@
   {
    "module": "src/contexts",
    "files": 6,
-   "lines": 606,
+   "lines": 610,
    "tables": [
     "salespeople"
    ],
@@ -106972,7 +106972,7 @@
   {
    "module": "src/hooks",
    "files": 548,
-   "lines": 64727,
+   "lines": 64748,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107606,7 +107606,7 @@
   {
    "module": "src/pages",
    "files": 180,
-   "lines": 44451,
+   "lines": 44518,
    "tables": [
     "achievements",
     "activities",
@@ -245973,7 +245973,7 @@
   },
   "src/components/shared/GlobalErrorBoundary.tsx": {
    "path": "src/components/shared/GlobalErrorBoundary.tsx",
-   "lines": 105,
+   "lines": 118,
    "exports": [
     "class GlobalErrorBoundary"
    ],
@@ -247914,7 +247914,7 @@
   },
   "src/contexts/DashboardThemeContext.tsx": {
    "path": "src/contexts/DashboardThemeContext.tsx",
-   "lines": 67,
+   "lines": 71,
    "exports": [
     "const DashboardThemeProvider",
     "const useDashboardTheme"
@@ -248867,7 +248867,7 @@
   },
   "src/hooks/useCommissions.ts": {
    "path": "src/hooks/useCommissions.ts",
-   "lines": 121,
+   "lines": 123,
    "exports": [
     "type CommissionStatus",
     "interface Commission",
@@ -251636,7 +251636,7 @@
   },
   "src/hooks/usePipeline.ts": {
    "path": "src/hooks/usePipeline.ts",
-   "lines": 226,
+   "lines": 235,
    "exports": [
     "type PipelineStageId",
     "interface PipelineStageConfig",
@@ -257808,7 +257808,7 @@
   },
   "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts": {
    "path": "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
-   "lines": 66,
+   "lines": 69,
    "exports": [
     "function useTodaysQuoteCadenceTasks"
    ],
@@ -260159,7 +260159,7 @@
   },
   "src/hooks/dialer/useClickToCall.ts": {
    "path": "src/hooks/dialer/useClickToCall.ts",
-   "lines": 81,
+   "lines": 83,
    "exports": [
     "const useTwilioCredentialsCheck",
     "const useInitiateCall",
@@ -261788,7 +261788,7 @@
   },
   "src/hooks/gamification/useLeagues.test.tsx": {
    "path": "src/hooks/gamification/useLeagues.test.tsx",
-   "lines": 176,
+   "lines": 180,
    "is_test": true,
    "tests": [
     "useLeagues",
@@ -261804,7 +261804,7 @@
   },
   "src/hooks/gamification/useLeagues.ts": {
    "path": "src/hooks/gamification/useLeagues.ts",
-   "lines": 208,
+   "lines": 210,
    "exports": [
     "type LeagueTier",
     "const LEAGUE_CONFIG",
@@ -263127,7 +263127,7 @@
   },
   "src/hooks/race/useMyRaceCar.ts": {
    "path": "src/hooks/race/useMyRaceCar.ts",
-   "lines": 80,
+   "lines": 82,
    "exports": [
     "interface RaceCar",
     "function useMyRaceCar"
@@ -263818,7 +263818,7 @@
   },
   "src/hooks/race/useRaceUnlocks.ts": {
    "path": "src/hooks/race/useRaceUnlocks.ts",
-   "lines": 69,
+   "lines": 71,
    "exports": [
     "function useRaceUnlocks",
     "function useUnlockRaceItem"
@@ -265745,7 +265745,7 @@
   },
   "src/hooks/sales/useSalespersonCoaching.ts": {
    "path": "src/hooks/sales/useSalespersonCoaching.ts",
-   "lines": 220,
+   "lines": 215,
    "exports": [
     "type CoachingData",
     "const useSalespersonCoaching"
@@ -265765,10 +265765,6 @@
     },
     {
      "table": "activities",
-     "op": "select"
-    },
-    {
-     "table": "sales",
      "op": "select"
     },
     {
@@ -271572,7 +271568,7 @@
   },
   "src/pages/ImportExport.tsx": {
    "path": "src/pages/ImportExport.tsx",
-   "lines": 368,
+   "lines": 419,
    "exports": [
     "default ImportExport"
    ],
@@ -273176,7 +273172,7 @@
   },
   "src/pages/admin/AdminV4CallbacksPage.tsx": {
    "path": "src/pages/admin/AdminV4CallbacksPage.tsx",
-   "lines": 639,
+   "lines": 655,
    "exports": [
     "function AdminV4CallbacksPage"
    ],
@@ -298286,10 +298282,72 @@
   }
  },
  "git": {
-  "sha": "bdea3f7dd1dacf6983d6c947b9a3372e9f293bba",
+  "sha": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "ff91ae9",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)",
+    "files": [
+     "src/pages/admin/AdminV4CallbacksPage.tsx"
+    ]
+   },
+   {
+    "sha": "45b9b02",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)",
+    "files": [
+     "src/hooks/usePipeline.ts"
+    ]
+   },
+   {
+    "sha": "d12f175",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)",
+    "files": [
+     "src/components/shared/GlobalErrorBoundary.tsx"
+    ]
+   },
+   {
+    "sha": "6781397",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/pages/ImportExport.tsx"
+    ]
+   },
+   {
+    "sha": "19fe244",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)",
+    "files": [
+     "src/hooks/sales/useSalespersonCoaching.ts"
+    ]
+   },
+   {
+    "sha": "a7c2da3",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)",
+    "files": [
+     "src/contexts/DashboardThemeContext.tsx",
+     "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
+     "src/hooks/dialer/useClickToCall.ts",
+     "src/hooks/gamification/useLeagues.test.tsx",
+     "src/hooks/gamification/useLeagues.ts",
+     "src/hooks/race/useMyRaceCar.ts",
+     "src/hooks/race/useRaceUnlocks.ts",
+     "src/hooks/useCommissions.ts"
+    ]
+   },
    {
     "sha": "bdea3f7",
     "date": "2026-11-23",
@@ -298522,80 +298580,72 @@
      "src/hooks/useEligibleBonuses.test.ts",
      "src/hooks/useEligibleBonuses.ts"
     ]
-   },
-   {
-    "sha": "e9e69b8",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)",
-    "files": [
-     "supabase/functions/notify-critical-pattern/index.ts"
-    ]
-   },
-   {
-    "sha": "e4ffc93",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)",
-    "files": [
-     "supabase/functions/workflow-executor/index.ts"
-    ]
-   },
-   {
-    "sha": "5aad0e0",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)",
-    "files": [
-     "supabase/functions/new-device-alert/index.ts"
-    ]
-   },
-   {
-    "sha": "ad2d98f",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)",
-    "files": [
-     "supabase/functions/execute-workflow/index.ts"
-    ]
-   },
-   {
-    "sha": "1de569f",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)",
-    "files": [
-     "docs/qa/00-RESUMO.md",
-     "docs/qa/01-INVENTARIO.md",
-     "docs/qa/02-CENARIOS.md",
-     "docs/qa/03-ACHADOS.md",
-     "docs/qa/04-PLANO.md",
-     "docs/qa/05-PROGRESSO.md"
-    ]
-   },
-   {
-    "sha": "f9b3558",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump astral-sh/setup-uv (#627)",
-    "files": [
-     ".github/workflows/contexto.yml",
-     ".github/workflows/graphify.yml"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "src/hooks/useEligibleBonuses.ts",
-    2
-   ],
    [
     "docs/qa/05-PROGRESSO.md",
     2
    ],
    [
+    "src/hooks/useEligibleBonuses.ts",
+    2
+   ],
+   [
     "supabase/functions/sequence-record-reply/index.ts",
     2
+   ],
+   [
+    "src/pages/admin/AdminV4CallbacksPage.tsx",
+    1
+   ],
+   [
+    "src/hooks/usePipeline.ts",
+    1
+   ],
+   [
+    "src/components/shared/GlobalErrorBoundary.tsx",
+    1
+   ],
+   [
+    "src/pages/ImportExport.tsx",
+    1
+   ],
+   [
+    "src/hooks/sales/useSalespersonCoaching.ts",
+    1
+   ],
+   [
+    "src/contexts/DashboardThemeContext.tsx",
+    1
+   ],
+   [
+    "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
+    1
+   ],
+   [
+    "src/hooks/dialer/useClickToCall.ts",
+    1
+   ],
+   [
+    "src/hooks/gamification/useLeagues.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/gamification/useLeagues.ts",
+    1
+   ],
+   [
+    "src/hooks/race/useMyRaceCar.ts",
+    1
+   ],
+   [
+    "src/hooks/race/useRaceUnlocks.ts",
+    1
+   ],
+   [
+    "src/hooks/useCommissions.ts",
+    1
    ],
    [
     "src/hooks/crm/useClients.ts",
@@ -298611,58 +298661,6 @@
    ],
    [
     "src/hooks/gamification/useGamifiedProfile.ts",
-    1
-   ],
-   [
-    "src/hooks/reports/useSalesReport.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/reports/useSalesReport.ts",
-    1
-   ],
-   [
-    "src/hooks/dashboard/useDashboardRedirect.ts",
-    1
-   ],
-   [
-    "src/lib/dashboardSections.ts",
-    1
-   ],
-   [
-    "src/pages/Index.tsx",
-    1
-   ],
-   [
-    "supabase/functions/winloss-webhook-dispatcher/retry.ts",
-    1
-   ],
-   [
-    "src/components/assistant/MessageBubble.tsx",
-    1
-   ],
-   [
-    "src/hooks/sales/useSalesAssistant.ts",
-    1
-   ],
-   [
-    "src/hooks/useSyncedSetting.ts",
-    1
-   ],
-   [
-    "src/hooks/dashboard/useDashboardKPIs.ts",
-    1
-   ],
-   [
-    "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
-    1
-   ],
-   [
-    "src/hooks/playbooks/usePlaybookMutations.ts",
-    1
-   ],
-   [
-    "src/hooks/sales/useSalesEnablement.ts",
     1
    ]
   ]

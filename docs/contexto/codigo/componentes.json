@@ -15199,7 +15199,7 @@
     "GlobalErrorBoundary"
    ],
    "export_default": null,
-   "linhas": 105,
+   "linhas": 118,
    "dominio": "components/shared",
    "hooks_locais": [],
    "tabelas": [],
@@ -15642,7 +15642,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 23,
+   "usado_por": 24,
    "orfao": false
   },
   {
@@ -17578,7 +17578,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 89,
+   "usado_por": 95,
    "orfao": false
   },
   {
@@ -17587,7 +17587,7 @@
     "DashboardThemeProvider"
    ],
    "export_default": null,
-   "linhas": 67,
+   "linhas": 71,
    "dominio": "contexts",
    "hooks_locais": [],
    "tabelas": [],
@@ -17844,7 +17844,7 @@
     "AdminV4CallbacksPage"
    ],
    "export_default": "AdminV4CallbacksPage",
-   "linhas": 639,
+   "linhas": 655,
    "dominio": "pages/admin",
    "hooks_locais": [
     "useV4AlertSettings",
@@ -19292,7 +19292,7 @@
     "ImportExport"
    ],
    "export_default": "ImportExport",
-   "linhas": 368,
+   "linhas": 419,
    "dominio": "pages",
    "hooks_locais": [
     "useLogAuditEvent"
