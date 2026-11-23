@@ -156,7 +156,7 @@ Exemplo:
 - [ ] 127 — Varrer o repositório por erro de leitura engolido — onda 5 — Média
 - [ ] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta
 - [ ] 129 — Tornar a importação de clientes capaz de ler CSV de verdade — onda 5 — Alta · **APROV**
-- [ ] 130 — Pedir confirmação explícita do volume antes de importar — onda 5 — Média
+- [x] 130 — Pedir confirmação explícita do volume antes de importar — onda 5 — Média — PR #669 - ImportExport pede confirmacao do volume antes de gravar
 - [x] 131 — Fazer o aviso de XP refletir o que foi creditado — onda 5 — Média - PR #666 - aviso de XP usa valor do servidor
 - [ ] 132 — Invalidar o contador de tarefas de follow-up após mutação — onda 5 — Média
 - [x] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média - PR #666 - assinaturas realtime de XP

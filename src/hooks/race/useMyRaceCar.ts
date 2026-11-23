@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 export interface RaceCar {
@@ -37,9 +38,10 @@ async function getMySalespersonId(): Promise<string | null> {
 
 export function useMyRaceCar() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const query = useQuery({
-    queryKey: ['my-race-car'],
+    queryKey: ['my-race-car', user?.id ?? null],
     queryFn: async (): Promise<RaceCar | null> => {
       const salespersonId = await getMySalespersonId();
       if (!salespersonId) return null;

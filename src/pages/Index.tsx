@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { DASHBOARD_SECTION_MAP } from '@/lib/dashboardSections';
 import React, { Suspense, lazy, useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { RankingPositionBanner } from '@/components/ranking/RankingPositionBanner';
@@ -102,13 +103,7 @@ const idle = (cb: () => void) => {
   }
 };
 
-const SECTION_MAP: Record<string, string> = {
-  performance: 'performance',
-  analises: 'analytics',
-  competicao: 'competition',
-  inteligencia: 'intelligence',
-  engajamento: 'engagement',
-};
+const SECTION_MAP = DASHBOARD_SECTION_MAP;
 
 const Index = () => {
   const { section } = useParams<{ section?: string }>();

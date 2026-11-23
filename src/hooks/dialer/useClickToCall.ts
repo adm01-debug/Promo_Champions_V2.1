@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 interface TwilioSession {
@@ -15,8 +16,9 @@ interface TwilioSession {
 }
 
 export const useTwilioCredentialsCheck = () => {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['twilio-credentials-check'],
+    queryKey: ['twilio-credentials-check', user?.id ?? null],
     queryFn: async () => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return { configured: false };

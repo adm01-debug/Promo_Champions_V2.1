@@ -873,9 +873,17 @@ Deno.test("fan-out: cada POST carrega header X-Winloss-Event correto e payload s
     assert(body.includes('"deal_id":"d-99"'), `body for ${url} missing deal_id`);
     assert(!body.includes("__replay_of"), `body for ${url} leaked __replay_of`);
   }
-  // Apenas SUB_C tem secret → header de assinatura
+  // Apenas SUB_C tem secret → header de assinatura HMAC (t=<unix>,v1=<hex>)
   const cInit = h.capturedInits.find((c) => c.url === SUB_C.url)!;
-  assertEquals((cInit.init.headers as Record<string, string>)["X-Winloss-Signature"], "shh");
+  const signature = (cInit.init.headers as Record<string, string>)["X-Winloss-Signature"];
+  assert(
+    /^t=\d+,v1=[0-9a-f]{64}$/.test(signature),
+    `SUB_C deve trazer X-Winloss-Signature no formato t=<unix>,v1=<hex64> (obtido: ${signature})`,
+  );
+  assert(
+    !signature.includes("shh"),
+    "a assinatura não pode expor o secret em claro",
+  );
   const aInit = h.capturedInits.find((c) => c.url === SUB_A.url)!;
   assertEquals((aInit.init.headers as Record<string, string>)["X-Winloss-Signature"], undefined);
 });
@@ -2000,9 +2008,15 @@ Deno.test("fan-out [estresse]: N=100 subs — total de POSTs preservado, sem cro
   for (const s of successSubs) assert(!dlqIds.has(s.id), `${s.id} não deveria estar no DLQ`);
 
   // ── Concorrência (observabilidade do contrato atual) ──────────
-  // Sem throttling, o pico in-flight da PRIMEIRA rodada == N (todas disparam juntas).
-  // Em rodadas subsequentes (retries), o pico cai porque sucessos já terminaram.
-  assertEquals(peakInFlight, N, `pico in-flight esperado=${N} (sem throttling); obtido=${peakInFlight}`);
+  // Sem throttling, todos os subs disparam juntos. Desde a assinatura HMAC
+  // (QA-092), cada sub COM secret faz um `await` de HMAC antes do primeiro POST,
+  // então esses saem do disparo síncrono e o pico da 1ª rodada cai para
+  // N − (subs com secret). Continua sendo fan-out concorrente de O(N).
+  const withSecret = subs.filter((s) => s.secret).length;
+  assert(
+    peakInFlight >= N - withSecret,
+    `pico in-flight esperado >= ${N - withSecret} (subs sem secret disparam juntos); obtido=${peakInFlight}`,
+  );
   // Sanidade: nunca pode ultrapassar N (seria contagem corrompida ou cross-fire).
   assertLessOrEqual(peakInFlight, N, "pico in-flight não pode exceder N");
 });
