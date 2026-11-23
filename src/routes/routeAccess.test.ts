@@ -90,6 +90,12 @@ describe('canAccessPath', () => {
     expect(canAccessPath('/comissoes', nobody)).toBe(true);
   });
 
+  it('/assinatura-digital é de gestor — não sobra no menu do Closer (QA-178)', () => {
+    expect(requiredRoleFor('/assinatura-digital')).toBe('manager');
+    expect(canAccessPath('/assinatura-digital', nobody)).toBe(false);
+    expect(canAccessPath('/assinatura-digital', gestor)).toBe(true);
+  });
+
   it('ignora query string e barra final', () => {
     expect(canAccessPath('/metas?tab=1', nobody)).toBe(false);
     expect(canAccessPath('/metas/', nobody)).toBe(false);

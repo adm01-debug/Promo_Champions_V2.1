@@ -114,13 +114,13 @@ Exemplo:
 - [ ] 089 — Fazer o cron perceber falha da função que ele chama — onda 3 — Alta · **APROV**
 - [ ] 090 — Calibrar a espera do despachante de cron para não travar os trabalhadores — onda 3 — Média · **APROV**
 - [x] 091 — Alertar quando a sincronização do Bitrix24 falhar — onda 3 — Média - PR #660 - alerta apos 3 falhas consecutivas do Bitrix24
-- [ ] 092 — Assinar o webhook de Win/Loss com HMAC do corpo — onda 3 — Crítica
+- [x] 092 — Assinar o webhook de Win/Loss com HMAC do corpo — onda 3 — Crítica — PR #655/#677 - retry.ts:1-14 assina `${ts}.${body}` e envia `t=<ts>,v1=<hex>` em X-Winloss-Signature (L155); #677 corrigiu a regressao que derrubava a main
 - [ ] 093 — Parar de trazer o segredo do webhook para o navegador e passar a gravá-lo — onda 3 — Alta · **APROV**
 - [ ] 094 — Tirar as credenciais de canal do navegador antes do primeiro provedor ser conectado — onda 3 — Alta · **APROV**
 - [ ] 095 — Dar uma tela à lista de destinos permitidos de webhook — onda 3 — Média
 - [x] 096 — Proteger o teste de conexão de integração contra destino interno — onda 3 — Média - PR #656 - test-integration-connection bloqueia URLs internas
 - [x] 097 — Respeitar o limite de requisições dos terceiros fora do caminho de IA — onda 3 — Média - PR #657 - Retry-After respeitado em 429 no Bitrix24 e V4
-- [ ] 098 — Validar o formato da resposta do sistema de atendimento — onda 3 — Média
+- [x] 098 — Validar o formato da resposta do sistema de atendimento — onda 3 — Média — PR #658 - requireArray em Zendesk/Intercom/Freshdesk com erro explicito e log de corte
 - [ ] 099 — Unificar a retenção da deduplicação de webhook — onda 3 — Baixa · **APROV**
 - [ ] 100 — Fazer a comissão recusar venda sem regra, em vez de pagar 5% — onda 3 — Alta · **APROV**
 
@@ -208,9 +208,9 @@ Exemplo:
 - [x] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta — PR #676 - AlertDialog com nome da chave e desativar como opcao reversivel
 - [x] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta — PR #676 - icone Trash2, aria-label e AlertDialog nomeando vendedor e premio
 - [ ] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média
-- [ ] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa
-- [ ] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa
-- [ ] 180 — Remover o componente órfão e o módulo usado só por teste — onda 7 — Baixa
+- [x] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa — PR #678 - /assinatura-digital segue managerOnlyRoutes e o filtro por papel tira o item do menu do Closer; teste em routeAccess.test.ts
+- [x] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa — PR #678 - NavLink consome routePrefetchMap; lista interna removida e as 12 rotas exclusivas do NavLink levadas para o mapa
+- [x] 180 — Remover o componente órfão e o módulo usado só por teste — onda 7 — Baixa — PR #678 - level-up-celebration.tsx removido; orderTracking/stages.ts mantido (decisão do dono pendente)
 - [ ] 181 — Fechar o grant de `anon` nas views de telemetria — onda 7 — Média · **APROV**
 - [ ] 182 — Igualar a defesa das tabelas de negação explícita — onda 7 — Baixa
 - [ ] 183 — Corrigir o remetente da escalação de alerta — onda 7 — Média · **APROV**
