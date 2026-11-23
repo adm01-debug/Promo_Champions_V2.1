@@ -93,7 +93,7 @@
     "npm:leaflet.markercluster@^1.5.3": "1.5.3_leaflet@1.9.4",
     "npm:leaflet@^1.9.4": "1.9.4",
     "npm:lint-staged@^17.6.0": "17.6.0",
-    "npm:lucide-react@1.49.0": "1.49.0_@types+react@19.3.0_react@19.3.1",
+    "npm:lucide-react@1.76.0": "1.76.0_@types+react@19.3.0_react@19.3.1",
     "npm:next-themes@~0.4.6": "0.4.6_react@19.3.1_react-dom@19.3.1",
     "npm:papaparse@^5.7.1": "5.7.1",
     "npm:postcss@^8.5.30": "8.5.33",
@@ -1362,7 +1362,6 @@
     "@eslint-community/eslint-utils@4.10.1_eslint@9.39.5": {
       "integrity": "sha512-cuadcxVFE8sDK6iWJbs8Sn0av2Nrh2QSGQhVlBW9AaAHqHwjWsZHT8LJ4hFGPh7ASBV2deFdM7H/DPjulmh8rg==",
       "dependencies": [
-        "eslint@9.39.5",
         "eslint-visitor-keys@3.4.3"
       ]
     },
@@ -3768,7 +3767,7 @@
         "@types/node"
       ]
     },
-    "@typescript-eslint/eslint-plugin@8.72.2_@typescript-eslint+parser@8.72.2__eslint@10.15.0__typescript@5.9.3_eslint@10.15.0_typescript@5.9.3": {
+    "@typescript-eslint/eslint-plugin@8.72.2_@typescript-eslint+parser@8.72.2_eslint@10.15.0_typescript@5.9.3": {
       "integrity": "sha512-222PKFXKihmFpi/pS5njoBgdAqsPhj2/GBmFbrNw8Tq8gEG9Sv+kSlKFy4u2q+mJv9ZzJgM2Gkv/bUzRZwZw5g==",
       "dependencies": [
         "@eslint-community/regexpp",
@@ -6345,8 +6344,8 @@
         "yallist"
       ]
     },
-    "lucide-react@1.49.0_@types+react@19.3.0_react@19.3.1": {
-      "integrity": "sha512-ApfaNM4/7jBrVopqLJ84Jz8TMQ1Q1JeZ1PmKh25aeS3E1FTVcMkSh1bEQB7dfzdIrwXRP8p3z4AJjTIHHb5IIA==",
+    "lucide-react@1.76.0_@types+react@19.3.0_react@19.3.1": {
+      "integrity": "sha512-wRVHt2Xf64GXndB4rQOY9+3Wy9oJ59HDMYv6vwhT0hpSwUxQhG/RM9YijnOmvmIQ+VI/n+1V/FKd6gP4XL2aBQ==",
       "dependencies": [
         "@types/react",
         "react@19.3.1"
@@ -8941,7 +8940,7 @@
         "npm:leaflet.markercluster@^1.5.3",
         "npm:leaflet@^1.9.4",
         "npm:lint-staged@^17.6.0",
-        "npm:lucide-react@1.49.0",
+        "npm:lucide-react@1.76.0",
         "npm:next-themes@~0.4.6",
         "npm:papaparse@^5.7.1",
         "npm:postcss@^8.5.30",
