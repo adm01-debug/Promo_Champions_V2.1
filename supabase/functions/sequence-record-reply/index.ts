@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+﻿import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -37,6 +37,18 @@ Deno.serve(withRequestId('sequence-record-reply', async (req, _ctx) => {
       return new Response(JSON.stringify({ error: "enrollment_id required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Verificar propriedade do enrollment antes de qualquer escrita
+    const { data: enrollment } = await callerCtx.client
+      .from("sequence_enrollments")
+      .select("id")
+      .eq("id", enrollmentId)
+      .maybeSingle();
+    if (!enrollment) {
+      return new Response(JSON.stringify({ error: "not_found_or_unauthorized" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
