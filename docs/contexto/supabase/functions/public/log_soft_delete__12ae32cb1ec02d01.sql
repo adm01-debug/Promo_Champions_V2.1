@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.log_soft_delete()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'auth', 'storage', 'cron', 'net', 'private', 'vault', 'pg_temp'
 AS $function$
 BEGIN
   IF NEW.deleted_at IS NOT NULL AND OLD.deleted_at IS NULL THEN

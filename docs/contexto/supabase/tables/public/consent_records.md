@@ -55,6 +55,7 @@
 |---|---|---|---|---|---|---|
 | consent_records_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX consent_records_pkey ON public.consent_records USING btree (id)` |
 | idx_consent_records_purpose | btree | purpose, revoked_at | não | sim |  | `CREATE INDEX idx_consent_records_purpose ON public.consent_records USING btree (purpose, revoked_at)` |
+| idx_consent_records_subject_client_id | btree | subject_client_id | não | sim |  | `CREATE INDEX idx_consent_records_subject_client_id ON public.consent_records USING btree (subject_client_id)` |
 | idx_consent_records_subject_email | btree |  | não | sim | `(revoked_at IS NULL)` | `CREATE INDEX idx_consent_records_subject_email ON public.consent_records USING btree (lower(subject_email)) WHERE (revoked_at IS NULL)` |
 | idx_consent_records_subject_id | btree | subject_id | não | sim | `(revoked_at IS NULL)` | `CREATE INDEX idx_consent_records_subject_id ON public.consent_records USING btree (subject_id) WHERE (revoked_at IS NULL)` |
 

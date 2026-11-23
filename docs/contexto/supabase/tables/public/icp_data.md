@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 4 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -71,16 +71,6 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `is_admin_or_manager(auth.uid())` |
-| WITH CHECK |  |
-
-### `Authenticated users can read icp_data`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
 | WITH CHECK |  |
 
 ### `Users can read own client icp_data`

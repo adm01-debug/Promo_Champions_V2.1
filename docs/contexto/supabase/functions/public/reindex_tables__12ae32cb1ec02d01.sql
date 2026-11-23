@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.reindex_tables()
  RETURNS void
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'auth', 'storage', 'cron', 'net', 'private', 'vault', 'pg_temp'
 AS $function$
 BEGIN
   REINDEX TABLE deals;

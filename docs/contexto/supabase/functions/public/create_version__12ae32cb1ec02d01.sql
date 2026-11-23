@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.create_version()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'auth', 'storage', 'cron', 'net', 'private', 'vault', 'pg_temp'
 AS $function$
 BEGIN
   INSERT INTO entity_versions (entity_type, entity_id, version_number, data, changed_by, change_summary)

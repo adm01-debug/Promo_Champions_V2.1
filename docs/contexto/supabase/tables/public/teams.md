@@ -53,7 +53,6 @@
 |---|---|---|---|---|---|---|
 | idx_teams_active | btree | id | não | sim | `(deleted_at IS NULL)` | `CREATE INDEX idx_teams_active ON public.teams USING btree (id) WHERE (deleted_at IS NULL)` |
 | idx_teams_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_teams_deleted ON public.teams USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
-| idx_teams_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_teams_deleted_at ON public.teams USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
 | idx_teams_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_teams_deleted_by_fk ON public.teams USING btree (deleted_by)` |
 | idx_teams_sdr_id | btree | sdr_id | não | sim |  | `CREATE INDEX idx_teams_sdr_id ON public.teams USING btree (sdr_id)` |
 | teams_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX teams_pkey ON public.teams USING btree (id)` |

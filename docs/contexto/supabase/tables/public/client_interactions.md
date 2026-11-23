@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 4 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -44,16 +44,6 @@
 
 
 ## Policies (RLS)
-
-### `Allow authenticated users to insert interactions`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING |  |
-| WITH CHECK | `(auth.role() = 'authenticated'::text)` |
 
 ### `Portfolio interactions readable`
 

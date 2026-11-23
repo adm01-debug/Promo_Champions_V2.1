@@ -49,7 +49,6 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | conversation_analyses_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX conversation_analyses_pkey ON public.conversation_analyses USING btree (id)` |
-| idx_conv_analyses_analyzed_by | btree | analyzed_by | não | sim |  | `CREATE INDEX idx_conv_analyses_analyzed_by ON public.conversation_analyses USING btree (analyzed_by)` |
 | idx_conv_analyses_created | btree | created_at | não | sim |  | `CREATE INDEX idx_conv_analyses_created ON public.conversation_analyses USING btree (created_at DESC)` |
 | idx_conv_analyses_sale | btree | sale_id | não | sim |  | `CREATE INDEX idx_conv_analyses_sale ON public.conversation_analyses USING btree (sale_id)` |
 | idx_conv_analyses_sentiment | btree | sentiment | não | sim |  | `CREATE INDEX idx_conv_analyses_sentiment ON public.conversation_analyses USING btree (sentiment)` |

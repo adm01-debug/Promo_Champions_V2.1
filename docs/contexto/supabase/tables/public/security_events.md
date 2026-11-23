@@ -43,7 +43,6 @@
 | idx_security_events_severity | btree | severity, created_at | não | sim |  | `CREATE INDEX idx_security_events_severity ON public.security_events USING btree (severity, created_at DESC)` |
 | idx_security_events_type | btree | event_type | não | sim |  | `CREATE INDEX idx_security_events_type ON public.security_events USING btree (event_type)` |
 | idx_security_events_type_created | btree | event_type, created_at | não | sim |  | `CREATE INDEX idx_security_events_type_created ON public.security_events USING btree (event_type, created_at DESC)` |
-| idx_security_events_user | btree | user_id, created_at | não | sim |  | `CREATE INDEX idx_security_events_user ON public.security_events USING btree (user_id, created_at DESC)` |
 | idx_security_events_user_created | btree | user_id, created_at | não | sim |  | `CREATE INDEX idx_security_events_user_created ON public.security_events USING btree (user_id, created_at DESC)` |
 | security_events_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX security_events_pkey ON public.security_events USING btree (id)` |
 

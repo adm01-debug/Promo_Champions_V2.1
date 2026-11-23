@@ -75,7 +75,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.churn_alert_settings](tables/public/churn_alert_settings.md) | table | sim | 2 | 16 | não |  |
 | [public.circuit_breaker_events](tables/public/circuit_breaker_events.md) | table | sim | 3 | 8 | não |  |
 | [public.client_churn_alerts_state](tables/public/client_churn_alerts_state.md) | table | sim | 2 | 12 | não |  |
-| [public.client_interactions](tables/public/client_interactions.md) | table | sim | 4 | 7 | não |  |
+| [public.client_interactions](tables/public/client_interactions.md) | table | sim | 3 | 7 | não |  |
 | [public.client_portfolio](tables/public/client_portfolio.md) | table | sim | 4 | 15 | não |  |
 | [public.client_renewals](tables/public/client_renewals.md) | table | sim | 1 | 10 | não |  |
 | [public.clients](tables/public/clients.md) | table | sim | 7 | 22 | não |  |
@@ -123,7 +123,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.dead_letter_replay_audit](tables/public/dead_letter_replay_audit.md) | table | sim | 1 | 6 | não |  |
 | [public.deal_chat_history](tables/public/deal_chat_history.md) | table | sim | 3 | 7 | sim |  |
 | [public.deal_committee_coverage](tables/public/deal_committee_coverage.md) | table | sim | 2 | 11 | sim |  |
-| [public.deal_health_history](tables/public/deal_health_history.md) | table | sim | 3 | 7 | sim |  |
+| [public.deal_health_history](tables/public/deal_health_history.md) | table | sim | 2 | 7 | sim |  |
 | [public.deal_health_scores](tables/public/deal_health_scores.md) | table | sim | 4 | 16 | sim |  |
 | [public.deal_outcomes](tables/public/deal_outcomes.md) | table | sim | 4 | 7 | não |  |
 | [public.deal_probability_scores](tables/public/deal_probability_scores.md) | table | sim | 2 | 7 | sim |  |
@@ -177,7 +177,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.geo_access_logs](tables/public/geo_access_logs.md) | table | sim | 1 | 10 | não |  |
 | [public.geo_blocked_regions](tables/public/geo_blocked_regions.md) | table | sim | 2 | 9 | não |  |
 | [public.geocode_cache](tables/public/geocode_cache.md) | table | sim | 1 | 6 | não |  |
-| [public.icp_data](tables/public/icp_data.md) | table | sim | 4 | 11 | não |  |
+| [public.icp_data](tables/public/icp_data.md) | table | sim | 3 | 11 | não |  |
 | [public.icp_parameters](tables/public/icp_parameters.md) | table | sim | 2 | 11 | não |  |
 | [public.inbound_reply_events](tables/public/inbound_reply_events.md) | table | sim | 1 | 10 | não |  |
 | [public.integration_autotest_jobs](tables/public/integration_autotest_jobs.md) | table | sim | 1 | 8 | não |  |
@@ -216,7 +216,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.mql_qualifications](tables/public/mql_qualifications.md) | table | sim | 1 | 15 | não |  |
 | [public.notification_preferences](tables/public/notification_preferences.md) | table | sim | 5 | 14 | não |  |
 | [public.notifications](tables/public/notifications.md) | table | sim | 7 | 15 | sim |  |
-| [public.nps_surveys](tables/public/nps_surveys.md) | table | sim | 8 | 12 | não |  |
+| [public.nps_surveys](tables/public/nps_surveys.md) | table | sim | 7 | 12 | não |  |
 | [public.objection_library](tables/public/objection_library.md) | table | sim | 2 | 8 | sim |  |
 | [public.objections_library](tables/public/objections_library.md) | table | sim | 4 | 10 | não |  |
 | [public.onboarding_journeys](tables/public/onboarding_journeys.md) | table | sim | 2 | 11 | não |  |
@@ -244,7 +244,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.playbook_items](tables/public/playbook_items.md) | table | sim | 4 | 9 | não |  |
 | [public.playbook_progress](tables/public/playbook_progress.md) | table | sim | 6 | 5 | não |  |
 | [public.playbooks](tables/public/playbooks.md) | table | sim | 4 | 6 | não |  |
-| [public.portfolio_settings](tables/public/portfolio_settings.md) | table | sim | 4 | 5 | não |  |
+| [public.portfolio_settings](tables/public/portfolio_settings.md) | table | sim | 3 | 5 | não |  |
 | [public.price_alerts](tables/public/price_alerts.md) | table | sim | 3 | 9 | não |  |
 | [public.price_history](tables/public/price_history.md) | table | sim | 2 | 9 | não |  |
 | [public.price_protection_rules](tables/public/price_protection_rules.md) | table | sim | 1 | 7 | não |  |

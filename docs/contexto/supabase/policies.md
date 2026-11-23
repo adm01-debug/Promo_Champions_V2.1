@@ -177,7 +177,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.circuit_breaker_events | Admins can delete circuit breaker events | DELETE | PERMISSIVE | public | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.client_churn_alerts_state | Admins can view all churn alert state | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.client_churn_alerts_state | Users can view their own churn alert state | SELECT | PERMISSIVE | authenticated | `(salesperson_id = auth.uid())` |  |
-| public.client_interactions | Allow authenticated users to insert interactions | INSERT | PERMISSIVE | public |  | `(auth.role() = 'authenticated'::text)` |
 | public.client_interactions | Portfolio interactions readable | SELECT | PERMISSIVE | public | `(is_admin_or_manager(auth.uid()) OR (auth.uid() = user_id) OR (client_id IN ( SELECT client_portfolio.client_id    FROM client_portfolio   WHERE (client_portfolio.salesperson_id = get_current_salesperson_id()))))` |  |
 | public.client_interactions | Users can insert own interactions | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = user_id)` |
 | public.client_interactions | Users can view own interactions | SELECT | PERMISSIVE | authenticated | `((auth.uid() = user_id) OR is_admin_or_manager(auth.uid()))` |  |
@@ -290,9 +289,8 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.deal_committee_coverage | Owners view own coverage | SELECT | PERMISSIVE | public | `((auth.uid() = owner_id) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
 | public.deal_committee_coverage | Service can upsert coverage | ALL | PERMISSIVE | public | `((auth.uid() = owner_id) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `((auth.uid() = owner_id) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.deal_health_history | Authenticated users can insert health history | INSERT | PERMISSIVE | public |  | `(auth.uid() = owner_id)` |
-| public.deal_health_history | Authenticated users can view health history | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.deal_health_history | Users see own deal health history | SELECT | PERMISSIVE | public | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
-| public.deal_health_scores | Authenticated insert health scores | INSERT | PERMISSIVE | public |  | `(auth.uid() IS NOT NULL)` |
+| public.deal_health_scores | Insert health scores for accessible sales | INSERT | PERMISSIVE | authenticated |  | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_health_scores.sale_id) AND (s.salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))))))` |
 | public.deal_health_scores | System can manage deal health | ALL | PERMISSIVE | public | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.deal_health_scores | Users see own deal health | SELECT | PERMISSIVE | public | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
 | public.deal_health_scores | View health via sale access | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_health_scores.sale_id) AND ((s.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |  |
@@ -302,7 +300,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.deal_outcomes | Users can update own outcomes | UPDATE | PERMISSIVE | public | `((salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid()))` |  |
 | public.deal_probability_scores | Admin/manager write deal scores | ALL | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.deal_probability_scores | Authenticated read deal scores | SELECT | PERMISSIVE | authenticated | `true` |  |
-| public.deal_risk_signals | Authenticated insert signals | INSERT | PERMISSIVE | public |  | `(auth.uid() IS NOT NULL)` |
+| public.deal_risk_signals | Insert risk signals for accessible sales | INSERT | PERMISSIVE | authenticated |  | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_risk_signals.sale_id) AND (s.salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))))))` |
 | public.deal_risk_signals | Owners resolve own signals | UPDATE | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_risk_signals.sale_id) AND ((s.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |  |
 | public.deal_risk_signals | View signals via sale access | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_risk_signals.sale_id) AND ((s.salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())))))` |  |
 | public.deal_stage_history | Users can insert own deal_stage_history | INSERT | PERMISSIVE | authenticated |  | `((sale_id IN ( SELECT sales.id    FROM sales   WHERE (sales.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |
@@ -416,7 +414,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.geocode_cache | Deny all access to geocode_cache | ALL | PERMISSIVE | anon, authenticated | `false` | `false` |
 | public.icp_data | Admins can insert icp_data | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
 | public.icp_data | Admins can update icp_data | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
-| public.icp_data | Authenticated users can read icp_data | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.icp_data | Users can read own client icp_data | SELECT | PERMISSIVE | authenticated | `((client_id IN ( SELECT client_portfolio.client_id    FROM client_portfolio   WHERE (client_portfolio.salesperson_id = get_current_salesperson_id()))) OR is_admin_or_manager(auth.uid()))` |  |
 | public.icp_parameters | Admins can manage ICP parameters | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.icp_parameters | All authenticated can view ICP parameters | SELECT | PERMISSIVE | authenticated | `true` |  |
@@ -503,7 +500,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.notifications | notifications_insert_own_or_admin | INSERT | PERMISSIVE | authenticated |  | `((user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |
 | public.notifications | notifications_select_own | SELECT | PERMISSIVE | authenticated | `(user_id = auth.uid())` |  |
 | public.notifications | notifications_update_own | UPDATE | PERMISSIVE | authenticated | `(user_id = auth.uid())` | `(user_id = auth.uid())` |
-| public.nps_surveys | Authenticated users can view nps surveys | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.nps_surveys | Salespeople can create their own nps surveys | INSERT | PERMISSIVE | authenticated |  | `(get_current_salesperson_id() = salesperson_id)` |
 | public.nps_surveys | Salespeople can delete their own nps surveys | DELETE | PERMISSIVE | authenticated | `((get_current_salesperson_id() = salesperson_id) OR is_admin_or_manager(auth.uid()))` |  |
 | public.nps_surveys | Salespeople can update their own nps surveys | UPDATE | PERMISSIVE | authenticated | `((get_current_salesperson_id() = salesperson_id) OR is_admin_or_manager(auth.uid()))` |  |
@@ -595,7 +591,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.playbooks | Authenticated users can read playbooks | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.portfolio_settings | Admins can manage portfolio_settings | ALL | PERMISSIVE | public | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
 | public.portfolio_settings | Admins can read all portfolio settings including credentials | SELECT | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
-| public.portfolio_settings | Authenticated can view portfolio settings | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.portfolio_settings | Authenticated users can read non-sensitive portfolio settings | SELECT | PERMISSIVE | authenticated | `((setting_key !~~* '%token%'::text) AND (setting_key !~~* '%secret%'::text) AND (setting_key !~~* '%webhook%'::text) AND (setting_key !~~* '%api_key%'::text) AND (setting_key !~~* '%password%'::text) AND (setting_key !~~* '%credential%'::text) AND (setting_key !~~* '%private%'::text))` |  |
 | public.price_alerts | Admin and managers can update price_alerts | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.price_alerts | Admin/manager can insert price_alerts | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |

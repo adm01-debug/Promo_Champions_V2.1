@@ -39,6 +39,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| idx_webhook_allowed_domains_created_by | btree | created_by | não | sim |  | `CREATE INDEX idx_webhook_allowed_domains_created_by ON public.webhook_allowed_domains USING btree (created_by)` |
 | ux_webhook_allowed_domains_pattern | btree | pattern | sim | sim |  | `CREATE UNIQUE INDEX ux_webhook_allowed_domains_pattern ON public.webhook_allowed_domains USING btree (pattern)` |
 | webhook_allowed_domains_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX webhook_allowed_domains_pkey ON public.webhook_allowed_domains USING btree (id)` |
 

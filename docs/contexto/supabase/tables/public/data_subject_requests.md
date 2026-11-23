@@ -50,6 +50,8 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | data_subject_requests_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX data_subject_requests_pkey ON public.data_subject_requests USING btree (id)` |
+| idx_data_subject_requests_subject_client_id | btree | subject_client_id | não | sim |  | `CREATE INDEX idx_data_subject_requests_subject_client_id ON public.data_subject_requests USING btree (subject_client_id)` |
+| idx_data_subject_requests_subject_id | btree | subject_id | não | sim |  | `CREATE INDEX idx_data_subject_requests_subject_id ON public.data_subject_requests USING btree (subject_id)` |
 | idx_dsr_status_due | btree | status, due_at | não | sim |  | `CREATE INDEX idx_dsr_status_due ON public.data_subject_requests USING btree (status, due_at)` |
 | idx_dsr_subject_email | btree |  | não | sim |  | `CREATE INDEX idx_dsr_subject_email ON public.data_subject_requests USING btree (lower(subject_email))` |
 

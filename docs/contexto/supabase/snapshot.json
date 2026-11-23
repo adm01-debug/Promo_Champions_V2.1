@@ -83517,8 +83517,8 @@
         ],
         "definition": null,
         "definition_sha": "4a3fa42f4547b557",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -83594,8 +83594,8 @@
         ],
         "definition": null,
         "definition_sha": "1f6af32574a175fb",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -83641,7 +83641,7 @@
         ],
         "definition": null,
         "definition_sha": "0ecd64a1782d0f17",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -83719,7 +83719,7 @@
         ],
         "definition": null,
         "definition_sha": "86e798aa3e5cae05",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -83931,8 +83931,8 @@
         ],
         "definition": null,
         "definition_sha": "2650a99ea8ce4aae",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -84690,7 +84690,7 @@
         ],
         "definition": null,
         "definition_sha": "5c3dd6462bdc6973",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -84715,9 +84715,11 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "7e819863daacbaea",
+        "definition_sha": "6a9135ade6ee7e21",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": false,
@@ -85077,11 +85079,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "13d9bf5c89fcb00d",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "78421bee7a9f9549",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -85135,11 +85139,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "679522972c8bb6ef",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "ce2029e1048048f6",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -85532,7 +85538,7 @@
         ],
         "definition": null,
         "definition_sha": "86547a381120a5a5",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -85691,11 +85697,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "a94cb3d916f7420f",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "55279b2fbeac66ea",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -85731,7 +85739,7 @@
         ],
         "definition": null,
         "definition_sha": "1c5ad6bcec3de74e",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -86110,7 +86118,7 @@
         ],
         "definition": null,
         "definition_sha": "9d532d5f3daefdc6",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -86188,9 +86196,11 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "c59d1ee1f00d9203",
+        "definition_sha": "11ed964bc45db049",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -86770,7 +86780,7 @@
         ],
         "definition": null,
         "definition_sha": "e9eefcfd4e13086d",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -86837,7 +86847,7 @@
         ],
         "definition": null,
         "definition_sha": "fde6d978898f7c75",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -87373,8 +87383,8 @@
         ],
         "definition": null,
         "definition_sha": "8b707c9532676728",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -87728,7 +87738,7 @@
         ],
         "definition": null,
         "definition_sha": "464e9b8639f60f0d",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -90116,7 +90126,7 @@
         ],
         "definition": null,
         "definition_sha": "6b66570d0a3fb4f6",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -91258,8 +91268,8 @@
         ],
         "definition": null,
         "definition_sha": "c5d479caf8d4149a",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -91338,8 +91348,8 @@
         ],
         "definition": null,
         "definition_sha": "ab544bdada36fcb6",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -91445,9 +91455,11 @@
           "views": []
         },
         "comment": "superseded por public.audit_log_row_change() (20261001193100)",
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "f49b68f406a8612b",
+        "definition_sha": "6cbc0243cd733287",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -91493,7 +91505,7 @@
         ],
         "definition": null,
         "definition_sha": "abc8e483bd3b74cb",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -91534,7 +91546,7 @@
         ],
         "definition": null,
         "definition_sha": "6250ac6c67444a26",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -92065,7 +92077,7 @@
         ],
         "definition": null,
         "definition_sha": "1411e7ee4502e88c",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -92175,7 +92187,7 @@
         ],
         "definition": null,
         "definition_sha": "88930e91e6bb1213",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -92378,8 +92390,8 @@
         ],
         "definition": null,
         "definition_sha": "46aa45ccb96d2c7d",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -92788,7 +92800,7 @@
         ],
         "definition": null,
         "definition_sha": "8d2fe30c227f93e6",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -92894,7 +92906,7 @@
         ],
         "definition": null,
         "definition_sha": "c9807f9b2c40d9f1",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -92935,7 +92947,7 @@
         ],
         "definition": null,
         "definition_sha": "6f256d520e9f31f9",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -93051,11 +93063,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "157e018fa2395607",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "6d3ee886944b773d",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -93189,11 +93203,13 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "7b8790f3f79f7eca",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "definition_sha": "2b26290b0875d439",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -93738,7 +93754,7 @@
         ],
         "definition": null,
         "definition_sha": "607f52753944d1cd",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -93845,7 +93861,7 @@
         ],
         "definition": null,
         "definition_sha": "65815943d58bc9e1",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -93882,7 +93898,7 @@
         ],
         "definition": null,
         "definition_sha": "1dbe09ca12342035",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94048,7 +94064,7 @@
         ],
         "definition": null,
         "definition_sha": "2b20122dd4c4add0",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94172,7 +94188,7 @@
         ],
         "definition": null,
         "definition_sha": "a7b81eb7be6558aa",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94256,7 +94272,7 @@
         ],
         "definition": null,
         "definition_sha": "6c5f5c6b1ad58818",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94293,7 +94309,7 @@
         ],
         "definition": null,
         "definition_sha": "9ec79e9162dba2bb",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94334,7 +94350,7 @@
         ],
         "definition": null,
         "definition_sha": "045b3ac18c65edca",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94582,8 +94598,8 @@
         ],
         "definition": null,
         "definition_sha": "48a4377e33bed166",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -94619,8 +94635,8 @@
         ],
         "definition": null,
         "definition_sha": "e1fcf056a6e439ca",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -94697,8 +94713,8 @@
         ],
         "definition": null,
         "definition_sha": "7fd10002d2748318",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -94738,7 +94754,7 @@
         ],
         "definition": null,
         "definition_sha": "e0d6553e3026750f",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -94812,8 +94828,8 @@
         ],
         "definition": null,
         "definition_sha": "dee0c20ebb11a953",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
         "language": "plpgsql",
@@ -95130,9 +95146,11 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "0f605f468a890cd2",
+        "definition_sha": "aeb94ef190e735b2",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -95601,9 +95619,11 @@
           "views": []
         },
         "comment": null,
-        "config": null,
+        "config": [
+          "search_path=pg_catalog, public, extensions, auth, storage, cron, net, private, vault, pg_temp"
+        ],
         "definition": null,
-        "definition_sha": "b6ce9036bc45dc51",
+        "definition_sha": "18b82d480e5fe506",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -96170,7 +96190,7 @@
         ],
         "definition": null,
         "definition_sha": "ecdae8257625318d",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -105169,20 +105189,6 @@
       },
       {
         "columns": [
-          "deleted_at"
-        ],
-        "definition": "CREATE INDEX idx_activities_deleted_at ON public.activities USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_activities_deleted_at",
-        "predicate": "(deleted_at IS NOT NULL)",
-        "schema": "public",
-        "table": "activities"
-      },
-      {
-        "columns": [
           "deleted_by"
         ],
         "definition": "CREATE INDEX idx_activities_deleted_by_fk ON public.activities USING btree (deleted_by)",
@@ -105878,20 +105884,6 @@
         "columns": [
           "created_at"
         ],
-        "definition": "CREATE INDEX idx_audit_created ON public.audit_log USING btree (created_at DESC)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_audit_created",
-        "predicate": null,
-        "schema": "public",
-        "table": "audit_log"
-      },
-      {
-        "columns": [
-          "created_at"
-        ],
         "definition": "CREATE INDEX idx_audit_log_created_at ON public.audit_log USING btree (created_at DESC)",
         "is_primary": false,
         "is_unique": false,
@@ -105955,20 +105947,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_audit_table",
-        "predicate": null,
-        "schema": "public",
-        "table": "audit_log"
-      },
-      {
-        "columns": [
-          "user_id"
-        ],
-        "definition": "CREATE INDEX idx_audit_user ON public.audit_log USING btree (user_id)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_audit_user",
         "predicate": null,
         "schema": "public",
         "table": "audit_log"
@@ -108307,20 +108285,6 @@
       },
       {
         "columns": [
-          "created_at"
-        ],
-        "definition": "CREATE INDEX idx_clients_created_at ON public.clients USING btree (created_at DESC)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_clients_created_at",
-        "predicate": null,
-        "schema": "public",
-        "table": "clients"
-      },
-      {
-        "columns": [
           "deleted_at"
         ],
         "definition": "CREATE INDEX idx_clients_deleted ON public.clients USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
@@ -108329,20 +108293,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_clients_deleted",
-        "predicate": "(deleted_at IS NOT NULL)",
-        "schema": "public",
-        "table": "clients"
-      },
-      {
-        "columns": [
-          "deleted_at"
-        ],
-        "definition": "CREATE INDEX idx_clients_deleted_at ON public.clients USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_clients_deleted_at",
         "predicate": "(deleted_at IS NOT NULL)",
         "schema": "public",
         "table": "clients"
@@ -109396,6 +109346,20 @@
         "table": "consent_records"
       },
       {
+        "columns": [
+          "subject_client_id"
+        ],
+        "definition": "CREATE INDEX idx_consent_records_subject_client_id ON public.consent_records USING btree (subject_client_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_consent_records_subject_client_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "consent_records"
+      },
+      {
         "columns": [],
         "definition": "CREATE INDEX idx_consent_records_subject_email ON public.consent_records USING btree (lower(subject_email)) WHERE (revoked_at IS NULL)",
         "is_primary": false,
@@ -109552,20 +109516,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "conversation_analyses_pkey",
-        "predicate": null,
-        "schema": "public",
-        "table": "conversation_analyses"
-      },
-      {
-        "columns": [
-          "analyzed_by"
-        ],
-        "definition": "CREATE INDEX idx_conv_analyses_analyzed_by ON public.conversation_analyses USING btree (analyzed_by)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_conv_analyses_analyzed_by",
         "predicate": null,
         "schema": "public",
         "table": "conversation_analyses"
@@ -110234,6 +110184,34 @@
         "is_valid": true,
         "method": "btree",
         "name": "data_subject_requests_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "data_subject_requests"
+      },
+      {
+        "columns": [
+          "subject_client_id"
+        ],
+        "definition": "CREATE INDEX idx_data_subject_requests_subject_client_id ON public.data_subject_requests USING btree (subject_client_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_data_subject_requests_subject_client_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "data_subject_requests"
+      },
+      {
+        "columns": [
+          "subject_id"
+        ],
+        "definition": "CREATE INDEX idx_data_subject_requests_subject_id ON public.data_subject_requests USING btree (subject_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_data_subject_requests_subject_id",
         "predicate": null,
         "schema": "public",
         "table": "data_subject_requests"
@@ -111899,20 +111877,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_error_logs_created",
-        "predicate": null,
-        "schema": "public",
-        "table": "error_logs"
-      },
-      {
-        "columns": [
-          "created_at"
-        ],
-        "definition": "CREATE INDEX idx_error_logs_created_at ON public.error_logs USING btree (created_at DESC)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_error_logs_created_at",
         "predicate": null,
         "schema": "public",
         "table": "error_logs"
@@ -116106,20 +116070,6 @@
       },
       {
         "columns": [
-          "deleted_at"
-        ],
-        "definition": "CREATE INDEX idx_products_deleted_at ON public.products USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_products_deleted_at",
-        "predicate": "(deleted_at IS NOT NULL)",
-        "schema": "public",
-        "table": "products"
-      },
-      {
-        "columns": [
           "deleted_by"
         ],
         "definition": "CREATE INDEX idx_products_deleted_by_fk ON public.products USING btree (deleted_by)",
@@ -119815,21 +119765,6 @@
       },
       {
         "columns": [
-          "user_id",
-          "entity_type"
-        ],
-        "definition": "CREATE INDEX idx_saved_filters_user_entity ON public.saved_filters USING btree (user_id, entity_type)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_saved_filters_user_entity",
-        "predicate": null,
-        "schema": "public",
-        "table": "saved_filters"
-      },
-      {
-        "columns": [
           "user_id"
         ],
         "definition": "CREATE INDEX idx_saved_filters_user_id ON public.saved_filters USING btree (user_id)",
@@ -120238,21 +120173,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_security_events_type_created",
-        "predicate": null,
-        "schema": "public",
-        "table": "security_events"
-      },
-      {
-        "columns": [
-          "user_id",
-          "created_at"
-        ],
-        "definition": "CREATE INDEX idx_security_events_user ON public.security_events USING btree (user_id, created_at DESC)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_security_events_user",
         "predicate": null,
         "schema": "public",
         "table": "security_events"
@@ -121657,20 +121577,6 @@
       },
       {
         "columns": [
-          "deleted_at"
-        ],
-        "definition": "CREATE INDEX idx_suppliers_deleted_at ON public.suppliers USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_suppliers_deleted_at",
-        "predicate": "(deleted_at IS NOT NULL)",
-        "schema": "public",
-        "table": "suppliers"
-      },
-      {
-        "columns": [
           "deleted_by"
         ],
         "definition": "CREATE INDEX idx_suppliers_deleted_by_fk ON public.suppliers USING btree (deleted_by)",
@@ -122203,20 +122109,6 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_teams_deleted",
-        "predicate": "(deleted_at IS NOT NULL)",
-        "schema": "public",
-        "table": "teams"
-      },
-      {
-        "columns": [
-          "deleted_at"
-        ],
-        "definition": "CREATE INDEX idx_teams_deleted_at ON public.teams USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
-        "is_primary": false,
-        "is_unique": false,
-        "is_valid": true,
-        "method": "btree",
-        "name": "idx_teams_deleted_at",
         "predicate": "(deleted_at IS NOT NULL)",
         "schema": "public",
         "table": "teams"
@@ -123213,6 +123105,20 @@
       },
       {
         "columns": [
+          "created_by"
+        ],
+        "definition": "CREATE INDEX idx_webhook_allowed_domains_created_by ON public.webhook_allowed_domains USING btree (created_by)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_webhook_allowed_domains_created_by",
+        "predicate": null,
+        "schema": "public",
+        "table": "webhook_allowed_domains"
+      },
+      {
+        "columns": [
           "pattern"
         ],
         "definition": "CREATE UNIQUE INDEX ux_webhook_allowed_domains_pattern ON public.webhook_allowed_domains USING btree (pattern)",
@@ -123622,6 +123528,20 @@
         "predicate": null,
         "schema": "public",
         "table": "webhooks"
+      },
+      {
+        "columns": [
+          "consent_record_id"
+        ],
+        "definition": "CREATE INDEX idx_website_visitor_logs_consent_record_id ON public.website_visitor_logs USING btree (consent_record_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_website_visitor_logs_consent_record_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "website_visitor_logs"
       },
       {
         "columns": [
@@ -124889,36 +124809,6 @@
         "severity": "MÉDIA"
       },
       {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.consent_records.consent_records_subject_client_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.data_subject_requests.data_subject_requests_subject_client_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['subject_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.data_subject_requests.data_subject_requests_subject_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.webhook_allowed_domains.webhook_allowed_domains_created_by_fkey",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "fk_without_index",
-        "detail": "FK sem índice nas colunas ['consent_record_id']: joins e DELETE/UPDATE na tabela pai ficam lentos.",
-        "object": "public.website_visitor_logs.website_visitor_logs_consent_record_id_fkey",
-        "severity": "BAIXA"
-      },
-      {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.ab_tests.Admins and managers can manage ab_tests",
@@ -125683,12 +125573,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.client_interactions.Allow authenticated users to insert interactions",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.client_interactions.Portfolio interactions readable",
         "severity": "BAIXA"
       },
@@ -126289,12 +126173,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.deal_health_scores.Authenticated insert health scores",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.deal_health_scores.System can manage deal health",
         "severity": "BAIXA"
       },
@@ -126338,12 +126216,6 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.deal_probability_scores.Admin/manager write deal scores",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.deal_risk_signals.Authenticated insert signals",
         "severity": "BAIXA"
       },
       {
@@ -135899,18 +135771,6 @@
         "with_check": null
       },
       {
-        "cmd": "INSERT",
-        "name": "Allow authenticated users to insert interactions",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "public"
-        ],
-        "schema": "public",
-        "table": "client_interactions",
-        "using": null,
-        "with_check": "(auth.role() = 'authenticated'::text)"
-      },
-      {
         "cmd": "SELECT",
         "name": "Portfolio interactions readable",
         "permissive": "PERMISSIVE",
@@ -137257,18 +137117,6 @@
       },
       {
         "cmd": "SELECT",
-        "name": "Authenticated users can view health history",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "deal_health_history",
-        "using": "true",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
         "name": "Users see own deal health history",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -137281,15 +137129,15 @@
       },
       {
         "cmd": "INSERT",
-        "name": "Authenticated insert health scores",
+        "name": "Insert health scores for accessible sales",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "deal_health_scores",
         "using": null,
-        "with_check": "(auth.uid() IS NOT NULL)"
+        "with_check": "(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (EXISTS ( SELECT 1\n   FROM sales s\n  WHERE ((s.id = deal_health_scores.sale_id) AND (s.salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))))))"
       },
       {
         "cmd": "ALL",
@@ -137401,15 +137249,15 @@
       },
       {
         "cmd": "INSERT",
-        "name": "Authenticated insert signals",
+        "name": "Insert risk signals for accessible sales",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "deal_risk_signals",
         "using": null,
-        "with_check": "(auth.uid() IS NOT NULL)"
+        "with_check": "(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (EXISTS ( SELECT 1\n   FROM sales s\n  WHERE ((s.id = deal_risk_signals.sale_id) AND (s.salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))))))"
       },
       {
         "cmd": "UPDATE",
@@ -138770,18 +138618,6 @@
       },
       {
         "cmd": "SELECT",
-        "name": "Authenticated users can read icp_data",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "icp_data",
-        "using": "true",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
         "name": "Users can read own client icp_data",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -139811,18 +139647,6 @@
         "table": "notifications",
         "using": "(user_id = auth.uid())",
         "with_check": "(user_id = auth.uid())"
-      },
-      {
-        "cmd": "SELECT",
-        "name": "Authenticated users can view nps surveys",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "nps_surveys",
-        "using": "true",
-        "with_check": null
       },
       {
         "cmd": "INSERT",
@@ -140914,18 +140738,6 @@
         "schema": "public",
         "table": "portfolio_settings",
         "using": "has_role(auth.uid(), 'admin'::app_role)",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
-        "name": "Authenticated can view portfolio settings",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "portfolio_settings",
-        "using": "true",
         "with_check": null
       },
       {
@@ -146991,16 +146803,16 @@
       "exposed_schemas_hint": "ver project-config.md (postgrest db_schemas); default: public, graphql_public",
       "idle_in_transaction_session_timeout": "0",
       "log_min_duration_statement": "-1",
-      "maintenance_work_mem": "32768",
+      "maintenance_work_mem": "65536",
       "max_connections": "60",
       "max_parallel_workers": "2",
-      "max_wal_size": "1024",
+      "max_wal_size": "4096",
       "max_worker_processes": "6",
       "server_version": "17.12",
-      "shared_buffers": "28672",
+      "shared_buffers": "32768",
       "statement_timeout": "90000",
       "wal_level": "logical",
-      "work_mem": "2184"
+      "work_mem": "3500"
     },
     "storage": [
       {

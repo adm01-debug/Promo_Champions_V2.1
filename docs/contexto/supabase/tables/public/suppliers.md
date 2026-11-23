@@ -66,7 +66,6 @@
 | idx_suppliers_active | btree | id | não | sim | `(deleted_at IS NULL)` | `CREATE INDEX idx_suppliers_active ON public.suppliers USING btree (id) WHERE (deleted_at IS NULL)` |
 | idx_suppliers_category | btree | category | não | sim |  | `CREATE INDEX idx_suppliers_category ON public.suppliers USING btree (category)` |
 | idx_suppliers_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_suppliers_deleted ON public.suppliers USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
-| idx_suppliers_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_suppliers_deleted_at ON public.suppliers USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
 | idx_suppliers_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_suppliers_deleted_by_fk ON public.suppliers USING btree (deleted_by)` |
 | idx_suppliers_is_active | btree | is_active | não | sim |  | `CREATE INDEX idx_suppliers_is_active ON public.suppliers USING btree (is_active)` |
 | suppliers_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX suppliers_pkey ON public.suppliers USING btree (id)` |

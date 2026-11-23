@@ -7,11 +7,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | MÉDIA | rls_no_policies | public.cron_job_last_run | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.cron_job_last_run_cursor | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.webhook_dispatch_rate | RLS ligado sem policies: inacessível via API (só service_role). |
-| BAIXA | fk_without_index | public.consent_records.consent_records_subject_client_id_fkey | FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.data_subject_requests.data_subject_requests_subject_client_id_fkey | FK sem índice nas colunas ['subject_client_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.data_subject_requests.data_subject_requests_subject_id_fkey | FK sem índice nas colunas ['subject_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.webhook_allowed_domains.webhook_allowed_domains_created_by_fkey | FK sem índice nas colunas ['created_by']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
-| BAIXA | fk_without_index | public.website_visitor_logs.website_visitor_logs_consent_record_id_fkey | FK sem índice nas colunas ['consent_record_id']: joins e DELETE/UPDATE na tabela pai ficam lentos. |
 | BAIXA | policy_auth_fn_not_wrapped | public.ab_tests.Admins and managers can manage ab_tests | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.access_denied_logs.Admins can view access logs | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.access_denied_logs.Authenticated users can log access denied | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -139,7 +134,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.circuit_breaker_events.Admins can delete circuit breaker events | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.client_churn_alerts_state.Admins can view all churn alert state | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.client_churn_alerts_state.Users can view their own churn alert state | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.client_interactions.Allow authenticated users to insert interactions | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.client_interactions.Portfolio interactions readable | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.client_interactions.Users can insert own interactions | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.client_interactions.Users can view own interactions | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -240,7 +234,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_committee_coverage.Service can upsert coverage | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_health_history.Authenticated users can insert health history | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_health_history.Users see own deal health history | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.deal_health_scores.Authenticated insert health scores | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_health_scores.System can manage deal health | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_health_scores.Users see own deal health | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_health_scores.View health via sale access | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -249,7 +242,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_outcomes.Users can read own outcomes or admins all | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_outcomes.Users can update own outcomes | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_probability_scores.Admin/manager write deal scores | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.deal_risk_signals.Authenticated insert signals | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_risk_signals.Owners resolve own signals | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_risk_signals.View signals via sale access | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.deal_stage_history.Users can insert own deal_stage_history | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

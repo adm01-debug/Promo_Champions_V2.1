@@ -43,7 +43,6 @@
 |---|---|---|---|---|---|---|
 | error_logs_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX error_logs_pkey ON public.error_logs USING btree (id)` |
 | idx_error_logs_created | btree | created_at | não | sim |  | `CREATE INDEX idx_error_logs_created ON public.error_logs USING btree (created_at DESC)` |
-| idx_error_logs_created_at | btree | created_at | não | sim |  | `CREATE INDEX idx_error_logs_created_at ON public.error_logs USING btree (created_at DESC)` |
 | idx_error_logs_severity_created_at | btree | severity, created_at | não | sim |  | `CREATE INDEX idx_error_logs_severity_created_at ON public.error_logs USING btree (severity, created_at DESC)` |
 | idx_error_logs_user_created | btree | user_id, created_at | não | sim |  | `CREATE INDEX idx_error_logs_user_created ON public.error_logs USING btree (user_id, created_at DESC)` |
 

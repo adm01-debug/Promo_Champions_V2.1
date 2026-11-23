@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.refresh_materialized_views()
  RETURNS void
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'auth', 'storage', 'cron', 'net', 'private', 'vault', 'pg_temp'
 AS $function$
 BEGIN
   REFRESH MATERIALIZED VIEW CONCURRENTLY mv_sales_performance;

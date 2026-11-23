@@ -75,7 +75,6 @@
 | idx_products_category | btree | category | não | sim |  | `CREATE INDEX idx_products_category ON public.products USING btree (category)` |
 | idx_products_category_trgm | gin | category | não | sim |  | `CREATE INDEX idx_products_category_trgm ON public.products USING gin (category gin_trgm_ops)` |
 | idx_products_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_products_deleted ON public.products USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
-| idx_products_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_products_deleted_at ON public.products USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
 | idx_products_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_products_deleted_by_fk ON public.products USING btree (deleted_by)` |
 | idx_products_name | btree | name | não | sim |  | `CREATE INDEX idx_products_name ON public.products USING btree (name)` |
 | idx_products_name_trgm | gin | name | não | sim |  | `CREATE INDEX idx_products_name_trgm ON public.products USING gin (name gin_trgm_ops)` |

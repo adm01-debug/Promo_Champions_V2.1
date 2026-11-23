@@ -65,7 +65,6 @@
 | idx_activities_created_at | btree | created_at | não | sim |  | `CREATE INDEX idx_activities_created_at ON public.activities USING btree (created_at DESC)` |
 | idx_activities_created_brin | brin | created_at | não | sim |  | `CREATE INDEX idx_activities_created_brin ON public.activities USING brin (created_at)` |
 | idx_activities_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_activities_deleted ON public.activities USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
-| idx_activities_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_activities_deleted_at ON public.activities USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
 | idx_activities_deleted_by_fk | btree | deleted_by | não | sim |  | `CREATE INDEX idx_activities_deleted_by_fk ON public.activities USING btree (deleted_by)` |
 | idx_activities_outcome | btree | outcome | não | sim |  | `CREATE INDEX idx_activities_outcome ON public.activities USING btree (outcome)` |
 | idx_activities_sale_id | btree | sale_id | não | sim |  | `CREATE INDEX idx_activities_sale_id ON public.activities USING btree (sale_id)` |

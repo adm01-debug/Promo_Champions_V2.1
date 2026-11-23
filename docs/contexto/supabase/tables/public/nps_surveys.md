@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 8 |
+| policies | 7 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -52,16 +52,6 @@
 
 
 ## Policies (RLS)
-
-### `Authenticated users can view nps surveys`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
-| WITH CHECK |  |
 
 ### `Salespeople can create their own nps surveys`
 

@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.ensure_single_default_filter()
  RETURNS trigger
  LANGUAGE plpgsql
+ SET search_path TO 'pg_catalog', 'public', 'extensions', 'auth', 'storage', 'cron', 'net', 'private', 'vault', 'pg_temp'
 AS $function$
 BEGIN
   IF NEW.is_default = true THEN

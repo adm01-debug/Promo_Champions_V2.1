@@ -41,6 +41,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| idx_website_visitor_logs_consent_record_id | btree | consent_record_id | não | sim |  | `CREATE INDEX idx_website_visitor_logs_consent_record_id ON public.website_visitor_logs USING btree (consent_record_id)` |
 | idx_website_visitor_logs_domain_identified | btree | domain, identified_at | não | sim |  | `CREATE INDEX idx_website_visitor_logs_domain_identified ON public.website_visitor_logs USING btree (domain, identified_at DESC)` |
 | idx_website_visitor_logs_retention | btree | retention_expires_at | não | sim | `(consent_record_id IS NULL)` | `CREATE INDEX idx_website_visitor_logs_retention ON public.website_visitor_logs USING btree (retention_expires_at) WHERE (consent_record_id IS NULL)` |
 | website_visitor_logs_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX website_visitor_logs_pkey ON public.website_visitor_logs USING btree (id)` |

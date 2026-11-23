@@ -81,9 +81,7 @@
 | idx_clients_active | btree | id | não | sim | `(deleted_at IS NULL)` | `CREATE INDEX idx_clients_active ON public.clients USING btree (id) WHERE (deleted_at IS NULL)` |
 | idx_clients_company | gin |  | não | sim |  | `CREATE INDEX idx_clients_company ON public.clients USING gin (to_tsvector('portuguese'::regconfig, company))` |
 | idx_clients_created | btree | created_at | não | sim |  | `CREATE INDEX idx_clients_created ON public.clients USING btree (created_at DESC)` |
-| idx_clients_created_at | btree | created_at | não | sim |  | `CREATE INDEX idx_clients_created_at ON public.clients USING btree (created_at DESC)` |
 | idx_clients_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_clients_deleted ON public.clients USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
-| idx_clients_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_clients_deleted_at ON public.clients USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |
 | idx_clients_deleted_by | btree | deleted_by | não | sim |  | `CREATE INDEX idx_clients_deleted_by ON public.clients USING btree (deleted_by)` |
 | idx_clients_email | btree | email | não | sim |  | `CREATE INDEX idx_clients_email ON public.clients USING btree (email)` |
 | idx_clients_email_trgm | gin | email | não | sim |  | `CREATE INDEX idx_clients_email_trgm ON public.clients USING gin (email gin_trgm_ops)` |

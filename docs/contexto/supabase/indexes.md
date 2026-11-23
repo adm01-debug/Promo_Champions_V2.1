@@ -44,7 +44,6 @@ Uso e tamanho em `stats.md`.
 | public.activities | idx_activities_created_at | btree | created_at | não | sim |  |
 | public.activities | idx_activities_created_brin | brin | created_at | não | sim |  |
 | public.activities | idx_activities_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
-| public.activities | idx_activities_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
 | public.activities | idx_activities_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.activities | idx_activities_outcome | btree | outcome | não | sim |  |
 | public.activities | idx_activities_sale_id | btree | sale_id | não | sim |  |
@@ -94,13 +93,11 @@ Uso e tamanho em `stats.md`.
 | public.asset_usage_logs | idx_aul_user | btree | user_id, created_at | não | sim |  |
 | public.audit_log | audit_log_pkey | btree | id | sim | sim |  |
 | public.audit_log | idx_audit_action | btree | action | não | sim |  |
-| public.audit_log | idx_audit_created | btree | created_at | não | sim |  |
 | public.audit_log | idx_audit_log_created_at | btree | created_at | não | sim |  |
 | public.audit_log | idx_audit_log_created_brin | brin | created_at | não | sim |  |
 | public.audit_log | idx_audit_log_user_id | btree | user_id | não | sim |  |
 | public.audit_log | idx_audit_record | btree | record_id | não | sim |  |
 | public.audit_log | idx_audit_table | btree | table_name, record_id | não | sim |  |
-| public.audit_log | idx_audit_user | btree | user_id | não | sim |  |
 | public.audit_logs | audit_logs_pkey | btree | id | sim | sim |  |
 | public.audit_logs | idx_audit_logs_action | btree | action | não | sim |  |
 | public.audit_logs | idx_audit_logs_actor_id | btree | actor_id | não | sim |  |
@@ -265,9 +262,7 @@ Uso e tamanho em `stats.md`.
 | public.clients | idx_clients_active | btree | id | não | sim | `(deleted_at IS NULL)` |
 | public.clients | idx_clients_company | gin |  | não | sim |  |
 | public.clients | idx_clients_created | btree | created_at | não | sim |  |
-| public.clients | idx_clients_created_at | btree | created_at | não | sim |  |
 | public.clients | idx_clients_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
-| public.clients | idx_clients_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
 | public.clients | idx_clients_deleted_by | btree | deleted_by | não | sim |  |
 | public.clients | idx_clients_email | btree | email | não | sim |  |
 | public.clients | idx_clients_email_trgm | gin | email | não | sim |  |
@@ -342,6 +337,7 @@ Uso e tamanho em `stats.md`.
 | public.competitors_registry | idx_competitors_registry_active | btree | is_active | não | sim |  |
 | public.consent_records | consent_records_pkey | btree | id | sim | sim |  |
 | public.consent_records | idx_consent_records_purpose | btree | purpose, revoked_at | não | sim |  |
+| public.consent_records | idx_consent_records_subject_client_id | btree | subject_client_id | não | sim |  |
 | public.consent_records | idx_consent_records_subject_email | btree |  | não | sim | `(revoked_at IS NULL)` |
 | public.consent_records | idx_consent_records_subject_id | btree | subject_id | não | sim | `(revoked_at IS NULL)` |
 | public.contact_engagement_score | contact_engagement_score_contact_id_contact_type_key | btree | contact_id, contact_type | sim | sim |  |
@@ -353,7 +349,6 @@ Uso e tamanho em `stats.md`.
 | public.contact_send_time_profile | idx_cstp_contact | btree | contact_id, contact_type | não | sim |  |
 | public.contact_send_time_profile | idx_cstp_score | btree | contact_id, contact_type, score | não | sim |  |
 | public.conversation_analyses | conversation_analyses_pkey | btree | id | sim | sim |  |
-| public.conversation_analyses | idx_conv_analyses_analyzed_by | btree | analyzed_by | não | sim |  |
 | public.conversation_analyses | idx_conv_analyses_created | btree | created_at | não | sim |  |
 | public.conversation_analyses | idx_conv_analyses_sale | btree | sale_id | não | sim |  |
 | public.conversation_analyses | idx_conv_analyses_sentiment | btree | sentiment | não | sim |  |
@@ -401,6 +396,8 @@ Uso e tamanho em `stats.md`.
 | public.data_access_log | idx_data_access_user | btree | user_id, created_at | não | sim |  |
 | public.data_retention_policies | data_retention_policies_pkey | btree | table_name | sim | sim |  |
 | public.data_subject_requests | data_subject_requests_pkey | btree | id | sim | sim |  |
+| public.data_subject_requests | idx_data_subject_requests_subject_client_id | btree | subject_client_id | não | sim |  |
+| public.data_subject_requests | idx_data_subject_requests_subject_id | btree | subject_id | não | sim |  |
 | public.data_subject_requests | idx_dsr_status_due | btree | status, due_at | não | sim |  |
 | public.data_subject_requests | idx_dsr_subject_email | btree |  | não | sim |  |
 | public.db_rollback_snapshots | db_rollback_snapshots_pkey | btree | id | sim | sim |  |
@@ -518,7 +515,6 @@ Uso e tamanho em `stats.md`.
 | public.entity_versions | unique_entity_version | btree | entity_type, entity_id, version_number | sim | sim |  |
 | public.error_logs | error_logs_pkey | btree | id | sim | sim |  |
 | public.error_logs | idx_error_logs_created | btree | created_at | não | sim |  |
-| public.error_logs | idx_error_logs_created_at | btree | created_at | não | sim |  |
 | public.error_logs | idx_error_logs_severity_created_at | btree | severity, created_at | não | sim |  |
 | public.error_logs | idx_error_logs_user_created | btree | user_id, created_at | não | sim |  |
 | public.executive_briefings | executive_briefings_briefing_date_key | btree | briefing_date | sim | sim |  |
@@ -815,7 +811,6 @@ Uso e tamanho em `stats.md`.
 | public.products | idx_products_category | btree | category | não | sim |  |
 | public.products | idx_products_category_trgm | gin | category | não | sim |  |
 | public.products | idx_products_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
-| public.products | idx_products_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
 | public.products | idx_products_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.products | idx_products_name | btree | name | não | sim |  |
 | public.products | idx_products_name_trgm | gin | name | não | sim |  |
@@ -1075,7 +1070,6 @@ Uso e tamanho em `stats.md`.
 | public.saved_filters | idx_saved_filters_default | btree | user_id, entity_type, is_default | não | sim | `(is_default = true)` |
 | public.saved_filters | idx_saved_filters_entity_type | btree | entity_type | não | sim |  |
 | public.saved_filters | idx_saved_filters_user | btree | user_id, entity_type | não | sim |  |
-| public.saved_filters | idx_saved_filters_user_entity | btree | user_id, entity_type | não | sim |  |
 | public.saved_filters | idx_saved_filters_user_id | btree | user_id | não | sim |  |
 | public.saved_filters | saved_filters_pkey | btree | id | sim | sim |  |
 | public.saved_filters | unique_filter_name_per_user_entity | btree | user_id, entity_type, name | sim | sim |  |
@@ -1105,7 +1099,6 @@ Uso e tamanho em `stats.md`.
 | public.security_events | idx_security_events_severity | btree | severity, created_at | não | sim |  |
 | public.security_events | idx_security_events_type | btree | event_type | não | sim |  |
 | public.security_events | idx_security_events_type_created | btree | event_type, created_at | não | sim |  |
-| public.security_events | idx_security_events_user | btree | user_id, created_at | não | sim |  |
 | public.security_events | idx_security_events_user_created | btree | user_id, created_at | não | sim |  |
 | public.security_events | security_events_pkey | btree | id | sim | sim |  |
 | public.semantic_index | idx_semantic_index_content_hash | btree | entity_type, entity_id, content_hash | não | sim |  |
@@ -1204,7 +1197,6 @@ Uso e tamanho em `stats.md`.
 | public.suppliers | idx_suppliers_active | btree | id | não | sim | `(deleted_at IS NULL)` |
 | public.suppliers | idx_suppliers_category | btree | category | não | sim |  |
 | public.suppliers | idx_suppliers_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
-| public.suppliers | idx_suppliers_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
 | public.suppliers | idx_suppliers_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.suppliers | idx_suppliers_is_active | btree | is_active | não | sim |  |
 | public.suppliers | suppliers_pkey | btree | id | sim | sim |  |
@@ -1243,7 +1235,6 @@ Uso e tamanho em `stats.md`.
 | public.team_custom_fields | team_custom_fields_team_id_field_key_key | btree | team_id, field_key | sim | sim |  |
 | public.teams | idx_teams_active | btree | id | não | sim | `(deleted_at IS NULL)` |
 | public.teams | idx_teams_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
-| public.teams | idx_teams_deleted_at | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
 | public.teams | idx_teams_deleted_by_fk | btree | deleted_by | não | sim |  |
 | public.teams | idx_teams_sdr_id | btree | sdr_id | não | sim |  |
 | public.teams | teams_pkey | btree | id | sim | sim |  |
@@ -1314,6 +1305,7 @@ Uso e tamanho em `stats.md`.
 | public.webauthn_credentials | idx_webauthn_credentials_user_id | btree | user_id | não | sim |  |
 | public.webauthn_credentials | webauthn_credentials_credential_id_key | btree | credential_id | sim | sim |  |
 | public.webauthn_credentials | webauthn_credentials_pkey | btree | id | sim | sim |  |
+| public.webhook_allowed_domains | idx_webhook_allowed_domains_created_by | btree | created_by | não | sim |  |
 | public.webhook_allowed_domains | ux_webhook_allowed_domains_pattern | btree | pattern | sim | sim |  |
 | public.webhook_allowed_domains | webhook_allowed_domains_pkey | btree | id | sim | sim |  |
 | public.webhook_deliveries | idx_webhook_deliveries_created_at | btree | created_at | não | sim |  |
@@ -1343,6 +1335,7 @@ Uso e tamanho em `stats.md`.
 | public.webhooks | idx_webhooks_created_by | btree | created_by | não | sim |  |
 | public.webhooks | idx_webhooks_enabled | btree | enabled | não | sim |  |
 | public.webhooks | webhooks_pkey | btree | id | sim | sim |  |
+| public.website_visitor_logs | idx_website_visitor_logs_consent_record_id | btree | consent_record_id | não | sim |  |
 | public.website_visitor_logs | idx_website_visitor_logs_domain_identified | btree | domain, identified_at | não | sim |  |
 | public.website_visitor_logs | idx_website_visitor_logs_retention | btree | retention_expires_at | não | sim | `(consent_record_id IS NULL)` |
 | public.website_visitor_logs | website_visitor_logs_pkey | btree | id | sim | sim |  |

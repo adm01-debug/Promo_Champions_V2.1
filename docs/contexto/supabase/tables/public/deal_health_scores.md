@@ -57,15 +57,15 @@
 
 ## Policies (RLS)
 
-### `Authenticated insert health scores`
+### `Insert health scores for accessible sales`
 
 | campo | valor |
 |---|---|
 | comando | INSERT |
 | tipo | PERMISSIVE |
-| roles | public |
+| roles | authenticated |
 | USING |  |
-| WITH CHECK | `(auth.uid() IS NOT NULL)` |
+| WITH CHECK | `(( SELECT is_admin_or_manager(( SELECT auth.uid() AS uid)) AS is_admin_or_manager) OR (EXISTS ( SELECT 1    FROM sales s   WHERE ((s.id = deal_health_scores.sale_id) AND (s.salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id))))))` |
 
 ### `System can manage deal health`
 

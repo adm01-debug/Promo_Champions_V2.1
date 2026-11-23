@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 2 |
 | realtime (publication) | sim |
 | replica identity | full |
 | vem de extensão | não |
@@ -52,16 +52,6 @@
 | roles | public |
 | USING |  |
 | WITH CHECK | `(auth.uid() = owner_id)` |
-
-### `Authenticated users can view health history`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
-| WITH CHECK |  |
 
 ### `Users see own deal health history`
 

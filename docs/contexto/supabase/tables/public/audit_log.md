@@ -43,13 +43,11 @@
 |---|---|---|---|---|---|---|
 | audit_log_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX audit_log_pkey ON public.audit_log USING btree (id)` |
 | idx_audit_action | btree | action | não | sim |  | `CREATE INDEX idx_audit_action ON public.audit_log USING btree (action)` |
-| idx_audit_created | btree | created_at | não | sim |  | `CREATE INDEX idx_audit_created ON public.audit_log USING btree (created_at DESC)` |
 | idx_audit_log_created_at | btree | created_at | não | sim |  | `CREATE INDEX idx_audit_log_created_at ON public.audit_log USING btree (created_at DESC)` |
 | idx_audit_log_created_brin | brin | created_at | não | sim |  | `CREATE INDEX idx_audit_log_created_brin ON public.audit_log USING brin (created_at)` |
 | idx_audit_log_user_id | btree | user_id | não | sim |  | `CREATE INDEX idx_audit_log_user_id ON public.audit_log USING btree (user_id)` |
 | idx_audit_record | btree | record_id | não | sim |  | `CREATE INDEX idx_audit_record ON public.audit_log USING btree (record_id)` |
 | idx_audit_table | btree | table_name, record_id | não | sim |  | `CREATE INDEX idx_audit_table ON public.audit_log USING btree (table_name, record_id)` |
-| idx_audit_user | btree | user_id | não | sim |  | `CREATE INDEX idx_audit_user ON public.audit_log USING btree (user_id)` |
 
 
 ## Policies (RLS)
