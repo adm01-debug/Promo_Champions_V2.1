@@ -86,7 +86,12 @@ export async function triggerConfetti(saleAmount: number) {
 export async function awardSaleXP(
   saleId: string,
   salespersonName: string
-): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
+): Promise<{
+  leveledUp: boolean;
+  newLevel: number;
+  previousLevel: number;
+  xpAwarded: number;
+} | null> {
   try {
     // O XP é derivado no servidor (amount da venda + xp.rewards do app_config)
     // e creditado uma única vez por sale_id — o cliente não envia valores.
@@ -101,6 +106,7 @@ export async function awardSaleXP(
 
     const result = data as {
       awarded: boolean;
+      xp_awarded?: number;
       leveled_up?: boolean;
       new_level?: number;
       previous_level?: number;
@@ -125,6 +131,7 @@ export async function awardSaleXP(
       leveledUp: result.leveled_up ?? false,
       newLevel,
       previousLevel: result.previous_level ?? newLevel - (result.leveled_up ? 1 : 0),
+      xpAwarded: result.xp_awarded ?? 0,
     };
   } catch (error) {
     console.error('Failed to award XP via RPC:', error);

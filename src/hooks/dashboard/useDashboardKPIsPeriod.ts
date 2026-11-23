@@ -335,9 +335,32 @@ export const useDashboardKPIsPeriod = (
   useEffect(() => {
     const channel = supabase
       .channel(uniqueChannelTopic(`dashboard-kpis-${salespersonId ?? 'all'}`))
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['dashboard-kpis-period'] });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'sales',
+          ...(salespersonId ? { filter: `salesperson_id=eq.${salespersonId}` } : {}),
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis-period'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis-period'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis-period'] });
+        }
+      )
       .subscribe();
 
     return () => {

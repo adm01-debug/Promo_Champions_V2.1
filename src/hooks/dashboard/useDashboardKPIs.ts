@@ -58,12 +58,44 @@ export const useDashboardKPIs = () => {
     // Optimized realtime invalidation: only invalidates if relevant tables change
     const channel = supabase
       .channel(uniqueChannelTopic('dashboard-kpis-realtime'))
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
-      })
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'daily_metrics' },
+        { event: 'INSERT', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'daily_metrics' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'daily_metrics' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'sales' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'daily_metrics' },
         () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
         }
