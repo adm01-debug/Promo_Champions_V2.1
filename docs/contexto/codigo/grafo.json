@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2347,
- "arestas": 9653,
+ "nos": 2346,
+ "arestas": 9634,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 543
+   "importado_por": 542
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -188,7 +188,6 @@
   "docs/graphify/revisao-20260911/reproduzir.mjs",
   "public/register-sw.js",
   "public/sw.js",
-  "src/components/ui/level-up-celebration.tsx",
   "src/lib/orderTracking/stages.ts",
   "supabase/functions/access-denied-alerts/config_guard_test.ts",
   "supabase/functions/auto-reassign-inactive/contract_test.ts",
@@ -255,7 +254,7 @@
   {
    "modulo": "pages",
    "depende_de": 126,
-   "importado_por": 2
+   "importado_por": 1
   },
   {
    "modulo": "lib",

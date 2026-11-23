@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8c02079096a379bdbcff72de7cb20060785ddf4a",
+  "commit": "4e1ca24d8be35f6e95ed23edcfa7454e359d42ae",
   "branch": "main",
-  "data_commit": "2026-11-23T18:13:59-03:00",
+  "data_commit": "2026-11-23T21:58:57Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4e1ca24",
+    "data": "2026-11-23",
+    "assunto": "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)"
+   },
    {
     "sha": "8c02079",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "f177678",
     "data": "2026-11-23",
     "assunto": "fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)"
-   },
-   {
-    "sha": "01065d8",
-    "data": "2026-11-23",
-    "assunto": "fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)"
    }
   ],
-  "arquivos_mudados_7d": 294,
+  "arquivos_mudados_7d": 287,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -148,11 +148,11 @@
     "mudancas": 98
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 79
+    "pasta": "src/components/win-loss",
+    "mudancas": 78
    },
    {
-    "pasta": "src/components/win-loss",
+    "pasta": "supabase/functions/_shared",
     "mudancas": 78
    },
    {
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 63
+    "mudancas": 64
    },
    {
     "pasta": "src/hooks/win-loss",
@@ -242,6 +242,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "inventario/estado/edges.json",
     "mudancas": 6
    },
@@ -259,10 +263,6 @@
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
     "mudancas": 5
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 243
+    "commits": 244
    },
    {
     "autor": "dependabot[bot]",
@@ -313,20 +313,20 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 8
+    "commits": 7
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3646,
-  "arquivos_codigo": 2590,
-  "linhas_codigo": 445026,
+  "arquivos_total": 3645,
+  "arquivos_codigo": 2589,
+  "linhas_codigo": 444878,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
   "modulos": 175,
-  "componentes": 1291,
+  "componentes": 1290,
   "hooks": 484,
   "edge_functions": 172,
   "tabelas": 420,
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1227,
-   "linhas": 193342
+   "arquivos": 1226,
+   "linhas": 193171
   },
   "src/config": {
    "arquivos": 4,
@@ -632,7 +632,7 @@
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1875
+   "linhas": 1898
   },
   "src/services": {
    "arquivos": 9,
@@ -913,9 +913,7 @@
   ],
   "tabelas_com_drift_migration_vs_types": [],
   "rpcs_sem_definicao": [],
-  "componentes_orfaos": [
-   "src/components/ui/level-up-celebration.tsx"
-  ],
+  "componentes_orfaos": [],
   "componentes_com_nome_duplicado": [
    "ActivityHeatmap",
    "BIProductCard",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8c02079096` · branch `main` · 2026-11-23 21:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4e1ca24d8b` · branch `main` · 2026-11-23 22:01 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1421,7 +1421,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `social` | compara, escreve | `src/components/activities/ArenaPulseFeed.tsx` |
 | `type` | `spamreport` | compara | `supabase/functions/_shared/webhook-integrity.ts` |
 | `type` | `split` | escreve | `supabase/functions/territory-optimization/index.ts` |
-| `type` | `spring` | escreve | `src/App.tsx`<br>`src/components/auth/AuthBrandPanel.tsx`<br>`src/components/competitive/BadgesGallery.tsx`<br>`src/components/competitive/LiveScoreboard.tsx`<br>`src/components/dashboard/DashboardEmptyState.tsx`<br>… +45 |
+| `type` | `spring` | escreve | `src/App.tsx`<br>`src/components/auth/AuthBrandPanel.tsx`<br>`src/components/competitive/BadgesGallery.tsx`<br>`src/components/competitive/LiveScoreboard.tsx`<br>`src/components/dashboard/DashboardEmptyState.tsx`<br>… +44 |
 | `type` | `stage_change` | compara, escreve | `src/components/pipeline/DealTimeline.tsx`<br>`src/components/win-loss/DealTimelineExpand.tsx`<br>`src/hooks/useDealTimeline.ts` |
 | `type` | `stagnant_deal` | escreve | `src/hooks/notifications/useAlerts.ts`<br>`supabase/functions/send-alert-notifications/index.ts` |
 | `type` | `start` | compara, escreve | `src/components/customer-success/CS360Filters.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx` |
@@ -4273,7 +4273,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1702 testes em 215 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1703 testes em 215 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4298,9 +4298,9 @@ _nenhum item encontrado_
 | `src/hooks/email/recoveryRateHelpers.test.ts` | 19 | failureTypeLabel · traduz códigos conhecidos · devolve o código bruto quando desconhecido · isPermanentFailureType … |
 | `tests/e2e/pages-crm-core.spec.ts` | 18 | Vendas — Deals Pipeline · carrega heading e filtros · title da página correto · Clientes — Client Hub … |
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
+| `src/routes/routeAccess.test.ts` | 17 | routeAccess — paridade com o roteador · lista de rotas exclusivas de admin bate com os wrappers <Admin> · lista de rotas de gestor bate com os wrappers <Manager> · nenhuma rota aparece nas duas listas … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
-| `src/routes/routeAccess.test.ts` | 16 | routeAccess — paridade com o roteador · lista de rotas exclusivas de admin bate com os wrappers <Admin> · lista de rotas de gestor bate com os wrappers <Manager> · nenhuma rota aparece nas duas listas … |
 | `src/services/salesService.test.ts` | 16 | salesService.getSales · mapeia rows do Supabase para o formato do domínio · faz fallback para client_name/product_name quando joins vêm nulos · sanitiza o searchTerm (remove vírgulas/parênteses) e chama .or() … |
 | `supabase/functions/cron-failure-alerter/index.test.ts` | 16 | fn_cron_expected_interval → cada schedule mapeia para o intervalo correto · fn_cron_stalled_threshold → 5min job usa piso de 30min · fn_cron_stalled_threshold → 15min job usa 30min (2× intervalo) · fn_cron_stalled_threshold → 30min job usa 60min (2× intervalo) … |
 | `src/lib/winloss/riskReasons.test.ts` | 15 | getReasonKindMeta · todos os códigos retornam meta com label + variant · STAGNATION_HIGH tem contribMax=50 e source=stagnation · COMPETITOR_PRESSURE tem source=competitor e variant=destructive … |

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8c02079096a379bdbcff72de7cb20060785ddf4a",
+  "sha": "4e1ca24d8be35f6e95ed23edcfa7454e359d42ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 21:16 UTC",
-  "files_total": 3661,
-  "code_files": 3312,
-  "code_lines": 480191
+  "generated_at": "2026-11-23 22:01 UTC",
+  "files_total": 3660,
+  "code_files": 3311,
+  "code_lines": 480043
  },
  "version": "1.3.2",
- "facts_hash": "392c2c761b3df8f4",
+ "facts_hash": "32369fff53762e2b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1379,
+   ".tsx": 1378,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -102907,7 +102907,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1227,
+  "components_count": 1226,
   "hooks": [
    {
     "name": "useContacts",
@@ -106866,8 +106866,8 @@
   },
   {
    "module": "src/components",
-   "files": 1227,
-   "lines": 193341,
+   "files": 1226,
+   "lines": 193170,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108026,7 +108026,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1875,
+   "lines": 1898,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -144984,18 +144984,6 @@
     "kind": "escreve"
    },
    {
-    "file": "src/components/ui/level-up-celebration.tsx",
-    "field": "type",
-    "value": "spring",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ui/level-up-celebration.tsx",
-    "field": "type",
-    "value": "spring",
-    "kind": "escreve"
-   },
-   {
     "file": "src/components/ui/sidebar.tsx",
     "field": "state",
     "value": "expanded",
@@ -162788,6 +162776,10 @@
    {
     "file": "src/routes/routeAccess.test.ts",
     "name": "rotas abertas passam para qualquer papel"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "/assinatura-digital é de gestor — não sobra no menu do Closer (QA-178)"
    },
    {
     "file": "src/routes/routeAccess.test.ts",
@@ -190460,7 +190452,6 @@
       "escreve:src/components/shared/EmptyState.tsx",
       "escreve:src/components/ui/NotificationBadge.tsx",
       "escreve:src/components/ui/gamified-toast.tsx",
-      "escreve:src/components/ui/level-up-celebration.tsx",
       "escreve:src/components/vendedores/RankingPodium.tsx",
       "escreve:src/components/vendedores/podium/PodiumCard.tsx",
       "escreve:src/components/win-loss/WinLossKpiBanner.tsx",
@@ -240293,7 +240284,7 @@
   },
   "src/components/navigation/NavLink.tsx": {
    "path": "src/components/navigation/NavLink.tsx",
-   "lines": 106
+   "lines": 67
   },
   "src/components/navigation/NavigationGuard.tsx": {
    "path": "src/components/navigation/NavigationGuard.tsx",
@@ -247043,25 +247034,6 @@
   "src/components/ui/label.tsx": {
    "path": "src/components/ui/label.tsx",
    "lines": 21
-  },
-  "src/components/ui/level-up-celebration.tsx": {
-   "path": "src/components/ui/level-up-celebration.tsx",
-   "lines": 132,
-   "exports": [
-    "const LevelUpCelebration"
-   ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "spring",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "spring",
-     "kind": "escreve"
-    }
-   ]
   },
   "src/components/ui/pagination.tsx": {
    "path": "src/components/ui/pagination.tsx",
@@ -274973,7 +274945,7 @@
   },
   "src/routes/pagePrefetchMap.ts": {
    "path": "src/routes/pagePrefetchMap.ts",
-   "lines": 42,
+   "lines": 59,
    "exports": [
     "type RoutePrefetcher",
     "const routePrefetchMap"
@@ -274982,7 +274954,7 @@
   },
   "src/routes/routeAccess.test.ts": {
    "path": "src/routes/routeAccess.test.ts",
-   "lines": 140,
+   "lines": 146,
    "is_test": true,
    "doc": "ACESSO-MENU — trava a fonte única de níveis de acesso. As listas de `routeAccess.ts` alimentam o filtro do menu e da paleta de comandos. Se o roteador mudar de guarda (`<Admin>` / `<Manager>`) e a lista não acompanhar, o menu volta a oferecer um caminho que termina em \"Acesso Negado\". O teste lê `Ap …",
    "tests": [
@@ -274996,6 +274968,7 @@
     "rota exclusiva de admin fica fechada ao gestor",
     "/admin/comissoes é de gestor, não capturado por /admin",
     "rotas abertas passam para qualquer papel",
+    "/assinatura-digital é de gestor — não sobra no menu do Closer (QA-178)",
     "ignora query string e barra final",
     "sub-rota herda a guarda do prefixo",
     "menu lateral — nenhum item oferecido a quem não pode abrir",
@@ -299000,10 +298973,23 @@
   }
  },
  "git": {
-  "sha": "8c02079096a379bdbcff72de7cb20060785ddf4a",
+  "sha": "4e1ca24d8be35f6e95ed23edcfa7454e359d42ae",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4e1ca24",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/navigation/NavLink.tsx",
+     "src/components/ui/level-up-celebration.tsx",
+     "src/routes/pagePrefetchMap.ts",
+     "src/routes/routeAccess.test.ts"
+    ]
+   },
    {
     "sha": "8c02079",
     "date": "2026-11-23",
@@ -299308,25 +299294,32 @@
     "files": [
      "supabase/functions/rotate-daily-challenges/index.ts"
     ]
-   },
-   {
-    "sha": "9d455c9",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)",
-    "files": [
-     "supabase/functions/csat-ces-trigger/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    4
+    5
+   ],
+   [
+    "src/routes/routeAccess.test.ts",
+    2
    ],
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "src/components/navigation/NavLink.tsx",
+    1
+   ],
+   [
+    "src/components/ui/level-up-celebration.tsx",
+    1
+   ],
+   [
+    "src/routes/pagePrefetchMap.ts",
+    1
    ],
    [
     "src/components/admin/AdminQuickLinks.tsx",
@@ -299382,22 +299375,6 @@
    ],
    [
     "supabase/functions/helpdesk-sync/index.ts",
-    1
-   ],
-   [
-    "src/components/command/CommandPalette.tsx",
-    1
-   ],
-   [
-    "src/components/layout/sidebar/sidebarMenuData.ts",
-    1
-   ],
-   [
-    "src/components/mobile/MobileDrawer.tsx",
-    1
-   ],
-   [
-    "src/components/organisms/AppSidebar.tsx",
     1
    ]
   ]

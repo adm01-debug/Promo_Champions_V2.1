@@ -1437,11 +1437,11 @@
   {
    "arquivo": "src/routes/routeAccess.test.ts",
    "tipo": "unit",
-   "linhas": 140,
+   "linhas": 146,
    "testa": [
     "src/routes/routeAccess.ts"
    ],
-   "casos": 13
+   "casos": 14
   },
   {
    "arquivo": "src/services/callFeedbackService.test.ts",

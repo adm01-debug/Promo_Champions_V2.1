@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8c02079096a379bdbcff72de7cb20060785ddf4a` (2026-11-23T18:13:59-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4e1ca24d8be35f6e95ed23edcfa7454e359d42ae` (2026-11-23T21:58:57Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2509), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2508), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,15 +34,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3646 |
-| arquivos_codigo | 2590 |
-| linhas_codigo | 445026 |
+| arquivos_total | 3645 |
+| arquivos_codigo | 2589 |
+| linhas_codigo | 444878 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 131 |
 | modulos | 175 |
-| componentes | 1291 |
+| componentes | 1290 |
 | hooks | 484 |
 | edge_functions | 172 |
 | tabelas | 420 |
@@ -55,7 +55,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Onde ficam as coisas
 - telas: src/pages (167)
-- componentes: src/components (1110), src/pages (174), src/contexts (5)
+- componentes: src/components (1109), src/pages (174), src/contexts (5)
 - hooks: src/hooks (472), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
 - testes: co-localizado (*.test) (165), tests/ (59), outro (18)
@@ -101,7 +101,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 345 | 33 | 166 |
+| components/navigation | 0 | 0 | 9 | 376 | 33 | 169 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
 | components/pipeline | 0 | 0 | 18 | 63 | 3 | 30 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
@@ -122,7 +122,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/shared | 0 | 0 | 8 | 4 | 0 | 2 |
 | components/skeletons | 0 | 0 | 5 | 1 | 0 | 0 |
 | components/tasks | 0 | 0 | 7 | 18 | 1 | 10 |
-| components/ui | 0 | 0 | 46 | 5 | 0 | 0 |
+| components/ui | 0 | 0 | 45 | 5 | 0 | 0 |
 | components/vendedor | 0 | 0 | 6 | 8 | 0 | 8 |
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
 | components/win-loss | 0 | 0 | 62 | 45 | 5 | 22 |
@@ -579,7 +579,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - tabelas_usadas_sem_definicao: 3 — ex.: auth_users_view, table, team_members
 - tabelas_com_drift_migration_vs_types: 0
 - rpcs_sem_definicao: 0
-- componentes_orfaos: 1 — ex.: src/components/ui/level-up-celebration.tsx
+- componentes_orfaos: 0
 - componentes_com_nome_duplicado: 19 — ex.: ActivityHeatmap, BIProductCard, BuyingCommitteeCard
 - scripts_orfaos: 0
 - env_usadas_nao_declaradas: 7 — ex.: DEV, MODE, VITE_APP_URL
@@ -587,8 +587,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22449 nós · 67739 arestas · 1615 comunidades · grafo do commit `8c020790`
-- comunidades maiores: Card (1048), schema.sql (785), Button (653), Badge (380), getCorsHeaders (331), Skeleton (313), supabase (283), Índice (277), vitest (255), utils.ts (241), Avatar (189), Onda 1 — Segurança e risco de perda de dado (165)
+- 22445 nós · 67713 arestas · 1587 comunidades · grafo do commit `4e1ca24d`
+- comunidades maiores: schema.sql (785), CardContent (468), Badge (413), client.ts (366), vitest (299), Skeleton (283), Input (281), Índice (277), withRequestId (263), DialogContent (259), formatBRL (219), ApprovalWorkflowsPage.tsx (205)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -604,10 +604,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/codeql.yml (6)
 - .github/workflows/migrations-drift.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
+- docs/qa/05-PROGRESSO.md (6)
 - inventario/estado/edges.json (6)
 - src/components/pipeline/DealCard.tsx (6)
 - src/hooks/abm/useAccounts.ts (6)
-- .github/workflows/contexto.yml (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -767,6 +767,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `4e1ca24` fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)
 - 2026-11-23 `8c02079` feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)
 - 2026-11-23 `9098770` fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)
 - 2026-11-23 `5a8ce99` fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)
@@ -781,7 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `bdea3f7` fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)
 - 2026-11-23 `b0ac351` fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)
 - 2026-11-23 `84b35ed` fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)
-- 2026-11-23 `56a3e80` docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
