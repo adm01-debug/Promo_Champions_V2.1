@@ -177,31 +177,38 @@ export const useMoveDeal = () => {
     // Optimistic update for smooth drag & drop
     onMutate: async ({ dealId, newStage }) => {
       await queryClient.cancelQueries({ queryKey: ['pipeline-deals'] });
-      const previousDeals = queryClient.getQueryData<Record<PipelineStageId, Deal[]>>([
-        'pipeline-deals',
-      ]);
+      const previousDeals = queryClient.getQueriesData<Record<PipelineStageId, Deal[]>>({
+        queryKey: ['pipeline-deals'],
+      });
 
-      if (previousDeals) {
-        const newDeals = { ...previousDeals };
-        let movedDeal: Deal | undefined;
+      queryClient.setQueriesData<Record<PipelineStageId, Deal[]>>(
+        { queryKey: ['pipeline-deals'] },
+        old => {
+          if (!old) return old;
+          // Clone each stage array to avoid mutating the snapshot
+          const newDeals = Object.fromEntries(
+            Object.entries(old).map(([k, v]) => [k, [...v]])
+          ) as Record<PipelineStageId, Deal[]>;
+          let movedDeal: Deal | undefined;
 
-        // Find and remove deal from its current stage
-        for (const stageId of Object.keys(newDeals) as PipelineStageId[]) {
-          const dealIndex = newDeals[stageId].findIndex(d => d.id === dealId);
-          if (dealIndex !== -1) {
-            [movedDeal] = newDeals[stageId].splice(dealIndex, 1);
-            break;
+          for (const stageId of Object.keys(newDeals) as PipelineStageId[]) {
+            const dealIndex = newDeals[stageId].findIndex(d => d.id === dealId);
+            if (dealIndex !== -1) {
+              [movedDeal] = newDeals[stageId].splice(dealIndex, 1);
+              break;
+            }
           }
-        }
 
-        // Add deal to new stage
-        if (movedDeal) {
-          movedDeal.status = newStage;
-          newDeals[newStage] = [movedDeal, ...newDeals[newStage]];
-        }
+          if (movedDeal) {
+            newDeals[newStage] = [
+              { ...movedDeal, status: newStage },
+              ...(newDeals[newStage] ?? []),
+            ];
+          }
 
-        queryClient.setQueryData(['pipeline-deals'], newDeals);
-      }
+          return newDeals;
+        }
+      );
 
       return { previousDeals };
     },
@@ -210,7 +217,9 @@ export const useMoveDeal = () => {
       toast.success(`Deal movido para ${stageLabel}`);
     },
     onError: (err, _vars, context) => {
-      queryClient.setQueryData(['pipeline-deals'], context?.previousDeals);
+      context?.previousDeals?.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
       if (isOptimisticLockConflict(err)) {
         toast.warning('Registro alterado por outro usuário — dados atualizados');
       } else {
