@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
+  "sha": "84b35eddf100d375a64412382e6296f86bcdd569",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 15:15 UTC",
-  "files_total": 3649,
-  "code_files": 3300,
-  "code_lines": 478667
+  "generated_at": "2026-11-23 16:16 UTC",
+  "files_total": 3650,
+  "code_files": 3301,
+  "code_lines": 478684
  },
  "version": "1.3.2",
- "facts_hash": "fde1c0cdeaedd69b",
+ "facts_hash": "892b7f119c6417a0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -399,7 +399,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1376,
-   ".ts": 1121,
+   ".ts": 1122,
    ".sql": 721,
    ".mjs": 72,
    ".js": 6,
@@ -94325,7 +94325,7 @@
      "get_active_salespeople",
      "get_dashboard_kpis"
     ],
-    "deps_count": 54
+    "deps_count": 55
    },
    {
     "path": "",
@@ -95552,7 +95552,7 @@
      "get_active_salespeople",
      "get_dashboard_kpis"
     ],
-    "deps_count": 56
+    "deps_count": 57
    },
    {
     "path": "/dashboard-custom",
@@ -106972,7 +106972,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64653,
+   "lines": 64663,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107434,8 +107434,8 @@
   },
   {
    "module": "src/lib",
-   "files": 80,
-   "lines": 8649,
+   "files": 81,
+   "lines": 8661,
    "tables": [
     "daily_metrics",
     "error_logs",
@@ -107449,6 +107449,7 @@
     "analytics.ts: setAnalyticsSalesperson, trackPageEnter, trackInteraction",
     "csv.ts: buildCsv, downloadCsv",
     "csvExporter.ts: exportToCSV",
+    "dashboardSections.ts: DASHBOARD_SECTION_MAP, VALID_DASHBOARD_SECTIONS",
     "draftMigration.ts: migrateLegacyDraft",
     "edgeFetch.ts: fetchWithUserToken",
     "errorTracking.ts: captureError, captureException, initErrorTracking",
@@ -107484,16 +107485,15 @@
     "salesReportPdf.ts: generateSalesReportPdf",
     "csvExport.ts: buildRevenueForecastCsv",
     "forecastEngine.ts: HistoricalPoint, ForecastResult, computeRevenueForecast, incrementPeriod, applyWhatIf",
-    "chunkedIn.ts: PostgrestLike, chunkedIn",
-    "fetchAllRows.ts: fetchAllRows"
+    "chunkedIn.ts: PostgrestLike, chunkedIn"
    ],
    "docs": [
     "analytics.ts: Product Analytics — lightweight client-side tracker. Estratégia otimizada: mantém a sessão de página em memória e grava UMA única linha no flush (saída/troca de rota). Isso substitui o antigo par INSERT (na entrada) + UPDATE (no flush) por 1 INSERT final, cortando ~50% das chamadas ao Postgres e eli …",
     "csv.ts: Utilitário RFC 4180 para geração de CSV compatível com Excel pt-BR. - Separador ';' (padrão pt-BR) - UTF-8 BOM para acentuação - Escapa aspas duplicando-as e envolve campos com vírgula/quebra em aspas",
+    "dashboardSections.ts: Seções válidas do dashboard (URL slug → chave interna). Exportado de um lugar só para Index.tsx e useDashboardRedirect usarem a mesma lista.",
     "date.ts: Datas de negócio (America/Sao_Paulo) para o frontend. Re-exporta o contrato compartilhado `supabase/functions/_shared/business-date.ts` — a mesma implementação roda nas edge functions. Use `toBusinessDate` / `usecaseDate` em vez de `toISOString().split('T')[0]` em filtros, agregações e campos de neg …",
     "draftMigration.ts: Migra um rascunho de formulário de uma chave legada para a chave atual, sem destruir dados: - destino com conteúdo real → preserva os dois ('kept'); - destino vazio (baseline gravado por visita sem edição) ou corrompido → o legado migra por cima ('migrated'); - sem legado → 'none'. A origem legada s …",
-    "edgeFetch.ts: Shared fetch helper for edge functions that require user JWT verification. Sends the active Supabase user's access_token as Bearer (falls back to the publishable key for unauthenticated scenarios). Includes apikey header so the Supabase gateway accepts the request.",
-    "errorTracking.ts: Centralized Error Tracking Service Captures, categorizes, and persists errors for monitoring."
+    "edgeFetch.ts: Shared fetch helper for edge functions that require user JWT verification. Sends the active Supabase user's access_token as Bearer (falls back to the publishable key for unauthenticated scenarios). Includes apikey header so the Supabase gateway accepts the request."
    ],
    "deps": [
     "@testing-library/react",
@@ -107524,6 +107524,7 @@
     "src/lib/analytics.ts",
     "src/lib/csv.ts",
     "src/lib/csvExporter.ts",
+    "src/lib/dashboardSections.ts",
     "src/lib/date.ts",
     "src/lib/draftMigration.test.ts",
     "src/lib/draftMigration.ts",
@@ -107599,14 +107600,13 @@
     "src/lib/winloss/scenarioChartKey.test.ts",
     "src/lib/winloss/scenarioChartKey.ts",
     "src/lib/winloss/severityFromScore.test.ts",
-    "src/lib/winloss/severityFromScore.ts",
-    "src/lib/winloss/winlossContract.test.ts"
+    "src/lib/winloss/severityFromScore.ts"
    ]
   },
   {
    "module": "src/pages",
    "files": 180,
-   "lines": 44456,
+   "lines": 44451,
    "tables": [
     "achievements",
     "activities",
@@ -259386,7 +259386,7 @@
   },
   "src/hooks/dashboard/useDashboardRedirect.ts": {
    "path": "src/hooks/dashboard/useDashboardRedirect.ts",
-   "lines": 51,
+   "lines": 61,
    "exports": [
     "const useDashboardRedirect"
    ],
@@ -268306,6 +268306,15 @@
     "function exportToCSV"
    ]
   },
+  "src/lib/dashboardSections.ts": {
+   "path": "src/lib/dashboardSections.ts",
+   "lines": 12,
+   "exports": [
+    "const DASHBOARD_SECTION_MAP",
+    "const VALID_DASHBOARD_SECTIONS"
+   ],
+   "doc": "Seções válidas do dashboard (URL slug → chave interna). Exportado de um lugar só para Index.tsx e useDashboardRedirect usarem a mesma lista."
+  },
   "src/lib/date.ts": {
    "path": "src/lib/date.ts",
    "lines": 19,
@@ -271635,7 +271644,7 @@
   },
   "src/pages/Index.tsx": {
    "path": "src/pages/Index.tsx",
-   "lines": 480,
+   "lines": 475,
    "exports": [
     "default Index"
    ],
@@ -298260,10 +298269,21 @@
   }
  },
  "git": {
-  "sha": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
+  "sha": "84b35eddf100d375a64412382e6296f86bcdd569",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "84b35ed",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)",
+    "files": [
+     "src/hooks/dashboard/useDashboardRedirect.ts",
+     "src/lib/dashboardSections.ts",
+     "src/pages/Index.tsx"
+    ]
+   },
    {
     "sha": "56a3e80",
     "date": "2026-11-23",
@@ -298543,16 +298563,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "fc6f8f9",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: timeout do pg_net para funcoes com DNS lento medido (#618)",
-    "files": [
-     "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
-     "supabase/tests/retry_dispatcher_assertions.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -298563,6 +298573,18 @@
    [
     "supabase/functions/sequence-record-reply/index.ts",
     2
+   ],
+   [
+    "src/hooks/dashboard/useDashboardRedirect.ts",
+    1
+   ],
+   [
+    "src/lib/dashboardSections.ts",
+    1
+   ],
+   [
+    "src/pages/Index.tsx",
+    1
    ],
    [
     "supabase/functions/winloss-webhook-dispatcher/retry.ts",
@@ -298622,18 +298644,6 @@
    ],
    [
     "supabase/functions/bitrix24-sync/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/notify-v4-quote-status/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/test-integration-connection/index.ts",
-    1
-   ],
-   [
-    "src/components/financeiro/CommissionCalculator.tsx",
     1
    ]
   ]

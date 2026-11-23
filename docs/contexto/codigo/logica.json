@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 74,
+ "total": 75,
  "por_camada": {
   "config": 3,
   "contexts": 1,
   "integrations": 4,
-  "lib": 53,
+  "lib": 54,
   "python": 3,
   "services": 6,
   "utils": 4
@@ -749,6 +749,31 @@
    "papeis": [],
    "usado_por": 2,
    "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/dashboardSections.ts",
+   "camada": "lib",
+   "exports": [
+    "DASHBOARD_SECTION_MAP",
+    "VALID_DASHBOARD_SECTIONS"
+   ],
+   "export_default": null,
+   "linhas": 12,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks/dashboard",
     "pages"
    ],
    "coberto_por_testes": 0,

@@ -3139,7 +3139,7 @@
    "hooks_exportados": [
     "useDashboardRedirect"
    ],
-   "linhas": 51,
+   "linhas": 61,
    "dominio": "hooks/dashboard",
    "tabelas": [],
    "rpcs": [],

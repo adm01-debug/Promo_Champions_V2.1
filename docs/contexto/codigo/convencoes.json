@@ -16,7 +16,7 @@
    "src/components (4)"
   ],
   "servicos_logica": [
-   "src/lib (53)",
+   "src/lib (54)",
    "src/services (6)",
    "src/integrations (4)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)",
    "docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)",
    "fix: assinar webhook Win/Loss com HMAC-SHA256 (QA-092) (#655)",
    "fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)",
-   "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)",
-   "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)"
+   "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

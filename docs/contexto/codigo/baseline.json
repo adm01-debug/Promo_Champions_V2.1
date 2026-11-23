@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
+  "commit": "84b35eddf100d375a64412382e6296f86bcdd569",
   "branch": "main",
-  "data_commit": "2026-11-23T12:01:41-03:00",
+  "data_commit": "2026-11-23T16:13:22Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "84b35ed",
+    "data": "2026-11-23",
+    "assunto": "fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)"
+   },
    {
     "sha": "56a3e80",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "5aad0e0",
     "data": "2026-11-23",
     "assunto": "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)"
-   },
-   {
-    "sha": "ad2d98f",
-    "data": "2026-11-23",
-    "assunto": "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)"
    }
   ],
-  "arquivos_mudados_7d": 250,
+  "arquivos_mudados_7d": 253,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -218,11 +218,11 @@
     "mudancas": 11
    },
    {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 10
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": "RELATORIO_CI.md",
     "mudancas": 9
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 229
+    "commits": 230
    },
    {
     "autor": "dependabot[bot]",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3634,
-  "arquivos_codigo": 2579,
-  "linhas_codigo": 443561,
+  "arquivos_total": 3635,
+  "arquivos_codigo": 2580,
+  "linhas_codigo": 443578,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -612,15 +612,15 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64653
+   "linhas": 64663
   },
   "src/integrations": {
    "arquivos": 4,
    "linhas": 25729
   },
   "src/lib": {
-   "arquivos": 80,
-   "linhas": 8649
+   "arquivos": 81,
+   "linhas": 8661
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44456
+   "linhas": 44451
   },
   "src/routes": {
    "arquivos": 3,

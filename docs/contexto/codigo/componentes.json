@@ -19325,7 +19325,7 @@
     "Index"
    ],
    "export_default": "Index",
-   "linhas": 480,
+   "linhas": 475,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

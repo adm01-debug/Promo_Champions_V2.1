@@ -8400,7 +8400,8 @@
   ],
   "src/hooks/dashboard/useDashboardRedirect.ts": [
    "src/contexts/AuthContext.tsx",
-   "src/hooks/useUserRoles.ts"
+   "src/hooks/useUserRoles.ts",
+   "src/lib/dashboardSections.ts"
   ],
   "src/hooks/dashboard/useFunnelData.ts": [
    "src/constants/index.ts",
@@ -10907,6 +10908,7 @@
    "src/hooks/dashboard/useGoalsDashboard.ts",
    "src/hooks/sales/useSalesChartData.ts",
    "src/hooks/sales/useSalesRealtime.ts",
+   "src/lib/dashboardSections.ts",
    "src/lib/money.ts"
   ],
   "src/pages/InteligenciaPreditiva.tsx": [
