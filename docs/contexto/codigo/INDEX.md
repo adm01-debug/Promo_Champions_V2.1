@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f9b3558ab6f5ce97d53de61217b2e36323cdc9ca` (2026-11-23T06:09:43Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1de569f985da376e54034cccb33d4677326bcb27` (2026-11-23T06:50:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2498), SQL (721), Markdown (217), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2498), SQL (721), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3628 |
+| arquivos_total | 3634 |
 | arquivos_codigo | 2579 |
 | linhas_codigo | 443272 |
 | rotas | 170 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 247 |
 | workflows | 27 |
 | scripts | 78 |
-| docs_md | 217 |
+| docs_md | 223 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -585,8 +585,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 21847 nós · 66854 arestas · 1591 comunidades · grafo do commit `f9b3558a`
-- comunidades maiores: schema.sql (785), Card (668), Button (617), react (434), client.ts (310), Índice (277), utils.ts (219), getCorsHeaders (216), withRequestId (213), Avatar (203), date-fns (177), lazyPages.ts (166)
+- 22378 nós · 67455 arestas · 1614 comunidades · grafo do commit `1de569f9`
+- comunidades maiores: Card (865), schema.sql (785), Button (655), client.ts (299), getCorsHeaders (290), Índice (277), Badge (272), Avatar (232), TabsTrigger (219), constants/index.ts (205), utils.ts (184), react (171)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -761,10 +761,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
-- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/pendencias (5), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
+- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/qa (6), docs/pendencias (5), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `1de569f` docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)
 - 2026-11-23 `f9b3558` chore(deps): bump astral-sh/setup-uv (#627)
 - 2026-11-23 `dfe85df` chore(deps): bump actions/dependency-review-action (#625)
 - 2026-11-22 `17e5d6d` chore(main): release 1.7.4 (#623)
@@ -779,7 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `b80439c` fix: guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes (#615)
 - 2026-11-22 `fe3bf20` fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)
 - 2026-11-22 `fef4c7e` fix: nao re-enfileira 5xx por secret ausente (#613)
-- 2026-11-22 `67dc32e` fix: reconcilia retry do pg_net em transacao separada (#612)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

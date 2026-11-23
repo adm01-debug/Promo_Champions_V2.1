@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "f9b3558ab6f5ce97d53de61217b2e36323cdc9ca",
+  "sha": "1de569f985da376e54034cccb33d4677326bcb27",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 06:32 UTC",
-  "files_total": 3643,
+  "generated_at": "2026-11-23 10:14 UTC",
+  "files_total": 3649,
   "code_files": 3300,
   "code_lines": 478378
  },
@@ -298110,10 +298110,24 @@
   }
  },
  "git": {
-  "sha": "f9b3558ab6f5ce97d53de61217b2e36323cdc9ca",
+  "sha": "1de569f985da376e54034cccb33d4677326bcb27",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "1de569f",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)",
+    "files": [
+     "docs/qa/00-RESUMO.md",
+     "docs/qa/01-INVENTARIO.md",
+     "docs/qa/02-CENARIOS.md",
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/04-PLANO.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "f9b3558",
     "date": "2026-11-23",
@@ -298479,16 +298493,6 @@
      "supabase/functions/send-multichannel-message/authz_test.ts",
      "supabase/migrations/20261120000000_t15_multichannel_retry.sql"
     ]
-   },
-   {
-    "sha": "d5e7079",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: testes de CORS alinhados ao SEC-07 (allowlist, nunca *) (#597)",
-    "files": [
-     "supabase/functions/process-race-event/index_test.ts",
-     "supabase/functions/race-commentary/index_test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -298549,27 +298553,27 @@
     2
    ],
    [
-    ".github/workflows/contexto.yml",
+    "docs/qa/00-RESUMO.md",
     1
    ],
    [
-    ".github/workflows/graphify.yml",
+    "docs/qa/01-INVENTARIO.md",
     1
    ],
    [
-    ".github/workflows/dependency-review.yml",
+    "docs/qa/02-CENARIOS.md",
     1
    ],
    [
-    "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+    "docs/qa/03-ACHADOS.md",
     1
    ],
    [
-    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
+    "docs/qa/04-PLANO.md",
     1
    ],
    [
-    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
+    "docs/qa/05-PROGRESSO.md",
     1
    ]
   ]

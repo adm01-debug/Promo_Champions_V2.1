@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f9b3558ab6f5ce97d53de61217b2e36323cdc9ca",
+  "commit": "1de569f985da376e54034cccb33d4677326bcb27",
   "branch": "main",
-  "data_commit": "2026-11-23T06:09:43Z",
+  "data_commit": "2026-11-23T06:50:12-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "1de569f",
+    "data": "2026-11-23",
+    "assunto": "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)"
+   },
    {
     "sha": "f9b3558",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "33b3f1c",
     "data": "2026-11-21",
     "assunto": "chore(main): release 1.6.2 (#599)"
-   },
-   {
-    "sha": "f1b58e0",
-    "data": "2026-11-21",
-    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#601)"
    }
   ],
-  "arquivos_mudados_7d": 216,
+  "arquivos_mudados_7d": 222,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 203
+    "commits": 204
    },
    {
     "autor": "dependabot[bot]",
@@ -318,7 +318,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3628,
+  "arquivos_total": 3634,
   "arquivos_codigo": 2579,
   "linhas_codigo": 443272,
   "rotas": 170,
@@ -335,7 +335,7 @@
   "testes": 247,
   "workflows": 27,
   "scripts": 78,
-  "docs_md": 217
+  "docs_md": 223
  },
  "por_pasta": {
   "commitlint.config.js": {

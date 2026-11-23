@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)",
    "chore(deps): bump astral-sh/setup-uv (#627)",
    "chore(deps): bump actions/dependency-review-action (#625)",
    "chore(main): release 1.7.4 (#623)",
-   "fix: timeout do pg_net para funcoes com DNS lento medido (#618)",
-   "chore(main): release 1.7.3 (#621)"
+   "fix: timeout do pg_net para funcoes com DNS lento medido (#618)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
