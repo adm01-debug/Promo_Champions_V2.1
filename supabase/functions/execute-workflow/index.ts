@@ -1,4 +1,4 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+﻿import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -36,9 +36,12 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
   // authenticated user. The caller's user_id is used to scope any created
   // tasks/activities — trigger_payload.salesperson_id is NOT trusted.
   let callerUserId: string;
+  // callerClient usa o JWT do chamador; RLS de sales recusa o update se a venda nao pertencer ao usuario.
+  let callerClient: Awaited<ReturnType<typeof getUserClient>>["client"];
   try {
     const ctx = await getUserClient(req);
     callerUserId = ctx.userId;
+    callerClient = ctx.client;
   } catch (e) {
     if (e instanceof UnauthorizedError) {
       return new Response(
@@ -144,7 +147,7 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
       activityRows.length > 0 ? supabase.from("activities").insert(activityRows) : Promise.resolve({ error: null }),
       ...stageUpdates.map((u) =>
         trigger_payload.sale_id
-          ? supabase.from("sales").update({ stage: u.stage }).eq("id", trigger_payload.sale_id)
+          ? callerClient.from("sales").update({ stage: u.stage }).eq("id", trigger_payload.sale_id)
           : Promise.resolve({ error: null })
       ),
     ]);
