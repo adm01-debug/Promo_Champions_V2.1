@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e9e69b83c632f2c9b9754f7c42d33378cd19c0e4` (2026-11-23T09:14:49-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `be744027447211454378ff70990570afc89f678b` (2026-11-23T10:40:32-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3634 |
 | arquivos_codigo | 2579 |
-| linhas_codigo | 443301 |
+| linhas_codigo | 443308 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -585,7 +585,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22378 nós · 67465 arestas · 1602 comunidades · grafo do commit `e9e69b83`
+- 22378 nós · 67465 arestas · 1602 comunidades · grafo do commit `be744027`
 - comunidades maiores: Card (799), schema.sql (785), Button (668), client.ts (307), Índice (277), ScrollArea (270), Badge (252), getCorsHeaders (236), utils.ts (230), Avatar (226), ref_npm_supabase (215), react (165)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -601,11 +601,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/codeql.yml (11)
 - .github/workflows/deploy.yml (10)
 - scripts/inventario/gerar-banco.mjs (9)
-- .github/workflows/ci-failure-alert.yml (7)
 - .github/workflows/migrations-drift.yml (7)
 - .github/workflows/pr-checks.yml (7)
 - scripts/db-audit/gen-migration-probes.mjs (7)
 - src/hooks/abm/useAccounts.ts (7)
+- .github/workflows/ci-failure-alert.yml (6)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -765,6 +765,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `be74402` fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)
 - 2026-11-23 `e9e69b8` fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)
 - 2026-11-23 `e4ffc93` fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)
 - 2026-11-23 `5aad0e0` fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)
@@ -779,7 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-22 `48c711b` perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)
 - 2026-11-22 `8ed528b` fix: bitrix24-sync responde 503 quando credenciais faltam (#619)
 - 2026-11-22 `1976a23` chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)
-- 2026-11-22 `aec099f` chore(main): release 1.7.2 (#611)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

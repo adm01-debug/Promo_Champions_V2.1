@@ -1,7 +1,7 @@
 # Graph Report - Promo_Champions_V2.1  (2026-11-23)
 
 ## Corpus Check
-- 3571 files · ~2,484,716 words
+- 3571 files · ~2,484,739 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 30 file(s) not represented in the graph (top: (none) 17, .toml 6, .lock 2)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e9e69b83`
+- Built from commit: `be744027`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

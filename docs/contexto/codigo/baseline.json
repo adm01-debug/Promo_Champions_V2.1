@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e9e69b83c632f2c9b9754f7c42d33378cd19c0e4",
+  "commit": "be744027447211454378ff70990570afc89f678b",
   "branch": "main",
-  "data_commit": "2026-11-23T09:14:49-03:00",
+  "data_commit": "2026-11-23T10:40:32-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "be74402",
+    "data": "2026-11-23",
+    "assunto": "fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)"
+   },
    {
     "sha": "e9e69b8",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "06e4384",
     "data": "2026-11-21",
     "assunto": "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)"
-   },
-   {
-    "sha": "bff6aa6",
-    "data": "2026-11-21",
-    "assunto": "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)"
    }
   ],
-  "arquivos_mudados_7d": 225,
+  "arquivos_mudados_7d": 227,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -238,10 +238,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/ci-failure-alert.yml",
-    "mudancas": 7
-   },
-   {
     "arquivo": ".github/workflows/migrations-drift.yml",
     "mudancas": 7
    },
@@ -256,6 +252,10 @@
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/ci-failure-alert.yml",
+    "mudancas": 6
    },
    {
     "arquivo": ".github/workflows/db-backup.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 208
+    "commits": 209
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443301,
+  "linhas_codigo": 443308,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64537
+   "linhas": 64544
   },
   "src/integrations": {
    "arquivos": 4,

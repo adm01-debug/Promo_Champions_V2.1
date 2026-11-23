@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)",
    "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)",
    "fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)",
    "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)",
-   "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)",
-   "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)"
+   "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

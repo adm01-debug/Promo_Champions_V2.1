@@ -965,7 +965,7 @@
   {
    "arquivo": "src/hooks/useEligibleBonuses.test.ts",
    "tipo": "unit",
-   "linhas": 80,
+   "linhas": 81,
    "testa": [
     "src/hooks/useCommissionBonuses.ts",
     "src/hooks/useEligibleBonuses.ts"

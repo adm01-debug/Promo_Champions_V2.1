@@ -8581,7 +8581,7 @@
    "hooks_exportados": [
     "useEligibleBonuses"
    ],
-   "linhas": 165,
+   "linhas": 171,
    "dominio": "hooks",
    "tabelas": [
     "commission_bonuses",
