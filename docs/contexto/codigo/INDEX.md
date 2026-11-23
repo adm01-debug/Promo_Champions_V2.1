@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843` (2026-11-23T16:19:45Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7370b42e247460fafd7ebab8556a63238a0c49a7` (2026-11-23T20:15:55Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3636 |
 | arquivos_codigo | 2581 |
-| linhas_codigo | 443747 |
+| linhas_codigo | 443780 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -585,7 +585,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22386 nós · 67530 arestas · 1576 comunidades · grafo do commit `ff91ae9e`
+- 22386 nós · 67530 arestas · 1576 comunidades · grafo do commit `7370b42e`
 - comunidades maiores: schema.sql (785), Input (327), Button (325), client.ts (291), PageTransition (288), Índice (277), CardContent (274), CardHeader (267), Badge (265), vitest (263), Avatar (238), card.tsx (230)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -765,6 +765,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `7370b42` fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)
 - 2026-11-23 `ff91ae9` fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)
 - 2026-11-23 `45b9b02` fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)
 - 2026-11-23 `d12f175` fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)
@@ -779,7 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `390db00` fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)
 - 2026-11-23 `e5f9f64` fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)
 - 2026-11-23 `96962bd` fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)
-- 2026-11-23 `d2006d2` fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

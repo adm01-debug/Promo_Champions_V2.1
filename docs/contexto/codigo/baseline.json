@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
+  "commit": "7370b42e247460fafd7ebab8556a63238a0c49a7",
   "branch": "main",
-  "data_commit": "2026-11-23T16:19:45Z",
+  "data_commit": "2026-11-23T20:15:55Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7370b42",
+    "data": "2026-11-23",
+    "assunto": "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)"
+   },
    {
     "sha": "ff91ae9",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "2088c24",
     "data": "2026-11-23",
     "assunto": "fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)"
-   },
-   {
-    "sha": "9d455c9",
-    "data": "2026-11-23",
-    "assunto": "fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)"
    }
   ],
-  "arquivos_mudados_7d": 272,
+  "arquivos_mudados_7d": 274,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/components/gamification",
-    "mudancas": 45
+    "mudancas": 44
    },
    {
     "pasta": "src/components/revenue-intelligence",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 238
+    "commits": 239
    },
    {
     "autor": "dependabot[bot]",
@@ -313,14 +313,14 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 13
+    "commits": 12
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3636,
   "arquivos_codigo": 2581,
-  "linhas_codigo": 443747,
+  "linhas_codigo": 443780,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67249
+   "linhas": 67282
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -686,7 +686,7 @@
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
-   "linhas": 2268
+   "linhas": 2282
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

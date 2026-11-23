@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
+  "sha": "7370b42e247460fafd7ebab8556a63238a0c49a7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 16:22 UTC",
+  "generated_at": "2026-11-23 20:17 UTC",
   "files_total": 3651,
   "code_files": 3302,
-  "code_lines": 478853
+  "code_lines": 478886
  },
  "version": "1.3.2",
- "facts_hash": "8f273a121c6daab6",
+ "facts_hash": "23e973ec19529793",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -108006,7 +108006,7 @@
   {
    "module": "supabase/functions",
    "files": 326,
-   "lines": 67249,
+   "lines": 67282,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -124643,7 +124643,7 @@
    },
    {
     "file": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
-    "text": "Apenas SUB_C tem secret → header de assinatura"
+    "text": "Apenas SUB_C tem secret → header de assinatura HMAC (t=<unix>,v1=<hex>)"
    },
    {
     "file": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
@@ -291736,7 +291736,7 @@
   },
   "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts": {
    "path": "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
-   "lines": 149,
+   "lines": 168,
    "rule_comments": [
     "o dead-letter entry deve refletir o webhook ORIGINAL — payload identico (preservando chaves",
     "// Como `DeadLetterEntry` expõe apenas `payload` (não `body` serializado nem `headers` HTTP),",
@@ -291863,7 +291863,7 @@
   },
   "supabase/functions/winloss-webhook-dispatcher/retry_test.ts": {
    "path": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
-   "lines": 2268,
+   "lines": 2282,
    "errors": [
     "${ctx}: body não é JSON válido: ${(e as Error).message}",
     "ECONNREFUSED",
@@ -291899,7 +291899,7 @@
     "Não deve lançar mesmo com todas as tentativas falhando.",
     "Nenhum log estruturado deve mencionar dead letter / DLQ.",
     "DLQ: apenas B",
-    "Apenas SUB_C tem secret → header de assinatura",
+    "Apenas SUB_C tem secret → header de assinatura HMAC (t=<unix>,v1=<hex>)",
     "Cada bloco abaixo isola UMA dimensão da validação para falhar com mensagem precisa.",
     "Para cada captura, o body parseado deve bater EXATAMENTE com o payload daquela sub.",
     "(c) campo desconhecido de OUTRA sub não pode aparecer aqui.",
@@ -298282,10 +298282,20 @@
   }
  },
  "git": {
-  "sha": "ff91ae9eb5ea70c9a4f0223f9bafbe8cff9b4843",
+  "sha": "7370b42e247460fafd7ebab8556a63238a0c49a7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7370b42",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)",
+    "files": [
+     "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
+     "supabase/functions/winloss-webhook-dispatcher/retry_test.ts"
+    ]
+   },
    {
     "sha": "ff91ae9",
     "date": "2026-11-23",
@@ -298570,16 +298580,6 @@
     "files": [
      "src/hooks/dashboard/useROIDashboard.ts"
     ]
-   },
-   {
-    "sha": "be74402",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)",
-    "files": [
-     "src/hooks/useEligibleBonuses.test.ts",
-     "src/hooks/useEligibleBonuses.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -298588,12 +298588,16 @@
     2
    ],
    [
-    "src/hooks/useEligibleBonuses.ts",
+    "supabase/functions/sequence-record-reply/index.ts",
     2
    ],
    [
-    "supabase/functions/sequence-record-reply/index.ts",
-    2
+    "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
+    1
+   ],
+   [
+    "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
+    1
    ],
    [
     "src/pages/admin/AdminV4CallbacksPage.tsx",
@@ -298657,10 +298661,6 @@
    ],
    [
     "src/hooks/dashboard/useGoalsDashboard.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useGamifiedProfile.ts",
     1
    ]
   ]

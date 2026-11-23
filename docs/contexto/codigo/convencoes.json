@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)",
    "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)",
    "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)",
    "fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)",
-   "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)",
-   "perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)"
+   "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

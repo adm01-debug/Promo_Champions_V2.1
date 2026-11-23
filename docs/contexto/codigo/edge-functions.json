@@ -6527,7 +6527,7 @@
    "nome": "winloss-webhook-dispatcher",
    "entrada": "supabase/functions/winloss-webhook-dispatcher/index.ts",
    "arquivos": 14,
-   "linhas": 5793,
+   "linhas": 5826,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
