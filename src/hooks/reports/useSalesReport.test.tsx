@@ -40,7 +40,7 @@ const wrapper = ({ children }: { children: ReactNode }) =>
 describe('useSalesReport', () => {
   it('propaga o erro do fetch de salespeople em vez de ranking vazio', async () => {
     const { result } = renderHook(
-      () => useSalesReport('month', new Date('2026-11-10T12:00:00.000Z')),
+      () => useSalesReport('monthly', new Date('2026-11-10T12:00:00.000Z')),
       { wrapper }
     );
 
