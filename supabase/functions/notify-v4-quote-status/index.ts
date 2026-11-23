@@ -154,19 +154,27 @@ Deno.serve(withRequestId("notify-v4-quote-status", async (req, _ctx) => {
     let ok = false;
     let statusCode = 0;
     let responseText = "";
+    let retryAfterMs: number | null = null;
     const t0 = Date.now();
     try {
       const resp = await postWithTimeout(callbackUrl, item.payload, callbackApiKey);
       statusCode = resp.status;
       responseText = await resp.text();
       ok = resp.ok;
+      if (statusCode === 429) {
+        const ra = resp.headers.get("Retry-After");
+        if (ra) {
+          const secs = Number(ra);
+          retryAfterMs = Number.isFinite(secs) && secs > 0 ? secs * 1000 : null;
+        }
+      }
     } catch (e) {
       responseText = e instanceof Error ? e.message : String(e);
     }
     const latency = Date.now() - t0;
     const attempts = (item.attempts ?? 0) + 1;
     const exhausted = !ok && attempts >= MAX_ATTEMPTS;
-    const nextRetry = new Date(Date.now() + backoffMs(attempts)).toISOString();
+    const nextRetry = new Date(Date.now() + (retryAfterMs ?? backoffMs(attempts))).toISOString();
     outcomes.push({ id: item.id, ok, statusCode, responseText, attempts, latency, exhausted, nextRetry, item });
   }
 
