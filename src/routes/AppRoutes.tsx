@@ -173,6 +173,7 @@ import {
   AdminConexoesPage,
   AdminV4CallbacksPage,
   AdminQuoteSyncInboundPage,
+  AdminDesignInboundPage,
   AdminQuoteConversionsPage,
   AdminPlatformSLOPage,
   AdminWebVitalsPage,
@@ -982,6 +983,14 @@ export function AppRoutes() {
                           element={
                             <Admin>
                               <AdminQuoteSyncInboundPage />
+                            </Admin>
+                          }
+                        />
+                        <Route
+                          path="/admin/design-inbound"
+                          element={
+                            <Admin>
+                              <AdminDesignInboundPage />
                             </Admin>
                           }
                         />

@@ -23,6 +23,7 @@ import {
   Gauge,
   Repeat,
   Zap,
+  Palette,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
@@ -69,6 +70,12 @@ const QUICK_LINKS = [
     icon: Repeat,
     label: 'Conversões Quote→Sale',
     color: 'text-chart-1',
+  },
+  {
+    to: '/admin/design-inbound',
+    icon: Palette,
+    label: 'Designs Recebidos',
+    color: 'text-chart-3',
   },
   {
     to: '/admin/web-vitals',
