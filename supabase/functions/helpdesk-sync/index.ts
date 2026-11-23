@@ -7,6 +7,15 @@ import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 type Provider = "zendesk" | "intercom" | "freshdesk";
 
+const PAGE_LIMIT = 50;
+
+function requireArray(value: unknown, label: string): unknown[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`${label}: expected array, got ${typeof value}`);
+  }
+  return value;
+}
+
 interface SyncRequest {
   provider: Provider;
   account_id?: string;
@@ -19,7 +28,9 @@ async function fetchZendesk(domain: string, email: string, token: string) {
   const r = await fetchWithTimeout(url, { headers: { Authorization: `Basic ${auth}` } });
   if (!r.ok) throw new Error(`Zendesk ${r.status}`);
   const j = await r.json();
-  return (j.tickets ?? []).map((t: Record<string, unknown>) => ({
+  const tickets = requireArray(j.tickets, "Zendesk tickets");
+  if (tickets.length >= PAGE_LIMIT) console.warn(JSON.stringify({ msg: "zendesk_page_limit_hit", count: tickets.length }));
+  return tickets.map((t: Record<string, unknown>) => ({
     external_id: String(t.id),
     subject: String(t.subject ?? "(sem assunto)"),
     description: String(t.description ?? ""),
@@ -37,7 +48,9 @@ async function fetchIntercom(token: string) {
   });
   if (!r.ok) throw new Error(`Intercom ${r.status}`);
   const j = await r.json();
-  return (j.conversations ?? []).map((c: Record<string, unknown>) => ({
+  const conversations = requireArray(j.conversations, "Intercom conversations");
+  if (conversations.length >= PAGE_LIMIT) console.warn(JSON.stringify({ msg: "intercom_page_limit_hit", count: conversations.length }));
+  return conversations.map((c: Record<string, unknown>) => ({
     external_id: String(c.id),
     subject: String((c.source as { subject?: string } | undefined)?.subject ?? "Conversa Intercom"),
     description: String((c.source as { body?: string } | undefined)?.body ?? "").replace(/<[^>]+>/g, "").slice(0, 500),
@@ -55,10 +68,11 @@ async function fetchFreshdesk(domain: string, apiKey: string) {
     headers: { Authorization: `Basic ${auth}` },
   });
   if (!r.ok) throw new Error(`Freshdesk ${r.status}`);
-  const arr = await r.json();
+  const arr = requireArray(await r.json(), "Freshdesk tickets");
+  if (arr.length >= PAGE_LIMIT) console.warn(JSON.stringify({ msg: "freshdesk_page_limit_hit", count: arr.length }));
   const statusMap: Record<number, string> = { 2: "open", 3: "pending", 4: "resolved", 5: "closed" };
   const prioMap: Record<number, string> = { 1: "low", 2: "normal", 3: "high", 4: "urgent" };
-  return (arr ?? []).map((t: Record<string, unknown>) => ({
+  return arr.map((t: Record<string, unknown>) => ({
     external_id: String(t.id),
     subject: String(t.subject ?? "(sem assunto)"),
     description: String(t.description_text ?? "").slice(0, 500),
