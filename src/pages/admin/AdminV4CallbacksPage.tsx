@@ -246,7 +246,17 @@ function AdminV4CallbacksContent() {
               <div className="mb-3 flex items-center gap-2 rounded-md border bg-muted/50 p-2 text-sm">
                 <span className="ml-2 font-medium">{selected.size} selecionado(s)</span>
                 <div className="ml-auto flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => retry.mutate(ids())}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => retry.mutate(ids())}
+                    disabled={tab === 'exhausted'}
+                    title={
+                      tab === 'exhausted'
+                        ? "Use 'Resetar tentativas' para itens com 5+ tentativas"
+                        : undefined
+                    }
+                  >
                     <Send className="h-4 w-4 mr-1" />
                     Reprocessar
                   </Button>
@@ -412,6 +422,12 @@ function AdminV4CallbacksContent() {
                     retry.mutate([detail.id]);
                     setDetail(null);
                   }}
+                  disabled={(detail?.attempts ?? 0) >= 5}
+                  title={
+                    (detail?.attempts ?? 0) >= 5
+                      ? "Use 'Resetar tentativas' para reiniciar a contagem"
+                      : undefined
+                  }
                 >
                   <Send className="h-4 w-4 mr-1" />
                   Reprocessar
