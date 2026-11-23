@@ -207,6 +207,42 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       log("warn", "metrics_export_failed", { reason: metricsResult.reason });
     }
 
+    // ── Bitrix24 consecutive-failure alert ──────────────────────────────────
+    // Alert when the last N sync runs all ended with status = 'error'.
+    const BITRIX24_FAILURE_THRESHOLD = 3;
+    const { data: b24Runs } = await admin
+      .from("bitrix24_sync_logs")
+      .select("status, started_at")
+      .order("started_at", { ascending: false })
+      .limit(BITRIX24_FAILURE_THRESHOLD);
+
+    const b24Rows = (b24Runs ?? []) as Array<{ status: string; started_at: string }>;
+    const allFailed =
+      b24Rows.length >= BITRIX24_FAILURE_THRESHOLD &&
+      b24Rows.every((r) => r.status === "error");
+
+    if (allFailed && adminIds.length > 0) {
+      const b24Notifs = adminIds.map((uid) => ({
+        user_id: uid,
+        type: "system",
+        category: "system",
+        priority: "high",
+        title: `Bitrix24: ${BITRIX24_FAILURE_THRESHOLD} falhas consecutivas`,
+        message: `As últimas ${BITRIX24_FAILURE_THRESHOLD} sincronizações do Bitrix24 falharam. Verifique a conexão e os logs em /admin/conexoes.`,
+        icon: "alert-triangle",
+        action_url: "/admin/conexoes",
+        action_label: "Ver painel",
+        metadata: { source: "cron-failure-alerter", check: "bitrix24_consecutive_failures" },
+      }));
+      const { error: b24Err } = await admin.from("notifications").insert(b24Notifs);
+      if (b24Err) {
+        log("warn", "bitrix24_alert_insert_failed", { error: b24Err.message });
+      } else {
+        log("warn", "bitrix24_consecutive_failures_alerted", { threshold: BITRIX24_FAILURE_THRESHOLD });
+        notifiedTotal += b24Notifs.length;
+      }
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,

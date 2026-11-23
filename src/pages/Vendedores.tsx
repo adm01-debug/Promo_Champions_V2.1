@@ -258,7 +258,7 @@ const Vendedores = () => {
                 className="opacity-0 animate-fade-in-up"
                 style={{ animationDelay: '350ms' }}
               >
-                <CelebrationTestButtons />
+                {import.meta.env.DEV && <CelebrationTestButtons />}
               </div>
 
               <GoalEditDialog

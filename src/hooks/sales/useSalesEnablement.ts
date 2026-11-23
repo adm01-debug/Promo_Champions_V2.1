@@ -289,6 +289,7 @@ export const useTogglePlaybookItem = () => {
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['playbook-progress-all', variables.sale_id] });
+      qc.invalidateQueries({ queryKey: ['playbook-progress', variables.sale_id] });
       toast.success(variables.completed ? 'Etapa concluída!' : 'Etapa desmarcada');
     },
   });

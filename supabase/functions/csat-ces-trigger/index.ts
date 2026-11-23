@@ -1,4 +1,4 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+﻿import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
 import {
@@ -20,10 +20,11 @@ Deno.serve(withRequestId("csat-ces-trigger", async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
   // Qualquer usuário autenticado pode registrar um disparo de pesquisa —
   // anon key deve receber 401.
   try {
-    await getUserClient(req);
+    callerCtx = await getUserClient(req);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return errorEnvelope("UNAUTHORIZED", "unauthorized", {
@@ -41,6 +42,13 @@ Deno.serve(withRequestId("csat-ces-trigger", async (req, ctx) => {
   );
   const body = (await req.json().catch(() => ({}))) as TriggerRequest;
 
+  // Verificar que a conta pertence ao chamador (RLS) antes de qualquer escrita
+  if (body.account_id) {
+    const { data: accOwner } = await callerCtx.client.from("accounts").select("id").eq("id", body.account_id).maybeSingle();
+    if (!accOwner) {
+      return errorEnvelope("FORBIDDEN", "account_not_found_or_unauthorized", { requestId: ctx.requestId, status: 403 });
+    }
+  }
   if (!body.account_id || !body.contact_email || !body.survey_type) {
     ctx.log("warn", "validation_failed", { reason: "missing_required_fields" });
     return errorEnvelope("BAD_REQUEST", "account_id, contact_email e survey_type são obrigatórios", {

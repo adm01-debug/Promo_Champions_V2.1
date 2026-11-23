@@ -1,3 +1,17 @@
+﻿async function hmacSign(secret: string, body: string): Promise<string> {
+  const ts = Math.floor(Date.now() / 1000).toString();
+  const payload = `${ts}.${body}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(payload));
+  const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+  return `t=${ts},v1=${hex}`;
+}
 // Retry/backoff logic extracted for testability.
 // Pure functions + dependency injection (no direct Supabase / fetch / setTimeout).
 
@@ -138,7 +152,7 @@ export async function dispatchOne(
           "X-Winloss-Event": event,
           "X-Winloss-Subscription-Id": sub.id,
           ...(requestId ? { "X-Request-Id": requestId } : {}),
-          ...(sub.secret ? { "X-Winloss-Signature": sub.secret } : {}),
+          ...(sub.secret ? { "X-Winloss-Signature": await hmacSign(sub.secret, body) } : {}),
         },
         body,
         signal: AbortSignal.timeout(TIMEOUT_MS),
