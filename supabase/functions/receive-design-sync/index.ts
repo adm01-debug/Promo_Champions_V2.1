@@ -14,16 +14,13 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
-import { DesignPayloadError, toDesignRow } from "./mapping.ts";
+import { createValidationErrorResponse, validateWebhookPayload } from "../_shared/webhook-validator.ts";
+import { DesignPayloadSchema, rowFromParsed } from "./mapping.ts";
 
 const encoder = new TextEncoder();
 const MAX_WEBHOOK_BODY_BYTES = 240 * 1024;
 const MAX_EVENT_LENGTH = 120;
 const MAX_CORRELATION_KEY_LENGTH = 128;
-
-function isBoundedText(value: unknown, maxLength: number): value is string {
-  return typeof value === "string" && value.length <= maxLength && value.trim().length > 0;
-}
 
 async function hmacSha256Hex(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -106,26 +103,29 @@ Deno.serve(withRequestId("receive-design-sync", async (req, ctx) => {
   const payload = parsed.payload;
 
   const missing: string[] = [];
-  if (!isBoundedText(event, MAX_EVENT_LENGTH)) missing.push("event");
-  if (!isBoundedText(correlationKey, MAX_CORRELATION_KEY_LENGTH)) missing.push("correlation_key");
+  if (typeof event !== "string" || event.trim().length === 0 || event.length > MAX_EVENT_LENGTH) {
+    missing.push("event");
+  }
+  if (typeof correlationKey !== "string" || correlationKey.trim().length === 0 ||
+    correlationKey.length > MAX_CORRELATION_KEY_LENGTH) {
+    missing.push("correlation_key");
+  }
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) missing.push("payload");
   if (missing.length > 0) {
     return json(req, { ok: false, error: "invalid_payload", details: { missing } }, 400);
   }
 
   const p = payload as Record<string, unknown>;
-  let row;
-  try {
-    row = toDesignRow(p);
-  } catch (e) {
-    if (e instanceof DesignPayloadError) {
-      return json(req, {
-        ok: false, error: "invalid_payload",
-        details: { field: `payload.${e.field}`, reason: e.reason },
-      }, 400);
-    }
-    throw e;
+  const validation = validateWebhookPayload(DesignPayloadSchema, p);
+  if (!validation.success || !validation.data) {
+    return createValidationErrorResponse(
+      validation.error ?? "invalid_payload",
+      validation.details ?? [],
+      validation.contract_version,
+      getCorsHeaders(req),
+    );
   }
+  const row = rowFromParsed(validation.data);
   const designId = row.design_id;
   const { data: reservation, error: dedupeErr } = await supabase
     .from("webhook_inbound_dedupe")

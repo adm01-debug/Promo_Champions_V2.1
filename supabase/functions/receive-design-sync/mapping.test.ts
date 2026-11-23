@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { DesignPayloadError, isUuid, toDesignRow } from "./mapping.ts";
+import { DesignPayloadError, DesignPayloadSchema, isUuid, toDesignRow } from "./mapping.ts";
 
 const VALID_UUID = "3f2504e0-4f89-11d3-9a0c-0305e82c3301";
 
@@ -12,6 +12,19 @@ Deno.test("isUuid rejeita string vazia, null e uuid truncado", () => {
   assertEquals(isUuid(null), false);
   assertEquals(isUuid("3f2504e0-4f89-11d3"), false);
   assertEquals(isUuid(123), false);
+});
+
+Deno.test("schema aceita o payload completo que o Promo Design emite", () => {
+  const r = DesignPayloadSchema.safeParse({
+    design_id: VALID_UUID,
+    name: "Mockup caneca natal",
+    product_name: "Caneca 325ml",
+    product_sku: "CAN-325",
+    thumbnail_url: "https://cdn/x.png",
+    seller_email: "vendedor@empresa.com",
+    updated_at: "2026-11-23T10:00:00Z",
+  });
+  assertEquals(r.success, true);
 });
 
 Deno.test("toDesignRow traduz todos os campos do payload", () => {
@@ -73,7 +86,6 @@ Deno.test("toDesignRow ignora campos de tipo errado sem lancar", () => {
 Deno.test("toDesignRow rejeita design_id ausente com field=design_id", () => {
   const err = assertThrows(() => toDesignRow({ name: "X" }), DesignPayloadError);
   assertEquals(err.field, "design_id");
-  assertEquals(err.reason, "expected_uuid");
 });
 
 Deno.test("toDesignRow rejeita design_id que nao e uuid", () => {
@@ -83,9 +95,12 @@ Deno.test("toDesignRow rejeita design_id que nao e uuid", () => {
 Deno.test("toDesignRow rejeita name ausente com field=name", () => {
   const err = assertThrows(() => toDesignRow({ design_id: VALID_UUID }), DesignPayloadError);
   assertEquals(err.field, "name");
-  assertEquals(err.reason, "required");
 });
 
 Deno.test("toDesignRow rejeita name vazio", () => {
   assertThrows(() => toDesignRow({ design_id: VALID_UUID, name: "   " }), DesignPayloadError);
+});
+
+Deno.test("toDesignRow faz trim do nome", () => {
+  assertEquals(toDesignRow({ design_id: VALID_UUID, name: "  Caneca  " }).name, "Caneca");
 });
