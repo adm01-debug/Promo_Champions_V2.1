@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES } from '@/constants';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
@@ -87,6 +87,7 @@ export function useWeightedForecast() {
       ]);
 
       if (salesRes.error) throw salesRes.error;
+      if (goalsRes.error) throw goalsRes.error;
 
       const sales = salesRes.data || [];
       const scores = scoresRes.data || [];
@@ -186,7 +187,7 @@ export function useWeightedForecast() {
             (deals.filter(d => d.lead_score !== null).length /
               Math.max(1, deals.length)) *
               30 +
-            (currentRevenue / Math.max(1, monthlyGoal)) * 20
+            (monthlyGoal > 0 ? (currentRevenue / monthlyGoal) * 20 : 0)
         )
       );
 
