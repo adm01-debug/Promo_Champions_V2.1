@@ -5,7 +5,7 @@
   "urls": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 133,
+  "itens_menu": 131,
   "lazy": 233
  },
  "urls": [
@@ -11697,15 +11697,6 @@
    "resolve_para": "src/pages/ApprovalWorkflowsPage.tsx"
   },
   {
-   "rotulo": "Assinatura Digital",
-   "destino": "/assinatura-digital",
-   "grupo": null,
-   "papeis": [],
-   "papeis_nao_resolvidos": null,
-   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "resolve_para": "src/pages/AssinaturaDigital.tsx"
-  },
-  {
    "rotulo": "Assistente IA",
    "destino": "/assistente",
    "grupo": null,
@@ -11812,15 +11803,6 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/SemanticSearch.tsx"
-  },
-  {
-   "rotulo": "Business Intelligence",
-   "destino": "/ferramentas/bi",
-   "grupo": null,
-   "papeis": [],
-   "papeis_nao_resolvidos": null,
-   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "resolve_para": "src/pages/BusinessIntelligencePage.tsx"
   },
   {
    "rotulo": "Cadências",

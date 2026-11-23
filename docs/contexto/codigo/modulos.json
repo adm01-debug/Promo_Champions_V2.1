@@ -1627,29 +1627,42 @@
    "modulo": "components/command",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 569,
+   "linhas": 610,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 1,
    "hooks_locais": [
+    "useAuth",
     "useI18n",
     "useSemanticSearch",
-    "useTheme"
+    "useTheme",
+    "useUserRoles"
    ],
    "hooks_definidos": [],
    "edges": [],
-   "tabelas": [],
+   "tabelas": [
+    "salespeople",
+    "user_roles"
+   ],
    "rpcs": [],
    "buckets": [],
    "canais_realtime": [],
    "env": [
+    "DEV",
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -1660,8 +1673,10 @@
     "components/semantic",
     "components/ui",
     "contexts",
+    "hooks",
     "hooks/semantic",
-    "lib"
+    "lib",
+    "routes"
    ],
    "pacotes_externos": [
     "lucide-react",
@@ -3834,7 +3849,7 @@
    "modulo": "components/layout",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 406,
+   "linhas": 403,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4051,7 +4066,7 @@
    "modulo": "components/mobile",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 576,
+   "linhas": 636,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4110,7 +4125,8 @@
     "components/ui",
     "contexts",
     "hooks",
-    "lib"
+    "lib",
+    "routes"
    ],
    "pacotes_externos": [
     "framer-motion",
@@ -5190,7 +5206,7 @@
    "modulo": "components/organisms",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 713,
+   "linhas": 757,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10772,6 +10788,7 @@
     "components/closer",
     "components/coaching",
     "components/collaboration",
+    "components/command",
     "components/competitive",
     "components/conversational",
     "components/customer-success",
@@ -15939,7 +15956,6 @@
     "Análise de Funil",
     "Analytics",
     "Aprovações",
-    "Assinatura Digital",
     "Assistente IA",
     "Atividades",
     "Audit Trail",
@@ -15952,7 +15968,6 @@
     "BI SDR (Neural)",
     "Busca Inteligente",
     "Busca Semântica",
-    "Business Intelligence",
     "Cadências",
     "Cadências de Orçamento",
     "Calendário",
@@ -18031,9 +18046,9 @@
   },
   {
    "modulo": "routes",
-   "arquivos": 3,
-   "testes": 0,
-   "linhas": 1557,
+   "arquivos": 4,
+   "testes": 1,
+   "linhas": 1722,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -19493,6 +19508,8 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/command",
+    "components/mobile",
     "components/organisms"
    ],
    "depende_de_modulos": [

@@ -1990,7 +1990,9 @@
    "src/components/ui/command.tsx",
    "src/contexts/I18nContext.tsx",
    "src/hooks/semantic/useSemanticSearch.ts",
-   "src/lib/navigationGuard.ts"
+   "src/hooks/useUserRoles.ts",
+   "src/lib/navigationGuard.ts",
+   "src/routes/routeAccess.ts"
   ],
   "src/components/comparador/PriceAlertsPanel.tsx": [
    "src/components/ui/badge.tsx",
@@ -4322,7 +4324,8 @@
    "src/contexts/AuthContext.tsx",
    "src/hooks/useUserRoles.ts",
    "src/lib/haptics.ts",
-   "src/lib/utils.ts"
+   "src/lib/utils.ts",
+   "src/routes/routeAccess.ts"
   ],
   "src/components/mobile/MobileNavigation.tsx": [
    "src/components/mobile/MobileComponents.tsx",
@@ -4614,7 +4617,8 @@
    "src/hooks/useUserRoles.ts",
    "src/lib/haptics.ts",
    "src/lib/utils.ts",
-   "src/routes/pagePrefetchMap.ts"
+   "src/routes/pagePrefetchMap.ts",
+   "src/routes/routeAccess.ts"
   ],
   "src/components/organisms/DesktopTopBar.tsx": [
    "src/components/atoms/LanguageToggle.tsx",

@@ -11046,11 +11046,12 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 39,
+   "usado_por": 40,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
     "src/components/cadences/EnrollCadenceDialog.tsx",
+    "src/components/command/CommandPalette.tsx",
     "src/components/competitive/BattleArena.tsx",
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
@@ -11076,8 +11077,7 @@
     "src/hooks/useSDRAlertNotifications.ts",
     "src/hooks/useSecurityAlertNotifications.ts",
     "src/pages/AccessDenied.tsx",
-    "src/pages/AccountBasedEngagement.tsx",
-    "src/pages/AccountBasedSelling.tsx"
+    "src/pages/AccountBasedEngagement.tsx"
    ],
    "coberto_por_testes": 0
   },

@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2340,
- "arestas": 9627,
+ "nos": 2341,
+ "arestas": 9631,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -121,12 +121,12 @@
    "importado_por": 41
   },
   {
-   "arquivo": "supabase/functions/_shared/chunked-in.ts",
+   "arquivo": "src/hooks/useUserRoles.ts",
    "importado_por": 40
   },
   {
-   "arquivo": "src/hooks/useUserRoles.ts",
-   "importado_por": 39
+   "arquivo": "supabase/functions/_shared/chunked-in.ts",
+   "importado_por": 40
   },
   {
    "arquivo": "supabase/functions/_shared/business-date.ts",
@@ -269,7 +269,7 @@
   {
    "modulo": "hooks",
    "depende_de": 17,
-   "importado_por": 82
+   "importado_por": 83
   },
   {
    "modulo": "integrations/supabase",

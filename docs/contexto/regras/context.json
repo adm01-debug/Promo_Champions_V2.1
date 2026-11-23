@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7370b42e247460fafd7ebab8556a63238a0c49a7",
+  "sha": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 20:17 UTC",
-  "files_total": 3651,
-  "code_files": 3302,
-  "code_lines": 478886
+  "generated_at": "2026-11-23 20:41 UTC",
+  "files_total": 3653,
+  "code_files": 3304,
+  "code_lines": 479333
  },
  "version": "1.3.2",
- "facts_hash": "23e973ec19529793",
+ "facts_hash": "a2d239f87b884bbb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -399,7 +399,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1377,
-   ".ts": 1122,
+   ".ts": 1124,
    ".sql": 721,
    ".mjs": 72,
    ".js": 6,
@@ -106643,7 +106643,7 @@
   {
    "module": "src/components",
    "files": 1226,
-   "lines": 193025,
+   "lines": 193167,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107801,20 +107801,27 @@
   },
   {
    "module": "src/routes",
-   "files": 3,
-   "lines": 1557,
+   "files": 5,
+   "lines": 1862,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
     "lazyPages.ts: Index, Auth, ResetPassword, NotFound, AccessDenied, Docs",
-    "pagePrefetchMap.ts: RoutePrefetcher, routePrefetchMap"
+    "pagePrefetchMap.ts: RoutePrefetcher, routePrefetchMap",
+    "routeAccess.ts: adminOnlyRoutes, managerOnlyRoutes, RouteAccess, requiredRoleFor, canAccessPath, filterItemsByAccess"
    ],
    "docs": [
-    "pagePrefetchMap.ts: Mapa rota → import dinâmico da página, usado pela sidebar para prefetch no hover. Módulo neutro de propósito: só declara `import()` dinâmicos, sem nenhum import estático de pages/components — assim quem o consome (AppSidebar) não puxa o grafo inteiro de páginas para dentro do seu próprio grafo de de …"
+    "pagePrefetchMap.ts: Mapa rota → import dinâmico da página, usado pela sidebar para prefetch no hover. Módulo neutro de propósito: só declara `import()` dinâmicos, sem nenhum import estático de pages/components — assim quem o consome (AppSidebar) não puxa o grafo inteiro de páginas para dentro do seu próprio grafo de de …",
+    "routeAccess.test.ts: ACESSO-MENU — trava a fonte única de níveis de acesso. As listas de `routeAccess.ts` alimentam o filtro do menu e da paleta de comandos. Se o roteador mudar de guarda (`<Admin>` / `<Manager>`) e a lista não acompanhar, o menu volta a oferecer um caminho que termina em \"Acesso Negado\". O teste lê `Ap …",
+    "routeAccess.ts: Nível de acesso das rotas, derivado de `AppRoutes.tsx`. O menu e a paleta de comandos precisam saber quais rotas o papel atual pode abrir para não oferecer um caminho que termina em \"Acesso Negado\". As listas abaixo acompanham os wrappers `<Admin>` (só admin) e `<Manager>` (admin ou gestor) do rotea …"
    ],
    "deps": [
+    "node:fs",
+    "node:path",
+    "node:url",
     "react",
-    "react-router-dom"
+    "react-router-dom",
+    "vitest"
    ],
    "imports_modules": [
     "src/components"
@@ -107822,7 +107829,9 @@
    "file_list": [
     "src/routes/AppRoutes.tsx",
     "src/routes/lazyPages.ts",
-    "src/routes/pagePrefetchMap.ts"
+    "src/routes/pagePrefetchMap.ts",
+    "src/routes/routeAccess.test.ts",
+    "src/routes/routeAccess.ts"
    ]
   },
   {
@@ -123104,6 +123113,10 @@
    {
     "file": "src/components/gamification/StreakWidget.tsx",
     "text": "Generate 7-day mini heatmap data (must be before early returns)"
+   },
+   {
+    "file": "src/components/organisms/AppSidebar.tsx",
+    "text": "Preferência salva só vale se o papel atual tiver permissão para o modo."
    },
    {
     "file": "src/components/pipeline/DealCard.tsx",
@@ -154636,6 +154649,12 @@
     "body": "e.preventDefault(); const next = new URLSearchParams(); if (requestIdInput.trim()) next.set('requestId', requestIdInput.trim()); if (subIdInput.trim()) next.set('subscriptionId', subIdInput.trim()); setSearchParams(next, { replace: true });"
    },
    {
+    "file": "src/routes/routeAccess.ts",
+    "name": "canAccessPath",
+    "params": "path: string, access: RouteAccess",
+    "body": "const required = requiredRoleFor(path); if (required === 'admin') return access.isAdmin; if (required === 'manager') return access.isAdmin || access.isManager; return true;"
+   },
+   {
     "file": "src/utils/bi-helpers.ts",
     "name": "computePipelineHealth",
     "params": "pipelineDeals: SaleRecord[], now: Date",
@@ -162408,6 +162427,70 @@
    {
     "file": "src/pages/PowerDialer.test.tsx",
     "name": "admin vê Editar/Excluir em todas as filas"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "routeAccess — paridade com o roteador"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "lista de rotas exclusivas de admin bate com os wrappers <Admin>"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "lista de rotas de gestor bate com os wrappers <Manager>"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "nenhuma rota aparece nas duas listas"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "canAccessPath"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "bloqueia rota de gestor para quem não é gestor nem admin"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "libera rota de gestor para gestor e para admin"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "rota exclusiva de admin fica fechada ao gestor"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "/admin/comissoes é de gestor, não capturado por /admin"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "rotas abertas passam para qualquer papel"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "ignora query string e barra final"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "sub-rota herda a guarda do prefixo"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "menu lateral — nenhum item oferecido a quem não pode abrir"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "itens das visões SDR e Closer são abertos a qualquer autenticado"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "itens de gestão exigem gestor"
+   },
+   {
+    "file": "src/routes/routeAccess.test.ts",
+    "name": "itens de administração são exclusivos de admin"
    },
    {
     "file": "src/services/callFeedbackService.test.ts",
@@ -234283,7 +234366,7 @@
   },
   "src/components/command/CommandPalette.tsx": {
    "path": "src/components/command/CommandPalette.tsx",
-   "lines": 569,
+   "lines": 610,
    "exports": [
     "function CommandPalette"
    ],
@@ -239199,7 +239282,7 @@
   },
   "src/components/layout/sidebar/sidebarMenuData.ts": {
    "path": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "lines": 406,
+   "lines": 403,
    "exports": [
     "interface MenuItem",
     "interface MenuGroup",
@@ -239502,7 +239585,7 @@
   },
   "src/components/mobile/MobileDrawer.tsx": {
    "path": "src/components/mobile/MobileDrawer.tsx",
-   "lines": 266,
+   "lines": 326,
    "exports": [
     "const MobileDrawer"
    ],
@@ -240002,7 +240085,7 @@
   },
   "src/components/organisms/AppSidebar.tsx": {
    "path": "src/components/organisms/AppSidebar.tsx",
-   "lines": 379,
+   "lines": 423,
    "exports": [
     "const AppSidebar"
    ],
@@ -240031,6 +240114,9 @@
    "role_checks": [
     "admin",
     "manager"
+   ],
+   "rule_comments": [
+    "Preferência salva só vale se o papel atual tiver permissão para o modo."
    ],
    "doc": "sidebar v3 — grouped submenus"
   },
@@ -274421,6 +274507,51 @@
    ],
    "doc": "Mapa rota → import dinâmico da página, usado pela sidebar para prefetch no hover. Módulo neutro de propósito: só declara `import()` dinâmicos, sem nenhum import estático de pages/components — assim quem o consome (AppSidebar) não puxa o grafo inteiro de páginas para dentro do seu próprio grafo de de …"
   },
+  "src/routes/routeAccess.test.ts": {
+   "path": "src/routes/routeAccess.test.ts",
+   "lines": 140,
+   "is_test": true,
+   "doc": "ACESSO-MENU — trava a fonte única de níveis de acesso. As listas de `routeAccess.ts` alimentam o filtro do menu e da paleta de comandos. Se o roteador mudar de guarda (`<Admin>` / `<Manager>`) e a lista não acompanhar, o menu volta a oferecer um caminho que termina em \"Acesso Negado\". O teste lê `Ap …",
+   "tests": [
+    "routeAccess — paridade com o roteador",
+    "lista de rotas exclusivas de admin bate com os wrappers <Admin>",
+    "lista de rotas de gestor bate com os wrappers <Manager>",
+    "nenhuma rota aparece nas duas listas",
+    "canAccessPath",
+    "bloqueia rota de gestor para quem não é gestor nem admin",
+    "libera rota de gestor para gestor e para admin",
+    "rota exclusiva de admin fica fechada ao gestor",
+    "/admin/comissoes é de gestor, não capturado por /admin",
+    "rotas abertas passam para qualquer papel",
+    "ignora query string e barra final",
+    "sub-rota herda a guarda do prefixo",
+    "menu lateral — nenhum item oferecido a quem não pode abrir",
+    "itens das visões SDR e Closer são abertos a qualquer autenticado",
+    "itens de gestão exigem gestor",
+    "itens de administração são exclusivos de admin"
+   ]
+  },
+  "src/routes/routeAccess.ts": {
+   "path": "src/routes/routeAccess.ts",
+   "lines": 165,
+   "exports": [
+    "const adminOnlyRoutes",
+    "const managerOnlyRoutes",
+    "interface RouteAccess",
+    "function requiredRoleFor",
+    "function canAccessPath",
+    "function filterItemsByAccess",
+    "function filterGroupsByAccess"
+   ],
+   "doc": "Nível de acesso das rotas, derivado de `AppRoutes.tsx`. O menu e a paleta de comandos precisam saber quais rotas o papel atual pode abrir para não oferecer um caminho que termina em \"Acesso Negado\". As listas abaixo acompanham os wrappers `<Admin>` (só admin) e `<Manager>` (admin ou gestor) do rotea …",
+   "calc_fns": [
+    {
+     "name": "canAccessPath",
+     "params": "path: string, access: RouteAccess",
+     "body": "const required = requiredRoleFor(path); if (required === 'admin') return access.isAdmin; if (required === 'manager') return access.isAdmin || access.isManager; return true;"
+    }
+   ]
+  },
   "src/services/biService.ts": {
    "path": "src/services/biService.ts",
    "lines": 359,
@@ -298282,10 +298413,25 @@
   }
  },
  "git": {
-  "sha": "7370b42e247460fafd7ebab8556a63238a0c49a7",
+  "sha": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7dfe259",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/command/CommandPalette.tsx",
+     "src/components/layout/sidebar/sidebarMenuData.ts",
+     "src/components/mobile/MobileDrawer.tsx",
+     "src/components/organisms/AppSidebar.tsx",
+     "src/routes/routeAccess.test.ts",
+     "src/routes/routeAccess.ts"
+    ]
+   },
    {
     "sha": "7370b42",
     "date": "2026-11-23",
@@ -298571,25 +298717,40 @@
     "files": [
      "supabase/functions/analyze-call/index.ts"
     ]
-   },
-   {
-    "sha": "81455f3",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir custo de comissao no painel ROI (dividir por 100) (QA-041) (#642)",
-    "files": [
-     "src/hooks/dashboard/useROIDashboard.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    2
+    3
    ],
    [
     "supabase/functions/sequence-record-reply/index.ts",
     2
+   ],
+   [
+    "src/components/command/CommandPalette.tsx",
+    1
+   ],
+   [
+    "src/components/layout/sidebar/sidebarMenuData.ts",
+    1
+   ],
+   [
+    "src/components/mobile/MobileDrawer.tsx",
+    1
+   ],
+   [
+    "src/components/organisms/AppSidebar.tsx",
+    1
+   ],
+   [
+    "src/routes/routeAccess.test.ts",
+    1
+   ],
+   [
+    "src/routes/routeAccess.ts",
+    1
    ],
    [
     "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
@@ -298637,30 +298798,6 @@
    ],
    [
     "src/hooks/gamification/useLeagues.ts",
-    1
-   ],
-   [
-    "src/hooks/race/useMyRaceCar.ts",
-    1
-   ],
-   [
-    "src/hooks/race/useRaceUnlocks.ts",
-    1
-   ],
-   [
-    "src/hooks/useCommissions.ts",
-    1
-   ],
-   [
-    "src/hooks/crm/useClients.ts",
-    1
-   ],
-   [
-    "src/hooks/useProducts.ts",
-    1
-   ],
-   [
-    "src/hooks/dashboard/useGoalsDashboard.ts",
     1
    ]
   ]

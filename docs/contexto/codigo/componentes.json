@@ -4189,12 +4189,13 @@
     "CommandPalette"
    ],
    "export_default": null,
-   "linhas": 569,
+   "linhas": 610,
    "dominio": "components/command",
    "hooks_locais": [
     "useI18n",
     "useSemanticSearch",
-    "useTheme"
+    "useTheme",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -9318,7 +9319,7 @@
     "MobileDrawer"
    ],
    "export_default": null,
-   "linhas": 266,
+   "linhas": 326,
    "dominio": "components/mobile",
    "hooks_locais": [
     "useAuth",
@@ -9858,7 +9859,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 379,
+   "linhas": 423,
    "dominio": "components/organisms",
    "hooks_locais": [
     "useAlerts",

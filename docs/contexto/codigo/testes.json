@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 248,
+ "total": 249,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 180
+  "unit": 181
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 163
+   "arquivos": 164
   },
   {
    "padrao": "tests/",
@@ -1435,6 +1435,15 @@
    "casos": 2
   },
   {
+   "arquivo": "src/routes/routeAccess.test.ts",
+   "tipo": "unit",
+   "linhas": 140,
+   "testa": [
+    "src/routes/routeAccess.ts"
+   ],
+   "casos": 13
+  },
+  {
    "arquivo": "src/services/callFeedbackService.test.ts",
    "tipo": "unit",
    "linhas": 53,
@@ -2269,6 +2278,7 @@
   "src/pages/NotFound.tsx": 1,
   "src/pages/PowerDialer.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
+  "src/routes/routeAccess.ts": 1,
   "src/services/callFeedbackService.ts": 1,
   "src/services/comboService.ts": 1,
   "src/services/knownDeviceService.ts": 1,

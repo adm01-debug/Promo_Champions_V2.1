@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7370b42e247460fafd7ebab8556a63238a0c49a7",
+  "commit": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
   "branch": "main",
-  "data_commit": "2026-11-23T20:15:55Z",
+  "data_commit": "2026-11-23T20:39:13Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7dfe259",
+    "data": "2026-11-23",
+    "assunto": "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)"
+   },
    {
     "sha": "7370b42",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "acce427",
     "data": "2026-11-23",
     "assunto": "fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)"
-   },
-   {
-    "sha": "2088c24",
-    "data": "2026-11-23",
-    "assunto": "fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)"
    }
   ],
-  "arquivos_mudados_7d": 274,
+  "arquivos_mudados_7d": 280,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -266,10 +266,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
     "mudancas": 5
    },
@@ -290,18 +286,22 @@
     "mudancas": 5
    },
    {
-    "arquivo": "supabase/functions/next-best-action/index.ts",
-    "mudancas": 5
+    "arquivo": ".github/workflows/db-backup.yml",
+    "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/db-backup.yml",
+    "arquivo": ".github/workflows/types-sync.yml",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "AGENTS.md",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 239
+    "commits": 240
    },
    {
     "autor": "dependabot[bot]",
@@ -313,18 +313,18 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 12
+    "commits": 11
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3636,
-  "arquivos_codigo": 2581,
-  "linhas_codigo": 443780,
+  "arquivos_total": 3638,
+  "arquivos_codigo": 2583,
+  "linhas_codigo": 444227,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 133,
+  "itens_menu": 131,
   "modulos": 174,
   "componentes": 1289,
   "hooks": 483,
@@ -332,7 +332,7 @@
   "tabelas": 419,
   "migrations": 711,
   "cron_jobs": 39,
-  "testes": 248,
+  "testes": 249,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1226,
-   "linhas": 193026
+   "linhas": 193168
   },
   "src/config": {
    "arquivos": 4,
@@ -631,8 +631,8 @@
    "linhas": 44518
   },
   "src/routes": {
-   "arquivos": 3,
-   "linhas": 1557
+   "arquivos": 5,
+   "linhas": 1862
   },
   "src/services": {
    "arquivos": 9,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7370b42e24` · branch `main` · 2026-11-23 20:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7dfe25916a` · branch `main` · 2026-11-23 20:41 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2499,6 +2499,10 @@ _nenhum item encontrado_
   ```
   e.preventDefault(); const next = new URLSearchParams(); if (requestIdInput.trim()) next.set('requestId', requestIdInput.trim()); if (subIdInput.trim()) next.set('subscriptionId', subIdInput.trim()); setSearchParams(next, { replace: true });
   ```
+- **canAccessPath(path: string, access: RouteAccess)** — `src/routes/routeAccess.ts`
+  ```
+  const required = requiredRoleFor(path); if (required === 'admin') return access.isAdmin; if (required === 'manager') return access.isAdmin || access.isManager; return true;
+  ```
 - **computePipelineHealth(pipelineDeals: SaleRecord[], now: Date)** — `src/utils/bi-helpers.ts`
   ```
   const totalPipelineValue = pipelineDeals.reduce((sum, d) => sum + Number(d.amount), 0); const atRiskDeals = pipelineDeals.filter( d => differenceInDays(now, parseISO(d.created_at)) > 14 ).length; const avgDaysInPipeline = pipelineDeals.length > 0 ? pipelineDeals.reduce( (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0 ) / pipelineDeals.length : 0; const stages = ['pending', 'qualified', 'proposal', 'negotiation']; const dealsByStage = stages.map(stage => ({ stage, count: pipeli …
@@ -4262,7 +4266,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1674 testes em 213 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1690 testes em 214 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4289,6 +4293,7 @@ _nenhum item encontrado_
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
+| `src/routes/routeAccess.test.ts` | 16 | routeAccess — paridade com o roteador · lista de rotas exclusivas de admin bate com os wrappers <Admin> · lista de rotas de gestor bate com os wrappers <Manager> · nenhuma rota aparece nas duas listas … |
 | `src/services/salesService.test.ts` | 16 | salesService.getSales · mapeia rows do Supabase para o formato do domínio · faz fallback para client_name/product_name quando joins vêm nulos · sanitiza o searchTerm (remove vírgulas/parênteses) e chama .or() … |
 | `supabase/functions/cron-failure-alerter/index.test.ts` | 16 | fn_cron_expected_interval → cada schedule mapeia para o intervalo correto · fn_cron_stalled_threshold → 5min job usa piso de 30min · fn_cron_stalled_threshold → 15min job usa 30min (2× intervalo) · fn_cron_stalled_threshold → 30min job usa 60min (2× intervalo) … |
 | `src/lib/winloss/riskReasons.test.ts` | 15 | getReasonKindMeta · todos os códigos retornam meta com label + variant · STAGNATION_HIGH tem contribMax=50 e source=stagnation · COMPETITOR_PRESSURE tem source=competitor e variant=destructive … |
@@ -4771,6 +4776,7 @@ _nenhum item encontrado_
 | Simula disparo de teste e loga no banco para validação | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | * Conversor minimalista de markdown -> HTML seguro (apenas h2/h3, parágrafos, bold, lista). | `src/components/executive-briefing/briefingHelpers.ts` |
 | Generate 7-day mini heatmap data (must be before early returns) | `src/components/gamification/StreakWidget.tsx` |
+| Preferência salva só vale se o papel atual tiver permissão para o modo. | `src/components/organisms/AppSidebar.tsx` |
 | Date + historico do negocio. A timeline so consulta o banco quando | `src/components/pipeline/DealCard.tsx` |
 | TabsList escondida — usada apenas para a11y (linkagem tab↔panel) */} | `src/components/playbooks/PlaybooksManager.tsx` |
 | * Win-rate medido na faixa de ~0% de desconto (0-1). */ | `src/components/pricing/DiscountOptimizer.tsx` |
@@ -5047,5 +5053,4 @@ _nenhum item encontrado_
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
 | Marca APENAS a execução enviada mais recente — senão uma | `supabase/functions/inbound-email-webhook/index.ts` |
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
-| PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
-| … +136 linhas — lista completa em `context.json` | |
+| … +137 linhas — lista completa em `context.json` | |
