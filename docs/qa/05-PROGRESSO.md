@@ -21,21 +21,21 @@ Exemplo:
 ## Onda 1 — Segurança e risco de perda de dado
 - [ ] 001 — Fechar o cadastro público do Supabase Auth — onda 1 — Crítica · **APROV**
 - [ ] 002 — Medir se a cadeia de ataque do `update_stage` está explorável hoje — onda 1 — Crítica
-- [ ] 003 — Escopar o `update_stage` do `execute-workflow` ao dono da venda — onda 1 — Crítica
+- [x] 003 — Escopar o `update_stage` do `execute-workflow` ao dono da venda — onda 1 — Crítica - PR #637 - update_stage escopado ao dono da venda via RLS
 - [ ] 004 — Exigir aprovador humano no environment `Production` — onda 1 — Crítica · **APROV**
-- [ ] 005 — Autenticar `new-device-alert` — onda 1 — Crítica
-- [ ] 006 — Fazer `workflow-executor` respeitar o resultado da autenticação — onda 1 — Alta
-- [ ] 007 — Autenticar `notify-critical-pattern` e escapar o HTML do e-mail — onda 1 — Alta
+- [x] 005 — Autenticar `new-device-alert` — onda 1 — Crítica - PR #638 - new-device-alert exige JWT valido
+- [x] 006 — Fazer `workflow-executor` respeitar o resultado da autenticação — onda 1 — Alta - PR #639 - workflow-executor recusa 401 sem auth
+- [x] 007 — Autenticar `notify-critical-pattern` e escapar o HTML do e-mail — onda 1 — Alta - PR #640 - notify-critical-pattern autenticado e HTML escapado
 - [ ] 008 — Validar a condição da premiação no servidor — onda 1 — Crítica · **APROV**
-- [ ] 009 — Trocar o fallback permissivo de `evaluateBonus` por recusa explícita — onda 1 — Crítica
+- [x] 009 — Trocar o fallback permissivo de `evaluateBonus` por recusa explícita — onda 1 — Crítica - PR #641 - evaluateBonus devolve achieved=false em condicao desconhecida
 - [ ] 010 — Desbloquear a criação de migrations (versões datadas no futuro) — onda 1 — Média · **APROV**
 - [ ] 011 — Ligar o ranking mensal à avaliação de premiação — onda 1 — Alta · **APROV**
-- [ ] 012 — Escopar `analyze-call` ao dono da gravação — onda 1 — Alta
-- [ ] 013 — Escopar `sequence-record-reply` ao dono da cadência — onda 1 — Alta
-- [ ] 014 — Escopar `schedule-optimal-send` à venda do chamador — onda 1 — Média
-- [ ] 015 — Escopar `csat-ces-trigger` à conta do chamador — onda 1 — Média
-- [ ] 016 — Restringir `rotate-daily-challenges` ao cron e ao administrador — onda 1 — Média
-- [ ] 017 — Restringir o recálculo em massa de `lead-scoring` — onda 1 — Média
+- [x] 012 — Escopar `analyze-call` ao dono da gravação — onda 1 — Alta - PR #643 - analyze-call escopado ao dono da gravacao
+- [x] 013 — Escopar `sequence-record-reply` ao dono da cadência — onda 1 — Alta - PR #644 - escopado ao dono da cadencia (callerCtx corrigido no #670)
+- [x] 014 — Escopar `schedule-optimal-send` à venda do chamador — onda 1 — Média - PR #645 - schedule-optimal-send escopado a venda do chamador
+- [x] 015 — Escopar `csat-ces-trigger` à conta do chamador — onda 1 — Média - PR #646 - csat-ces-trigger salva ctx e verifica ownership da account
+- [x] 016 — Restringir `rotate-daily-challenges` ao cron e ao administrador — onda 1 — Média - PR #647 - rotacao manual de desafios diarios exige admin
+- [x] 017 — Restringir o recálculo em massa de `lead-scoring` — onda 1 — Média - PR #648 - recalculo em massa do lead-scoring exige admin
 - [ ] 018 — Remover a policy permissiva de `nps_surveys` e de `commercial_approval_requests` — onda 1 — Crítica · **APROV**
 - [ ] 019 — Fechar a leitura irrestrita de `entity_versions` — onda 1 — Crítica · **APROV**
 - [ ] 020 — Fechar previsão e saúde de negócio para o time todo — onda 1 — Alta · **APROV**
@@ -61,7 +61,7 @@ Exemplo:
 - [ ] 040 — Tornar os testes de ponta a ponta alcançáveis — onda 1 — Alta · **APROV**
 
 ## Onda 2 — Fluxos principais quebrados
-- [ ] 041 — Corrigir o custo de comissão do painel de ROI — onda 2 — Crítica
+- [x] 041 — Corrigir o custo de comissão do painel de ROI — onda 2 — Crítica - PR #642 - /roi com taxa 10% mostra custo = 10% da receita (antes 10x)
 - [ ] 042 — Unificar "a comissão desta venda" numa única fonte — onda 2 — Crítica · **APROV**
 - [ ] 043 — Separar "Arquivado" de "Ganho" — onda 2 — Crítica · **APROV**
 - [ ] 044 — Mapear "cotação expirada" para um status que não seja ganho — onda 2 — Crítica · **APROV**
@@ -80,7 +80,7 @@ Exemplo:
 - [ ] 057 — Consertar a atualização otimista do pipeline — onda 2 — Alta
 - [ ] 058 — Consertar a atualização otimista de clientes — onda 2 — Alta
 - [ ] 059 — Consertar a atualização otimista de produtos — onda 2 — Média
-- [ ] 060 — Fazer a previsão de receita falhar visivelmente em vez de mentir — onda 2 — Alta
+- [x] 060 — Fazer a previsão de receita falhar visivelmente em vez de mentir — onda 2 — Alta - PR #651 - forecast falha visivelmente quando as metas falham
 - [ ] 061 — Tratar o erro das consultas paralelas de premiação — onda 2 — Alta
 - [ ] 062 — Tratar o erro das consultas paralelas de metas, perfil e relatório de vendas — onda 2 — Média
 
@@ -97,8 +97,8 @@ Exemplo:
 - [ ] 072 — Revogar as funções de gamificação que o vendedor pode chamar sobre si — onda 3 — Alta · **APROV**
 - [ ] 073 — Ponderar o markup médio pela receita — onda 3 — Média · **APROV**
 - [ ] 074 — Separar valor e percentual no total de premiações — onda 3 — Média · **APROV**
-- [ ] 075 — Excluir comissões canceladas do total do vendedor — onda 3 — Baixa
-- [ ] 076 — Tirar os números inventados do simulador de ganhos — onda 3 — Média
+- [x] 075 — Excluir comissões canceladas do total do vendedor — onda 3 — Baixa - PR #652 - total de comissoes nao inclui canceladas
+- [x] 076 — Tirar os números inventados do simulador de ganhos — onda 3 — Média - PR #652 - dados inventados removidos do painel de comissoes
 - [ ] 077 — Dar um CHECK ao status de cotação — onda 3 — Média · **APROV**
 - [ ] 078 — Validar as restrições de valor que entraram sem verificar o histórico — onda 3 — Média · **APROV**
 - [ ] 079 — Dar restrições de valor a `commissions` e `quote_items` — onda 3 — Média · **APROV**
@@ -109,17 +109,17 @@ Exemplo:
 - [ ] 084 — Dar chave estrangeira à trilha de conversão de orçamento — onda 3 — Baixa · **APROV**
 - [ ] 085 — Remover os índices exatamente duplicados — onda 3 — Média · **APROV**
 - [ ] 086 — Remover os gatilhos duplicados de `updated_at` — onda 3 — Média · **APROV**
-- [ ] 087 — Medir se a deduplicação de webhook está realmente gravando — onda 3 — Média
-- [ ] 088 — Religar a deduplicação no caminho de entrada de cotações — onda 3 — Alta
+- [x] 087 — Medir se a deduplicação de webhook está realmente gravando — onda 3 — Média - PR #659 - deduplicacao de webhook no receive-quote-webhook
+- [x] 088 — Religar a deduplicação no caminho de entrada de cotações — onda 3 — Alta - PR #659 - webhook repetido nao processa duas vezes
 - [ ] 089 — Fazer o cron perceber falha da função que ele chama — onda 3 — Alta · **APROV**
 - [ ] 090 — Calibrar a espera do despachante de cron para não travar os trabalhadores — onda 3 — Média · **APROV**
-- [ ] 091 — Alertar quando a sincronização do Bitrix24 falhar — onda 3 — Média
+- [x] 091 — Alertar quando a sincronização do Bitrix24 falhar — onda 3 — Média - PR #660 - alerta apos 3 falhas consecutivas do Bitrix24
 - [ ] 092 — Assinar o webhook de Win/Loss com HMAC do corpo — onda 3 — Crítica
 - [ ] 093 — Parar de trazer o segredo do webhook para o navegador e passar a gravá-lo — onda 3 — Alta · **APROV**
 - [ ] 094 — Tirar as credenciais de canal do navegador antes do primeiro provedor ser conectado — onda 3 — Alta · **APROV**
 - [ ] 095 — Dar uma tela à lista de destinos permitidos de webhook — onda 3 — Média
-- [ ] 096 — Proteger o teste de conexão de integração contra destino interno — onda 3 — Média
-- [ ] 097 — Respeitar o limite de requisições dos terceiros fora do caminho de IA — onda 3 — Média
+- [x] 096 — Proteger o teste de conexão de integração contra destino interno — onda 3 — Média - PR #656 - test-integration-connection bloqueia URLs internas
+- [x] 097 — Respeitar o limite de requisições dos terceiros fora do caminho de IA — onda 3 — Média - PR #657 - Retry-After respeitado em 429 no Bitrix24 e V4
 - [ ] 098 — Validar o formato da resposta do sistema de atendimento — onda 3 — Média
 - [ ] 099 — Unificar a retenção da deduplicação de webhook — onda 3 — Baixa · **APROV**
 - [ ] 100 — Fazer a comissão recusar venda sem regra, em vez de pagar 5% — onda 3 — Alta · **APROV**
@@ -132,8 +132,8 @@ Exemplo:
 - [ ] 105 — Decidir o destino dos botões do guia de estado vazio — onda 4 — Baixa
 - [ ] 106 — Fazer o campo de busca da auditoria de duplicados buscar — onda 4 — Média
 - [ ] 107 — Fazer o diálogo "Configurar IA" salvar ou sair da tela — onda 4 — Média · **APROV**
-- [ ] 108 — Tirar os números fabricados do painel de Segurança — onda 4 — Média
-- [ ] 109 — Esconder os botões de teste de gamificação em produção — onda 4 — Média
+- [x] 108 — Tirar os números fabricados do painel de Segurança — onda 4 — Média - PR #662 - painel de Seguranca sem dados falsos
+- [x] 109 — Esconder os botões de teste de gamificação em produção — onda 4 — Média - PR #662 - botoes de teste ocultos no painel de Seguranca
 - [ ] 110 — Dar entrada no menu às duas telas de alerta de webhook — onda 4 — Média
 - [ ] 111 — Dar entrada no menu às telas de conformidade (LGPD e opt-out) — onda 4 — Alta
 - [ ] 112 — Remover a página de teste de retentativa de produção — onda 4 — Média
@@ -157,18 +157,18 @@ Exemplo:
 - [ ] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta
 - [ ] 129 — Tornar a importação de clientes capaz de ler CSV de verdade — onda 5 — Alta · **APROV**
 - [ ] 130 — Pedir confirmação explícita do volume antes de importar — onda 5 — Média
-- [ ] 131 — Fazer o aviso de XP refletir o que foi creditado — onda 5 — Média
+- [x] 131 — Fazer o aviso de XP refletir o que foi creditado — onda 5 — Média - PR #666 - aviso de XP usa valor do servidor
 - [ ] 132 — Invalidar o contador de tarefas de follow-up após mutação — onda 5 — Média
-- [ ] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média
+- [x] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média - PR #666 - assinaturas realtime de XP
 - [ ] 134 — Unificar as duas versões do funil de prospecção — onda 5 — Baixa · **APROV**
 - [ ] 135 — Persistir a preferência de tema do painel — onda 5 — Baixa
 - [ ] 136 — Remover o filtro declarado e ignorado em `useClients` — onda 5 — Baixa
-- [ ] 137 — Filtrar as assinaturas em tempo real dos painéis — onda 5 — Baixa
+- [x] 137 — Filtrar as assinaturas em tempo real dos painéis — onda 5 — Baixa - PR #666 - aviso de XP nao conta duas vezes
 - [ ] 138 — Liberar os canais de tempo real da corrida — onda 5 — Média
 - [ ] 139 — Acrescentar o usuário às chaves de cache por pessoa — onda 5 — Baixa
 - [ ] 140 — Dar justificativa real às supressões da regra de dependências — onda 5 — Média
-- [ ] 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting` — onda 5 — Alta
-- [ ] 142 — Avisar quando a conversa do assistente não for gravada — onda 5 — Média
+- [x] 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting` — onda 5 — Alta - PR #667 - reconcile do useSyncedSetting le valor corrente e trata empate
+- [x] 142 — Avisar quando a conversa do assistente não for gravada — onda 5 — Média - PR #668 - aviso na conversa quando a mensagem do assistente nao for salva
 - [ ] 143 — Dar asserções aos testes de fluxo principal — onda 5 — Alta
 - [ ] 144 — Tirar o mock que substitui a regra sob teste — onda 5 — Alta
 - [ ] 145 — Criar o teste que verifica policy contra o banco, não contra o arquivo — onda 5 — Alta
