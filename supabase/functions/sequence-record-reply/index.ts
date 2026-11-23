@@ -1,32 +1,25 @@
-﻿import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 Deno.serve(withRequestId('sequence-record-reply', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
-    { global: { headers: { Authorization: authHeader } } },
-  );
-
-  const token = authHeader.replace("Bearer ", "");
-  const { data: authData, error: claimsErr } = await supabase.auth.getUser(token);
-  if (claimsErr || !authData?.user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  // Client escopado ao chamador: a checagem de dono do enrollment abaixo roda
+  // sob RLS, em vez de confiar no service_role.
+  let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
+  try {
+    callerCtx = await getUserClient(req);
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    throw e;
   }
 
   try {
