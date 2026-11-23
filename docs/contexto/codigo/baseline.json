@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1de569f985da376e54034cccb33d4677326bcb27",
+  "commit": "ad2d98fe3c5258ccf6e8354e75f9787816f2939b",
   "branch": "main",
-  "data_commit": "2026-11-23T06:50:12-03:00",
+  "data_commit": "2026-11-23T08:08:35-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ad2d98f",
+    "data": "2026-11-23",
+    "assunto": "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)"
+   },
    {
     "sha": "1de569f",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "b20af81",
     "data": "2026-11-21",
     "assunto": "feat: troca IA de chat do Lovable para OpenRouter (#603)"
-   },
-   {
-    "sha": "33b3f1c",
-    "data": "2026-11-21",
-    "assunto": "chore(main): release 1.6.2 (#599)"
    }
   ],
-  "arquivos_mudados_7d": 222,
+  "arquivos_mudados_7d": 223,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 204
+    "commits": 205
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443272,
+  "linhas_codigo": 443275,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67072
+   "linhas": 67075
   },
   "tailwind.config.ts": {
    "arquivos": 1,

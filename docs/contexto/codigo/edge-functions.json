@@ -2730,7 +2730,7 @@
    "nome": "execute-workflow",
    "entrada": "supabase/functions/execute-workflow/index.ts",
    "arquivos": 3,
-   "linhas": 259,
+   "linhas": 262,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
