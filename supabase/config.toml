@@ -41,6 +41,12 @@ verify_jwt = false
 [functions.receive-quote-sync]
 verify_jwt = false
 
+# Webhook do Promo Design (design.created / design.updated): sem JWT; assinatura
+# HMAC dedicada verificada no handler (DESIGN_SYNC_WEBHOOK_SECRET). Sem esta
+# entrada o gateway responde 401 antes do handler rodar e nenhum design entra.
+[functions.receive-design-sync]
+verify_jwt = false
+
 # Webhook do gift_store: sem JWT; chave dedicada x-api-key
 # (QUOTE_SYNC_API_KEY) validada no handler.
 [functions.receive-quote-webhook]
