@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 interface RaceUnlock {
@@ -10,8 +11,9 @@ interface RaceUnlock {
 }
 
 export function useRaceUnlocks() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['race-unlocks'],
+    queryKey: ['race-unlocks', user?.id ?? null],
     queryFn: async (): Promise<RaceUnlock[]> => {
       const {
         data: { user },
