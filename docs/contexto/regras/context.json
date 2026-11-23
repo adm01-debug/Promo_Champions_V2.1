@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "17e5d6db31719ac2a4b9d00d6a94549aae51c4d3",
+  "sha": "f9b3558ab6f5ce97d53de61217b2e36323cdc9ca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-22 19:59 UTC",
+  "generated_at": "2026-11-23 06:32 UTC",
   "files_total": 3643,
   "code_files": 3300,
   "code_lines": 478378
@@ -298110,10 +298110,29 @@
   }
  },
  "git": {
-  "sha": "17e5d6db31719ac2a4b9d00d6a94549aae51c4d3",
+  "sha": "f9b3558ab6f5ce97d53de61217b2e36323cdc9ca",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f9b3558",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump astral-sh/setup-uv (#627)",
+    "files": [
+     ".github/workflows/contexto.yml",
+     ".github/workflows/graphify.yml"
+    ]
+   },
+   {
+    "sha": "dfe85df",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump actions/dependency-review-action (#625)",
+    "files": [
+     ".github/workflows/dependency-review.yml"
+    ]
+   },
    {
     "sha": "17e5d6d",
     "date": "2026-11-22",
@@ -298470,24 +298489,6 @@
      "supabase/functions/process-race-event/index_test.ts",
      "supabase/functions/race-commentary/index_test.ts"
     ]
-   },
-   {
-    "sha": "66230ee",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "chore: registra A5 como concluido no backlog (#595)",
-    "files": [
-     "docs/pendencias/backlog-verificado.md"
-    ]
-   },
-   {
-    "sha": "2ac2520",
-    "date": "2026-11-20",
-    "author": "adm01-debug",
-    "subject": "fix: endurece anti prompt injection no personal-assistant-stream (A5) (#594)",
-    "files": [
-     "supabase/functions/personal-assistant-stream/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -298548,12 +298549,16 @@
     2
    ],
    [
-    "supabase/functions/personal-assistant-stream/index.ts",
-    2
+    ".github/workflows/contexto.yml",
+    1
    ],
    [
-    "docs/pendencias/backlog-verificado.md",
-    2
+    ".github/workflows/graphify.yml",
+    1
+   ],
+   [
+    ".github/workflows/dependency-review.yml",
+    1
    ],
    [
     "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
@@ -298565,10 +298570,6 @@
    ],
    [
     "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-sync/config_guard_test.ts",
     1
    ]
   ]
