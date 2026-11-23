@@ -20,11 +20,12 @@ import {
   type Subscription,
 } from "./retry.ts";
 
+const SECRET = "shh-signature-token";
 const SUB: Subscription = {
   id: "sub-dlq-bh",
   url: "https://hook.test/winloss",
   events: ["deal.lost"],
-  secret: "shh-signature-token",
+  secret: SECRET,
 };
 
 const PAYLOAD: Record<string, unknown> = {
@@ -112,7 +113,25 @@ Deno.test(
       // Headers obrigatórios
       assertEquals(req.headers["Content-Type"], "application/json", `${ctx}: Content-Type`);
       assertEquals(req.headers["X-Winloss-Event"], String(PAYLOAD.event), `${ctx}: X-Winloss-Event = event do payload`);
-      assertEquals(req.headers["X-Winloss-Signature"], SUB.secret, `${ctx}: X-Winloss-Signature = secret`);
+      // Assinatura HMAC-SHA256 no formato `t=<unix>,v1=<hex>` sobre `<t>.<body>` (QA-092).
+      const signature = req.headers["X-Winloss-Signature"];
+      assert(signature, `${ctx}: X-Winloss-Signature presente`);
+      const parsed = /^t=(\d+),v1=([0-9a-f]{64})$/.exec(signature);
+      assert(parsed, `${ctx}: X-Winloss-Signature no formato t=<unix>,v1=<hex64> (obtido: ${signature})`);
+      const [, ts, hex] = parsed;
+      const key = await crypto.subtle.importKey(
+        "raw",
+        new TextEncoder().encode(SECRET),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"],
+      );
+      const expected = Array.from(
+        new Uint8Array(
+          await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${ts}.${req.bodyRaw}`)),
+        ),
+      ).map((b) => b.toString(16).padStart(2, "0")).join("");
+      assertEquals(hex, expected, `${ctx}: v1 é o HMAC do body enviado, com o secret da subscription`);
 
       // Body: sanitizado (sem __*) + carrega dispatched_at ISO-8601
       const { dispatched_at, ...bodyWithoutTimestamp } = req.bodyJson as { dispatched_at: string };
