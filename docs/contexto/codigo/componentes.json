@@ -2350,7 +2350,7 @@
     "MessageBubble"
    ],
    "export_default": null,
-   "linhas": 88,
+   "linhas": 97,
    "dominio": "components/assistant",
    "hooks_locais": [],
    "tabelas": [],

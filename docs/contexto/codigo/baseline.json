@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "96962bdd264aed4a449798b681819375134ccbb2",
+  "commit": "e5f9f64b80d99791042257ad85c0adaddd9d9abe",
   "branch": "main",
-  "data_commit": "2026-11-23T10:42:34-03:00",
+  "data_commit": "2026-11-23T10:57:06-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e5f9f64",
+    "data": "2026-11-23",
+    "assunto": "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)"
+   },
    {
     "sha": "96962bd",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "dfe85df",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump actions/dependency-review-action (#625)"
-   },
-   {
-    "sha": "17e5d6d",
-    "data": "2026-11-22",
-    "assunto": "chore(main): release 1.7.4 (#623)"
    }
   ],
-  "arquivos_mudados_7d": 247,
+  "arquivos_mudados_7d": 249,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -184,11 +184,11 @@
     "mudancas": 17
    },
    {
-    "pasta": "src/components/bi",
-    "mudancas": 16
+    "pasta": "src/hooks/sales",
+    "mudancas": 17
    },
    {
-    "pasta": "src/hooks/sales",
+    "pasta": "src/components/bi",
     "mudancas": 16
    },
    {
@@ -215,22 +215,18 @@
    },
    {
     "arquivo": "RELATORIO_CI.md",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 10
-   },
-   {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 10
    },
    {
-    "arquivo": "PENDENCIAS.md",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 9
    },
    {
@@ -239,6 +235,10 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 225
+    "commits": 226
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443526,
+  "linhas_codigo": 443554,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1226,
-   "linhas": 193004
+   "linhas": 193013
   },
   "src/config": {
    "arquivos": 4,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64634
+   "linhas": 64653
   },
   "src/integrations": {
    "arquivos": 4,

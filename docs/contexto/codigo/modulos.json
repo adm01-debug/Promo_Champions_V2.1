@@ -680,7 +680,7 @@
    "modulo": "components/assistant",
    "arquivos": 13,
    "testes": 0,
-   "linhas": 2518,
+   "linhas": 2527,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -742,6 +742,7 @@
     "manager",
     "salesperson",
     "sdr",
+    "status",
     "user"
    ],
    "diretos": {
@@ -4886,6 +4887,7 @@
     "region",
     "salesperson",
     "sdr",
+    "status",
     "user"
    ],
    "diretos": {
@@ -14308,7 +14310,7 @@
    "modulo": "hooks/sales",
    "arquivos": 16,
    "testes": 4,
-   "linhas": 2390,
+   "linhas": 2409,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

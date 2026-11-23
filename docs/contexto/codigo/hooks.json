@@ -6609,7 +6609,7 @@
    "hooks_exportados": [
     "useSalesAssistant"
    ],
-   "linhas": 380,
+   "linhas": 399,
    "dominio": "hooks/sales",
    "tabelas": [
     "chat_conversations",
