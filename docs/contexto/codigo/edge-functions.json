@@ -6730,7 +6730,7 @@
    "nome": "workflow-executor",
    "entrada": "supabase/functions/workflow-executor/index.ts",
    "arquivos": 1,
-   "linhas": 184,
+   "linhas": 190,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -6741,7 +6741,6 @@
    ],
    "rpcs": [],
    "env": [
-    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -6749,6 +6748,7 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "auth-client.ts",
     "cors.ts",
     "request-id.ts"
    ],

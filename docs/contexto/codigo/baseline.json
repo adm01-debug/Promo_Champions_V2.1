@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5aad0e08b6d894462f6f0f728502d590c7ba945b",
+  "commit": "e4ffc931c8ce63c628920c107344934ce9e942f0",
   "branch": "main",
-  "data_commit": "2026-11-23T08:31:01-03:00",
+  "data_commit": "2026-11-23T08:50:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e4ffc93",
+    "data": "2026-11-23",
+    "assunto": "fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)"
+   },
    {
     "sha": "5aad0e0",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "a122081",
     "data": "2026-11-21",
     "assunto": "chore(release): 1.7.0 (#605)"
-   },
-   {
-    "sha": "6e92a51",
-    "data": "2026-11-21",
-    "assunto": "fix: corrige chave de chat e search_path da busca semantica (#604)"
    }
   ],
-  "arquivos_mudados_7d": 223,
+  "arquivos_mudados_7d": 224,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 206
+    "commits": 207
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443286,
+  "linhas_codigo": 443292,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67086
+   "linhas": 67092
   },
   "tailwind.config.ts": {
    "arquivos": 1,

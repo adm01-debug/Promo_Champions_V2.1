@@ -13664,6 +13664,7 @@
    "supabase/functions/_shared/request-id.ts"
   ],
   "supabase/functions/workflow-executor/index.ts": [
+   "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/request-id.ts"
   ]
