@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e58a9dcdf9221fa95d4cd260bce21439695aa0eb",
+  "commit": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
   "branch": "main",
-  "data_commit": "2026-11-23T12:00:20-03:00",
+  "data_commit": "2026-11-23T12:01:41-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "56a3e80",
+    "data": "2026-11-23",
+    "assunto": "docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)"
+   },
    {
     "sha": "e58a9dc",
     "data": "2026-11-23",
@@ -126,11 +131,6 @@
     "sha": "ad2d98f",
     "data": "2026-11-23",
     "assunto": "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)"
-   },
-   {
-    "sha": "1de569f",
-    "data": "2026-11-23",
-    "assunto": "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)"
    }
   ],
   "arquivos_mudados_7d": 250,
@@ -198,12 +198,12 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "package.json",
     "mudancas": 40
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 40
+    "arquivo": "package-lock.json",
+    "mudancas": 39
    },
    {
     "arquivo": "deno.lock",
@@ -214,12 +214,12 @@
     "mudancas": 14
    },
    {
-    "arquivo": "RELATORIO_CI.md",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
+    "arquivo": "RELATORIO_CI.md",
+    "mudancas": 10
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -239,10 +239,6 @@
    },
    {
     "arquivo": ".github/workflows/migrations-drift.yml",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "PENDENCIAS.md",
     "mudancas": 6
    },
    {
@@ -267,6 +263,10 @@
    },
    {
     "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
     "mudancas": 5
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 228
+    "commits": 229
    },
    {
     "autor": "dependabot[bot]",

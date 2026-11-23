@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e58a9dcdf9221fa95d4cd260bce21439695aa0eb` (2026-11-23T12:00:20-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `56a3e80fbfaf7fb64efe1abbf74aad9d04554187` (2026-11-23T12:01:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -585,27 +585,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22380 nós · 67480 arestas · 1609 comunidades · grafo do commit `e58a9dcd`
+- 22380 nós · 67480 arestas · 1609 comunidades · grafo do commit `56a3e80f`
 - comunidades maiores: Card (806), schema.sql (785), Button (620), client.ts (313), getCorsHeaders (296), Índice (277), Badge (268), PageTransition (268), Avatar (210), utils.ts (189), useAuth (178), lazyPages.ts (163)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (40)
 - package.json (40)
+- package-lock.json (39)
 - deno.lock (15)
 - CHANGELOG.md (14)
-- RELATORIO_CI.md (11)
 - src/integrations/supabase/types.ts (11)
+- RELATORIO_CI.md (10)
 - .github/workflows/deploy.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/codeql.yml (8)
 - .github/workflows/pr-checks.yml (7)
 - .github/workflows/migrations-drift.yml (6)
-- PENDENCIAS.md (6)
 - docs/pendencias/backlog-verificado.md (6)
 - inventario/estado/edges.json (6)
 - src/components/pipeline/DealCard.tsx (6)
+- src/hooks/abm/useAccounts.ts (6)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -765,6 +765,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `56a3e80` docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)
 - 2026-11-23 `e58a9dc` fix: assinar webhook Win/Loss com HMAC-SHA256 (QA-092) (#655)
 - 2026-11-23 `390db00` fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)
 - 2026-11-23 `e5f9f64` fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)
@@ -779,7 +780,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `980247f` fix: forecast falha visivelmente se metas falhar (QA-060) (#651)
 - 2026-11-23 `acce427` fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)
 - 2026-11-23 `2088c24` fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)
-- 2026-11-23 `9d455c9` fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

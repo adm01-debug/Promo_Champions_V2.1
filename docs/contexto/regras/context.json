@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e58a9dcdf9221fa95d4cd260bce21439695aa0eb",
+  "sha": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 15:02 UTC",
+  "generated_at": "2026-11-23 15:15 UTC",
   "files_total": 3649,
   "code_files": 3300,
   "code_lines": 478667
@@ -298260,10 +298260,19 @@
   }
  },
  "git": {
-  "sha": "e58a9dcdf9221fa95d4cd260bce21439695aa0eb",
+  "sha": "56a3e80fbfaf7fb64efe1abbf74aad9d04554187",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "56a3e80",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "e58a9dc",
     "date": "2026-11-23",
@@ -298544,39 +298553,15 @@
      "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
      "supabase/tests/retry_dispatcher_assertions.sql"
     ]
-   },
-   {
-    "sha": "56da98a",
-    "date": "2026-11-22",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.7.3 (#621)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
+    "docs/qa/05-PROGRESSO.md",
+    2
+   ],
+   [
     "supabase/functions/sequence-record-reply/index.ts",
-    2
-   ],
-   [
-    ".release-please-manifest.json",
-    2
-   ],
-   [
-    "CHANGELOG.md",
-    2
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [
@@ -298637,6 +298622,18 @@
    ],
    [
     "supabase/functions/bitrix24-sync/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/notify-v4-quote-status/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/test-integration-connection/index.ts",
+    1
+   ],
+   [
+    "src/components/financeiro/CommissionCalculator.tsx",
     1
    ]
   ]
