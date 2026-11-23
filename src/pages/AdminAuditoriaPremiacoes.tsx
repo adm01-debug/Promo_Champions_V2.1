@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -99,7 +100,13 @@ export default function AdminAuditoriaPremiacoes() {
   const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
   const [awardToCancel, setAwardToCancel] = useState<AwardWithRefs | null>(null);
   const [awardToDelete, setAwardToDelete] = useState<AwardWithRefs | null>(null);
-  const { data: rawAwards = [], isLoading } = useCommissionBonusAwards({
+  const {
+    data: rawAwards = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
   const updateStatus = useUpdateAwardStatus();
@@ -449,6 +456,10 @@ export default function AdminAuditoriaPremiacoes() {
               <Skeleton className="h-8 w-full" />
               <Skeleton className="h-8 w-full" />
               <Skeleton className="h-8 w-full" />
+            </div>
+          ) : isError ? (
+            <div className="p-4">
+              <QueryErrorState error={error} onRetry={() => refetch()} />
             </div>
           ) : awards.length === 0 ? (
             <div className="p-10 text-center text-sm text-muted-foreground">

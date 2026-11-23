@@ -36,7 +36,13 @@ function hashUserFlag(userId: string, flagKey: string): number {
 export function useFeatureFlags() {
   const { user } = useAuth();
 
-  const { data: flags = [], isLoading } = useQuery({
+  const {
+    data: flags = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['feature-flags'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -92,7 +98,7 @@ export function useFeatureFlags() {
     [flagMap, isEnabled]
   );
 
-  return { flags, isEnabled, isEnabledOrDefault, isLoading };
+  return { flags, isEnabled, isEnabledOrDefault, isLoading, isError, error, refetch };
 }
 
 /**

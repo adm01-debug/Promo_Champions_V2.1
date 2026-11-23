@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -30,7 +31,13 @@ const statusBadge: Record<
 };
 
 export default function Comissoes() {
-  const { data: commissions = [], isLoading } = useMyCommissions();
+  const {
+    data: commissions = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useMyCommissions();
 
   const totals = useMemo(() => {
     const t = { pending: 0, approved: 0, paid: 0, all: 0 };
@@ -53,6 +60,9 @@ export default function Comissoes() {
           ))}
         </div>
       );
+    }
+    if (isError) {
+      return <QueryErrorState error={error} onRetry={() => refetch()} />;
     }
     if (list.length === 0) {
       return (
