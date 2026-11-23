@@ -1,6 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+﻿import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -26,14 +27,16 @@ Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const auth = req.headers.get("Authorization");
-    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-
-    const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: auth } },
-    });
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
+    try {
+      callerCtx = await getUserClient(req);
+    } catch (e) {
+      if (e instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      throw e;
+    }
+    const userId = callerCtx.userId;
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const body = await req.json();
@@ -63,8 +66,13 @@ Deno.serve(withRequestId("schedule-optimal-send", async (req, _ctx) => {
       }
     }
 
+    // Verificar que a venda pertence ao chamador antes de enfileirar o envio
+    const { data: saleOwner } = await callerCtx.client.from("sales").select("id").eq("id", sale_id).maybeSingle();
+    if (!saleOwner) {
+      return new Response(JSON.stringify({ error: "not_found_or_unauthorized" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const { data: inserted, error } = await admin.from("scheduled_sends").insert({
-      owner_id: user.id,
+      owner_id: userId,
       sale_id, channel, payload,
       scheduled_for: scheduledFor.toISOString(),
       optimization_source: source,

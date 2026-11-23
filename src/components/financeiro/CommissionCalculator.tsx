@@ -89,21 +89,8 @@ export function CommissionCalculator() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="p-2 rounded-lg bg-white/5 border border-white/5 text-center">
-            <p className="text-[8px] text-muted-foreground uppercase font-bold">
-              Acumulado Mês
-            </p>
-            <p className="text-xs font-bold">
-              + {formatBRL(commission * 1.2, { decimals: 2 })}
-            </p>
-          </div>
-          <div className="p-2 rounded-lg bg-white/5 border border-white/5 text-center">
-            <p className="text-[8px] text-muted-foreground uppercase font-bold">
-              Rank Potencial
-            </p>
-            <p className="text-xs font-bold text-amber-500">Top 3 🔥</p>
-          </div>
+        <div className="p-2 rounded-lg bg-white/5 border border-white/5 text-center text-xs text-muted-foreground">
+          Simulação — valores reais disponíveis na aba Comissões
         </div>
       </CardContent>
     </Card>

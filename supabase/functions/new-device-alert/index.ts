@@ -1,4 +1,5 @@
-import { withRequestId } from "../_shared/request-id.ts";
+﻿import { withRequestId } from "../_shared/request-id.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
@@ -109,6 +110,16 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
+  }
+
+  // Gate: apenas servicos internos (service_role) podem chamar esta funcao.
+  // O chamador legitimo e um hook de auth do Supabase ou um cron interno.
+  if (!isInternalServiceRequest(req)) {
+    log('warn', 'new_device_alert_unauthorized');
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json", ...getCorsHeaders(req) },
+    });
   }
 
   if (!RESEND_API_KEY) {

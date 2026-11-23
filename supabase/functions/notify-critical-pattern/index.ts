@@ -1,7 +1,9 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+﻿import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { alertFromEmail } from "../_shared/alert-escalation.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { escapeHtml } from "../_shared/html-escape.ts";
 
 interface Payload {
   pattern_id?: string;
@@ -12,6 +14,13 @@ interface Payload {
 Deno.serve(withRequestId("notify-critical-pattern", async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  // Gate: funcao interna; recusa chamadores sem service_role.
+  if (!isInternalServiceRequest(req)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const body = (await req.json().catch(() => ({}))) as Payload;
@@ -27,8 +36,8 @@ Deno.serve(withRequestId("notify-critical-pattern", async (req, ctx) => {
 
     const html = `
       <h2>🚨 Padrão crítico detectado</h2>
-      <p><strong>${body.name ?? "Padrão"}</strong> com confiança ${(Number(body.confidence ?? 0) * 100).toFixed(0)}%.</p>
-      <p>ID: <code>${body.pattern_id ?? "—"}</code></p>
+      <p><strong>${escapeHtml(body.name ?? "Padrão")}</strong> com confiança ${(Number(body.confidence ?? 0) * 100).toFixed(0)}%.</p>
+      <p>ID: <code>${escapeHtml(body.pattern_id ?? "")}</code></p>
       <p>Investigue no módulo Win/Loss Intelligence.</p>
     `;
 

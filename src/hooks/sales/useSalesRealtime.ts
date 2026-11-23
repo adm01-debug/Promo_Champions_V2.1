@@ -105,8 +105,10 @@ export function useSalesRealtime(
           triggerConfetti(newSale.amount);
 
           const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
+          let xpCredited = 0;
           if (xpFromSale > 0) {
             const levelUpResult = await awardSaleXP(newSale.id, salesperson.name);
+            xpCredited = levelUpResult?.xpAwarded ?? 0;
             if (levelUpResult?.leveledUp) {
               const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
               setTimeout(
@@ -123,7 +125,10 @@ export function useSalesRealtime(
           }
 
           toast.success(`🔥 ${salesperson.name} fechou uma venda!`, {
-            description: `${newSale.client_name} - ${formattedAmount}. +${xpFromSale} XP! 🚀`,
+            description:
+              xpCredited > 0
+                ? `${newSale.client_name} - ${formattedAmount}. +${xpCredited} XP! 🚀`
+                : `${newSale.client_name} - ${formattedAmount}`,
             duration: 8000,
           });
 

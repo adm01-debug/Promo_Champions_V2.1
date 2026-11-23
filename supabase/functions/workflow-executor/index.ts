@@ -1,6 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+﻿import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface WorkflowNode {
   id: string;
@@ -52,14 +53,19 @@ Deno.serve(withRequestId('workflow-executor', async (req, _ctx) => {
   try {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    const auth = req.headers.get("Authorization") ?? "";
-    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-      global: { headers: { Authorization: auth } },
-    });
-    const { data: userData } = await userClient.auth.getUser();
-    const userId = userData?.user?.id ?? null;
+    let userId: string;
+    try {
+      const ctx = await getUserClient(req);
+      userId = ctx.userId;
+    } catch (e) {
+      if (e instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw e;
+    }
 
     const { workflow_id, input_payload = {} } = await req.json();
     if (!workflow_id) {

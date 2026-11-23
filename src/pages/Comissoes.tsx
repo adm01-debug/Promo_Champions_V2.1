@@ -35,7 +35,7 @@ export default function Comissoes() {
   const totals = useMemo(() => {
     const t = { pending: 0, approved: 0, paid: 0, all: 0 };
     for (const c of commissions) {
-      t.all += c.commission_amount;
+      if (c.status !== 'cancelled') t.all += c.commission_amount;
       if (c.status === 'pending') t.pending += c.commission_amount;
       else if (c.status === 'approved') t.approved += c.commission_amount;
       else if (c.status === 'paid') t.paid += c.commission_amount;

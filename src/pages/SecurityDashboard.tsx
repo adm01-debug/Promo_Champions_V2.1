@@ -136,17 +136,17 @@ const SecurityDashboard = () => {
                           <span className="text-muted-foreground">
                             Latência de Bloqueio
                           </span>
-                          <span className="font-mono text-status-success">~12ms</span>
+                          <span className="font-mono text-muted-foreground">—</span>
                         </div>
                         <div className="flex items-center justify-between text-[10px] border-b border-white/5 pb-2">
                           <span className="text-muted-foreground">Precisão por IP</span>
-                          <span className="font-mono text-status-success">99.8%</span>
+                          <span className="font-mono text-muted-foreground">—</span>
                         </div>
                         <div className="flex items-center justify-between text-[10px]">
                           <span className="text-muted-foreground">
                             Proteção DDoS Ativa
                           </span>
-                          <span className="font-mono text-status-success">L7 Shield</span>
+                          <span className="font-mono text-muted-foreground">—</span>
                         </div>
                       </div>
                     </div>

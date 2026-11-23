@@ -1,8 +1,8 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+﻿import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { getUserClient, requireAdmin, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface ScoringFactors {
   dealValue: number;
@@ -20,8 +20,9 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
 
   try {
     // Autorização: exige usuário autenticado (JWT válido).
+    let callerCtx: Awaited<ReturnType<typeof getUserClient>>;
     try {
-      await getUserClient(req);
+      callerCtx = await getUserClient(req);
     } catch (error) {
       if (error instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: "unauthorized" }), {
@@ -35,6 +36,8 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    // Upsert em massa requer papel admin/gestor (A-35)
+    await requireAdmin(callerCtx);
 
     const rawBody = await req.json();
     

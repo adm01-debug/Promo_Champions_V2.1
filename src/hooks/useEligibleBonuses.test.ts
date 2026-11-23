@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+﻿import { describe, it, expect } from 'vitest';
 import { evaluateBonus } from './useEligibleBonuses';
 import type { CommissionBonus } from './useCommissionBonuses';
 
@@ -63,8 +63,9 @@ describe('evaluateBonus', () => {
     expect(evaluateBonus(b, ctx)?.achieved).toBe(false);
   });
 
-  it('empty trigger: informational, achieved=true', () => {
-    expect(evaluateBonus(base, ctx)?.achieved).toBe(true);
+  it('empty trigger: returns achieved=false (condicao nao reconhecida)', () => {
+    expect(evaluateBonus(base, ctx)?.achieved).toBe(false);
+    expect(evaluateBonus(base, ctx)?.progress).toBe(0);
   });
 
   it('malformed trigger: does not throw', () => {
@@ -74,6 +75,6 @@ describe('evaluateBonus', () => {
       trigger_condition: { milestone_amount: 'x' as unknown as number },
     };
     expect(() => evaluateBonus(b, ctx)).not.toThrow();
-    expect(evaluateBonus(b, ctx)?.achieved).toBe(true);
+    expect(evaluateBonus(b, ctx)?.achieved).toBe(false);
   });
 });

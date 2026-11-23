@@ -148,6 +148,26 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
 
     console.info(`[receive-quote-webhook] action=${action} quote_number=${quote.quote_number} ts=${timestamp}`);
 
+    // ── Deduplicação ─────────────────────────────────────────────
+    const correlationKey = `gift_store:${action}:${quote.id}:${timestamp ?? ""}`;
+    const { data: dedupeReservation, error: dedupeErr } = await supabase
+      .from("webhook_inbound_dedupe")
+      .insert({ correlation_key: correlationKey, event: action, source: "gift_store", payload: quote as unknown as Record<string, unknown> })
+      .select("id")
+      .single();
+
+    if (dedupeErr) {
+      if ((dedupeErr as { code?: string }).code === "23505") {
+        console.info("[receive-quote-webhook] duplicate_ignored", { correlationKey });
+        return new Response(
+          JSON.stringify({ status: "duplicate_ignored", correlation_key: correlationKey }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      console.error("[receive-quote-webhook] dedupe_insert_failed", { error: dedupeErr.message });
+      // non-duplicate error: proceed without blocking (fail-open to avoid losing events)
+    }
+
     // ── Log inicial ───────────────────────────────────────────────
     const { data: logData, error: logErr } = await supabase
       .from("quote_sync_logs")
@@ -326,6 +346,11 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
           .from("quote_sync_logs")
           .update({ status: "failed", error_message: errMsg })
           .eq("id", logId);
+      }
+
+      // Release dedupe reservation so a legitimate retry can be reprocessed
+      if (dedupeReservation?.id) {
+        await supabase.from("webhook_inbound_dedupe").delete().eq("id", dedupeReservation.id);
       }
 
       return new Response(
