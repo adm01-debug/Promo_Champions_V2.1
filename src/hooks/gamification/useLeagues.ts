@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'diamond' | 'legendary';
 
@@ -85,8 +86,9 @@ interface LeagueMemberRow {
 }
 
 export function useLeagues() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['salesperson-leagues'],
+    queryKey: ['salesperson-leagues', user?.id ?? null],
     queryFn: async (): Promise<LeagueMember[]> => {
       const { data: salespeople, error: spErr } = await supabase
         .from('salespeople')
