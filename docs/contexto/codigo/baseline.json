@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4e1ca24d8be35f6e95ed23edcfa7454e359d42ae",
+  "commit": "aef48e8d382947ce0fa2eaf9ac320018785984fd",
   "branch": "main",
-  "data_commit": "2026-11-23T21:58:57Z",
+  "data_commit": "2026-11-23T19:05:10-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "aef48e8",
+    "data": "2026-11-23",
+    "assunto": "fix: receive-design-sync sem verify_jwt (webhook HMAC)"
+   },
    {
     "sha": "4e1ca24",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "ed53bd4",
     "data": "2026-11-23",
     "assunto": "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)"
-   },
-   {
-    "sha": "f177678",
-    "data": "2026-11-23",
-    "assunto": "fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)"
    }
   ],
-  "arquivos_mudados_7d": 287,
+  "arquivos_mudados_7d": 288,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 244
+    "commits": 245
    },
    {
     "autor": "dependabot[bot]",
@@ -313,7 +313,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 7
+    "commits": 6
    }
   ]
  },
@@ -883,7 +883,6 @@
    "process-race-event",
    "process-scheduled-sends",
    "ranking-api",
-   "receive-design-sync",
    "run-retry-tests",
    "semantic-coverage",
    "semantic-index-entity",

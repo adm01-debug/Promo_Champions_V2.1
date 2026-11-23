@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4e1ca24d8b` · branch `main` · 2026-11-23 22:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aef48e8d38` · branch `main` · 2026-11-23 22:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -790,6 +790,7 @@
 - `email-bulk-retry`
 - `log-web-vitals`
 - `receive-quote-sync`
+- `receive-design-sync`
 - `receive-quote-webhook`
 - `report-embed-public`
 - `email-unsubscribe`

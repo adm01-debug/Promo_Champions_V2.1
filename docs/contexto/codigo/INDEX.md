@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4e1ca24d8be35f6e95ed23edcfa7454e359d42ae` (2026-11-23T21:58:57Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `aef48e8d382947ce0fa2eaf9ac320018785984fd` (2026-11-23T19:05:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -458,7 +458,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `qbr-scheduler` — tabelas: accounts, agenda_events, notifications, qbr_schedule, salespeople; chamada por 1 arquivo(s) do front
 - `race-commentary` — tabelas: -; chamada por 1 arquivo(s) do front
 - `ranking-api` — tabelas: salespeople, salesperson_custom_field_values, score_change_logs, team_custom_fields, team_members, teams; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `receive-design-sync` — tabelas: designs_inbound, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `receive-design-sync` (verify_jwt=false) — tabelas: designs_inbound, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front
 - `receive-quote-sync` (verify_jwt=false) — tabelas: quote_sync_inbound_log, quotes, quotes_inbound, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front
 - `receive-quote-webhook` (verify_jwt=false) — tabelas: quote_sync_logs, quotes, salespeople, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front
 - `recompute-stage-baselines` — tabelas: deal_stage_transitions, sales, stage_velocity_baselines; chamada por 2 arquivo(s) do front
@@ -560,7 +560,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: openrouter.ai, x.test, api.resend.com, example.test, promo-champions-v2-1.vercel.app, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promochampions.com.br, wa.me, x.supabase.co, api.dicebear.com
-- webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
+- webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-design-sync, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
 - env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, DESIGN_SYNC_WEBHOOK_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, METRICS_INGEST_TOKEN, OPENROUTER_API_KEY, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
 ## Permissões / papéis
@@ -573,7 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 1 — ex.: /contas/:id
 - componentes_ambiguos: 0
 - menu_sem_destino: 22 — ex.: Análises -> /dashboard/analises, Colete um power-up -> powerup, Competição -> /dashboard/competicao
-- edges_orfas: 33 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
+- edges_orfas: 32 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 6 — ex.: ab_tests, experiment_assignments, experiment_variants
 - tabelas_usadas_sem_definicao: 3 — ex.: auth_users_view, table, team_members
@@ -587,7 +587,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22445 nós · 67713 arestas · 1587 comunidades · grafo do commit `4e1ca24d`
+- 22445 nós · 67713 arestas · 1587 comunidades · grafo do commit `aef48e8d`
 - comunidades maiores: schema.sql (785), CardContent (468), Badge (413), client.ts (366), vitest (299), Skeleton (283), Input (281), Índice (277), withRequestId (263), DialogContent (259), formatBRL (219), ApprovalWorkflowsPage.tsx (205)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -767,6 +767,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `aef48e8` fix: receive-design-sync sem verify_jwt (webhook HMAC)
 - 2026-11-23 `4e1ca24` fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)
 - 2026-11-23 `8c02079` feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)
 - 2026-11-23 `9098770` fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)
@@ -781,7 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `a7c2da3` fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)
 - 2026-11-23 `bdea3f7` fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)
 - 2026-11-23 `b0ac351` fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)
-- 2026-11-23 `84b35ed` fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

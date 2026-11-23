@@ -20,6 +20,7 @@
   "multichannel-status-webhook",
   "notify-v4-quote-status",
   "process-call-recording-ingest",
+  "receive-design-sync",
   "receive-quote-sync",
   "receive-quote-webhook",
   "report-embed-public",
@@ -4577,7 +4578,7 @@
    "entrada": "supabase/functions/receive-design-sync/index.ts",
    "arquivos": 3,
    "linhas": 293,
-   "verify_jwt": true,
+   "verify_jwt": false,
    "metodos": [
     "OPTIONS",
     "POST"
@@ -4607,7 +4608,7 @@
    "chamada_pelo_front": [],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": true,
+   "orfa": false,
    "testes": 1
   },
   {
