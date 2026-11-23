@@ -76,7 +76,9 @@ export function useGamifiedProfile(salespersonId?: string) {
             .eq('status', 'completed'),
         ]);
 
-      if (spRes.error || !spRes.data) return null;
+      if (spRes.error) throw spRes.error;
+      if (salesRes.error) throw salesRes.error;
+      if (!spRes.data) return null;
       const sp = spRes.data;
       const sales = salesRes.data || [];
       const totalSales = sales.reduce((s, r) => s + Number(r.amount), 0);
