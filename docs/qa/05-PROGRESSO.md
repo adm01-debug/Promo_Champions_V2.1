@@ -287,7 +287,7 @@ Exemplo:
 - [ ] 252 — Decidir sobre o bucket público de fotos de perfil — onda 8 — Baixa · **APROV**
 - [ ] 253 — Fazer o guard-rail de `service_role` ser verificado — onda 8 — Baixa · **APROV**
 - [ ] 254 — Reduzir o risco do workflow com `pull_request_target` — onda 8 — Baixa · **APROV**
-- [ ] 255 — Garantir a remoção dos mapas de código-fonte do pacote publicado — onda 8 — Baixa
+- [x] 255 — Garantir a remoção dos mapas de código-fonte do pacote publicado — onda 8 — Baixa — PR #685 - plugin `remove-sourcemaps-after-upload` (`closeBundle`, `enforce:'post'`) apaga `dist/assets/*.map` com ou sem `SENTRY_AUTH_TOKEN`; build real provou 466 mapas antes e 0 depois, com o entry JS intacto
 
 ---
 
