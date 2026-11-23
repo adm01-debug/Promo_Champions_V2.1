@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
+  "commit": "5a8ce9997abb359518f0a75053b147202e13db99",
   "branch": "main",
-  "data_commit": "2026-11-23T20:39:13Z",
+  "data_commit": "2026-11-23T20:49:49Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "5a8ce99",
+    "data": "2026-11-23",
+    "assunto": "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)"
+   },
    {
     "sha": "7dfe259",
     "data": "2026-11-23",
@@ -126,18 +131,13 @@
     "sha": "980247f",
     "data": "2026-11-23",
     "assunto": "fix: forecast falha visivelmente se metas falhar (QA-060) (#651)"
-   },
-   {
-    "sha": "acce427",
-    "data": "2026-11-23",
-    "assunto": "fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)"
    }
   ],
-  "arquivos_mudados_7d": 280,
+  "arquivos_mudados_7d": 281,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
-    "mudancas": 131
+    "mudancas": 129
    },
    {
     "pasta": "src/components/analytics",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "src/components/admin",
-    "mudancas": 71
+    "mudancas": 70
    },
    {
     "pasta": "src/components/ui",
@@ -173,15 +173,15 @@
    },
    {
     "pasta": "src/hooks/win-loss",
-    "mudancas": 61
+    "mudancas": 59
    },
    {
     "pasta": "src/components/deal-intelligence",
-    "mudancas": 57
+    "mudancas": 55
    },
    {
     "pasta": "src/hooks/race",
-    "mudancas": 55
+    "mudancas": 51
    },
    {
     "pasta": "src/components/bi",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/components/gamification",
-    "mudancas": 44
+    "mudancas": 43
    },
    {
     "pasta": "src/components/revenue-intelligence",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 240
+    "commits": 241
    },
    {
     "autor": "dependabot[bot]",
@@ -313,14 +313,14 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 11
+    "commits": 10
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3638,
   "arquivos_codigo": 2583,
-  "linhas_codigo": 444227,
+  "linhas_codigo": 444241,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67282
+   "linhas": 67296
   },
   "tailwind.config.ts": {
    "arquivos": 1,

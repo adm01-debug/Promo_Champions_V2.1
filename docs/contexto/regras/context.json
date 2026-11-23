@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
+  "sha": "5a8ce9997abb359518f0a75053b147202e13db99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 20:41 UTC",
+  "generated_at": "2026-11-23 20:50 UTC",
   "files_total": 3653,
   "code_files": 3304,
-  "code_lines": 479333
+  "code_lines": 479347
  },
  "version": "1.3.2",
- "facts_hash": "a2d239f87b884bbb",
+ "facts_hash": "84ec577b7b01447c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -98744,14 +98744,14 @@
     "invokes": [],
     "doc": "",
     "errors": [
+     "${label}: expected array, got ${typeof value}",
      "Freshdesk ${r.status}",
      "Freshdesk não configurado (FRESHDESK_DOMAIN/API_KEY)",
      "Intercom ${r.status}",
      "Intercom não configurado (INTERCOM_ACCESS_TOKEN)",
      "Nenhuma conta disponível para vincular tickets",
      "Zendesk ${r.status}",
-     "Zendesk não configurado (ZENDESK_DOMAIN/EMAIL/API_TOKEN)",
-     "forbidden"
+     "Zendesk não configurado (ZENDESK_DOMAIN/EMAIL/API_TOKEN)"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -108015,7 +108015,7 @@
   {
    "module": "supabase/functions",
    "files": 326,
-   "lines": 67282,
+   "lines": 67296,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -121889,6 +121889,10 @@
    {
     "file": "supabase/functions/generate-loss-coaching/index.ts",
     "msg": "analysis_id required"
+   },
+   {
+    "file": "supabase/functions/helpdesk-sync/index.ts",
+    "msg": "${label}: expected array, got ${typeof value}"
    },
    {
     "file": "supabase/functions/helpdesk-sync/index.ts",
@@ -140423,6 +140427,11 @@
     "file": "supabase/functions/geocode-proxy/index.ts",
     "name": "MISS_TTL_MS",
     "value": "14"
+   },
+   {
+    "file": "supabase/functions/helpdesk-sync/index.ts",
+    "name": "PAGE_LIMIT",
+    "value": "50"
    },
    {
     "file": "supabase/functions/inbound-email-webhook/index.ts",
@@ -284271,7 +284280,7 @@
   },
   "supabase/functions/helpdesk-sync/index.ts": {
    "path": "supabase/functions/helpdesk-sync/index.ts",
-   "lines": 178,
+   "lines": 192,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -284309,6 +284318,7 @@
     "ZENDESK_EMAIL"
    ],
    "errors": [
+    "${label}: expected array, got ${typeof value}",
     "Freshdesk ${r.status}",
     "Freshdesk não configurado (FRESHDESK_DOMAIN/API_KEY)",
     "Intercom ${r.status}",
@@ -284319,6 +284329,12 @@
     "forbidden",
     "provider required",
     "unauthorized"
+   ],
+   "params": [
+    {
+     "name": "PAGE_LIMIT",
+     "value": "50"
+    }
    ],
    "status_values": [
     {
@@ -298413,10 +298429,19 @@
   }
  },
  "git": {
-  "sha": "7dfe25916ae3b60d7968af9897d851291dc06dd9",
+  "sha": "5a8ce9997abb359518f0a75053b147202e13db99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "5a8ce99",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)",
+    "files": [
+     "supabase/functions/helpdesk-sync/index.ts"
+    ]
+   },
    {
     "sha": "7dfe259",
     "date": "2026-11-23",
@@ -298708,15 +298733,6 @@
     "files": [
      "supabase/functions/sequence-record-reply/index.ts"
     ]
-   },
-   {
-    "sha": "7213672",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: escopar analyze-call ao dono da gravacao via RLS (QA-012) (#643)",
-    "files": [
-     "supabase/functions/analyze-call/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -298727,6 +298743,10 @@
    [
     "supabase/functions/sequence-record-reply/index.ts",
     2
+   ],
+   [
+    "supabase/functions/helpdesk-sync/index.ts",
+    1
    ],
    [
     "src/components/command/CommandPalette.tsx",
@@ -298794,10 +298814,6 @@
    ],
    [
     "src/hooks/gamification/useLeagues.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/gamification/useLeagues.ts",
     1
    ]
   ]

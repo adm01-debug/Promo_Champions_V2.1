@@ -3330,7 +3330,7 @@
    "nome": "helpdesk-sync",
    "entrada": "supabase/functions/helpdesk-sync/index.ts",
    "arquivos": 1,
-   "linhas": 178,
+   "linhas": 192,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

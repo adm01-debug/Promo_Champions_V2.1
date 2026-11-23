@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7dfe25916a` · branch `main` · 2026-11-23 20:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5a8ce9997a` · branch `main` · 2026-11-23 20:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3170,6 +3170,7 @@ _nenhum item encontrado_
 | `WORKFLOW_ACTIVITY_OUTCOME` | `"connected"` | `supabase/functions/execute-workflow/actions.ts` |
 | `HIT_TTL_MS` | `90` | `supabase/functions/geocode-proxy/index.ts` |
 | `MISS_TTL_MS` | `14` | `supabase/functions/geocode-proxy/index.ts` |
+| `PAGE_LIMIT` | `50` | `supabase/functions/helpdesk-sync/index.ts` |
 | `MAX_INBOUND_EMAIL_BODY_BYTES` | `256` | `supabase/functions/inbound-email-webhook/index.ts` |
 | `DB_CHUNK` | `100` | `supabase/functions/lead-scoring/index.ts` |
 | `MAX_BODY_BYTES` | `32` | `supabase/functions/log-web-vitals/index.ts` |
@@ -4160,7 +4161,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +696 linhas — lista completa em `context.json` | |
+| … +697 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
