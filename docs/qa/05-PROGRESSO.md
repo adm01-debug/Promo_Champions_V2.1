@@ -205,8 +205,8 @@ Exemplo:
 - [ ] 172 — Corrigir o modo de visualização do menu lido do navegador — onda 7 — Média
 - [ ] 173 — Alinhar o rótulo "Administração" com quem realmente pode entrar — onda 7 — Média · **APROV**
 - [ ] 174 — Dar acesso à administração no celular — onda 7 — Alta
-- [ ] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta
-- [ ] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta
+- [x] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta — PR #676 - AlertDialog com nome da chave e desativar como opcao reversivel
+- [x] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta — PR #676 - icone Trash2, aria-label e AlertDialog nomeando vendedor e premio
 - [ ] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média
 - [ ] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa
 - [ ] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa

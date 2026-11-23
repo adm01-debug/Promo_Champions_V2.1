@@ -24,14 +24,24 @@ import {
 } from '@/components/ui/select';
 import {
   Trophy,
-  CheckCircle2,
   XCircle,
   Clock,
   Wallet,
   Download,
   LayoutList,
   Layers,
+  Trash2,
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import {
   useCommissionBonusAwards,
   useUpdateAwardStatus,
@@ -102,6 +112,8 @@ export default function AdminAuditoriaPremiacoes() {
   const [viewMode, setViewMode] = useState<ViewMode>('detailed');
   const [periodFilter, setPeriodFilter] = useState<string>('all'); // 'all' | 'YYYY-MM'
   const [salespersonFilter, setSalespersonFilter] = useState<string>('all'); // 'all' | id
+  const [awardToCancel, setAwardToCancel] = useState<AwardWithRefs | null>(null);
+  const [awardToDelete, setAwardToDelete] = useState<AwardWithRefs | null>(null);
   const { data: rawAwards = [], isLoading } = useCommissionBonusAwards({
     status: statusFilter === 'all' ? undefined : statusFilter,
   });
@@ -580,9 +592,8 @@ export default function AdminAuditoriaPremiacoes() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() =>
-                                  updateStatus.mutate({ id: a.id, status: 'cancelled' })
-                                }
+                                aria-label={`Cancelar a premiação ${a.bonus_name ?? ''} de ${a.salesperson_name ?? 'vendedor'}`}
+                                onClick={() => setAwardToCancel(a)}
                                 disabled={updateStatus.isPending}
                               >
                                 <XCircle className="h-3.5 w-3.5" />
@@ -591,14 +602,11 @@ export default function AdminAuditoriaPremiacoes() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => {
-                                if (confirm('Remover este registro definitivamente?')) {
-                                  remove.mutate(a.id);
-                                }
-                              }}
+                              aria-label={`Excluir definitivamente a premiação ${a.bonus_name ?? ''} de ${a.salesperson_name ?? 'vendedor'}`}
+                              onClick={() => setAwardToDelete(a)}
                               disabled={remove.isPending}
                             >
-                              <CheckCircle2 className="h-3.5 w-3.5 rotate-45" />
+                              <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         </TableCell>
@@ -611,6 +619,72 @@ export default function AdminAuditoriaPremiacoes() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog
+        open={!!awardToCancel}
+        onOpenChange={open => !open && setAwardToCancel(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancelar a premiação?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {awardToCancel
+                ? `${awardToCancel.bonus_name ?? 'Premiação'} de ${awardToCancel.salesperson_name ?? 'vendedor'} (${awardToCancel.bonus_kind === 'fixed' ? brl(Number(awardToCancel.computed_amount)) : `${Number(awardToCancel.computed_amount).toFixed(2)}%`}). O registro continua na auditoria, marcado como cancelado.`
+                : ''}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Voltar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (!awardToCancel) return;
+                updateStatus.mutate(
+                  { id: awardToCancel.id, status: 'cancelled' },
+                  {
+                    onSuccess: () => {
+                      toast.success('Premiação cancelada');
+                      setAwardToCancel(null);
+                    },
+                  }
+                );
+              }}
+            >
+              Cancelar premiação
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!awardToDelete}
+        onOpenChange={open => !open && setAwardToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir a premiação definitivamente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {awardToDelete
+                ? `${awardToDelete.bonus_name ?? 'Premiação'} de ${awardToDelete.salesperson_name ?? 'vendedor'} (${awardToDelete.bonus_kind === 'fixed' ? brl(Number(awardToDelete.computed_amount)) : `${Number(awardToDelete.computed_amount).toFixed(2)}%`}) será apagada da auditoria, sem volta. Prefira cancelar se quiser manter o histórico.`
+                : ''}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Voltar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (!awardToDelete) return;
+                remove.mutate(awardToDelete.id, {
+                  onSuccess: () => setAwardToDelete(null),
+                });
+              }}
+            >
+              Excluir definitivamente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
