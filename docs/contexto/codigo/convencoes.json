@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)",
    "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)",
    "docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)",
    "chore(deps): bump astral-sh/setup-uv (#627)",
-   "chore(deps): bump actions/dependency-review-action (#625)",
-   "chore(main): release 1.7.4 (#623)"
+   "chore(deps): bump actions/dependency-review-action (#625)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ad2d98fe3c5258ccf6e8354e75f9787816f2939b",
+  "sha": "5aad0e08b6d894462f6f0f728502d590c7ba945b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 11:11 UTC",
+  "generated_at": "2026-11-23 11:32 UTC",
   "files_total": 3649,
   "code_files": 3300,
-  "code_lines": 478381
+  "code_lines": 478392
  },
  "version": "1.3.2",
- "facts_hash": "1d15851beb4865ce",
+ "facts_hash": "0f00ded89eb7a10c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -108003,7 +108003,7 @@
   {
    "module": "supabase/functions",
    "files": 326,
-   "lines": 67075,
+   "lines": 67086,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -124199,6 +124199,10 @@
    {
     "file": "supabase/functions/multichannel-status-webhook/index.ts",
     "text": "* Faz o parse somente depois de validar a assinatura sobre o corpo bruto. */"
+   },
+   {
+    "file": "supabase/functions/new-device-alert/index.ts",
+    "text": "Gate: apenas servicos internos (service_role) podem chamar esta funcao."
    },
    {
     "file": "supabase/functions/new-device-alert/index.ts",
@@ -284479,7 +284483,7 @@
   },
   "supabase/functions/new-device-alert/index.ts": {
    "path": "supabase/functions/new-device-alert/index.ts",
-   "lines": 317,
+   "lines": 328,
    "tables": [
     {
      "table": "known_devices",
@@ -284548,6 +284552,7 @@
     }
    ],
    "rule_comments": [
+    "Gate: apenas servicos internos (service_role) podem chamar esta funcao.",
     "Input validation"
    ],
    "calc_fns": [
@@ -298110,10 +298115,19 @@
   }
  },
  "git": {
-  "sha": "ad2d98fe3c5258ccf6e8354e75f9787816f2939b",
+  "sha": "5aad0e08b6d894462f6f0f728502d590c7ba945b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "5aad0e0",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)",
+    "files": [
+     "supabase/functions/new-device-alert/index.ts"
+    ]
+   },
    {
     "sha": "ad2d98f",
     "date": "2026-11-23",
@@ -298476,36 +298490,24 @@
     "files": [
      "src/components/win-loss/CompetitorBattleCardModal.tsx"
     ]
-   },
-   {
-    "sha": "a9ec900",
-    "date": "2026-11-21",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.6.1 (#579)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    8
+    7
    ],
    [
     "package.json",
-    8
+    7
    ],
    [
     ".release-please-manifest.json",
-    7
+    6
    ],
    [
     "CHANGELOG.md",
-    7
+    6
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -298514,6 +298516,10 @@
    [
     "supabase/functions/semantic-search-universal/index.ts",
     3
+   ],
+   [
+    "supabase/functions/new-device-alert/index.ts",
+    2
    ],
    [
     "supabase/tests/retry_dispatcher_assertions.sql",
@@ -298565,10 +298571,6 @@
    ],
    [
     "docs/qa/03-ACHADOS.md",
-    1
-   ],
-   [
-    "docs/qa/04-PLANO.md",
     1
    ]
   ]

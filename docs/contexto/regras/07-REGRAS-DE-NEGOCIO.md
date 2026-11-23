@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ad2d98fe3c` · branch `main` · 2026-11-23 11:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5aad0e08b6` · branch `main` · 2026-11-23 11:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5046,4 +5046,4 @@ _nenhum item encontrado_
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
 | PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
 | For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
-| … +134 linhas — lista completa em `context.json` | |
+| … +135 linhas — lista completa em `context.json` | |

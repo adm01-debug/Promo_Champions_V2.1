@@ -3574,7 +3574,7 @@
    "nome": "new-device-alert",
    "entrada": "supabase/functions/new-device-alert/index.ts",
    "arquivos": 2,
-   "linhas": 346,
+   "linhas": 357,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3601,6 +3601,7 @@
     "cors.ts",
     "fetch-with-timeout.ts",
     "html-escape.ts",
+    "internal-service-auth.ts",
     "pii.ts",
     "request-id.ts"
    ],

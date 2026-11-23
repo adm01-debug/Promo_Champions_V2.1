@@ -13019,6 +13019,7 @@
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/fetch-with-timeout.ts",
    "supabase/functions/_shared/html-escape.ts",
+   "supabase/functions/_shared/internal-service-auth.ts",
    "supabase/functions/_shared/pii.ts",
    "supabase/functions/_shared/request-id.ts"
   ],
