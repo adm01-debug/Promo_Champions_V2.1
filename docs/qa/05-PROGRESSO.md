@@ -147,12 +147,12 @@ Exemplo:
 - [ ] 120 — Decidir o destino de `salesperson_commission_configs` — onda 4 — Média · **APROV**
 
 ## Onda 5 — Robustez: erros, estados, concorrência
-- [ ] 121 — Criar o tratamento padrão de erro de leitura — onda 5 — Alta
-- [ ] 122 — Mostrar erro em vez de "nenhuma comissão" — onda 5 — Alta
-- [ ] 123 — Mostrar erro em vez de "nenhum registro" na trilha de auditoria — onda 5 — Alta
-- [ ] 124 — Mostrar erro em vez de "nenhuma premiação para auditar" — onda 5 — Alta
-- [ ] 125 — Mostrar erro nas telas de deduplicação e de chaves de funcionalidade — onda 5 — Média
-- [ ] 126 — Mostrar erro na tela de supressão de e-mails — onda 5 — Média
+- [x] 121 — Criar o tratamento padrão de erro de leitura — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
+- [x] 122 — Mostrar erro em vez de "nenhuma comissão" — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
+- [x] 123 — Mostrar erro em vez de "nenhum registro" na trilha de auditoria — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
+- [x] 124 — Mostrar erro em vez de "nenhuma premiação para auditar" — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
+- [x] 125 — Mostrar erro nas telas de deduplicação e de chaves de funcionalidade — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
+- [x] 126 — Mostrar erro na tela de supressão de e-mails — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [ ] 127 — Varrer o repositório por erro de leitura engolido — onda 5 — Média
 - [ ] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta
 - [ ] 129 — Tornar a importação de clientes capaz de ler CSV de verdade — onda 5 — Alta · **APROV**
