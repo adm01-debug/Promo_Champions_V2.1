@@ -3706,7 +3706,7 @@
    "nome": "notify-critical-pattern",
    "entrada": "supabase/functions/notify-critical-pattern/index.ts",
    "arquivos": 1,
-   "linhas": 62,
+   "linhas": 71,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3726,6 +3726,8 @@
     "alert-escalation.ts",
     "cors.ts",
     "fetch-with-timeout.ts",
+    "html-escape.ts",
+    "internal-service-auth.ts",
     "request-id.ts"
    ],
    "chamada_pelo_front": [],

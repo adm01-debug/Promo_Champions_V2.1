@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e4ffc931c8` · branch `main` · 2026-11-23 11:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e9e69b83c6` · branch `main` · 2026-11-23 12:17 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 328 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 329 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -419,6 +419,7 @@
 - `supabase/functions/multichannel-status-webhook/index.ts`
 - `supabase/functions/new-device-alert/index.ts`
 - `supabase/functions/next-best-action/index.ts`
+- `supabase/functions/notify-critical-pattern/index.ts`
 - `supabase/functions/notify-v4-quote-status/index.ts`
 - `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts`
 - `supabase/functions/pipeline-pulse-aggregator/index.ts`
@@ -471,8 +472,7 @@
 - `supabase/functions/wal-health-alert/index.ts`
 - `supabase/functions/webauthn/index.ts`
 - `supabase/functions/webvitals-regression-alert/index.ts`
-- `supabase/functions/whatsapp-inbound-webhook/index.ts`
-- … +178 (lista completa em `context.json`)
+- … +179 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e4ffc931c8ce63c628920c107344934ce9e942f0",
+  "commit": "e9e69b83c632f2c9b9754f7c42d33378cd19c0e4",
   "branch": "main",
-  "data_commit": "2026-11-23T08:50:52-03:00",
+  "data_commit": "2026-11-23T09:14:49-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e9e69b8",
+    "data": "2026-11-23",
+    "assunto": "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)"
+   },
    {
     "sha": "e4ffc93",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "bff6aa6",
     "data": "2026-11-21",
     "assunto": "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)"
-   },
-   {
-    "sha": "a122081",
-    "data": "2026-11-21",
-    "assunto": "chore(release): 1.7.0 (#605)"
    }
   ],
-  "arquivos_mudados_7d": 224,
+  "arquivos_mudados_7d": 225,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 207
+    "commits": 208
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443292,
+  "linhas_codigo": 443301,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67092
+   "linhas": 67101
   },
   "tailwind.config.ts": {
    "arquivos": 1,

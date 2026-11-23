@@ -13053,6 +13053,8 @@
    "supabase/functions/_shared/alert-escalation.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/fetch-with-timeout.ts",
+   "supabase/functions/_shared/html-escape.ts",
+   "supabase/functions/_shared/internal-service-auth.ts",
    "supabase/functions/_shared/request-id.ts"
   ],
   "supabase/functions/notify-quote-conversion/index.ts": [
