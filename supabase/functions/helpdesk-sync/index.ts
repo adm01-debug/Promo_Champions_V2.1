@@ -9,7 +9,7 @@ type Provider = "zendesk" | "intercom" | "freshdesk";
 
 const PAGE_LIMIT = 50;
 
-function requireArray(value: unknown, label: string): unknown[] {
+function requireArray(value: unknown, label: string): Record<string, unknown>[] {
   if (!Array.isArray(value)) {
     throw new Error(`${label}: expected array, got ${typeof value}`);
   }
