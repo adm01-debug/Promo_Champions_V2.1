@@ -45,6 +45,8 @@ import {
 import { useTheme } from 'next-themes';
 import { useSemanticSearch } from '@/hooks/semantic/useSemanticSearch';
 import { requestNavigation } from '@/lib/navigationGuard';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { canAccessPath, type RouteAccess } from '@/routes/routeAccess';
 import {
   ENTITY_META,
   type SemanticEntityType,
@@ -55,6 +57,8 @@ interface CommandItemData {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   shortcut?: string;
+  /** Destino do item, usado para validar o papel antes de exibir. */
+  path?: string;
   action: () => void;
   group: 'navigation' | 'actions' | 'settings' | 'recent';
   keywords?: string[];
@@ -88,6 +92,11 @@ export function CommandPalette() {
       void requestNavigation(() => navigate(path));
     },
     [navigate]
+  );
+  const { isAdmin, isManager } = useUserRoles();
+  const routeAccess = useMemo(
+    (): RouteAccess => ({ isAdmin, isManager }),
+    [isAdmin, isManager]
   );
   const { theme, setTheme } = useTheme();
   const { locale, setLocale } = useI18n();
@@ -135,6 +144,7 @@ export function CommandPalette() {
         label: 'Visão Geral',
         icon: LayoutDashboard,
         shortcut: '⌘D',
+        path: '/dashboard/visao-geral',
         action: () => guardedNavigate('/dashboard/visao-geral'),
         group: 'navigation',
         keywords: ['home', 'início', 'painel', 'overview'],
@@ -143,6 +153,7 @@ export function CommandPalette() {
         id: 'dashboard-performance',
         label: 'Performance',
         icon: Gauge,
+        path: '/dashboard/performance',
         action: () => guardedNavigate('/dashboard/performance'),
         group: 'navigation',
         keywords: ['speedometer', 'velocidade', 'metas'],
@@ -151,6 +162,7 @@ export function CommandPalette() {
         id: 'dashboard-analytics',
         label: 'Dashboard Analytics',
         icon: BarChart3,
+        path: '/dashboard/analises',
         action: () => guardedNavigate('/dashboard/analises'),
         group: 'navigation',
         keywords: ['análises', 'gráficos', 'data'],
@@ -159,6 +171,7 @@ export function CommandPalette() {
         id: 'dashboard-competition',
         label: 'Competição',
         icon: Trophy,
+        path: '/dashboard/competicao',
         action: () => guardedNavigate('/dashboard/competicao'),
         group: 'navigation',
         keywords: ['ranking', 'arena', 'leaderboard'],
@@ -167,6 +180,7 @@ export function CommandPalette() {
         id: 'dashboard-intelligence',
         label: 'Inteligência Hub',
         icon: Zap,
+        path: '/inteligencia',
         action: () => guardedNavigate('/inteligencia'),
         group: 'navigation',
         keywords: ['ai', 'insight', 'preditivo'],
@@ -175,6 +189,7 @@ export function CommandPalette() {
         id: 'revenue-intelligence',
         label: 'Revenue Intelligence',
         icon: TrendingUp,
+        path: '/revenue-intelligence',
         action: () => guardedNavigate('/revenue-intelligence'),
         group: 'navigation',
         keywords: ['receita', 'forecast', 'vendas'],
@@ -183,6 +198,7 @@ export function CommandPalette() {
         id: 'conversational-intelligence',
         label: 'Conversational Intelligence',
         icon: MessageSquare,
+        path: '/conversational-intelligence',
         action: () => guardedNavigate('/conversational-intelligence'),
         group: 'navigation',
         keywords: ['transcrição', 'análise de voz', 'calls'],
@@ -191,6 +207,7 @@ export function CommandPalette() {
         id: 'deal-intelligence',
         label: 'Deal Intelligence',
         icon: Briefcase,
+        path: '/deal-intelligence',
         action: () => guardedNavigate('/deal-intelligence'),
         group: 'navigation',
         keywords: ['oportunidades', 'riscos', 'pipeline'],
@@ -199,6 +216,7 @@ export function CommandPalette() {
         id: 'predictive-intelligence',
         label: 'Inteligência Preditiva',
         icon: Brain,
+        path: '/inteligencia-preditiva',
         action: () => guardedNavigate('/inteligencia-preditiva'),
         group: 'navigation',
         keywords: ['previsão', 'machine learning'],
@@ -207,6 +225,7 @@ export function CommandPalette() {
         id: 'dashboard-engagement',
         label: 'Engajamento',
         icon: HeartPulse,
+        path: '/dashboard/engajamento',
         action: () => guardedNavigate('/dashboard/engajamento'),
         group: 'navigation',
         keywords: ['mood', 'pulse', 'feedback'],
@@ -216,6 +235,7 @@ export function CommandPalette() {
         label: 'Pipeline',
         icon: Zap,
         shortcut: '⌘P',
+        path: '/pipeline',
         action: () => guardedNavigate('/pipeline'),
         group: 'navigation',
         keywords: ['funil', 'kanban'],
@@ -225,6 +245,7 @@ export function CommandPalette() {
         label: 'Vendas',
         icon: ShoppingCart,
         shortcut: '⌘V',
+        path: '/vendas',
         action: () => guardedNavigate('/vendas'),
         group: 'navigation',
         keywords: ['sales', 'deals', 'negócios'],
@@ -234,6 +255,7 @@ export function CommandPalette() {
         label: 'Clientes',
         icon: Users,
         shortcut: '⌘C',
+        path: '/clientes',
         action: () => guardedNavigate('/clientes'),
         group: 'navigation',
         keywords: ['customers', 'contacts'],
@@ -242,6 +264,7 @@ export function CommandPalette() {
         id: 'produtos',
         label: 'Produtos',
         icon: Package,
+        path: '/produtos',
         action: () => guardedNavigate('/produtos'),
         group: 'navigation',
         keywords: ['products', 'catalog'],
@@ -250,6 +273,7 @@ export function CommandPalette() {
         id: 'metas',
         label: 'Metas',
         icon: Target,
+        path: '/metas',
         action: () => guardedNavigate('/metas'),
         group: 'navigation',
         keywords: ['goals', 'objectives', 'targets'],
@@ -258,6 +282,7 @@ export function CommandPalette() {
         id: 'analytics',
         label: 'Analytics',
         icon: BarChart3,
+        path: '/analytics',
         action: () => guardedNavigate('/analytics'),
         group: 'navigation',
         keywords: ['análise', 'relatórios', 'gráficos', 'heatmap', 'radar'],
@@ -266,6 +291,7 @@ export function CommandPalette() {
         id: 'ranking',
         label: 'Ranking Competitivo',
         icon: Trophy,
+        path: '/ranking',
         action: () => guardedNavigate('/ranking'),
         group: 'navigation',
         keywords: ['leaderboard', 'competition'],
@@ -274,6 +300,7 @@ export function CommandPalette() {
         id: 'desafios',
         label: 'Desafios Semanais',
         icon: Flame,
+        path: '/desafios',
         action: () => guardedNavigate('/desafios'),
         group: 'navigation',
         keywords: ['challenges', 'weekly'],
@@ -282,6 +309,7 @@ export function CommandPalette() {
         id: 'atividades',
         label: 'Atividades',
         icon: Calendar,
+        path: '/atividades',
         action: () => guardedNavigate('/atividades'),
         group: 'navigation',
         keywords: ['activities', 'calls', 'meetings'],
@@ -290,6 +318,7 @@ export function CommandPalette() {
         id: 'assistente',
         label: 'Assistente IA',
         icon: Brain,
+        path: '/assistente',
         action: () => guardedNavigate('/assistente'),
         group: 'navigation',
         keywords: ['ai', 'copilot', 'chat', 'inteligência'],
@@ -298,6 +327,7 @@ export function CommandPalette() {
         id: 'notificacoes',
         label: 'Notificações',
         icon: Bell,
+        path: '/notificacoes',
         action: () => guardedNavigate('/notificacoes'),
         group: 'navigation',
         keywords: ['alerts', 'avisos'],
@@ -306,6 +336,7 @@ export function CommandPalette() {
         id: 'relatorios',
         label: 'Relatórios',
         icon: FileText,
+        path: '/relatorios',
         action: () => guardedNavigate('/relatorios'),
         group: 'navigation',
         keywords: ['reports', 'export'],
@@ -314,6 +345,7 @@ export function CommandPalette() {
         id: 'bi-gestor',
         label: 'BI Gestão',
         icon: Radar,
+        path: '/bi-gestor',
         action: () => guardedNavigate('/bi-gestor'),
         group: 'navigation',
         keywords: ['business intelligence', 'gestão'],
@@ -322,6 +354,7 @@ export function CommandPalette() {
         id: 'seguranca',
         label: 'Segurança',
         icon: Shield,
+        path: '/configuracoes',
         action: () => guardedNavigate('/configuracoes'),
         group: 'navigation',
         keywords: ['security', 'mfa', '2fa'],
@@ -330,6 +363,7 @@ export function CommandPalette() {
         id: 'configuracoes',
         label: 'Configurações',
         icon: Settings,
+        path: '/configuracoes',
         action: () => guardedNavigate('/configuracoes'),
         group: 'navigation',
         keywords: ['settings', 'preferences'],
@@ -399,9 +433,16 @@ export function CommandPalette() {
     [theme, setTheme, locale, setLocale]
   );
 
+  // A paleta é um atalho para o menu: só oferece o destino que o papel abre de fato.
+  const visibleNavigationItems = useMemo(
+    () =>
+      navigationItems.filter(item => !item.path || canAccessPath(item.path, routeAccess)),
+    [navigationItems, routeAccess]
+  );
+
   const allItems = useMemo(
-    () => [...navigationItems, ...actionItems, ...settingsItems],
-    [navigationItems, actionItems, settingsItems]
+    () => [...visibleNavigationItems, ...actionItems, ...settingsItems],
+    [visibleNavigationItems, actionItems, settingsItems]
   );
 
   const recentIds = getRecent();
@@ -503,7 +544,7 @@ export function CommandPalette() {
         )}
 
         <CommandGroup heading="Navegação">
-          {navigationItems.map(item => (
+          {visibleNavigationItems.map(item => (
             <CommandItem
               key={item.id}
               onSelect={() => runCommand(item.id, item.action)}
