@@ -3,6 +3,25 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
+function isSafeExternalUrl(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    const privateIpv4 =
+      /^(?:10\.|127\.|0\.|169\.254\.|192\.168\.|172\.(?:1[6-9]|2\d|3[0-1])\.)/;
+    return (
+      url.protocol === "https:" &&
+      host !== "localhost" &&
+      host !== "::1" &&
+      !host.endsWith(".localhost") &&
+      !privateIpv4.test(host)
+    );
+  } catch {
+    return false;
+  }
+}
+
 interface Body {
   connection_id: string;
   triggered_by?: "manual" | "auto";
@@ -20,6 +39,7 @@ async function probeDatabase(cfg: Record<string, unknown>) {
   const key = String(cfg.anon_key ?? Deno.env.get("EXTERNAL_SUPABASE_ANON_KEY") ?? "");
   const table = String(cfg.test_table ?? "salespeople");
   if (!url || !key) throw new Error("Missing url or anon_key");
+  if (!isSafeExternalUrl(url)) throw new Error("URL not allowed: must be https and not a private/local address");
   const r = await fetch(`${url.replace(/\/$/, "")}/rest/v1/${table}?select=*&limit=1`, {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
     signal: AbortSignal.timeout(8000),
@@ -32,6 +52,7 @@ async function probeN8n(cfg: Record<string, unknown>) {
   const baseUrl = String(cfg.base_url ?? "").replace(/\/$/, "");
   const apiKey = String(cfg.api_key ?? Deno.env.get(String(cfg.api_key_secret ?? "N8N_API_KEY")) ?? "");
   if (!baseUrl) throw new Error("Missing base_url");
+  if (!isSafeExternalUrl(baseUrl)) throw new Error("URL not allowed: must be https and not a private/local address");
   const r = await fetch(`${baseUrl}/healthz`, {
     headers: apiKey ? { "X-N8N-API-KEY": apiKey } : {},
     signal: AbortSignal.timeout(8000),
@@ -44,6 +65,7 @@ async function probeMcp(cfg: Record<string, unknown>) {
   const url = String(cfg.url ?? "");
   const auth = cfg.auth_header ? String(cfg.auth_header) : null;
   if (!url) throw new Error("Missing url");
+  if (!isSafeExternalUrl(url)) throw new Error("URL not allowed: must be https and not a private/local address");
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Accept: "application/json, text/event-stream",
@@ -63,6 +85,7 @@ async function probeMcp(cfg: Record<string, unknown>) {
 async function probeWebhook(cfg: Record<string, unknown>) {
   const url = String(cfg.url ?? "");
   if (!url) throw new Error("Missing url");
+  if (!isSafeExternalUrl(url)) throw new Error("URL not allowed: must be https and not a private/local address");
   const r = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Webhook-Event": "test.ping" },
