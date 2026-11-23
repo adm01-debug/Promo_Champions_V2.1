@@ -117,12 +117,12 @@
    "importado_por": 48
   },
   {
-   "arquivo": "supabase/functions/_shared/ai-gateway.ts",
+   "arquivo": "src/hooks/useUserRoles.ts",
    "importado_por": 41
   },
   {
-   "arquivo": "src/hooks/useUserRoles.ts",
-   "importado_por": 40
+   "arquivo": "supabase/functions/_shared/ai-gateway.ts",
+   "importado_por": 41
   },
   {
    "arquivo": "supabase/functions/_shared/chunked-in.ts",

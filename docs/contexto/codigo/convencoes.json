@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (165)",
+   "co-localizado (*.test) (166)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)",
    "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)",
    "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)",
    "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)",
-   "docs: marca etapas 121-126 no checklist de QA (#680)",
-   "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)"
+   "docs: marca etapas 121-126 no checklist de QA (#680)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

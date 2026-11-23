@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "546a22902a648a50a6b330b5b03bbd9234a14e3c",
+  "commit": "e84935ef49e90478c9606677ecfc1320688ee947",
   "branch": "main",
-  "data_commit": "2026-11-23T23:12:09Z",
+  "data_commit": "2026-11-23T23:38:31Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e84935e",
+    "data": "2026-11-23",
+    "assunto": "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)"
+   },
    {
     "sha": "546a229",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "a7c2da3",
     "data": "2026-11-23",
     "assunto": "fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)"
-   },
-   {
-    "sha": "bdea3f7",
-    "data": "2026-11-23",
-    "assunto": "fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)"
    }
   ],
-  "arquivos_mudados_7d": 282,
+  "arquivos_mudados_7d": 284,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -218,11 +218,11 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 9
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 10
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3646,
-  "arquivos_codigo": 2590,
-  "linhas_codigo": 445021,
+  "arquivos_total": 3647,
+  "arquivos_codigo": 2591,
+  "linhas_codigo": 445193,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 250,
+  "testes": 251,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -607,8 +607,8 @@
    "linhas": 610
   },
   "src/hooks": {
-   "arquivos": 549,
-   "linhas": 64789
+   "arquivos": 550,
+   "linhas": 64961
   },
   "src/integrations": {
    "arquivos": 4,

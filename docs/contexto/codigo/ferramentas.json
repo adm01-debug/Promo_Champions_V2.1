@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2509)",
+   "TypeScript (2510)",
    "SQL (722)",
    "Markdown (223)",
    "JavaScript (78)",
@@ -1902,15 +1902,15 @@
    },
    {
     "papel": "closer",
+    "ocorrencias": 22
+   },
+   {
+    "papel": "admin",
     "ocorrencias": 21
    },
    {
     "papel": "sdr",
     "ocorrencias": 21
-   },
-   {
-    "papel": "admin",
-    "ocorrencias": 20
    },
    {
     "papel": "alert",
@@ -1929,11 +1929,11 @@
     "ocorrencias": 10
    },
    {
-    "papel": "authenticated",
-    "ocorrencias": 8
+    "papel": "manager",
+    "ocorrencias": 9
    },
    {
-    "papel": "manager",
+    "papel": "authenticated",
     "ocorrencias": 8
    },
    {
@@ -2005,6 +2005,10 @@
     "ocorrencias": 2
    },
    {
+    "papel": "salesperson",
+    "ocorrencias": 2
+   },
+   {
     "papel": "tab",
     "ocorrencias": 2
    },
@@ -2014,6 +2018,10 @@
    },
    {
     "papel": "Roles",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "account_owner",
     "ocorrencias": 1
    },
    {
@@ -2058,10 +2066,6 @@
    },
    {
     "papel": "sales_rep",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "salesperson",
     "ocorrencias": 1
    },
    {

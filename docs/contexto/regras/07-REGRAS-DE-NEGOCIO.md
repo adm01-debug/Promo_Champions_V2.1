@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `546a22902a` · branch `main` · 2026-11-23 23:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e84935ef49` · branch `main` · 2026-11-23 23:40 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4273,7 +4273,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1703 testes em 215 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1715 testes em 216 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4317,6 +4317,7 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/retry-policy.test.ts` | 13 | erros permanentes são reconhecidos · erros transitórios não são permanentes · já enviado é ignorado · sem erro é ignorado … |
 | `tests/e2e/pages-sales-commerce.spec.ts` | 13 | Orçamentos — CPQ Engine · carrega heading  · title da página correto · mostra filtros de status … |
 | `src/components/sales/cadence/CadenceTemplateManager.test.tsx` | 12 | CadenceTemplateManager (message_templates) · mostra estado vazio sem template fictício · mostra erro com opção de tentar novamente · lista os templates reais do banco … |
+| `src/hooks/useUserRoles.test.ts` | 12 | pickHighestRole · o papel desconhecido do caso vem antes de admin na ordenacao · escolhe admin entre admin e salesperson · ignora papel fora da lista conhecida que viria antes de admin no alfabeto … |
 | `src/lib/bi/markupOverviewHelpers.test.ts` | 12 | aggregateMarkupOverview · lista vazia → resumo zerado e sem vendedores · agrupa média por vendedor e ordena desc · conta vendas críticas abaixo do limiar … |
 | `src/lib/log/pii.test.ts` | 12 | maskEmail · preserva primeira e última letra do local + domínio · retorna vazio para entrada nula e *** para formato inválido · maskPhone … |
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
@@ -4841,6 +4842,7 @@ _nenhum item encontrado_
 | Atualizar atividade da sessão — throttle: no máximo 1x a cada 10s | `src/hooks/useSessionManagement.ts` |
 | renovacao de token e a cada foco) e nao pode capturar o estado da 1a render. | `src/hooks/useSyncedSetting.ts` |
 | O cache de módulo não expira sozinho: no logout/troca de conta a | `src/hooks/useUnreadNotificationsCount.ts` |
+| A escolha era feita por `.order('role').limit(1)` — ordem alfabética, que só | `src/hooks/useUserRoles.ts` |
 | Falha de listagem não pode parecer "nenhuma passkey" — expõe erro. | `src/hooks/useWebAuthn.ts` |
 | verifyOtp falhando não pode ser tratado como login bem-sucedido. | `src/hooks/useWebAuthn.ts` |
 | * Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */ | `src/hooks/admin/useApprovalWorkflows.ts` |
@@ -5060,5 +5062,4 @@ _nenhum item encontrado_
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
 | Marca APENAS a execução enviada mais recente — senão uma | `supabase/functions/inbound-email-webhook/index.ts` |
-| Contract validation | `supabase/functions/lead-scoring/index.ts` |
-| … +138 linhas — lista completa em `context.json` | |
+| … +139 linhas — lista completa em `context.json` | |

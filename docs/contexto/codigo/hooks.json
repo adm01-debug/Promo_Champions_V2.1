@@ -11054,7 +11054,7 @@
    "hooks_exportados": [
     "useUserRoles"
    ],
-   "linhas": 179,
+   "linhas": 195,
    "dominio": "hooks",
    "tabelas": [
     "salespeople",
@@ -11102,7 +11102,7 @@
     "src/pages/AccessDenied.tsx",
     "src/pages/AccountBasedEngagement.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useVendasMacro.ts",
