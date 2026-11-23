@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -42,7 +43,7 @@ const ACTION_COLORS: Record<string, string> = {
 const AuditLogsPage = () => {
   const [filters, setFilters] = useState<AuditFilters>({});
   const [search, setSearch] = useState('');
-  const { data: logs, isLoading } = useAuditLogs(filters, 500);
+  const { data: logs, isLoading, isError, error, refetch } = useAuditLogs(filters, 500);
 
   const filtered = useMemo(() => {
     if (!search) return logs ?? [];
@@ -208,6 +209,14 @@ const AuditLogsPage = () => {
                       {Array.from({ length: 8 }).map((_, i) => (
                         <Skeleton key={i} className="h-14 rounded-lg" />
                       ))}
+                    </div>
+                  ) : isError ? (
+                    <div className="p-4">
+                      <QueryErrorState
+                        error={error}
+                        onRetry={() => refetch()}
+                        message="Falha ao carregar registros de auditoria — a ausência não significa que nada aconteceu."
+                      />
                     </div>
                   ) : !filtered.length ? (
                     <div className="p-8 text-center">

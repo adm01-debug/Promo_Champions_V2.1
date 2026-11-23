@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Helmet } from 'react-helmet-async';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -25,7 +26,7 @@ const Deduplication = () => {
   const [isResolverOpen, setIsResolverOpen] = useState(false);
   const [ignoredKeys, setIgnoredKeys] = useState<Set<string>>(new Set());
 
-  const { data: duplicates, isLoading } = useDeduplicationScan();
+  const { data: duplicates, isLoading, isError, error, refetch } = useDeduplicationScan();
 
   const mergeMutation = useMutation({
     mutationFn: clientService.mergeClients,
@@ -88,6 +89,8 @@ const Deduplication = () => {
                 <Skeleton key={i} className="h-24 rounded-xl" />
               ))}
             </div>
+          ) : isError ? (
+            <QueryErrorState error={error} onRetry={() => refetch()} />
           ) : activeDuplicates.length === 0 ? (
             <Card className="p-8 text-center glass border-border/40">
               <Check className="h-12 w-12 text-status-success mx-auto mb-3" />

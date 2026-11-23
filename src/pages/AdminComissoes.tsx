@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Helmet } from 'react-helmet-async';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -68,7 +69,7 @@ export default function AdminComissoes() {
   const [notes, setNotes] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { data: commissions = [], isLoading } = useAllCommissions(
+  const { data: commissions = [], isLoading, isError, error, refetch } = useAllCommissions(
     statusFilter === 'all' ? undefined : statusFilter
   );
   const updateStatus = useUpdateCommissionStatus();
@@ -205,6 +206,12 @@ export default function AdminComissoes() {
                           </TableCell>
                         </TableRow>
                       ))
+                    ) : isError ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="py-4">
+                          <QueryErrorState error={error} onRetry={() => refetch()} />
+                        </TableCell>
+                      </TableRow>
                     ) : filteredCommissions.length === 0 ? (
                       <TableRow>
                         <TableCell

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Helmet } from 'react-helmet-async';
 import { useFeatureFlags, useFeatureFlag } from '@/hooks/useFeatureFlags';
 import {
@@ -30,7 +31,7 @@ const FeatureFlagsAdmin = () => {
   const [newKey, setNewKey] = useState('');
   const [newDesc, setNewDesc] = useState('');
 
-  const { flags, isLoading } = useFeatureFlags();
+  const { flags, isLoading, isError, error, refetch } = useFeatureFlags();
   const testFlag = useFeatureFlag('experimental_ui');
 
   const updateFlag = useUpdateFeatureFlag();
@@ -127,6 +128,8 @@ const FeatureFlagsAdmin = () => {
                 <Skeleton key={i} className="h-20 rounded-xl" />
               ))}
             </div>
+          ) : isError ? (
+            <QueryErrorState error={error} onRetry={() => refetch()} />
           ) : !flags?.length ? (
             <Card className="p-8 text-center glass border-border/40">
               <Flag className="h-12 w-12 text-muted-foreground mx-auto mb-3" />

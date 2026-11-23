@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { QueryErrorState } from '@/components/QueryErrorState';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -91,7 +92,7 @@ function AdminSupressaoEmails() {
     [search, source, page]
   );
 
-  const { data, isLoading, isFetching, refetch } = useEmailOptOuts(filters);
+  const { data, isLoading, isFetching, isError, error, refetch } = useEmailOptOuts(filters);
   const addMutation = useAddEmailOptOut();
   const removeMutation = useRemoveEmailOptOut();
 
@@ -298,6 +299,12 @@ function AdminSupressaoEmails() {
                   <Skeleton key={`sk-${i}`} className="h-14 w-full rounded-lg" />
                 ))}
               </div>
+            ) : isError ? (
+              <QueryErrorState
+                error={error}
+                onRetry={() => refetch()}
+                message="Falha ao carregar lista de supressão. A ausência de registros não significa que ninguém optou por sair."
+              />
             ) : rows.length === 0 ? (
               <p className="py-10 text-center text-sm text-muted-foreground">
                 Nenhum endereço suprimido com os filtros atuais.
