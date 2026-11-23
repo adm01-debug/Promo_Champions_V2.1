@@ -14,6 +14,28 @@ export interface UserRole {
   updated_at: string;
 }
 
+/**
+ * Ordem de privilégio quando o usuário tem mais de uma linha em `user_roles`.
+ * A escolha era feita por `.order('role').limit(1)` — ordem alfabética, que só
+ * coincide com privilégio por acidente ('admin' < 'manager' < 'salesperson').
+ * Com um papel cujo nome venha antes de 'admin', o usuário perderia o acesso.
+ */
+const ROLE_PRECEDENCE: readonly AppRole[] = ['admin', 'manager', 'salesperson'];
+
+/** Devolve a linha de maior privilégio; `null` para papel desconhecido (fail-closed). */
+export function pickHighestRole<T extends { role: AppRole }>(
+  rows: readonly T[] | null | undefined
+): T | null {
+  if (!rows || rows.length === 0) return null;
+
+  for (const role of ROLE_PRECEDENCE) {
+    const row = rows.find(candidate => candidate.role === role);
+    if (row) return row;
+  }
+
+  return null;
+}
+
 const ROLE_QUERY_TIMEOUT_MS = 8_000;
 
 function withRoleTimeout<T>(request: PromiseLike<T>, label: string): Promise<T | null> {
@@ -45,21 +67,15 @@ export function useUserRoles() {
       if (!user?.id) return null;
 
       const roleResult = await withRoleTimeout(
-        supabase
-          .from('user_roles')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('role')
-          .limit(1)
-          .maybeSingle(),
+        supabase.from('user_roles').select('*').eq('user_id', user.id),
         'user_roles lookup'
       );
 
-      const data = roleResult?.data;
+      const rows = (roleResult?.data ?? []) as UserRole[];
       const error = roleResult?.error;
 
       // Fallback: If no role found in user_roles but exists as salesperson
-      if (!data && !error && user?.id) {
+      if (rows.length === 0 && !error && user?.id) {
         const salespersonResult = await withRoleTimeout(
           supabase
             .from('salespeople')
@@ -88,7 +104,7 @@ export function useUserRoles() {
         return null;
       }
 
-      return data as UserRole | null;
+      return pickHighestRole(rows);
     },
     enabled: !!user?.id,
     ...CONFIG_QUERY_OPTIONS,
