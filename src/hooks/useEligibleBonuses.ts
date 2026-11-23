@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { CommissionBonus } from './useCommissionBonuses';
 
@@ -96,8 +96,9 @@ export function evaluateBonus(
     };
   }
 
-  // Trigger vazio/desconhecido → informativo
-  return { ...bonus, achieved: true, progress: 1, reason: 'Premiação ativa' };
+  // Trigger vazio/desconhecido: recusa explicita para o vendedor saber e o admin corrigir o cadastro.
+  console.warn('[useEligibleBonuses] condicao nao reconhecida:', trigger);
+  return { ...bonus, achieved: false, progress: 0, reason: 'Condição de premiação não reconhecida' };
 }
 
 export function useEligibleBonuses(salespersonId: string | undefined) {
