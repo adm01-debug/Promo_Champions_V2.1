@@ -139,7 +139,7 @@
     "react-leaflet": "^5.0.0",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^4.22.0",
-    "react-router-dom": "^7.18.5",
+    "react-router-dom": "^7.18.6",
     "react-window": "^2.5.3",
     "recharts": "3.10.1",
     "sonner": "^2.0.8",
