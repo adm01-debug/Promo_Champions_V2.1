@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `be744027447211454378ff70990570afc89f678b` (2026-11-23T10:40:32-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `96962bdd264aed4a449798b681819375134ccbb2` (2026-11-23T10:42:34-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3634 |
 | arquivos_codigo | 2579 |
-| linhas_codigo | 443308 |
+| linhas_codigo | 443526 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -382,8 +382,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `compute-forecast-accuracy` — tabelas: forecast_accuracy, forecast_confidence_scores, forecast_snapshots, sales; chamada por 1 arquivo(s) do front
 - `conversational-intelligence` — tabelas: call_insights, call_recordings; chamada por 1 arquivo(s) do front
 - `create-stagnant-tasks` — tabelas: notification_preferences, sales, tasks; chamada por 1 arquivo(s) do front
-- `cron-failure-alerter` (verify_jwt=false) — tabelas: _internal_secrets, notifications, user_roles; chamada por 0 arquivo(s) do front
-- `csat-ces-trigger` — tabelas: csat_ces_surveys; chamada por 1 arquivo(s) do front
+- `cron-failure-alerter` (verify_jwt=false) — tabelas: _internal_secrets, bitrix24_sync_logs, notifications, user_roles; chamada por 0 arquivo(s) do front
+- `csat-ces-trigger` — tabelas: accounts, csat_ces_surveys; chamada por 1 arquivo(s) do front
 - `customer-success-360` — tabelas: accounts, clients, csat_ces_surveys, expansion_opportunities, onboarding_journeys, orders, product_usage_summary, qbr_schedule, quotes, renewals, sales, support_tickets; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `customer-success-hub` — tabelas: account_activities, accounts; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `deal-probability` — tabelas: deal_outcomes, deal_stage_history, sales; chamada por 1 arquivo(s) do front
@@ -458,7 +458,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `race-commentary` — tabelas: -; chamada por 1 arquivo(s) do front
 - `ranking-api` — tabelas: salespeople, salesperson_custom_field_values, score_change_logs, team_custom_fields, team_members, teams; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `receive-quote-sync` (verify_jwt=false) — tabelas: quote_sync_inbound_log, quotes, quotes_inbound, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front
-- `receive-quote-webhook` (verify_jwt=false) — tabelas: quote_sync_logs, quotes, salespeople; chamada por 0 arquivo(s) do front
+- `receive-quote-webhook` (verify_jwt=false) — tabelas: quote_sync_logs, quotes, salespeople, webhook_inbound_dedupe; chamada por 0 arquivo(s) do front
 - `recompute-stage-baselines` — tabelas: deal_stage_transitions, sales, stage_velocity_baselines; chamada por 2 arquivo(s) do front
 - `renewal-automation` — tabelas: notifications, renewals, tasks; chamada por 1 arquivo(s) do front
 - `report-builder-execute` — tabelas: custom_reports; chamada por 1 arquivo(s) do front
@@ -470,7 +470,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `run-retry-tests` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `sales-assistant-chat` — tabelas: activities, activity_goals, deal_outcomes, deal_stage_history, lead_scores, objections_library, sales, sales_goals, salespeople; chamada por 1 arquivo(s) do front
 - `salesperson-coaching` — tabelas: deal_outcomes, salespeople; chamada por 1 arquivo(s) do front
-- `schedule-optimal-send` — tabelas: scheduled_sends, send_time_profiles; chamada por 1 arquivo(s) do front
+- `schedule-optimal-send` — tabelas: sales, scheduled_sends, send_time_profiles; chamada por 1 arquivo(s) do front
 - `scheduled-report-trigger` — tabelas: scheduled_reports; chamada por 1 arquivo(s) do front
 - `scheduled-reports-runner` — tabelas: _internal_secrets, client_portfolio, clients, custom_reports, salespeople, scheduled_report_runs, scheduled_reports; chamada por 0 arquivo(s) do front
 - `sdr-consecutive-alerts` — tabelas: _internal_secrets, activities, activity_goals, email_logs, notification_preferences, salespeople, sdr_alert_history, user_roles; chamada por 1 arquivo(s) do front
@@ -585,27 +585,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22378 nós · 67465 arestas · 1602 comunidades · grafo do commit `be744027`
-- comunidades maiores: Card (799), schema.sql (785), Button (668), client.ts (307), Índice (277), ScrollArea (270), Badge (252), getCorsHeaders (236), utils.ts (230), Avatar (226), ref_npm_supabase (215), react (165)
+- 22379 nós · 67475 arestas · 1613 comunidades · grafo do commit `96962bdd`
+- comunidades maiores: schema.sql (785), Card (746), Button (497), react (422), client.ts (326), Índice (277), Badge (270), Avatar (248), Skeleton (243), getCorsHeaders (237), ScrollArea (221), utils.ts (194)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (40)
-- package.json (40)
-- RELATORIO_CI.md (18)
-- deno.lock (15)
-- CHANGELOG.md (14)
-- src/integrations/supabase/types.ts (14)
-- PENDENCIAS.md (12)
-- .github/workflows/codeql.yml (11)
+- package-lock.json (41)
+- package.json (41)
+- deno.lock (16)
+- CHANGELOG.md (15)
+- RELATORIO_CI.md (14)
+- src/integrations/supabase/types.ts (12)
+- .github/workflows/codeql.yml (10)
 - .github/workflows/deploy.yml (10)
+- PENDENCIAS.md (9)
 - scripts/inventario/gerar-banco.mjs (9)
+- .github/workflows/pr-checks.yml (8)
 - .github/workflows/migrations-drift.yml (7)
-- .github/workflows/pr-checks.yml (7)
-- scripts/db-audit/gen-migration-probes.mjs (7)
+- src/components/pipeline/DealCard.tsx (7)
 - src/hooks/abm/useAccounts.ts (7)
-- .github/workflows/ci-failure-alert.yml (6)
+- .github/workflows/graphify.yml (6)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -765,21 +765,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
-- 2026-11-23 `be74402` fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)
-- 2026-11-23 `e9e69b8` fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)
-- 2026-11-23 `e4ffc93` fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)
-- 2026-11-23 `5aad0e0` fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)
-- 2026-11-23 `ad2d98f` fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)
-- 2026-11-23 `1de569f` docs: auditoria de QA completa com plano de correcao em 255 etapas (#624)
-- 2026-11-23 `f9b3558` chore(deps): bump astral-sh/setup-uv (#627)
-- 2026-11-23 `dfe85df` chore(deps): bump actions/dependency-review-action (#625)
-- 2026-11-22 `17e5d6d` chore(main): release 1.7.4 (#623)
-- 2026-11-22 `fc6f8f9` fix: timeout do pg_net para funcoes com DNS lento medido (#618)
-- 2026-11-22 `56da98a` chore(main): release 1.7.3 (#621)
-- 2026-11-22 `b488591` fix: espalha schedules do cron para eliminar job startup timeout (#622)
-- 2026-11-22 `48c711b` perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)
-- 2026-11-22 `8ed528b` fix: bitrix24-sync responde 503 quando credenciais faltam (#619)
-- 2026-11-22 `1976a23` chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)
+- 2026-11-23 `96962bd` fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)
+- 2026-11-23 `d2006d2` fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)
+- 2026-11-23 `339d0fa` fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)
+- 2026-11-23 `23b32db` fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)
+- 2026-11-23 `ed53bd4` fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)
+- 2026-11-23 `f177678` fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)
+- 2026-11-23 `01065d8` fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)
+- 2026-11-23 `4fdd6dc` fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)
+- 2026-11-23 `980247f` fix: forecast falha visivelmente se metas falhar (QA-060) (#651)
+- 2026-11-23 `acce427` fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)
+- 2026-11-23 `2088c24` fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)
+- 2026-11-23 `9d455c9` fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)
+- 2026-11-23 `e3600e9` fix: escopar schedule-optimal-send a venda do chamador (QA-014) (#645)
+- 2026-11-23 `93abc97` fix: escopar sequence-record-reply ao dono da cadencia (QA-013) (#644)
+- 2026-11-23 `7213672` fix: escopar analyze-call ao dono da gravacao via RLS (QA-012) (#643)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

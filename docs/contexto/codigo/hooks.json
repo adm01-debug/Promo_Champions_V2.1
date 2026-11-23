@@ -3032,7 +3032,7 @@
    "hooks_exportados": [
     "useDashboardKPIs"
    ],
-   "linhas": 114,
+   "linhas": 146,
    "dominio": "hooks/dashboard",
    "tabelas": [],
    "rpcs": [
@@ -3060,7 +3060,7 @@
    "hooks_exportados": [
     "useDashboardKPIsPeriod"
    ],
-   "linhas": 366,
+   "linhas": 389,
    "dominio": "hooks/dashboard",
    "tabelas": [
     "daily_metrics",
@@ -4977,7 +4977,7 @@
     "useTogglePlaybookItem",
     "useUpdatePlaybookItem"
    ],
-   "linhas": 239,
+   "linhas": 242,
    "dominio": "hooks/playbooks",
    "tabelas": [
     "playbook_items",
@@ -6727,7 +6727,7 @@
     "useTogglePlaybookItem",
     "useUpdateAsset"
    ],
-   "linhas": 311,
+   "linhas": 312,
    "dominio": "hooks/sales",
    "tabelas": [
     "asset_usage_logs",
@@ -6985,7 +6985,7 @@
    "hooks_exportados": [
     "useSalesRealtime"
    ],
-   "linhas": 162,
+   "linhas": 167,
    "dominio": "hooks/sales",
    "tabelas": [
     "salespeople"
@@ -10758,7 +10758,7 @@
    "hooks_exportados": [
     "useSyncedSetting"
    ],
-   "linhas": 234,
+   "linhas": 252,
    "dominio": "hooks",
    "tabelas": [
     "user_app_settings"
@@ -10767,7 +10767,8 @@
    "edges": [],
    "hooks_internos": [
     "useCallback",
-    "useEffect"
+    "useEffect",
+    "useRef"
    ],
    "canais_realtime": [],
    "usado_por": 1,
@@ -11238,7 +11239,7 @@
    "hooks_exportados": [
     "useWeightedForecast"
    ],
-   "linhas": 211,
+   "linhas": 212,
    "dominio": "hooks",
    "tabelas": [
     "deal_stage_history",

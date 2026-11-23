@@ -2,11 +2,91 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "be744027447211454378ff70990570afc89f678b",
+  "commit": "96962bdd264aed4a449798b681819375134ccbb2",
   "branch": "main",
-  "data_commit": "2026-11-23T10:40:32-03:00",
+  "data_commit": "2026-11-23T10:42:34-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "96962bd",
+    "data": "2026-11-23",
+    "assunto": "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)"
+   },
+   {
+    "sha": "d2006d2",
+    "data": "2026-11-23",
+    "assunto": "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)"
+   },
+   {
+    "sha": "339d0fa",
+    "data": "2026-11-23",
+    "assunto": "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)"
+   },
+   {
+    "sha": "23b32db",
+    "data": "2026-11-23",
+    "assunto": "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)"
+   },
+   {
+    "sha": "ed53bd4",
+    "data": "2026-11-23",
+    "assunto": "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)"
+   },
+   {
+    "sha": "f177678",
+    "data": "2026-11-23",
+    "assunto": "fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)"
+   },
+   {
+    "sha": "01065d8",
+    "data": "2026-11-23",
+    "assunto": "fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)"
+   },
+   {
+    "sha": "4fdd6dc",
+    "data": "2026-11-23",
+    "assunto": "fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)"
+   },
+   {
+    "sha": "980247f",
+    "data": "2026-11-23",
+    "assunto": "fix: forecast falha visivelmente se metas falhar (QA-060) (#651)"
+   },
+   {
+    "sha": "acce427",
+    "data": "2026-11-23",
+    "assunto": "fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)"
+   },
+   {
+    "sha": "2088c24",
+    "data": "2026-11-23",
+    "assunto": "fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)"
+   },
+   {
+    "sha": "9d455c9",
+    "data": "2026-11-23",
+    "assunto": "fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)"
+   },
+   {
+    "sha": "e3600e9",
+    "data": "2026-11-23",
+    "assunto": "fix: escopar schedule-optimal-send a venda do chamador (QA-014) (#645)"
+   },
+   {
+    "sha": "93abc97",
+    "data": "2026-11-23",
+    "assunto": "fix: escopar sequence-record-reply ao dono da cadencia (QA-013) (#644)"
+   },
+   {
+    "sha": "7213672",
+    "data": "2026-11-23",
+    "assunto": "fix: escopar analyze-call ao dono da gravacao via RLS (QA-012) (#643)"
+   },
+   {
+    "sha": "81455f3",
+    "data": "2026-11-23",
+    "assunto": "fix: corrigir custo de comissao no painel ROI (dividir por 100) (QA-041) (#642)"
+   },
    {
     "sha": "be74402",
     "data": "2026-11-23",
@@ -51,89 +131,9 @@
     "sha": "17e5d6d",
     "data": "2026-11-22",
     "assunto": "chore(main): release 1.7.4 (#623)"
-   },
-   {
-    "sha": "fc6f8f9",
-    "data": "2026-11-22",
-    "assunto": "fix: timeout do pg_net para funcoes com DNS lento medido (#618)"
-   },
-   {
-    "sha": "56da98a",
-    "data": "2026-11-22",
-    "assunto": "chore(main): release 1.7.3 (#621)"
-   },
-   {
-    "sha": "b488591",
-    "data": "2026-11-22",
-    "assunto": "fix: espalha schedules do cron para eliminar job startup timeout (#622)"
-   },
-   {
-    "sha": "48c711b",
-    "data": "2026-11-22",
-    "assunto": "perf: elimina seq scan de cron.job_run_details em detect_stalled_cron_jobs (#620)"
-   },
-   {
-    "sha": "8ed528b",
-    "data": "2026-11-22",
-    "assunto": "fix: bitrix24-sync responde 503 quando credenciais faltam (#619)"
-   },
-   {
-    "sha": "1976a23",
-    "data": "2026-11-22",
-    "assunto": "chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)"
-   },
-   {
-    "sha": "aec099f",
-    "data": "2026-11-22",
-    "assunto": "chore(main): release 1.7.2 (#611)"
-   },
-   {
-    "sha": "88f8cde",
-    "data": "2026-11-22",
-    "assunto": "fix: timeout do pg_net por funcao no dispatcher de crons (#616)"
-   },
-   {
-    "sha": "b80439c",
-    "data": "2026-11-22",
-    "assunto": "fix: guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes (#615)"
-   },
-   {
-    "sha": "fe3bf20",
-    "data": "2026-11-22",
-    "assunto": "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)"
-   },
-   {
-    "sha": "fef4c7e",
-    "data": "2026-11-22",
-    "assunto": "fix: nao re-enfileira 5xx por secret ausente (#613)"
-   },
-   {
-    "sha": "67dc32e",
-    "data": "2026-11-22",
-    "assunto": "fix: reconcilia retry do pg_net em transacao separada (#612)"
-   },
-   {
-    "sha": "a8961ba",
-    "data": "2026-11-22",
-    "assunto": "fix: adiciona retry em trigger_internal_edge_job quando o pg_net falha no DNS (#609)"
-   },
-   {
-    "sha": "504a53e",
-    "data": "2026-11-22",
-    "assunto": "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)"
-   },
-   {
-    "sha": "374d7d8",
-    "data": "2026-11-21",
-    "assunto": "chore(main): release 1.7.1 (#607)"
-   },
-   {
-    "sha": "06e4384",
-    "data": "2026-11-21",
-    "assunto": "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)"
    }
   ],
-  "arquivos_mudados_7d": 227,
+  "arquivos_mudados_7d": 247,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/analytics",
@@ -188,65 +188,65 @@
     "mudancas": 16
    },
    {
-    "pasta": "src/components/conversational",
-    "mudancas": 15
+    "pasta": "src/hooks/sales",
+    "mudancas": 16
    },
    {
-    "pasta": "deno.lock",
-    "mudancas": 14
+    "pasta": "src/components/conversational",
+    "mudancas": 15
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "arquivo": "package.json",
-    "mudancas": 40
-   },
-   {
-    "arquivo": "RELATORIO_CI.md",
-    "mudancas": 18
+    "mudancas": 41
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "CHANGELOG.md",
+    "mudancas": 15
+   },
+   {
+    "arquivo": "RELATORIO_CI.md",
     "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 14
-   },
-   {
-    "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 10
    },
    {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 9
+   },
+   {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
+   },
+   {
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 8
    },
    {
     "arquivo": ".github/workflows/migrations-drift.yml",
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 7
    },
    {
@@ -254,11 +254,7 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/ci-failure-alert.yml",
-    "mudancas": 6
-   },
-   {
-    "arquivo": ".github/workflows/db-backup.yml",
+    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 6
    },
    {
@@ -270,7 +266,27 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/hooks/bi/useABCAnalysis.ts",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "supabase/functions/next-best-action/index.ts",
     "mudancas": 6
    },
    {
@@ -278,30 +294,14 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": ".github/workflows/release-please.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "docs/DEPLOYMENT.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "inventario/estado/banco.json",
+    "arquivo": ".github/workflows/db-backup.yml",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 209
+    "commits": 225
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3634,
   "arquivos_codigo": 2579,
-  "linhas_codigo": 443308,
+  "linhas_codigo": 443526,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1226,
-   "linhas": 193017
+   "linhas": 193004
   },
   "src/config": {
    "arquivos": 4,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 547,
-   "linhas": 64544
+   "linhas": 64634
   },
   "src/integrations": {
    "arquivos": 4,
@@ -652,7 +652,7 @@
   },
   "supabase/functions": {
    "arquivos": 326,
-   "linhas": 67101
+   "linhas": 67242
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-   "linhas": 1206
+   "linhas": 1215
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",

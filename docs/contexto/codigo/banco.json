@@ -3351,6 +3351,7 @@
    "usada_no_front": 2,
    "usada_em_edges": [
     "account-engagement-aggregator",
+    "csat-ces-trigger",
     "customer-success-360",
     "customer-success-hub",
     "expansion-detector",
@@ -6402,7 +6403,8 @@
    "criada_em": "20251214174647_99a3d41e-bc2d-428c-92ef-c682687f3790.sql",
    "usada_no_front": 2,
    "usada_em_edges": [
-    "bitrix24-sync"
+    "bitrix24-sync",
+    "cron-failure-alerter"
    ],
    "triggers": [],
    "sem_rls": false,
@@ -36593,6 +36595,7 @@
     "recompute-stage-baselines",
     "revops-hub",
     "sales-assistant-chat",
+    "schedule-optimal-send",
     "send-alert-notifications",
     "send-time-optimizer",
     "sequence-runner",
@@ -46488,6 +46491,7 @@
    "usada_em_edges": [
     "multichannel-status-webhook",
     "receive-quote-sync",
+    "receive-quote-webhook",
     "twilio-call-status"
    ],
    "triggers": [],

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: evaluateBonus retorna achieved=false para condição desconhecida (QA-009) (#641)",
-   "fix: autenticar notify-critical-pattern e escapar HTML do email (QA-007) (#640)",
-   "fix: workflow-executor exige JWT valido, recusa 401 sem autenticacao (QA-006) (#639)",
-   "fix: autenticar new-device-alert com gate de servico interno (QA-005) (#638)",
-   "fix: escopar update_stage ao dono da venda via RLS (etapa QA-003) (#637)"
+   "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)",
+   "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)",
+   "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)",
+   "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)",
+   "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

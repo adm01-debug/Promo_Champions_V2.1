@@ -442,7 +442,7 @@
    "nome": "analyze-call",
    "entrada": "supabase/functions/analyze-call/index.ts",
    "arquivos": 1,
-   "linhas": 143,
+   "linhas": 149,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1022,7 +1022,7 @@
    "nome": "bitrix24-sync",
    "entrada": "supabase/functions/bitrix24-sync/index.ts",
    "arquivos": 2,
-   "linhas": 1241,
+   "linhas": 1250,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1683,7 +1683,7 @@
    "nome": "cron-failure-alerter",
    "entrada": "supabase/functions/cron-failure-alerter/index.ts",
    "arquivos": 1,
-   "linhas": 229,
+   "linhas": 265,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
@@ -1691,6 +1691,7 @@
    ],
    "tabelas": [
     "_internal_secrets",
+    "bitrix24_sync_logs",
     "notifications",
     "user_roles"
    ],
@@ -1723,12 +1724,13 @@
    "nome": "csat-ces-trigger",
    "entrada": "supabase/functions/csat-ces-trigger/index.ts",
    "arquivos": 1,
-   "linhas": 97,
+   "linhas": 105,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
+    "accounts",
     "csat_ces_surveys"
    ],
    "rpcs": [],
@@ -3420,7 +3422,7 @@
    "nome": "lead-scoring",
    "entrada": "supabase/functions/lead-scoring/index.ts",
    "arquivos": 2,
-   "linhas": 288,
+   "linhas": 291,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3816,7 +3818,7 @@
    "nome": "notify-v4-quote-status",
    "entrada": "supabase/functions/notify-v4-quote-status/index.ts",
    "arquivos": 1,
-   "linhas": 218,
+   "linhas": 226,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
@@ -4612,7 +4614,7 @@
    "nome": "receive-quote-webhook",
    "entrada": "supabase/functions/receive-quote-webhook/index.ts",
    "arquivos": 1,
-   "linhas": 345,
+   "linhas": 370,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS",
@@ -4621,7 +4623,8 @@
    "tabelas": [
     "quote_sync_logs",
     "quotes",
-    "salespeople"
+    "salespeople",
+    "webhook_inbound_dedupe"
    ],
    "rpcs": [
     "sync_quote_from_webhook"
@@ -4907,7 +4910,7 @@
    "nome": "rotate-daily-challenges",
    "entrada": "supabase/functions/rotate-daily-challenges/index.ts",
    "arquivos": 1,
-   "linhas": 139,
+   "linhas": 142,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5064,12 +5067,13 @@
    "nome": "schedule-optimal-send",
    "entrada": "supabase/functions/schedule-optimal-send/index.ts",
    "arquivos": 1,
-   "linhas": 87,
+   "linhas": 95,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
+    "sales",
     "scheduled_sends",
     "send_time_profiles"
    ],
@@ -5077,7 +5081,6 @@
     "get_global_send_time_stats"
    ],
    "env": [
-    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
@@ -5085,6 +5088,7 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "auth-client.ts",
     "cors.ts",
     "request-id.ts"
    ],
@@ -5821,7 +5825,7 @@
    "nome": "sequence-record-reply",
    "entrada": "supabase/functions/sequence-record-reply/index.ts",
    "arquivos": 1,
-   "linhas": 102,
+   "linhas": 114,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -6118,7 +6122,7 @@
    "nome": "test-integration-connection",
    "entrada": "supabase/functions/test-integration-connection/index.ts",
    "arquivos": 1,
-   "linhas": 188,
+   "linhas": 211,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

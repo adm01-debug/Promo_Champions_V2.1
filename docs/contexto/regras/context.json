@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "be744027447211454378ff70990570afc89f678b",
+  "sha": "96962bdd264aed4a449798b681819375134ccbb2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 13:42 UTC",
+  "generated_at": "2026-11-23 13:44 UTC",
   "files_total": 3649,
   "code_files": 3300,
-  "code_lines": 478414
+  "code_lines": 478632
  },
  "version": "1.3.2",
- "facts_hash": "e4751f1586ed5107",
+ "facts_hash": "4cf265de9bdb49c2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -96809,7 +96809,8 @@
     "doc": "",
     "errors": [
      "AI error ${aiRes.status}: ${txt}",
-     "LOVABLE_API_KEY missing"
+     "LOVABLE_API_KEY missing",
+     "not_found_or_unauthorized"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -97644,6 +97645,7 @@
     "auth": "PÚBLICA (verify_jwt=false em config.toml)",
     "tables": [
      "_internal_secrets",
+     "bitrix24_sync_logs",
      "notifications",
      "user_roles"
     ],
@@ -97667,6 +97669,7 @@
     ],
     "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
+     "accounts",
      "csat_ces_surveys"
     ],
     "env": [],
@@ -99596,7 +99599,8 @@
     "tables": [
      "quote_sync_logs",
      "quotes",
-     "salespeople"
+     "salespeople",
+     "webhook_inbound_dedupe"
     ],
     "env": [
      "QUOTE_SYNC_API_KEY",
@@ -99609,7 +99613,7 @@
     "errors": [],
     "side_effects": [],
     "webhook_events": [],
-    "idempotency": false
+    "idempotency": true
    },
    {
     "name": "recompute-stage-baselines",
@@ -99876,13 +99880,13 @@
     "methods": [
      "OPTIONS"
     ],
-    "auth": "service_role (ignora RLS) + valida JWT do usuário",
+    "auth": "service_role (ignora RLS) — NÃO valida usuário no código",
     "tables": [
+     "sales",
      "scheduled_sends",
      "send_time_profiles"
     ],
     "env": [
-     "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
     ],
@@ -99890,6 +99894,7 @@
     "invokes": [],
     "doc": "",
     "errors": [
+     "not_found_or_unauthorized",
      "sale_id, channel, payload required",
      "unauthorized"
     ],
@@ -100608,7 +100613,7 @@
      "Missing base_url",
      "Missing url",
      "Missing url or anon_key",
-     "Unsupported kind: ${c.kind}"
+     "URL not allowed: must be https and not a private/local address"
     ],
     "side_effects": [],
     "webhook_events": [],
@@ -106639,7 +106644,7 @@
   {
    "module": "src/components",
    "files": 1226,
-   "lines": 193016,
+   "lines": 193003,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106968,7 +106973,7 @@
   {
    "module": "src/hooks",
    "files": 547,
-   "lines": 64544,
+   "lines": 64634,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108002,7 +108007,7 @@
   {
    "module": "supabase/functions",
    "files": 326,
-   "lines": 67101,
+   "lines": 67242,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -108662,6 +108667,7 @@
      "src/hooks/abm/useAccounts.ts",
      "src/hooks/engagement/useAccountEngagement.ts",
      "supabase/functions/account-engagement-aggregator/index.ts",
+     "supabase/functions/csat-ces-trigger/index.ts",
      "supabase/functions/customer-success-360/index.ts",
      "supabase/functions/customer-success-hub/index.ts",
      "supabase/functions/expansion-detector/index.ts",
@@ -108999,7 +109005,8 @@
    "bitrix24_sync_logs": {
     "select": [
      "src/hooks/admin/useAdminStats.ts",
-     "src/hooks/useBitrix24.ts"
+     "src/hooks/useBitrix24.ts",
+     "supabase/functions/cron-failure-alerter/index.ts"
     ],
     "insert": [
      "supabase/functions/bitrix24-sync/index.ts"
@@ -109261,6 +109268,7 @@
      "src/hooks/conversational/useCallRecordings.ts",
      "src/hooks/win-loss/useSentimentTrend.ts",
      "supabase/functions/aggregate-coaching-scorecard/index.ts",
+     "supabase/functions/analyze-call/index.ts",
      "supabase/functions/analyze-conversation-metrics/index.ts",
      "supabase/functions/analyze-objection-handling/index.ts",
      "supabase/functions/analyze-question-quality/index.ts",
@@ -111633,6 +111641,7 @@
      "supabase/functions/recompute-stage-baselines/index.ts",
      "supabase/functions/revops-hub/index.ts",
      "supabase/functions/sales-assistant-chat/index.ts",
+     "supabase/functions/schedule-optimal-send/index.ts",
      "supabase/functions/send-alert-notifications/index.ts",
      "supabase/functions/send-time-optimizer/index.ts",
      "supabase/functions/sequence-runner/index.ts",
@@ -112699,15 +112708,18 @@
     "delete": [
      "supabase/functions/multichannel-status-webhook/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
+     "supabase/functions/receive-quote-webhook/index.ts",
      "supabase/functions/twilio-call-status/index.ts"
     ],
     "insert": [
      "supabase/functions/multichannel-status-webhook/index.ts",
-     "supabase/functions/receive-quote-sync/index.ts"
+     "supabase/functions/receive-quote-sync/index.ts",
+     "supabase/functions/receive-quote-webhook/index.ts"
     ],
     "select": [
      "supabase/functions/multichannel-status-webhook/index.ts",
-     "supabase/functions/receive-quote-sync/index.ts"
+     "supabase/functions/receive-quote-sync/index.ts",
+     "supabase/functions/receive-quote-webhook/index.ts"
     ],
     "ref": [
      "supabase/functions/twilio-call-status/index.ts"
@@ -113142,6 +113154,7 @@
    ],
    "bitrix24_sync_logs": [
     "created_at",
+    "started_at",
     "status"
    ],
    "blocked_ips": [
@@ -115058,7 +115071,8 @@
     "src/lib/errorTracking.ts",
     "src/lib/log/logger.ts",
     "src/lib/swUpdater.ts",
-    "src/lib/webVitals.ts"
+    "src/lib/webVitals.ts",
+    "src/pages/Vendedores.tsx"
    ],
    "E2E_TEST_EMAIL": [
     "scripts/e2e-precheck.mjs",
@@ -115382,7 +115396,6 @@
     "supabase/functions/report-builder-execute/index.ts",
     "supabase/functions/revenue-forecast-ai/index.ts",
     "supabase/functions/revenue-intelligence/index.ts",
-    "supabase/functions/schedule-optimal-send/index.ts",
     "supabase/functions/semantic-coverage/index.ts",
     "supabase/functions/semantic-reindex-batch/index.ts",
     "supabase/functions/semantic-search-universal/index.ts",
@@ -117107,6 +117120,10 @@
    {
     "table": "teams",
     "column": "description"
+   },
+   {
+    "table": "bitrix24_sync_logs",
+    "column": "started_at"
    },
    {
     "table": "call_recordings",
@@ -121583,6 +121600,10 @@
     "msg": "LOVABLE_API_KEY missing"
    },
    {
+    "file": "supabase/functions/analyze-call/index.ts",
+    "msg": "not_found_or_unauthorized"
+   },
+   {
     "file": "supabase/functions/analyze-conversation/index.ts",
     "msg": "AI error ${ai.status}: ${txt}"
    },
@@ -122104,6 +122125,10 @@
    },
    {
     "file": "supabase/functions/schedule-optimal-send/index.ts",
+    "msg": "not_found_or_unauthorized"
+   },
+   {
+    "file": "supabase/functions/schedule-optimal-send/index.ts",
     "msg": "sale_id, channel, payload required"
    },
    {
@@ -122277,6 +122302,10 @@
    {
     "file": "supabase/functions/test-integration-connection/index.ts",
     "msg": "Missing url or anon_key"
+   },
+   {
+    "file": "supabase/functions/test-integration-connection/index.ts",
+    "msg": "URL not allowed: must be https and not a private/local address"
    },
    {
     "file": "supabase/functions/test-integration-connection/index.ts",
@@ -123293,6 +123322,10 @@
    {
     "file": "src/hooks/useSessionManagement.ts",
     "text": "Atualizar atividade da sessão — throttle: no máximo 1x a cada 10s"
+   },
+   {
+    "file": "src/hooks/useSyncedSetting.ts",
+    "text": "renovacao de token e a cada foco) e nao pode capturar o estado da 1a render."
    },
    {
     "file": "src/hooks/useUnreadNotificationsCount.ts",
@@ -140306,6 +140339,11 @@
     "value": "5"
    },
    {
+    "file": "supabase/functions/cron-failure-alerter/index.ts",
+    "name": "BITRIX24_FAILURE_THRESHOLD",
+    "value": "3"
+   },
+   {
     "file": "supabase/functions/deal-risk-digest/index.ts",
     "name": "DIGEST_TYPE",
     "value": "'deal_risk_digest'"
@@ -147718,6 +147756,12 @@
    {
     "file": "src/pages/Comissoes.tsx",
     "field": "status",
+    "value": "cancelled",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/Comissoes.tsx",
+    "field": "status",
     "value": "pending",
     "kind": "compara"
    },
@@ -149688,6 +149732,18 @@
     "field": "type",
     "value": "system",
     "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/cron-failure-alerter/index.ts",
+    "field": "type",
+    "value": "system",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/cron-failure-alerter/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "compara"
    },
    {
     "file": "supabase/functions/cron-failure-alerter/index.ts",
@@ -152308,6 +152364,12 @@
    {
     "file": "supabase/functions/receive-quote-webhook/index.ts",
     "field": "status",
+    "value": "duplicate_ignored",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/receive-quote-webhook/index.ts",
+    "field": "status",
     "value": "processing",
     "kind": "escreve"
    },
@@ -154525,7 +154587,7 @@
     "file": "src/pages/Comissoes.tsx",
     "name": "Comissoes",
     "params": "",
-    "body": "const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: CommissionStatus) => { const list …"
+    "body": "const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { if (c.status !== 'cancelled') t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: Comm …"
    },
    {
     "file": "src/pages/HistoricoDesafiosDiarios.tsx",
@@ -190795,6 +190857,7 @@
       "compara:src/components/dashboard/IntegrationStatusPanel.tsx",
       "compara:src/hooks/useQueryPerformance.ts",
       "compara:src/pages/ClosingTimePage.tsx",
+      "compara:supabase/functions/cron-failure-alerter/index.ts",
       "compara:supabase/functions/external-db-bridge/index.ts",
       "escreve:src/components/admin/BackendAutomationMonitor.tsx",
       "escreve:src/components/dashboard/DevKpiDebugPanel.tsx",
@@ -191120,6 +191183,7 @@
       "compara:src/pages/AcompanhamentoPedidos.tsx",
       "compara:src/pages/AdminAuditoriaPremiacoes.tsx",
       "compara:src/pages/Agenda.tsx",
+      "compara:src/pages/Comissoes.tsx",
       "compara:supabase/functions/sales-assistant-chat/index.ts",
       "escreve:src/hooks/agents/useApproveAgentRun.ts",
       "escreve:src/hooks/cadences/useBulkQuoteCadenceMutations.ts",
@@ -191633,7 +191697,8 @@
       "escreve:supabase/functions/receive-quote-sync/index.ts"
      ],
      "duplicate_ignored": [
-      "escreve:supabase/functions/receive-quote-sync/index.ts"
+      "escreve:supabase/functions/receive-quote-sync/index.ts",
+      "escreve:supabase/functions/receive-quote-webhook/index.ts"
      ],
      "dedupe_failed": [
       "escreve:supabase/functions/receive-quote-sync/index.ts"
@@ -225649,7 +225714,8 @@
     "kind": "status",
     "msg": "valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
-     "escreve:supabase/functions/receive-quote-sync/index.ts"
+     "escreve:supabase/functions/receive-quote-sync/index.ts",
+     "escreve:supabase/functions/receive-quote-webhook/index.ts"
     ]
    },
    {
@@ -226040,6 +226106,11 @@
    {
     "kind": "coluna",
     "msg": "coluna `description` usada no código não existe no schema de `teams`",
+    "where": []
+   },
+   {
+    "kind": "coluna",
+    "msg": "coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs`",
     "where": []
    },
    {
@@ -238221,7 +238292,7 @@
   },
   "src/components/financeiro/CommissionCalculator.tsx": {
    "path": "src/components/financeiro/CommissionCalculator.tsx",
-   "lines": 112,
+   "lines": 99,
    "exports": [
     "function CommissionCalculator"
    ]
@@ -247991,7 +248062,7 @@
   },
   "src/hooks/salesRealtimeUtils.ts": {
    "path": "src/hooks/salesRealtimeUtils.ts",
-   "lines": 134,
+   "lines": 141,
    "exports": [
     "const RANK_TITLES",
     "function getRankTitle",
@@ -253321,7 +253392,7 @@
   },
   "src/hooks/useSyncedSetting.ts": {
    "path": "src/hooks/useSyncedSetting.ts",
-   "lines": 234,
+   "lines": 252,
    "exports": [
     "type SyncStatus",
     "function useSyncedSetting"
@@ -253353,6 +253424,9 @@
      "name": "SyncStatus",
      "values": "idle | loading | syncing | synced | offline | error"
     }
+   ],
+   "rule_comments": [
+    "renovacao de token e a cada foco) e nao pode capturar o estado da 1a render."
    ],
    "hooks": [
     "useSyncedSetting"
@@ -254102,7 +254176,7 @@
   },
   "src/hooks/useWeightedForecast.ts": {
    "path": "src/hooks/useWeightedForecast.ts",
-   "lines": 211,
+   "lines": 212,
    "exports": [
     "function useWeightedForecast"
    ],
@@ -259012,7 +259086,7 @@
   },
   "src/hooks/dashboard/useDashboardKPIs.ts": {
    "path": "src/hooks/dashboard/useDashboardKPIs.ts",
-   "lines": 114,
+   "lines": 146,
    "exports": [
     "const useDashboardKPIs"
    ],
@@ -259047,7 +259121,7 @@
   },
   "src/hooks/dashboard/useDashboardKPIsPeriod.ts": {
    "path": "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
-   "lines": 366,
+   "lines": 389,
    "exports": [
     "type KPIPeriod",
     "interface KPIPeriodResult",
@@ -262592,7 +262666,7 @@
   },
   "src/hooks/playbooks/usePlaybookMutations.ts": {
    "path": "src/hooks/playbooks/usePlaybookMutations.ts",
-   "lines": 239,
+   "lines": 242,
    "exports": [
     "const useTogglePlaybookItem",
     "const useCreatePlaybook",
@@ -265279,7 +265353,7 @@
   },
   "src/hooks/sales/useSalesEnablement.ts": {
    "path": "src/hooks/sales/useSalesEnablement.ts",
-   "lines": 311,
+   "lines": 312,
    "exports": [
     "interface EnablementAsset",
     "interface Playbook",
@@ -265434,7 +265508,7 @@
   },
   "src/hooks/sales/useSalesRealtime.ts": {
    "path": "src/hooks/sales/useSalesRealtime.ts",
-   "lines": 162,
+   "lines": 167,
    "exports": [
     "function useSalesRealtime"
    ],
@@ -270910,6 +270984,11 @@
    "status_values": [
     {
      "field": "status",
+     "value": "cancelled",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
      "value": "pending",
      "kind": "compara"
     },
@@ -270943,7 +271022,7 @@
     {
      "name": "Comissoes",
      "params": "",
-     "body": "const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: CommissionStatus) => { const list …"
+     "body": "const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { if (c.status !== 'cancelled') t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: Comm …"
     }
    ]
   },
@@ -272658,6 +272737,9 @@
    "lines": 278,
    "exports": [
     "default Vendedores"
+   ],
+   "env": [
+    "DEV"
    ]
   },
   "src/pages/VictoryFeedPage.tsx": {
@@ -277617,8 +277699,12 @@
   },
   "supabase/functions/analyze-call/index.ts": {
    "path": "supabase/functions/analyze-call/index.ts",
-   "lines": 143,
+   "lines": 149,
    "tables": [
+    {
+     "table": "call_recordings",
+     "op": "select"
+    },
     {
      "table": "call_recordings",
      "op": "update"
@@ -277652,7 +277738,8 @@
    ],
    "errors": [
     "AI error ${aiRes.status}: ${txt}",
-    "LOVABLE_API_KEY missing"
+    "LOVABLE_API_KEY missing",
+    "not_found_or_unauthorized"
    ],
    "params": [
     {
@@ -278782,7 +278869,7 @@
   },
   "supabase/functions/bitrix24-sync/index.ts": {
    "path": "supabase/functions/bitrix24-sync/index.ts",
-   "lines": 1206,
+   "lines": 1215,
    "tables": [
     {
      "table": "bitrix24_sync_logs",
@@ -280293,7 +280380,7 @@
   },
   "supabase/functions/cron-failure-alerter/index.ts": {
    "path": "supabase/functions/cron-failure-alerter/index.ts",
-   "lines": 229,
+   "lines": 265,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -280301,6 +280388,14 @@
     },
     {
      "table": "user_roles",
+     "op": "select"
+    },
+    {
+     "table": "notifications",
+     "op": "insert"
+    },
+    {
+     "table": "bitrix24_sync_logs",
      "op": "select"
     },
     {
@@ -280316,6 +280411,10 @@
     "user_roles": [
      "role",
      "user_id"
+    ],
+    "bitrix24_sync_logs": [
+     "started_at",
+     "status"
     ]
    },
    "rpc": [
@@ -280326,11 +280425,27 @@
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
+   "params": [
+    {
+     "name": "BITRIX24_FAILURE_THRESHOLD",
+     "value": "3"
+    }
+   ],
    "status_values": [
     {
      "field": "type",
      "value": "system",
      "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "system",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "compara"
     },
     {
      "field": "role",
@@ -280346,8 +280461,12 @@
   },
   "supabase/functions/csat-ces-trigger/index.ts": {
    "path": "supabase/functions/csat-ces-trigger/index.ts",
-   "lines": 97,
+   "lines": 105,
    "tables": [
+    {
+     "table": "accounts",
+     "op": "select"
+    },
     {
      "table": "csat_ces_surveys",
      "op": "select"
@@ -280358,6 +280477,9 @@
     }
    ],
    "table_cols": {
+    "accounts": [
+     "id"
+    ],
     "csat_ces_surveys": [
      "account_id",
      "contact_email",
@@ -284169,7 +284291,7 @@
   },
   "supabase/functions/lead-scoring/index.ts": {
    "path": "supabase/functions/lead-scoring/index.ts",
-   "lines": 245,
+   "lines": 248,
    "tables": [
     {
      "table": "sales",
@@ -285208,7 +285330,7 @@
   },
   "supabase/functions/notify-v4-quote-status/index.ts": {
    "path": "supabase/functions/notify-v4-quote-status/index.ts",
-   "lines": 218,
+   "lines": 226,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -287565,8 +287687,12 @@
   },
   "supabase/functions/receive-quote-webhook/index.ts": {
    "path": "supabase/functions/receive-quote-webhook/index.ts",
-   "lines": 345,
+   "lines": 370,
    "tables": [
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "insert,select"
+    },
     {
      "table": "quote_sync_logs",
      "op": "insert,select"
@@ -287594,9 +287720,16 @@
     {
      "table": "quote_sync_logs",
      "op": "update"
+    },
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "delete"
     }
    ],
    "table_cols": {
+    "webhook_inbound_dedupe": [
+     "id"
+    ],
     "quote_sync_logs": [
      "id"
     ],
@@ -287627,6 +287760,11 @@
     }
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "duplicate_ignored",
+     "kind": "escreve"
+    },
     {
      "field": "status",
      "value": "processing",
@@ -288019,7 +288157,7 @@
   },
   "supabase/functions/rotate-daily-challenges/index.ts": {
    "path": "supabase/functions/rotate-daily-challenges/index.ts",
-   "lines": 139,
+   "lines": 142,
    "tables": [
     {
      "table": "daily_challenge_rotations",
@@ -288545,10 +288683,14 @@
   },
   "supabase/functions/schedule-optimal-send/index.ts": {
    "path": "supabase/functions/schedule-optimal-send/index.ts",
-   "lines": 87,
+   "lines": 95,
    "tables": [
     {
      "table": "send_time_profiles",
+     "op": "select"
+    },
+    {
+     "table": "sales",
      "op": "select"
     },
     {
@@ -288562,17 +288704,20 @@
      "best_hour",
      "confidence",
      "sale_id"
+    ],
+    "sales": [
+     "id"
     ]
    },
    "rpc": [
     "get_global_send_time_stats"
    ],
    "env": [
-    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
+    "not_found_or_unauthorized",
     "sale_id, channel, payload required",
     "unauthorized"
    ],
@@ -289798,8 +289943,12 @@
   },
   "supabase/functions/sequence-record-reply/index.ts": {
    "path": "supabase/functions/sequence-record-reply/index.ts",
-   "lines": 102,
+   "lines": 114,
    "tables": [
+    {
+     "table": "sequence_enrollments",
+     "op": "select"
+    },
     {
      "table": "sequence_step_executions",
      "op": "select"
@@ -289818,16 +289967,16 @@
     }
    ],
    "table_cols": {
+    "sequence_enrollments": [
+     "contact_id",
+     "contact_type",
+     "id"
+    ],
     "sequence_step_executions": [
      "enrollment_id",
      "id",
      "replied_at",
      "variant_id"
-    ],
-    "sequence_enrollments": [
-     "contact_id",
-     "contact_type",
-     "id"
     ]
    },
    "rpc": [
@@ -290577,7 +290726,7 @@
   },
   "supabase/functions/test-integration-connection/index.ts": {
    "path": "supabase/functions/test-integration-connection/index.ts",
-   "lines": 188,
+   "lines": 211,
    "tables": [
     {
      "table": "integration_connections",
@@ -290613,6 +290762,7 @@
     "Missing base_url",
     "Missing url",
     "Missing url or anon_key",
+    "URL not allowed: must be https and not a private/local address",
     "Unsupported kind: ${c.kind}"
    ],
    "status_values": [
@@ -298114,10 +298264,162 @@
   }
  },
  "git": {
-  "sha": "be744027447211454378ff70990570afc89f678b",
+  "sha": "96962bdd264aed4a449798b681819375134ccbb2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "96962bd",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)",
+    "files": [
+     "src/hooks/useSyncedSetting.ts"
+    ]
+   },
+   {
+    "sha": "d2006d2",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)",
+    "files": [
+     "src/hooks/dashboard/useDashboardKPIs.ts",
+     "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
+     "src/hooks/playbooks/usePlaybookMutations.ts",
+     "src/hooks/sales/useSalesEnablement.ts",
+     "src/hooks/sales/useSalesRealtime.ts",
+     "src/hooks/salesRealtimeUtils.ts"
+    ]
+   },
+   {
+    "sha": "339d0fa",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)",
+    "files": [
+     "src/pages/SecurityDashboard.tsx",
+     "src/pages/Vendedores.tsx"
+    ]
+   },
+   {
+    "sha": "23b32db",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)",
+    "files": [
+     "supabase/functions/cron-failure-alerter/index.ts"
+    ]
+   },
+   {
+    "sha": "ed53bd4",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)",
+    "files": [
+     "supabase/functions/receive-quote-webhook/index.ts"
+    ]
+   },
+   {
+    "sha": "f177678",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)",
+    "files": [
+     "supabase/functions/bitrix24-sync/index.ts",
+     "supabase/functions/notify-v4-quote-status/index.ts"
+    ]
+   },
+   {
+    "sha": "01065d8",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)",
+    "files": [
+     "supabase/functions/test-integration-connection/index.ts"
+    ]
+   },
+   {
+    "sha": "4fdd6dc",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)",
+    "files": [
+     "src/components/financeiro/CommissionCalculator.tsx",
+     "src/pages/Comissoes.tsx"
+    ]
+   },
+   {
+    "sha": "980247f",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: forecast falha visivelmente se metas falhar (QA-060) (#651)",
+    "files": [
+     "src/hooks/useWeightedForecast.ts"
+    ]
+   },
+   {
+    "sha": "acce427",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: exigir admin/gestor para recalculo em massa no lead-scoring (QA-017) (#648)",
+    "files": [
+     "supabase/functions/lead-scoring/index.ts"
+    ]
+   },
+   {
+    "sha": "2088c24",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: exigir admin para rotacao manual de desafios diarios (QA-016) (#647)",
+    "files": [
+     "supabase/functions/rotate-daily-challenges/index.ts"
+    ]
+   },
+   {
+    "sha": "9d455c9",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: salvar ctx e verificar ownership de account em csat-ces-trigger (QA-015) (#646)",
+    "files": [
+     "supabase/functions/csat-ces-trigger/index.ts"
+    ]
+   },
+   {
+    "sha": "e3600e9",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: escopar schedule-optimal-send a venda do chamador (QA-014) (#645)",
+    "files": [
+     "supabase/functions/schedule-optimal-send/index.ts"
+    ]
+   },
+   {
+    "sha": "93abc97",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: escopar sequence-record-reply ao dono da cadencia (QA-013) (#644)",
+    "files": [
+     "supabase/functions/sequence-record-reply/index.ts"
+    ]
+   },
+   {
+    "sha": "7213672",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: escopar analyze-call ao dono da gravacao via RLS (QA-012) (#643)",
+    "files": [
+     "supabase/functions/analyze-call/index.ts"
+    ]
+   },
+   {
+    "sha": "81455f3",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir custo de comissao no painel ROI (dividir por 100) (QA-041) (#642)",
+    "files": [
+     "src/hooks/dashboard/useROIDashboard.ts"
+    ]
+   },
    {
     "sha": "be74402",
     "date": "2026-11-23",
@@ -298259,318 +298561,87 @@
      "supabase/functions/bitrix24-sync/config_guard_test.ts",
      "supabase/functions/bitrix24-sync/index.ts"
     ]
-   },
-   {
-    "sha": "1976a23",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "chore: suite de asserts do dispatcher e do reconciler do pg_net (#617)",
-    "files": [
-     "scripts/run-sql-tests.sh",
-     "supabase/tests/retry_dispatcher_assertions.sql"
-    ]
-   },
-   {
-    "sha": "aec099f",
-    "date": "2026-11-22",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.7.2 (#611)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "88f8cde",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: timeout do pg_net por funcao no dispatcher de crons (#616)",
-    "files": [
-     "src/integrations/supabase/types.ts",
-     "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
-    ]
-   },
-   {
-    "sha": "b80439c",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: guard 503 explicito quando RESEND_API_KEY ausente nestas 3 funcoes (#615)",
-    "files": [
-     "supabase/functions/broadcast-sale-notification/index.ts",
-     "supabase/functions/new-device-alert/config_guard_test.ts",
-     "supabase/functions/new-device-alert/index.ts",
-     "supabase/functions/sdr-consecutive-alerts/index.ts"
-    ]
-   },
-   {
-    "sha": "fe3bf20",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: desambigua embed salespeople e expoe 503 quando falta secret de email (#614)",
-    "files": [
-     "supabase/functions/access-denied-alerts/config_guard_test.ts",
-     "supabase/functions/access-denied-alerts/index.ts",
-     "supabase/functions/broadcast-sale-notification/index.ts",
-     "supabase/functions/check-lead-sla/embed_fk_test.ts",
-     "supabase/functions/check-lead-sla/index.ts",
-     "supabase/functions/detect-at-risk-deals/index.ts",
-     "supabase/functions/send-alert-notifications/config_guard_test.ts",
-     "supabase/functions/send-alert-notifications/index.ts"
-    ]
-   },
-   {
-    "sha": "fef4c7e",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: nao re-enfileira 5xx por secret ausente (#613)",
-    "files": [
-     "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql"
-    ]
-   },
-   {
-    "sha": "67dc32e",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: reconcilia retry do pg_net em transacao separada (#612)",
-    "files": [
-     "src/integrations/supabase/types.ts",
-     "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql"
-    ]
-   },
-   {
-    "sha": "a8961ba",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: adiciona retry em trigger_internal_edge_job quando o pg_net falha no DNS (#609)",
-    "files": [
-     "supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql"
-    ]
-   },
-   {
-    "sha": "504a53e",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "chore: fecha alerta Dependabot #62 (minimatch) e forca glob seguro no workbox-build (#610)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "374d7d8",
-    "date": "2026-11-21",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.7.1 (#607)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "06e4384",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: busca semantica retornando zero resultados e login quebrado (500) (#608)",
-    "files": [
-     "src/hooks/semantic/useReindexBatch.ts",
-     "supabase/functions/_shared/semantic-content.ts",
-     "supabase/functions/semantic-index-entity/index.ts",
-     "supabase/functions/semantic-reindex-batch/index.ts",
-     "supabase/migrations/20260522130044_8979a1fe-d93b-487c-8a11-963fa5f9fa8e.sql",
-     "supabase/migrations/20261123000000_semantic_index_hnsw_and_status_filters.sql",
-     "supabase/migrations/20261123000100_fix_auth_users_token_columns_and_identities.sql",
-     "supabase/seed.sql"
-    ]
-   },
-   {
-    "sha": "bff6aa6",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: embeddings via OpenRouter e cron de reindexacao semantica (#606)",
-    "files": [
-     "supabase/functions/_shared/ai-gateway.ts",
-     "supabase/functions/semantic-index-entity/index.ts",
-     "supabase/functions/semantic-reindex-batch/index.ts",
-     "supabase/functions/semantic-search-universal/index.ts",
-     "supabase/functions/visual-search/index.ts",
-     "supabase/migrations/20261122000000_schedule_semantic_reindex_cron.sql"
-    ]
-   },
-   {
-    "sha": "a122081",
-    "date": "2026-11-21",
-    "author": "github-actions[bot]",
-    "subject": "chore(release): 1.7.0 (#605)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "6e92a51",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "fix: corrige chave de chat e search_path da busca semantica (#604)",
-    "files": [
-     "supabase/functions/semantic-search-universal/index.ts",
-     "supabase/functions/visual-search/index.ts",
-     "supabase/migrations/20261121000000_fix_search_path_similarity_e_pgvector.sql"
-    ]
-   },
-   {
-    "sha": "b20af81",
-    "date": "2026-11-21",
-    "author": "adm01-debug",
-    "subject": "feat: troca IA de chat do Lovable para OpenRouter (#603)",
-    "files": [
-     "docs/DEPLOYMENT.md",
-     "docs/SECRETS_ROTATION.md",
-     "supabase/functions/_shared/ai-gateway.ts",
-     "supabase/functions/ai-agent-orchestrator/index.ts",
-     "supabase/functions/ai-copilot/index.ts",
-     "supabase/functions/ai-email-composer/index.ts",
-     "supabase/functions/analyze-call/index.ts",
-     "supabase/functions/analyze-conversation/index.ts",
-     "supabase/functions/analyze-pipeline-coverage/index.ts",
-     "supabase/functions/analyze-sentiment-timeline/index.ts",
-     "supabase/functions/analyze-skill-gaps/index.ts",
-     "supabase/functions/analyze-stage-conversion/index.ts",
-     "supabase/functions/analyze-win-loss/index.ts",
-     "supabase/functions/behavioral-analysis/index.ts",
-     "supabase/functions/calculate-deal-health/index.ts",
-     "supabase/functions/coaching-session-prep/index.ts",
-     "supabase/functions/detect-at-risk-deals/index.ts",
-     "supabase/functions/detect-coaching-opportunities/index.ts",
-     "supabase/functions/detect-critical-moments/index.ts",
-     "supabase/functions/diarize-call-recording/index.ts",
-     "supabase/functions/email-composer-bulk/index.ts",
-     "supabase/functions/extract-coaching-actions/index.ts",
-     "supabase/functions/extract-committee-from-call/index.ts",
-     "supabase/functions/extract-deal-stakeholders/index.ts",
-     "supabase/functions/forecast-narrative/index.ts",
-     "supabase/functions/generate-coaching-actions/index.ts",
-     "supabase/functions/generate-executive-briefing/index.ts",
-     "supabase/functions/generate-loss-coaching/index.ts",
-     "supabase/functions/generate-revenue-forecast/index.ts",
-     "supabase/functions/mine-win-loss-patterns/index.ts",
-     "supabase/functions/next-best-action/index.ts",
-     "supabase/functions/nlq-query/index.ts",
-     "supabase/functions/personal-assistant-stream/index.ts",
-     "supabase/functions/predict-deal-velocity/index.ts",
-     "supabase/functions/predict-quota-attainment/index.ts",
-     "supabase/functions/predictive-intelligence/index.ts",
-     "supabase/functions/predictive-scoring-explain/index.ts",
-     "supabase/functions/purchase-intelligence-forecast/index.ts",
-     "supabase/functions/qbr-generator/index.ts",
-     "supabase/functions/race-commentary/index.ts",
-     "supabase/functions/revenue-forecast-ai/index.ts",
-     "supabase/functions/sales-assistant-chat/index.ts",
-     "supabase/functions/salesperson-coaching/index.ts",
-     "supabase/functions/semantic-search-universal/index.ts",
-     "supabase/functions/semantic-search/index.ts",
-     "supabase/functions/summarize-call-recording/index.ts",
-     "supabase/functions/transcribe-call-recording/index.ts"
-    ]
-   },
-   {
-    "sha": "33b3f1c",
-    "date": "2026-11-21",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.6.2 (#599)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
-    "package-lock.json",
-    7
-   ],
-   [
-    "package.json",
-    7
+    "supabase/functions/bitrix24-sync/index.ts",
+    2
    ],
    [
     ".release-please-manifest.json",
-    6
+    2
    ],
    [
     "CHANGELOG.md",
-    6
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    3
-   ],
-   [
-    "supabase/functions/semantic-search-universal/index.ts",
-    3
-   ],
-   [
-    "supabase/functions/new-device-alert/index.ts",
     2
    ],
    [
-    "supabase/tests/retry_dispatcher_assertions.sql",
+    "package-lock.json",
     2
    ],
    [
-    "supabase/functions/broadcast-sale-notification/index.ts",
+    "package.json",
     2
    ],
    [
-    "supabase/functions/detect-at-risk-deals/index.ts",
-    2
-   ],
-   [
-    "supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql",
-    2
-   ],
-   [
-    "supabase/functions/semantic-index-entity/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/semantic-reindex-batch/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/_shared/ai-gateway.ts",
-    2
-   ],
-   [
-    "supabase/functions/visual-search/index.ts",
-    2
-   ],
-   [
-    "src/hooks/useEligibleBonuses.test.ts",
+    "src/hooks/useSyncedSetting.ts",
     1
    ],
    [
-    "src/hooks/useEligibleBonuses.ts",
+    "src/hooks/dashboard/useDashboardKPIs.ts",
     1
    ],
    [
-    "supabase/functions/notify-critical-pattern/index.ts",
+    "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
     1
    ],
    [
-    "supabase/functions/workflow-executor/index.ts",
+    "src/hooks/playbooks/usePlaybookMutations.ts",
     1
    ],
    [
-    "supabase/functions/execute-workflow/index.ts",
+    "src/hooks/sales/useSalesEnablement.ts",
+    1
+   ],
+   [
+    "src/hooks/sales/useSalesRealtime.ts",
+    1
+   ],
+   [
+    "src/hooks/salesRealtimeUtils.ts",
+    1
+   ],
+   [
+    "src/pages/SecurityDashboard.tsx",
+    1
+   ],
+   [
+    "src/pages/Vendedores.tsx",
+    1
+   ],
+   [
+    "supabase/functions/cron-failure-alerter/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/receive-quote-webhook/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/notify-v4-quote-status/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/test-integration-connection/index.ts",
+    1
+   ],
+   [
+    "src/components/financeiro/CommissionCalculator.tsx",
+    1
+   ],
+   [
+    "src/pages/Comissoes.tsx",
     1
    ]
   ]

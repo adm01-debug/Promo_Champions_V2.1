@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `be74402744` · branch `main` · 2026-11-23 13:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96962bdd26` · branch `main` · 2026-11-23 13:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1492,7 +1492,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `breached` | compara | `src/components/pipeline/SLADashboard.tsx`<br>`src/hooks/useDealSLAs.ts` |
 | `status` | `busy` | compara | `supabase/functions/twilio-call-status/index.ts` |
 | `status` | `canceled` | compara | `supabase/functions/twilio-call-status/index.ts` |
-| `status` | `cancelled` | compara, escreve, filtra | `src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/orders/orderHelpers.ts`<br>`src/components/vendedor/VendedorBottomRow.tsx`<br>… +16 |
+| `status` | `cancelled` | compara, escreve, filtra | `src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/orders/orderHelpers.ts`<br>`src/components/vendedor/VendedorBottomRow.tsx`<br>… +17 |
 | `status` | `churned` | compara | `supabase/functions/customer-success-360/index.ts` |
 | `status` | `closed` | compara | `supabase/migrations/20260105000004_performance_indexes.sql` |
 | `status` | `closed_lost` | compara | `src/components/assistant/DealPreviewCard.tsx`<br>`src/components/assistant/dealRiskCalculator.ts` |
@@ -1508,9 +1508,9 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx` |
 | `status` | `done` | escreve | `src/hooks/dialer/usePowerDialer.ts` |
 | `status` | `draft` | compara, escreve | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/quotes/QuoteCard.tsx`<br>`src/components/quotes/QuoteDetailDialog.tsx`<br>`src/hooks/cadences/useABTests.ts`<br>`src/hooks/useDigitalSignatures.ts`<br>… +2 |
-| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
+| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
 | `status` | `erro` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| `status` | `error` | compara, escreve | `src/components/admin/BackendAutomationMonitor.tsx`<br>`src/components/admin/QuoteSyncLogsPanel.tsx`<br>`src/components/dashboard/DevKpiDebugPanel.tsx`<br>`src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/hooks/useQueryPerformance.ts`<br>… +4 |
+| `status` | `error` | compara, escreve | `src/components/admin/BackendAutomationMonitor.tsx`<br>`src/components/admin/QuoteSyncLogsPanel.tsx`<br>`src/components/dashboard/DevKpiDebugPanel.tsx`<br>`src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/hooks/useQueryPerformance.ts`<br>… +5 |
 | `status` | `etapa_inexistente` | escreve | `supabase/functions/_shared/deal-probability-calc_test.ts` |
 | `status` | `event_required` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `executing` | escreve | `supabase/functions/ai-agent-orchestrator/index.ts` |
@@ -2465,7 +2465,7 @@ _nenhum item encontrado_
   ```
 - **Comissoes()** — `src/pages/Comissoes.tsx`
   ```
-  const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: CommissionStatus) => { const list …
+  const { data: commissions = [], isLoading } = useMyCommissions(); const totals = useMemo(() => { const t = { pending: 0, approved: 0, paid: 0, all: 0 }; for (const c of commissions) { if (c.status !== 'cancelled') t.all += c.commission_amount; if (c.status === 'pending') t.pending += c.commission_amount; else if (c.status === 'approved') t.approved += c.commission_amount; else if (c.status === 'paid') t.paid += c.commission_amount; } return t; }, [commissions]); const renderList = (filter?: Comm …
   ```
 - **calculateStreak(dates: string[], grouped: Record<string, DailyChallengeWithProgress[]>)** — `src/pages/HistoricoDesafiosDiarios.tsx`
   ```
@@ -3151,6 +3151,7 @@ _nenhum item encontrado_
 | `PENDING_CLAIM_STALE_MS` | `60` | `supabase/functions/bitrix24-sync/index.ts` |
 | `BITRIX_LIST_MAX_PAGES` | `40` | `supabase/functions/bitrix24-sync/index.ts` |
 | `MAX_ATTEMPTS` | `5` | `supabase/functions/check-v4-callback-alerts/index.ts` |
+| `BITRIX24_FAILURE_THRESHOLD` | `3` | `supabase/functions/cron-failure-alerter/index.ts` |
 | `DIGEST_TYPE` | `'deal_risk_digest'` | `supabase/functions/deal-risk-digest/index.ts` |
 | `HEALTH_THRESHOLD` | `50` | `supabase/functions/deal-risk-digest/index.ts` |
 | `TOP_N` | `5` | `supabase/functions/deal-risk-digest/index.ts` |
@@ -4155,7 +4156,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +693 linhas — lista completa em `context.json` | |
+| … +696 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4823,6 +4824,7 @@ _nenhum item encontrado_
 | Request notification permission on mount | `src/hooks/useSDRAlertNotifications.ts` |
 | Limit to recent activities for speed | `src/hooks/useSDRMetrics.ts` |
 | Atualizar atividade da sessão — throttle: no máximo 1x a cada 10s | `src/hooks/useSessionManagement.ts` |
+| renovacao de token e a cada foco) e nao pode capturar o estado da 1a render. | `src/hooks/useSyncedSetting.ts` |
 | O cache de módulo não expira sozinho: no logout/troca de conta a | `src/hooks/useUnreadNotificationsCount.ts` |
 | Falha de listagem não pode parecer "nenhuma passkey" — expõe erro. | `src/hooks/useWebAuthn.ts` |
 | verifyOtp falhando não pode ser tratado como login bem-sucedido. | `src/hooks/useWebAuthn.ts` |
@@ -5045,5 +5047,4 @@ _nenhum item encontrado_
 | Marca APENAS a execução enviada mais recente — senão uma | `supabase/functions/inbound-email-webhook/index.ts` |
 | Contract validation | `supabase/functions/lead-scoring/index.ts` |
 | PostgREST `?id=in.(...)` has a URL length limit (~8KB gateway cap); | `supabase/functions/lead-scoring/index.ts` |
-| For this simulation, we'll focus on contract validation and logic coverage | `supabase/functions/lead-scoring/lead-scoring_test.ts` |
-| … +135 linhas — lista completa em `context.json` | |
+| … +136 linhas — lista completa em `context.json` | |

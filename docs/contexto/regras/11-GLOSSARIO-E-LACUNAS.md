@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `be74402744` · branch `main` · 2026-11-23 13:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `96962bdd26` · branch `main` · 2026-11-23 13:44 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -397,7 +397,7 @@
 | status | valor `correlation_key_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `data_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `external_quote_id_required` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
-| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
+| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts` |
 | status | valor `dedupe_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `lookup_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `upsert_failed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
@@ -458,6 +458,7 @@
 | coluna | coluna `total_score` usada no código não existe no schema de `lead_scores` |  |
 | coluna | coluna `salesperson_id` usada no código não existe no schema de `sequence_enrollments` |  |
 | coluna | coluna `description` usada no código não existe no schema de `teams` |  |
+| coluna | coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs` |  |
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_recordings` |  |
 | coluna | coluna `sale_id` usada no código não existe no schema de `coaching_actions` |  |
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_sentiment_timeline` |  |

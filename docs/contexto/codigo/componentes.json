@@ -8067,7 +8067,7 @@
     "CommissionCalculator"
    ],
    "export_default": null,
-   "linhas": 112,
+   "linhas": 99,
    "dominio": "components/financeiro",
    "hooks_locais": [],
    "tabelas": [],
