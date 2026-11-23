@@ -42,6 +42,9 @@ export const useTogglePlaybookItem = () => {
       queryClient.invalidateQueries({
         queryKey: ['playbook-progress', variables.saleId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['playbook-progress-all', variables.saleId],
+      });
     },
     onError: _error => {
       toast.error('Erro ao atualizar checklist');
