@@ -36,7 +36,11 @@ export const DashboardThemeProvider: React.FC<{ children: React.ReactNode }> = (
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setThemeState(prev => (prev === 'standard' ? 'cyber' : 'standard'));
+    setThemeState(prev => {
+      const next = prev === 'standard' ? 'cyber' : 'standard';
+      window.localStorage.setItem('dashboard-style-theme', next);
+      return next;
+    });
   }, []);
 
   useEffect(() => {

@@ -39,6 +39,10 @@ vi.mock('@/integrations/supabase/client', () => {
   };
 });
 
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ user: { id: 'auth-1' } }),
+}));
+
 const { useLeagues, useLeagueEnrollment, useJoinLeague } = await import('./useLeagues');
 
 let client: QueryClient;

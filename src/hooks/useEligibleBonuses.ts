@@ -142,6 +142,7 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
       ]);
 
       if (bonusesRes.error) throw bonusesRes.error;
+      if (salesRes.error) throw salesRes.error;
 
       // eslint-disable-next-line no-restricted-syntax
       const bonuses = (bonusesRes.data ?? []) as unknown as CommissionBonus[];

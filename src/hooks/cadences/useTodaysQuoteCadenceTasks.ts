@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface TodaysQuoteCadenceTask {
@@ -19,8 +20,10 @@ interface TodaysQuoteCadenceTask {
  * (prospect_cadences.quote_id IS NOT NULL) for the current authenticated salesperson.
  */
 export function useTodaysQuoteCadenceTasks() {
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
   return useQuery({
-    queryKey: ['todays-quote-cadence-tasks'],
+    queryKey: ['todays-cadence-tasks', userId],
     queryFn: async () => {
       const { data: auth } = await supabase.auth.getUser();
       const userId = auth.user?.id;
