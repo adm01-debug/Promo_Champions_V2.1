@@ -8079,8 +8079,9 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
+    "src/components/admin/AwardActions.tsx",
     "src/hooks/useMyBonusAwards.ts",
     "src/pages/AdminAuditoriaPremiacoes.tsx",
     "src/pages/MinhasPremiacoes.tsx"

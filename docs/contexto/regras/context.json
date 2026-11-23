@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5a8ce9997abb359518f0a75053b147202e13db99",
+  "sha": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 20:50 UTC",
-  "files_total": 3653,
-  "code_files": 3304,
-  "code_lines": 479347
+  "generated_at": "2026-11-23 21:01 UTC",
+  "files_total": 3654,
+  "code_files": 3305,
+  "code_lines": 479550
  },
  "version": "1.3.2",
- "facts_hash": "84ec577b7b01447c",
+ "facts_hash": "646e59150c4a707d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1377,
+   ".tsx": 1378,
    ".ts": 1124,
    ".sql": 721,
    ".mjs": 72,
@@ -93584,7 +93584,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 13
+    "deps_count": 15
    },
    {
     "path": "",
@@ -94176,7 +94176,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 17
+    "deps_count": 18
    },
    {
     "path": "",
@@ -102691,7 +102691,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1226,
+  "components_count": 1227,
   "hooks": [
    {
     "name": "useContacts",
@@ -106642,8 +106642,8 @@
   },
   {
    "module": "src/components",
-   "files": 1226,
-   "lines": 193167,
+   "files": 1227,
+   "lines": 193334,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -106750,14 +106750,14 @@
     "AdminSecurityPanel.tsx: AdminSecurityPanel",
     "AdminSystemStatus.tsx: AdminSystemStatus",
     "AutomationRulesPanel.tsx: AutomationRulesPanel",
+    "AwardActions.tsx: AwardRowActions, AwardDestructiveDialogs",
     "BackendAutomationMonitor.tsx: BackendAutomationMonitor",
     "ExternalDBSettings.tsx: ExternalDBSettings",
     "InboundReplyLogPanel.tsx: InboundReplyLogPanel",
     "MergeConflictsResolver.tsx: MergeConflictsResolver",
     "PerformanceMonitor.tsx: PerformanceMonitor",
     "QuoteSyncLogsPanel.tsx: QuoteSyncLogsPanel",
-    "SemanticReindexPanel.tsx: SemanticReindexPanel",
-    "ChurnHistoryChart.tsx: ChurnHistoryChart"
+    "SemanticReindexPanel.tsx: SemanticReindexPanel"
    ],
    "docs": [
     "DealVelocityChart.tsx: DealVelocityChart - visualizes deal pipeline velocity",
@@ -106842,6 +106842,7 @@
     "src/components/admin/AdminSecurityPanel.tsx",
     "src/components/admin/AdminSystemStatus.tsx",
     "src/components/admin/AutomationRulesPanel.tsx",
+    "src/components/admin/AwardActions.tsx",
     "src/components/admin/BackendAutomationMonitor.tsx",
     "src/components/admin/ExternalDBSettings.tsx",
     "src/components/admin/InboundReplyLogPanel.tsx",
@@ -106886,8 +106887,7 @@
     "src/components/admin/connections/useCredentialsSource.ts",
     "src/components/admin/task-console/BulkActionBar.tsx",
     "src/components/admin/task-console/PendingApprovalsQueue.tsx",
-    "src/components/admin/task-console/SquadManager.tsx",
-    "src/components/admin/task-console/TaskAssignmentDialog.tsx"
+    "src/components/admin/task-console/SquadManager.tsx"
    ]
   },
   {
@@ -107606,7 +107606,7 @@
   {
    "module": "src/pages",
    "files": 180,
-   "lines": 44518,
+   "lines": 44554,
    "tables": [
     "achievements",
     "activities",
@@ -230458,6 +230458,14 @@
     "function AutomationRulesPanel"
    ]
   },
+  "src/components/admin/AwardActions.tsx": {
+   "path": "src/components/admin/AwardActions.tsx",
+   "lines": 167,
+   "exports": [
+    "function AwardRowActions",
+    "function AwardDestructiveDialogs"
+   ]
+  },
   "src/components/admin/BackendAutomationMonitor.tsx": {
    "path": "src/components/admin/BackendAutomationMonitor.tsx",
    "lines": 181,
@@ -270234,7 +270242,7 @@
   },
   "src/pages/AdminAuditoriaPremiacoes.tsx": {
    "path": "src/pages/AdminAuditoriaPremiacoes.tsx",
-   "lines": 617,
+   "lines": 594,
    "exports": [
     "function AdminAuditoriaPremiacoes"
    ],
@@ -271431,7 +271439,7 @@
   },
   "src/pages/FeatureFlagsAdmin.tsx": {
    "path": "src/pages/FeatureFlagsAdmin.tsx",
-   "lines": 280,
+   "lines": 339,
    "exports": [
     "default FeatureFlagsAdmin"
    ],
@@ -298429,10 +298437,22 @@
   }
  },
  "git": {
-  "sha": "5a8ce9997abb359518f0a75053b147202e13db99",
+  "sha": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9098770",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/admin/AwardActions.tsx",
+     "src/pages/AdminAuditoriaPremiacoes.tsx",
+     "src/pages/FeatureFlagsAdmin.tsx"
+    ]
+   },
    {
     "sha": "5a8ce99",
     "date": "2026-11-23",
@@ -298724,25 +298744,24 @@
     "files": [
      "supabase/functions/schedule-optimal-send/index.ts"
     ]
-   },
-   {
-    "sha": "93abc97",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: escopar sequence-record-reply ao dono da cadencia (QA-013) (#644)",
-    "files": [
-     "supabase/functions/sequence-record-reply/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    3
+    4
    ],
    [
-    "supabase/functions/sequence-record-reply/index.ts",
-    2
+    "src/components/admin/AwardActions.tsx",
+    1
+   ],
+   [
+    "src/pages/AdminAuditoriaPremiacoes.tsx",
+    1
+   ],
+   [
+    "src/pages/FeatureFlagsAdmin.tsx",
+    1
    ],
    [
     "supabase/functions/helpdesk-sync/index.ts",
@@ -298806,14 +298825,6 @@
    ],
    [
     "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
-    1
-   ],
-   [
-    "src/hooks/dialer/useClickToCall.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useLeagues.test.tsx",
     1
    ]
   ]

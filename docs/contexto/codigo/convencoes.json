@@ -6,7 +6,7 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1109)",
+   "src/components (1110)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1289)"
+  ".tsx (1290)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)",
    "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)",
    "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)",
    "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)",
-   "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)",
-   "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)"
+   "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

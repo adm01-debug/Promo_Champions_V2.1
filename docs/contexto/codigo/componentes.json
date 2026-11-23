@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1289,
+ "total": 1290,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -571,6 +571,21 @@
     "useAutomationRules",
     "useToggleAutomationRule"
    ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/AwardActions.tsx",
+   "exports": [
+    "AwardDestructiveDialogs",
+    "AwardRowActions"
+   ],
+   "export_default": null,
+   "linhas": 167,
+   "dominio": "components/admin",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -15643,7 +15658,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 24,
+   "usado_por": 26,
    "orfao": false
   },
   {
@@ -15740,7 +15755,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 541,
+   "usado_por": 542,
    "orfao": false
   },
   {
@@ -17985,7 +18000,7 @@
     "AdminAuditoriaPremiacoes"
    ],
    "export_default": "AdminAuditoriaPremiacoes",
-   "linhas": 617,
+   "linhas": 594,
    "dominio": "pages",
    "hooks_locais": [
     "useCommissionBonusAwards",
@@ -19083,7 +19098,7 @@
     "FeatureFlagsAdmin"
    ],
    "export_default": "FeatureFlagsAdmin",
-   "linhas": 280,
+   "linhas": 339,
    "dominio": "pages",
    "hooks_locais": [
     "useCreateFeatureFlag",

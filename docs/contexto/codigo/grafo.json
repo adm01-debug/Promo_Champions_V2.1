@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2341,
- "arestas": 9631,
+ "nos": 2342,
+ "arestas": 9637,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 541
+   "importado_por": 542
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -30,7 +30,7 @@
   },
   {
    "arquivo": "src/lib/money.ts",
-   "importado_por": 192
+   "importado_por": 193
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -157,11 +157,11 @@
    "importado_por": 28
   },
   {
-   "arquivo": "src/components/ui/slider.tsx",
+   "arquivo": "src/components/ui/alert-dialog.tsx",
    "importado_por": 26
   },
   {
-   "arquivo": "supabase/functions/_shared/validation.ts",
+   "arquivo": "src/components/ui/slider.tsx",
    "importado_por": 26
   }
  ],

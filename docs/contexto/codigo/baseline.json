@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5a8ce9997abb359518f0a75053b147202e13db99",
+  "commit": "9098770bb4933fae22c1b5b74d9c4bbe18f2e859",
   "branch": "main",
-  "data_commit": "2026-11-23T20:49:49Z",
+  "data_commit": "2026-11-23T21:00:45Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9098770",
+    "data": "2026-11-23",
+    "assunto": "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)"
+   },
    {
     "sha": "5a8ce99",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "4fdd6dc",
     "data": "2026-11-23",
     "assunto": "fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)"
-   },
-   {
-    "sha": "980247f",
-    "data": "2026-11-23",
-    "assunto": "fix: forecast falha visivelmente se metas falhar (QA-060) (#651)"
    }
   ],
-  "arquivos_mudados_7d": 281,
+  "arquivos_mudados_7d": 284,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "src/components/admin",
-    "mudancas": 70
+    "mudancas": 71
    },
    {
     "pasta": "src/components/ui",
@@ -262,6 +262,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "inventario/estado/banco.json",
     "mudancas": 5
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": ".github/workflows/types-sync.yml",
     "mudancas": 4
-   },
-   {
-    "arquivo": "AGENTS.md",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 241
+    "commits": 242
    },
    {
     "autor": "dependabot[bot]",
@@ -313,20 +313,20 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 10
+    "commits": 9
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3638,
-  "arquivos_codigo": 2583,
-  "linhas_codigo": 444241,
+  "arquivos_total": 3639,
+  "arquivos_codigo": 2584,
+  "linhas_codigo": 444444,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
   "modulos": 174,
-  "componentes": 1289,
+  "componentes": 1290,
   "hooks": 483,
   "edge_functions": 171,
   "tabelas": 419,
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1226,
-   "linhas": 193168
+   "arquivos": 1227,
+   "linhas": 193335
   },
   "src/config": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44518
+   "linhas": 44554
   },
   "src/routes": {
    "arquivos": 5,

@@ -326,6 +326,12 @@
    "src/components/ui/tabs.tsx",
    "src/hooks/automation/useAutomationRules.ts"
   ],
+  "src/components/admin/AwardActions.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/hooks/useCommissionBonusAwards.ts",
+   "src/lib/money.ts"
+  ],
   "src/components/admin/BackendAutomationMonitor.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -9963,6 +9969,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/pages/AdminAuditoriaPremiacoes.tsx": [
+   "src/components/admin/AwardActions.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -10729,6 +10736,7 @@
   ],
   "src/pages/FeatureFlagsAdmin.tsx": [
    "src/components/transitions/PageTransition.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
