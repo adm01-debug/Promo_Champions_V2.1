@@ -1,4 +1,4 @@
-import { Client } from '@/types';
+﻿import { Client } from '@/types';
 import { CACHE_TIMES } from '@/constants';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -75,8 +75,8 @@ export const useUpdateClient = () => {
       ),
     onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
-      const previous = queryClient.getQueryData(['clients']);
-      queryClient.setQueryData(['clients'], (old: Client[] | undefined) =>
+      const previous = queryClient.getQueriesData<Client[]>({ queryKey: ['clients'] });
+      queryClient.setQueriesData<Client[]>({ queryKey: ['clients'] }, old =>
         old?.map(c => (c.id === newData.id ? { ...c, ...newData } : c))
       );
       return { previous };
@@ -87,7 +87,7 @@ export const useUpdateClient = () => {
       toast.success('Cliente atualizado!');
     },
     onError: (_err, _vars, ctx) => {
-      queryClient.setQueryData(['clients'], ctx?.previous);
+      ctx?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Erro ao atualizar cliente');
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['clients'] }),
@@ -101,15 +101,15 @@ export const useDeleteClient = () => {
     mutationFn: (clientId: string) => clientService.deleteClient(clientId),
     onMutate: async clientId => {
       await queryClient.cancelQueries({ queryKey: ['clients'] });
-      const previous = queryClient.getQueryData(['clients']);
-      queryClient.setQueryData(['clients'], (old: Client[] | undefined) =>
+      const previous = queryClient.getQueriesData<Client[]>({ queryKey: ['clients'] });
+      queryClient.setQueriesData<Client[]>({ queryKey: ['clients'] }, old =>
         old?.filter(c => c.id !== clientId)
       );
       return { previous };
     },
     onSuccess: () => toast.success('Cliente excluído'),
     onError: (_err, _id, ctx) => {
-      queryClient.setQueryData(['clients'], ctx?.previous);
+      ctx?.previous?.forEach(([key, data]) => queryClient.setQueryData(key, data));
       toast.error('Erro ao excluir cliente');
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['clients'] }),
