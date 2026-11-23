@@ -9,6 +9,8 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  /** true quando a gravacao no servidor falhou: a mensagem existe so na tela. */
+  notSaved?: boolean;
 }
 
 export interface Conversation {
@@ -128,7 +130,11 @@ export const useSalesAssistant = (
   );
 
   const saveMessage = useCallback(
-    async (conversationId: string, role: 'user' | 'assistant', content: string) => {
+    async (
+      conversationId: string,
+      role: 'user' | 'assistant',
+      content: string
+    ): Promise<boolean> => {
       try {
         const { error: msgError } = await supabase
           .from('chat_messages')
@@ -142,9 +148,12 @@ export const useSalesAssistant = (
           .eq('id', conversationId);
 
         if (convError) throw convError;
+        return true;
       } catch (error) {
         console.error('Error saving message:', error);
-        // Only re-throw if it's critical, or handle gracefully
+        // A conversa continua na tela (nao bloqueia a resposta); o chamador
+        // marca a mensagem como nao salva para o usuario saber.
+        return false;
       }
     },
     []
@@ -168,7 +177,12 @@ export const useSalesAssistant = (
           convId = await createConversation(content);
         }
         if (convId) {
-          await saveMessage(convId, 'user', content);
+          const saved = await saveMessage(convId, 'user', content);
+          if (!saved) {
+            setMessages(prev =>
+              prev.map(m => (m.id === userMessage.id ? { ...m, notSaved: true } : m))
+            );
+          }
         } else {
           throw new Error('Não foi possível criar ou encontrar uma conversa.');
         }
@@ -258,7 +272,12 @@ export const useSalesAssistant = (
         }
 
         if (assistantContent) {
-          await saveMessage(convId, 'assistant', assistantContent);
+          const saved = await saveMessage(convId, 'assistant', assistantContent);
+          if (!saved) {
+            setMessages(prev =>
+              prev.map(m => (m.id === assistantMsgId ? { ...m, notSaved: true } : m))
+            );
+          }
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
