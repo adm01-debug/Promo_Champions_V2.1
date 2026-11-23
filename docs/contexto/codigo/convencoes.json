@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)",
-   "fix: receive-design-sync sem verify_jwt (webhook HMAC)",
-   "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)",
-   "feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)",
-   "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)"
+   "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)",
+   "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)",
+   "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)",
+   "docs: marca etapas 121-126 no checklist de QA (#680)",
+   "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

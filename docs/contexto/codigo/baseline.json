@@ -2,11 +2,61 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e328672023e16a579726dd7361a03835ae399f6d",
+  "commit": "546a22902a648a50a6b330b5b03bbd9234a14e3c",
   "branch": "main",
-  "data_commit": "2026-11-23T22:08:18Z",
+  "data_commit": "2026-11-23T23:12:09Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "546a229",
+    "data": "2026-11-23",
+    "assunto": "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)"
+   },
+   {
+    "sha": "27e826b",
+    "data": "2026-11-23",
+    "assunto": "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)"
+   },
+   {
+    "sha": "421ad72",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)"
+   },
+   {
+    "sha": "96ca434",
+    "data": "2026-11-23",
+    "assunto": "docs: marca etapas 121-126 no checklist de QA (#680)"
+   },
+   {
+    "sha": "f42eb57",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)"
+   },
+   {
+    "sha": "cef0dfd",
+    "data": "2026-11-23",
+    "assunto": "chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)"
+   },
+   {
+    "sha": "cdee014",
+    "data": "2026-11-23",
+    "assunto": "chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)"
+   },
+   {
+    "sha": "4a38ccf",
+    "data": "2026-11-23",
+    "assunto": "chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)"
+   },
+   {
+    "sha": "c5edf84",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)"
+   },
+   {
+    "sha": "6979cae",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)"
+   },
    {
     "sha": "e328672",
     "data": "2026-11-23",
@@ -81,59 +131,9 @@
     "sha": "bdea3f7",
     "data": "2026-11-23",
     "assunto": "fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)"
-   },
-   {
-    "sha": "b0ac351",
-    "data": "2026-11-23",
-    "assunto": "fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)"
-   },
-   {
-    "sha": "84b35ed",
-    "data": "2026-11-23",
-    "assunto": "fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)"
-   },
-   {
-    "sha": "56a3e80",
-    "data": "2026-11-23",
-    "assunto": "docs: marca as 27 etapas ja mergeadas no checklist de QA (#671)"
-   },
-   {
-    "sha": "e58a9dc",
-    "data": "2026-11-23",
-    "assunto": "fix: assinar webhook Win/Loss com HMAC-SHA256 (QA-092) (#655)"
-   },
-   {
-    "sha": "390db00",
-    "data": "2026-11-23",
-    "assunto": "fix: sequence-record-reply declara callerCtx via getUserClient (QA-013) (#670)"
-   },
-   {
-    "sha": "e5f9f64",
-    "data": "2026-11-23",
-    "assunto": "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)"
-   },
-   {
-    "sha": "96962bd",
-    "data": "2026-11-23",
-    "assunto": "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)"
-   },
-   {
-    "sha": "d2006d2",
-    "data": "2026-11-23",
-    "assunto": "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)"
-   },
-   {
-    "sha": "339d0fa",
-    "data": "2026-11-23",
-    "assunto": "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)"
-   },
-   {
-    "sha": "23b32db",
-    "data": "2026-11-23",
-    "assunto": "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)"
    }
   ],
-  "arquivos_mudados_7d": 292,
+  "arquivos_mudados_7d": 282,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 78
+    "mudancas": 77
    },
    {
     "pasta": "src/components/conversational",
@@ -165,18 +165,18 @@
    },
    {
     "pasta": "src/components/admin",
-    "mudancas": 71
+    "mudancas": 70
    },
    {
     "pasta": "src/components/ui",
     "mudancas": 64
    },
    {
-    "pasta": "src/hooks/win-loss",
-    "mudancas": 57
+    "pasta": "src/components/deal-intelligence",
+    "mudancas": 55
    },
    {
-    "pasta": "src/components/deal-intelligence",
+    "pasta": "src/hooks/win-loss",
     "mudancas": 55
    },
    {
@@ -184,33 +184,33 @@
     "mudancas": 46
    },
    {
+    "pasta": "package.json",
+    "mudancas": 45
+   },
+   {
     "pasta": "src/hooks/race",
     "mudancas": 44
    },
    {
-    "pasta": "src/components/gamification",
-    "mudancas": 42
-   },
-   {
-    "pasta": "src/components/revenue-intelligence",
+    "pasta": "package-lock.json",
     "mudancas": 42
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 39
+    "mudancas": 45
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 37
-   },
-   {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "mudancas": 42
    },
    {
     "arquivo": "deno.lock",
+    "mudancas": 20
+   },
+   {
+    "arquivo": "CHANGELOG.md",
     "mudancas": 14
    },
    {
@@ -219,6 +219,10 @@
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "docs/qa/05-PROGRESSO.md",
     "mudancas": 9
    },
    {
@@ -242,10 +246,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 6
-   },
-   {
     "arquivo": "inventario/estado/edges.json",
     "mudancas": 6
    },
@@ -259,10 +259,6 @@
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 5
    },
    {
@@ -282,11 +278,11 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/hooks/bi/useABCAnalysis.ts",
-    "mudancas": 5
+    "arquivo": ".github/workflows/db-backup.yml",
+    "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/db-backup.yml",
+    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 4
    },
    {
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "AGENTS.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "CLAUDE.md",
     "mudancas": 4
    }
   ],
@@ -305,22 +305,18 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 25
+    "commits": 30
    },
    {
     "autor": "github-actions[bot]",
     "commits": 24
-   },
-   {
-    "autor": "devin-ai-integration[bot]",
-    "commits": 5
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3646,
   "arquivos_codigo": 2590,
-  "linhas_codigo": 444990,
+  "linhas_codigo": 445021,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -420,7 +416,7 @@
   },
   "scripts/check-typecheck-baseline.mjs": {
    "arquivos": 1,
-   "linhas": 72
+   "linhas": 103
   },
   "scripts/ci": {
    "arquivos": 14,

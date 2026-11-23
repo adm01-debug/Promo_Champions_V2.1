@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e328672023e16a579726dd7361a03835ae399f6d` (2026-11-23T22:08:18Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `546a22902a648a50a6b330b5b03bbd9234a14e3c` (2026-11-23T23:12:09Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3646 |
 | arquivos_codigo | 2590 |
-| linhas_codigo | 444990 |
+| linhas_codigo | 445021 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -587,24 +587,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22448 nós · 67740 arestas · 1621 comunidades · grafo do commit `e3286720`
-- comunidades maiores: schema.sql (785), lucide-react (519), client.ts (412), Input (407), CardHeader (407), CardContent (293), getCorsHeaders (283), Índice (279), card.tsx (274), ApprovalWorkflowsPage.tsx (223), input.tsx (220), Button (174)
+- 22449 nós · 67741 arestas · 1607 comunidades · grafo do commit `546a2290`
+- comunidades maiores: schema.sql (785), Card (713), Button (470), client.ts (423), Skeleton (322), lucide-react (305), Badge (279), react (279), Índice (277), vitest (271), getCorsHeaders (210), ref_npm_supabase (171)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (39)
-- package-lock.json (37)
+- package.json (45)
+- package-lock.json (42)
+- deno.lock (20)
 - CHANGELOG.md (14)
-- deno.lock (14)
 - src/integrations/supabase/types.ts (11)
 - .github/workflows/deploy.yml (9)
+- docs/qa/05-PROGRESSO.md (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/pr-checks.yml (7)
 - .github/workflows/codeql.yml (6)
 - .github/workflows/migrations-drift.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
-- docs/qa/05-PROGRESSO.md (6)
 - inventario/estado/edges.json (6)
 - src/components/pipeline/DealCard.tsx (6)
 - src/hooks/abm/useAccounts.ts (6)
@@ -767,21 +767,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `546a229` docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)
+- 2026-11-23 `27e826b` fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)
+- 2026-11-23 `421ad72` chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)
+- 2026-11-23 `96ca434` docs: marca etapas 121-126 no checklist de QA (#680)
+- 2026-11-23 `f42eb57` chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)
+- 2026-11-23 `cef0dfd` chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)
+- 2026-11-23 `cdee014` chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)
+- 2026-11-23 `4a38ccf` chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)
+- 2026-11-23 `c5edf84` chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)
+- 2026-11-23 `6979cae` chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)
 - 2026-11-23 `e328672` feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)
 - 2026-11-23 `aef48e8` fix: receive-design-sync sem verify_jwt (webhook HMAC)
 - 2026-11-23 `4e1ca24` fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)
 - 2026-11-23 `8c02079` feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)
 - 2026-11-23 `9098770` fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)
-- 2026-11-23 `5a8ce99` fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)
-- 2026-11-23 `7dfe259` fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)
-- 2026-11-23 `7370b42` fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)
-- 2026-11-23 `ff91ae9` fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)
-- 2026-11-23 `45b9b02` fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)
-- 2026-11-23 `d12f175` fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)
-- 2026-11-23 `6781397` feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)
-- 2026-11-23 `19fe244` perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)
-- 2026-11-23 `a7c2da3` fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)
-- 2026-11-23 `bdea3f7` fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

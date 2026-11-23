@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e328672023e16a579726dd7361a03835ae399f6d",
+  "sha": "546a22902a648a50a6b330b5b03bbd9234a14e3c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-23 22:09 UTC",
+  "generated_at": "2026-11-23 23:14 UTC",
   "files_total": 3661,
   "code_files": 3312,
-  "code_lines": 480155
+  "code_lines": 480186
  },
  "version": "1.3.2",
- "facts_hash": "f027073126576b3c",
+ "facts_hash": "6c3f22bc21e6f535",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -42,7 +42,7 @@
     "in": "package.json"
    },
    "lucide-react": {
-    "version": "1.49.0",
+    "version": "1.76.0",
     "role": "Ícones Lucide",
     "in": "package.json"
    },
@@ -57,7 +57,7 @@
     "in": "package.json"
    },
    "react-router-dom": {
-    "version": "^7.18.5",
+    "version": "^7.18.6",
     "role": "Roteamento (React Router)",
     "in": "package.json"
    },
@@ -106623,7 +106623,7 @@
   {
    "module": "scripts",
    "files": 97,
-   "lines": 24240,
+   "lines": 24271,
    "tables": [
     "a",
     "achievements",
@@ -227620,7 +227620,7 @@
   },
   "scripts/check-typecheck-baseline.mjs": {
    "path": "scripts/check-typecheck-baseline.mjs",
-   "lines": 72,
+   "lines": 103,
    "rule_comments": [
     "`scripts/typecheck-baseline.json`. Falha apenas em erros NOVOS:"
    ],
@@ -298982,10 +298982,116 @@
   }
  },
  "git": {
-  "sha": "e328672023e16a579726dd7361a03835ae399f6d",
+  "sha": "546a22902a648a50a6b330b5b03bbd9234a14e3c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "546a229",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)",
+    "files": [
+     ".env.example",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
+   {
+    "sha": "27e826b",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "scripts/check-typecheck-baseline.mjs"
+    ]
+   },
+   {
+    "sha": "421ad72",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "96ca434",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs: marca etapas 121-126 no checklist de QA (#680)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
+   {
+    "sha": "f42eb57",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "cef0dfd",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "cdee014",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "4a38ccf",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "c5edf84",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "6979cae",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "e328672",
     "date": "2026-11-23",
@@ -299212,118 +299318,27 @@
     "files": [
      "supabase/functions/sequence-record-reply/index.ts"
     ]
-   },
-   {
-    "sha": "e5f9f64",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: avisar na conversa quando a mensagem do assistente nao for salva (QA-142) (#668)",
-    "files": [
-     "src/components/assistant/MessageBubble.tsx",
-     "src/hooks/sales/useSalesAssistant.ts"
-    ]
-   },
-   {
-    "sha": "96962bd",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: reconcile do useSyncedSetting le valor corrente e trata empate (QA-141) (#667)",
-    "files": [
-     "src/hooks/useSyncedSetting.ts"
-    ]
-   },
-   {
-    "sha": "d2006d2",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: aviso de XP usa valor do servidor e assinaturas realtime (QA-131+133+137) (#666)",
-    "files": [
-     "src/hooks/dashboard/useDashboardKPIs.ts",
-     "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
-     "src/hooks/playbooks/usePlaybookMutations.ts",
-     "src/hooks/sales/useSalesEnablement.ts",
-     "src/hooks/sales/useSalesRealtime.ts",
-     "src/hooks/salesRealtimeUtils.ts"
-    ]
-   },
-   {
-    "sha": "339d0fa",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: remover dados falsos do painel de Seguranca e ocultar botoes de teste (QA-108+109) (#662)",
-    "files": [
-     "src/pages/SecurityDashboard.tsx",
-     "src/pages/Vendedores.tsx"
-    ]
-   },
-   {
-    "sha": "23b32db",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: alertar 3 falhas consecutivas do Bitrix24 (QA-091) (#660)",
-    "files": [
-     "supabase/functions/cron-failure-alerter/index.ts"
-    ]
-   },
-   {
-    "sha": "ed53bd4",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: deduplicacao de webhook no receive-quote-webhook (QA-087+088) (#659)",
-    "files": [
-     "supabase/functions/receive-quote-webhook/index.ts"
-    ]
-   },
-   {
-    "sha": "f177678",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: respeitar Retry-After em 429 no Bitrix24 e V4 (QA-097) (#657)",
-    "files": [
-     "supabase/functions/bitrix24-sync/index.ts",
-     "supabase/functions/notify-v4-quote-status/index.ts"
-    ]
-   },
-   {
-    "sha": "01065d8",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: bloquear URLs internas em test-integration-connection (QA-096) (#656)",
-    "files": [
-     "supabase/functions/test-integration-connection/index.ts"
-    ]
-   },
-   {
-    "sha": "4fdd6dc",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: excluir canceladas do total de comissoes e remover dados inventados (QA-075+076) (#652)",
-    "files": [
-     "src/components/financeiro/CommissionCalculator.tsx",
-     "src/pages/Comissoes.tsx"
-    ]
-   },
-   {
-    "sha": "980247f",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: forecast falha visivelmente se metas falhar (QA-060) (#651)",
-    "files": [
-     "src/hooks/useWeightedForecast.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    5
+    8
+   ],
+   [
+    "deno.lock",
+    7
+   ],
+   [
+    "package-lock.json",
+    7
+   ],
+   [
+    "package.json",
+    7
    ],
    [
     "src/pages/AdminAuditoriaPremiacoes.tsx",
-    2
-   ],
-   [
-    "src/pages/Comissoes.tsx",
     2
    ],
    [
@@ -299337,6 +299352,14 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    ".env.example",
+    1
+   ],
+   [
+    "scripts/check-typecheck-baseline.mjs",
+    1
    ],
    [
     "src/components/QueryErrorState.tsx",
@@ -299359,6 +299382,10 @@
     1
    ],
    [
+    "src/pages/Comissoes.tsx",
+    1
+   ],
+   [
     "src/pages/Deduplication.tsx",
     1
    ],
@@ -299372,26 +299399,6 @@
    ],
    [
     "src/components/ui/level-up-celebration.tsx",
-    1
-   ],
-   [
-    "src/routes/pagePrefetchMap.ts",
-    1
-   ],
-   [
-    "src/components/admin/AdminQuickLinks.tsx",
-    1
-   ],
-   [
-    "src/hooks/designs-inbound/useDesignsInbound.ts",
-    1
-   ],
-   [
-    "src/pages/admin/AdminDesignInboundPage.tsx",
-    1
-   ],
-   [
-    "src/routes/AppRoutes.tsx",
     1
    ]
   ]

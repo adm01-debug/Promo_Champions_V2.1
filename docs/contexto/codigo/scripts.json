@@ -172,7 +172,7 @@
   {
    "arquivo": "scripts/check-typecheck-baseline.mjs",
    "descricao": "* Ratchet de typecheck estrito (pacote de tipagem — STRICT).",
-   "linhas": 72,
+   "linhas": 103,
    "env": [],
    "npm_scripts": [
     "typecheck:baseline"
