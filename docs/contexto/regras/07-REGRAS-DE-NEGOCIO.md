@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `20279aa555` · branch `main` · 2026-11-24 03:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `01dd7e3fe4` · branch `main` · 2026-11-24 03:30 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4276,7 +4276,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1719 testes em 217 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1724 testes em 218 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4392,6 +4392,7 @@ _nenhum item encontrado_
 | `src/hooks/tasks/useTaskMutations.test.tsx` | 5 | useCreateTask — dono da tarefa (policy de INSERT de tasks) · sem responsável escolhido, grava a tarefa com o vendedor logado · responsável vazio ( · respeita o responsável escolhido sem consultar o vendedor logado … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
+| `src/pages/AdminComissoes.test.tsx` | 5 | AdminComissoes — filtro de busca · mantém na lista a comissão sem vendedor e sem cliente quando a busca está vazia · esconde a comissão sem vínculo quando o termo buscado não casa nada · filtra pelo nome do vendedor mantendo a busca existente … |
 | `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
 | `src/test/csv-export.test.ts` | 5 | CSV Export Utils · formatDateForExport should format correctly · formatPercentForExport should format correctly · formatCurrencyForExport should format correctly … |
 | `src/test/feed-batalha-post-unico.test.ts` | 5 | migration feed_batalha_post_unico · remove o trigger duplicado tr_victory_battle de forma idempotente · nenhuma migration posterior recria tr_victory_battle · fn_notify_victory vira o caminho único e idempotente por battle_id … |

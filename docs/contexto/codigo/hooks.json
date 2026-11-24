@@ -8193,7 +8193,7 @@
     "src/pages/AdminComissoes.tsx",
     "src/pages/Comissoes.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useCompetencyData.ts",

@@ -18034,7 +18034,7 @@
     "AdminComissoes"
    ],
    "export_default": "AdminComissoes",
-   "linhas": 412,
+   "linhas": 415,
    "dominio": "pages",
    "hooks_locais": [
     "useAllCommissions",

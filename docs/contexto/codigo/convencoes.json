@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (167)",
+   "co-localizado (*.test) (168)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)",
    "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)",
    "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)",
    "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)",
-   "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)",
-   "fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)"
+   "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

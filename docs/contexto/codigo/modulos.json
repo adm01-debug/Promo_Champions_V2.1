@@ -16054,8 +16054,8 @@
   {
    "modulo": "pages",
    "arquivos": 161,
-   "testes": 7,
-   "linhas": 39717,
+   "testes": 8,
+   "linhas": 39720,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

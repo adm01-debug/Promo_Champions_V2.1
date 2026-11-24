@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "20279aa555fce711efb2ded55f4799a5f81e4ee5",
+  "commit": "01dd7e3fe4ab1e06d58adde7653c86934f85a248",
   "branch": "main",
-  "data_commit": "2026-11-23T23:39:06-03:00",
+  "data_commit": "2026-11-24T00:29:23-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "01dd7e3",
+    "data": "2026-11-24",
+    "assunto": "fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)"
+   },
    {
     "sha": "20279aa",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "4a38ccf",
     "data": "2026-11-23",
     "assunto": "chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)"
-   },
-   {
-    "sha": "c5edf84",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)"
    }
   ],
-  "arquivos_mudados_7d": 272,
+  "arquivos_mudados_7d": 273,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": "deno.lock",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3648,
-  "arquivos_codigo": 2592,
-  "linhas_codigo": 445677,
+  "arquivos_total": 3649,
+  "arquivos_codigo": 2593,
+  "linhas_codigo": 445804,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 252,
+  "testes": 253,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -623,8 +623,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 181,
-   "linhas": 44737
+   "arquivos": 182,
+   "linhas": 44864
   },
   "src/routes": {
    "arquivos": 5,

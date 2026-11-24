@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 252,
+ "total": 253,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 184
+  "unit": 185
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 167
+   "arquivos": 168
   },
   {
    "padrao": "tests/",
@@ -1392,6 +1392,16 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/AdminComissoes.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/hooks/useCommissions.ts",
+    "src/pages/AdminComissoes.tsx"
+   ],
+   "casos": 4
+  },
+  {
    "arquivo": "src/pages/DealVelocityPage.test.tsx",
    "tipo": "unit",
    "linhas": 47,
@@ -2248,6 +2258,7 @@
   "src/hooks/useBackNavigation.ts": 1,
   "src/hooks/useClientsNeedingContact.ts": 1,
   "src/hooks/useCommissionBonuses.ts": 1,
+  "src/hooks/useCommissions.ts": 1,
   "src/hooks/useDigitalSignatures.ts": 1,
   "src/hooks/useEligibleBonuses.ts": 1,
   "src/hooks/useEvolutionCurves.ts": 1,
@@ -2297,6 +2308,7 @@
   "src/lib/winloss/scenarioChartKey.ts": 1,
   "src/lib/winloss/severityFromScore.ts": 2,
   "src/pages/AccountBasedSelling.tsx": 1,
+  "src/pages/AdminComissoes.tsx": 1,
   "src/pages/Auth.tsx": 1,
   "src/pages/Clientes.tsx": 1,
   "src/pages/DealVelocityPage.tsx": 1,
@@ -2338,7 +2350,6 @@
    "src/pages/AcompanhamentoPedidos.tsx",
    "src/pages/AdminAlertasChurn.tsx",
    "src/pages/AdminAuditoriaPremiacoes.tsx",
-   "src/pages/AdminComissoes.tsx",
    "src/pages/AdminDashboard.tsx",
    "src/pages/AdminFilaTarefasAutomaticas.tsx",
    "src/pages/AdminHistoricoAlertasChurn.tsx",
@@ -2755,7 +2766,6 @@
    "src/hooks/useCombo.ts",
    "src/hooks/useCommissionBonusAwards.ts",
    "src/hooks/useCommissionRules.ts",
-   "src/hooks/useCommissions.ts",
    "src/hooks/useCompetencyData.ts",
    "src/hooks/useCompetitiveChat.ts",
    "src/hooks/useCompetitiveRanking.ts",
