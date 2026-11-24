@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Database, Settings, Zap, ArrowRight, Sparkles, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export function EmptyStateGuide() {
+  const navigate = useNavigate();
+
   return (
     <Card className="border-dashed border-2 bg-muted/20 overflow-hidden relative">
       <div className="absolute top-0 right-0 p-12 opacity-5">
@@ -69,11 +72,17 @@ export function EmptyStateGuide() {
           <Button
             size="lg"
             className="gap-2 font-bold px-8 shadow-lg shadow-primary/20 group"
+            onClick={() => navigate('/configuracoes')}
           >
             Começar Configuração{' '}
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button variant="outline" size="lg" className="gap-2 font-bold px-8">
+          <Button
+            variant="outline"
+            size="lg"
+            className="gap-2 font-bold px-8"
+            onClick={() => navigate('/docs')}
+          >
             <Info className="h-4 w-4" /> Ver Documentação
           </Button>
         </div>
