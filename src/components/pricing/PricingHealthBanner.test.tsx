@@ -70,10 +70,10 @@ describe('PricingHealthBanner — exportação da auditoria (etapa 103)', () => 
     expect(rows).toHaveLength(5);
 
     const status = rows[0];
-    expect(status.Bloco).toBe('Resumo');
-    expect(String(status.Detalhe)).toContain('Crítico');
-    expect(status.Deals).toBe(120);
-    expect(status['Receita Perdida (R$)']).toBe(98000);
+    expect(status?.Bloco).toBe('Resumo');
+    expect(String(status?.Detalhe)).toContain('Crítico');
+    expect(status?.Deals).toBe(120);
+    expect(status?.['Receita Perdida (R$)']).toBe(98000);
 
     expect(rows.find(row => row.Bloco === 'Faixa de desconto')?.Item).toBe('20-30%');
     const seller = rows.find(row => row.Bloco === 'Vendedor');
@@ -94,7 +94,7 @@ describe('PricingHealthBanner — exportação da auditoria (etapa 103)', () => 
     await waitFor(() => expect(exportToCSV).toHaveBeenCalledTimes(1));
     const rows = rowsFromMock();
     expect(rows).toHaveLength(2);
-    expect(rows[0].Deals).toBe(8);
-    expect(rows[1].Detalhe).toBe('');
+    expect(rows[0]?.Deals).toBe(8);
+    expect(rows[1]?.Detalhe).toBe('');
   });
 });
