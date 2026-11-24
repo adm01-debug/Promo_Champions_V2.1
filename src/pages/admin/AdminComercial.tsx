@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { PageTransition } from '@/components/transitions/PageTransition';
@@ -37,6 +37,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { exportToCSV } from '@/utils/csvExport';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import { CommercialDiffViewer } from '@/components/admin/commercial/CommercialDiffViewer';
 import {
   Tooltip,
@@ -149,6 +151,41 @@ export default function AdminComercial() {
       return parseRows<AuditLog>(data);
     },
   });
+
+  const [showAuditFilter, setShowAuditFilter] = useState(false);
+  const [auditSearch, setAuditSearch] = useState('');
+
+  const filteredAuditLogs = useMemo(() => {
+    const term = auditSearch.trim().toLowerCase();
+    if (!term) return auditLogs ?? [];
+    return (auditLogs ?? []).filter(log =>
+      [log.action, log.entity_type, log.actor_email, log.entity_id].some(value =>
+        (value ?? '').toLowerCase().includes(term)
+      )
+    );
+  }, [auditLogs, auditSearch]);
+
+  const handleExportAudit = () => {
+    if (filteredAuditLogs.length === 0) {
+      toast({ title: 'Nada para exportar com o filtro atual' });
+      return;
+    }
+    exportToCSV(
+      filteredAuditLogs.map(log => ({
+        'Data/Hora': format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss'),
+        Evento: log.action,
+        Entidade: log.entity_type,
+        'ID do registro': log.entity_id ?? '',
+        Ator: log.actor_email ?? '',
+        Alteracoes: log.changes ? JSON.stringify(log.changes) : '',
+      })),
+      `auditoria_comercial_${getLocalISODate()}`
+    );
+    toast({
+      title: 'Exportação concluída',
+      description: `${filteredAuditLogs.length} registro(s) exportado(s).`,
+    });
+  };
 
   const createApprovalMutation = useMutation({
     mutationFn: async ({
@@ -711,13 +748,26 @@ export default function AdminComercial() {
                   </CardTitle>
                   <CardDescription className="text-[10px] uppercase">
                     Rastreabilidade completa de todas as alterações comerciais
+                    {auditSearch.trim() &&
+                      ` · ${filteredAuditLogs.length} de ${auditLogs?.length ?? 0} registros`}
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
+                  {showAuditFilter && (
+                    <Input
+                      value={auditSearch}
+                      onChange={e => setAuditSearch(e.target.value)}
+                      placeholder="Evento, entidade, registro ou ator"
+                      aria-label="Filtrar histórico de auditoria"
+                      className="h-8 w-64 text-[10px]"
+                    />
+                  )}
                   <Button
-                    variant="outline"
+                    variant={showAuditFilter ? 'default' : 'outline'}
                     size="sm"
                     className="h-8 text-[10px] font-bold uppercase border-border/40"
+                    onClick={() => setShowAuditFilter(value => !value)}
+                    aria-pressed={showAuditFilter}
                   >
                     <Filter className="h-3 w-3 mr-2" /> Filtrar
                   </Button>
@@ -725,6 +775,8 @@ export default function AdminComercial() {
                     variant="outline"
                     size="sm"
                     className="h-8 text-[10px] font-bold uppercase border-border/40"
+                    onClick={handleExportAudit}
+                    disabled={filteredAuditLogs.length === 0}
                   >
                     <Download className="h-3 w-3 mr-2" /> Exportar
                   </Button>
@@ -749,51 +801,64 @@ export default function AdminComercial() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {auditLogs?.map(log => (
-                      <TableRow
-                        key={log.id}
-                        className="hover:bg-primary/5 transition-colors border-border/10"
-                      >
-                        <TableCell className="text-[10px] font-mono whitespace-nowrap">
-                          {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss')}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className="text-[9px] uppercase font-bold border-primary/20 text-primary bg-primary/5"
-                          >
-                            {log.action
-                              .replace('approved_', 'APROVADO: ')
-                              .replace('create_approval_', 'SOLICITADO: ')}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-[10px] font-black uppercase italic tracking-tighter">
-                          {log.entity_type}
-                        </TableCell>
-                        <TableCell>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="flex items-center gap-1.5 cursor-help max-w-[300px] truncate">
-                                  <Info className="h-3 w-3 text-muted-foreground shrink-0" />
-                                  <span className="text-[10px] font-mono text-muted-foreground">
-                                    {JSON.stringify(log.changes).substring(0, 50)}...
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent
-                                side="left"
-                                className="w-80 p-3 bg-black/95 border-primary/30"
-                              >
-                                <pre className="text-[9px] font-mono leading-relaxed overflow-x-auto text-primary-foreground/90 whitespace-pre-wrap">
-                                  {JSON.stringify(log.changes, null, 2)}
-                                </pre>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                    {filteredAuditLogs.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="text-center py-10 text-[10px] uppercase text-muted-foreground"
+                        >
+                          {auditSearch.trim()
+                            ? 'Nenhum registro corresponde ao filtro'
+                            : 'Nenhuma alteração comercial registrada'}
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      filteredAuditLogs.map(log => (
+                        <TableRow
+                          key={log.id}
+                          className="hover:bg-primary/5 transition-colors border-border/10"
+                        >
+                          <TableCell className="text-[10px] font-mono whitespace-nowrap">
+                            {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss')}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className="text-[9px] uppercase font-bold border-primary/20 text-primary bg-primary/5"
+                            >
+                              {log.action
+                                .replace('approved_', 'APROVADO: ')
+                                .replace('create_approval_', 'SOLICITADO: ')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-[10px] font-black uppercase italic tracking-tighter">
+                            {log.entity_type}
+                          </TableCell>
+                          <TableCell>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center gap-1.5 cursor-help max-w-[300px] truncate">
+                                    <Info className="h-3 w-3 text-muted-foreground shrink-0" />
+                                    <span className="text-[10px] font-mono text-muted-foreground">
+                                      {JSON.stringify(log.changes).substring(0, 50)}...
+                                    </span>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  side="left"
+                                  className="w-80 p-3 bg-black/95 border-primary/30"
+                                >
+                                  <pre className="text-[9px] font-mono leading-relaxed overflow-x-auto text-primary-foreground/90 whitespace-pre-wrap">
+                                    {JSON.stringify(log.changes, null, 2)}
+                                  </pre>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </ScrollArea>
