@@ -7325,6 +7325,60 @@ export type Database = {
           },
         ]
       }
+      designs_inbound: {
+        Row: {
+          created_at: string
+          design_id: string
+          id: string
+          last_correlation_key: string | null
+          last_event: string | null
+          name: string
+          product_name: string | null
+          product_sku: string | null
+          raw_payload: Json
+          received_at: string
+          seller_email: string | null
+          source: string
+          source_updated_at: string | null
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          design_id: string
+          id?: string
+          last_correlation_key?: string | null
+          last_event?: string | null
+          name: string
+          product_name?: string | null
+          product_sku?: string | null
+          raw_payload?: Json
+          received_at?: string
+          seller_email?: string | null
+          source?: string
+          source_updated_at?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          design_id?: string
+          id?: string
+          last_correlation_key?: string | null
+          last_event?: string | null
+          name?: string
+          product_name?: string | null
+          product_sku?: string | null
+          raw_payload?: Json
+          received_at?: string
+          seller_email?: string | null
+          source?: string
+          source_updated_at?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dialer_queue_items: {
         Row: {
           added_at: string
