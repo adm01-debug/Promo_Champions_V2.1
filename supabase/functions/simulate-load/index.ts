@@ -25,13 +25,32 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   // endpoint gera tráfego de saída significativo. Nenhum chamador existe no
   // repo (ferramenta ops); os dois caminhos são aceitos por compatibilidade.
   if (!isInternalServiceRequest(req)) {
+    let caller: Awaited<ReturnType<typeof getUserClient>>;
     try {
-      await getUserClient(req);
+      caller = await getUserClient(req);
     } catch (authErr) {
       const isUnauth = authErr instanceof UnauthorizedError;
       return new Response(
         JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    // QA-216 — ferramenta de ops: autenticar não bastava, qualquer usuário
+    // logado gerava carga de saída. Restrito a admin/gestor.
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      'is_admin_or_manager' as never,
+      { _user_id: caller.userId } as never
+    );
+    if (roleError) {
+      return new Response(
+        JSON.stringify({ error: 'authorization_unavailable' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (!isPrivileged) {
+      return new Response(
+        JSON.stringify({ error: 'forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
   }
