@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `456503415639eadafe23010d05805c26c1061119` (2026-11-24T11:48:21-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d7d7f739bc65a3ceee5d77676709a8365fe059e0` (2026-11-24T12:08:20-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2539), SQL (726), Markdown (225), JavaScript (78), JSON (33), YAML (33), Shell (7), Python (5)
+- linguagens: TypeScript (2539), SQL (727), Markdown (225), JavaScript (78), JSON (33), YAML (33), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3686 |
+| arquivos_total | 3687 |
 | arquivos_codigo | 2620 |
 | linhas_codigo | 449194 |
 | rotas | 170 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 483 |
 | edge_functions | 173 |
 | tabelas | 421 |
-| migrations | 715 |
+| migrations | 716 |
 | cron_jobs | 40 |
 | testes | 281 |
 | workflows | 31 |
@@ -588,16 +588,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24456 nós · 74915 arestas · 1171 comunidades · grafo do commit `45650341`
+- 24457 nós · 74915 arestas · 1172 comunidades · grafo do commit `d7d7f739`
 - comunidades maiores: schema.sql (595), Card (551), Badge (362), lucide-react (340), vitest (330), client.ts (313), getCorsHeaders (289), public (242), set_updated_at (238), public.register_race_daily_checkin (227), button.tsx (227), DialogContent (222)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (34)
-- package-lock.json (33)
+- package.json (33)
+- package-lock.json (32)
 - docs/qa/05-PROGRESSO.md (30)
-- deno.lock (17)
+- deno.lock (16)
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (13)
 - .github/workflows/deploy.yml (7)
@@ -772,6 +772,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.9.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.8.0...promo-champions-v2-v1.9.0) (2026-11-24)
 
 ## Últimos commits
+- 2026-11-24 `d7d7f73` feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)
 - 2026-11-24 `4565034` fix: restaura timeouts de DNS lento derrubados pela 20261127000000 (#742)
 - 2026-11-24 `b45a2bf` ci: provisiona RESEND_API_KEY nas edge functions (#738)
 - 2026-11-24 `d52445e` chore: sonda read-only da fila do supply_outbox na suite remota (#737)
@@ -786,7 +787,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `9a949f0` chore(main): release 1.8.0 (#661)
 - 2026-11-24 `6938bcc` chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)
 - 2026-11-24 `a35b9ea` fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)
-- 2026-11-24 `dd14171` fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

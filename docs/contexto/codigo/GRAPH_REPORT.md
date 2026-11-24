@@ -1,17 +1,17 @@
 # Graph Report - Promo_Champions_V2.1  (2026-11-24)
 
 ## Corpus Check
-- 3644 files · ~2,487,902 words
+- 3645 files · ~2,488,103 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 29 file(s) not represented in the graph (top: (none) 16, .toml 6, .lock 2)
 
 ## Summary
-- 24456 nodes · 74915 edges · 1171 communities (858 shown, 313 thin omitted)
+- 24457 nodes · 74915 edges · 1172 communities (858 shown, 314 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 1049 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `45650341`
+- Built from commit: `d7d7f739`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -959,7 +959,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1171 total, 313 thin omitted)
+## Communities (1172 total, 314 thin omitted)
 
 ### Community 0 - "schema.sql"
 Cohesion: 0.01
@@ -4395,20 +4395,20 @@ Nodes (3): idx_experiment_variants_experiment_id_fk, idx_experiment_variants_exp
 
 ## Knowledge Gaps
 - **9 isolated node(s):** `PATH`, `@/views/Home.vue`, `RFC-4180`, `ADR-0010`, `RFC-8058` (+4 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8664 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **313 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8665 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **314 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `react` to `Card`, `Badge`, `lucide-react`, `vitest`, `client.ts`, `button.tsx`, `DialogContent`, `TabsTrigger`, `Skeleton`, `Button`, `lazyPages.ts`, `formatBRL`, `constants/index.ts`, `ApprovalWorkflowsPage.tsx`, `useAuth`, `pages/SDRDashboard.tsx`, `package.json`, `AccountBasedSelling.tsx`, `date-fns`, `sonner`, `TableRow`, `PipelineBoard.tsx`, `NotificationCenter.tsx`, `ClickToCallButton.tsx`, `ScoreContributionBar.tsx`, `chunkedIn.ts`, `gamified-toast.tsx`, `AIEmailComposerDialog.tsx`, `getLocalISODate`, `Progress`, `RaceArena.tsx`, `AppSidebar.tsx`, `race/index.ts`, `Checkbox`, `SequencesPage.tsx`, `ArenaCompetitiva.tsx`, `EmptyState.tsx`, `PageLoadingSkeleton.tsx`, `useSalesBattles.test.tsx`, `useWinLossSalespersonScore.ts`, `useRevenueIntelligenceHub.ts`, `raceTrackHelpers.ts`, `EditCadenceDialog.tsx`, `MainLayout.tsx`, `IntelligenceCockpit.tsx`, `App.tsx`, `Clientes.tsx`, `useSalespersonXP.ts`, `Analytics.tsx`, `Textarea`, `PopoverContent`, `SalesReportPage.tsx`, `ClientPurchaseHistory.tsx`, `ActivityLogForm.tsx`, `RaceArenaHub.tsx`, `consoleGuard.ts`, `ActivityList.tsx`, `deal-intelligence/BuyingCommitteeCard.tsx`, `ScenarioForecastChart.tsx`, `useLeadRouting.ts`, `RevenueIntelligenceHub.tsx`, `WebhookDeadLetterPanel.tsx`, `EdgeRetryTimeSeriesChart.tsx`, `WinLossIntelligence.tsx`, `WorkflowsPage.tsx`, `Fireworks.tsx`, `RacePanelEmptyState.tsx`, `RaceViewModeToggle.tsx`, `MarkupOverviewCard.tsx`, `Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito)`, `errorTracking.ts`, `WebhookHealthPanel.tsx`, `SalesReportHeader.tsx`, `RaceLeaderboardEntry`, `RecordingSummaryDrawer.tsx`, `RevenueForecastV2.tsx`, `ConversationalIntelligence.tsx`, `winLossHelpers.ts`, `AdminAuditoriaPremiacoes.tsx`, `useWinLossAggregations.ts`, `useAuthForm.ts`, `ObjectionHandlingCard.tsx`, `CriticalDealsTable.tsx`, `useNextBestAction.ts`, `Relatorios.tsx`, `useInactiveDeals.ts`, `QuestionQualityCard.tsx`, `CS360Tabs.tsx`, `VirtualDealsList.tsx`, `RaceCar.tsx`, `FailedDraftsCard.tsx`, `ReportBuilder.tsx`, `FunnelReportView.tsx`, `enablement/SalesEnablementHub.tsx`, `2.3 Candidatos a órfão de 2º grau — 15 de 857 (1,8%)`, `useSeasonComparison.ts`, `EngagementLeaderboardWidget.tsx`, `CoachingGapByRepTable.tsx`, `RaceArenaHeader.tsx`, `CoachingScorecardCard.tsx`, `QuotaPredictorAdvancedPanel.tsx`, `staleAssetRecovery.ts`, `MFASetup.tsx`, `Vendedores.tsx`, `ProviderConnectionDialog.tsx`, `BusinessIntelligencePage.tsx`, `useRetryMutation.ts`, `ConnectionsOverviewTable.tsx`, `AIAgents.tsx`, `useWinLossData.ts`, `CoachingActionsList.tsx`, `RecoveryRateCard.tsx`, `useAtRiskSettings.ts`, `biService.ts`, `DealTimeline.tsx`, `DashboardSection.tsx`, `useChurnPeriodPreference.ts`, `ScheduledReports.tsx`, `CadenceReportPanel.tsx`, `ChurnHistoryChart.tsx`, `DealVelocityCard.tsx`, `CampaignDeliveryLatencyCard.tsx`, `LeadScoringDashboard.tsx`, `navigationGuard.ts`, `PortfolioTable.tsx`, `CalibrationVarianceTable.tsx`, `ProtectedRoute`, `nlqHelpers.ts`, `useFeatureFlags.ts`, `CallRecordingPlayer.tsx`, `PeriodTrendChart.tsx`, `revenue-intelligence/useRevenueForecast.ts`, `SkillMaturityMatrix.tsx`, `AdminV4CallbacksPage.tsx`, `Client360View.tsx`, `PermissionMatrix.tsx`, `QuotaRiskTable.tsx`, `RiskCompareModal.tsx`, `DevKpiDebugPanel.tsx`, `ActionableInsightsPanel.tsx`, `RaceCarsLayer.tsx`, `usePersonalAssistant.ts`, `AdminComissoes.tsx`, `useDashboardTheme`, `global.d.ts`, `BriefingHistoryTimeline.tsx`, `CredentialsSourceFilterContext.tsx`, `MapaClientes.tsx`, `useAutomationWorkflows.test.tsx`, `useWinLossViewPrefs.ts`?**
-  _High betweenness centrality (0.061) - this node is a cross-community bridge._
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **What connects `PATH`, `@/views/Home.vue`, `RFC-4180` to the rest of the system?**
   _9 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `schema.sql` be split into smaller, more focused modules?**
   _Cohesion score 0.0055060408001584476 - nodes in this community are weakly interconnected._
 - **Why does `cn()` connect `Badge` to `Card`, `lucide-react`, `client.ts`, `button.tsx`, `DialogContent`, `TabsTrigger`, `Skeleton`, `Button`, `formatBRL`, `constants/index.ts`, `ApprovalWorkflowsPage.tsx`, `useAuth`, `pages/SDRDashboard.tsx`, `AccountBasedSelling.tsx`, `date-fns`, `sonner`, `TableRow`, `PipelineBoard.tsx`, `NotificationCenter.tsx`, `ClickToCallButton.tsx`, `ScoreContributionBar.tsx`, `gamified-toast.tsx`, `react`, `getLocalISODate`, `Progress`, `AppSidebar.tsx`, `race/index.ts`, `Checkbox`, `ArenaCompetitiva.tsx`, `EmptyState.tsx`, `PageLoadingSkeleton.tsx`, `EditCadenceDialog.tsx`, `MainLayout.tsx`, `IntelligenceCockpit.tsx`, `App.tsx`, `Clientes.tsx`, `Analytics.tsx`, `Textarea`, `PopoverContent`, `ClientPurchaseHistory.tsx`, `ActivityLogForm.tsx`, `ActivityList.tsx`, `WebhookDeadLetterPanel.tsx`, `ClientChurnJustificationCard.tsx`, `WorkflowsPage.tsx`, `RacePanelEmptyState.tsx`, `RaceViewModeToggle.tsx`, `MarkupOverviewCard.tsx`, `WebhookHealthPanel.tsx`, `SalesReportHeader.tsx`, `RaceLeaderboardEntry`, `ConversationalIntelligence.tsx`, `useWinLossAggregations.ts`, `CriticalDealsTable.tsx`, `Relatorios.tsx`, `AccountDetail.tsx`, `RaceCar.tsx`, `FailedDraftsCard.tsx`, `FunnelReportView.tsx`, `enablement/SalesEnablementHub.tsx`, `EngagementLeaderboardWidget.tsx`, `RaceArenaHeader.tsx`, `MFASetup.tsx`, `Vendedores.tsx`, `BusinessIntelligencePage.tsx`, `CoachingActionsList.tsx`, `DealTimeline.tsx`, `DashboardSection.tsx`, `ScheduledReports.tsx`, `gen-data-dict.mjs`, `LeadScoringDashboard.tsx`, `PeriodTrendChart.tsx`, `43. Utilitários & Bibliotecas`, `Client360View.tsx`, `RiskCompareModal.tsx`, `Client360KpiCards.tsx`, `criticalMomentsHelpers.ts`, `PricingHealthBanner.tsx`, `AdminComissoes.tsx`, `Client360OrdersCard.tsx`, `BriefingHistoryTimeline.tsx`?**
-  _High betweenness centrality (0.052) - this node is a cross-community bridge._
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **Should `Card` be split into smaller, more focused modules?**
   _Cohesion score 0.012763570367926086 - nodes in this community are weakly interconnected._
 - **Why does `now()` connect `now` to `Índice`, `.collect`, `ABCMatrixShift.test.ts`?**

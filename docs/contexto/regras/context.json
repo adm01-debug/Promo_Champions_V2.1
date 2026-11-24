@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "456503415639eadafe23010d05805c26c1061119",
+  "sha": "d7d7f739bc65a3ceee5d77676709a8365fe059e0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 14:49 UTC",
-  "files_total": 3701,
-  "code_files": 3346,
-  "code_lines": 484663
+  "generated_at": "2026-11-24 15:09 UTC",
+  "files_total": 3702,
+  "code_files": 3347,
+  "code_lines": 484700
  },
  "version": "1.3.2",
- "facts_hash": "0428aba30f0ad8ed",
+ "facts_hash": "cc9bc59965fff9a9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -428,7 +428,7 @@
   "languages": {
    ".tsx": 1403,
    ".ts": 1135,
-   ".sql": 726,
+   ".sql": 727,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -68137,6 +68137,7 @@
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
    "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+   "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -109009,8 +109010,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 715,
-   "lines": 59921,
+   "files": 716,
+   "lines": 59958,
    "tables": [
     "user_permissions_cache"
    ],
@@ -298636,6 +298637,10 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql": {
+   "path": "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
+   "lines": 37
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -300720,10 +300725,19 @@
   }
  },
  "git": {
-  "sha": "456503415639eadafe23010d05805c26c1061119",
+  "sha": "d7d7f739bc65a3ceee5d77676709a8365fe059e0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d7d7f73",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)",
+    "files": [
+     "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql"
+    ]
+   },
    {
     "sha": "4565034",
     "date": "2026-11-24",
@@ -301078,16 +301092,6 @@
      "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
      "src/components/purchase-intelligence/IntelligenceSettings.tsx"
     ]
-   },
-   {
-    "sha": "22f284a",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)",
-    "files": [
-     "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
-     "src/components/purchase-intelligence/EmptyStateGuide.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301118,6 +301122,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
+    1
    ],
    [
     "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
@@ -301165,10 +301173,6 @@
    ],
    [
     "supabase/functions/supply-dispatch/contract.ts",
-    1
-   ],
-   [
-    "supabase/functions/supply-dispatch/index.ts",
     1
    ]
   ]

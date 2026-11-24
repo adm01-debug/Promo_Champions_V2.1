@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 715,
+ "migrations": 716,
  "seeds": [
   "supabase/seed.sql"
  ],
