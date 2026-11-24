@@ -153,7 +153,7 @@ Exemplo:
 - [x] 124 — Mostrar erro em vez de "nenhuma premiação para auditar" — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [x] 125 — Mostrar erro nas telas de deduplicação e de chaves de funcionalidade — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [x] 126 — Mostrar erro na tela de supressão de e-mails — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
-- [ ] 127 — Varrer o repositório por erro de leitura engolido — onda 5 — Média
+- [x] 127 — Varrer o repositório por erro de leitura engolido — onda 5 — Média — PR #721 — `docs/qa/06-VARREDURA-ERRO-DE-LEITURA.md`: 101 consumidores diretos de react-query sem `isError`, 73 hooks que montam o retorno sem `error`, priorizados em dinheiro/dado pessoal/auditoria
 - [x] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta — PR #664 - VALID_DASHBOARD_SECTIONS em lib/dashboardSections valida antes de gravar e limpa valor invalido na leitura
 - [ ] 129 — Tornar a importação de clientes capaz de ler CSV de verdade — onda 5 — Alta · **APROV**
 - [x] 130 — Pedir confirmação explícita do volume antes de importar — onda 5 — Média — PR #669 - ImportExport pede confirmacao do volume antes de gravar
