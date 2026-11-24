@@ -1,5 +1,24 @@
 # 01 — FRONTEND: ROTAS E PÁGINAS (estado medido)
 
+> ⚠️ **DOCUMENTO OBSOLETO — não decida nada por ele.** Declarado obsoleto em 2026-11-24
+> (etapa 187 de `docs/qa/04-PLANO.md`, achado A-115).
+>
+> **Motivo:** as medições foram feitas contra o banco `rapjswienfhkobhlamxb`, que **não é** o banco
+> deste repositório — o canônico é `usyxfpqlsspldubptrdl` (`AGENTS.md:62`; ver também
+> `docs/estado/IDENTIDADE_BANCO_2026-09-13.md`, que explica a troca de banco).
+> Documento que afirma o estado do sistema medido em outro sistema é pior que documento ausente:
+> induz decisão errada com aparência de evidência.
+>
+> **Fontes vivas:** `inventario/estado/banco.json` (objetos do banco canônico) e
+> `inventario/estado/edges.json` (edge functions publicadas).
+>
+> O conteúdo abaixo fica preservado como histórico da auditoria de 2026-08-16.
+
+> A menção a `project_id = "rapjswienfhkobhlamxb"` na §2 é leitura do `supabase/config.toml` de
+> 2026-08-16; hoje esse arquivo declara `project_id = "usyxfpqlsspldubptrdl"`. O cabeçalho e o
+> corpo deste arquivo também estão trocados (é o documento 01, de rotas e páginas, salvo com o
+> nome 10_EDGE_FUNCTIONS): o conserto fica para quem regerar o lote com acesso ao banco.
+
 > **Auditoria por medição.** Cada afirmação abaixo tem `arquivo:linha` que eu li ou um comando que executei sobre o repositório / o banco de produção (SELECT apenas).
 > Nenhuma linha veio de `README`/`docs/*.md`. Data da medição: 2026-08-16. Commit: `git rev-parse --short HEAD` = d44e3db.
 

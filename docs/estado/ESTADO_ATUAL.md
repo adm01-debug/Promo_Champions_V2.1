@@ -1,5 +1,19 @@
 # ESTADO ATUAL DO SISTEMA — Promo Champions v2.1
 
+> ⚠️ **DOCUMENTO OBSOLETO — não decida nada por ele.** Declarado obsoleto em 2026-11-24
+> (etapa 187 de `docs/qa/04-PLANO.md`, achado A-115).
+>
+> **Motivo:** as medições foram feitas contra o banco `rapjswienfhkobhlamxb`, que **não é** o banco
+> deste repositório — o canônico é `usyxfpqlsspldubptrdl` (`AGENTS.md:62`; ver também
+> `docs/estado/IDENTIDADE_BANCO_2026-09-13.md`, que explica a troca de banco).
+> Documento que afirma o estado do sistema medido em outro sistema é pior que documento ausente:
+> induz decisão errada com aparência de evidência.
+>
+> **Fontes vivas:** `inventario/estado/banco.json` (objetos do banco canônico) e
+> `inventario/estado/edges.json` (edge functions publicadas).
+>
+> O conteúdo abaixo fica preservado como histórico da auditoria de 2026-08-16.
+
 > Auditoria de estado. Medição: **2026-08-16**. Banco de produção `rapjswienfhkobhlamxb`, acessado
 > em modo somente leitura. Nada foi alterado em produção.
 > Detalhamento por dimensão nos 13 documentos deste diretório.
