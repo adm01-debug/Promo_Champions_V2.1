@@ -504,7 +504,7 @@
     "AdminQuickLinks"
    ],
    "export_default": null,
-   "linhas": 150,
+   "linhas": 162,
    "dominio": "components/admin",
    "hooks_locais": [
     "useDeadLettersCounts"

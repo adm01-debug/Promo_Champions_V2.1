@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b05ca726f0` · branch `main` · 2026-11-24 03:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `06ff5fe80d` · branch `main` · 2026-11-24 03:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1732 testes em 219 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1735 testes em 220 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4435,6 +4435,7 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
+| `src/components/admin/AdminQuickLinks.test.tsx` | 3 | AdminQuickLinks — telas de alerta de webhook (etapa 110) · leva às configurações de alerta de webhook · leva ao histórico de alertas de webhook |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |

@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (169)",
+   "co-localizado (*.test) (170)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)",
+   "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)",
    "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)",
    "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)",
-   "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)",
-   "fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)",
-   "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)"
+   "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

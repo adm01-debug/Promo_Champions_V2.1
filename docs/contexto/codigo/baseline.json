@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b05ca726f0a48a9419f34c6d1e7b8afb86d5151c",
+  "commit": "06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b",
   "branch": "main",
-  "data_commit": "2026-11-24T00:50:40-03:00",
+  "data_commit": "2026-11-24T00:56:10-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "06ff5fe",
+    "data": "2026-11-24",
+    "assunto": "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)"
+   },
+   {
+    "sha": "737d0c0",
+    "data": "2026-11-24",
+    "assunto": "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)"
+   },
    {
     "sha": "b05ca72",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "421ad72",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)"
-   },
-   {
-    "sha": "96ca434",
-    "data": "2026-11-23",
-    "assunto": "docs: marca etapas 121-126 no checklist de QA (#680)"
-   },
-   {
-    "sha": "f42eb57",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)"
    }
   ],
-  "arquivos_mudados_7d": 284,
+  "arquivos_mudados_7d": 288,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -160,12 +160,12 @@
     "mudancas": 73
    },
    {
-    "pasta": "src/components/competitive",
+    "pasta": "src/components/admin",
     "mudancas": 72
    },
    {
-    "pasta": "src/components/admin",
-    "mudancas": 70
+    "pasta": "src/components/competitive",
+    "mudancas": 72
    },
    {
     "pasta": "src/components/ui",
@@ -227,10 +227,6 @@
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 8
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 7
    },
    {
@@ -239,6 +235,10 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 6
    },
    {
@@ -301,22 +301,22 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 253
-   },
-   {
-    "autor": "github-actions[bot]",
-    "commits": 24
+    "commits": 254
    },
    {
     "autor": "dependabot[bot]",
+    "commits": 23
+   },
+   {
+    "autor": "github-actions[bot]",
     "commits": 23
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3648,
-  "arquivos_codigo": 2592,
-  "linhas_codigo": 445617,
+  "arquivos_total": 3649,
+  "arquivos_codigo": 2593,
+  "linhas_codigo": 445667,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 254,
+  "testes": 255,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1228,
-   "linhas": 193390
+   "arquivos": 1229,
+   "linhas": 193440
   },
   "src/config": {
    "arquivos": 4,
