@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
+  "commit": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
   "branch": "main",
-  "data_commit": "2026-11-24T00:23:06Z",
+  "data_commit": "2026-11-24T01:08:32Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f0b094b",
+    "data": "2026-11-24",
+    "assunto": "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691"
+   },
+   {
+    "sha": "812f690",
+    "data": "2026-11-24",
+    "assunto": "fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)"
+   },
+   {
+    "sha": "a7e02eb",
+    "data": "2026-11-24",
+    "assunto": "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)"
+   },
    {
     "sha": "0ab02a5",
     "data": "2026-11-24",
@@ -116,24 +131,9 @@
     "sha": "7dfe259",
     "data": "2026-11-23",
     "assunto": "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)"
-   },
-   {
-    "sha": "7370b42",
-    "data": "2026-11-23",
-    "assunto": "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)"
-   },
-   {
-    "sha": "ff91ae9",
-    "data": "2026-11-23",
-    "assunto": "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)"
-   },
-   {
-    "sha": "45b9b02",
-    "data": "2026-11-23",
-    "assunto": "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)"
    }
   ],
-  "arquivos_mudados_7d": 274,
+  "arquivos_mudados_7d": 276,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -184,26 +184,26 @@
     "mudancas": 46
    },
    {
-    "pasta": "package.json",
-    "mudancas": 45
-   },
-   {
     "pasta": "src/hooks/race",
     "mudancas": 44
    },
    {
-    "pasta": "package-lock.json",
+    "pasta": "package.json",
+    "mudancas": 42
+   },
+   {
+    "pasta": "src/components/gamification",
     "mudancas": 42
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 45
+    "mudancas": 42
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 42
+    "mudancas": 40
    },
    {
     "arquivo": "deno.lock",
@@ -215,18 +215,18 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 12
+    "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 9
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 10
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 9
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 247
+    "commits": 248
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 29
+    "commits": 28
    },
    {
     "autor": "github-actions[bot]",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3647,
-  "arquivos_codigo": 2591,
-  "linhas_codigo": 445273,
+  "arquivos_total": 3648,
+  "arquivos_codigo": 2592,
+  "linhas_codigo": 445446,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 251,
+  "testes": 252,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -420,7 +420,7 @@
   },
   "scripts/ci": {
    "arquivos": 14,
-   "linhas": 1668
+   "linhas": 1683
   },
   "scripts/codemod-money.mjs": {
    "arquivos": 1,
@@ -488,7 +488,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 863
+   "linhas": 885
   },
   "scripts/lib": {
    "arquivos": 3,
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1227,
-   "linhas": 193222
+   "arquivos": 1228,
+   "linhas": 193352
   },
   "src/config": {
    "arquivos": 4,
@@ -608,7 +608,7 @@
   },
   "src/hooks": {
    "arquivos": 550,
-   "linhas": 64961
+   "linhas": 64967
   },
   "src/integrations": {
    "arquivos": 4,
@@ -943,7 +943,7 @@
   "ciclos_de_import": 2,
   "possiveis_segredos_no_codigo": [
    "scripts/ai-context/cenarios.mjs:102",
-   "scripts/ci/inventario-banco.unit.mjs:165"
+   "scripts/ci/inventario-banco.unit.mjs:180"
   ]
  },
  "erros_do_gerador": []

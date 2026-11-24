@@ -15769,7 +15769,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 543,
+   "usado_por": 544,
    "orfao": false
   },
   {
@@ -16386,7 +16386,7 @@
     "EligibleBonusesCard"
    ],
    "export_default": null,
-   "linhas": 182,
+   "linhas": 229,
    "dominio": "components/vendedor",
    "hooks_locais": [
     "useAutoAwardBonuses",

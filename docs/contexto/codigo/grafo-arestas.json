@@ -7420,6 +7420,7 @@
   ],
   "src/components/vendedor/EligibleBonusesCard.tsx": [
    "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/hooks/useAutoAwardBonuses.ts",
    "src/hooks/useCommissionBonuses.ts",

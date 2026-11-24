@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
+  "sha": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 00:32 UTC",
-  "files_total": 3662,
-  "code_files": 3313,
-  "code_lines": 480384
+  "generated_at": "2026-11-24 01:09 UTC",
+  "files_total": 3663,
+  "code_files": 3314,
+  "code_lines": 480557
  },
  "version": "1.3.2",
- "facts_hash": "2edc1269b90ff485",
+ "facts_hash": "818db538a210cc67",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1379,
+   ".tsx": 1380,
    ".ts": 1130,
    ".sql": 722,
    ".mjs": 72,
@@ -102908,7 +102908,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1227,
+  "components_count": 1228,
   "hooks": [
    {
     "name": "useContacts",
@@ -106624,7 +106624,7 @@
   {
    "module": "scripts",
    "files": 97,
-   "lines": 24271,
+   "lines": 24308,
    "tables": [
     "a",
     "achievements",
@@ -106868,8 +106868,8 @@
   },
   {
    "module": "src/components",
-   "files": 1227,
-   "lines": 193221,
+   "files": 1228,
+   "lines": 193351,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107198,7 +107198,7 @@
   {
    "module": "src/hooks",
    "files": 550,
-   "lines": 64961,
+   "lines": 64967,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107507,7 +107507,7 @@
     "useDemandForecast.ts: useDemandForecast",
     "useDigitalSignatures.ts: DigitalSignature, DIGITAL_SIGNATURE_INTEGRATION_MESSAGE, useDigitalSignatures",
     "useElevenLabsVoice.ts: VOICE_OPTIONS, VoiceId, useElevenLabsVoice",
-    "useEligibleBonuses.ts: EligibleBonus, evaluateBonus, useEligibleBonuses"
+    "useEligibleBonuses.ts: EligibleBonus, EligibleBonusesResult, evaluateBonus, useEligibleBonuses"
    ],
    "docs": [
     "quoteErrorMessages.ts: Mensagens e códigos de erro do fluxo quote → sale. Extraído de `useQuotes.ts` para que os specs E2E (que rodam sob Node/Playwright, sem `import.meta.env`) possam importar as mensagens sem puxar toda a chain do cliente Supabase, que quebra fora do ambiente Vite.",
@@ -154551,7 +154551,7 @@
     "file": "src/components/vendedor/EligibleBonusesCard.tsx",
     "name": "EligibleBonusesCard",
     "params": "{ salespersonId }: Props",
-    "body": "const { data: bonuses = [], isLoading } = useEligibleBonuses(salespersonId); const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isLoading) { return ( <Card className=\"p-4\"> <div className=\"h-24 animate-pulse rounded-lg bg-muted/30\" /> </C …"
+    "body": "const { data, isLoading, isError, refetch } = useEligibleBonuses(salespersonId); const bonuses: EligibleBonusesResult = data ?? SEM_PREMIACOES; const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isError) { return ( <Card className=\"p-4 bo …"
    },
    {
     "file": "src/components/vendedores/RankingGridItem.tsx",
@@ -154635,7 +154635,7 @@
     "file": "src/hooks/useEligibleBonuses.ts",
     "name": "useEligibleBonuses",
     "params": "salespersonId: string | undefined",
-    "body": "return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonus[]> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .order('pr …"
+    "body": "return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonusesResult> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .ord …"
    },
    {
     "file": "src/hooks/useFeatureFlagsAdmin.ts",
@@ -159598,6 +159598,22 @@
    {
     "file": "src/components/tasks/CreateTaskDialog.test.tsx",
     "name": "admin/gestor continua vendo todos os vendedores"
+   },
+   {
+    "file": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+    "name": "EligibleBonusesCard (QA-061)"
+   },
+   {
+    "file": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+    "name": "mostra erro com nova tentativa quando a leitura falha"
+   },
+   {
+    "file": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+    "name": "avisa que o dado é parcial quando sequência ou total de vendas falharam"
+   },
+   {
+    "file": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+    "name": "nao mostra o aviso de parcial quando todas as leituras funcionaram"
    },
    {
     "file": "src/config/dominio-publico.test.ts",
@@ -229114,7 +229130,7 @@
   },
   "scripts/ci/inventario-banco.unit.mjs": {
    "path": "scripts/ci/inventario-banco.unit.mjs",
-   "lines": 217,
+   "lines": 232,
    "tables": [
     {
      "table": "contatos",
@@ -229482,7 +229498,7 @@
    "params": [
     {
      "name": "DEFAULT_VERSION",
-     "value": "'0.9.70'"
+     "value": "'0.9.115'"
     },
     {
      "name": "LARGE_SCOPE_LIMIT",
@@ -229773,7 +229789,7 @@
   },
   "scripts/inventario/gerar-banco.mjs": {
    "path": "scripts/inventario/gerar-banco.mjs",
-   "lines": 350,
+   "lines": 372,
    "exports": [
     "const PROJETO_OFICIAL",
     "const LIMIARES",
@@ -229832,7 +229848,8 @@
     "tem mais pastas que isso. Avisa a partir de 95 para o proximo deploy nao falhar no limite.",
     "* Algo com cara de credencial no texto? (mesma regra do Promo_Gifts_V4) */",
     "Limite conhecido: `.from(variavel)` nao e resolvido.",
-    "* Versoes que o ledger deve ter: arquivos do repo + legadas reconciliadas (era Lovable/dashboard,"
+    "* Versoes que o ledger deve ter: arquivos do repo + legadas reconciliadas (era Lovable/dashboard,",
+    "\"limite do plano\" se concluem dai (sonda OPTIONS achou as 171 no ar)."
    ],
    "doc": "!/usr/bin/env node",
    "percents": [
@@ -247245,9 +247262,23 @@
     "const ClientContactAlertsWidget"
    ]
   },
+  "src/components/vendedor/EligibleBonusesCard.test.tsx": {
+   "path": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+   "lines": 83,
+   "is_test": true,
+   "rule_comments": [
+    "QA-061: falha na receita do mês é erro fatal — o card não pode dizer \"não atingido\"."
+   ],
+   "tests": [
+    "EligibleBonusesCard (QA-061)",
+    "mostra erro com nova tentativa quando a leitura falha",
+    "avisa que o dado é parcial quando sequência ou total de vendas falharam",
+    "nao mostra o aviso de parcial quando todas as leituras funcionaram"
+   ]
+  },
   "src/components/vendedor/EligibleBonusesCard.tsx": {
    "path": "src/components/vendedor/EligibleBonusesCard.tsx",
-   "lines": 182,
+   "lines": 229,
    "exports": [
     "function EligibleBonusesCard"
    ],
@@ -247255,7 +247286,7 @@
     {
      "name": "EligibleBonusesCard",
      "params": "{ salespersonId }: Props",
-     "body": "const { data: bonuses = [], isLoading } = useEligibleBonuses(salespersonId); const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isLoading) { return ( <Card className=\"p-4\"> <div className=\"h-24 animate-pulse rounded-lg bg-muted/30\" /> </C …"
+     "body": "const { data, isLoading, isError, refetch } = useEligibleBonuses(salespersonId); const bonuses: EligibleBonusesResult = data ?? SEM_PREMIACOES; const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isError) { return ( <Card className=\"p-4 bo …"
     }
    ]
   },
@@ -250272,9 +250303,10 @@
   },
   "src/hooks/useEligibleBonuses.ts": {
    "path": "src/hooks/useEligibleBonuses.ts",
-   "lines": 172,
+   "lines": 182,
    "exports": [
     "interface EligibleBonus",
+    "type EligibleBonusesResult",
     "function evaluateBonus",
     "function useEligibleBonuses"
    ],
@@ -250318,7 +250350,7 @@
     {
      "name": "useEligibleBonuses",
      "params": "salespersonId: string | undefined",
-     "body": "return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonus[]> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .order('pr …"
+     "body": "return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonusesResult> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .ord …"
     }
    ]
   },
@@ -259581,7 +259613,7 @@
   },
   "src/hooks/crm/useClients.ts": {
    "path": "src/hooks/crm/useClients.ts",
-   "lines": 118,
+   "lines": 114,
    "exports": [
     "const useClients",
     "const useClientsPage",
@@ -299071,10 +299103,51 @@
   }
  },
  "git": {
-  "sha": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
+  "sha": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f0b094b",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/vendedor/EligibleBonusesCard.test.tsx",
+     "src/components/vendedor/EligibleBonusesCard.tsx",
+     "src/hooks/crm/useClients.ts",
+     "src/hooks/useEligibleBonuses.ts"
+    ]
+   },
+   {
+    "sha": "812f690",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "inventario/estado/README.md",
+     "scripts/ci/inventario-banco.unit.mjs",
+     "scripts/inventario/gerar-banco.mjs"
+    ]
+   },
+   {
+    "sha": "a7e02eb",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)",
+    "files": [
+     "docs/graphify/README.md",
+     "graphify-out/GRAPH_REPORT.md",
+     "graphify-out/manifest.json",
+     "graphify.local.json",
+     "scripts/graphify/extract-code-only.mjs",
+     "scripts/graphify/extract-code-only.test.mjs",
+     "tools/graphify/pyproject.toml",
+     "tools/graphify/uv.lock"
+    ]
+   },
    {
     "sha": "0ab02a5",
     "date": "2026-11-23",
@@ -299369,47 +299442,12 @@
      "docs/qa/05-PROGRESSO.md",
      "src/pages/ImportExport.tsx"
     ]
-   },
-   {
-    "sha": "19fe244",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)",
-    "files": [
-     "src/hooks/sales/useSalespersonCoaching.ts"
-    ]
-   },
-   {
-    "sha": "a7c2da3",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)",
-    "files": [
-     "src/contexts/DashboardThemeContext.tsx",
-     "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
-     "src/hooks/dialer/useClickToCall.ts",
-     "src/hooks/gamification/useLeagues.test.tsx",
-     "src/hooks/gamification/useLeagues.ts",
-     "src/hooks/race/useMyRaceCar.ts",
-     "src/hooks/race/useRaceUnlocks.ts",
-     "src/hooks/useCommissions.ts"
-    ]
-   },
-   {
-    "sha": "bdea3f7",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir atualizacao otimista de clientes e produtos (QA-058+059) (#654)",
-    "files": [
-     "src/hooks/crm/useClients.ts",
-     "src/hooks/useProducts.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    10
+    12
    ],
    [
     "deno.lock",
@@ -299440,51 +299478,51 @@
     2
    ],
    [
-    "AGENTS.md",
+    "src/components/vendedor/EligibleBonusesCard.test.tsx",
     1
    ],
    [
-    "src/integrations/supabase/types.ts",
+    "src/components/vendedor/EligibleBonusesCard.tsx",
     1
    ],
    [
-    "vite.config.ts",
+    "src/hooks/crm/useClients.ts",
     1
    ],
    [
-    "src/hooks/useUserRoles.test.ts",
+    "src/hooks/useEligibleBonuses.ts",
     1
    ],
    [
-    "src/hooks/useUserRoles.ts",
+    "inventario/estado/README.md",
     1
    ],
    [
-    ".env.example",
+    "scripts/ci/inventario-banco.unit.mjs",
     1
    ],
    [
-    "scripts/check-typecheck-baseline.mjs",
+    "scripts/inventario/gerar-banco.mjs",
     1
    ],
    [
-    "src/components/QueryErrorState.tsx",
+    "docs/graphify/README.md",
     1
    ],
    [
-    "src/hooks/useFeatureFlags.ts",
+    "graphify-out/GRAPH_REPORT.md",
     1
    ],
    [
-    "src/pages/AdminComissoes.tsx",
+    "graphify-out/manifest.json",
     1
    ],
    [
-    "src/pages/AdminSupressaoEmails.tsx",
+    "graphify.local.json",
     1
    ],
    [
-    "src/pages/AuditLogsPage.tsx",
+    "scripts/graphify/extract-code-only.mjs",
     1
    ]
   ]

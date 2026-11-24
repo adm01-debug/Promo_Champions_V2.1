@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0ab02a594fca76495f833bd38b446bf4e5e208f3` (2026-11-24T00:23:06Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5` (2026-11-24T01:08:32Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2510), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2511), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3647 |
-| arquivos_codigo | 2591 |
-| linhas_codigo | 445273 |
+| arquivos_total | 3648 |
+| arquivos_codigo | 2592 |
+| linhas_codigo | 445446 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 420 |
 | migrations | 712 |
 | cron_jobs | 39 |
-| testes | 251 |
+| testes | 252 |
 | workflows | 27 |
 | scripts | 78 |
 | docs_md | 223 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1110), src/pages (174), src/contexts (5)
 - hooks: src/hooks (472), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (166), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (167), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -584,23 +584,23 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts_orfaos: 0
 - env_usadas_nao_declaradas: 7 — ex.: DEV, MODE, VITE_APP_URL
 - ciclos_de_import: 2
-- possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
+- possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 22457 nós · 67775 arestas · 1614 comunidades · grafo do commit `0ab02a59`
-- comunidades maiores: schema.sql (785), lucide-react (363), client.ts (332), Input (314), Índice (272), DialogContent (271), getCorsHeaders (259), Badge (238), CardHeader (235), CardTitle (233), Card (224), date-fns (214)
+- 24161 nós · 74325 arestas · 1174 comunidades · grafo do commit `f0b094b9`
+- comunidades maiores: schema.sql (551), Card (531), Índice (395), lucide-react (368), Badge (362), SelectContent (287), Skeleton (286), DialogContent (282), public (261), client.ts (253), getCorsHeaders (222), public.sales (213)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (45)
-- package-lock.json (42)
+- package.json (42)
+- package-lock.json (40)
 - deno.lock (20)
 - CHANGELOG.md (14)
-- docs/qa/05-PROGRESSO.md (12)
+- docs/qa/05-PROGRESSO.md (14)
 - src/integrations/supabase/types.ts (12)
+- scripts/inventario/gerar-banco.mjs (10)
 - .github/workflows/deploy.yml (9)
-- scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/pr-checks.yml (7)
 - .github/workflows/codeql.yml (6)
 - .github/workflows/migrations-drift.yml (6)
@@ -767,6 +767,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `f0b094b` fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691
+- 2026-11-24 `812f690` fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)
+- 2026-11-24 `a7e02eb` chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)
 - 2026-11-24 `0ab02a5` chore: marca a etapa 190 no progresso (PR #688) (#689)
 - 2026-11-24 `dd3a3f9` chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)
 - 2026-11-24 `99efd08` fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)
@@ -779,9 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `f42eb57` chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)
 - 2026-11-23 `cef0dfd` chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)
 - 2026-11-23 `cdee014` chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)
-- 2026-11-23 `4a38ccf` chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)
-- 2026-11-23 `c5edf84` chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)
-- 2026-11-23 `6979cae` chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

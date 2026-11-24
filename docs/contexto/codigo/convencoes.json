@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (166)",
+   "co-localizado (*.test) (167)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)",
+   "fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)",
+   "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)",
    "chore: marca a etapa 190 no progresso (PR #688) (#689)",
-   "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)",
-   "fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)",
-   "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)",
-   "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)"
+   "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

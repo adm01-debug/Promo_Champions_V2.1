@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 251,
+ "total": 252,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 183
+  "unit": 184
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 166
+   "arquivos": 167
   },
   {
    "padrao": "tests/",
@@ -83,11 +83,11 @@
   {
    "arquivo": "scripts/ci/inventario-banco.unit.mjs",
    "tipo": "unit",
-   "linhas": 217,
+   "linhas": 232,
    "testa": [
     "scripts/inventario/gerar-banco.mjs"
    ],
-   "casos": 18
+   "casos": 19
   },
   {
    "arquivo": "scripts/ci/inventario-mudou.unit.mjs",
@@ -572,6 +572,15 @@
     "src/components/tasks/CreateTaskDialog.tsx"
    ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/components/vendedor/EligibleBonusesCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/components/vendedor/EligibleBonusesCard.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/config/dominio-publico.test.ts",
@@ -2185,6 +2194,7 @@
   "src/components/sequences/sendTimeHelpers.ts": 1,
   "src/components/tasks/CreateTaskDialog.tsx": 1,
   "src/components/ui/tooltip.tsx": 1,
+  "src/components/vendedor/EligibleBonusesCard.tsx": 1,
   "src/config/external.ts": 1,
   "src/config/role-permissions.json": 1,
   "src/constants/index.ts": 1,

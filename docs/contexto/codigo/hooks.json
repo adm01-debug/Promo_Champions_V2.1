@@ -2921,7 +2921,7 @@
     "useDeleteClient",
     "useUpdateClient"
    ],
-   "linhas": 118,
+   "linhas": 114,
    "dominio": "hooks/crm",
    "tabelas": [],
    "rpcs": [],
@@ -8610,7 +8610,7 @@
    "hooks_exportados": [
     "useEligibleBonuses"
    ],
-   "linhas": 172,
+   "linhas": 182,
    "dominio": "hooks",
    "tabelas": [
     "commission_bonuses",

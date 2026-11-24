@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0ab02a594f` · branch `main` · 2026-11-24 00:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f0b094b90d` · branch `main` · 2026-11-24 01:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2225,7 +2225,7 @@ _nenhum item encontrado_
   ```
 - **EligibleBonusesCard({ salespersonId }: Props)** — `src/components/vendedor/EligibleBonusesCard.tsx`
   ```
-  const { data: bonuses = [], isLoading } = useEligibleBonuses(salespersonId); const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isLoading) { return ( <Card className="p-4"> <div className="h-24 animate-pulse rounded-lg bg-muted/30" /> </C …
+  const { data, isLoading, isError, refetch } = useEligibleBonuses(salespersonId); const bonuses: EligibleBonusesResult = data ?? SEM_PREMIACOES; const { achieved, inProgress } = useMemo(() => { const a: EligibleBonus[] = []; const p: EligibleBonus[] = []; for (const b of bonuses) (b.achieved ? a : p).push(b); p.sort((x, y) => y.progress - x.progress); return { achieved: a, inProgress: p }; }, [bonuses]); useAutoAwardBonuses(achieved, salespersonId); if (isError) { return ( <Card className="p-4 bo …
   ```
 - **RankingGridItem({ id, name, avatar_url, rank, totalSales, goalAmount, goalProgress, completedSales, role, index, }: RankingGridItemProps)** — `src/components/vendedores/RankingGridItem.tsx`
   ```
@@ -2281,7 +2281,7 @@ _nenhum item encontrado_
   ```
 - **useEligibleBonuses(salespersonId: string | undefined)** — `src/hooks/useEligibleBonuses.ts`
   ```
-  return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonus[]> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .order('pr …
+  return useQuery({ queryKey: ['eligible-bonuses', salespersonId], enabled: !!salespersonId, staleTime: 60_000, queryFn: async (): Promise<EligibleBonusesResult> => { if (!salespersonId) return []; const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0); const [bonusesRes, salesRes, streakRes, allSalesRes] = await Promise.all([ supabase .from('commission_bonuses') .select('*') .eq('is_active', true) .or(`salesperson_id.eq.${salespersonId},salesperson_id.is.null`) .ord …
   ```
 - **invalidateFlagQueries(queryClient: ReturnType<typeof useQueryClient>)** — `src/hooks/useFeatureFlagsAdmin.ts`
   ```
@@ -4273,7 +4273,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1715 testes em 216 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1719 testes em 217 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4409,6 +4409,7 @@ _nenhum item encontrado_
 | `src/components/conversational/BattleCardSuggestion.test.tsx` | 4 | BattleCardSuggestion · busca só battle card ativo (arquivado não é sugerido) · não renderiza nada quando o material não volta (arquivado ou inexistente) · mostra o material ativo sugerido |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/components/sales/cadence/EliteCadenceAnalytics.test.tsx` | 4 | EliteCadenceAnalytics · mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios · mostra estado vazio quando não há tarefas no período · mostra erro quando a consulta falha |
+| `src/components/vendedor/EligibleBonusesCard.test.tsx` | 4 | EligibleBonusesCard (QA-061) · mostra erro com nova tentativa quando a leitura falha · avisa que o dado é parcial quando sequência ou total de vendas falharam · nao mostra o aviso de parcial quando todas as leituras funcionaram |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/useVictoryFeed.test.tsx` | 4 | useVictoryFeed — comentários próprios · edita o conteúdo do comentário pelo id · exclui o comentário pelo id · falha com toast de erro quando o RLS não afeta nenhuma linha |
