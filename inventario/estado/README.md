@@ -19,8 +19,18 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão. Mesmo padrão do 
   `historico_cron_sem_limpeza` (> 50 mil linhas com mais de 7 dias), `integracao_sem_sucesso`
   (integração ativa cujo último health check não foi `success`, ou nunca checada),
   `dead_letters_pendentes` (tabela `*dead_letter*` com linha esperando replay), `edge_sem_deploy`,
-  `edge_publicada_sem_codigo` e `edge_limite_do_plano` (≥ 95 das 100 edges que o plano aceita).
+  `edge_publicada_sem_codigo`, `edge_limite_do_plano` (≥ 95 das 100 edges que o plano aceita) e
+  `edge_lista_truncada` (GET /functions bateu no teto da página: o total de publicadas não foi medido).
   Os limiares estão em `LIMIARES` no script.
+
+  > **Snapshot de 2026-11-12 (`medido_em 2026-11-12T14:07:03Z`):** os alertas `edge_sem_deploy`
+  > (71 funções) e `edge_limite_do_plano` ("100 publicadas de 100") daquele arquivo são falsos.
+  > A lista de `publicadas` veio com **exatamente 100 itens** (o teto da página da Management API)
+  > para 171 pastas no repo — 71 = 171 − 100 — e `publicadas_sem_codigo_no_repo` veio vazio, ou
+  > seja, nenhum slug era desconhecido. Sonda `OPTIONS` em todas as 171 funções respondeu 200
+  > (0 ausentes), com controle negativo (nomes inventados → 404), validando o método. A correção
+  > está no gerador (`compararEdges` marca `publicadas_truncadas` e devolve `no_repo_sem_deploy: null`,
+  > sem emitir os dois alertas); o `banco.json` com os alertas falsos é gerado e some no próximo run.
 - **`tabelas_orfas`**: 0 linhas + não citada em função/view do banco + nenhum `.from()` nem `/rest/v1/`
   no código (`.from(variavel)` não é resolvido). Candidata a limpeza, não prova de que pode apagar.
 - **`linhas`** é `count(*)` exato quando a tabela tem menos de 200 mil linhas (`linhas_exatas: true`);

@@ -111,6 +111,21 @@ test('edges publicadas perto do limite do plano viram alerta', () => {
   assert.equal(montarInventario(base(), {}, poucas).alertas.some((a) => a.tipo === 'edge_limite_do_plano'), false);
 });
 
+test('lista de edges no teto do plano e medicao incompleta, nao ausencia de deploy', () => {
+  const api = Array.from({ length: LIMIARES.edgesPublicadasMax }, (_, i) => ({ slug: `e${i}`, version: 1, status: 'ACTIVE', verify_jwt: true }));
+  const noRepo = [...api.map((f) => f.slug), 'sem-deploy-1', 'sem-deploy-2'];
+  const ed = compararEdges(api, noRepo);
+  assert.equal(ed.publicadas_truncadas, true);
+  assert.equal(ed.no_repo_sem_deploy, null, 'no teto da pagina nao se conclui "sem deploy"');
+  assert.deepEqual(ed.publicadas_sem_codigo_no_repo, [], 'a direcao inversa continua conclusiva');
+  const tipos = montarInventario(base(), {}, ed).alertas.map((a) => a.tipo);
+  assert.deepEqual(tipos, ['edge_lista_truncada'], 'nem edge_sem_deploy nem edge_limite_do_plano no teto');
+  const abaixoDoTeto = api.slice(0, LIMIARES.edgesPublicadasMax - 1);
+  const poucas = compararEdges(abaixoDoTeto, [...abaixoDoTeto.map((f) => f.slug), 'sem-deploy-1', 'sem-deploy-2']);
+  assert.equal(poucas.publicadas_truncadas, false);
+  assert.deepEqual(poucas.no_repo_sem_deploy, ['sem-deploy-1', 'sem-deploy-2']);
+});
+
 test('saida tem chaves ordenadas (diff estavel entre execucoes)', () => {
   const inv = montarInventario(base(), {});
   assert.deepEqual(Object.keys(inv), [...Object.keys(inv)].sort());
