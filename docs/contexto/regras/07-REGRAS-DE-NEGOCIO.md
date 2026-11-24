@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `66ebe3f60e` · branch `main` · 2026-11-24 04:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `22f284a570` · branch `main` · 2026-11-24 04:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1761 testes em 226 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1764 testes em 227 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4444,6 +4444,7 @@ _nenhum item encontrado_
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |
 | `src/components/pricing/PricingHealthBanner.test.tsx` | 3 | PricingHealthBanner — exportação da auditoria (etapa 103) · exporta resumo, faixas, vendedores e produtos em CSV · exporta apenas o resumo quando o hub não passa os detalhes |
+| `src/components/purchase-intelligence/EmptyStateGuide.test.tsx` | 3 | EmptyStateGuide — guia de estado vazio com ações reais (etapa 105) · leva para a configuração ao clicar em Começar Configuração · leva para a documentação ao clicar em Ver Documentação |
 | `src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx` | 3 | PurchaseHeatmapGrid — exportação do mapa de compras (etapa 104) · exporta em CSV as células visíveis, somando receita por cliente e mês · mostra estado vazio, sem exportação, quando não há compras no período |
 | `src/components/sales/cadence/ApprovalQueue.test.tsx` | 3 | Filas de aprovação de cadência · ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos · aba Fila de Aprovação do gerenciador não exibe itens fictícios |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |

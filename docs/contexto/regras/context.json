@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
+  "sha": "22f284a5707a9b3e55589cb63636bc70825d6e48",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:32 UTC",
-  "files_total": 3670,
-  "code_files": 3321,
-  "code_lines": 481949
+  "generated_at": "2026-11-24 04:35 UTC",
+  "files_total": 3671,
+  "code_files": 3322,
+  "code_lines": 481990
  },
  "version": "1.3.2",
- "facts_hash": "1d49fcdbac26e292",
+ "facts_hash": "2d1e6b745e4b5aa9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1388,
+   ".tsx": 1389,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -101961,6 +101961,13 @@
    },
    {
     "path": "/configuracoes",
+    "component": "div",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx"
+   },
+   {
+    "path": "/configuracoes",
     "component": "Configuracoes",
     "guard": "",
     "roles": [],
@@ -102056,6 +102063,13 @@
     "guard": "",
     "roles": [],
     "file": "src/routes/AppRoutes.tsx"
+   },
+   {
+    "path": "/docs",
+    "component": "div",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx"
    },
    {
     "path": "/docs",
@@ -102259,6 +102273,13 @@
     "guard": "",
     "roles": [],
     "file": "src/routes/AppRoutes.tsx"
+   },
+   {
+    "path": "/inteligencia-compras",
+    "component": "EmptyStateGuide",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx"
    },
    {
     "path": "/inteligencia-compras",
@@ -102936,7 +102957,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1233,
+  "components_count": 1234,
   "hooks": [
    {
     "name": "useContacts",
@@ -106892,8 +106913,8 @@
   },
   {
    "module": "src/components",
-   "files": 1233,
-   "lines": 194147,
+   "files": 1234,
+   "lines": 194188,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -159388,6 +159409,18 @@
    {
     "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
     "name": "desabilita a exportação quando nenhum registro corresponde ao filtro"
+   },
+   {
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+    "name": "EmptyStateGuide — guia de estado vazio com ações reais (etapa 105)"
+   },
+   {
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+    "name": "leva para a configuração ao clicar em Começar Configuração"
+   },
+   {
+    "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+    "name": "leva para a documentação ao clicar em Ver Documentação"
    },
    {
     "file": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
@@ -242072,11 +242105,45 @@
     }
    ]
   },
+  "src/components/purchase-intelligence/EmptyStateGuide.test.tsx": {
+   "path": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+   "lines": 32,
+   "is_test": true,
+   "routes": [
+    {
+     "path": "/inteligencia-compras",
+     "component": "EmptyStateGuide",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/configuracoes",
+     "component": "div",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/docs",
+     "component": "div",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "tests": [
+    "EmptyStateGuide — guia de estado vazio com ações reais (etapa 105)",
+    "leva para a configuração ao clicar em Começar Configuração",
+    "leva para a documentação ao clicar em Ver Documentação"
+   ]
+  },
   "src/components/purchase-intelligence/EmptyStateGuide.tsx": {
    "path": "src/components/purchase-intelligence/EmptyStateGuide.tsx",
-   "lines": 84,
+   "lines": 93,
    "exports": [
     "function EmptyStateGuide"
+   ],
+   "navigates": [
+    "/configuracoes",
+    "/docs"
    ],
    "percents": [
     "transition={{ delay: 0.2 + i * 0.1 }}"
@@ -299373,10 +299440,20 @@
   }
  },
  "git": {
-  "sha": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
+  "sha": "22f284a5707a9b3e55589cb63636bc70825d6e48",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "22f284a",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)",
+    "files": [
+     "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+     "src/components/purchase-intelligence/EmptyStateGuide.tsx"
+    ]
+   },
    {
     "sha": "66ebe3f",
     "date": "2026-11-24",
@@ -299703,22 +299780,12 @@
      ".env.example",
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "27e826b",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "scripts/check-typecheck-baseline.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    16
+    15
    ],
    [
     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
@@ -299739,6 +299806,14 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/EmptyStateGuide.tsx",
+    1
    ],
    [
     "src/components/purchase-intelligence/ClientPurchaseHistory.tsx",
@@ -299786,14 +299861,6 @@
    ],
    [
     "src/components/analytics/WinLossAnalysis.tsx",
-    1
-   ],
-   [
-    "src/hooks/useWinLossAnalysis.ts",
-    1
-   ],
-   [
-    "src/pages/WinLossAnalysisPage.test.tsx",
     1
    ]
   ]

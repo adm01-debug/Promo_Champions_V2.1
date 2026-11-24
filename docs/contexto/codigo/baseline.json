@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
+  "commit": "22f284a5707a9b3e55589cb63636bc70825d6e48",
   "branch": "main",
-  "data_commit": "2026-11-24T01:31:56-03:00",
+  "data_commit": "2026-11-24T01:34:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "22f284a",
+    "data": "2026-11-24",
+    "assunto": "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)"
+   },
    {
     "sha": "66ebe3f",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "0ab02a5",
     "data": "2026-11-24",
     "assunto": "chore: marca a etapa 190 no progresso (PR #688) (#689)"
-   },
-   {
-    "sha": "dd3a3f9",
-    "data": "2026-11-24",
-    "assunto": "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)"
    }
   ],
-  "arquivos_mudados_7d": 304,
+  "arquivos_mudados_7d": 306,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 255
+    "commits": 256
    },
    {
     "autor": "dependabot[bot]",
@@ -309,14 +309,14 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 22
+    "commits": 21
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3655,
-  "arquivos_codigo": 2599,
-  "linhas_codigo": 446838,
+  "arquivos_total": 3656,
+  "arquivos_codigo": 2600,
+  "linhas_codigo": 446879,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 261,
+  "testes": 262,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1233,
-   "linhas": 194148
+   "arquivos": 1234,
+   "linhas": 194189
   },
   "src/config": {
    "arquivos": 4,
