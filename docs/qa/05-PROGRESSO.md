@@ -245,7 +245,7 @@ Exemplo:
 - [ ] 210 — Revisar supressões da regra de dependências — os 15 de leitura de dado de negócio — onda 8 — Média
 - [ ] 211 — Revisar supressões da regra de dependências — os 15 de interface e gamificação — onda 8 — Média
 - [ ] 212 — Revisar supressões da regra de dependências — os restantes — onda 8 — Média
-- [ ] 213 — Escopar as funções que autenticam e descartam — busca semântica e busca visual — onda 8 — Média
+- [x] 213 — Escopar as funções que autenticam e descartam — busca semântica e busca visual — onda 8 — Média — PR #696 - `semantic-index-entity` passou a ler a entidade de origem com o client do chamador (RLS decide): cliente de outro vendedor deu 404 e a leitura no stub apareceu como `as=user`, contra `as=svc` na main; `semantic-search` e `visual-search` autenticam antes do limite e chaveiam o bucket pelo `userId`, então 33 chamadas com o mesmo JWT e `X-Forwarded-For` trocado deram 3× 429, contra 0× na main
 - [ ] 214 — Escopar as funções que autenticam e descartam — inteligência preditiva e análise comportamental — onda 8 — Média
 - [ ] 215 — Escopar as funções que autenticam e descartam — enriquecimento de lead — onda 8 — Média
 - [ ] 216 — Escopar as funções que autenticam e descartam — OAuth do Bitrix24 e simulação de carga — onda 8 — Média

@@ -39,31 +39,34 @@ Deno.serve(
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Autorização antes de qualquer consumo: o limite é chaveado pelo usuário,
+    // não pelo `x-forwarded-for` (falsificável e compartilhado por NAT).
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('semantic-search authorization failed:', error);
+      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const rl = enforceRateLimit(req, {
       name: 'semantic-search',
       limit: 30,
       windowSeconds: 60,
+      key: caller.userId,
     });
     if (rl) return rl;
 
     try {
-      // Autorização: exige usuário autenticado (JWT válido).
-      try {
-        await getUserClient(req);
-      } catch (error) {
-        if (error instanceof UnauthorizedError) {
-          return new Response(JSON.stringify({ error: 'unauthorized' }), {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        console.error('semantic-search authorization failed:', error);
-        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
-          status: 503,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
 
       const { query, limit = 20 } = (await req.json()) as SearchRequest;
 
