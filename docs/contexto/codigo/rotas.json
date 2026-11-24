@@ -858,7 +858,7 @@
     "sdr",
     "status"
    ],
-   "arquivos_puxados": 68
+   "arquivos_puxados": 69
   },
   {
    "protegida": true,
@@ -1366,7 +1366,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 21
   },
   {
    "protegida": true,
@@ -9280,7 +9280,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 28
   },
   {
    "protegida": false,
@@ -9356,7 +9356,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 46
+   "arquivos_puxados": 47
   },
   {
    "protegida": false,
@@ -9432,7 +9432,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 46
+   "arquivos_puxados": 47
   },
   {
    "protegida": false,
@@ -11031,7 +11031,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 23
+   "arquivos_puxados": 25
   },
   {
    "protegida": false,

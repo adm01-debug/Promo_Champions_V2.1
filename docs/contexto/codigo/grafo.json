@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9660,
+ "arestas": 9666,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -317,6 +317,11 @@
    "importado_por": 1
   },
   {
+   "modulo": "components/admin",
+   "depende_de": 14,
+   "importado_por": 5
+  },
+  {
    "modulo": "components/analytics",
    "depende_de": 14,
    "importado_por": 5
@@ -325,11 +330,6 @@
    "modulo": "components/sdr",
    "depende_de": 17,
    "importado_por": 2
-  },
-  {
-   "modulo": "components/admin",
-   "depende_de": 13,
-   "importado_por": 5
   },
   {
    "modulo": "hooks/gamification",

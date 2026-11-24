@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bf7fc73c56` · branch `main` · 2026-11-24 06:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7b75ef89a8` · branch `main` · 2026-11-24 06:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1815 testes em 238 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1822 testes em 240 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4416,6 +4416,7 @@ _nenhum item encontrado_
 | `scripts/graphify/multigraph.test.mjs` | 4 | preserva relações múltiplas dirigidas entre os mesmos nós · materializa importações externas e mantém todas as relações da fonte · impacto reverso conserva evidência e informa relações ambíguas · rejeita documento que perde uma relação da fonte |
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
 | `src/components/activities/ActivityLogForm.test.tsx` | 4 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem · %s grava no vendedor logado, não no primeiro da lista |
+| `src/components/admin/connections/WebhooksTab.test.tsx` | 4 | WebhooksTab (confirmação de remoção) · não remove o webhook antes da confirmação · remove o webhook ao confirmar · cancelar mantém o webhook |
 | `src/components/analytics/ABCAnalysis.test.tsx` | 4 | ABCAnalysis · mostra só o insight calculado, sem automações, movimentações nem ações falsas · usa rótulos factuais, sem prometer IA ou versão inexistente · sem vendas, não exibe a seção de insights |
 | `src/components/cadences/EnrollCadenceDialog.test.tsx` | 4 | EnrollCadenceDialog — responsável da inscrição · vendedor sem escolher responsável inscreve com o próprio salesperson_id · vendedor só vê a si mesmo na lista de responsáveis · admin/gestor continua vendo todos os vendedores |
 | `src/components/competitive/FeatureComparison.test.tsx` | 4 | FeatureComparison (Market Intel) · mostra estado vazio honesto quando não há concorrentes cadastrados · lista concorrentes reais com menções e battle card vinculado · mostra erro com ação de tentar novamente |
@@ -4446,6 +4447,7 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
+| `src/components/admin/connections/ConnectionsOverviewTable.test.tsx` | 3 | ConnectionsOverviewTable (confirmação de remoção) · não remove a conexão antes da confirmação · remove a conexão ao confirmar |
 | `src/components/assistant/DealChatHistory.test.tsx` | 3 | DealChatHistory — apagar pergunta · pede confirmacao antes de apagar e so apaga no confirmar · cancelar mantem a pergunta no historico |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |

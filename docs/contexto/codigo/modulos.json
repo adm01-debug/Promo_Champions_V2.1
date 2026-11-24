@@ -238,8 +238,8 @@
   {
    "modulo": "components/admin",
    "arquivos": 60,
-   "testes": 1,
-   "linhas": 8190,
+   "testes": 3,
+   "linhas": 8228,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -392,6 +392,7 @@
    ],
    "depende_de_modulos": [
     "components/semantic",
+    "components/shared",
     "components/ui",
     "hooks",
     "hooks/admin",
@@ -8238,6 +8239,7 @@
    },
    "importado_por_outros_modulos": [
     "components/activities",
+    "components/admin",
     "components/assistant",
     "components/coaching",
     "components/comparador",
@@ -16065,7 +16067,7 @@
    "modulo": "pages",
    "arquivos": 160,
    "testes": 11,
-   "linhas": 39561,
+   "linhas": 39636,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

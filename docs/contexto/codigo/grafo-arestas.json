@@ -413,6 +413,7 @@
   ],
   "src/components/admin/connections/ConnectionsOverviewTable.tsx": [
    "src/components/admin/connections/useCredentialsSource.ts",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -579,6 +580,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/components/admin/connections/WebhooksTab.tsx": [
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -10492,6 +10494,7 @@
    "src/lib/utils.ts"
   ],
   "src/pages/CommissionRules.tsx": [
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -10600,6 +10603,7 @@
   ],
   "src/pages/CustomReports.tsx": [
    "src/components/reporting/ReportBuilder.tsx",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -11503,6 +11507,7 @@
    "src/components/reporting/ScheduledReportFormDialog.tsx",
    "src/components/reporting/ScheduledReportRunsDrawer.tsx",
    "src/components/reporting/scheduledReportHelpers.ts",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -11699,6 +11704,7 @@
   "src/pages/WebhooksPage.tsx": [
    "src/components/debug/QualityReportView.tsx",
    "src/components/debug/WebhookSimulationPanel.tsx",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",

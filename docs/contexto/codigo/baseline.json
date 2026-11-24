@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
+  "commit": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
   "branch": "main",
-  "data_commit": "2026-11-24T03:19:53-03:00",
+  "data_commit": "2026-11-24T03:20:28-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7b75ef8",
+    "data": "2026-11-24",
+    "assunto": "fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)"
+   },
    {
     "sha": "bf7fc73",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "d458d7b",
     "data": "2026-11-24",
     "assunto": "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)"
-   },
-   {
-    "sha": "aab4737",
-    "data": "2026-11-24",
-    "assunto": "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)"
    }
   ],
-  "arquivos_mudados_7d": 359,
+  "arquivos_mudados_7d": 367,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -152,12 +152,12 @@
     "mudancas": 80
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 77
+    "pasta": "src/components/admin",
+    "mudancas": 78
    },
    {
-    "pasta": "src/components/admin",
-    "mudancas": 74
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 77
    },
    {
     "pasta": "src/components/competitive",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3670,
-  "arquivos_codigo": 2612,
-  "linhas_codigo": 448147,
+  "arquivos_total": 3672,
+  "arquivos_codigo": 2614,
+  "linhas_codigo": 448424,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 274,
+  "testes": 276,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 225
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1238,
-   "linhas": 194698
+   "arquivos": 1240,
+   "linhas": 194900
   },
   "src/config": {
    "arquivos": 4,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 185,
-   "linhas": 45185
+   "linhas": 45260
   },
   "src/routes": {
    "arquivos": 5,

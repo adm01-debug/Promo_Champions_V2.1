@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 274,
+ "total": 276,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 206
+  "unit": 208
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 188
+   "arquivos": 190
   },
   {
    "padrao": "tests/",
@@ -273,6 +273,24 @@
     "src/components/admin/AdminQuickLinks.tsx"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 77,
+   "testa": [
+    "src/components/admin/connections/ConnectionsOverviewTable.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/components/admin/connections/WebhooksTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/admin/connections/WebhooksTab.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/analytics/ABCActionableAutomations.test.ts",
@@ -2361,6 +2379,8 @@
   "src/components/activities/ActivityItemRow.tsx": 1,
   "src/components/activities/ActivityLogForm.tsx": 1,
   "src/components/admin/AdminQuickLinks.tsx": 1,
+  "src/components/admin/connections/ConnectionsOverviewTable.tsx": 1,
+  "src/components/admin/connections/WebhooksTab.tsx": 1,
   "src/components/analytics/ABCActionableAutomations.tsx": 1,
   "src/components/analytics/ABCAnalysis.tsx": 1,
   "src/components/analytics/ABCMatrixShift.tsx": 1,

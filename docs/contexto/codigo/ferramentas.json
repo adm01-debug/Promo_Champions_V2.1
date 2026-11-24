@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2531)",
+   "TypeScript (2533)",
    "SQL (722)",
    "Markdown (225)",
    "JavaScript (78)",
@@ -1669,6 +1669,10 @@
     "arquivos": 2
    },
    {
+    "host": "exemplo.test",
+    "arquivos": 2
+   },
+   {
     "host": "promochampions.com.br",
     "arquivos": 2
    },
@@ -1734,10 +1738,6 @@
    },
    {
     "host": "example.supabase.co",
-    "arquivos": 1
-   },
-   {
-    "host": "exemplo.test",
     "arquivos": 1
    },
    {

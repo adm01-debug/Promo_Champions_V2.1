@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
+  "sha": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 06:20 UTC",
-  "files_total": 3685,
-  "code_files": 3334,
-  "code_lines": 483258
+  "generated_at": "2026-11-24 06:22 UTC",
+  "files_total": 3687,
+  "code_files": 3336,
+  "code_lines": 483535
  },
  "version": "1.3.2",
- "facts_hash": "07262ff5da95ff2f",
+ "facts_hash": "3d2fd8a24ae36d6b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1399,
+   ".tsx": 1401,
    ".ts": 1131,
    ".sql": 722,
    ".mjs": 72,
@@ -94173,7 +94173,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 18
+    "deps_count": 20
    },
    {
     "path": "",
@@ -95036,7 +95036,7 @@
      "scheduled-report-trigger"
     ],
     "rpc_transitive": [],
-    "deps_count": 25
+    "deps_count": 27
    },
    {
     "path": "",
@@ -95183,7 +95183,7 @@
      "stress-test-contracts"
     ],
     "rpc_transitive": [],
-    "deps_count": 22
+    "deps_count": 24
    },
    {
     "path": "",
@@ -96519,7 +96519,7 @@
      "report-builder-execute"
     ],
     "rpc_transitive": [],
-    "deps_count": 44
+    "deps_count": 45
    },
    {
     "path": "/relatorios-email",
@@ -102985,7 +102985,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1238,
+  "components_count": 1240,
   "hooks": [
    {
     "name": "useContacts",
@@ -106941,8 +106941,8 @@
   },
   {
    "module": "src/components",
-   "files": 1238,
-   "lines": 194697,
+   "files": 1240,
+   "lines": 194899,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107156,6 +107156,7 @@
     "src/components/admin/connections/AutoTestIntervalCard.tsx",
     "src/components/admin/connections/AutoTestJobStatusCard.tsx",
     "src/components/admin/connections/Bitrix24Tab.tsx",
+    "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
     "src/components/admin/connections/ConnectionsOverviewTable.tsx",
     "src/components/admin/connections/CredentialsSourceContext.ts",
     "src/components/admin/connections/CredentialsSourceFilter.tsx",
@@ -107182,11 +107183,10 @@
     "src/components/admin/connections/SmokeTestChecklist.tsx",
     "src/components/admin/connections/SupabaseConnectionsTab.tsx",
     "src/components/admin/connections/TopQueriesPanel.tsx",
+    "src/components/admin/connections/WebhooksTab.test.tsx",
     "src/components/admin/connections/WebhooksTab.tsx",
     "src/components/admin/connections/historyOpenPersistence.ts",
-    "src/components/admin/connections/smokeTestHelpers.ts",
-    "src/components/admin/connections/useCredentialsSource.ts",
-    "src/components/admin/task-console/BulkActionBar.tsx"
+    "src/components/admin/connections/smokeTestHelpers.ts"
    ]
   },
   {
@@ -107909,7 +107909,7 @@
   {
    "module": "src/pages",
    "files": 185,
-   "lines": 45185,
+   "lines": 45260,
    "tables": [
     "achievements",
     "activities",
@@ -158996,6 +158996,34 @@
    {
     "file": "src/components/admin/AdminQuickLinks.test.tsx",
     "name": "leva à supressão de e-mails"
+   },
+   {
+    "file": "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+    "name": "ConnectionsOverviewTable (confirmação de remoção)"
+   },
+   {
+    "file": "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+    "name": "não remove a conexão antes da confirmação"
+   },
+   {
+    "file": "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+    "name": "remove a conexão ao confirmar"
+   },
+   {
+    "file": "src/components/admin/connections/WebhooksTab.test.tsx",
+    "name": "WebhooksTab (confirmação de remoção)"
+   },
+   {
+    "file": "src/components/admin/connections/WebhooksTab.test.tsx",
+    "name": "não remove o webhook antes da confirmação"
+   },
+   {
+    "file": "src/components/admin/connections/WebhooksTab.test.tsx",
+    "name": "remove o webhook ao confirmar"
+   },
+   {
+    "file": "src/components/admin/connections/WebhooksTab.test.tsx",
+    "name": "cancelar mantém o webhook"
    },
    {
     "file": "src/components/analytics/ABCActionableAutomations.test.ts",
@@ -231641,9 +231669,19 @@
     "function Bitrix24Tab"
    ]
   },
+  "src/components/admin/connections/ConnectionsOverviewTable.test.tsx": {
+   "path": "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+   "lines": 77,
+   "is_test": true,
+   "tests": [
+    "ConnectionsOverviewTable (confirmação de remoção)",
+    "não remove a conexão antes da confirmação",
+    "remove a conexão ao confirmar"
+   ]
+  },
   "src/components/admin/connections/ConnectionsOverviewTable.tsx": {
    "path": "src/components/admin/connections/ConnectionsOverviewTable.tsx",
-   "lines": 184,
+   "lines": 201,
    "exports": [
     "function ConnectionsOverviewTable"
    ],
@@ -232054,9 +232092,20 @@
     "Falha ao reiniciar: ${e.message}"
    ]
   },
+  "src/components/admin/connections/WebhooksTab.test.tsx": {
+   "path": "src/components/admin/connections/WebhooksTab.test.tsx",
+   "lines": 87,
+   "is_test": true,
+   "tests": [
+    "WebhooksTab (confirmação de remoção)",
+    "não remove o webhook antes da confirmação",
+    "remove o webhook ao confirmar",
+    "cancelar mantém o webhook"
+   ]
+  },
   "src/components/admin/connections/WebhooksTab.tsx": {
    "path": "src/components/admin/connections/WebhooksTab.tsx",
-   "lines": 98,
+   "lines": 119,
    "exports": [
     "function WebhooksTab"
    ]
@@ -272398,7 +272447,7 @@
   },
   "src/pages/CommissionRules.tsx": {
    "path": "src/pages/CommissionRules.tsx",
-   "lines": 377,
+   "lines": 392,
    "exports": [
     "function CommissionRules"
    ],
@@ -272538,7 +272587,7 @@
   },
   "src/pages/CustomReports.tsx": {
    "path": "src/pages/CustomReports.tsx",
-   "lines": 189,
+   "lines": 208,
    "exports": [
     "function CustomReports"
    ],
@@ -273903,7 +273952,7 @@
   },
   "src/pages/ScheduledReports.tsx": {
    "path": "src/pages/ScheduledReports.tsx",
-   "lines": 161,
+   "lines": 180,
    "exports": [
     "default ScheduledReports"
    ]
@@ -274106,7 +274155,7 @@
   },
   "src/pages/WebhooksPage.tsx": {
    "path": "src/pages/WebhooksPage.tsx",
-   "lines": 455,
+   "lines": 477,
    "exports": [
     "default WebhooksPage"
    ],
@@ -299864,10 +299913,27 @@
   }
  },
  "git": {
-  "sha": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
+  "sha": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7b75ef8",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)",
+    "files": [
+     "docs/qa/07-ACOES-DESTRUTIVAS.md",
+     "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+     "src/components/admin/connections/ConnectionsOverviewTable.tsx",
+     "src/components/admin/connections/WebhooksTab.test.tsx",
+     "src/components/admin/connections/WebhooksTab.tsx",
+     "src/pages/CommissionRules.tsx",
+     "src/pages/CustomReports.tsx",
+     "src/pages/ScheduledReports.tsx",
+     "src/pages/WebhooksPage.tsx"
+    ]
+   },
    {
     "sha": "bf7fc73",
     "date": "2026-11-24",
@@ -300217,24 +300283,16 @@
      "docs/TECH_DEBT.md",
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "6598301",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/functions/behavioral-analysis/index.ts",
-     "supabase/functions/predictive-intelligence/index.ts",
-     "supabase/functions/revenue-forecast-ai/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    12
+    11
+   ],
+   [
+    "docs/qa/07-ACOES-DESTRUTIVAS.md",
+    2
    ],
    [
     "src/components/pipeline/PipelineBoard.tsx",
@@ -300257,6 +300315,38 @@
     2
    ],
    [
+    "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+    1
+   ],
+   [
+    "src/components/admin/connections/ConnectionsOverviewTable.tsx",
+    1
+   ],
+   [
+    "src/components/admin/connections/WebhooksTab.test.tsx",
+    1
+   ],
+   [
+    "src/components/admin/connections/WebhooksTab.tsx",
+    1
+   ],
+   [
+    "src/pages/CommissionRules.tsx",
+    1
+   ],
+   [
+    "src/pages/CustomReports.tsx",
+    1
+   ],
+   [
+    "src/pages/ScheduledReports.tsx",
+    1
+   ],
+   [
+    "src/pages/WebhooksPage.tsx",
+    1
+   ],
+   [
     "src/components/assistant/DealChatHistory.test.tsx",
     1
    ],
@@ -300274,42 +300364,6 @@
    ],
    [
     "src/components/settings/FeatureFlagsAdmin.test.tsx",
-    1
-   ],
-   [
-    "src/components/settings/FeatureFlagsAdmin.tsx",
-    1
-   ],
-   [
-    "src/pages/AdminSupressaoEmails.test.tsx",
-    1
-   ],
-   [
-    "src/pages/AdminSupressaoEmails.tsx",
-    1
-   ],
-   [
-    "docs/qa/07-ACOES-DESTRUTIVAS.md",
-    1
-   ],
-   [
-    "src/components/analytics/ActivityHeatmap.tsx",
-    1
-   ],
-   [
-    "src/components/customer-success/CustomerSuccess360Hub.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/CustomizableDashboard.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/modules/IntelligenceAlerts.tsx",
-    1
-   ],
-   [
-    "src/components/reporting/ReportPreview.tsx",
     1
    ]
   ]

@@ -689,7 +689,7 @@
     "ConnectionsOverviewTable"
    ],
    "export_default": null,
-   "linhas": 184,
+   "linhas": 201,
    "dominio": "components/admin",
    "hooks_locais": [
     "useCredentialsSource",
@@ -1096,7 +1096,7 @@
     "WebhooksTab"
    ],
    "export_default": null,
-   "linhas": 98,
+   "linhas": 119,
    "dominio": "components/admin",
    "hooks_locais": [
     "useDeleteWebhook",
@@ -15177,7 +15177,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 10,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -18756,7 +18756,7 @@
     "CommissionRules"
    ],
    "export_default": "CommissionRules",
-   "linhas": 377,
+   "linhas": 392,
    "dominio": "pages",
    "hooks_locais": [
     "useCommissionRules",
@@ -18905,7 +18905,7 @@
     "CustomReports"
    ],
    "export_default": "CustomReports",
-   "linhas": 189,
+   "linhas": 208,
    "dominio": "pages",
    "hooks_locais": [
     "useCustomReport",
@@ -20203,7 +20203,7 @@
     "ScheduledReports"
    ],
    "export_default": "ScheduledReports",
-   "linhas": 161,
+   "linhas": 180,
    "dominio": "pages",
    "hooks_locais": [
     "useDeleteScheduledReport",
@@ -20531,7 +20531,7 @@
     "WebhooksPage"
    ],
    "export_default": "WebhooksPage",
-   "linhas": 455,
+   "linhas": 477,
    "dominio": "pages",
    "hooks_locais": [
     "useCreateWebhook",
