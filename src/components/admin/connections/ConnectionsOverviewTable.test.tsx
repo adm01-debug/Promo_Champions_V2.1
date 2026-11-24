@@ -71,6 +71,6 @@ describe('ConnectionsOverviewTable (confirmação de remoção)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 
     await waitFor(() => expect(hooks.del.mutate).toHaveBeenCalledTimes(1));
-    expect(hooks.del.mutate.mock.calls[0][0]).toBe('c-1');
+    expect(hooks.del.mutate).toHaveBeenCalledWith('c-1', expect.anything());
   });
 });

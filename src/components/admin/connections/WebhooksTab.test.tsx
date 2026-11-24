@@ -69,7 +69,7 @@ describe('WebhooksTab (confirmação de remoção)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 
     await waitFor(() => expect(hooks.del.mutate).toHaveBeenCalledTimes(1));
-    expect(hooks.del.mutate.mock.calls[0][0]).toBe('w-1');
+    expect(hooks.del.mutate).toHaveBeenCalledWith('w-1', expect.anything());
   });
 
   it('cancelar mantém o webhook', async () => {
