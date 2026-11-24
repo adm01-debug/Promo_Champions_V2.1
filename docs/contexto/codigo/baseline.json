@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
+  "commit": "dd14171eb0bc2b665eb6852ebc7df69babc37673",
   "branch": "main",
-  "data_commit": "2026-11-24T03:20:28-03:00",
+  "data_commit": "2026-11-24T03:33:08-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "dd14171",
+    "data": "2026-11-24",
+    "assunto": "fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)"
+   },
    {
     "sha": "7b75ef8",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "b05ca72",
     "data": "2026-11-24",
     "assunto": "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)"
-   },
-   {
-    "sha": "d458d7b",
-    "data": "2026-11-24",
-    "assunto": "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)"
    }
   ],
-  "arquivos_mudados_7d": 367,
+  "arquivos_mudados_7d": 381,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -141,19 +141,19 @@
    },
    {
     "pasta": "src/components/analytics",
-    "mudancas": 103
+    "mudancas": 104
    },
    {
     "pasta": "src/components/dashboard",
     "mudancas": 102
    },
    {
-    "pasta": "src/components/win-loss",
-    "mudancas": 80
+    "pasta": "src/components/admin",
+    "mudancas": 81
    },
    {
-    "pasta": "src/components/admin",
-    "mudancas": 78
+    "pasta": "src/components/win-loss",
+    "mudancas": 80
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -177,7 +177,7 @@
    },
    {
     "pasta": "src/components/deal-intelligence",
-    "mudancas": 55
+    "mudancas": 56
    },
    {
     "pasta": "src/hooks/race",
@@ -282,10 +282,6 @@
     "mudancas": 4
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 4
-   },
-   {
     "arquivo": "src/components/activities/ActivityLogForm.tsx",
     "mudancas": 4
    },
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "src/components/pipeline/PipelineColumn.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
     "mudancas": 4
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3672,
-  "arquivos_codigo": 2614,
-  "linhas_codigo": 448424,
+  "arquivos_total": 3674,
+  "arquivos_codigo": 2616,
+  "linhas_codigo": 448816,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 276,
+  "testes": 278,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 225
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1240,
-   "linhas": 194900
+   "arquivos": 1242,
+   "linhas": 195251
   },
   "src/config": {
    "arquivos": 4,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 185,
-   "linhas": 45260
+   "linhas": 45301
   },
   "src/routes": {
    "arquivos": 5,
@@ -783,7 +783,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 7,
-  "arquivos_acima_500_linhas": 71
+  "arquivos_acima_500_linhas": 72
  },
  "todos": [
   {

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 276,
+ "total": 278,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 208
+  "unit": 210
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 190
+   "arquivos": 192
   },
   {
    "padrao": "tests/",
@@ -293,6 +293,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/components/admin/task-console/SquadManager.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/components/admin/task-console/SquadManager.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/components/analytics/ABCActionableAutomations.test.ts",
    "tipo": "unit",
    "linhas": 110,
@@ -473,6 +482,16 @@
     "src/hooks/usePipeline.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/components/playbooks/PlaybookItemRow.test.tsx",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/components/playbooks/PlaybookItemRow.tsx",
+    "src/hooks/usePlaybooks.ts"
+   ],
+   "casos": 1
   },
   {
    "arquivo": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
@@ -2381,6 +2400,7 @@
   "src/components/admin/AdminQuickLinks.tsx": 1,
   "src/components/admin/connections/ConnectionsOverviewTable.tsx": 1,
   "src/components/admin/connections/WebhooksTab.tsx": 1,
+  "src/components/admin/task-console/SquadManager.tsx": 1,
   "src/components/analytics/ABCActionableAutomations.tsx": 1,
   "src/components/analytics/ABCAnalysis.tsx": 1,
   "src/components/analytics/ABCMatrixShift.tsx": 1,
@@ -2401,6 +2421,7 @@
   "src/components/pipeline/DealCard.tsx": 1,
   "src/components/pipeline/InactivityPanel.tsx": 1,
   "src/components/pipeline/PipelineBoard.tsx": 1,
+  "src/components/playbooks/PlaybookItemRow.tsx": 1,
   "src/components/predictive/PredictiveScenarioPlanner.tsx": 1,
   "src/components/pricing/MarginAlertsCard.tsx": 1,
   "src/components/pricing/PricingHealthBanner.tsx": 1,
@@ -2496,6 +2517,7 @@
   "src/hooks/useNPSSurveys.ts": 1,
   "src/hooks/useNotificationPreferences.ts": 1,
   "src/hooks/usePipeline.ts": 3,
+  "src/hooks/usePlaybooks.ts": 1,
   "src/hooks/usePricingIntelligence.ts": 1,
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
@@ -3033,7 +3055,6 @@
    "src/hooks/usePeriodTrend.ts",
    "src/hooks/usePermissions.ts",
    "src/hooks/usePipelineVelocity.ts",
-   "src/hooks/usePlaybooks.ts",
    "src/hooks/usePortfolioSettings.ts",
    "src/hooks/usePredictiveIntelligence.ts",
    "src/hooks/usePriceHistory.ts",

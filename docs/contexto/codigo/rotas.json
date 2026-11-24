@@ -195,7 +195,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 87
+   "arquivos_puxados": 88
   },
   {
    "protegida": false,
@@ -1616,7 +1616,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 43
+   "arquivos_puxados": 45
   },
   {
    "protegida": true,
@@ -2011,7 +2011,7 @@
    "papeis": [
     "admin"
    ],
-   "arquivos_puxados": 34
+   "arquivos_puxados": 36
   },
   {
    "protegida": false,
@@ -2164,7 +2164,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 91
+   "arquivos_puxados": 93
   },
   {
    "protegida": false,
@@ -2434,7 +2434,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 17
+   "arquivos_puxados": 19
   },
   {
    "protegida": false,
@@ -3727,7 +3727,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 81
+   "arquivos_puxados": 82
   },
   {
    "protegida": false,
@@ -7407,7 +7407,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 42
+   "arquivos_puxados": 44
   },
   {
    "protegida": false,
@@ -7718,7 +7718,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 50
+   "arquivos_puxados": 51
   },
   {
    "protegida": false,
@@ -8092,7 +8092,7 @@
    "papeis": [
     "tablist"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 29
   },
   {
    "protegida": false,
@@ -9968,7 +9968,7 @@
     "closer",
     "manager"
    ],
-   "arquivos_puxados": 155
+   "arquivos_puxados": 157
   },
   {
    "protegida": false,
@@ -10373,7 +10373,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 65
+   "arquivos_puxados": 67
   },
   {
    "protegida": false,

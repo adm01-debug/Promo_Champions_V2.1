@@ -1239,7 +1239,7 @@
     "SquadManager"
    ],
    "export_default": null,
-   "linhas": 229,
+   "linhas": 270,
    "dominio": "components/admin",
    "hooks_locais": [
     "useSalespeopleMin",
@@ -1276,7 +1276,7 @@
     "TaskCatalogManager"
    ],
    "export_default": null,
-   "linhas": 261,
+   "linhas": 281,
    "dominio": "components/admin",
    "hooks_locais": [
     "useTaskCatalog"
@@ -2005,7 +2005,7 @@
     "ObjectionsLibrary"
    ],
    "export_default": null,
-   "linhas": 518,
+   "linhas": 543,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useAddObjection",
@@ -3195,7 +3195,7 @@
     "EditCadenceDialog"
    ],
    "export_default": null,
-   "linhas": 457,
+   "linhas": 478,
    "dominio": "components/cadences",
    "hooks_locais": [
     "useCadenceSteps",
@@ -3236,7 +3236,7 @@
     "EnrollmentRulesDialog"
    ],
    "export_default": null,
-   "linhas": 324,
+   "linhas": 344,
    "dominio": "components/cadences",
    "hooks_locais": [
     "useCadences",
@@ -6748,7 +6748,7 @@
     "BuyingCommitteeCard"
    ],
    "export_default": null,
-   "linhas": 206,
+   "linhas": 228,
    "dominio": "components/deal-intelligence",
    "hooks_locais": [
     "useCommitteeCoverage",
@@ -9544,7 +9544,7 @@
     "TemplateManager"
    ],
    "export_default": null,
-   "linhas": 250,
+   "linhas": 275,
    "dominio": "components/multichannel",
    "hooks_locais": [
     "useAuth",
@@ -10380,7 +10380,7 @@
     "PlaybookItemRow"
    ],
    "export_default": null,
-   "linhas": 138,
+   "linhas": 151,
    "dominio": "components/playbooks",
    "hooks_locais": [],
    "tabelas": [],
@@ -14654,7 +14654,7 @@
     "SequenceBuilder"
    ],
    "export_default": null,
-   "linhas": 104,
+   "linhas": 127,
    "dominio": "components/sequences",
    "hooks_locais": [
     "useDeleteSequenceStep",
@@ -14914,7 +14914,7 @@
     "FollowUpTerritoryRules"
    ],
    "export_default": null,
-   "linhas": 248,
+   "linhas": 270,
    "dominio": "components/settings",
    "hooks_locais": [
     "useUserRoles"
@@ -15177,7 +15177,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 28,
    "orfao": false
   },
   {
@@ -18208,7 +18208,7 @@
     "Agenda"
    ],
    "export_default": "Agenda",
-   "linhas": 397,
+   "linhas": 410,
    "dominio": "pages",
    "hooks_locais": [
     "useAgendaEvents",
@@ -18586,7 +18586,7 @@
     "Cadencias"
    ],
    "export_default": "Cadencias",
-   "linhas": 497,
+   "linhas": 525,
    "dominio": "pages",
    "hooks_locais": [
     "useCadenceStats",

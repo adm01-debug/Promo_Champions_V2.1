@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7b75ef89a8` · branch `main` · 2026-11-24 06:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dd14171eb0` · branch `main` · 2026-11-24 06:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1822 testes em 240 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1827 testes em 242 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4448,6 +4448,7 @@ _nenhum item encontrado_
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
 | `src/components/admin/connections/ConnectionsOverviewTable.test.tsx` | 3 | ConnectionsOverviewTable (confirmação de remoção) · não remove a conexão antes da confirmação · remove a conexão ao confirmar |
+| `src/components/admin/task-console/SquadManager.test.tsx` | 3 | SquadManager - confirmacao de exclusao · nao exclui o squad antes da confirmacao no dialogo · cancelar mantem o squad |
 | `src/components/assistant/DealChatHistory.test.tsx` | 3 | DealChatHistory — apagar pergunta · pede confirmacao antes de apagar e so apaga no confirmar · cancelar mantem a pergunta no historico |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
@@ -4484,6 +4485,7 @@ _nenhum item encontrado_
 | `tests/e2e/smoke.spec.ts` | 3 | Smoke Tests · should load the home page · should redirect to auth if not logged in |
 | `src/components/competitive/BattleArena.test.tsx` | 2 | BattleArena — gerenciar batalhas · mostra editar/cancelar só na batalha ativa, nunca na finalizada |
 | `src/components/conversational/ConversationalIntelligenceHub.test.tsx` | 2 | ConversationalIntelligenceHub — KPIs · mostra os valores reais sem tendência inventada ao lado |
+| `src/components/playbooks/PlaybookItemRow.test.tsx` | 2 | PlaybookItemRow - confirmacao de exclusao · pede confirmacao antes de remover o item |
 | `src/components/pricing/RevenueLeakageCard.test.tsx` | 2 | RevenueLeakageCard · leva às vendas com markup crítico em vez de só exibir um toast |
 | `src/components/reports/EmailReportConfig.test.tsx` | 2 | EmailReportConfig — primeira configuração · insere com user_id do usuário logado (RLS exige user_id = auth.uid()) |
 | `src/hooks/useClientsNeedingContact.test.tsx` | 2 | useClientsNeedingContact · particiona a busca de contatos para carteiras grandes |

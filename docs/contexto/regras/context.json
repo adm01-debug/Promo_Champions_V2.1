@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
+  "sha": "dd14171eb0bc2b665eb6852ebc7df69babc37673",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 06:22 UTC",
-  "files_total": 3687,
-  "code_files": 3336,
-  "code_lines": 483535
+  "generated_at": "2026-11-24 06:33 UTC",
+  "files_total": 3689,
+  "code_files": 3338,
+  "code_lines": 483927
  },
  "version": "1.3.2",
- "facts_hash": "3d2fd8a24ae36d6b",
+ "facts_hash": "5cb2405be4ac7337",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1401,
+   ".tsx": 1403,
    ".ts": 1131,
    ".sql": 722,
    ".mjs": 72,
@@ -93940,7 +93940,7 @@
      "grant_task_xp",
      "manual_xp_adjustment"
     ],
-    "deps_count": 42
+    "deps_count": 44
    },
    {
     "path": "",
@@ -93975,7 +93975,7 @@
      "compute_salesperson_retention_cohort",
      "get_current_salesperson_id"
     ],
-    "deps_count": 89
+    "deps_count": 91
    },
    {
     "path": "",
@@ -94597,7 +94597,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 16
+    "deps_count": 18
    },
    {
     "path": "",
@@ -94614,7 +94614,7 @@
     "rpc_transitive": [
      "get_current_salesperson_id"
     ],
-    "deps_count": 26
+    "deps_count": 27
    },
    {
     "path": "",
@@ -95109,7 +95109,7 @@
      "declare_step_winner",
      "get_global_send_time_stats"
     ],
-    "deps_count": 63
+    "deps_count": 65
    },
    {
     "path": "",
@@ -95309,7 +95309,7 @@
      "get_current_salesperson_id",
      "merge_clients"
     ],
-    "deps_count": 33
+    "deps_count": 35
    },
    {
     "path": "/agentes",
@@ -95572,7 +95572,7 @@
      "get_cadence_metrics",
      "process_lead_intent_event"
     ],
-    "deps_count": 80
+    "deps_count": 81
    },
    {
     "path": "/calendario",
@@ -96298,7 +96298,7 @@
      "send-transactional-email"
     ],
     "rpc_transitive": [],
-    "deps_count": 40
+    "deps_count": 42
    },
    {
     "path": "/notificacoes",
@@ -102985,7 +102985,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1240,
+  "components_count": 1242,
   "hooks": [
    {
     "name": "useContacts",
@@ -106941,8 +106941,8 @@
   },
   {
    "module": "src/components",
-   "files": 1240,
-   "lines": 194899,
+   "files": 1242,
+   "lines": 195250,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107909,7 +107909,7 @@
   {
    "module": "src/pages",
    "files": 185,
-   "lines": 45260,
+   "lines": 45301,
    "tables": [
     "achievements",
     "activities",
@@ -159026,6 +159026,18 @@
     "name": "cancelar mantém o webhook"
    },
    {
+    "file": "src/components/admin/task-console/SquadManager.test.tsx",
+    "name": "SquadManager - confirmacao de exclusao"
+   },
+   {
+    "file": "src/components/admin/task-console/SquadManager.test.tsx",
+    "name": "nao exclui o squad antes da confirmacao no dialogo"
+   },
+   {
+    "file": "src/components/admin/task-console/SquadManager.test.tsx",
+    "name": "cancelar mantem o squad"
+   },
+   {
     "file": "src/components/analytics/ABCActionableAutomations.test.ts",
     "name": "buildAbcAutomations"
    },
@@ -159412,6 +159424,14 @@
    {
     "file": "src/components/pipeline/PipelineBoard.test.tsx",
     "name": "não inventa número enquanto carrega ou quando a consulta falha"
+   },
+   {
+    "file": "src/components/playbooks/PlaybookItemRow.test.tsx",
+    "name": "PlaybookItemRow - confirmacao de exclusao"
+   },
+   {
+    "file": "src/components/playbooks/PlaybookItemRow.test.tsx",
+    "name": "pede confirmacao antes de remover o item"
    },
    {
     "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
@@ -232200,9 +232220,19 @@
     }
    ]
   },
+  "src/components/admin/task-console/SquadManager.test.tsx": {
+   "path": "src/components/admin/task-console/SquadManager.test.tsx",
+   "lines": 66,
+   "is_test": true,
+   "tests": [
+    "SquadManager - confirmacao de exclusao",
+    "nao exclui o squad antes da confirmacao no dialogo",
+    "cancelar mantem o squad"
+   ]
+  },
   "src/components/admin/task-console/SquadManager.tsx": {
    "path": "src/components/admin/task-console/SquadManager.tsx",
-   "lines": 229,
+   "lines": 270,
    "exports": [
     "function SquadManager"
    ]
@@ -232216,7 +232246,7 @@
   },
   "src/components/admin/task-console/TaskCatalogManager.tsx": {
    "path": "src/components/admin/task-console/TaskCatalogManager.tsx",
-   "lines": 261,
+   "lines": 281,
    "exports": [
     "function TaskCatalogManager"
    ]
@@ -232991,7 +233021,7 @@
   },
   "src/components/analytics/ObjectionsLibrary.tsx": {
    "path": "src/components/analytics/ObjectionsLibrary.tsx",
-   "lines": 518,
+   "lines": 543,
    "exports": [
     "function ObjectionsLibrary"
    ],
@@ -234287,7 +234317,7 @@
   },
   "src/components/cadences/EditCadenceDialog.tsx": {
    "path": "src/components/cadences/EditCadenceDialog.tsx",
-   "lines": 457,
+   "lines": 478,
    "exports": [
     "function EditCadenceDialog"
    ],
@@ -234335,7 +234365,7 @@
   },
   "src/components/cadences/EnrollmentRulesDialog.tsx": {
    "path": "src/components/cadences/EnrollmentRulesDialog.tsx",
-   "lines": 324,
+   "lines": 344,
    "exports": [
     "function EnrollmentRulesDialog"
    ],
@@ -238299,7 +238329,7 @@
   },
   "src/components/deal-intelligence/BuyingCommitteeCard.tsx": {
    "path": "src/components/deal-intelligence/BuyingCommitteeCard.tsx",
-   "lines": 206,
+   "lines": 228,
    "exports": [
     "function BuyingCommitteeCard"
    ]
@@ -240797,7 +240827,7 @@
   },
   "src/components/multichannel/TemplateManager.tsx": {
    "path": "src/components/multichannel/TemplateManager.tsx",
-   "lines": 250,
+   "lines": 275,
    "exports": [
     "function TemplateManager"
    ]
@@ -241891,9 +241921,18 @@
     "transition={{ delay: 0.1 + idx * 0.08, duration: 0.35 }}"
    ]
   },
+  "src/components/playbooks/PlaybookItemRow.test.tsx": {
+   "path": "src/components/playbooks/PlaybookItemRow.test.tsx",
+   "lines": 53,
+   "is_test": true,
+   "tests": [
+    "PlaybookItemRow - confirmacao de exclusao",
+    "pede confirmacao antes de remover o item"
+   ]
+  },
   "src/components/playbooks/PlaybookItemRow.tsx": {
    "path": "src/components/playbooks/PlaybookItemRow.tsx",
-   "lines": 138,
+   "lines": 151,
    "exports": [
     "const PlaybookItemRow"
    ]
@@ -246619,7 +246658,7 @@
   },
   "src/components/sequences/SequenceBuilder.tsx": {
    "path": "src/components/sequences/SequenceBuilder.tsx",
-   "lines": 104,
+   "lines": 127,
    "exports": [
     "function SequenceBuilder"
    ]
@@ -246960,7 +246999,7 @@
   },
   "src/components/settings/FollowUpTerritoryRules.tsx": {
    "path": "src/components/settings/FollowUpTerritoryRules.tsx",
-   "lines": 248,
+   "lines": 270,
    "exports": [
     "function FollowUpTerritoryRules"
    ],
@@ -271930,7 +271969,7 @@
   },
   "src/pages/Agenda.tsx": {
    "path": "src/pages/Agenda.tsx",
-   "lines": 397,
+   "lines": 410,
    "exports": [
     "function Agenda"
    ],
@@ -272212,7 +272251,7 @@
   },
   "src/pages/Cadencias.tsx": {
    "path": "src/pages/Cadencias.tsx",
-   "lines": 497,
+   "lines": 525,
    "exports": [
     "function Cadencias"
    ],
@@ -299913,10 +299952,33 @@
   }
  },
  "git": {
-  "sha": "7b75ef89a8535f32253cabc48051cdb09f3b0cfe",
+  "sha": "dd14171eb0bc2b665eb6852ebc7df69babc37673",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "dd14171",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)",
+    "files": [
+     "docs/qa/07-ACOES-DESTRUTIVAS.md",
+     "src/components/admin/task-console/SquadManager.test.tsx",
+     "src/components/admin/task-console/SquadManager.tsx",
+     "src/components/admin/task-console/TaskCatalogManager.tsx",
+     "src/components/analytics/ObjectionsLibrary.tsx",
+     "src/components/cadences/EditCadenceDialog.tsx",
+     "src/components/cadences/EnrollmentRulesDialog.tsx",
+     "src/components/deal-intelligence/BuyingCommitteeCard.tsx",
+     "src/components/multichannel/TemplateManager.tsx",
+     "src/components/playbooks/PlaybookItemRow.test.tsx",
+     "src/components/playbooks/PlaybookItemRow.tsx",
+     "src/components/sequences/SequenceBuilder.tsx",
+     "src/components/settings/FollowUpTerritoryRules.tsx",
+     "src/pages/Agenda.tsx",
+     "src/pages/Cadencias.tsx"
+    ]
+   },
    {
     "sha": "7b75ef8",
     "date": "2026-11-24",
@@ -300273,26 +300335,16 @@
      "AGENTS.md",
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "cdf709f",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)",
-    "files": [
-     "docs/TECH_DEBT.md",
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    11
+    10
    ],
    [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
-    2
+    3
    ],
    [
     "src/components/pipeline/PipelineBoard.tsx",
@@ -300315,55 +300367,55 @@
     2
    ],
    [
-    "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
+    "src/components/admin/task-console/SquadManager.test.tsx",
     1
    ],
    [
-    "src/components/admin/connections/ConnectionsOverviewTable.tsx",
+    "src/components/admin/task-console/SquadManager.tsx",
     1
    ],
    [
-    "src/components/admin/connections/WebhooksTab.test.tsx",
+    "src/components/admin/task-console/TaskCatalogManager.tsx",
     1
    ],
    [
-    "src/components/admin/connections/WebhooksTab.tsx",
+    "src/components/analytics/ObjectionsLibrary.tsx",
     1
    ],
    [
-    "src/pages/CommissionRules.tsx",
+    "src/components/cadences/EditCadenceDialog.tsx",
     1
    ],
    [
-    "src/pages/CustomReports.tsx",
+    "src/components/cadences/EnrollmentRulesDialog.tsx",
     1
    ],
    [
-    "src/pages/ScheduledReports.tsx",
+    "src/components/deal-intelligence/BuyingCommitteeCard.tsx",
     1
    ],
    [
-    "src/pages/WebhooksPage.tsx",
+    "src/components/multichannel/TemplateManager.tsx",
     1
    ],
    [
-    "src/components/assistant/DealChatHistory.test.tsx",
+    "src/components/playbooks/PlaybookItemRow.test.tsx",
     1
    ],
    [
-    "src/components/assistant/DealChatHistory.tsx",
+    "src/components/playbooks/PlaybookItemRow.tsx",
     1
    ],
    [
-    "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+    "src/components/sequences/SequenceBuilder.tsx",
     1
    ],
    [
-    "src/components/reporting/EmbedTokenManagerDialog.tsx",
+    "src/components/settings/FollowUpTerritoryRules.tsx",
     1
    ],
    [
-    "src/components/settings/FeatureFlagsAdmin.test.tsx",
+    "src/pages/Agenda.tsx",
     1
    ]
   ]

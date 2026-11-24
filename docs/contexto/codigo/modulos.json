@@ -238,8 +238,8 @@
   {
    "modulo": "components/admin",
    "arquivos": 60,
-   "testes": 3,
-   "linhas": 8228,
+   "testes": 4,
+   "linhas": 8289,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -531,7 +531,7 @@
    "modulo": "components/analytics",
    "arquivos": 50,
    "testes": 3,
-   "linhas": 10332,
+   "linhas": 10357,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -642,6 +642,7 @@
    ],
    "depende_de_modulos": [
     "components/icons",
+    "components/shared",
     "components/ui",
     "constants",
     "contexts",
@@ -1156,7 +1157,7 @@
    "modulo": "components/cadences",
    "arquivos": 22,
    "testes": 2,
-   "linhas": 4833,
+   "linhas": 4874,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1292,6 +1293,7 @@
    "depende_de_modulos": [
     "components/filters",
     "components/icons",
+    "components/shared",
     "components/ui",
     "config",
     "contexts",
@@ -2565,7 +2567,7 @@
    "modulo": "components/deal-intelligence",
    "arquivos": 47,
    "testes": 1,
-   "linhas": 4731,
+   "linhas": 4753,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -2660,6 +2662,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/shared",
     "components/ui",
     "contexts",
     "hooks/deal-intelligence",
@@ -4240,7 +4243,7 @@
    "modulo": "components/multichannel",
    "arquivos": 11,
    "testes": 0,
-   "linhas": 1224,
+   "linhas": 1249,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4298,6 +4301,7 @@
    "depende_de_modulos": [
     "components/email",
     "components/icons",
+    "components/shared",
     "components/ui",
     "contexts",
     "hooks",
@@ -6260,8 +6264,8 @@
   {
    "modulo": "components/playbooks",
    "arquivos": 5,
-   "testes": 0,
-   "linhas": 772,
+   "testes": 1,
+   "linhas": 785,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6305,6 +6309,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/shared",
     "components/ui",
     "hooks",
     "lib"
@@ -7952,7 +7957,7 @@
    "modulo": "components/sequences",
    "arquivos": 20,
    "testes": 1,
-   "linhas": 1665,
+   "linhas": 1688,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8044,6 +8049,7 @@
     "components/engagement",
     "components/icons",
     "components/multichannel",
+    "components/shared",
     "components/ui",
     "hooks/engagement",
     "hooks/sequences"
@@ -8057,7 +8063,7 @@
    "modulo": "components/settings",
    "arquivos": 25,
    "testes": 1,
-   "linhas": 5403,
+   "linhas": 5425,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8240,12 +8246,18 @@
    "importado_por_outros_modulos": [
     "components/activities",
     "components/admin",
+    "components/analytics",
     "components/assistant",
+    "components/cadences",
     "components/coaching",
     "components/comparador",
     "components/competitive",
     "components/conversational",
+    "components/deal-intelligence",
+    "components/multichannel",
+    "components/playbooks",
     "components/portfolio",
+    "components/sequences",
     "components/settings",
     "pages"
    ],
@@ -16067,7 +16079,7 @@
    "modulo": "pages",
    "arquivos": 160,
    "testes": 11,
-   "linhas": 39636,
+   "linhas": 39677,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

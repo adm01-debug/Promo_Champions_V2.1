@@ -9774,7 +9774,7 @@
     "src/components/playbooks/PlaybooksManager.tsx",
     "src/pages/Playbooks.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/usePortfolioSettings.ts",

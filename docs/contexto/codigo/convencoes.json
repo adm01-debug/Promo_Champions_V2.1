@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (190)",
+   "co-localizado (*.test) (192)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)",
    "fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)",
    "fix: confirma exclusao de flag, conversa, token e supressao (QA-177) (#727)",
    "docs: varre acoes destrutivas sem confirmacao (QA-177) (#726)",
-   "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)",
-   "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)"
+   "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
