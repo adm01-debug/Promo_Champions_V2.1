@@ -139,5 +139,9 @@ FROM unnest(ARRAY[
   'supply-dispatch',
   'process-call-recording-ingest',
   'semantic-reindex-batch',
+  'cron-failure-alerter',
+  'wal-health-alert',
+  'send-alert-notifications',
+  'access-denied-alerts',
   'check-lead-sla'
 ]) AS fn;
