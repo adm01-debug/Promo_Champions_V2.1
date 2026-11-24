@@ -39,7 +39,9 @@ de cliente ou revogar um link publico.
   `src/components/competitive/VictoryFeed.tsx:108` -> `FeedCommentOwnerActions.tsx:110` (`DeleteConfirmDialog`);
   `src/pages/VictoryFeedPage.tsx:262` usa o mesmo componente;
   `src/pages/AdminAuditoriaPremiacoes.tsx:599` -> `src/components/admin/AwardActions.tsx:145-160`
-  (`AlertDialog` nomeando vendedor e premio).
+  (`AlertDialog` nomeando vendedor e premio);
+  `src/components/security/IPWhitelistManager.tsx:236` -> `src/components/security/IPWhitelistTable.tsx:80-118`
+  (`AlertDialog` com o IP no corpo, achado ao ler o filho depois da classificacao automatica).
 - Preferencia de notificacao (`NotificationCenter.tsx:432`, `Notificacoes.tsx:332`): o interruptor volta
   em dois cliques, nao e perda de dado.
 
@@ -50,16 +52,15 @@ de cliente ou revogar um link publico.
 | `DeleteConfirmDialog` de `src/components/shared/DeleteConfirmDialog.tsx` | 5 | ok |
 | `AlertDialog` nomeando o registro | 10 | ok |
 | `confirm()` nativo do navegador | 6 | funciona, mas nao e acessivel e, num caso, nao nomeia o registro |
-| Nenhum | 25 | 19 casos reais (6 P1, 13 P2), 3 delegam, 3 sao reversiveis |
+| Nenhum no arquivo que chama o `mutate` | 25 | 18 casos reais (5 P1, 13 P2), 4 delegam para filho que confirma, 3 sao reversiveis |
 
-## P1 - irreversivel, impacto alto, sem confirmacao (6 chamadas em 5 arquivos)
+## P1 - irreversivel, impacto alto, sem confirmacao (5 chamadas em 4 arquivos)
 
 | Arquivo:linha | Acao | Por que P1 |
 | --- | --- | --- |
 | `src/components/settings/FeatureFlagsAdmin.tsx:123` | exclui a flag de funcionalidade | desliga funcionalidade para todos os usuarios do tenant, e o componente esta em producao (`src/pages/Configuracoes.tsx:20`); a pagina `src/pages/FeatureFlagsAdmin.tsx:324` ja tem `AlertDialog`, esta nao |
 | `src/components/reporting/EmbedTokenManagerDialog.tsx:153` | revoga token de relatorio compartilhado | quebra um link ja entregue a terceiro, sem volta; o token nao pode ser reemitido igual |
 | `src/components/reporting/EmbedTokenManagerDialog.tsx:162` | exclui o token | mesmo efeito do anterior, apagando o historico da revogacao |
-| `src/components/security/IPWhitelistManager.tsx:236` | remove IP da allowlist | tranca o usuario ou o integrador para fora do sistema |
 | `src/pages/AdminSupressaoEmails.tsx:117` | remove e-mail da lista de supressao | quem pediu descadastro volta a receber disparo - exposicao de LGPD |
 | `src/components/assistant/DealChatHistory.tsx:125` | apaga conversa de cliente | dado do cliente, sem copia; alimenta o assistente e o historico de contexto |
 
@@ -116,7 +117,7 @@ congela a aba. Em `CommissionRules.tsx:66` ele nem nomeia a regra que vai apagar
 
 | Proposta | Escopo | Prioridade |
 | --- | --- | --- |
-| 256 | bloquear as 6 chamadas P1 com `DeleteConfirmDialog`, com o nome do registro e o efeito no corpo | Alta |
+| 256 | bloquear as 5 chamadas P1 com `DeleteConfirmDialog`, com o nome do registro e o efeito no corpo | Alta |
 | 257 | bloquear as 13 chamadas P2, mesma padronizacao | Media |
 | 258 | trocar os 6 `confirm()` nativo por `DeleteConfirmDialog` | Media |
 
@@ -125,5 +126,5 @@ As P3 ficam como estao, por decisao do plano: nao se pede confirmacao para o que
 ## Como validar depois de corrigir
 
 1. `grep -rn 'confirm(' src/ --include=*.tsx` deve devolver vazio fora de testes.
-2. Cada um dos 19 casos corrigidos deve ter o `DeleteConfirmDialog` no mesmo arquivo que chama o `mutate`.
+2. Cada um dos 18 casos corrigidos deve ter o dialogo no mesmo arquivo que chama o `mutate`, ou no filho imediato que recebe o `onX`.
 3. `npm run lint`, `npm run typecheck` e `vitest run` verdes antes de abrir a PR.

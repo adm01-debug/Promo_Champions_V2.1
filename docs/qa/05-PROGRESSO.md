@@ -215,7 +215,7 @@ Exemplo:
 - [x] 174 — Dar acesso à administração no celular — onda 7 — Alta — PR #675 - MobileDrawer renderiza adminOnlyItems em grupo colapsavel
 - [x] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta — PR #676 - AlertDialog com nome da chave e desativar como opcao reversivel
 - [x] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta — PR #676 - icone Trash2, aria-label e AlertDialog nomeando vendedor e premio
-- [x] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média — docs/qa/07-ACOES-DESTRUTIVAS.md - 46 chamadas irreversiveis classificadas: 21 ja protegidas, 6 P1 e 13 P2 sem confirmacao, 6 confirm() nativo a trocar, 3 reversiveis
+- [x] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média — docs/qa/07-ACOES-DESTRUTIVAS.md - 46 chamadas irreversiveis classificadas: 21 ja protegidas, 5 P1 e 13 P2 sem confirmacao, 6 confirm() nativo a trocar, 4 delegam a filho que confirma, 3 reversiveis
 - [x] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa — PR #678 - /assinatura-digital segue managerOnlyRoutes e o filtro por papel tira o item do menu do Closer; teste em routeAccess.test.ts
 - [x] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa — PR #678 - NavLink consome routePrefetchMap; lista interna removida e as 12 rotas exclusivas do NavLink levadas para o mapa
 - [x] 180 — Remover o componente órfão e o módulo usado só por teste — onda 7 — Baixa — PR #678 - level-up-celebration.tsx removido; orderTracking/stages.ts mantido (decisão do dono pendente)
