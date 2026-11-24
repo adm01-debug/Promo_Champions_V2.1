@@ -3,7 +3,13 @@ name: Release Please
 # CHANGELOG automático + tags semânticas a partir de conventional commits.
 # Em cada push na main, o release-please abre/atualiza uma PR "chore: release"
 # com o CHANGELOG e a próxima versão; ao mergear, cria o GitHub Release e a
-# tag v*.*.* — que por sua vez dispara o Deploy Pipeline (deploy.yml).
+# tag promo-champions-v2-v*.*.*.
+#
+# A tag NÃO dispara o deploy.yml por conta própria: tag/release criados com o
+# GITHUB_TOKEN não geram evento `push` nem `release` (regra do GitHub), e foi
+# exatamente por isso que as releases v1.8.0 e v1.9.0 não rodaram o Deploy
+# Pipeline. `workflow_dispatch` é a exceção permitida, então o deploy é
+# disparado explicitamente no step final deste workflow.
 
 on:
   push:
@@ -13,6 +19,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 concurrency:
   group: release-please
@@ -21,10 +28,32 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    continue-on-error: true
     timeout-minutes: 10
     steps:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
+        # Falha do release-please não derruba o workflow (comportamento anterior),
+        # mas agora só ESTE step é tolerante: falha no disparo do deploy fica visível.
+        continue-on-error: true
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # `release_created`/`tag_name` saem sem prefixo para o pacote raiz (path "."),
+      # mas versões do action já prefixaram com o path — o `||` cobre os dois.
+      - name: Disparar Deploy Pipeline da tag publicada
+        if: steps.release.outputs.release_created == 'true' || steps.release.outputs['.--release_created'] == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag_name || steps.release.outputs['.--tag_name'] }}
+        run: |
+          if [ -z "$TAG" ]; then
+            echo "::error::release criada sem tag_name nos outputs — deploy não disparado"
+            exit 1
+          fi
+          echo "Disparando deploy.yml com ref=$TAG"
+          gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref main -f ref="$TAG"
+          sleep 10
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy.yml --limit 1 \
+            --json databaseId,event,status,conclusion,createdAt \
+            --jq '.[] | "deploy run \(.databaseId) (\(.event)) \(.status) \(.conclusion // "")"'
