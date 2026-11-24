@@ -36,8 +36,12 @@ SUPABASE_DB_URL=postgres://postgres:<senha>@db.usyxfpqlsspldubptrdl.supabase.co:
 - `static`: roda `scripts/check-migrations.mjs` quando presente (com `--base`
   em PR) e gera `sql-coverage-matrix.md` — matriz tabelas `public.*` × suites.
 - `remote`: `rls_test_suite`, `canonical_post_migration_assertions`,
-  `canonical_role_simulation` (single-transaction) e `quote-to-sale-stress`
+  `canonical_role_simulation` (single-transaction), `retry_dispatcher_assertions`
+  (contrato do dispatcher/reconciler) e `quote-to-sale-stress`
   (auto-descobre admin/salesperson). Requer o secret `SUPABASE_DB_URL`.
+  Fecha a lista `supply_outbox_diagnostics.sql`: sonda **read-only de relatório**
+  da fila de entrega ao Supply (`supply_outbox`, cron `supply-dispatch-1min`,
+  `edge_retry_events`) — imprime o estado no log do job e não falha por dado.
 
 No CI: job **SQL Suites** — sem `SUPABASE_DB_URL`, ou com o banco
 inalcançável (pre-flight `select 1`), o remoto é pulado com warning. Atenção:
