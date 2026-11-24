@@ -153,3 +153,37 @@ SELECT version,
 FROM supabase_migrations.schema_migrations
 WHERE version LIKE '20261127%'
 ORDER BY version;
+
+-- Os eventos `error_name = 'pending'` são marcadores do disparo pelo pg_net: o
+-- fechador é public.retry_pending_internal_edge_jobs() (cron a cada 2 min). Se as
+-- linhas `pending` continuam abertas e o cron está ativo, o fechador não está
+-- encontrando a resposta em net._http_response.
+\echo '## 13. cron do fechador de pendencias (retry_pending_internal_edge_jobs)'
+SELECT jobid, jobname, schedule, active
+FROM cron.job
+WHERE jobname ILIKE '%pending%' OR command ILIKE '%retry_pending_internal_edge_jobs%';
+
+\echo '## 14. ultimas 5 execucoes do fechador'
+SELECT d.jobid, d.status, d.start_time, left(coalesce(d.return_message, ''), 120) AS retorno
+FROM cron.job_run_details d
+WHERE d.jobid IN (
+  SELECT jobid FROM cron.job
+  WHERE jobname ILIKE '%pending%' OR command ILIKE '%retry_pending_internal_edge_jobs%'
+)
+ORDER BY d.start_time DESC
+LIMIT 5;
+
+\echo '## 15. pendencias por idade (marcador pending do pg_net)'
+SELECT CASE
+         WHEN created_at > now() - interval '5 minutes'  THEN '0-5min'
+         WHEN created_at > now() - interval '20 minutes' THEN '5-20min'
+         WHEN created_at > now() - interval '2 hours'    THEN '20min-2h'
+         ELSE '>2h (fora da janela do fechador)'
+       END AS faixa,
+       count(*) AS eventos
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND outcome = 'retry'
+  AND error_name = 'pending'
+GROUP BY faixa
+ORDER BY faixa;
