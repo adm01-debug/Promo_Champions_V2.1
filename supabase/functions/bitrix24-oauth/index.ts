@@ -309,8 +309,14 @@ Deno.serve(
       // Check connection status — a function roda com verify_jwt=false (o
       // callback OAuth chega do browser sem JWT), então o status exige um
       // chamador autenticado/interno para não expor o estado da integração.
+      // QA-216 — a identidade era usada só como porteiro: qualquer usuário
+      // autenticado lia o estado da integração. Agora exige admin/gestor, que é
+      // quem opera a conexão (telas em src/components/admin/connections/).
       if (!isInternalServiceRequest(req)) {
-        await getUserClient(req);
+        const caller = await getUserClient(req);
+        if (!(await isAdminOrManager(caller))) {
+          return jsonResponse({ error: 'forbidden' }, 403, corsHeaders);
+        }
       }
 
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
