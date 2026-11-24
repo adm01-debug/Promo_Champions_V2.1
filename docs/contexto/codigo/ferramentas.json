@@ -1180,7 +1180,7 @@
   {
    "arquivo": "docs/DEAD_TABLES.md",
    "titulo": "DEAD TABLES — Tabelas sem referência no código",
-   "linhas": 92
+   "linhas": 151
   },
   {
    "arquivo": "docs/DEAL_RISK_CRITERIA.md",
@@ -1330,7 +1330,7 @@
   {
    "arquivo": "docs/TECH_DEBT.md",
    "titulo": "Quadro de débito técnico — Promo Champions V2.1",
-   "linhas": 31
+   "linhas": 52
   },
   {
    "arquivo": "docs/TELEMETRY_MODULE_DOCS.md",

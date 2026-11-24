@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `659830120d94b8e1e383173dc4b561dd14a5375b` (2026-11-23T23:17:53-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `20279aa555fce711efb2ded55f4799a5f81e4ee5` (2026-11-23T23:39:06-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -587,27 +587,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24163 nós · 74337 arestas · 1165 comunidades · grafo do commit `65983012`
-- comunidades maiores: schema.sql (565), Card (549), Índice (395), Button (344), client.ts (298), CardDescription (275), CardHeader (264), Input (264), Badge (258), public (252), framer-motion (243), utils.ts (235)
+- 24166 nós · 74340 arestas · 1196 comunidades · grafo do commit `20279aa5`
+- comunidades maiores: schema.sql (591), lucide-react (485), button.tsx (434), react (327), Card (326), client.ts (293), getCorsHeaders (280), CardContent (269), date-fns (263), Button (256), CardHeader (238), vitest (230)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (38)
-- package-lock.json (36)
-- deno.lock (20)
-- docs/qa/05-PROGRESSO.md (19)
+- package.json (36)
+- package-lock.json (34)
+- docs/qa/05-PROGRESSO.md (22)
+- deno.lock (18)
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (12)
-- scripts/inventario/gerar-banco.mjs (10)
 - .github/workflows/deploy.yml (9)
+- scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/pr-checks.yml (7)
 - .github/workflows/codeql.yml (6)
-- .github/workflows/migrations-drift.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
 - inventario/estado/edges.json (6)
 - src/components/pipeline/DealCard.tsx (6)
 - src/hooks/abm/useAccounts.ts (6)
+- .github/workflows/contexto.yml (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -723,7 +723,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/AUTOMACAO_LOCAL.md` — Automação local — Promo_Champions_V2.1 (176 linhas)
 - `docs/DATA_DICTIONARY.md` — Dicionário de Dados — Promo Champions V2.1 (7105 linhas)
 - `docs/DATA_RETENTION.md` — DATA RETENTION — Política de retenção e purge (90 linhas)
-- `docs/DEAD_TABLES.md` — DEAD TABLES — Tabelas sem referência no código (92 linhas)
+- `docs/DEAD_TABLES.md` — DEAD TABLES — Tabelas sem referência no código (151 linhas)
 - `docs/DEAL_RISK_CRITERIA.md` — Critério canônico de "deal em risco" (26 linhas)
 - `docs/DEPLOYMENT.md` — Deploy — Promo Champions V2.1 (112 linhas)
 - `docs/DESIGN_SYSTEM.md` — Design System - Promo Champions (1183 linhas)
@@ -753,7 +753,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/SECURITY_HEADERS.md` — Headers de segurança — hosting e edge functions (48 linhas)
 - `docs/SIZING.md` — Sizing — gatilhos de upgrade de plano (Supabase + Vercel) (34 linhas)
 - `docs/STAGING.md` — Staging — Promo Champions V2.1 (70 linhas)
-- `docs/TECH_DEBT.md` — Quadro de débito técnico — Promo Champions V2.1 (31 linhas)
+- `docs/TECH_DEBT.md` — Quadro de débito técnico — Promo Champions V2.1 (52 linhas)
 - `docs/TELEMETRY_MODULE_DOCS.md` — 📊 Módulo de Telemetria de Queries — Documentação Completa (909 linhas)
 - `docs/TYPE_DEBT.md` — TYPE_DEBT — débito de tipagem do frontend (104 linhas)
 - `docs/ZERO_DOWNTIME_MIGRATIONS.md` — Migrations sem downtime — disciplina expand-contract (69 linhas)
@@ -767,6 +767,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `20279aa` chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)
+- 2026-11-23 `a73897a` docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)
+- 2026-11-23 `cdf709f` chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)
 - 2026-11-23 `6598301` fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)
 - 2026-11-23 `41972be` fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)
 - 2026-11-23 `78beba2` fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)
@@ -779,9 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `dd3a3f9` chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)
 - 2026-11-24 `99efd08` fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)
 - 2026-11-24 `2809674` infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)
-- 2026-11-23 `e84935e` fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)
-- 2026-11-23 `546a229` docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)
-- 2026-11-23 `27e826b` fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

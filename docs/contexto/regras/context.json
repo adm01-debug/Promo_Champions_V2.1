@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "659830120d94b8e1e383173dc4b561dd14a5375b",
+  "sha": "20279aa555fce711efb2ded55f4799a5f81e4ee5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 02:18 UTC",
+  "generated_at": "2026-11-24 03:17 UTC",
   "files_total": 3663,
   "code_files": 3314,
   "code_lines": 480788
@@ -299112,10 +299112,40 @@
   }
  },
  "git": {
-  "sha": "659830120d94b8e1e383173dc4b561dd14a5375b",
+  "sha": "20279aa555fce711efb2ded55f4799a5f81e4ee5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "20279aa",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)",
+    "files": [
+     "docs/DEAD_TABLES.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
+   {
+    "sha": "a73897a",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)",
+    "files": [
+     "AGENTS.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
+   {
+    "sha": "cdf709f",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)",
+    "files": [
+     "docs/TECH_DEBT.md",
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
    {
     "sha": "6598301",
     "date": "2026-11-23",
@@ -299426,48 +299456,12 @@
      "supabase/functions/receive-design-sync/mapping.ts",
      "supabase/migrations/20261125150000_designs_inbound.sql"
     ]
-   },
-   {
-    "sha": "9098770",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/admin/AwardActions.tsx",
-     "src/pages/AdminAuditoriaPremiacoes.tsx",
-     "src/pages/FeatureFlagsAdmin.tsx"
-    ]
-   },
-   {
-    "sha": "5a8ce99",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)",
-    "files": [
-     "supabase/functions/helpdesk-sync/index.ts"
-    ]
-   },
-   {
-    "sha": "7dfe259",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/command/CommandPalette.tsx",
-     "src/components/layout/sidebar/sidebarMenuData.ts",
-     "src/components/mobile/MobileDrawer.tsx",
-     "src/components/organisms/AppSidebar.tsx",
-     "src/routes/routeAccess.test.ts",
-     "src/routes/routeAccess.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    16
+    17
    ],
    [
     "deno.lock",
@@ -299482,20 +299476,16 @@
     7
    ],
    [
-    "src/pages/AdminAuditoriaPremiacoes.tsx",
+    "AGENTS.md",
     2
    ],
    [
-    "src/pages/FeatureFlagsAdmin.tsx",
-    2
+    "docs/DEAD_TABLES.md",
+    1
    ],
    [
-    "src/routes/routeAccess.test.ts",
-    2
-   ],
-   [
-    "src/routes/routeAccess.ts",
-    2
+    "docs/TECH_DEBT.md",
+    1
    ],
    [
     "supabase/functions/behavioral-analysis/index.ts",
@@ -299543,6 +299533,10 @@
    ],
    [
     "supabase/functions/race-commentary/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/summarize-call-recording/index.ts",
     1
    ]
   ]

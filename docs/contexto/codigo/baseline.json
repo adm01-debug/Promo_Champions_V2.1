@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "659830120d94b8e1e383173dc4b561dd14a5375b",
+  "commit": "20279aa555fce711efb2ded55f4799a5f81e4ee5",
   "branch": "main",
-  "data_commit": "2026-11-23T23:17:53-03:00",
+  "data_commit": "2026-11-23T23:39:06-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "20279aa",
+    "data": "2026-11-23",
+    "assunto": "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)"
+   },
+   {
+    "sha": "a73897a",
+    "data": "2026-11-23",
+    "assunto": "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)"
+   },
+   {
+    "sha": "cdf709f",
+    "data": "2026-11-23",
+    "assunto": "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)"
+   },
    {
     "sha": "6598301",
     "data": "2026-11-23",
@@ -116,24 +131,9 @@
     "sha": "c5edf84",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)"
-   },
-   {
-    "sha": "6979cae",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)"
-   },
-   {
-    "sha": "e328672",
-    "data": "2026-11-23",
-    "assunto": "feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)"
-   },
-   {
-    "sha": "aef48e8",
-    "data": "2026-11-23",
-    "assunto": "fix: receive-design-sync sem verify_jwt (webhook HMAC)"
    }
   ],
-  "arquivos_mudados_7d": 271,
+  "arquivos_mudados_7d": 272,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -199,19 +199,19 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 38
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 36
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 20
+    "arquivo": "package-lock.json",
+    "mudancas": 34
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 19
+    "mudancas": 22
+   },
+   {
+    "arquivo": "deno.lock",
+    "mudancas": 18
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -222,11 +222,11 @@
     "mudancas": 12
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 10
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
    {
@@ -235,10 +235,6 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 6
-   },
-   {
-    "arquivo": ".github/workflows/migrations-drift.yml",
     "mudancas": 6
    },
    {
@@ -259,6 +255,14 @@
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": ".github/workflows/migrations-drift.yml",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "AGENTS.md",
     "mudancas": 5
    },
    {
@@ -286,10 +290,6 @@
     "mudancas": 4
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 4
-   },
-   {
     "arquivo": "docs/DEPLOYMENT.md",
     "mudancas": 4
    },
@@ -301,15 +301,15 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 252
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 24
+    "commits": 253
    },
    {
     "autor": "github-actions[bot]",
     "commits": 24
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 23
    }
   ]
  },
