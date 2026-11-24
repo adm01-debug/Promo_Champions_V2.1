@@ -1,5 +1,19 @@
 # Lote 13 — Integrações Externas
 
+> ⚠️ **DOCUMENTO OBSOLETO — não decida nada por ele.** Declarado obsoleto em 2026-11-24
+> (etapa 186 de `docs/qa/04-PLANO.md`, achado A-115).
+>
+> **Motivo:** todo o lote foi medido contra o banco `rapjswienfhkobhlamxb`, que **não é** o banco
+> deste repositório — o canônico é `usyxfpqlsspldubptrdl` (ver `docs/estado/IDENTIDADE_BANCO_2026-09-13.md`
+> e `AGENTS.md` §7). Não é erro de contagem: é medição no banco errado. Por isso o veredito
+> abaixo ("nenhuma integração externa está configurada") é falso desde que foi escrito, e continua
+> falso hoje — há crons ativos, log do Bitrix24 e webhooks recebendo tráfego.
+>
+> **Fontes vivas:** `inventario/estado/banco.json` (objetos do banco canônico) e
+> `inventario/estado/edges.json` (edge functions publicadas).
+>
+> O conteúdo abaixo fica preservado apenas como histórico da auditoria.
+
 > Auditoria de estado. Autor: sessão de auditoria (lote próprio, não delegado).
 > Método: código lido diretamente + consulta ao banco de produção `rapjswienfhkobhlamxb` (somente `SELECT`).
 > Data da medição: 2026-08-16.
