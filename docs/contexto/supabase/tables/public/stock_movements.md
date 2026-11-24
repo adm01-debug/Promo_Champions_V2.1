@@ -1,5 +1,7 @@
 # public.stock_movements
 
+> Movimentações de entrada, saída ou ajuste de estoque.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `movement_type` | `text` | não |  |  |  |
-| 4 | `quantity` | `integer` | não |  |  |  |
-| 5 | `reason` | `text` | sim |  |  |  |
-| 6 | `reference_id` | `uuid` | sim |  |  |  |
-| 7 | `performed_by` | `uuid` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da movimentação. |
+| 2 | `product_id` | `uuid` | sim |  |  | Produto afetado pela movimentação, quando informado. |
+| 3 | `movement_type` | `text` | não |  |  | Tipo de movimentação: entry, exit ou adjustment. |
+| 4 | `quantity` | `integer` | não |  |  | Quantidade de unidades movimentadas. |
+| 5 | `reason` | `text` | sim |  |  | Motivo ou contexto da movimentação, quando informado. |
+| 6 | `reference_id` | `uuid` | sim |  |  | Identificador de referência relacionado à movimentação, quando aplicável. |
+| 7 | `performed_by` | `uuid` | sim |  |  | Identificador de quem realizou a movimentação, quando registrado. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da movimentação. |
 
 
 ## Constraints

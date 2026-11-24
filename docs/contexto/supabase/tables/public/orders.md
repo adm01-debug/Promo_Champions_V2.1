@@ -53,6 +53,7 @@
 |---|---|---|---|
 | public.order_items | order_items_order_id_fkey | order_id | CASCADE |
 | public.order_status_events | order_status_events_order_id_fkey | order_id | CASCADE |
+| public.supply_outbox | supply_outbox_order_id_fkey | order_id | CASCADE |
 
 
 ## Índices

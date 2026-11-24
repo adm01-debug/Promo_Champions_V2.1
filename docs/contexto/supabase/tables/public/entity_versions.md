@@ -1,5 +1,7 @@
 # public.entity_versions
 
+> Histórico de versões de entidades, armazenando uma representação dos dados em cada versão.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `entity_type` | `text` | não |  |  |  |
-| 3 | `entity_id` | `uuid` | não |  |  |  |
-| 4 | `version_number` | `integer` | não |  |  |  |
-| 5 | `data` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `changed_by` | `uuid` | sim |  |  |  |
-| 7 | `changed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `change_summary` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da versão. |
+| 2 | `entity_type` | `text` | não |  |  | Tipo da entidade versionada. |
+| 3 | `entity_id` | `uuid` | não |  |  | Identificador da entidade versionada; a entidade concreta é indicada por entity_type. |
+| 4 | `version_number` | `integer` | não |  |  | Número sequencial da versão dentro do histórico da entidade. |
+| 5 | `data` | `jsonb` | não | `'{}'::jsonb` |  | Representação dos dados da entidade nesta versão, armazenada em JSON. |
+| 6 | `changed_by` | `uuid` | sim |  |  | Usuário que registrou a alteração; nulo indica que não foi associado um usuário. |
+| 7 | `changed_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a versão foi registrada. |
+| 8 | `change_summary` | `text` | sim |  |  | Resumo textual da alteração, quando fornecido. |
 
 
 ## Constraints

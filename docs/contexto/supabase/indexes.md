@@ -1207,6 +1207,10 @@ Uso e tamanho em `stats.md`.
 | public.suppliers | suppliers_pkey | btree | id | sim | sim |  |
 | public.suppliers | ux_suppliers_cnpj_ativo | btree | cnpj | sim | sim | `((cnpj IS NOT NULL) AND (cnpj <> ''::text) AND (deleted_at IS NULL))` |
 | public.suppliers | ux_suppliers_email_ativo | btree |  | sim | sim | `((email IS NOT NULL) AND (email <> ''::text) AND (deleted_at IS NULL))` |
+| public.supply_outbox | idx_supply_outbox_due | btree | next_attempt_at | não | sim | `(status = 'pending'::text)` |
+| public.supply_outbox | idx_supply_outbox_order | btree | order_id | não | sim |  |
+| public.supply_outbox | supply_outbox_item_event_key | btree | order_item_id, event | sim | sim |  |
+| public.supply_outbox | supply_outbox_pkey | btree | id | sim | sim |  |
 | public.support_tickets | idx_support_tickets_account | btree | account_id | não | sim |  |
 | public.support_tickets | idx_support_tickets_status | btree | status | não | sim |  |
 | public.support_tickets | support_tickets_pkey | btree | id | sim | sim |  |

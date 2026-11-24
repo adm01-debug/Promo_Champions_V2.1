@@ -1,5 +1,7 @@
 # public.inventory_levels
 
+> Nível atual de estoque e parâmetros de reposição por produto.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `current_stock` | `integer` | não | `0` |  |  |
-| 4 | `min_stock_level` | `integer` | não | `10` |  |  |
-| 5 | `max_stock_level` | `integer` | não | `100` |  |  |
-| 6 | `reorder_point` | `integer` | não | `20` |  |  |
-| 7 | `lead_time_days` | `integer` | sim | `7` |  |  |
-| 8 | `last_restock_date` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de estoque. |
+| 2 | `product_id` | `uuid` | sim |  |  | Produto ao qual os níveis de estoque se referem. |
+| 3 | `current_stock` | `integer` | não | `0` |  | Quantidade atualmente disponível em estoque. |
+| 4 | `min_stock_level` | `integer` | não | `10` |  | Nível mínimo de estoque configurado. |
+| 5 | `max_stock_level` | `integer` | não | `100` |  | Nível máximo de estoque configurado. |
+| 6 | `reorder_point` | `integer` | não | `20` |  | Quantidade de estoque que aciona a necessidade de reposição. |
+| 7 | `lead_time_days` | `integer` | sim | `7` |  | Prazo de reposição estimado em dias, quando informado. |
+| 8 | `last_restock_date` | `timestamp with time zone` | sim |  |  | Data e hora da reposição mais recente. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

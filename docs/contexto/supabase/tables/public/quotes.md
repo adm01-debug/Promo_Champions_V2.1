@@ -1,5 +1,7 @@
 # public.quotes
 
+> Orçamentos comerciais, com valores, cliente, ciclo de aprovação, itens e sincronização externa.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,49 +19,49 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `client_name` | `text` | não |  |  |  |
-| 4 | `title` | `text` | não |  |  |  |
-| 5 | `description` | `text` | sim |  |  |  |
-| 6 | `total_value` | `numeric` | não | `0` |  |  |
-| 7 | `status` | `text` | não | `'draft'::text` |  |  |
-| 8 | `external_reference` | `text` | sim |  |  |  |
-| 9 | `valid_until` | `date` | sim |  |  |  |
-| 10 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `approved_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `rejected_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `rejection_reason` | `text` | sim |  |  |  |
-| 14 | `created_by` | `uuid` | sim |  |  |  |
-| 15 | `notes` | `text` | sim |  |  |  |
-| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 17 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 18 | `quote_number` | `text` | sim |  |  |  |
-| 19 | `subtotal` | `numeric` | sim | `0` |  |  |
-| 20 | `discount_percent` | `numeric` | sim | `0` |  |  |
-| 21 | `discount_amount` | `numeric` | sim | `0` |  |  |
-| 22 | `client_email` | `text` | sim |  |  |  |
-| 23 | `client_phone` | `text` | sim |  |  |  |
-| 24 | `seller_name` | `text` | sim |  |  |  |
-| 25 | `items` | `jsonb` | sim | `'[]'::jsonb` |  |  |
-| 26 | `source` | `text` | sim | `'manual'::text` |  |  |
-| 27 | `synced_from_external` | `boolean` | sim | `false` |  |  |
-| 28 | `external_quote_id` | `text` | sim |  |  |  |
-| 29 | `last_synced_at` | `timestamp with time zone` | sim |  |  | Data da última sincronização com o GIFT STORE |
-| 30 | `sync_status` | `text` | sim | `'none'::text` |  | Status de sincronização: none, synced, failed |
-| 31 | `pdf_url` | `text` | sim |  |  |  |
-| 32 | `currency` | `text` | sim | `'BRL'::text` |  |  |
-| 33 | `exchange_rate` | `numeric(15,6)` | sim | `1.0` |  |  |
-| 34 | `billing_status` | `text` | sim | `'pending'::text` |  |  |
-| 35 | `contract_start_date` | `date` | sim |  |  |  |
-| 36 | `contract_end_date` | `date` | sim |  |  |  |
-| 37 | `subscription_type` | `text` | sim |  |  |  |
-| 38 | `external_seller_id` | `text` | sim |  |  |  |
-| 39 | `client_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do orçamento. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio associado ao orçamento, quando houver. |
+| 3 | `client_name` | `text` | não |  |  | Nome do cliente registrado no orçamento. |
+| 4 | `title` | `text` | não |  |  | Título do orçamento. |
+| 5 | `description` | `text` | sim |  |  | Descrição do orçamento. |
+| 6 | `total_value` | `numeric` | não | `0` |  | Valor total do orçamento, em BRL. |
+| 7 | `status` | `text` | não | `'draft'::text` |  | Estado atual do orçamento, conforme utilizado pela aplicação. |
+| 8 | `external_reference` | `text` | sim |  |  | Referência do orçamento em sistema externo, quando disponível. |
+| 9 | `valid_until` | `date` | sim |  |  | Data até a qual o orçamento é válido. |
+| 10 | `sent_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o orçamento foi enviado. |
+| 11 | `approved_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o orçamento foi aprovado. |
+| 12 | `rejected_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o orçamento foi rejeitado. |
+| 13 | `rejection_reason` | `text` | sim |  |  | Motivo informado para a rejeição do orçamento. |
+| 14 | `created_by` | `uuid` | sim |  |  | Vendedor que criou o orçamento, quando informado. |
+| 15 | `notes` | `text` | sim |  |  | Observações adicionais sobre o orçamento. |
+| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do orçamento. |
+| 17 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do orçamento. |
+| 18 | `quote_number` | `text` | sim |  |  | Número ou código legível do orçamento, quando atribuído. |
+| 19 | `subtotal` | `numeric` | sim | `0` |  | Subtotal dos itens antes dos ajustes finais, em BRL. |
+| 20 | `discount_percent` | `numeric` | sim | `0` |  | Percentual de desconto informado no orçamento; a escala não é fixada por constraint. |
+| 21 | `discount_amount` | `numeric` | sim | `0` |  | Valor monetário do desconto, em BRL. |
+| 22 | `client_email` | `text` | sim |  |  | E-mail do cliente registrado no orçamento. |
+| 23 | `client_phone` | `text` | sim |  |  | Telefone do cliente registrado no orçamento. |
+| 24 | `seller_name` | `text` | sim |  |  | Nome do vendedor exibido no orçamento. |
+| 25 | `items` | `jsonb` | sim | `'[]'::jsonb` |  | Itens do orçamento em formato JSON; a estrutura é definida pela aplicação. |
+| 26 | `source` | `text` | sim | `'manual'::text` |  | Origem do orçamento, conforme utilizada pela aplicação. |
+| 27 | `synced_from_external` | `boolean` | sim | `false` |  | Indica se o orçamento foi sincronizado de uma fonte externa. |
+| 28 | `external_quote_id` | `text` | sim |  |  | Identificador do orçamento no sistema externo, quando disponível. |
+| 29 | `last_synced_at` | `timestamp with time zone` | sim |  |  | Data e hora da última sincronização com o sistema externo. |
+| 30 | `sync_status` | `text` | sim | `'none'::text` |  | Status de sincronização: none, synced, failed. |
+| 31 | `pdf_url` | `text` | sim |  |  | URL do arquivo PDF do orçamento, quando disponível. |
+| 32 | `currency` | `text` | sim | `'BRL'::text` |  | Código da moeda do orçamento; o padrão informado no projeto é BRL. |
+| 33 | `exchange_rate` | `numeric(15,6)` | sim | `1.0` |  | Taxa de câmbio associada ao orçamento, conforme definida pela integração ou aplicação. |
+| 34 | `billing_status` | `text` | sim | `'pending'::text` |  | Estado de cobrança associado ao orçamento, conforme utilizado pela aplicação. |
+| 35 | `contract_start_date` | `date` | sim |  |  | Data de início do contrato associado ao orçamento, quando aplicável. |
+| 36 | `contract_end_date` | `date` | sim |  |  | Data de término do contrato associado ao orçamento, quando aplicável. |
+| 37 | `subscription_type` | `text` | sim |  |  | Tipo de assinatura ou recorrência associado ao orçamento, quando aplicável. |
+| 38 | `external_seller_id` | `text` | sim |  |  | Identificador do vendedor no sistema externo, quando disponível. |
+| 39 | `client_id` | `uuid` | sim |  |  | Cliente cadastrado associado ao orçamento, quando houver. |
 | 40 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
 | 41 | `deleted_by` | `uuid` | sim |  |  |  |
-| 42 | `delete_reason` | `text` | sim |  |  |  |
-| 43 | `version` | `integer` | não | `1` |  | Optimistic locking: incrementado a cada UPDATE; UPDATEs críticos devem filtrar pela versão lida. |
+| 42 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o orçamento como excluído. |
+| 43 | `version` | `integer` | não | `1` |  | Número da versão do registro usado para controle de concorrência otimista. |
 
 
 ## Constraints

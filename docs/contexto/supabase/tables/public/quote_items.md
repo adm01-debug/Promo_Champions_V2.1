@@ -1,5 +1,7 @@
 # public.quote_items
 
+> Itens de produto e valores que compõem um orçamento.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `quote_id` | `uuid` | não |  |  |  |
-| 3 | `product_id` | `uuid` | sim |  |  |  |
-| 4 | `product_name` | `text` | não |  |  |  |
-| 5 | `quantity` | `integer` | não | `1` |  |  |
-| 6 | `unit_price` | `numeric(15,2)` | não |  |  |  |
-| 7 | `discount_amount` | `numeric(15,2)` | sim | `0` |  |  |
-| 8 | `total_price` | `numeric(15,2)` | não |  |  |  |
-| 9 | `is_recurring` | `boolean` | sim | `false` |  |  |
-| 10 | `billing_period` | `text` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do item do orçamento. |
+| 2 | `quote_id` | `uuid` | não |  |  | Orçamento ao qual o item pertence. |
+| 3 | `product_id` | `uuid` | sim |  |  | Produto do catálogo associado ao item, quando identificado. |
+| 4 | `product_name` | `text` | não |  |  | Nome do produto registrado no item do orçamento. |
+| 5 | `quantity` | `integer` | não | `1` |  | Quantidade de unidades incluídas no item. |
+| 6 | `unit_price` | `numeric(15,2)` | não |  |  | Preço unitário do item, em BRL. |
+| 7 | `discount_amount` | `numeric(15,2)` | sim | `0` |  | Valor de desconto aplicado ao item, em BRL. |
+| 8 | `total_price` | `numeric(15,2)` | não |  |  | Valor total do item, em BRL. |
+| 9 | `is_recurring` | `boolean` | sim | `false` |  | Indica se o item representa uma cobrança recorrente. |
+| 10 | `billing_period` | `text` | sim |  |  | Período de cobrança do item recorrente, quando informado. |
+| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do item. |
 
 
 ## Constraints

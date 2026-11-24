@@ -1092,6 +1092,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.suppliers | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.suppliers | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.suppliers | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.supply_outbox | authenticated | SELECT |
+| public.supply_outbox | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.support_tickets | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.support_tickets | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.support_tickets | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

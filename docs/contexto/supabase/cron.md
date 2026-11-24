@@ -51,3 +51,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`.
 | 88 | scheduled-reports-runner-hourly | `10 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('scheduled-reports-runner');` |
 | 95 | semantic-reindex-daily | `0 5 * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('semantic-reindex-batch');` |
 | 98 | retry-pending-internal-edge-jobs-2min | `*/2 * * * *` | sim | postgres | postgres | `SELECT public.retry_pending_internal_edge_jobs();` |
+| 125 | supply-dispatch-1min | `* * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('supply-dispatch');` |

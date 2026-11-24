@@ -1,5 +1,7 @@
 # public.digital_signatures
 
+> Documentos preparados para assinatura digital e seus estados de assinatura.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `status` | `text` | não | `'draft'::text` |  |  |
-| 5 | `file_url` | `text` | sim |  |  |  |
-| 6 | `created_by` | `uuid` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `expires_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `signed_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do documento de assinatura. |
+| 2 | `title` | `text` | não |  |  | Título do documento. |
+| 3 | `description` | `text` | sim |  |  | Descrição do documento. |
+| 4 | `status` | `text` | não | `'draft'::text` |  | Estado do documento: draft, pending, signed, rejected ou expired. |
+| 5 | `file_url` | `text` | sim |  |  | URL do arquivo associado ao documento, quando disponível. |
+| 6 | `created_by` | `uuid` | sim |  |  | Vendedor que criou o documento, quando identificado. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do documento. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do documento. |
+| 9 | `expires_at` | `timestamp with time zone` | sim |  |  | Data e hora de expiração do documento, quando configurada. |
+| 10 | `signed_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o documento foi assinado. |
 
 
 ## Constraints

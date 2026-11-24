@@ -1,5 +1,7 @@
 # public.price_alerts
 
+> Alertas gerados para mudanças de preço de produtos ou fornecedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `supplier_id` | `uuid` | sim |  |  |  |
-| 4 | `alert_type` | `text` | não |  |  |  |
-| 5 | `old_price` | `numeric` | sim |  |  |  |
-| 6 | `new_price` | `numeric` | não |  |  |  |
-| 7 | `price_change_percent` | `numeric` | sim |  |  |  |
-| 8 | `is_read` | `boolean` | não | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do alerta de preço. |
+| 2 | `product_id` | `uuid` | sim |  |  | Produto relacionado ao alerta, quando identificado. |
+| 3 | `supplier_id` | `uuid` | sim |  |  | Fornecedor relacionado ao alerta, quando identificado. |
+| 4 | `alert_type` | `text` | não |  |  | Tipo de alerta: price_drop, price_increase ou new_best_price. |
+| 5 | `old_price` | `numeric` | sim |  |  | Preço anterior, quando disponível, em BRL. |
+| 6 | `new_price` | `numeric` | não |  |  | Novo preço associado ao alerta, em BRL. |
+| 7 | `price_change_percent` | `numeric` | sim |  |  | Variação percentual do preço, quando calculada; a escala não é fixada por constraint. |
+| 8 | `is_read` | `boolean` | não | `false` |  | Indica se o alerta foi marcado como lido. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do alerta. |
 
 
 ## Constraints

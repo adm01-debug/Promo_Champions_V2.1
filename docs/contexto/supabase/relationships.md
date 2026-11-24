@@ -365,6 +365,7 @@
 | public.supplier_products | supplier_id | public.suppliers | id | CASCADE | NO ACTION |
 | public.supplier_risk_assessments | supplier_id | public.suppliers | id | CASCADE | NO ACTION |
 | public.suppliers | deleted_by | auth.users | id | NO ACTION | NO ACTION |
+| public.supply_outbox | order_id | public.orders | id | CASCADE | NO ACTION |
 | public.support_tickets | account_id | public.accounts | id | CASCADE | NO ACTION |
 | public.task_assignments | catalog_id | public.task_catalog | id | CASCADE | NO ACTION |
 | public.task_assignments | squad_id | public.squads | id | SET NULL | NO ACTION |

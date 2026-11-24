@@ -1,5 +1,7 @@
 # public.clients
 
+> Cadastro de clientes e informações de contato, relacionamento, origem e ativação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,28 +19,28 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `email` | `text` | sim |  |  |  |
-| 4 | `phone` | `text` | sim |  |  |  |
-| 5 | `company` | `text` | sim |  |  |  |
-| 6 | `total_value` | `numeric` | não | `0` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do cliente. |
+| 2 | `name` | `text` | não |  |  | Nome do cliente. |
+| 3 | `email` | `text` | sim |  |  | Endereço de e-mail do cliente, quando informado. |
+| 4 | `phone` | `text` | sim |  |  | Telefone do cliente, quando informado. |
+| 5 | `company` | `text` | sim |  |  | Empresa associada ao cliente, quando informada. |
+| 6 | `total_value` | `numeric` | não | `0` |  | Valor total associado ao cliente, em BRL. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do cadastro do cliente. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do cadastro do cliente. |
 | 9 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 10 | `deleted_by` | `uuid` | sim |  |  | Usuário que deletou |
-| 11 | `delete_reason` | `text` | sim |  |  | Motivo do delete |
-| 12 | `lat` | `double precision` | sim |  |  |  |
-| 13 | `lng` | `double precision` | sim |  |  |  |
-| 14 | `user_id` | `uuid` | sim |  |  |  |
-| 15 | `last_interaction_at` | `timestamp with time zone` | sim |  |  |  |
-| 16 | `lead_source` | `text` | sim |  |  |  |
-| 17 | `email_verified` | `boolean` | sim | `false` |  |  |
-| 18 | `phone_verified` | `boolean` | sim | `false` |  |  |
-| 19 | `last_enrichment_id` | `uuid` | sim |  |  |  |
-| 20 | `is_activated` | `boolean` | sim | `false` |  |  |
-| 21 | `activated_at` | `timestamp with time zone` | sim |  |  |  |
-| 22 | `ramo_atividade` | `text` | sim |  |  | Setor de atuação do cliente (Tecnologia, Indústria, Varejo, etc) |
+| 10 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou o cliente como excluído. |
+| 11 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o cliente como excluído. |
+| 12 | `lat` | `double precision` | sim |  |  | Latitude da localização do cliente, quando disponível. |
+| 13 | `lng` | `double precision` | sim |  |  | Longitude da localização do cliente, quando disponível. |
+| 14 | `user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth associado ao cadastro, quando houver. |
+| 15 | `last_interaction_at` | `timestamp with time zone` | sim |  |  | Data e hora da interação mais recente registrada com o cliente. |
+| 16 | `lead_source` | `text` | sim |  |  | Origem do lead, quando informada. |
+| 17 | `email_verified` | `boolean` | sim | `false` |  | Indica se o endereço de e-mail foi verificado. |
+| 18 | `phone_verified` | `boolean` | sim | `false` |  | Indica se o telefone foi verificado. |
+| 19 | `last_enrichment_id` | `uuid` | sim |  |  | Identificador do processo ou registro de enriquecimento mais recente, quando disponível. |
+| 20 | `is_activated` | `boolean` | sim | `false` |  | Indica se o cliente foi marcado como ativado. |
+| 21 | `activated_at` | `timestamp with time zone` | sim |  |  | Data e hora da ativação do cliente. |
+| 22 | `ramo_atividade` | `text` | sim |  |  | Ramo de atividade informado para o cliente. |
 
 
 ## Constraints

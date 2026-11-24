@@ -714,3 +714,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261125100000 | [cron_job_run_details_sem_seq_scan](migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql) | 0 |
 | 20261125110000 | [espalha_schedules_cron_evita_startup_timeout](migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql) | 0 |
 | 20261125150000 | [20261125150000_designs_inbound](migrations/20261125150000_20261125150000_designs_inbound.sql) | 0 |
+| 20261126090000 | [20261126090000_champions_supply_outbox](migrations/20261126090000_20261126090000_champions_supply_outbox.sql) | 0 |

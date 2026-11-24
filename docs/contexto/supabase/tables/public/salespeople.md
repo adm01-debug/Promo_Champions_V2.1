@@ -1,5 +1,7 @@
 # public.salespeople
 
+> Cadastro de vendedores e seus atributos operacionais, comerciais e de notificação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,20 +19,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `email` | `text` | sim |  |  |  |
-| 4 | `avatar_url` | `text` | sim |  |  |  |
-| 5 | `commission_rate` | `numeric(5,2)` | não | `10.00` |  |  |
-| 6 | `is_active` | `boolean` | não | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `role` | `salesperson_role` | não | `'hybrid'::salesperson_role` |  |  |
-| 10 | `auth_user_id` | `uuid` | sim |  |  |  |
-| 11 | `score_total` | `numeric` | não | `0` |  |  |
-| 12 | `squad_id` | `uuid` | sim |  |  |  |
-| 13 | `notify_sales_in_app` | `boolean` | sim | `true` |  |  |
-| 14 | `notify_sales_email` | `boolean` | sim | `false` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do vendedor. |
+| 2 | `name` | `text` | não |  |  | Nome do vendedor. |
+| 3 | `email` | `text` | sim |  |  | Endereço de e-mail do vendedor, quando informado. |
+| 4 | `avatar_url` | `text` | sim |  |  | URL do avatar do vendedor, quando disponível. |
+| 5 | `commission_rate` | `numeric(5,2)` | não | `10.00` |  | Taxa de comissão configurada para o vendedor; a escala é definida pela aplicação. |
+| 6 | `is_active` | `boolean` | não | `true` |  | Indica se o vendedor está ativo. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do cadastro. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do cadastro. |
+| 9 | `role` | `salesperson_role` | não | `'hybrid'::salesperson_role` |  | Papel comercial do vendedor: SDR, Closer ou Hybrid. |
+| 10 | `auth_user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth vinculado ao vendedor. |
+| 11 | `score_total` | `numeric` | não | `0` |  | Pontuação total acumulada pelo vendedor. |
+| 12 | `squad_id` | `uuid` | sim |  |  | Equipe à qual o vendedor está associado, quando houver. |
+| 13 | `notify_sales_in_app` | `boolean` | sim | `true` |  | Indica se o vendedor recebe notificações de vendas no aplicativo. |
+| 14 | `notify_sales_email` | `boolean` | sim | `false` |  | Indica se o vendedor recebe notificações de vendas por e-mail. |
 
 
 ## Constraints

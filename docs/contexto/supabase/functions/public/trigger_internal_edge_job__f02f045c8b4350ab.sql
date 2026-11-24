@@ -31,7 +31,8 @@ BEGIN
       'scheduled-reports-runner',
       'rotate-daily-challenges',
       'bitrix24-sync',
-      'semantic-reindex-batch'
+      'semantic-reindex-batch',
+      'supply-dispatch'
     ]::text[])
   ) THEN
     RAISE EXCEPTION 'internal_edge_job_not_allowed';

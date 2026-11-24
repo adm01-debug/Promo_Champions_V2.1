@@ -66,7 +66,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.call_sentiment_timeline](tables/public/call_sentiment_timeline.md) | table | sim | 2 | 11 | não |  |
 | [public.call_transcripts](tables/public/call_transcripts.md) | table | sim | 2 | 8 | não |  |
 | [public.campaign_health_alerts](tables/public/campaign_health_alerts.md) | table | sim | 2 | 10 | não |  |
-| [public.category_metrics](tables/public/category_metrics.md) | table | sim | 4 | 5 | não |  |
+| [public.category_metrics](tables/public/category_metrics.md) | table | sim | 4 | 5 | não | Métricas agregadas por categoria e data. |
 | [public.challenge_progress](tables/public/challenge_progress.md) | table | sim | 1 | 8 | não |  |
 | [public.channel_credentials](tables/public/channel_credentials.md) | table | sim | 4 | 11 | não |  |
 | [public.channel_interactions](tables/public/channel_interactions.md) | table | sim | 4 | 12 | não |  |
@@ -78,7 +78,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.client_interactions](tables/public/client_interactions.md) | table | sim | 3 | 7 | não |  |
 | [public.client_portfolio](tables/public/client_portfolio.md) | table | sim | 4 | 15 | não |  |
 | [public.client_renewals](tables/public/client_renewals.md) | table | sim | 1 | 10 | não |  |
-| [public.clients](tables/public/clients.md) | table | sim | 7 | 22 | não |  |
+| [public.clients](tables/public/clients.md) | table | sim | 7 | 22 | não | Cadastro de clientes e informações de contato, relacionamento, origem e ativação. |
 | [public.coaching_actions](tables/public/coaching_actions.md) | table | sim | 4 | 14 | não |  |
 | [public.coaching_opportunities](tables/public/coaching_opportunities.md) | table | sim | 2 | 12 | sim |  |
 | [public.coaching_scorecard_config](tables/public/coaching_scorecard_config.md) | table | sim | 1 | 6 | não |  |
@@ -113,7 +113,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.daily_challenge_progress](tables/public/daily_challenge_progress.md) | table | sim | 1 | 8 | não |  |
 | [public.daily_challenge_rotations](tables/public/daily_challenge_rotations.md) | table | sim | 1 | 2 | não |  |
 | [public.daily_challenges](tables/public/daily_challenges.md) | table | sim | 4 | 10 | não |  |
-| [public.daily_metrics](tables/public/daily_metrics.md) | table | sim | 4 | 9 | não |  |
+| [public.daily_metrics](tables/public/daily_metrics.md) | table | sim | 4 | 9 | não | Métricas comerciais agregadas por data, incluindo receita, metas, vendas, novos clientes e indicadores de conversão. |
 | [public.daily_streak_achievements](tables/public/daily_streak_achievements.md) | table | sim | 1 | 7 | não |  |
 | [public.dashboard_layouts](tables/public/dashboard_layouts.md) | table | sim | 1 | 5 | não |  |
 | [public.data_access_log](tables/public/data_access_log.md) | table | sim | 1 | 6 | não |  |
@@ -125,10 +125,10 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.deal_committee_coverage](tables/public/deal_committee_coverage.md) | table | sim | 2 | 11 | sim |  |
 | [public.deal_health_history](tables/public/deal_health_history.md) | table | sim | 2 | 7 | sim |  |
 | [public.deal_health_scores](tables/public/deal_health_scores.md) | table | sim | 4 | 16 | sim |  |
-| [public.deal_outcomes](tables/public/deal_outcomes.md) | table | sim | 4 | 7 | não |  |
+| [public.deal_outcomes](tables/public/deal_outcomes.md) | table | sim | 4 | 7 | não | Registro do desfecho de um negócio e do motivo associado. |
 | [public.deal_probability_scores](tables/public/deal_probability_scores.md) | table | sim | 2 | 7 | sim |  |
 | [public.deal_risk_signals](tables/public/deal_risk_signals.md) | table | sim | 3 | 9 | não |  |
-| [public.deal_stage_history](tables/public/deal_stage_history.md) | table | sim | 3 | 6 | não |  |
+| [public.deal_stage_history](tables/public/deal_stage_history.md) | table | sim | 3 | 6 | não | Histórico de períodos em que negócios permaneceram em cada estágio. |
 | [public.deal_stage_transitions](tables/public/deal_stage_transitions.md) | table | sim | 2 | 9 | sim |  |
 | [public.deal_stakeholders](tables/public/deal_stakeholders.md) | table | sim | 4 | 20 | sim |  |
 | [public.deal_velocity_alerts](tables/public/deal_velocity_alerts.md) | table | sim | 2 | 9 | sim |  |
@@ -137,8 +137,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.designs_inbound](tables/public/designs_inbound.md) | table | sim | 1 | 15 | não |  |
 | [public.dialer_queue_items](tables/public/dialer_queue_items.md) | table | sim | 2 | 9 | não |  |
 | [public.dialer_queues](tables/public/dialer_queues.md) | table | sim | 2 | 9 | não |  |
-| [public.digital_signatures](tables/public/digital_signatures.md) | table | sim | 4 | 10 | não |  |
-| [public.document_signers](tables/public/document_signers.md) | table | sim | 4 | 8 | não |  |
+| [public.digital_signatures](tables/public/digital_signatures.md) | table | sim | 4 | 10 | não | Documentos preparados para assinatura digital e seus estados de assinatura. |
+| [public.document_signers](tables/public/document_signers.md) | table | sim | 4 | 8 | não | Signatários e estado de assinatura de cada documento digital. |
 | [public.duplicate_block_logs](tables/public/duplicate_block_logs.md) | table | sim | 1 | 8 | não |  |
 | [public.edge_call_failures](tables/public/edge_call_failures.md) | table | sim | 1 | 6 | não |  |
 | [public.edge_job_locks](tables/public/edge_job_locks.md) | table | sim | 1 | 3 | não |  |
@@ -153,7 +153,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.embedded_report_tokens](tables/public/embedded_report_tokens.md) | table | sim | 1 | 10 | não |  |
 | [public.engagement_score_history](tables/public/engagement_score_history.md) | table | sim | 2 | 7 | não |  |
 | [public.enriched_company_intelligence](tables/public/enriched_company_intelligence.md) | table | sim | 1 | 14 | não |  |
-| [public.entity_versions](tables/public/entity_versions.md) | table | sim | 2 | 8 | não |  |
+| [public.entity_versions](tables/public/entity_versions.md) | table | sim | 2 | 8 | não | Histórico de versões de entidades, armazenando uma representação dos dados em cada versão. |
 | [public.error_logs](tables/public/error_logs.md) | table | sim | 4 | 11 | não |  |
 | [public.executive_briefings](tables/public/executive_briefings.md) | table | sim | 4 | 11 | não |  |
 | [public.expansion_opportunities](tables/public/expansion_opportunities.md) | table | sim | 2 | 11 | não |  |
@@ -188,7 +188,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.integration_logs](tables/public/integration_logs.md) | table | sim | 1 | 9 | não |  |
 | [public.integration_secret_refs](tables/public/integration_secret_refs.md) | table | sim | 4 | 7 | não |  |
 | [public.intent_audit_logs](tables/public/intent_audit_logs.md) | table | sim | 4 | 6 | não |  |
-| [public.inventory_levels](tables/public/inventory_levels.md) | table | sim | 4 | 10 | não |  |
+| [public.inventory_levels](tables/public/inventory_levels.md) | table | sim | 4 | 10 | não | Nível atual de estoque e parâmetros de reposição por produto. |
 | [public.ip_whitelist](tables/public/ip_whitelist.md) | table | sim | 1 | 6 | não |  |
 | [public.known_devices](tables/public/known_devices.md) | table | sim | 4 | 12 | não |  |
 | [public.kudos](tables/public/kudos.md) | table | sim | 3 | 7 | sim |  |
@@ -246,8 +246,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.playbook_progress](tables/public/playbook_progress.md) | table | sim | 6 | 5 | não |  |
 | [public.playbooks](tables/public/playbooks.md) | table | sim | 4 | 6 | não |  |
 | [public.portfolio_settings](tables/public/portfolio_settings.md) | table | sim | 3 | 5 | não |  |
-| [public.price_alerts](tables/public/price_alerts.md) | table | sim | 3 | 9 | não |  |
-| [public.price_history](tables/public/price_history.md) | table | sim | 2 | 9 | não |  |
+| [public.price_alerts](tables/public/price_alerts.md) | table | sim | 3 | 9 | não | Alertas gerados para mudanças de preço de produtos ou fornecedores. |
+| [public.price_history](tables/public/price_history.md) | table | sim | 2 | 9 | não | Histórico de alterações de preços de produtos e fornecedores. |
 | [public.price_protection_rules](tables/public/price_protection_rules.md) | table | sim | 1 | 7 | não |  |
 | [public.pricing_rules](tables/public/pricing_rules.md) | table | sim | 1 | 8 | não |  |
 | [public.prize_wheel_spins](tables/public/prize_wheel_spins.md) | table | sim | 2 | 8 | sim |  |
@@ -255,7 +255,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.product_usage](tables/public/product_usage.md) | table | sim | 1 | 7 | não |  |
 | [public.product_usage_events](tables/public/product_usage_events.md) | table | sim | 2 | 7 | não |  |
 | [public.product_usage_summary](tables/public/product_usage_summary.md) | table | sim | 2 | 8 | não |  |
-| [public.products](tables/public/products.md) | table | sim | 4 | 18 | não |  |
+| [public.products](tables/public/products.md) | table | sim | 4 | 18 | não | Catálogo de produtos, com preços, custos, disponibilidade e informações de estoque. |
 | [public.progressive_goals](tables/public/progressive_goals.md) | table | sim | 3 | 11 | não |  |
 | [public.prospect_cadences](tables/public/prospect_cadences.md) | table | sim | 5 | 17 | sim |  |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 8 | 7 | não |  |
@@ -267,10 +267,10 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.quota_attainment_forecasts](tables/public/quota_attainment_forecasts.md) | table | sim | 2 | 16 | sim |  |
 | [public.quota_attainment_predictions](tables/public/quota_attainment_predictions.md) | table | sim | 3 | 17 | sim |  |
 | [public.quote_conversion_audit](tables/public/quote_conversion_audit.md) | table | sim | 1 | 16 | não |  |
-| [public.quote_items](tables/public/quote_items.md) | table | sim | 4 | 11 | não |  |
+| [public.quote_items](tables/public/quote_items.md) | table | sim | 4 | 11 | não | Itens de produto e valores que compõem um orçamento. |
 | [public.quote_sync_inbound_log](tables/public/quote_sync_inbound_log.md) | table | sim | 1 | 12 | não |  |
 | [public.quote_sync_logs](tables/public/quote_sync_logs.md) | table | sim | 3 | 9 | não |  |
-| [public.quotes](tables/public/quotes.md) | table | sim | 6 | 43 | não |  |
+| [public.quotes](tables/public/quotes.md) | table | sim | 6 | 43 | não | Orçamentos comerciais, com valores, cliente, ciclo de aprovação, itens e sincronização externa. |
 | [public.quotes_inbound](tables/public/quotes_inbound.md) | table | sim | 2 | 17 | não |  |
 | [public.race_badges](tables/public/race_badges.md) | table | sim | 1 | 5 | não |  |
 | [public.race_cars](tables/public/race_cars.md) | table | sim | 4 | 14 | sim |  |
@@ -299,13 +299,13 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.revenue_forecasts](tables/public/revenue_forecasts.md) | table | sim | 2 | 19 | sim |  |
 | [public.role_permissions](tables/public/role_permissions.md) | table | sim | 2 | 4 | não |  |
 | [public.sale_notifications_audit](tables/public/sale_notifications_audit.md) | table | sim | 1 | 14 | não |  |
-| [public.sales](tables/public/sales.md) | table | sim | 13 | 49 | sim |  |
+| [public.sales](tables/public/sales.md) | table | sim | 13 | 49 | sim | Negócios e vendas acompanhados no pipeline comercial, incluindo responsáveis, valores, estágio e dados de fechamento. |
 | [public.sales_battles](tables/public/sales_battles.md) | table | sim | 2 | 12 | sim |  |
 | [public.sales_enablement_assets](tables/public/sales_enablement_assets.md) | table | sim | 2 | 14 | não |  |
-| [public.sales_goals](tables/public/sales_goals.md) | table | sim | 4 | 5 | não |  |
+| [public.sales_goals](tables/public/sales_goals.md) | table | sim | 4 | 5 | não | Metas de venda definidas por vendedor e mês. |
 | [public.sales_streaks](tables/public/sales_streaks.md) | table | sim | 3 | 7 | sim |  |
 | [public.sales_territories](tables/public/sales_territories.md) | table | sim | 3 | 10 | sim |  |
-| [public.salespeople](tables/public/salespeople.md) | table | sim | 4 | 14 | não |  |
+| [public.salespeople](tables/public/salespeople.md) | table | sim | 4 | 14 | não | Cadastro de vendedores e seus atributos operacionais, comerciais e de notificação. |
 | [public.salesperson_badges](tables/public/salesperson_badges.md) | table | sim | 3 | 5 | sim |  |
 | [public.salesperson_coaching_aggregates](tables/public/salesperson_coaching_aggregates.md) | table | sim | 2 | 14 | sim |  |
 | [public.salesperson_commission_configs](tables/public/salesperson_commission_configs.md) | table | sim | 2 | 5 | não |  |
@@ -314,7 +314,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.salesperson_performance_telemetry](tables/public/salesperson_performance_telemetry.md) | table | sim | 1 | 5 | não |  |
 | [public.salesperson_preferences](tables/public/salesperson_preferences.md) | table | sim | 3 | 10 | não |  |
 | [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 2 | 7 | sim |  |
-| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 5 | 8 | não | Filtros salvos por usuários para diferentes entidades |
+| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 5 | 8 | não | Filtros salvos por usuários, associados a um tipo de entidade e aplicáveis individualmente ou como padrão. |
 | [public.scheduled_report_runs](tables/public/scheduled_report_runs.md) | table | sim | 1 | 8 | não |  |
 | [public.scheduled_reports](tables/public/scheduled_reports.md) | table | sim | 4 | 15 | não |  |
 | [public.scheduled_sends](tables/public/scheduled_sends.md) | table | sim | 3 | 13 | não |  |
@@ -348,16 +348,17 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.stage_probabilities](tables/public/stage_probabilities.md) | table | sim | 1 | 3 | não |  |
 | [public.stage_velocity_baselines](tables/public/stage_velocity_baselines.md) | table | sim | 3 | 15 | sim |  |
 | [public.status_transitions](tables/public/status_transitions.md) | table | sim | 2 | 4 | não | Máquina de estados: transições de status válidas por entidade (sales, commissions). |
-| [public.stock_movements](tables/public/stock_movements.md) | table | sim | 2 | 8 | não |  |
-| [public.supplier_order_items](tables/public/supplier_order_items.md) | table | sim | 2 | 7 | não |  |
-| [public.supplier_orders](tables/public/supplier_orders.md) | table | sim | 4 | 12 | não |  |
-| [public.supplier_products](tables/public/supplier_products.md) | table | sim | 4 | 10 | não |  |
+| [public.stock_movements](tables/public/stock_movements.md) | table | sim | 2 | 8 | não | Movimentações de entrada, saída ou ajuste de estoque. |
+| [public.supplier_order_items](tables/public/supplier_order_items.md) | table | sim | 2 | 7 | não | Itens de produto incluídos em pedidos a fornecedores. |
+| [public.supplier_orders](tables/public/supplier_orders.md) | table | sim | 4 | 12 | não | Pedidos de compra enviados a fornecedores e seu acompanhamento de entrega. |
+| [public.supplier_products](tables/public/supplier_products.md) | table | sim | 4 | 10 | não | Relação de produtos fornecidos, com preço unitário e condições de compra. |
 | [public.supplier_risk_assessments](tables/public/supplier_risk_assessments.md) | table | sim | 3 | 12 | não |  |
-| [public.suppliers](tables/public/suppliers.md) | table | sim | 4 | 21 | não |  |
+| [public.suppliers](tables/public/suppliers.md) | table | sim | 4 | 21 | não | Cadastro de fornecedores, informações de contato, condições comerciais e avaliação operacional. |
+| [public.supply_outbox](tables/public/supply_outbox.md) | table | sim | 1 | 12 | não |  |
 | [public.support_tickets](tables/public/support_tickets.md) | table | sim | 4 | 16 | não |  |
 | [public.task_assignments](tables/public/task_assignments.md) | table | sim | 4 | 15 | não |  |
 | [public.task_catalog](tables/public/task_catalog.md) | table | sim | 4 | 10 | não |  |
-| [public.tasks](tables/public/tasks.md) | table | sim | 4 | 18 | não |  |
+| [public.tasks](tables/public/tasks.md) | table | sim | 4 | 18 | não | Tarefas comerciais associadas a vendedores, negócios ou clientes, com prazo, prioridade e estado. |
 | [public.team_closers](tables/public/team_closers.md) | table | sim | 3 | 4 | não |  |
 | [public.team_custom_fields](tables/public/team_custom_fields.md) | table | sim | 2 | 8 | não |  |
 | [public.teams](tables/public/teams.md) | table | sim | 4 | 10 | não |  |

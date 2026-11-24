@@ -1,5 +1,7 @@
 # public.supplier_products
 
+> Relação de produtos fornecidos, com preço unitário e condições de compra.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `supplier_id` | `uuid` | sim |  |  |  |
-| 3 | `product_id` | `uuid` | sim |  |  |  |
-| 4 | `unit_price` | `numeric(12,2)` | não |  |  |  |
-| 5 | `min_order_quantity` | `integer` | sim | `1` |  |  |
-| 6 | `currency` | `text` | sim | `'BRL'::text` |  |  |
-| 7 | `last_price_update` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `is_preferred` | `boolean` | sim | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da relação fornecedor-produto. |
+| 2 | `supplier_id` | `uuid` | sim |  |  | Fornecedor associado ao produto, quando informado. |
+| 3 | `product_id` | `uuid` | sim |  |  | Produto associado ao fornecedor, quando informado. |
+| 4 | `unit_price` | `numeric(12,2)` | não |  |  | Preço unitário oferecido pelo fornecedor, em BRL. |
+| 5 | `min_order_quantity` | `integer` | sim | `1` |  | Quantidade mínima exigida por pedido, quando informada. |
+| 6 | `currency` | `text` | sim | `'BRL'::text` |  | Código da moeda do preço; o padrão do projeto é BRL. |
+| 7 | `last_price_update` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do preço. |
+| 8 | `is_preferred` | `boolean` | sim | `false` |  | Indica se o fornecedor está marcado como preferencial para o produto. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da relação. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da relação. |
 
 
 ## Constraints

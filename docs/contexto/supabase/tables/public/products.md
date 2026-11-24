@@ -1,5 +1,7 @@
 # public.products
 
+> Catálogo de produtos, com preços, custos, disponibilidade e informações de estoque.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,24 +19,24 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `category` | `text` | não | `'subscription'::text` |  |  |
-| 4 | `price` | `numeric` | não | `0` |  |  |
-| 5 | `sales_count` | `integer` | não | `0` |  |  |
-| 6 | `rating` | `numeric` | não | `0` |  |  |
-| 7 | `status` | `text` | não | `'ativo'::text` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `sku` | `text` | sim |  |  |  |
-| 11 | `stock_quantity` | `integer` | sim | `0` |  |  |
-| 12 | `min_stock_level` | `integer` | sim | `5` |  |  |
-| 13 | `description` | `text` | sim |  |  |  |
-| 14 | `default_cost` | `numeric(12,2)` | sim |  |  |  |
-| 15 | `cost_synced_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do produto. |
+| 2 | `name` | `text` | não |  |  | Nome do produto. |
+| 3 | `category` | `text` | não | `'subscription'::text` |  | Categoria do produto. |
+| 4 | `price` | `numeric` | não | `0` |  | Preço do produto, em BRL. |
+| 5 | `sales_count` | `integer` | não | `0` |  | Quantidade de vendas contabilizada para o produto. |
+| 6 | `rating` | `numeric` | não | `0` |  | Avaliação numérica do produto; a escala é definida pela aplicação. |
+| 7 | `status` | `text` | não | `'ativo'::text` |  | Estado operacional do produto. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do cadastro do produto. |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do cadastro do produto. |
+| 10 | `sku` | `text` | sim |  |  | Código SKU do produto, quando informado. |
+| 11 | `stock_quantity` | `integer` | sim | `0` |  | Quantidade de unidades do produto em estoque. |
+| 12 | `min_stock_level` | `integer` | sim | `5` |  | Nível mínimo de estoque configurado para o produto. |
+| 13 | `description` | `text` | sim |  |  | Descrição do produto. |
+| 14 | `default_cost` | `numeric(12,2)` | sim |  |  | Custo padrão do produto, em BRL. |
+| 15 | `cost_synced_at` | `timestamp with time zone` | sim |  |  | Data e hora da última sincronização do custo do produto. |
 | 16 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 17 | `deleted_by` | `uuid` | sim |  |  |  |
-| 18 | `delete_reason` | `text` | sim |  |  |  |
+| 17 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou o produto como excluído. |
+| 18 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o produto como excluído. |
 
 
 ## Constraints

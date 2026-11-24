@@ -1,5 +1,7 @@
 # public.deal_stage_history
 
+> Histórico de períodos em que negócios permaneceram em cada estágio.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `stage` | `text` | não |  |  |  |
-| 4 | `entered_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `exited_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `is_backfilled` | `boolean` | não | `false` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro histórico. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio cujo estágio está sendo registrado. |
+| 3 | `stage` | `text` | não |  |  | Estágio comercial registrado. |
+| 4 | `entered_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o negócio entrou no estágio. |
+| 5 | `exited_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o negócio saiu do estágio; nulo indica que ainda não há saída registrada. |
+| 6 | `is_backfilled` | `boolean` | não | `false` |  | Indica se o registro histórico foi preenchido retroativamente. |
 
 
 ## Constraints

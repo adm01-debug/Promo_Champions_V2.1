@@ -867,6 +867,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.suppliers | Admins and managers can insert suppliers | INSERT | PERMISSIVE | public |  | `is_admin_or_manager(auth.uid())` |
 | public.suppliers | Admins and managers can update suppliers | UPDATE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.suppliers | admin_delete_suppliers | DELETE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
+| public.supply_outbox | supply_outbox_admin_read | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.support_tickets | cs_st_delete | DELETE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.support_tickets | cs_st_insert | INSERT | PERMISSIVE | public |  | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = support_tickets.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |
 | public.support_tickets | cs_st_select | SELECT | PERMISSIVE | public | `(is_admin_or_manager(auth.uid()) OR (EXISTS ( SELECT 1    FROM accounts a   WHERE ((a.id = support_tickets.account_id) AND (a.owner_id = get_current_salesperson_id())))))` |  |

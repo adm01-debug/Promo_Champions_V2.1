@@ -1,5 +1,7 @@
 # public.tasks
 
+> Tarefas comerciais associadas a vendedores, negócios ou clientes, com prazo, prioridade e estado.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,24 +19,24 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `sale_id` | `uuid` | sim |  |  |  |
-| 6 | `priority` | `task_priority` | não | `'medium'::task_priority` |  |  |
-| 7 | `status` | `task_status` | não | `'pending'::task_status` |  |  |
-| 8 | `task_type` | `task_type` | não | `'other'::task_type` |  |  |
-| 9 | `due_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 10 | `due_time` | `time without time zone` | sim |  |  |  |
-| 11 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `source_insight_id` | `uuid` | sim |  |  |  |
-| 15 | `client_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da tarefa. |
+| 2 | `title` | `text` | não |  |  | Título da tarefa. |
+| 3 | `description` | `text` | sim |  |  | Descrição detalhada da tarefa. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pela tarefa, quando atribuído. |
+| 5 | `sale_id` | `uuid` | sim |  |  | Negócio relacionado à tarefa, quando houver. |
+| 6 | `priority` | `task_priority` | não | `'medium'::task_priority` |  | Prioridade da tarefa: high, medium, low ou urgent. |
+| 7 | `status` | `task_status` | não | `'pending'::task_status` |  | Estado da tarefa: pending, in_progress, completed ou cancelled. |
+| 8 | `task_type` | `task_type` | não | `'other'::task_type` |  | Tipo de tarefa: call, meeting, follow_up, email, proposal, other ou discount. |
+| 9 | `due_date` | `date` | não | `CURRENT_DATE` |  | Data prevista para conclusão da tarefa. |
+| 10 | `due_time` | `time without time zone` | sim |  |  | Horário previsto para conclusão, quando informado. |
+| 11 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora em que a tarefa foi concluída. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da tarefa. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da tarefa. |
+| 14 | `source_insight_id` | `uuid` | sim |  |  | Insight que originou a tarefa, quando aplicável. |
+| 15 | `client_id` | `uuid` | sim |  |  | Cliente relacionado à tarefa, quando houver. |
 | 16 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
 | 17 | `deleted_by` | `uuid` | sim |  |  |  |
-| 18 | `delete_reason` | `text` | sim |  |  |  |
+| 18 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar a tarefa como excluída. |
 
 
 ## Constraints

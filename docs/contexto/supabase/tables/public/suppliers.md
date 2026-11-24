@@ -1,5 +1,7 @@
 # public.suppliers
 
+> Cadastro de fornecedores, informações de contato, condições comerciais e avaliação operacional.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,27 +19,27 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `contact_name` | `text` | sim |  |  |  |
-| 4 | `email` | `text` | sim |  |  |  |
-| 5 | `phone` | `text` | sim |  |  |  |
-| 6 | `address` | `text` | sim |  |  |  |
-| 7 | `city` | `text` | sim |  |  |  |
-| 8 | `state` | `text` | sim |  |  |  |
-| 9 | `country` | `text` | sim | `'Brasil'::text` |  |  |
-| 10 | `cnpj` | `text` | sim |  |  |  |
-| 11 | `category` | `text` | sim | `'geral'::text` |  |  |
-| 12 | `payment_terms` | `text` | sim | `'30 dias'::text` |  |  |
-| 13 | `lead_time_days` | `integer` | sim | `7` |  |  |
-| 14 | `reliability_score` | `numeric(3,2)` | sim | `0.85` |  |  |
-| 15 | `is_active` | `boolean` | sim | `true` |  |  |
-| 16 | `notes` | `text` | sim |  |  |  |
-| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do fornecedor. |
+| 2 | `name` | `text` | não |  |  | Nome do fornecedor. |
+| 3 | `contact_name` | `text` | sim |  |  | Nome da pessoa de contato do fornecedor, quando informado. |
+| 4 | `email` | `text` | sim |  |  | E-mail de contato do fornecedor, quando informado. |
+| 5 | `phone` | `text` | sim |  |  | Telefone de contato do fornecedor, quando informado. |
+| 6 | `address` | `text` | sim |  |  | Endereço do fornecedor, quando informado. |
+| 7 | `city` | `text` | sim |  |  | Cidade do fornecedor, quando informada. |
+| 8 | `state` | `text` | sim |  |  | Estado ou região do fornecedor, quando informado. |
+| 9 | `country` | `text` | sim | `'Brasil'::text` |  | País do fornecedor. |
+| 10 | `cnpj` | `text` | sim |  |  | CNPJ do fornecedor, quando informado. |
+| 11 | `category` | `text` | sim | `'geral'::text` |  | Categoria comercial do fornecedor, quando informada. |
+| 12 | `payment_terms` | `text` | sim | `'30 dias'::text` |  | Condições ou prazo de pagamento acordado, quando informado. |
+| 13 | `lead_time_days` | `integer` | sim | `7` |  | Prazo estimado de entrega em dias, quando informado. |
+| 14 | `reliability_score` | `numeric(3,2)` | sim | `0.85` |  | Pontuação de confiabilidade do fornecedor; a escala é definida pela aplicação. |
+| 15 | `is_active` | `boolean` | sim | `true` |  | Indica se o fornecedor está ativo. |
+| 16 | `notes` | `text` | sim |  |  | Observações sobre o fornecedor. |
+| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do cadastro. |
+| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do cadastro. |
 | 19 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 20 | `deleted_by` | `uuid` | sim |  |  |  |
-| 21 | `delete_reason` | `text` | sim |  |  |  |
+| 20 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou o fornecedor como excluído. |
+| 21 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o fornecedor como excluído. |
 
 
 ## Constraints

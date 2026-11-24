@@ -1,5 +1,7 @@
 # public.deal_outcomes
 
+> Registro do desfecho de um negócio e do motivo associado.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `outcome` | `text` | não |  |  |  |
-| 5 | `reason` | `text` | não |  |  |  |
-| 6 | `notes` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do desfecho. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio relacionado ao desfecho, quando informado. |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Vendedor associado ao desfecho, quando informado. |
+| 4 | `outcome` | `text` | não |  |  | Resultado do negócio: won ou lost. |
+| 5 | `reason` | `text` | não |  |  | Motivo registrado para o resultado do negócio. |
+| 6 | `notes` | `text` | sim |  |  | Observações adicionais sobre o desfecho. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro do desfecho. |
 
 
 ## Constraints

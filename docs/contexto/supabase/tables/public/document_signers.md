@@ -1,5 +1,7 @@
 # public.document_signers
 
+> Signatários e estado de assinatura de cada documento digital.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `document_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `email` | `text` | não |  |  |  |
-| 5 | `status` | `text` | não | `'pending'::text` |  |  |
-| 6 | `signed_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `sign_order` | `integer` | sim | `1` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro do signatário. |
+| 2 | `document_id` | `uuid` | não |  |  | Documento digital ao qual o signatário está associado. |
+| 3 | `name` | `text` | não |  |  | Nome do signatário. |
+| 4 | `email` | `text` | não |  |  | E-mail do signatário. |
+| 5 | `status` | `text` | não | `'pending'::text` |  | Estado da assinatura do signatário: pending, signed ou rejected. |
+| 6 | `signed_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o signatário assinou. |
+| 7 | `sign_order` | `integer` | sim | `1` |  | Ordem de assinatura do signatário, quando definida. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro do signatário. |
 
 
 ## Constraints

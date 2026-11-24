@@ -1,6 +1,6 @@
 # public.saved_filters
 
-> Filtros salvos por usuários para diferentes entidades
+> Filtros salvos por usuários, associados a um tipo de entidade e aplicáveis individualmente ou como padrão.
 
 | propriedade | valor |
 |---|---|
@@ -18,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `entity_type` | `text` | não |  |  | Tipo de entidade (ex: produtos, pedidos, colaboradores) |
-| 4 | `name` | `text` | não |  |  |  |
-| 5 | `filters` | `jsonb` | não | `'{}'::jsonb` |  | Configuração do filtro em JSON |
-| 6 | `is_default` | `boolean` | não | `false` |  | Se true, este filtro é aplicado automaticamente ao abrir a página |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do filtro salvo. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário proprietário do filtro salvo. |
+| 3 | `entity_type` | `text` | não |  |  | Tipo de entidade ao qual o filtro se aplica. |
+| 4 | `name` | `text` | não |  |  | Nome legível atribuído ao filtro. |
+| 5 | `filters` | `jsonb` | não | `'{}'::jsonb` |  | Definição do filtro em formato JSON; a estrutura depende da entidade e dos filtros aceitos pela aplicação. |
+| 6 | `is_default` | `boolean` | não | `false` |  | Indica se este é o filtro padrão do usuário para o tipo de entidade. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do filtro. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do filtro. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.category_metrics
 
+> Métricas agregadas por categoria e data.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `date` | `date` | não |  |  |  |
-| 3 | `category` | `text` | não |  |  |  |
-| 4 | `percentage` | `numeric(5,2)` | não | `0` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de métrica. |
+| 2 | `date` | `date` | não |  |  | Data a que a métrica da categoria se refere. |
+| 3 | `category` | `text` | não |  |  | Categoria comercial à qual a métrica se refere. |
+| 4 | `percentage` | `numeric(5,2)` | não | `0` |  | Percentual atribuído à categoria; a escala não está especificada no esquema. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro de métrica. |
 
 
 ## Constraints

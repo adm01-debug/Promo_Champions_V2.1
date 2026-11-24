@@ -1,5 +1,7 @@
 # public.sales
 
+> Negócios e vendas acompanhados no pipeline comercial, incluindo responsáveis, valores, estágio e dados de fechamento.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,55 +19,55 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_name` | `text` | não |  |  |  |
-| 3 | `product_name` | `text` | não |  |  |  |
-| 4 | `amount` | `numeric(12,2)` | não |  |  |  |
-| 5 | `status` | `text` | não | `'pending'::text` |  |  |
-| 6 | `category` | `text` | não | `'subscription'::text` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 10 | `source` | `text` | sim | `'other'::text` |  | Lead source: linkedin, referral, inbound, outbound, event, website, paid_ads, other |
-| 11 | `pipeline_id` | `uuid` | sim |  |  |  |
-| 12 | `forecast_category` | `forecast_category` | sim |  |  |  |
-| 13 | `account_id` | `uuid` | sim |  |  |  |
-| 14 | `broadcast_sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 15 | `script_variant` | `text` | sim |  |  |  |
-| 17 | `client_id` | `uuid` | sim |  |  |  |
-| 18 | `product_id` | `uuid` | sim |  |  |  |
-| 19 | `sku` | `text` | sim |  |  |  |
-| 20 | `stock_reduced` | `boolean` | sim | `false` |  |  |
-| 21 | `enrichment_data` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 22 | `enrichment_status` | `text` | sim | `'pending'::text` |  |  |
-| 23 | `lost_to_competitor_id` | `uuid` | sim |  |  |  |
-| 24 | `competitor_price_at_deal` | `numeric(12,2)` | sim |  |  |  |
-| 25 | `territory_id` | `uuid` | sim |  |  |  |
-| 26 | `ai_prediction_score` | `double precision` | sim | `0` |  |  |
-| 27 | `ai_prediction_reasoning` | `text` | sim |  |  |  |
-| 28 | `whatsapp_last_interaction` | `timestamp with time zone` | sim |  |  |  |
-| 29 | `whatsapp_status` | `text` | sim | `'not_connected'::text` |  |  |
-| 30 | `sdr_id` | `uuid` | sim |  |  | ID do SDR que realizou a ativação/prospecção |
-| 31 | `closer_id` | `uuid` | sim |  |  | ID do Closer responsável pelo fechamento e gestão |
-| 32 | `is_first_sale` | `boolean` | sim | `false` |  | Indicates if this was the first successful sale for this client name, used for SDR/Closer commission splitting. |
-| 33 | `unit_cost` | `numeric(12,2)` | sim |  |  | Custo unitário snapshot no momento da venda (fonte: Promo Gifts ou manual). |
-| 34 | `total_cost` | `numeric(14,2)` | sim |  |  | Custo total da venda (unit_cost * quantidade quando aplicável). |
-| 35 | `cost_source` | `text` | sim |  |  |  |
-| 36 | `cost_synced_at` | `timestamp with time zone` | sim |  |  |  |
-| 37 | `margin_amount` | `numeric(14,2)` | sim | ` CASE     WHEN ((total_cost IS NULL) OR (amount IS NULL)) THEN NULL::numeric     ELSE round((amount - total_cost), 2) END` | s | Coluna calculada: amount - total_cost. |
-| 38 | `markup_pct` | `numeric(8,2)` | sim | ` CASE     WHEN ((total_cost IS NULL) OR (total_cost = (0)::numeric) OR (amount IS NULL)) THEN NULL::numeric     ELSE round((((amount - total_cost) / total_cost) * (100)::numeric), 2) END` | s | Coluna calculada: ((amount - total_cost) / total_cost) * 100. |
-| 39 | `stage` | `text` | sim |  |  |  |
-| 40 | `segment` | `text` | sim |  |  |  |
-| 41 | `notes` | `text` | sim |  |  |  |
-| 42 | `loss_reason` | `text` | sim |  |  |  |
-| 43 | `competitor_name` | `text` | sim |  |  |  |
-| 44 | `closed_at` | `timestamp with time zone` | sim |  |  |  |
-| 45 | `external_deal_id` | `text` | sim |  |  | ID do negócio na origem externa (ex.: Bitrix24 deal.ID) p/ dedupe idempotente de sync. |
-| 46 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 47 | `deleted_by` | `uuid` | sim |  |  |  |
-| 48 | `delete_reason` | `text` | sim |  |  |  |
-| 49 | `version` | `integer` | não | `1` |  | Optimistic locking: incrementado a cada UPDATE; UPDATEs críticos devem filtrar pela versão lida. |
-| 50 | `deal_status` | `deal_status` | sim | ` CASE     WHEN (status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) THEN 'completed'::deal_status     WHEN (status = ANY (ARRAY['lost'::text, 'cancelled'::text])) THEN 'lost'::deal_status     WHEN (status = 'qualified'::text) THEN 'qualified'::deal_status     WHEN (status = 'proposal'::text) THEN 'proposal'::deal_status     WHEN (status = 'negotiation'::text) THEN 'negotiation'::deal_status     WHEN (status = ANY (ARRAY['pending'::text, 'lead'::text, 'prospecting'::text, 'open'::text, 'in_progress'::text])) THEN 'pending'::deal_status     ELSE NULL::deal_status END` | s |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do negócio. |
+| 2 | `client_name` | `text` | não |  |  | Nome do cliente associado ao negócio, conforme armazenado no registro. |
+| 3 | `product_name` | `text` | não |  |  | Nome do produto associado ao negócio, conforme armazenado no registro. |
+| 4 | `amount` | `numeric(12,2)` | não |  |  | Valor monetário do negócio em reais brasileiros (BRL). |
+| 5 | `status` | `text` | não | `'pending'::text` |  | Status operacional do negócio; os valores aceitos são definidos pela constraint da coluna. |
+| 6 | `category` | `text` | não | `'subscription'::text` |  | Categoria comercial do negócio; os valores aceitos são definidos pela constraint da coluna. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do negócio. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do negócio. |
+| 9 | `salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pelo negócio, quando atribuído. |
+| 10 | `source` | `text` | sim | `'other'::text` |  | Origem de aquisição ou entrada do lead, quando informada. |
+| 11 | `pipeline_id` | `uuid` | sim |  |  | Pipeline comercial ao qual o negócio está associado. |
+| 12 | `forecast_category` | `forecast_category` | sim |  |  | Categoria do negócio usada para previsão de vendas. |
+| 13 | `account_id` | `uuid` | sim |  |  | Conta empresarial associada ao negócio, quando houver. |
+| 14 | `broadcast_sent_at` | `timestamp with time zone` | sim |  |  | Data e hora do envio da comunicação em massa associada ao negócio, se aplicável. |
+| 15 | `script_variant` | `text` | sim |  |  | Variante do roteiro de comunicação associada ao negócio, se aplicável. |
+| 17 | `client_id` | `uuid` | sim |  |  | Cliente associado ao negócio, quando houver um cadastro correspondente. |
+| 18 | `product_id` | `uuid` | sim |  |  | Produto associado ao negócio, quando houver um cadastro correspondente. |
+| 19 | `sku` | `text` | sim |  |  | Código SKU do produto associado, quando informado. |
+| 20 | `stock_reduced` | `boolean` | sim | `false` |  | Indica se o estoque foi reduzido em decorrência deste negócio. |
+| 21 | `enrichment_data` | `jsonb` | sim | `'{}'::jsonb` |  | Dados adicionais de enriquecimento do negócio em formato JSON. |
+| 22 | `enrichment_status` | `text` | sim | `'pending'::text` |  | Estado do processo de enriquecimento, conforme utilizado pela aplicação. |
+| 23 | `lost_to_competitor_id` | `uuid` | sim |  |  | Concorrente associado à perda do negócio, quando identificado. |
+| 24 | `competitor_price_at_deal` | `numeric(12,2)` | sim |  |  | Preço do concorrente observado no contexto do negócio, em BRL. |
+| 25 | `territory_id` | `uuid` | sim |  |  | Território comercial associado ao negócio. |
+| 26 | `ai_prediction_score` | `double precision` | sim | `0` |  | Pontuação numérica produzida pela previsão de IA; a escala depende do modelo consumidor. |
+| 27 | `ai_prediction_reasoning` | `text` | sim |  |  | Justificativa textual produzida para a previsão de IA. |
+| 28 | `whatsapp_last_interaction` | `timestamp with time zone` | sim |  |  | Data e hora da interação mais recente via WhatsApp registrada para o negócio. |
+| 29 | `whatsapp_status` | `text` | sim | `'not_connected'::text` |  | Estado da integração ou interação via WhatsApp, conforme utilizado pela aplicação. |
+| 30 | `sdr_id` | `uuid` | sim |  |  | Vendedor SDR associado à prospecção ou ativação do negócio, quando atribuído. |
+| 31 | `closer_id` | `uuid` | sim |  |  | Vendedor Closer responsável pelo fechamento, quando atribuído. |
+| 32 | `is_first_sale` | `boolean` | sim | `false` |  | Indica se este negócio foi marcado como a primeira venda para o cliente. |
+| 33 | `unit_cost` | `numeric(12,2)` | sim |  |  | Custo unitário registrado para o negócio, em BRL. |
+| 34 | `total_cost` | `numeric(14,2)` | sim |  |  | Custo total registrado para o negócio, em BRL. |
+| 35 | `cost_source` | `text` | sim |  |  | Origem do custo registrado; os valores aceitos são definidos pela constraint da coluna. |
+| 36 | `cost_synced_at` | `timestamp with time zone` | sim |  |  | Data e hora da última sincronização dos dados de custo. |
+| 37 | `margin_amount` | `numeric(14,2)` | sim | ` CASE     WHEN ((total_cost IS NULL) OR (amount IS NULL)) THEN NULL::numeric     ELSE round((amount - total_cost), 2) END` | s | Margem monetária calculada a partir do valor do negócio menos o custo total, em BRL. |
+| 38 | `markup_pct` | `numeric(8,2)` | sim | ` CASE     WHEN ((total_cost IS NULL) OR (total_cost = (0)::numeric) OR (amount IS NULL)) THEN NULL::numeric     ELSE round((((amount - total_cost) / total_cost) * (100)::numeric), 2) END` | s | Markup percentual calculado sobre o custo total; a expressão da coluna multiplica a razão por 100. |
+| 39 | `stage` | `text` | sim |  |  | Estágio comercial do negócio no pipeline. |
+| 40 | `segment` | `text` | sim |  |  | Segmento comercial associado ao negócio, quando informado. |
+| 41 | `notes` | `text` | sim |  |  | Observações livres sobre o negócio. |
+| 42 | `loss_reason` | `text` | sim |  |  | Motivo informado para a perda do negócio. |
+| 43 | `competitor_name` | `text` | sim |  |  | Nome do concorrente relacionado ao negócio, quando informado. |
+| 44 | `closed_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o negócio foi fechado ou encerrado. |
+| 45 | `external_deal_id` | `text` | sim |  |  | Identificador do negócio no sistema externo de origem, quando disponível. |
+| 46 | `deleted_at` | `timestamp with time zone` | sim |  |  | Data e hora da exclusão lógica; preenchido indica que o registro foi marcado como excluído. |
+| 47 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou o negócio como excluído. |
+| 48 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o negócio como excluído. |
+| 49 | `version` | `integer` | não | `1` |  | Número da versão do registro usado para controle de concorrência otimista. |
+| 50 | `deal_status` | `deal_status` | sim | ` CASE     WHEN (status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) THEN 'completed'::deal_status     WHEN (status = ANY (ARRAY['lost'::text, 'cancelled'::text])) THEN 'lost'::deal_status     WHEN (status = 'qualified'::text) THEN 'qualified'::deal_status     WHEN (status = 'proposal'::text) THEN 'proposal'::deal_status     WHEN (status = 'negotiation'::text) THEN 'negotiation'::deal_status     WHEN (status = ANY (ARRAY['pending'::text, 'lead'::text, 'prospecting'::text, 'open'::text, 'in_progress'::text])) THEN 'pending'::deal_status     ELSE NULL::deal_status END` | s | Status normalizado do negócio, derivado de status conforme a expressão da coluna. |
 
 
 ## Constraints

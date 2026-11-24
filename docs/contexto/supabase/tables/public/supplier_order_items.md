@@ -1,5 +1,7 @@
 # public.supplier_order_items
 
+> Itens de produto incluídos em pedidos a fornecedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `order_id` | `uuid` | sim |  |  |  |
-| 3 | `product_id` | `uuid` | sim |  |  |  |
-| 4 | `quantity` | `integer` | não |  |  |  |
-| 5 | `unit_price` | `numeric(12,2)` | não |  |  |  |
-| 6 | `total_price` | `numeric(12,2)` | não |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do item do pedido. |
+| 2 | `order_id` | `uuid` | sim |  |  | Pedido ao fornecedor ao qual o item pertence. |
+| 3 | `product_id` | `uuid` | sim |  |  | Produto incluído no pedido, quando informado. |
+| 4 | `quantity` | `integer` | não |  |  | Quantidade de unidades solicitadas. |
+| 5 | `unit_price` | `numeric(12,2)` | não |  |  | Preço unitário do item, em BRL. |
+| 6 | `total_price` | `numeric(12,2)` | não |  |  | Preço total do item, em BRL. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do item. |
 
 
 ## Constraints

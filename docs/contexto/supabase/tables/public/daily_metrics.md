@@ -1,5 +1,7 @@
 # public.daily_metrics
 
+> Métricas comerciais agregadas por data, incluindo receita, metas, vendas, novos clientes e indicadores de conversão.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `date` | `date` | não |  |  |  |
-| 3 | `revenue` | `numeric(12,2)` | não | `0` |  |  |
-| 4 | `revenue_goal` | `numeric(12,2)` | não | `0` |  |  |
-| 5 | `new_clients` | `integer` | não | `0` |  |  |
-| 6 | `total_sales` | `integer` | não | `0` |  |  |
-| 7 | `conversion_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 8 | `avg_ticket` | `numeric(12,2)` | não | `0` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro diário de métricas. |
+| 2 | `date` | `date` | não |  |  | Data a que as métricas agregadas se referem; cada data é única. |
+| 3 | `revenue` | `numeric(12,2)` | não | `0` |  | Receita agregada do dia, em BRL. |
+| 4 | `revenue_goal` | `numeric(12,2)` | não | `0` |  | Meta de receita do dia, em BRL. |
+| 5 | `new_clients` | `integer` | não | `0` |  | Quantidade de novos clientes contabilizados no dia. |
+| 6 | `total_sales` | `integer` | não | `0` |  | Quantidade total de vendas contabilizadas no dia. |
+| 7 | `conversion_rate` | `numeric(5,2)` | não | `0` |  | Taxa de conversão diária; a escala não está especificada no esquema. |
+| 8 | `avg_ticket` | `numeric(12,2)` | não | `0` |  | Valor médio por venda no dia, em BRL. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do agregado diário. |
 
 
 ## Constraints

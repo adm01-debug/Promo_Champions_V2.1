@@ -75,7 +75,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| trg_supply_enqueue_from_order_item | AFTER | INSERT | ROW | enabled | public.tg_supply_enqueue_from_order_item |
 
 
 ## Grants

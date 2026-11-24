@@ -1,5 +1,7 @@
 # public.supplier_orders
 
+> Pedidos de compra enviados a fornecedores e seu acompanhamento de entrega.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `supplier_id` | `uuid` | sim |  |  |  |
-| 3 | `order_number` | `text` | sim |  |  |  |
-| 4 | `status` | `text` | sim | `'pending'::text` |  |  |
-| 5 | `total_amount` | `numeric(12,2)` | não | `0` |  |  |
-| 6 | `order_date` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `expected_delivery` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `actual_delivery` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `notes` | `text` | sim |  |  |  |
-| 10 | `created_by` | `uuid` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do pedido ao fornecedor. |
+| 2 | `supplier_id` | `uuid` | sim |  |  | Fornecedor destinatário do pedido, quando informado. |
+| 3 | `order_number` | `text` | sim |  |  | Número ou referência do pedido, quando informado. |
+| 4 | `status` | `text` | sim | `'pending'::text` |  | Estado do pedido: pending, confirmed, shipped, delivered ou cancelled. |
+| 5 | `total_amount` | `numeric(12,2)` | não | `0` |  | Valor total do pedido, em BRL. |
+| 6 | `order_date` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação ou emissão do pedido. |
+| 7 | `expected_delivery` | `timestamp with time zone` | sim |  |  | Data e hora previstas para a entrega. |
+| 8 | `actual_delivery` | `timestamp with time zone` | sim |  |  | Data e hora em que a entrega ocorreu. |
+| 9 | `notes` | `text` | sim |  |  | Observações sobre o pedido. |
+| 10 | `created_by` | `uuid` | sim |  |  | Usuário que criou o pedido, quando identificado. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

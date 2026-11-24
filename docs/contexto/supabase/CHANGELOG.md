@@ -2,6 +2,23 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 13:15 UTC
+
+- **colunas** adicionado (12): `public.supply_outbox.attempts`, `public.supply_outbox.created_at`, `public.supply_outbox.delivered_at`, `public.supply_outbox.event`, `public.supply_outbox.id`, `public.supply_outbox.last_error`, `public.supply_outbox.next_attempt_at`, `public.supply_outbox.order_id`, `public.supply_outbox.order_item_id`, `public.supply_outbox.payload`, `public.supply_outbox.status`, `public.supply_outbox.updated_at`
+- **colunas** alterado (328): `public.audit_log.action`, `public.audit_log.created_at`, `public.audit_log.id`, `public.audit_log.new_data`, `public.audit_log.old_data`, `public.audit_log.record_id`, `public.audit_log.table_name`, `public.audit_log.user_id`, `public.category_metrics.category`, `public.category_metrics.created_at`, `public.category_metrics.date`, `public.category_metrics.id`, `public.category_metrics.percentage`, `public.clients.activated_at`, `public.clients.company`, `public.clients.created_at`, `public.clients.delete_reason`, `public.clients.deleted_by`, `public.clients.email`, `public.clients.email_verified`, `public.clients.id`, `public.clients.is_activated`, `public.clients.last_enrichment_id`, `public.clients.last_interaction_at`, `public.clients.lat`, `public.clients.lead_source`, `public.clients.lng`, `public.clients.name`, `public.clients.phone`, `public.clients.phone_verified`, `public.clients.ramo_atividade`, `public.clients.total_value`, `public.clients.updated_at`, `public.clients.user_id`, `public.daily_metrics.avg_ticket`, `public.daily_metrics.conversion_rate`, `public.daily_metrics.created_at`, `public.daily_metrics.date`, `public.daily_metrics.id`, `public.daily_metrics.new_clients` … (+288)
+- **constraints** adicionado (4): `public.supply_outbox.supply_outbox_item_event_key`, `public.supply_outbox.supply_outbox_order_id_fkey`, `public.supply_outbox.supply_outbox_pkey`, `public.supply_outbox.supply_outbox_status_check`
+- **cron jobs** adicionado (1): `125:supply-dispatch-1min`
+- **functions** adicionado (3): `public.claim_supply_outbox(p_limit integer)`, `public.finish_supply_outbox(p_ids uuid[], p_ok boolean, p_error text)`, `public.tg_supply_enqueue_from_order_item()`
+- **functions** alterado (4): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`, `public.post_internal_edge_job(p_function_name text, p_attempt integer, p_max_attempts integer)`, `public.trigger_internal_edge_job(p_function_name text)`
+- **grants** adicionado (2): `public.supply_outbox:authenticated`, `public.supply_outbox:service_role`
+- **indexes** adicionado (4): `public.idx_supply_outbox_due`, `public.idx_supply_outbox_order`, `public.supply_outbox_item_event_key`, `public.supply_outbox_pkey`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.supply_outbox.supply_outbox_admin_read`
+- **migrations** adicionado (1): `20261126090000_20261126090000_champions_supply_outbox`
+- **policies (RLS)** adicionado (1): `public.supply_outbox.supply_outbox_admin_read`
+- **tabelas** adicionado (1): `public.supply_outbox`
+- **tabelas** alterado (24): `public.category_metrics`, `public.clients`, `public.daily_metrics`, `public.deal_outcomes`, `public.deal_stage_history`, `public.digital_signatures`, `public.document_signers`, `public.entity_versions`, `public.inventory_levels`, `public.price_alerts`, `public.price_history`, `public.products`, `public.quote_items`, `public.quotes`, `public.sales`, `public.sales_goals`, `public.salespeople`, `public.saved_filters`, `public.stock_movements`, `public.supplier_order_items`, `public.supplier_orders`, `public.supplier_products`, `public.suppliers`, `public.tasks`
+- **triggers** adicionado (1): `public.order_items.trg_supply_enqueue_from_order_item`
+
 ## 2026-11-24 10:13 UTC
 
 - **lints** removido (5): `policy_auth_fn_not_wrapped:public.commercial_approval_requests.Criar solicitações`, `policy_auth_fn_not_wrapped:public.salespeople.Users can read own salesperson record`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can delete their own saved filters`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can insert own filters`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can view their own saved filters`

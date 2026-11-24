@@ -1,5 +1,7 @@
 # public.sales_goals
 
+> Metas de venda definidas por vendedor e mês.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,11 +19,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `month` | `date` | não |  |  |  |
-| 4 | `goal_amount` | `numeric(12,2)` | não | `0` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da meta. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor ao qual a meta pertence. |
+| 3 | `month` | `date` | não |  |  | Data que identifica o mês de competência da meta. |
+| 4 | `goal_amount` | `numeric(12,2)` | não | `0` |  | Valor monetário da meta mensal, em BRL. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da meta. |
 
 
 ## Constraints

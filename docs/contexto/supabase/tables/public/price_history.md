@@ -1,5 +1,7 @@
 # public.price_history
 
+> Histórico de alterações de preços de produtos e fornecedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `supplier_product_id` | `uuid` | sim |  |  |  |
-| 3 | `product_id` | `uuid` | sim |  |  |  |
-| 4 | `supplier_id` | `uuid` | sim |  |  |  |
-| 5 | `old_price` | `numeric` | não |  |  |  |
-| 6 | `new_price` | `numeric` | não |  |  |  |
-| 7 | `price_change_percent` | `numeric` | sim | ` CASE     WHEN (old_price > (0)::numeric) THEN (((new_price - old_price) / old_price) * (100)::numeric)     ELSE (0)::numeric END` | s |  |
-| 8 | `recorded_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de histórico de preço. |
+| 2 | `supplier_product_id` | `uuid` | sim |  |  | Relação fornecedor-produto associada à alteração, quando disponível. |
+| 3 | `product_id` | `uuid` | sim |  |  | Produto cujo preço foi alterado, quando identificado. |
+| 4 | `supplier_id` | `uuid` | sim |  |  | Fornecedor relacionado à alteração de preço, quando identificado. |
+| 5 | `old_price` | `numeric` | não |  |  | Preço anterior à alteração, em BRL. |
+| 6 | `new_price` | `numeric` | não |  |  | Novo preço após a alteração, em BRL. |
+| 7 | `price_change_percent` | `numeric` | sim | ` CASE     WHEN (old_price > (0)::numeric) THEN (((new_price - old_price) / old_price) * (100)::numeric)     ELSE (0)::numeric END` | s | Variação percentual calculada entre o preço novo e o anterior; a expressão multiplica a razão por 100. |
+| 8 | `recorded_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a alteração de preço foi registrada. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
 
 
 ## Constraints

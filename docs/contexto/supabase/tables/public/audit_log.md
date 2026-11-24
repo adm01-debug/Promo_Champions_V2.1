@@ -18,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `table_name` | `text` | não |  |  |  |
-| 3 | `record_id` | `uuid` | não |  |  |  |
-| 4 | `action` | `text` | não |  |  |  |
-| 5 | `old_data` | `jsonb` | sim |  |  |  |
-| 6 | `new_data` | `jsonb` | sim |  |  |  |
-| 7 | `user_id` | `uuid` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro histórico de auditoria. |
+| 2 | `table_name` | `text` | não |  |  | Nome da tabela afetada pela operação auditada. |
+| 3 | `record_id` | `uuid` | não |  |  | Identificador do registro afetado. |
+| 4 | `action` | `text` | não |  |  | Operação registrada: INSERT, UPDATE ou DELETE. |
+| 5 | `old_data` | `jsonb` | sim |  |  | Dados do registro antes da operação, quando disponíveis. |
+| 6 | `new_data` | `jsonb` | sim |  |  | Dados do registro depois da operação, quando disponíveis. |
+| 7 | `user_id` | `uuid` | sim |  |  | Usuário associado à operação, quando identificado. |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora em que o evento histórico foi registrado. |
 
 
 ## Constraints
