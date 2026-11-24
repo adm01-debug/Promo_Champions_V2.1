@@ -22,7 +22,7 @@ export function ReactionFloater({ reactions }: Props) {
       setVisible(prev => prev.filter(r => r.id !== newest.id));
     }, 1600);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite reactions (a chave reactions[0]?.id identifica so a reacao mais nova) e visible (estado escrito pelo proprio efeito; incluir reexecutaria e rearmaria o timeout a cada mudanca)
   }, [reactions[0]?.id]);
 
   return (

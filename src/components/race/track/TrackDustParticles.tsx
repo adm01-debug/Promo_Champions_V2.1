@@ -69,7 +69,7 @@ export function TrackDustParticles({ cars }: TrackDustParticlesProps) {
       particlesRef.current = merged.slice(-MAX_PARTICLES);
       setTick(t => t + 1);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite cars: a chave id:progress*200 muda quando algum carro se move, e o array e recriado a cada render
   }, [cars.map(c => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
 
   // Loop de animação (~30fps) atualiza posição/idade e força re-render

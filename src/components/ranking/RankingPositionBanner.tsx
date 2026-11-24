@@ -38,7 +38,7 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
       return () => clearTimeout(t);
     }
     return undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite markRead (o objeto da mutation troca de identidade a cada render e rearmaria o timer) e notif (a chave notif?.id identifica a notificacao; read_at e checado no corpo)
   }, [notif?.id]);
 
   if (isLoading || !notif || dismissed) return null;

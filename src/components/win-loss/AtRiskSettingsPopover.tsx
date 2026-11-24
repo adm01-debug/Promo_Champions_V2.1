@@ -70,13 +70,13 @@ export function AtRiskSettingsPopover({
     if (debounced !== settings.keywordFilter) {
       onUpdate({ keywordFilter: debounced });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite onUpdate (callback do pai recriado a cada render) e settings.keywordFilter: a dep debounced e o gatilho; comparar com o valor do pai aqui reescreveria o reset externo antes do efeito abaixo
   }, [debounced]);
 
   // External resets (e.g. clearFilters) should reflect in the input.
   useEffect(() => {
     if (settings.keywordFilter !== keyword) setKeyword(settings.keywordFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite keyword: a dep settings.keywordFilter e o gatilho do reset externo; incluir keyword faria o efeito rodar a cada tecla digitada
   }, [settings.keywordFilter]);
 
   const toggleStage = (stage: string) => {

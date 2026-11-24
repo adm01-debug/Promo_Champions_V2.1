@@ -3,6 +3,7 @@
 Checklist do plano de `04-PLANO.md`. **O executor marca aqui, etapa por etapa.**
 
 Legenda:
+
 - `[ ]` não começada
 - `[x]` concluída — verificação executada e evidência anotada
 - `[~]` divergente — o código já não corresponde à evidência da etapa; registre o que encontrou
@@ -19,6 +20,7 @@ Exemplo:
 ---
 
 ## Onda 1 — Segurança e risco de perda de dado
+
 - [ ] 001 — Fechar o cadastro público do Supabase Auth — onda 1 — Crítica · **APROV**
 - [ ] 002 — Medir se a cadeia de ataque do `update_stage` está explorável hoje — onda 1 — Crítica
 - [x] 003 — Escopar o `update_stage` do `execute-workflow` ao dono da venda — onda 1 — Crítica - PR #637 - update_stage escopado ao dono da venda via RLS
@@ -61,6 +63,7 @@ Exemplo:
 - [ ] 040 — Tornar os testes de ponta a ponta alcançáveis — onda 1 — Alta · **APROV**
 
 ## Onda 2 — Fluxos principais quebrados
+
 - [x] 041 — Corrigir o custo de comissão do painel de ROI — onda 2 — Crítica - PR #642 - /roi com taxa 10% mostra custo = 10% da receita (antes 10x)
 - [ ] 042 — Unificar "a comissão desta venda" numa única fonte — onda 2 — Crítica · **APROV**
 - [ ] 043 — Separar "Arquivado" de "Ganho" — onda 2 — Crítica · **APROV**
@@ -85,6 +88,7 @@ Exemplo:
 - [x] 062 — Tratar o erro das consultas paralelas de metas, perfil e relatório de vendas — onda 2 — Média — PR #653 (b0ac35101) - useSalesReport.ts:70-72 e os hooks de metas e perfil checam os tres erros; reconferido na main, 14 testes passam
 
 ## Onda 3 — Integridade de dados e regras de negócio
+
 - [ ] 063 — Unificar a data de fechamento de venda em uma definição — onda 3 — Alta · **APROV**
 - [ ] 064 — Unificar o fuso horário de corte de período — onda 3 — Alta · **APROV**
 - [ ] 065 — Fazer meta ausente ser tratada do mesmo jeito em todas as telas — onda 3 — Média · **APROV**
@@ -125,6 +129,7 @@ Exemplo:
 - [ ] 100 — Fazer a comissão recusar venda sem regra, em vez de pagar 5% — onda 3 — Alta · **APROV**
 
 ## Onda 4 — Funcionalidades incompletas
+
 - [x] 101 — Decidir o destino dos botões de exportação de Win/Loss — onda 4 — Média — PR #709 - 3 passed: exporta os 2 negocios, filtro "Perdas" reduz a 1 e exporta 1 linha com Desfecho: Perdido, "Limpar" volta a 2; contraprova com os 3 arquivos de producao em stash deu 3 failed
 - [x] 102 — Decidir o destino dos botões de filtro e exportação da auditoria comercial — onda 4 — Média — PR #711 - 3 passed (filtro, exportacao so das linhas filtradas com colunas e nome do arquivo, estado vazio com botao desabilitado); contraprova 3 failed
 - [x] 103 — Decidir o destino do botão de exportação de auditoria de preço — onda 4 — Média — PR #712 - 2 passed (CSV com as 4 secoes e fallback so-resumo); contraprova 2 failed
@@ -147,6 +152,7 @@ Exemplo:
 - [ ] 120 — Decidir o destino de `salesperson_commission_configs` — onda 4 — Média · **APROV**
 
 ## Onda 5 — Robustez: erros, estados, concorrência
+
 - [x] 121 — Criar o tratamento padrão de erro de leitura — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [x] 122 — Mostrar erro em vez de "nenhuma comissão" — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [x] 123 — Mostrar erro em vez de "nenhum registro" na trilha de auditoria — onda 5 — Alta — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
@@ -190,6 +196,7 @@ Exemplo:
 - [ ] 161 — Criar a verificação que impede a superfície pública de divergir de novo — onda 5 — Média · **APROV**
 
 ## Onda 6 — Performance e escala
+
 - [ ] 162 — Corrigir o truncamento do relatório de atividades da equipe — onda 6 — Alta · **APROV**
 - [ ] 163 — Auditar as 101 consultas sem limite e classificar por risco — onda 6 — Média
 - [ ] 164 — Agregar no banco os indicadores de BI de vendas — onda 6 — Média · **APROV**
@@ -201,6 +208,7 @@ Exemplo:
 - [ ] 170 — Reduzir o peso das assinaturas em tempo real nos painéis mais abertos — onda 6 — Média
 
 ## Onda 7 — Experiência de uso e consistência
+
 - [x] 171 — Filtrar o menu pelo papel do usuário — onda 7 — Alta — PR #675 - routeAccess derivado do roteador; menu e paleta filtrados
 - [x] 172 — Corrigir o modo de visualização do menu lido do navegador — onda 7 — Média — PR #675 - modo salvo validado contra o papel e removido quando invalido
 - [ ] 173 — Alinhar o rótulo "Administração" com quem realmente pode entrar — onda 7 — Média · **APROV**
@@ -223,6 +231,7 @@ Exemplo:
 - [x] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa — PR #688 - regra registrada no `AGENTS.md` §7: função nova ou tocada usa `_shared/http-envelope.ts`, webhook de saída só troca de formato com contrato conferido; gate `check-claude-md-integrity.mjs` exit 0 (134849 bytes, 8 seções)
 
 ## Onda 8 — Higiene, CI e observabilidade
+
 - [ ] 191 — Revogar o grant anônimo — lote de gamificação e corrida — onda 8 — Média · **APROV**
 - [ ] 192 — Revogar o grant anônimo — lote de cadências e sequências — onda 8 — Média · **APROV**
 - [ ] 193 — Revogar o grant anônimo — lote de relatórios e BI — onda 8 — Média · **APROV**
@@ -243,8 +252,8 @@ Exemplo:
 - [ ] 208 — Remover as tabelas órfãs aprovadas pelo dono — onda 8 — Baixa · **APROV**
 - [x] 209 — Revisar supressões da regra de dependências — os 10 ganchos que escrevem no banco — onda 8 — Média — PR #723 - as 19 diretivas restantes dos 10 arquivos agora nomeiam a dependencia omitida e o motivo (levantado rodando o eslint sem as diretivas); 3 supressoes foram removidas por esconderem defeito: allLeads em LeadScoringDashboard e rawItems em WebhookDeadLetterPanel viraram useMemo, e leaderSpeed saiu da dep do memo currentFlag em RaceArena, que nao a lia
 - [ ] 210 — Revisar supressões da regra de dependências — os 15 de leitura de dado de negócio — onda 8 — Média
-- [ ] 211 — Revisar supressões da regra de dependências — os 15 de interface e gamificação — onda 8 — Média
-- [ ] 212 — Revisar supressões da regra de dependências — os restantes — onda 8 — Média
+- [x] 211 — Revisar supressões da regra de dependências — os 15 de interface e gamificação — onda 8 — Média — PR #725 - 8 arquivos de interface e gamificação revisados um a um (`Speedometer`, `PitStopPanel`, `ReactionFloater`, `TrackDustParticles`, `TrackTireMarks`, `RankingPositionBanner`, `AtRiskSettingsPopover`, `useRaceAudioEngine`): 19 supressões passaram a nomear a dependência omitida e o gatilho real do efeito (auxiliar recriado a cada render, callback do pai, dep debounced); lint 0 avisos, prettier ok, 163 arquivos / 1071 testes passaram, `typecheck:baseline` e `test:config` sem regressão, `deps:check` 0 erros
+- [-] 212 — Revisar supressões da regra de dependências — os restantes — onda 8 — Média - não sobraram ocorrências: medido no `main`, são 48 diretivas em 29 arquivos (47 com a justificativa genérica e 1 já específica em `KnownDevices.tsx:94`), distribuídas em #723 (10 arquivos que gravam), #724 (11 de leitura de dado) e #725 (8 de interface e gamificação); nenhuma ficou de fora
 - [x] 213 — Escopar as funções que autenticam e descartam — busca semântica e busca visual — onda 8 — Média — PR #696 - `semantic-index-entity` passou a ler a entidade de origem com o client do chamador (RLS decide): cliente de outro vendedor deu 404 e a leitura no stub apareceu como `as=user`, contra `as=svc` na main; `semantic-search` e `visual-search` autenticam antes do limite e chaveiam o bucket pelo `userId`, então 33 chamadas com o mesmo JWT e `X-Forwarded-For` trocado deram 3× 429, contra 0× na main
 - [x] 214 — Escopar as funções que autenticam e descartam — inteligência preditiva e análise comportamental — onda 8 — Média — PR #697 - as três autenticam antes do limite e chaveiam o bucket pelo `userId`: 26 chamadas com o mesmo JWT e `X-Forwarded-For` trocado deram 7× 429, contra 0× na main; `predictive-intelligence` e `revenue-forecast-ai` passaram a ler com o client do chamador e o stub registrou `sales`/`clients`/`lead_scores`/`stage_probabilities`/`revenue_forecast_view` como `as=user`, contra `as=svc` na main
 - [x] 215 — Escopar as funções que autenticam e descartam — enriquecimento de lead — onda 8 — Média — PR #128 - `enrich-lead` não lê nem grava registro algum desde #128 (`996c70197`): autentica, descarta a identidade e devolve 503 `enrichment_provider_not_configured`, então não há escopo a aplicar; verificado na leitura do arquivo
@@ -297,8 +306,8 @@ Problema encontrado durante a execução **não é corrigido na hora** (regra 4 
 do executor). Anote aqui, com arquivo:linha, e siga a etapa em curso.
 
 | Data | Etapa em curso | Achado | Evidência (arquivo:linha) |
-|---|---|---|---|
-| | | | |
+| ---- | -------------- | ------ | ------------------------- |
+|      |                |        |                           |
 
 ## Divergências encontradas
 
@@ -306,37 +315,41 @@ Etapa cuja evidência não corresponde mais ao código atual (regra 2). Registre
 próxima etapa independente.
 
 | Data | Etapa | O que o plano dizia | O que você encontrou |
-|---|---|---|---|
-| | | | |
+| ---- | ----- | ------------------- | -------------------- |
+|      |       |                     |                      |
 
 ## Verificações de fechamento de onda
 
 As etapas 240 a 243 pedem o registro consolidado por onda. Use esta seção para elas.
 
 ### Onda 1 (etapa 240)
+
 _não executada_
 
 ### Onda 2 (etapa 241)
+
 _não executada_
 
 ### Onda 3 (etapa 242)
+
 _não executada_
 
 ### Ondas 4 a 8 (etapa 243)
+
 _não executada_
 
 ## Medições pedidas pelo plano
 
 Etapas que **só medem** e cujo resultado decide as seguintes. Registre a saída aqui.
 
-| Etapa | O que medir | Resultado | Data |
-|---|---|---|---|
-| 002 | `automation_workflows` ativos com ação `update_stage` (decide a urgência de 003) | | |
-| 087 | `quote_sync_inbound_log` × `webhook_inbound_dedupe` (decide se 088 existe) | | |
-| 153 | corpo de `fn_cleanup_stale_logs` (decide o caminho de A-21/A-150) | | |
-| 163 | classificação das 101 consultas sem limite | | |
-| 168 | 30 consultas mais custosas (`pg_stat_statements`) | | |
-| 188 | `cron.job` × os 12 jobs da migration da máquina de vendas | | |
-| 206 | classificação das 31 tabelas órfãs | | |
-| 218 | consumo de IA antes/depois do fechamento dos endpoints | | |
-| 225 | linha de base de acessibilidade (`npm run a11y:report`) | | |
+| Etapa | O que medir                                                                      | Resultado | Data |
+| ----- | -------------------------------------------------------------------------------- | --------- | ---- |
+| 002   | `automation_workflows` ativos com ação `update_stage` (decide a urgência de 003) |           |      |
+| 087   | `quote_sync_inbound_log` × `webhook_inbound_dedupe` (decide se 088 existe)       |           |      |
+| 153   | corpo de `fn_cleanup_stale_logs` (decide o caminho de A-21/A-150)                |           |      |
+| 163   | classificação das 101 consultas sem limite                                       |           |      |
+| 168   | 30 consultas mais custosas (`pg_stat_statements`)                                |           |      |
+| 188   | `cron.job` × os 12 jobs da migration da máquina de vendas                        |           |      |
+| 206   | classificação das 31 tabelas órfãs                                               |           |      |
+| 218   | consumo de IA antes/depois do fechamento dos endpoints                           |           |      |
+| 225   | linha de base de acessibilidade (`npm run a11y:report`)                          |           |      |
