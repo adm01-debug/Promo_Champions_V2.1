@@ -6459,15 +6459,16 @@
   {
    "modulo": "components/pricing",
    "arquivos": 13,
-   "testes": 2,
-   "linhas": 1740,
+   "testes": 3,
+   "linhas": 1848,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 12,
    "hooks_locais": [
     "useCriticalMarkupSales",
-    "usePricingIntelligence"
+    "usePricingIntelligence",
+    "useToast"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -6499,7 +6500,8 @@
     "hooks",
     "hooks/bi",
     "lib",
-    "lib/bi"
+    "lib/bi",
+    "utils"
    ],
    "pacotes_externos": [
     "framer-motion",
@@ -19858,6 +19860,7 @@
     "components/dashboard",
     "components/forecast",
     "components/lead-scoring",
+    "components/pricing",
     "components/race",
     "components/revenue-intelligence",
     "components/sdr",

@@ -7664,13 +7664,14 @@
     "useEffect"
    ],
    "canais_realtime": [],
-   "usado_por": 30,
+   "usado_por": 31,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/cadences/TodaysCadenceTasks.tsx",
     "src/components/customer-success/CustomerSuccess360Hub.tsx",
     "src/components/email/AIEmailComposerDialog.tsx",
     "src/components/engagement/BulkComposer/BulkComposerWizard.tsx",
+    "src/components/pricing/PricingHealthBanner.tsx",
     "src/components/sales/cadence/CadenceFunnelConfig.tsx",
     "src/components/settings/AIAssistantSettings.tsx",
     "src/components/settings/AccessDeniedLogs.tsx",
@@ -7694,8 +7695,7 @@
     "src/hooks/useSDRAlertNotifications.ts",
     "src/hooks/useSecurityAlertNotifications.ts",
     "src/hooks/useStagnantTasks.ts",
-    "src/pages/admin/AdminComercial.tsx",
-    "src/pages/admin/WebhookAlertSettingsPage.tsx"
+    "src/pages/admin/AdminComercial.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -9874,7 +9874,7 @@
     "src/components/pricing/TopDiscountersCard.tsx",
     "src/components/pricing/pricing-ui.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useProductRecommendations.ts",

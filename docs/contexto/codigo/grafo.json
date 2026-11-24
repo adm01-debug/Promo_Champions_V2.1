@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9647,
+ "arestas": 9650,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -130,7 +130,7 @@
   },
   {
    "arquivo": "src/utils/dateHelpers.ts",
-   "importado_por": 37
+   "importado_por": 38
   },
   {
    "arquivo": "supabase/functions/_shared/business-date.ts",
@@ -142,7 +142,7 @@
   },
   {
    "arquivo": "src/hooks/use-toast.ts",
-   "importado_por": 30
+   "importado_por": 31
   },
   {
    "arquivo": "src/components/skeletons/SkeletonTransition.tsx",
@@ -297,14 +297,14 @@
    "importado_por": 32
   },
   {
+   "modulo": "utils",
+   "depende_de": 3,
+   "importado_por": 28
+  },
+  {
    "modulo": "components/dashboard",
    "depende_de": 28,
    "importado_por": 2
-  },
-  {
-   "modulo": "utils",
-   "depende_de": 3,
-   "importado_por": 27
   },
   {
    "modulo": "types",

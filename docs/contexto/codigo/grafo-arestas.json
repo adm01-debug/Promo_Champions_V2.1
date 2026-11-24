@@ -4994,8 +4994,11 @@
   "src/components/pricing/PricingHealthBanner.tsx": [
    "src/components/pricing/pricing-ui.tsx",
    "src/components/ui/button.tsx",
+   "src/hooks/use-toast.ts",
    "src/hooks/usePricingIntelligence.ts",
-   "src/lib/utils.ts"
+   "src/lib/utils.ts",
+   "src/utils/csvExport.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/components/pricing/PricingIntelligenceHub.tsx": [
    "src/components/pricing/CompetitorRadarCard.tsx",

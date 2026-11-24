@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b48da889288547218935f6088b291ec1117bb4c7",
+  "sha": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:27 UTC",
-  "files_total": 3667,
-  "code_files": 3318,
-  "code_lines": 481391
+  "generated_at": "2026-11-24 04:29 UTC",
+  "files_total": 3668,
+  "code_files": 3319,
+  "code_lines": 481600
  },
  "version": "1.3.2",
- "facts_hash": "bb4e07d5b488b805",
+ "facts_hash": "fe56d25a0bed196c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1385,
+   ".tsx": 1386,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -94690,7 +94690,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 27
+    "deps_count": 31
    },
    {
     "path": "",
@@ -102915,7 +102915,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1230,
+  "components_count": 1231,
   "hooks": [
    {
     "name": "useContacts",
@@ -106871,8 +106871,8 @@
   },
   {
    "module": "src/components",
-   "files": 1230,
-   "lines": 193589,
+   "files": 1231,
+   "lines": 193798,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -159315,6 +159315,18 @@
    {
     "file": "src/components/pricing/MarginAlertsCard.test.tsx",
     "name": "lista vendas reais com markup crítico e conta os incidentes"
+   },
+   {
+    "file": "src/components/pricing/PricingHealthBanner.test.tsx",
+    "name": "PricingHealthBanner — exportação da auditoria (etapa 103)"
+   },
+   {
+    "file": "src/components/pricing/PricingHealthBanner.test.tsx",
+    "name": "exporta resumo, faixas, vendedores e produtos em CSV"
+   },
+   {
+    "file": "src/components/pricing/PricingHealthBanner.test.tsx",
+    "name": "exporta apenas o resumo quando o hub não passa os detalhes"
    },
    {
     "file": "src/components/pricing/RevenueLeakageCard.test.tsx",
@@ -241759,16 +241771,26 @@
     "function PricingHeader"
    ]
   },
+  "src/components/pricing/PricingHealthBanner.test.tsx": {
+   "path": "src/components/pricing/PricingHealthBanner.test.tsx",
+   "lines": 101,
+   "is_test": true,
+   "tests": [
+    "PricingHealthBanner — exportação da auditoria (etapa 103)",
+    "exporta resumo, faixas, vendedores e produtos em CSV",
+    "exporta apenas o resumo quando o hub não passa os detalhes"
+   ]
+  },
   "src/components/pricing/PricingHealthBanner.tsx": {
    "path": "src/components/pricing/PricingHealthBanner.tsx",
-   "lines": 75,
+   "lines": 179,
    "exports": [
     "function PricingHealthBanner"
    ]
   },
   "src/components/pricing/PricingIntelligenceHub.tsx": {
    "path": "src/components/pricing/PricingIntelligenceHub.tsx",
-   "lines": 156,
+   "lines": 160,
    "exports": [
     "function PricingIntelligenceHub"
    ],
@@ -299225,10 +299247,21 @@
   }
  },
  "git": {
-  "sha": "b48da889288547218935f6088b291ec1117bb4c7",
+  "sha": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e514cbc",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)",
+    "files": [
+     "src/components/pricing/PricingHealthBanner.test.tsx",
+     "src/components/pricing/PricingHealthBanner.tsx",
+     "src/components/pricing/PricingIntelligenceHub.tsx"
+    ]
+   },
    {
     "sha": "b48da88",
     "date": "2026-11-24",
@@ -299550,21 +299583,12 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "96ca434",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "docs: marca etapas 121-126 no checklist de QA (#680)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    17
+    16
    ],
    [
     "src/components/admin/AdminQuickLinks.test.tsx",
@@ -299577,6 +299601,18 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/pricing/PricingHealthBanner.test.tsx",
+    1
+   ],
+   [
+    "src/components/pricing/PricingHealthBanner.tsx",
+    1
+   ],
+   [
+    "src/components/pricing/PricingIntelligenceHub.tsx",
+    1
    ],
    [
     "src/pages/admin/AdminComercial.test.tsx",
@@ -299628,18 +299664,6 @@
    ],
    [
     "docs/API.md",
-    1
-   ],
-   [
-    "docs/estado/01_FRONTEND_ROTAS.md",
-    1
-   ],
-   [
-    "docs/prod-readiness.md",
-    1
-   ],
-   [
-    "src/hooks/useRetryTestRun.ts",
     1
    ]
   ]

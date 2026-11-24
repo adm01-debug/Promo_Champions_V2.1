@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b48da889288547218935f6088b291ec1117bb4c7` (2026-11-24T01:25:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694` (2026-11-24T01:27:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2515), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2516), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3652 |
-| arquivos_codigo | 2596 |
-| linhas_codigo | 446280 |
+| arquivos_total | 3653 |
+| arquivos_codigo | 2597 |
+| linhas_codigo | 446489 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 420 |
 | migrations | 712 |
 | cron_jobs | 39 |
-| testes | 258 |
+| testes | 259 |
 | workflows | 27 |
 | scripts | 78 |
 | docs_md | 223 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1110), src/pages (173), src/contexts (5)
 - hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (173), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (174), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -107,7 +107,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
 | components/playbooks | 0 | 0 | 5 | 7 | 0 | 3 |
 | components/portfolio | 0 | 0 | 11 | 17 | 0 | 7 |
-| components/pricing | 0 | 0 | 13 | 2 | 1 | 1 |
+| components/pricing | 0 | 0 | 13 | 3 | 1 | 1 |
 | components/purchase-intelligence | 0 | 0 | 10 | 5 | 1 | 7 |
 | components/race | 0 | 0 | 102 | 45 | 3 | 16 |
 | components/ranking | 0 | 0 | 5 | 4 | 1 | 2 |
@@ -586,8 +586,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24186 nós · 74383 arestas · 1180 comunidades · grafo do commit `b48da889`
-- comunidades maiores: schema.sql (581), CardContent (446), Índice (395), Badge (386), client.ts (331), framer-motion (320), getCorsHeaders (294), vitest (281), SelectContent (256), public.sales (250), public (243), Button (238)
+- 24190 nós · 74405 arestas · 1192 comunidades · grafo do commit `e514cbc7`
+- comunidades maiores: Card (600), schema.sql (583), cn (460), client.ts (335), lucide-react (326), getCorsHeaders (299), DialogContent (281), Label (281), vitest (280), public (250), Button (237), public.register_race_daily_checkin (230)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -766,6 +766,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `e514cbc` feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)
 - 2026-11-24 `b48da88` feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)
 - 2026-11-24 `5c0431f` feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)
 - 2026-11-24 `97e44d8` feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)
@@ -780,7 +781,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `a73897a` docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)
 - 2026-11-23 `cdf709f` chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)
 - 2026-11-23 `6598301` fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)
-- 2026-11-23 `41972be` fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b48da889288547218935f6088b291ec1117bb4c7",
+  "commit": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
   "branch": "main",
-  "data_commit": "2026-11-24T01:25:19-03:00",
+  "data_commit": "2026-11-24T01:27:33-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e514cbc",
+    "data": "2026-11-24",
+    "assunto": "feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)"
+   },
    {
     "sha": "b48da88",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "99efd08",
     "data": "2026-11-24",
     "assunto": "fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)"
-   },
-   {
-    "sha": "2809674",
-    "data": "2026-11-24",
-    "assunto": "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)"
    }
   ],
-  "arquivos_mudados_7d": 296,
+  "arquivos_mudados_7d": 299,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3652,
-  "arquivos_codigo": 2596,
-  "linhas_codigo": 446280,
+  "arquivos_total": 3653,
+  "arquivos_codigo": 2597,
+  "linhas_codigo": 446489,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 258,
+  "testes": 259,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1230,
-   "linhas": 193590
+   "arquivos": 1231,
+   "linhas": 193799
   },
   "src/config": {
    "arquivos": 4,

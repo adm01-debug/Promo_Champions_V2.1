@@ -10697,7 +10697,7 @@
     "PricingHealthBanner"
    ],
    "export_default": null,
-   "linhas": 75,
+   "linhas": 179,
    "dominio": "components/pricing",
    "hooks_locais": [],
    "tabelas": [],
@@ -10711,7 +10711,7 @@
     "PricingIntelligenceHub"
    ],
    "export_default": null,
-   "linhas": 156,
+   "linhas": 160,
    "dominio": "components/pricing",
    "hooks_locais": [
     "usePricingIntelligence"

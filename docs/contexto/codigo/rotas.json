@@ -8252,14 +8252,17 @@
    "hooks": [
     "useCallback",
     "useCriticalMarkupSales",
+    "useEffect",
     "useMemo",
     "useNavigate",
     "usePricingIntelligence",
-    "useState"
+    "useState",
+    "useToast"
    ],
    "hooks_locais": [
     "useCriticalMarkupSales",
-    "usePricingIntelligence"
+    "usePricingIntelligence",
+    "useToast"
    ],
    "tabelas": [
     "sales_with_markup"
@@ -8271,7 +8274,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 33
+   "arquivos_puxados": 37
   },
   {
    "protegida": false,
