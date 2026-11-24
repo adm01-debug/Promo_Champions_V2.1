@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "ci: provisiona o segredo do webhook Promo Supply (#732)",
    "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)",
    "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)",
    "chore(main): release 1.8.0 (#661)",
-   "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)",
-   "fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)"
+   "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

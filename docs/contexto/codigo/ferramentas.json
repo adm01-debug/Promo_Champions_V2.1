@@ -8,7 +8,7 @@
    "Markdown (225)",
    "JavaScript (78)",
    "JSON (33)",
-   "YAML (30)",
+   "YAML (31)",
    "Shell (7)",
    "Python (5)"
   ],
@@ -924,6 +924,28 @@
    "actions": []
   },
   {
+   "arquivo": ".github/workflows/provisionar-secret-supply-webhook.yml",
+   "nome": "Provisionar secret do webhook Promo Supply",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "provisionar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "PROMO_SUPPLY_WEBHOOK_SECRET",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": []
+  },
+  {
    "arquivo": ".github/workflows/qa-exhaustive.yml",
    "nome": "QA Exhaustive (Weekly)",
    "gatilhos": [
@@ -1597,6 +1619,7 @@
    "GITHUB_TOKEN",
    "N8N_ALERT_WEBHOOK_SECRET",
    "N8N_ALERT_WEBHOOK_URL",
+   "PROMO_SUPPLY_WEBHOOK_SECRET",
    "SLACK_CI_WEBHOOK_URL",
    "SUPABASE_ACCESS_TOKEN",
    "SUPABASE_DB_PASSWORD",

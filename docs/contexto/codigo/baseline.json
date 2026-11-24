@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5d5329c8873ad1ba965f50bebc50b6b5f685c68f",
+  "commit": "b241da210fb341a90a72db539b842979e4a66f23",
   "branch": "main",
-  "data_commit": "2026-11-24T08:08:16-03:00",
+  "data_commit": "2026-11-24T08:33:11-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b241da2",
+    "data": "2026-11-24",
+    "assunto": "ci: provisiona o segredo do webhook Promo Supply (#732)"
+   },
    {
     "sha": "5d5329c",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "b48da88",
     "data": "2026-11-24",
     "assunto": "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)"
-   },
-   {
-    "sha": "5c0431f",
-    "data": "2026-11-24",
-    "assunto": "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)"
    }
   ],
-  "arquivos_mudados_7d": 378,
+  "arquivos_mudados_7d": 379,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3676,
+  "arquivos_total": 3677,
   "arquivos_codigo": 2617,
   "linhas_codigo": 448887,
   "rotas": 170,
@@ -329,7 +329,7 @@
   "migrations": 712,
   "cron_jobs": 39,
   "testes": 279,
-  "workflows": 28,
+  "workflows": 29,
   "scripts": 78,
   "docs_md": 225
  },
