@@ -249,7 +249,7 @@ Exemplo:
 - [ ] 214 — Escopar as funções que autenticam e descartam — inteligência preditiva e análise comportamental — onda 8 — Média
 - [ ] 215 — Escopar as funções que autenticam e descartam — enriquecimento de lead — onda 8 — Média
 - [ ] 216 — Escopar as funções que autenticam e descartam — OAuth do Bitrix24 e simulação de carga — onda 8 — Média
-- [ ] 217 — Pôr barreira de identidade antes dos endpoints de IA pagos — onda 8 — Média
+- [x] 217 — Pôr barreira de identidade antes dos endpoints de IA pagos — onda 8 — Média — PR #693 - `getUserClient(req)` roda antes do gateway nas 4 funções e devolve 401 para Bearer ausente, anon ou service_role; POST sem header e com chave publishable deram 401 nas quatro e com JWT chegaram na lógica (na main o mesmo POST dava 400, prova de detecção); rate limit mantido como segunda camada, chaveado por `userId`
 - [ ] 218 — Medir o consumo de IA antes e depois do fechamento dos endpoints — onda 8 — Baixa
 - [ ] 219 — Validar a lista de colunas no `external-db-bridge` — onda 8 — Média
 - [ ] 220 — Redistribuir o esforço de teste de backend — onda 8 — Média
