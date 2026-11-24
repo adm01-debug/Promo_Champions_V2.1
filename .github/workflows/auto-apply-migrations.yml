@@ -1,0 +1,83 @@
+name: Auto Apply Migrations
+
+# Encadeia o caminho canonico de DDL (`apply-migration.yml`) no merge.
+#
+# Motivo: `deploy.yml` so aplica migrations quando SUPABASE_ACCESS_TOKEN e
+# SUPABASE_DB_PASSWORD existem; sem eles o merge publica a edge function e a
+# migration fica pendente em silencio (foi o que aconteceu com
+# 20261126090000_champions_supply_outbox.sql, aplicada a mao). O repo proibe
+# `db push` (AGENTS.md §7), entao a saida aqui nao e rodar DDL por conta
+# propria: e disparar o MESMO workflow canonico, com o arquivo ja revisado e
+# ja na main, para cada migration do push.
+#
+# Seguranca:
+# - so roda em push para main (nada de SQL nao revisado);
+# - apply-migration.yml valida o nome do arquivo, checa o ledger
+#   (supabase_migrations.schema_migrations) e nao reaplica versao registrada;
+# - a concurrency de apply-migration.yml (apply-migration-prod) serializa.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/*.sql'
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: auto-apply-migrations
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Disparar Apply Migration por arquivo
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+
+      - name: Descobrir migrations deste push
+        id: files
+        run: |
+          set -euo pipefail
+          before="${{ github.event.before }}"
+          # Push inicial ou force-push: `before` pode nao existir no clone.
+          if [ -z "$before" ] || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            before="$(git rev-parse HEAD^)"
+          fi
+          changed="$(git diff --name-only "$before" "$GITHUB_SHA" -- 'supabase/migrations/*.sql' || true)"
+          if [ -z "$changed" ]; then
+            echo "nenhuma migration no push"
+            exit 0
+          fi
+          echo "$changed"
+          {
+            echo 'files<<MIGRATION_EOF'
+            echo "$changed"
+            echo 'MIGRATION_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Disparar apply-migration por migration
+        if: steps.files.outputs.files != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r path; do
+            [ -n "$path" ] || continue
+            file="$(basename "$path")"
+            case "$file" in
+              [0-9]*_*.sql) ;;
+              *) echo "::warning::ignorando nome fora do padrao: $file"; continue ;;
+            esac
+            echo "disparando apply-migration para $file"
+            gh workflow run apply-migration.yml --ref main \
+              -f "migration_file=$file" -f dry_run=false
+            n=$((n + 1))
+          done <<< "${{ steps.files.outputs.files }}"
+          echo "disparadas: $n migration(s)" >> "$GITHUB_STEP_SUMMARY"

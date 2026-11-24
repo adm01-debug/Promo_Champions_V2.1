@@ -19100,6 +19100,59 @@ export type Database = {
         }
         Relationships: []
       }
+      supply_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          delivered_at: string | null
+          event: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          order_id: string
+          order_item_id: string
+          payload: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          event?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          order_id: string
+          order_item_id: string
+          payload: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          event?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          order_id?: string
+          order_item_id?: string
+          payload?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_outbox_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
           account_id: string
@@ -24047,6 +24100,7 @@ export type Database = {
         }[]
       }
       claim_streak_achievements: { Args: never; Returns: Json }
+      claim_supply_outbox: { Args: { p_limit?: number }; Returns: Json }
       claim_weekly_challenge_reward: {
         Args: { p_challenge_id: string }
         Returns: Json
@@ -24187,6 +24241,10 @@ export type Database = {
           rule_id: string
           rule_name: string
         }[]
+      }
+      finish_supply_outbox: {
+        Args: { p_error?: string; p_ids: string[]; p_ok: boolean }
+        Returns: number
       }
       fn_admin_cleanup_stale_logs: {
         Args: { _days?: number }
