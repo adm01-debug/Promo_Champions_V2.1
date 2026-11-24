@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -18,7 +19,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export const DuplicateBlockAudit = () => {
-  const { data: logs, isLoading } = useQuery({
+  const [search, setSearch] = useState('');
+  const {
+    data: logs,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ['duplicate-block-logs'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -30,6 +37,17 @@ export const DuplicateBlockAudit = () => {
     },
   });
 
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredLogs = useMemo(() => {
+    const rows = logs ?? [];
+    if (!normalizedSearch) return rows;
+    return rows.filter(
+      log =>
+        (log.entity_name ?? '').toLowerCase().includes(normalizedSearch) ||
+        (log.block_type ?? '').toLowerCase().includes(normalizedSearch)
+    );
+  }, [logs, normalizedSearch]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -38,6 +56,8 @@ export const DuplicateBlockAudit = () => {
           <Input
             placeholder="Buscar por entidade ou tipo..."
             className="pl-9 bg-black/20 border-white/10"
+            value={search}
+            onChange={event => setSearch(event.target.value)}
           />
         </div>
         <div className="flex gap-2">
@@ -62,6 +82,20 @@ export const DuplicateBlockAudit = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-[400px]">
             <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          </div>
+        ) : isError ? (
+          <div className="p-8 text-center text-sm text-destructive">
+            Erro ao carregar a auditoria de bloqueios:{' '}
+            {error instanceof Error ? error.message : 'desconhecido'}
+          </div>
+        ) : filteredLogs.length === 0 ? (
+          <div className="p-10 text-center">
+            <Search className="mx-auto h-10 w-10 text-muted-foreground/40 mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {normalizedSearch
+                ? 'Nenhum bloqueio encontrado para a busca.'
+                : 'Nenhum bloqueio registrado.'}
+            </p>
           </div>
         ) : (
           <Table>
@@ -88,7 +122,7 @@ export const DuplicateBlockAudit = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {logs?.map(log => (
+              {filteredLogs.map(log => (
                 <TableRow
                   key={log.id}
                   className="border-white/5 hover:bg-white/2 transition-colors group"
