@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d52445e0846ba1e64d45659b6e3b1456705fc62b",
+  "commit": "b45a2bfdcb306216df24c856a77182f442fe768c",
   "branch": "main",
-  "data_commit": "2026-11-24T11:29:38-03:00",
+  "data_commit": "2026-11-24T11:33:39-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b45a2bf",
+    "data": "2026-11-24",
+    "assunto": "ci: provisiona RESEND_API_KEY nas edge functions (#738)"
+   },
    {
     "sha": "d52445e",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "adedb79",
     "data": "2026-11-24",
     "assunto": "docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)"
-   },
-   {
-    "sha": "9db0028",
-    "data": "2026-11-24",
-    "assunto": "test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)"
    }
   ],
-  "arquivos_mudados_7d": 384,
+  "arquivos_mudados_7d": 385,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 259
+    "commits": 260
    },
    {
     "autor": "github-actions[bot]",
@@ -309,12 +309,12 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 20
+    "commits": 19
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3684,
+  "arquivos_total": 3685,
   "arquivos_codigo": 2620,
   "linhas_codigo": 449194,
   "rotas": 170,
@@ -329,7 +329,7 @@
   "migrations": 714,
   "cron_jobs": 40,
   "testes": 281,
-  "workflows": 30,
+  "workflows": 31,
   "scripts": 78,
   "docs_md": 225
  },

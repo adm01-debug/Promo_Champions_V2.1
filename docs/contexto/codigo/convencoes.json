@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "ci: provisiona RESEND_API_KEY nas edge functions (#738)",
    "chore: sonda read-only da fila do supply_outbox na suite remota (#737)",
    "fix: timeout de 60s para o cron supply-dispatch (#736)",
    "chore(main): release 1.9.0 (#733)",
-   "ci: dispara apply-migration no merge de migration (#734)",
-   "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)"
+   "ci: dispara apply-migration no merge de migration (#734)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
