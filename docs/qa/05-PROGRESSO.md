@@ -251,7 +251,7 @@ Exemplo:
 - [ ] 216 — Escopar as funções que autenticam e descartam — OAuth do Bitrix24 e simulação de carga — onda 8 — Média
 - [x] 217 — Pôr barreira de identidade antes dos endpoints de IA pagos — onda 8 — Média — PR #693 - `getUserClient(req)` roda antes do gateway nas 4 funções e devolve 401 para Bearer ausente, anon ou service_role; POST sem header e com chave publishable deram 401 nas quatro e com JWT chegaram na lógica (na main o mesmo POST dava 400, prova de detecção); rate limit mantido como segunda camada, chaveado por `userId`
 - [ ] 218 — Medir o consumo de IA antes e depois do fechamento dos endpoints — onda 8 — Baixa
-- [ ] 219 — Validar a lista de colunas no `external-db-bridge` — onda 8 — Média
+- [x] 219 — Validar a lista de colunas no `external-db-bridge` — onda 8 — Média — PR #694 - `columns` do corpo passou a ser validado contra allowlist explícita por tabela (206 colunas de `types.ts`); `*, outra_tabela(*)`, `senha_hash` e `id, outra_tabela(id)` deram 400 e pararam antes do banco externo (3 de 5 requisições chegaram lá; na main as 5 chegavam), default sem `columns` intacto
 - [ ] 220 — Redistribuir o esforço de teste de backend — onda 8 — Média
 - [ ] 221 — Incluir os testes de backend no comando de integração contínua local — onda 8 — Baixa
 - [ ] 222 — Devolver o teto de complexidade ao valor anterior — onda 8 — Média
