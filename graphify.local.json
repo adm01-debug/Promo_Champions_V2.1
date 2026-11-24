@@ -2,7 +2,7 @@
   "version": 1,
   "project": "Promo_Champions_V2.1",
   "environment": "tools/graphify/.venv",
-  "pin": "0.9.70",
+  "pin": "0.9.115",
   "pythonVersion": "3.11",
   "state": "tools/graphify/.venv/graphify-local-state",
   "output": "graphify-out",

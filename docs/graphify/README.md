@@ -4,14 +4,14 @@ Esta integração cria um índice local e derivado para investigação técnica.
 
 ## Instalação reproduzível
 
-O runtime está definido em `tools/graphify/pyproject.toml`. Em uma máquina com `uv` e Python entre 3.10 e 3.12:
+O runtime está definido em `tools/graphify/pyproject.toml`. Em uma máquina com `uv` e Python entre 3.11.5 e 3.12:
 
 ```bash
 uv sync --directory tools/graphify --locked
 tools/graphify/.venv/bin/graphify --version
 ```
 
-Enquanto a publicação interna do runtime não existir, a alternativa equivalente é `uv tool install graphifyy==0.9.48`. Não usar instalação sem versão fixada.
+Enquanto a publicação interna do runtime não existir, a alternativa equivalente é `uv tool install graphifyy==0.9.115`. Não usar instalação sem versão fixada.
 
 ## Extração estrutural por domínio
 
