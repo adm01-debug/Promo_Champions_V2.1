@@ -108,6 +108,20 @@ describe('useLeagues', () => {
 });
 
 describe('useLeagueEnrollment', () => {
+  it('inclui o usuário logado na chave de cache', async () => {
+    respostas.salespeople = { data: { id: 'sp1' }, error: null };
+    respostas.leagues = { data: { id: 'liga-bronze' }, error: null };
+
+    const { result } = renderHook(() => useLeagueEnrollment(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const keys = client
+      .getQueryCache()
+      .getAll()
+      .map(q => JSON.stringify(q.queryKey));
+    expect(keys).toContain('["league-enrollment","auth-1"]');
+  });
+
   beforeEach(() => {
     client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     for (const k of Object.keys(respostas)) delete respostas[k];
