@@ -70,6 +70,7 @@ export function useGoalsDashboard() {
           supabase
             .from('sales')
             .select('salesperson_id, amount')
+            .is('deleted_at', null)
             .in('status', [...WON_SALE_STATUSES])
             .gte('created_at', monthStart.toISOString())
             .lte('created_at', monthEnd.toISOString()),
