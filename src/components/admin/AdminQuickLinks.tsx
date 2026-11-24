@@ -24,6 +24,8 @@ import {
   Repeat,
   Zap,
   Palette,
+  ShieldCheck,
+  MailX,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDeadLettersCounts } from '@/hooks/win-loss/useDeadLettersCounts';
@@ -70,6 +72,18 @@ const QUICK_LINKS = [
     icon: AlertTriangle,
     label: 'Histórico de Alertas',
     color: 'text-chart-2',
+  },
+  {
+    to: '/admin/solicitacoes-titular',
+    icon: ShieldCheck,
+    label: 'LGPD — Titular',
+    color: 'text-emerald-500',
+  },
+  {
+    to: '/admin/supressao-emails',
+    icon: MailX,
+    label: 'Supressão de E-mails',
+    color: 'text-destructive',
   },
   {
     to: '/admin/platform-slo',
