@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
+  "sha": "78beba22b2e57869bb1e220beddb5780b0b51ad0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 01:59 UTC",
+  "generated_at": "2026-11-24 02:08 UTC",
   "files_total": 3663,
   "code_files": 3314,
-  "code_lines": 480707
+  "code_lines": 480717
  },
  "version": "1.3.2",
- "facts_hash": "6ec544d9f10c995d",
+ "facts_hash": "2d7cd07dc8627190",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -100237,9 +100237,7 @@
      "semantic_index"
     ],
     "env": [
-     "OPENROUTER_API_KEY",
-     "SUPABASE_SERVICE_ROLE_KEY",
-     "SUPABASE_URL"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -108244,7 +108242,7 @@
   {
    "module": "supabase/functions",
    "files": 330,
-   "lines": 67845,
+   "lines": 67855,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -115745,7 +115743,6 @@
     "supabase/functions/scheduled-report-trigger/index.ts",
     "supabase/functions/scheduled-reports-runner/index.ts",
     "supabase/functions/sdr-consecutive-alerts/index.ts",
-    "supabase/functions/semantic-index-entity/index.ts",
     "supabase/functions/semantic-reindex-batch/index.ts",
     "supabase/functions/semantic-search/index.ts",
     "supabase/functions/send-churn-alert-email/index.ts",
@@ -115861,7 +115858,6 @@
     "supabase/functions/scheduled-reports-runner/index.ts",
     "supabase/functions/sdr-consecutive-alerts/index.ts",
     "supabase/functions/semantic-coverage/index.ts",
-    "supabase/functions/semantic-index-entity/index.ts",
     "supabase/functions/semantic-reindex-batch/index.ts",
     "supabase/functions/semantic-search-universal/index.ts",
     "supabase/functions/semantic-search/index.ts",
@@ -124715,7 +124711,7 @@
    },
    {
     "file": "supabase/functions/semantic-search/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Autorização antes de qualquer consumo: o limite é chaveado pelo usuário,"
    },
    {
     "file": "supabase/functions/semantic-search-universal/index.ts",
@@ -124799,7 +124795,7 @@
    },
    {
     "file": "supabase/functions/visual-search/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Autorização antes de qualquer consumo: o limite é chaveado pelo usuário,"
    },
    {
     "file": "supabase/functions/wal-health-alert/index.ts",
@@ -289906,7 +289902,7 @@
   },
   "supabase/functions/semantic-index-entity/index.ts": {
    "path": "supabase/functions/semantic-index-entity/index.ts",
-   "lines": 241,
+   "lines": 245,
    "tables": [
     {
      "table": "semantic_index",
@@ -289938,9 +289934,7 @@
     "upsert_semantic_entry"
    ],
    "env": [
-    "OPENROUTER_API_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
+    "OPENROUTER_API_KEY"
    ],
    "errors": [
     "Embedding dimension mismatch: ${emb.length} != ${AI_EMBEDDING_DIMENSIONS}",
@@ -290020,7 +290014,7 @@
   },
   "supabase/functions/semantic-search/index.ts": {
    "path": "supabase/functions/semantic-search/index.ts",
-   "lines": 232,
+   "lines": 235,
    "rpc": [
     "search_products_semantic"
    ],
@@ -290087,7 +290081,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Autorização antes de qualquer consumo: o limite é chaveado pelo usuário,"
    ],
    "temporal": [
     "const TTL_MS = 5 * 60 * 1000;"
@@ -291925,7 +291919,7 @@
   },
   "supabase/functions/visual-search/index.ts": {
    "path": "supabase/functions/visual-search/index.ts",
-   "lines": 319,
+   "lines": 322,
    "rpc": [
     "search_products_semantic",
     "search_products_vector"
@@ -292012,7 +292006,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Autorização antes de qualquer consumo: o limite é chaveado pelo usuário,"
    ],
    "uses_service_role": true
   },
@@ -299127,10 +299121,22 @@
   }
  },
  "git": {
-  "sha": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
+  "sha": "78beba22b2e57869bb1e220beddb5780b0b51ad0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "78beba2",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/semantic-index-entity/index.ts",
+     "supabase/functions/semantic-search/index.ts",
+     "supabase/functions/visual-search/index.ts"
+    ]
+   },
    {
     "sha": "554eb39",
     "date": "2026-11-23",
@@ -299461,21 +299467,12 @@
     "files": [
      "src/pages/admin/AdminV4CallbacksPage.tsx"
     ]
-   },
-   {
-    "sha": "45b9b02",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)",
-    "files": [
-     "src/hooks/usePipeline.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    14
    ],
    [
     "deno.lock",
@@ -299504,6 +299501,18 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "supabase/functions/semantic-index-entity/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/semantic-search/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/visual-search/index.ts",
+    1
    ],
    [
     "supabase/functions/external-db-bridge/index.ts",
@@ -299539,18 +299548,6 @@
    ],
    [
     "src/hooks/useEligibleBonuses.ts",
-    1
-   ],
-   [
-    "inventario/estado/README.md",
-    1
-   ],
-   [
-    "scripts/ci/inventario-banco.unit.mjs",
-    1
-   ],
-   [
-    "scripts/inventario/gerar-banco.mjs",
     1
    ]
   ]

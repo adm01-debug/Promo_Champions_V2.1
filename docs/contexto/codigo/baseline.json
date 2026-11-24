@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
+  "commit": "78beba22b2e57869bb1e220beddb5780b0b51ad0",
   "branch": "main",
-  "data_commit": "2026-11-23T22:55:10-03:00",
+  "data_commit": "2026-11-23T23:07:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "78beba2",
+    "data": "2026-11-23",
+    "assunto": "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)"
+   },
    {
     "sha": "554eb39",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "8c02079",
     "data": "2026-11-23",
     "assunto": "feat: recebe design criado/alterado do Promo Design (receive-design-sync) (#674)"
-   },
-   {
-    "sha": "9098770",
-    "data": "2026-11-23",
-    "assunto": "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)"
    }
   ],
-  "arquivos_mudados_7d": 271,
+  "arquivos_mudados_7d": 270,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 38
+    "mudancas": 37
    },
    {
     "arquivo": "deno.lock",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 250
+    "commits": 251
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 26
+    "commits": 25
    },
    {
     "autor": "github-actions[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3648,
   "arquivos_codigo": 2592,
-  "linhas_codigo": 445596,
+  "linhas_codigo": 445606,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "supabase/functions": {
    "arquivos": 330,
-   "linhas": 67845
+   "linhas": 67855
   },
   "tailwind.config.ts": {
    "arquivos": 1,

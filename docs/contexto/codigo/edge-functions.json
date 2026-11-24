@@ -5302,7 +5302,7 @@
    "nome": "semantic-index-entity",
    "entrada": "supabase/functions/semantic-index-entity/index.ts",
    "arquivos": 1,
-   "linhas": 241,
+   "linhas": 245,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5315,9 +5315,7 @@
     "upsert_semantic_entry"
    ],
    "env": [
-    "OPENROUTER_API_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
+    "OPENROUTER_API_KEY"
    ],
    "buckets": [],
    "chama_edges": [],
@@ -5384,7 +5382,7 @@
    "nome": "semantic-search",
    "entrada": "supabase/functions/semantic-search/index.ts",
    "arquivos": 1,
-   "linhas": 232,
+   "linhas": 235,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -6370,7 +6368,7 @@
    "nome": "visual-search",
    "entrada": "supabase/functions/visual-search/index.ts",
    "arquivos": 1,
-   "linhas": 319,
+   "linhas": 322,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
