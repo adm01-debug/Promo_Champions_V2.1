@@ -50,7 +50,7 @@ export function useRaceAudioEngine({
       tryPlay('powerup');
     }
     prevComboRef.current = comboCount;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite tryPlay: auxiliar recriado a cada render e com debounce proprio; incluir reexecutaria o efeito a cada render sem tocar som de novo (gatilho: comboCount e muted)
   }, [comboCount, muted]);
 
   // Checkpoint: 25/50/75/100% do progresso
@@ -67,7 +67,7 @@ export function useRaceAudioEngine({
       }
     }
     prevProgressRef.current = progress;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite tryPlay: auxiliar recriado a cada render; as deps leaderboard, mySalespersonId e muted ja definem o gatilho do checkpoint
   }, [leaderboard, mySalespersonId, muted]);
 
   // Countdown final: últimos 5s
@@ -83,7 +83,7 @@ export function useRaceAudioEngine({
       tryPlay('countdown');
     }
     prevSecondsRef.current = secondsToEnd;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite tryPlay: auxiliar recriado a cada render; o gatilho e a mudanca de secondsToEnd
   }, [secondsToEnd, muted]);
 
   // Rank up pessoal (subiu ≥1 posição)
@@ -97,6 +97,6 @@ export function useRaceAudioEngine({
     }
     prevRankRef.current = me.rank;
     initializedRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite tryPlay: auxiliar recriado a cada render; o gatilho e a posicao do usuario na leaderboard
   }, [leaderboard, mySalespersonId, muted]);
 }

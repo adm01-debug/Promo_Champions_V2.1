@@ -49,7 +49,7 @@ export const PitStopPanel: FC<Props> = ({
       setSecondsLeft(s => (s > 0 ? s - 1 : 0));
     }, 1000);
     return () => window.clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite onPlaySound: prop callback do pai; o gatilho e open, e reexecutar por identidade do callback tocaria o som de novo
   }, [open]);
 
   const { myStats, nextRival, pace, recommendation, hasData } = analysis;

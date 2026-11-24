@@ -53,7 +53,7 @@ export function TrackTireMarks({ cars }: TrackTireMarksProps) {
         return filtered.slice(-MAX_MARKS);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite cars: a chave id:progress*200 muda quando algum carro se move, e o array e recriado a cada render
   }, [cars.map(c => `${c.id}:${Math.floor(c.progress * 200)}`).join('|')]);
 
   // GC periódico

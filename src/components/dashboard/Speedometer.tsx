@@ -276,7 +276,7 @@ export const Speedometer = memo(
 
       raf = requestAnimationFrame(animate);
       return () => cancelAnimationFrame(raf);
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- omite animatedValue: e so o ponto de partida da animacao e o proprio efeito escreve esse estado; incluir reexecutaria a animacao a cada frame
     }, [value]);
 
     const displayValue = formatValue
