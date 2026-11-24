@@ -26,6 +26,7 @@ export function useWeeklyRanking() {
         supabase
           .from('sales')
           .select('salesperson_id, amount')
+          .is('deleted_at', null)
           .in('status', [...WON_SALE_STATUSES])
           .gte('created_at', weekStart.toISOString())
           .lte('created_at', weekEnd.toISOString()),
