@@ -1,12 +1,69 @@
+import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { WinLossAnalysis } from '@/components/analytics/WinLossAnalysis';
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { Trophy, ShieldCheck, Filter, Download, LineChart } from 'lucide-react';
+import { Trophy, ShieldCheck, Filter, Download, LineChart, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
+import { exportToCSV, formatDateForExport } from '@/utils/csvExport';
+import { getLocalISODate } from '@/utils/dateHelpers';
+import { WIN_LOSS_OUTCOME } from '@/constants';
+
+const OUTCOME_OPTIONS = [
+  { value: 'all' as const, label: 'Todos' },
+  { value: WIN_LOSS_OUTCOME.WON as 'won', label: 'Ganhos' },
+  { value: WIN_LOSS_OUTCOME.LOST as 'lost', label: 'Perdas' },
+];
 
 export default function WinLossAnalysisPage() {
+  const { data } = useWinLossAnalysis();
+  const [outcome, setOutcome] = useState<'all' | 'won' | 'lost'>('all');
+  const [salesperson, setSalesperson] = useState<string>('all');
+
+  const salespeople = useMemo(() => data?.bySalesperson.map(s => s.name) ?? [], [data]);
+
+  const filteredDetails = useMemo(
+    () =>
+      (data?.details ?? []).filter(
+        d =>
+          (outcome === 'all' || d.outcome === outcome) &&
+          (salesperson === 'all' ||
+            (d.salespeople?.name ?? 'Desconhecido') === salesperson)
+      ),
+    [data, outcome, salesperson]
+  );
+
+  const activeFilters = (outcome === 'all' ? 0 : 1) + (salesperson === 'all' ? 0 : 1);
+
+  const clearFilters = () => {
+    setOutcome('all');
+    setSalesperson('all');
+  };
+
+  const handleExport = () => {
+    if (filteredDetails.length === 0) {
+      toast.message('Nada para exportar com os filtros atuais');
+      return;
+    }
+    const rows = filteredDetails.map(d => ({
+      Data: formatDateForExport(d.created_at),
+      Vendedor: d.salespeople?.name ?? 'Desconhecido',
+      Cliente: d.sales?.client_name ?? '',
+      Produto: d.sales?.product_name ?? '',
+      'Valor (R$)': d.sales?.amount ?? 0,
+      Desfecho: d.outcome === WIN_LOSS_OUTCOME.WON ? 'Ganho' : 'Perdido',
+      Motivo: d.reason ?? '',
+      Observacoes: d.notes ?? '',
+    }));
+    exportToCSV(rows, `win_loss_${getLocalISODate()}`);
+    toast.success(`${rows.length} negócio(s) exportado(s)`);
+  };
+
   return (
     <>
       <Helmet>
@@ -41,25 +98,93 @@ export default function WinLossAnalysisPage() {
                 variant="outline"
                 size="sm"
                 className="glass gap-2 border-border/50"
+                onClick={handleExport}
+                disabled={!data || filteredDetails.length === 0}
               >
                 <Download className="h-4 w-4" />
                 Exportar Dados
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Filter className="h-4 w-4" />
-                Filtros Avançados
-              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="glass gap-2 border-border/50"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filtros Avançados
+                    {activeFilters > 0 && (
+                      <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+                        {activeFilters}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-72 space-y-3 p-3">
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-medium text-muted-foreground">Resultado</p>
+                    <div className="flex gap-1">
+                      {OUTCOME_OPTIONS.map(o => (
+                        <Button
+                          key={o.value}
+                          size="sm"
+                          variant={outcome === o.value ? 'default' : 'ghost'}
+                          className="h-7 flex-1 text-xs"
+                          onClick={() => setOutcome(o.value)}
+                        >
+                          {o.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-medium text-muted-foreground">Vendedor</p>
+                    <div className="max-h-48 space-y-1 overflow-y-auto">
+                      <Button
+                        size="sm"
+                        variant={salesperson === 'all' ? 'default' : 'ghost'}
+                        className="h-7 w-full justify-start text-xs"
+                        onClick={() => setSalesperson('all')}
+                      >
+                        Todos
+                      </Button>
+                      {salespeople.map(name => (
+                        <Button
+                          key={name}
+                          size="sm"
+                          variant={salesperson === name ? 'default' : 'ghost'}
+                          className="h-7 w-full justify-start text-xs"
+                          onClick={() => setSalesperson(name)}
+                        >
+                          <span className="truncate">{name}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-border/40 pt-2">
+                    <span className="text-xs text-muted-foreground">
+                      {filteredDetails.length} de {data?.details.length ?? 0} negócios
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 text-xs"
+                      onClick={clearFilters}
+                      disabled={activeFilters === 0}
+                    >
+                      <X className="mr-1 h-3.5 w-3.5" />
+                      Limpar
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
               <div className="xl:col-span-3">
-                <WinLossAnalysis />
+                <WinLossAnalysis details={filteredDetails} />
               </div>
 
               <div className="space-y-6">

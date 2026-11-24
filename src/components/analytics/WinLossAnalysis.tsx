@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useWinLossAnalysis } from '@/hooks/useWinLossAnalysis';
+import { useWinLossAnalysis, type WinLossDetail } from '@/hooks/useWinLossAnalysis';
 import { Trophy, Maximize2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,12 @@ import { WinLossMonthlyTrend } from './win-loss/WinLossMonthlyTrend';
 import { WinLossReasonsPanels } from './win-loss/WinLossReasonsPanels';
 import { WinLossDrillDown } from './win-loss/WinLossDrillDown';
 
-export const WinLossAnalysis: FC = () => {
+interface Props {
+  /** Subconjunto de detalhes a exibir; quando ausente, usa todos os detalhes carregados. */
+  details?: WinLossDetail[];
+}
+
+export const WinLossAnalysis: FC<Props> = ({ details }) => {
   const { data, isLoading } = useWinLossAnalysis();
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +82,7 @@ export const WinLossAnalysis: FC = () => {
         <WinLossDrillDown
           bySalesperson={data.bySalesperson}
           byProduct={data.byProduct}
-          details={data.details}
+          details={details ?? data.details}
         />
       )}
     </div>
