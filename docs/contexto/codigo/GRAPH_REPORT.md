@@ -1,17 +1,17 @@
 # Graph Report - Promo_Champions_V2.1  (2026-11-24)
 
 ## Corpus Check
-- 3641 files · ~2,486,750 words
+- 3642 files · ~2,487,184 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 29 file(s) not represented in the graph (top: (none) 16, .toml 6, .lock 2)
 
 ## Summary
-- 24423 nodes · 74885 edges · 1205 communities (882 shown, 323 thin omitted)
+- 24424 nodes · 74885 edges · 1206 communities (882 shown, 324 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 1049 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a4084fb5`
+- Built from commit: `d52445e0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -995,7 +995,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1205 total, 323 thin omitted)
+## Communities (1206 total, 324 thin omitted)
 
 ### Community 0 - "Card"
 Cohesion: 0.01
@@ -4527,8 +4527,8 @@ Nodes (3): idx_experiment_variants_experiment_id_fk, idx_experiment_variants_exp
 
 ## Knowledge Gaps
 - **9 isolated node(s):** `PATH`, `@/views/Home.vue`, `RFC-4180`, `ADR-0010`, `RFC-8058` (+4 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8645 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **323 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8646 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **324 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

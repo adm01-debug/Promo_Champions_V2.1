@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
+  "sha": "d52445e0846ba1e64d45659b6e3b1456705fc62b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 14:30 UTC",
-  "files_total": 3698,
-  "code_files": 3344,
-  "code_lines": 484540
+  "generated_at": "2026-11-24 14:31 UTC",
+  "files_total": 3699,
+  "code_files": 3345,
+  "code_lines": 484615
  },
  "version": "1.3.2",
- "facts_hash": "ce4f9dc9c49824e7",
+ "facts_hash": "3fc6e2a3db16567b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -421,7 +421,7 @@
   "languages": {
    ".tsx": 1403,
    ".ts": 1135,
-   ".sql": 724,
+   ".sql": 725,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -68138,6 +68138,7 @@
    "supabase/tests/retry_dispatcher_assertions.sql",
    "supabase/tests/rls_test_suite.sql",
    "supabase/tests/role_helpers_matrix_assertions.sql",
+   "supabase/tests/supply_outbox_diagnostics.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -109084,8 +109085,8 @@
   },
   {
    "module": "supabase/tests",
-   "files": 7,
-   "lines": 784,
+   "files": 8,
+   "lines": 859,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -109098,7 +109099,8 @@
     "supabase/tests/quote-to-sale-stress.sql",
     "supabase/tests/retry_dispatcher_assertions.sql",
     "supabase/tests/rls_test_suite.sql",
-    "supabase/tests/role_helpers_matrix_assertions.sql"
+    "supabase/tests/role_helpers_matrix_assertions.sql",
+    "supabase/tests/supply_outbox_diagnostics.sql"
    ]
   },
   {
@@ -298628,6 +298630,15 @@
    "lines": 66,
    "is_test": true
   },
+  "supabase/tests/supply_outbox_diagnostics.sql": {
+   "path": "supabase/tests/supply_outbox_diagnostics.sql",
+   "lines": 75,
+   "is_test": true,
+   "temporal": [
+    "AND created_at < now() - interval '15 minutes';",
+    "AND created_at > now() - interval '24 hours'"
+   ]
+  },
   "tests/a11y/axe-sweep.spec.ts": {
    "path": "tests/a11y/axe-sweep.spec.ts",
    "lines": 151,
@@ -300656,10 +300667,21 @@
   }
  },
  "git": {
-  "sha": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
+  "sha": "d52445e0846ba1e64d45659b6e3b1456705fc62b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d52445e",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: sonda read-only da fila do supply_outbox na suite remota (#737)",
+    "files": [
+     "docs/testes/suites-ci.md",
+     "scripts/run-sql-tests.sh",
+     "supabase/tests/supply_outbox_diagnostics.sql"
+    ]
+   },
    {
     "sha": "a4084fb",
     "date": "2026-11-24",
@@ -301021,16 +301043,6 @@
      "src/components/pricing/PricingHealthBanner.tsx",
      "src/components/pricing/PricingIntelligenceHub.tsx"
     ]
-   },
-   {
-    "sha": "b48da88",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)",
-    "files": [
-     "src/pages/admin/AdminComercial.test.tsx",
-     "src/pages/admin/AdminComercial.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301061,6 +301073,18 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "docs/testes/suites-ci.md",
+    1
+   ],
+   [
+    "scripts/run-sql-tests.sh",
+    1
+   ],
+   [
+    "supabase/tests/supply_outbox_diagnostics.sql",
+    1
    ],
    [
     "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
@@ -301100,18 +301124,6 @@
    ],
    [
     ".github/workflows/provisionar-secret-supply-webhook.yml",
-    1
-   ],
-   [
-    ".github/workflows/provisionar-secret-design-sync.yml",
-    1
-   ],
-   [
-    "src/hooks/dashboard/useGoalsDashboard.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useWeeklyRanking.test.ts",
     1
    ]
   ]

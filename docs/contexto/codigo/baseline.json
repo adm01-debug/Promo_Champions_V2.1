@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
+  "commit": "d52445e0846ba1e64d45659b6e3b1456705fc62b",
   "branch": "main",
-  "data_commit": "2026-11-24T11:29:24-03:00",
+  "data_commit": "2026-11-24T11:29:38-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d52445e",
+    "data": "2026-11-24",
+    "assunto": "chore: sonda read-only da fila do supply_outbox na suite remota (#737)"
+   },
    {
     "sha": "a4084fb",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "9db0028",
     "data": "2026-11-24",
     "assunto": "test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)"
-   },
-   {
-    "sha": "312d10e",
-    "data": "2026-11-24",
-    "assunto": "fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)"
    }
   ],
-  "arquivos_mudados_7d": 382,
+  "arquivos_mudados_7d": 384,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -193,17 +193,17 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 35
+    "mudancas": 34
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 34
+    "mudancas": 33
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 258
+    "commits": 259
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 22
+    "commits": 21
    },
    {
     "autor": "dependabot[bot]",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3683,
+  "arquivos_total": 3684,
   "arquivos_codigo": 2620,
   "linhas_codigo": 449194,
   "rotas": 170,
@@ -328,7 +328,7 @@
   "tabelas": 421,
   "migrations": 714,
   "cron_jobs": 40,
-  "testes": 280,
+  "testes": 281,
   "workflows": 30,
   "scripts": 78,
   "docs_md": 225
