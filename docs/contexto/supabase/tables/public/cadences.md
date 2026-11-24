@@ -1,5 +1,7 @@
 # public.cadences
 
+> Definição de cadências comerciais e seu tipo de uso.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,13 +19,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `is_active` | `boolean` | não | `true` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `cadence_type` | `cadence_type` | não | `'prospecting'::cadence_type` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da cadência. |
+| 2 | `name` | `text` | não |  |  | Nome da cadência. |
+| 3 | `description` | `text` | sim |  |  | Descrição da cadência. |
+| 4 | `is_active` | `boolean` | não | `true` |  | Indica se a cadência está ativa. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da cadência. |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da cadência. |
+| 7 | `cadence_type` | `cadence_type` | não | `'prospecting'::cadence_type` |  | Tipo de cadência: prospecting ou quote_followup. |
 
 
 ## Constraints

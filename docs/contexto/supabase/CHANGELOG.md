@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 15:14 UTC
+
+- **colunas** alterado (132): `public.active_sessions.created_at`, `public.active_sessions.device_info`, `public.active_sessions.expires_at`, `public.active_sessions.id`, `public.active_sessions.ip_address`, `public.active_sessions.last_activity`, `public.active_sessions.last_refresh_at`, `public.active_sessions.max_lifetime_hours`, `public.active_sessions.refresh_count`, `public.active_sessions.session_token`, `public.active_sessions.user_agent`, `public.active_sessions.user_id`, `public.activities.activity_type`, `public.activities.client_id`, `public.activities.contact_name`, `public.activities.created_at`, `public.activities.delete_reason`, `public.activities.deleted_by`, `public.activities.duration_minutes`, `public.activities.id`, `public.activities.lead_status`, `public.activities.mql_qualified_at`, `public.activities.notes`, `public.activities.outcome`, `public.activities.qualification_score`, `public.activities.sale_id`, `public.activities.salesperson_id`, `public.cadence_steps.action_type`, `public.cadence_steps.cadence_id`, `public.cadence_steps.created_at`, `public.cadence_steps.day_number`, `public.cadence_steps.description`, `public.cadence_steps.id`, `public.cadence_steps.needs_approval`, `public.cadence_steps.singu_variables`, `public.cadence_steps.step_order`, `public.cadence_steps.task_type`, `public.cadence_steps.template_content`, `public.cadence_steps.title`, `public.cadence_tasks.cadence_step_id` … (+92)
+- **functions** alterado (1): `public.internal_edge_job_timeout_ms(p_function_name text)`
+- **migrations** adicionado (3): `20261127000000_20261127000000_supply_dispatch_timeout_60s`, `20261127001000_20261127001000_restaura_timeouts_dns_lento`, `20261127100000_20261127100000_backfill_supply_outbox_pedidos_pendentes`
+- **tabelas** alterado (12): `public.active_sessions`, `public.activities`, `public.cadence_steps`, `public.cadence_tasks`, `public.cadences`, `public.login_attempts`, `public.notification_preferences`, `public.password_history`, `public.prospect_cadences`, `public.sms_verification_codes`, `public.user_mfa_settings`, `public.webauthn_credentials`
+
 ## 2026-11-24 13:15 UTC
 
 - **colunas** adicionado (12): `public.supply_outbox.attempts`, `public.supply_outbox.created_at`, `public.supply_outbox.delivered_at`, `public.supply_outbox.event`, `public.supply_outbox.id`, `public.supply_outbox.last_error`, `public.supply_outbox.next_attempt_at`, `public.supply_outbox.order_id`, `public.supply_outbox.order_item_id`, `public.supply_outbox.payload`, `public.supply_outbox.status`, `public.supply_outbox.updated_at`

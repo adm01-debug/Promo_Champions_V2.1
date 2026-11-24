@@ -1,5 +1,7 @@
 # public.notification_preferences
 
+> Preferências do usuário para notificações e limites de alertas comerciais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `email` | `text` | não |  |  |  |
-| 3 | `is_active` | `boolean` | não | `true` |  |  |
-| 4 | `frequency` | `text` | não | `'daily'::text` |  |  |
-| 5 | `notify_stagnant_deals` | `boolean` | não | `true` |  |  |
-| 6 | `notify_inactive_clients` | `boolean` | não | `true` |  |  |
-| 7 | `notify_at_risk_goals` | `boolean` | não | `true` |  |  |
-| 8 | `stagnant_threshold_days` | `integer` | não | `14` |  |  |
-| 9 | `inactive_threshold_days` | `integer` | não | `60` |  |  |
-| 10 | `preferred_time` | `time without time zone` | não | `'08:00:00'::time without time zone` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `consecutive_days_threshold` | `integer` | não | `3` |  | Number of consecutive days below goal before triggering SDR alert |
-| 14 | `user_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único das preferências. |
+| 2 | `email` | `text` | não |  |  | Endereço de e-mail usado para notificações. |
+| 3 | `is_active` | `boolean` | não | `true` |  | Indica se estas preferências estão ativas. |
+| 4 | `frequency` | `text` | não | `'daily'::text` |  | Frequência de notificação: realtime, daily ou weekly. |
+| 5 | `notify_stagnant_deals` | `boolean` | não | `true` |  | Indica se devem ser enviadas notificações sobre negócios estagnados. |
+| 6 | `notify_inactive_clients` | `boolean` | não | `true` |  | Indica se devem ser enviadas notificações sobre clientes inativos. |
+| 7 | `notify_at_risk_goals` | `boolean` | não | `true` |  | Indica se devem ser enviadas notificações sobre metas em risco. |
+| 8 | `stagnant_threshold_days` | `integer` | não | `14` |  | Quantidade de dias usada como limite para considerar um negócio estagnado. |
+| 9 | `inactive_threshold_days` | `integer` | não | `60` |  | Quantidade de dias usada como limite para considerar um cliente inativo. |
+| 10 | `preferred_time` | `time without time zone` | não | `'08:00:00'::time without time zone` |  | Horário local preferido para receber notificações. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação das preferências. |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização das preferências. |
+| 13 | `consecutive_days_threshold` | `integer` | não | `3` |  | Quantidade de dias consecutivos abaixo da meta para acionar o alerta SDR. |
+| 14 | `user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth associado às preferências, quando informado. |
 
 
 ## Constraints

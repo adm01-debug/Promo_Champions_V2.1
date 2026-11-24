@@ -1,5 +1,7 @@
 # public.cadence_tasks
 
+> Ações agendadas e resultados de execução das etapas de uma cadência.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `prospect_cadence_id` | `uuid` | não |  |  |  |
-| 3 | `cadence_step_id` | `uuid` | não |  |  |  |
-| 4 | `scheduled_date` | `date` | não |  |  |  |
-| 5 | `status` | `text` | não | `'pending'::text` |  |  |
-| 6 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `notes` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `call_result` | `text` | sim |  |  |  |
-| 10 | `priority` | `text` | sim | `'normal'::text` |  |  |
-| 11 | `task_type` | `text` | sim | `'manual'::text` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da tarefa de cadência. |
+| 2 | `prospect_cadence_id` | `uuid` | não |  |  | Inscrição de prospect à qual a tarefa pertence. |
+| 3 | `cadence_step_id` | `uuid` | não |  |  | Etapa da cadência que originou a tarefa. |
+| 4 | `scheduled_date` | `date` | não |  |  | Data prevista para executar a tarefa. |
+| 5 | `status` | `text` | não | `'pending'::text` |  | Estado da tarefa: pending, completed ou skipped. |
+| 6 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora de conclusão da tarefa. |
+| 7 | `notes` | `text` | sim |  |  | Observações registradas para a tarefa. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da tarefa. |
+| 9 | `call_result` | `text` | sim |  |  | Resultado da chamada, quando aplicável. |
+| 10 | `priority` | `text` | sim | `'normal'::text` |  | Prioridade atribuída à tarefa. |
+| 11 | `task_type` | `text` | sim | `'manual'::text` |  | Tipo de tarefa conforme utilizado pela aplicação. |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da tarefa. |
 
 
 ## Constraints

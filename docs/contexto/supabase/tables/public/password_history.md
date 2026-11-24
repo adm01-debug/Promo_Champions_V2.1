@@ -1,5 +1,7 @@
 # public.password_history
 
+> Histórico de hashes de senha associado a usuários, para controles de segurança.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `password_hash` | `text` | não |  |  |  |
-| 4 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Identificador único do registro de histórico. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth ao qual o histórico pertence. |
+| 3 | `password_hash` | `text` | não |  |  | Hash de senha usado para comparação histórica; dado sensível, nunca armazenar senha em texto claro. |
+| 4 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de registro do hash. |
 
 
 ## Constraints

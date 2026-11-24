@@ -1,5 +1,7 @@
 # public.active_sessions
 
+> Registro de sessões ativas e metadados de atividade e expiração.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `session_token` | `text` | sim |  |  |  |
-| 4 | `ip_address` | `text` | sim |  |  |  |
-| 5 | `user_agent` | `text` | sim |  |  |  |
-| 6 | `device_info` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 7 | `last_activity` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `expires_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `refresh_count` | `integer` | sim | `0` |  |  |
-| 11 | `last_refresh_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `max_lifetime_hours` | `integer` | sim | `24` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da sessão registrada. |
+| 2 | `user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth associado à sessão, quando identificado. |
+| 3 | `session_token` | `text` | sim |  |  | Token de sessão; credencial sensível que não deve ser exposta a clientes ou registrada em logs. |
+| 4 | `ip_address` | `text` | sim |  |  | Endereço IP observado para a sessão, quando disponível. |
+| 5 | `user_agent` | `text` | sim |  |  | User-Agent do cliente que iniciou a sessão, quando disponível. |
+| 6 | `device_info` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados do dispositivo associados à sessão, em formato JSON. |
+| 7 | `last_activity` | `timestamp with time zone` | sim | `now()` |  | Data e hora da atividade mais recente da sessão. |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação da sessão. |
+| 9 | `expires_at` | `timestamp with time zone` | sim |  |  | Data e hora de expiração da sessão, quando configurada. |
+| 10 | `refresh_count` | `integer` | sim | `0` |  | Quantidade de renovações registradas para a sessão. |
+| 11 | `last_refresh_at` | `timestamp with time zone` | sim |  |  | Data e hora da renovação mais recente. |
+| 12 | `max_lifetime_hours` | `integer` | sim | `24` |  | Tempo máximo de vida da sessão em horas, quando configurado. |
 
 
 ## Constraints

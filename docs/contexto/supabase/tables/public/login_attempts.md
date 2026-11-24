@@ -1,5 +1,7 @@
 # public.login_attempts
 
+> Tentativas de autenticação registradas para fins de auditoria e segurança.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `email` | `text` | não |  |  |  |
-| 3 | `ip_address` | `text` | sim |  |  |  |
-| 4 | `user_agent` | `text` | sim |  |  |  |
-| 5 | `success` | `boolean` | sim | `false` |  |  |
-| 6 | `failure_reason` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da tentativa de autenticação. |
+| 2 | `email` | `text` | não |  |  | E-mail informado na tentativa de autenticação. |
+| 3 | `ip_address` | `text` | sim |  |  | Endereço IP de origem, quando disponível. |
+| 4 | `user_agent` | `text` | sim |  |  | User-Agent do cliente, quando disponível. |
+| 5 | `success` | `boolean` | sim | `false` |  | Indica se a tentativa de autenticação foi bem-sucedida. |
+| 6 | `failure_reason` | `text` | sim |  |  | Motivo registrado para a falha de autenticação, quando aplicável. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da tentativa de autenticação. |
 
 
 ## Constraints

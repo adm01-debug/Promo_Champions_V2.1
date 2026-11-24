@@ -1,5 +1,7 @@
 # public.prospect_cadences
 
+> Inscrição de um prospect ou orçamento em uma cadência e acompanhamento de seu progresso.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,23 +18,23 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `cadence_id` | `uuid` | não |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `status` | `text` | não | `'active'::text` |  |  |
-| 6 | `started_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `current_step` | `integer` | não | `0` |  |  |
-| 8 | `next_action_date` | `date` | sim |  |  |  |
-| 9 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `enrolled_via_rule_id` | `uuid` | sim |  |  |  |
-| 13 | `enrollment_source` | `text` | não | `'manual'::text` |  |  |
-| 14 | `paused_reason` | `text` | sim |  |  |  |
-| 15 | `paused_at` | `timestamp with time zone` | sim |  |  |  |
-| 16 | `quote_id` | `uuid` | sim |  |  |  |
-| 17 | `funnel_stage` | `text` | sim | `'new'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da inscrição na cadência. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio associado à inscrição, quando houver. |
+| 3 | `cadence_id` | `uuid` | não |  |  | Cadência aplicada à inscrição. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pela inscrição, quando atribuído. |
+| 5 | `status` | `text` | não | `'active'::text` |  | Estado da inscrição: active, paused, completed ou cancelled. |
+| 6 | `started_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de início da cadência. |
+| 7 | `current_step` | `integer` | não | `0` |  | Etapa atual da cadência. |
+| 8 | `next_action_date` | `date` | sim |  |  | Data prevista para a próxima ação. |
+| 9 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora de conclusão da cadência. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da inscrição. |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da inscrição. |
+| 12 | `enrolled_via_rule_id` | `uuid` | sim |  |  | Regra de inscrição automática que originou a inscrição, quando aplicável. |
+| 13 | `enrollment_source` | `text` | não | `'manual'::text` |  | Origem da inscrição na cadência. |
+| 14 | `paused_reason` | `text` | sim |  |  | Motivo pelo qual a cadência foi pausada, quando informado. |
+| 15 | `paused_at` | `timestamp with time zone` | sim |  |  | Data e hora em que a cadência foi pausada. |
+| 16 | `quote_id` | `uuid` | sim |  |  | Orçamento associado à inscrição, quando aplicável. |
+| 17 | `funnel_stage` | `text` | sim | `'new'::text` |  | Estágio de funil associado à inscrição; os valores aceitos são definidos pela constraint da coluna. |
 
 
 ## Constraints

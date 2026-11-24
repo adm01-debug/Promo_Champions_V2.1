@@ -13,8 +13,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.accounts](tables/public/accounts.md) | table | sim | 4 | 22 | não |  |
 | [public.achievements](tables/public/achievements.md) | table | sim | 2 | 6 | não |  |
 | [public.active_power_ups](tables/public/active_power_ups.md) | table | sim | 2 | 8 | não |  |
-| [public.active_sessions](tables/public/active_sessions.md) | table | sim | 6 | 12 | não |  |
-| [public.activities](tables/public/activities.md) | table | sim | 4 | 16 | sim |  |
+| [public.active_sessions](tables/public/active_sessions.md) | table | sim | 6 | 12 | não | Registro de sessões ativas e metadados de atividade e expiração. |
+| [public.activities](tables/public/activities.md) | table | sim | 4 | 16 | sim | Registro de atividades comerciais realizadas com clientes e negócios. |
 | [public.activity_audit_logs](tables/public/activity_audit_logs.md) | table | sim | 1 | 7 | não |  |
 | [public.activity_goals](tables/public/activity_goals.md) | table | sim | 4 | 9 | não |  |
 | [public.agenda_events](tables/public/agenda_events.md) | table | sim | 2 | 14 | não |  |
@@ -47,9 +47,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cadence_enrollment_rules](tables/public/cadence_enrollment_rules.md) | table | sim | 2 | 14 | não |  |
 | [public.cadence_funnel_rules](tables/public/cadence_funnel_rules.md) | table | sim | 2 | 13 | não |  |
 | [public.cadence_outcome_rules](tables/public/cadence_outcome_rules.md) | table | sim | 1 | 12 | não |  |
-| [public.cadence_steps](tables/public/cadence_steps.md) | table | sim | 4 | 12 | não |  |
-| [public.cadence_tasks](tables/public/cadence_tasks.md) | table | sim | 4 | 12 | sim |  |
-| [public.cadences](tables/public/cadences.md) | table | sim | 4 | 7 | não |  |
+| [public.cadence_steps](tables/public/cadence_steps.md) | table | sim | 4 | 12 | não | Etapas ordenadas que definem as ações de uma cadência. |
+| [public.cadence_tasks](tables/public/cadence_tasks.md) | table | sim | 4 | 12 | sim | Ações agendadas e resultados de execução das etapas de uma cadência. |
+| [public.cadences](tables/public/cadences.md) | table | sim | 4 | 7 | não | Definição de cadências comerciais e seu tipo de uso. |
 | [public.call_coaching_scorecards](tables/public/call_coaching_scorecards.md) | table | sim | 2 | 15 | sim |  |
 | [public.call_conversation_metrics](tables/public/call_conversation_metrics.md) | table | sim | 2 | 14 | sim |  |
 | [public.call_critical_moments](tables/public/call_critical_moments.md) | table | sim | 5 | 13 | sim |  |
@@ -207,7 +207,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.league_members](tables/public/league_members.md) | table | sim | 3 | 11 | sim |  |
 | [public.leagues](tables/public/leagues.md) | table | sim | 1 | 10 | não |  |
 | [public.login_alerts](tables/public/login_alerts.md) | table | sim | 2 | 13 | não |  |
-| [public.login_attempts](tables/public/login_attempts.md) | table | sim | 1 | 7 | não |  |
+| [public.login_attempts](tables/public/login_attempts.md) | table | sim | 1 | 7 | não | Tentativas de autenticação registradas para fins de auditoria e segurança. |
 | [public.maintenance_log](tables/public/maintenance_log.md) | table | sim | 1 | 8 | não |  |
 | [public.message_templates](tables/public/message_templates.md) | table | sim | 4 | 13 | não |  |
 | [public.mfa_verification_attempts](tables/public/mfa_verification_attempts.md) | table | sim | 1 | 7 | não |  |
@@ -215,7 +215,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.monthly_sales_summary](tables/public/monthly_sales_summary.md) | table | sim | 1 | 6 | não |  |
 | [public.mood_entries](tables/public/mood_entries.md) | table | sim | 3 | 5 | não |  |
 | [public.mql_qualifications](tables/public/mql_qualifications.md) | table | sim | 1 | 15 | não |  |
-| [public.notification_preferences](tables/public/notification_preferences.md) | table | sim | 5 | 14 | não |  |
+| [public.notification_preferences](tables/public/notification_preferences.md) | table | sim | 5 | 14 | não | Preferências do usuário para notificações e limites de alertas comerciais. |
 | [public.notifications](tables/public/notifications.md) | table | sim | 7 | 15 | sim |  |
 | [public.nps_surveys](tables/public/nps_surveys.md) | table | sim | 7 | 12 | não |  |
 | [public.objection_library](tables/public/objection_library.md) | table | sim | 2 | 8 | sim |  |
@@ -227,7 +227,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.orders](tables/public/orders.md) | table | sim | 4 | 15 | não |  |
 | [public.outbound_messages](tables/public/outbound_messages.md) | table | sim | 3 | 18 | não |  |
 | [public.page_analytics](tables/public/page_analytics.md) | table | sim | 3 | 12 | não |  |
-| [public.password_history](tables/public/password_history.md) | table | sim | 1 | 4 | não |  |
+| [public.password_history](tables/public/password_history.md) | table | sim | 1 | 4 | não | Histórico de hashes de senha associado a usuários, para controles de segurança. |
 | [public.password_reset_requests](tables/public/password_reset_requests.md) | table | sim | 3 | 13 | não |  |
 | [public.performance_bets](tables/public/performance_bets.md) | table | sim | 3 | 14 | sim |  |
 | [public.performance_impact_factors](tables/public/performance_impact_factors.md) | table | sim | 1 | 6 | não |  |
@@ -257,7 +257,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.product_usage_summary](tables/public/product_usage_summary.md) | table | sim | 2 | 8 | não |  |
 | [public.products](tables/public/products.md) | table | sim | 4 | 18 | não | Catálogo de produtos, com preços, custos, disponibilidade e informações de estoque. |
 | [public.progressive_goals](tables/public/progressive_goals.md) | table | sim | 3 | 11 | não |  |
-| [public.prospect_cadences](tables/public/prospect_cadences.md) | table | sim | 5 | 17 | sim |  |
+| [public.prospect_cadences](tables/public/prospect_cadences.md) | table | sim | 5 | 17 | sim | Inscrição de um prospect ou orçamento em uma cadência e acompanhamento de seu progresso. |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 8 | 7 | não |  |
 | [public.qbr_reports](tables/public/qbr_reports.md) | table | sim | 3 | 10 | não |  |
 | [public.qbr_schedule](tables/public/qbr_schedule.md) | table | sim | 2 | 10 | não |  |
@@ -339,7 +339,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.sla_policies](tables/public/sla_policies.md) | table | sim | 2 | 9 | não |  |
 | [public.sla_violations](tables/public/sla_violations.md) | table | sim | 2 | 11 | não |  |
 | [public.slow_query_alerts](tables/public/slow_query_alerts.md) | table | sim | 2 | 15 | não | G6: consultas SQL detectadas como lentas. Dedupe por query_hash enquanto não reconhecidas. |
-| [public.sms_verification_codes](tables/public/sms_verification_codes.md) | table | sim | 8 | 7 | não |  |
+| [public.sms_verification_codes](tables/public/sms_verification_codes.md) | table | sim | 8 | 7 | não | Códigos temporários de verificação por SMS associados a usuários. |
 | [public.squad_members](tables/public/squad_members.md) | table | sim | 2 | 3 | não |  |
 | [public.squads](tables/public/squads.md) | table | sim | 2 | 7 | não |  |
 | [public.stage_bottleneck_insights](tables/public/stage_bottleneck_insights.md) | table | sim | 3 | 11 | sim |  |
@@ -372,7 +372,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.user_2fa_backup_codes](tables/public/user_2fa_backup_codes.md) | table | sim | 2 | 6 | não |  |
 | [public.user_2fa_log](tables/public/user_2fa_log.md) | table | sim | 1 | 6 | não |  |
 | [public.user_app_settings](tables/public/user_app_settings.md) | table | sim | 4 | 5 | não |  |
-| [public.user_mfa_settings](tables/public/user_mfa_settings.md) | table | sim | 3 | 14 | não |  |
+| [public.user_mfa_settings](tables/public/user_mfa_settings.md) | table | sim | 3 | 14 | não | Configurações de autenticação multifator associadas a cada usuário. |
 | [public.user_roles](tables/public/user_roles.md) | table | sim | 5 | 5 | não |  |
 | [public.user_winloss_preferences](tables/public/user_winloss_preferences.md) | table | sim | 4 | 3 | não |  |
 | [public.v4_callback_alert_settings](tables/public/v4_callback_alert_settings.md) | table | sim | 1 | 11 | não |  |
@@ -382,7 +382,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.victory_feed](tables/public/victory_feed.md) | table | sim | 2 | 8 | sim |  |
 | [public.web_vitals_samples](tables/public/web_vitals_samples.md) | table | sim | 1 | 12 | não |  |
 | [public.webauthn_challenges](tables/public/webauthn_challenges.md) | table | sim | 3 | 7 | não |  |
-| [public.webauthn_credentials](tables/public/webauthn_credentials.md) | table | sim | 4 | 11 | não |  |
+| [public.webauthn_credentials](tables/public/webauthn_credentials.md) | table | sim | 4 | 11 | não | Credenciais WebAuthn registradas pelos usuários para autenticação. |
 | [public.webhook_allowed_domains](tables/public/webhook_allowed_domains.md) | table | sim | 1 | 6 | não | Allowlist de hosts para webhook de saida. Vazia = nada e permitido (fail-closed). Gerida por admin. A blocklist de rede privada/metadata nao fica aqui: esta no corpo de is_webhook_host_allowed(). |
 | [public.webhook_deliveries](tables/public/webhook_deliveries.md) | table | sim | 1 | 11 | não |  |
 | [public.webhook_dispatch_rate](tables/public/webhook_dispatch_rate.md) | table | sim | 0 | 5 | não |  |

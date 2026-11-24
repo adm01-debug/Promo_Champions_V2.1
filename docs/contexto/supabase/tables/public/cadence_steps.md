@@ -1,5 +1,7 @@
 # public.cadence_steps
 
+> Etapas ordenadas que definem as ações de uma cadência.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `cadence_id` | `uuid` | não |  |  |  |
-| 3 | `day_number` | `integer` | não | `1` |  |  |
-| 4 | `action_type` | `text` | não |  |  |  |
-| 5 | `title` | `text` | não |  |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `template_content` | `text` | sim |  |  |  |
-| 8 | `step_order` | `integer` | não | `0` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `needs_approval` | `boolean` | sim | `false` |  |  |
-| 11 | `singu_variables` | `jsonb` | sim | `'[]'::jsonb` |  |  |
-| 12 | `task_type` | `text` | sim | `'manual'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da etapa. |
+| 2 | `cadence_id` | `uuid` | não |  |  | Cadência à qual a etapa pertence. |
+| 3 | `day_number` | `integer` | não | `1` |  | Dia relativo da cadência em que a etapa está prevista. |
+| 4 | `action_type` | `text` | não |  |  | Canal ou tipo de ação: email, call, linkedin, whatsapp, meeting ou other. |
+| 5 | `title` | `text` | não |  |  | Título da etapa. |
+| 6 | `description` | `text` | sim |  |  | Descrição da ação prevista. |
+| 7 | `template_content` | `text` | sim |  |  | Conteúdo de mensagem ou modelo associado à etapa, quando informado. |
+| 8 | `step_order` | `integer` | não | `0` |  | Posição da etapa na sequência da cadência. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da etapa. |
+| 10 | `needs_approval` | `boolean` | sim | `false` |  | Indica se a ação da etapa requer aprovação. |
+| 11 | `singu_variables` | `jsonb` | sim | `'[]'::jsonb` |  | Variáveis associadas à etapa em formato JSON. |
+| 12 | `task_type` | `text` | sim | `'manual'::text` |  | Tipo de tarefa criado ou usado para esta etapa. |
 
 
 ## Constraints

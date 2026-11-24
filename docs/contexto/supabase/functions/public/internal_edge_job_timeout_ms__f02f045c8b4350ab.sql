@@ -11,6 +11,7 @@ AS $function$
     WHEN 'wal-health-alert' THEN 60000
     WHEN 'send-alert-notifications' THEN 60000
     WHEN 'access-denied-alerts' THEN 60000
+    WHEN 'supply-dispatch' THEN 60000
     ELSE 5000
   END;
 $function$

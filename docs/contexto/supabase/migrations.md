@@ -715,3 +715,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261125110000 | [espalha_schedules_cron_evita_startup_timeout](migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql) | 0 |
 | 20261125150000 | [20261125150000_designs_inbound](migrations/20261125150000_20261125150000_designs_inbound.sql) | 0 |
 | 20261126090000 | [20261126090000_champions_supply_outbox](migrations/20261126090000_20261126090000_champions_supply_outbox.sql) | 0 |
+| 20261127000000 | [20261127000000_supply_dispatch_timeout_60s](migrations/20261127000000_20261127000000_supply_dispatch_timeout_60s.sql) | 0 |
+| 20261127001000 | [20261127001000_restaura_timeouts_dns_lento](migrations/20261127001000_20261127001000_restaura_timeouts_dns_lento.sql) | 0 |
+| 20261127100000 | [20261127100000_backfill_supply_outbox_pedidos_pendentes](migrations/20261127100000_20261127100000_backfill_supply_outbox_pedidos_pendentes.sql) | 0 |

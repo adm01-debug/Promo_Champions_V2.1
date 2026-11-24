@@ -1,5 +1,7 @@
 # public.activities
 
+> Registro de atividades comerciais realizadas com clientes e negócios.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,22 +19,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `activity_type` | `activity_type` | não |  |  |  |
-| 5 | `outcome` | `activity_outcome` | não |  |  |  |
-| 6 | `notes` | `text` | sim |  |  |  |
-| 7 | `duration_minutes` | `integer` | sim |  |  |  |
-| 8 | `contact_name` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `client_id` | `uuid` | sim |  |  |  |
-| 11 | `lead_status` | `text` | sim | `'prospect'::text` |  |  |
-| 12 | `mql_qualified_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `qualification_score` | `integer` | sim | `0` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da atividade. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio relacionado à atividade, quando houver. |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Vendedor que realizou ou registrou a atividade, quando informado. |
+| 4 | `activity_type` | `activity_type` | não |  |  | Tipo de atividade: call, email, meeting, linkedin, whatsapp, other ou note. |
+| 5 | `outcome` | `activity_outcome` | não |  |  | Resultado da atividade, conforme os valores do tipo activity_outcome. |
+| 6 | `notes` | `text` | sim |  |  | Notas sobre a atividade. |
+| 7 | `duration_minutes` | `integer` | sim |  |  | Duração da atividade em minutos, quando informada. |
+| 8 | `contact_name` | `text` | sim |  |  | Nome do contato relacionado à atividade, quando informado. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da atividade. |
+| 10 | `client_id` | `uuid` | sim |  |  | Cliente relacionado à atividade, quando houver. |
+| 11 | `lead_status` | `text` | sim | `'prospect'::text` |  | Estado do lead registrado no contexto da atividade. |
+| 12 | `mql_qualified_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o lead foi qualificado como MQL. |
+| 13 | `qualification_score` | `integer` | sim | `0` |  | Pontuação de qualificação atribuída ao lead. |
 | 14 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 15 | `deleted_by` | `uuid` | sim |  |  |  |
-| 16 | `delete_reason` | `text` | sim |  |  |  |
+| 15 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou a atividade como excluída. |
+| 16 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar a atividade como excluída. |
 
 
 ## Constraints

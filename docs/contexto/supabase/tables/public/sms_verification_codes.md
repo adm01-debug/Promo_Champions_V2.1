@@ -1,5 +1,7 @@
 # public.sms_verification_codes
 
+> Códigos temporários de verificação por SMS associados a usuários.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `phone_number` | `text` | não |  |  |  |
-| 4 | `code` | `text` | não |  |  |  |
-| 5 | `expires_at` | `timestamp with time zone` | não |  |  |  |
-| 6 | `used_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de verificação. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth associado à verificação. |
+| 3 | `phone_number` | `text` | não |  |  | Número de telefone destinatário do código. |
+| 4 | `code` | `text` | não |  |  | Código temporário de verificação; dado sensível que não deve ser exposto a clientes. |
+| 5 | `expires_at` | `timestamp with time zone` | não |  |  | Data e hora após a qual o código deixa de ser válido. |
+| 6 | `used_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o código foi utilizado; nulo indica que não há uso registrado. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do código. |
 
 
 ## Constraints

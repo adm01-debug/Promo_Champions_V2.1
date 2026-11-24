@@ -1,5 +1,7 @@
 # public.user_mfa_settings
 
+> Configurações de autenticação multifator associadas a cada usuário.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `totp_enabled` | `boolean` | sim | `false` |  |  |
-| 4 | `totp_secret` | `text` | sim |  |  |  |
-| 5 | `totp_verified_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `sms_enabled` | `boolean` | sim | `false` |  |  |
-| 7 | `phone_number` | `text` | sim |  |  |  |
-| 8 | `phone_verified_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `backup_codes` | `text[]` | sim |  |  |  |
-| 10 | `backup_codes_generated_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `preferred_method` | `text` | sim | `'totp'::text` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 14 | `migrated_to_native_mfa` | `boolean` | não | `false` |  | true quando o usuário concluiu o enroll TOTP no MFA nativo do Supabase (auth.mfa) |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único das configurações de MFA. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth dono das configurações de MFA. |
+| 3 | `totp_enabled` | `boolean` | sim | `false` |  | Indica se a autenticação TOTP está habilitada. |
+| 4 | `totp_secret` | `text` | sim |  |  | Segredo TOTP do usuário; dado de autenticação altamente sensível, não expor a clientes. |
+| 5 | `totp_verified_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o segredo TOTP foi verificado. |
+| 6 | `sms_enabled` | `boolean` | sim | `false` |  | Indica se a verificação por SMS está habilitada. |
+| 7 | `phone_number` | `text` | sim |  |  | Número de telefone associado à verificação por SMS. |
+| 8 | `phone_verified_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o telefone foi verificado. |
+| 9 | `backup_codes` | `text[]` | sim |  |  | Códigos de recuperação MFA; credenciais sensíveis que não devem ser expostas a terceiros. |
+| 10 | `backup_codes_generated_at` | `timestamp with time zone` | sim |  |  | Data e hora da geração mais recente dos códigos de recuperação. |
+| 11 | `preferred_method` | `text` | sim | `'totp'::text` |  | Método MFA preferido: totp ou sms. |
+| 12 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação das configurações. |
+| 13 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização das configurações. |
+| 14 | `migrated_to_native_mfa` | `boolean` | não | `false` |  | Indica se o usuário concluiu a migração do TOTP para o MFA nativo do Supabase. |
 
 
 ## Constraints

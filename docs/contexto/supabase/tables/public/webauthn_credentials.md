@@ -1,5 +1,7 @@
 # public.webauthn_credentials
 
+> Credenciais WebAuthn registradas pelos usuários para autenticação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `credential_id` | `text` | não |  |  |  |
-| 4 | `public_key` | `text` | não |  |  |  |
-| 5 | `counter` | `integer` | não | `0` |  |  |
-| 6 | `device_type` | `text` | sim |  |  |  |
-| 7 | `backed_up` | `boolean` | sim | `false` |  |  |
-| 8 | `transports` | `text[]` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `last_used_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `friendly_name` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da credencial WebAuthn. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth proprietário da credencial. |
+| 3 | `credential_id` | `text` | não |  |  | Identificador da credencial WebAuthn. |
+| 4 | `public_key` | `text` | não |  |  | Chave pública da credencial WebAuthn. |
+| 5 | `counter` | `integer` | não | `0` |  | Contador de assinatura informado pela credencial. |
+| 6 | `device_type` | `text` | sim |  |  | Tipo de dispositivo associado à credencial, quando informado. |
+| 7 | `backed_up` | `boolean` | sim | `false` |  | Indica se a credencial está marcada como respaldada. |
+| 8 | `transports` | `text[]` | sim |  |  | Transportes suportados pela credencial, quando informados. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da credencial. |
+| 10 | `last_used_at` | `timestamp with time zone` | sim |  |  | Data e hora do uso mais recente da credencial. |
+| 11 | `friendly_name` | `text` | sim |  |  | Nome legível atribuído à credencial pelo usuário. |
 
 
 ## Constraints

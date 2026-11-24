@@ -1228,7 +1228,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da sessão registrada.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -1241,7 +1241,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth associado à sessão, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1254,7 +1254,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Token de sessão; credencial sensível que não deve ser exposta a clientes ou registrada em logs.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1267,7 +1267,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP observado para a sessão, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1280,7 +1280,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "User-Agent do cliente que iniciou a sessão, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1293,7 +1293,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Metadados do dispositivo associados à sessão, em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -1306,7 +1306,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da atividade mais recente da sessão.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -1319,7 +1319,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da sessão.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -1332,7 +1332,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de expiração da sessão, quando configurada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1345,7 +1345,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de renovações registradas para a sessão.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -1358,7 +1358,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da renovação mais recente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1371,7 +1371,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Tempo máximo de vida da sessão em horas, quando configurado.",
         "default": "24",
         "generated": null,
         "identity": null,
@@ -1384,7 +1384,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da atividade.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -1397,7 +1397,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Negócio relacionado à atividade, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1410,7 +1410,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que realizou ou registrou a atividade, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1423,7 +1423,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo de atividade: call, email, meeting, linkedin, whatsapp, other ou note.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1436,7 +1436,7 @@
         "type": "activity_type"
       },
       {
-        "comment": null,
+        "comment": "Resultado da atividade, conforme os valores do tipo activity_outcome.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1449,7 +1449,7 @@
         "type": "activity_outcome"
       },
       {
-        "comment": null,
+        "comment": "Notas sobre a atividade.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1462,7 +1462,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Duração da atividade em minutos, quando informada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1475,7 +1475,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Nome do contato relacionado à atividade, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1488,7 +1488,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro da atividade.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -1501,7 +1501,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Cliente relacionado à atividade, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1514,7 +1514,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Estado do lead registrado no contexto da atividade.",
         "default": "'prospect'::text",
         "generated": null,
         "identity": null,
@@ -1527,7 +1527,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o lead foi qualificado como MQL.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1540,7 +1540,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Pontuação de qualificação atribuída ao lead.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -1566,7 +1566,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Usuário que marcou a atividade como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1579,7 +1579,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Motivo informado para marcar a atividade como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -5999,7 +5999,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da etapa.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -6012,7 +6012,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Cadência à qual a etapa pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6025,7 +6025,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Dia relativo da cadência em que a etapa está prevista.",
         "default": "1",
         "generated": null,
         "identity": null,
@@ -6038,7 +6038,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Canal ou tipo de ação: email, call, linkedin, whatsapp, meeting ou other.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6051,7 +6051,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Título da etapa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6064,7 +6064,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da ação prevista.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6077,7 +6077,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Conteúdo de mensagem ou modelo associado à etapa, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6090,7 +6090,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Posição da etapa na sequência da cadência.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -6103,7 +6103,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da etapa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -6116,7 +6116,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se a ação da etapa requer aprovação.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -6129,7 +6129,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Variáveis associadas à etapa em formato JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -6142,7 +6142,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Tipo de tarefa criado ou usado para esta etapa.",
         "default": "'manual'::text",
         "generated": null,
         "identity": null,
@@ -6155,7 +6155,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da tarefa de cadência.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -6168,7 +6168,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Inscrição de prospect à qual a tarefa pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6181,7 +6181,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Etapa da cadência que originou a tarefa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6194,7 +6194,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data prevista para executar a tarefa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6207,7 +6207,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Estado da tarefa: pending, completed ou skipped.",
         "default": "'pending'::text",
         "generated": null,
         "identity": null,
@@ -6220,7 +6220,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de conclusão da tarefa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6233,7 +6233,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Observações registradas para a tarefa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6246,7 +6246,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da tarefa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -6259,7 +6259,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Resultado da chamada, quando aplicável.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6272,7 +6272,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Prioridade atribuída à tarefa.",
         "default": "'normal'::text",
         "generated": null,
         "identity": null,
@@ -6285,7 +6285,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de tarefa conforme utilizado pela aplicação.",
         "default": "'manual'::text",
         "generated": null,
         "identity": null,
@@ -6298,7 +6298,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da tarefa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -6311,7 +6311,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da cadência.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -6324,7 +6324,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da cadência.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6337,7 +6337,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da cadência.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -6350,7 +6350,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se a cadência está ativa.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -6363,7 +6363,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da cadência.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -6376,7 +6376,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da cadência.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -6389,7 +6389,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Tipo de cadência: prospecting ou quote_followup.",
         "default": "'prospecting'::cadence_type",
         "generated": null,
         "identity": null,
@@ -27371,7 +27371,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da tentativa de autenticação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -27384,7 +27384,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "E-mail informado na tentativa de autenticação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -27397,7 +27397,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP de origem, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -27410,7 +27410,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "User-Agent do cliente, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -27423,7 +27423,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se a tentativa de autenticação foi bem-sucedida.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -27436,7 +27436,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Motivo registrado para a falha de autenticação, quando aplicável.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -27449,7 +27449,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da tentativa de autenticação.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -28333,7 +28333,7 @@
         "type": "bigint"
       },
       {
-        "comment": null,
+        "comment": "Identificador único das preferências.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -28346,7 +28346,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Endereço de e-mail usado para notificações.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -28359,7 +28359,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se estas preferências estão ativas.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -28372,7 +28372,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Frequência de notificação: realtime, daily ou weekly.",
         "default": "'daily'::text",
         "generated": null,
         "identity": null,
@@ -28385,7 +28385,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se devem ser enviadas notificações sobre negócios estagnados.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -28398,7 +28398,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Indica se devem ser enviadas notificações sobre clientes inativos.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -28411,7 +28411,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Indica se devem ser enviadas notificações sobre metas em risco.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -28424,7 +28424,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de dias usada como limite para considerar um negócio estagnado.",
         "default": "14",
         "generated": null,
         "identity": null,
@@ -28437,7 +28437,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de dias usada como limite para considerar um cliente inativo.",
         "default": "60",
         "generated": null,
         "identity": null,
@@ -28450,7 +28450,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Horário local preferido para receber notificações.",
         "default": "'08:00:00'::time without time zone",
         "generated": null,
         "identity": null,
@@ -28463,7 +28463,7 @@
         "type": "time without time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação das preferências.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -28476,7 +28476,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização das preferências.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -28489,7 +28489,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": "Number of consecutive days below goal before triggering SDR alert",
+        "comment": "Quantidade de dias consecutivos abaixo da meta para acionar o alerta SDR.",
         "default": "3",
         "generated": null,
         "identity": null,
@@ -28502,7 +28502,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth associado às preferências, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -30088,7 +30088,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro de histórico.",
         "default": "uuid_generate_v4()",
         "generated": null,
         "identity": null,
@@ -30101,7 +30101,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth ao qual o histórico pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -30114,7 +30114,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Hash de senha usado para comparação histórica; dado sensível, nunca armazenar senha em texto claro.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -30127,7 +30127,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro do hash.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -33520,7 +33520,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da inscrição na cadência.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -33533,7 +33533,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Negócio associado à inscrição, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33546,7 +33546,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Cadência aplicada à inscrição.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33559,7 +33559,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pela inscrição, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33572,7 +33572,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Estado da inscrição: active, paused, completed ou cancelled.",
         "default": "'active'::text",
         "generated": null,
         "identity": null,
@@ -33585,7 +33585,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de início da cadência.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -33598,7 +33598,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Etapa atual da cadência.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -33611,7 +33611,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data prevista para a próxima ação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33624,7 +33624,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de conclusão da cadência.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33637,7 +33637,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da inscrição.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -33650,7 +33650,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da inscrição.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -33663,7 +33663,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Regra de inscrição automática que originou a inscrição, quando aplicável.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33676,7 +33676,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Origem da inscrição na cadência.",
         "default": "'manual'::text",
         "generated": null,
         "identity": null,
@@ -33689,7 +33689,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Motivo pelo qual a cadência foi pausada, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33702,7 +33702,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que a cadência foi pausada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33715,7 +33715,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Orçamento associado à inscrição, quando aplicável.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33728,7 +33728,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Estágio de funil associado à inscrição; os valores aceitos são definidos pela constraint da coluna.",
         "default": "'new'::text",
         "generated": null,
         "identity": null,
@@ -45948,7 +45948,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro de verificação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -45961,7 +45961,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth associado à verificação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -45974,7 +45974,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Número de telefone destinatário do código.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -45987,7 +45987,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Código temporário de verificação; dado sensível que não deve ser exposto a clientes.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -46000,7 +46000,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora após a qual o código deixa de ser válido.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -46013,7 +46013,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o código foi utilizado; nulo indica que não há uso registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -46026,7 +46026,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do código.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -50381,7 +50381,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único das configurações de MFA.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -50394,7 +50394,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth dono das configurações de MFA.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50407,7 +50407,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Indica se a autenticação TOTP está habilitada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -50420,7 +50420,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Segredo TOTP do usuário; dado de autenticação altamente sensível, não expor a clientes.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50433,7 +50433,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o segredo TOTP foi verificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50446,7 +50446,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se a verificação por SMS está habilitada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -50459,7 +50459,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Número de telefone associado à verificação por SMS.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50472,7 +50472,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o telefone foi verificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50485,7 +50485,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Códigos de recuperação MFA; credenciais sensíveis que não devem ser expostas a terceiros.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50498,7 +50498,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da geração mais recente dos códigos de recuperação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -50511,7 +50511,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Método MFA preferido: totp ou sms.",
         "default": "'totp'::text",
         "generated": null,
         "identity": null,
@@ -50524,7 +50524,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação das configurações.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -50537,7 +50537,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização das configurações.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -50550,7 +50550,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": "true quando o usuário concluiu o enroll TOTP no MFA nativo do Supabase (auth.mfa)",
+        "comment": "Indica se o usuário concluiu a migração do TOTP para o MFA nativo do Supabase.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -54203,7 +54203,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da credencial WebAuthn.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -54216,7 +54216,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário do Supabase Auth proprietário da credencial.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54229,7 +54229,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Identificador da credencial WebAuthn.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54242,7 +54242,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Chave pública da credencial WebAuthn.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54255,7 +54255,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Contador de assinatura informado pela credencial.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -54268,7 +54268,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Tipo de dispositivo associado à credencial, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54281,7 +54281,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se a credencial está marcada como respaldada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -54294,7 +54294,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Transportes suportados pela credencial, quando informados.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54307,7 +54307,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro da credencial.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -54320,7 +54320,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do uso mais recente da credencial.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -54333,7 +54333,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Nome legível atribuído à credencial pelo usuário.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -90922,7 +90922,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "8897682e0bc1a53b",
+        "definition_sha": "b80572af0932a35e",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -134469,6 +134469,21 @@
         "name": "20261126090000_champions_supply_outbox",
         "statements": null,
         "version": "20261126090000"
+      },
+      {
+        "name": "20261127000000_supply_dispatch_timeout_60s",
+        "statements": null,
+        "version": "20261127000000"
+      },
+      {
+        "name": "20261127001000_restaura_timeouts_dns_lento",
+        "statements": null,
+        "version": "20261127001000"
+      },
+      {
+        "name": "20261127100000_backfill_supply_outbox_pedidos_pendentes",
+        "statements": null,
+        "version": "20261127100000"
       }
     ],
     "policies": [
@@ -147642,7 +147657,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Registro de sessões ativas e metadados de atividade e expiração.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147657,7 +147672,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Registro de atividades comerciais realizadas com clientes e negócios.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148152,7 +148167,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Etapas ordenadas que definem as ações de uma cadência.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148167,7 +148182,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Ações agendadas e resultados de execução das etapas de uma cadência.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148182,7 +148197,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Definição de cadências comerciais e seu tipo de uso.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150552,7 +150567,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Tentativas de autenticação registradas para fins de auditoria e segurança.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150672,7 +150687,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Preferências do usuário para notificações e limites de alertas comerciais.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150852,7 +150867,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Histórico de hashes de senha associado a usuários, para controles de segurança.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -151302,7 +151317,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Inscrição de um prospect ou orçamento em uma cadência e acompanhamento de seu progresso.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152532,7 +152547,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Códigos temporários de verificação por SMS associados a usuários.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153027,7 +153042,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Configurações de autenticação multifator associadas a cada usuário.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153177,7 +153192,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Credenciais WebAuthn registradas pelos usuários para autenticação.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
