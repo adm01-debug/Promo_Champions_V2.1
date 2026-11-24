@@ -82,7 +82,10 @@ describe('WinLossAnalysisPage', () => {
     await user.click(screen.getByRole('button', { name: /Exportar Dados/i }));
 
     expect(exportToCSV).toHaveBeenCalledTimes(1);
-    const [rows, filename] = exportToCSV.mock.calls[0];
+    const [rows, filename] = exportToCSV.mock.calls[0] as [
+      Record<string, unknown>[],
+      string,
+    ];
     expect(filename).toMatch(/^win_loss_\d{4}-\d{2}-\d{2}$/);
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({
@@ -106,7 +109,7 @@ describe('WinLossAnalysisPage', () => {
 
     await user.click(screen.getByRole('button', { name: /Exportar Dados/i }));
 
-    const [rows] = exportToCSV.mock.calls[0];
+    const [rows] = exportToCSV.mock.calls[0] as [Record<string, unknown>[], string];
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ Vendedor: 'Bruno', Desfecho: 'Perdido' });
   });
