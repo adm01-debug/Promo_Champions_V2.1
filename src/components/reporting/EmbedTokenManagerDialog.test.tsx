@@ -47,7 +47,10 @@ describe('EmbedTokenManagerDialog — revogar e excluir token', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Revogar' }));
 
     expect(data.revoke).toHaveBeenCalledTimes(1);
-    expect(data.revoke.mock.calls[0][0]).toEqual({ id: 'tk-1', report_id: 'report-1' });
+    expect(data.revoke).toHaveBeenCalledWith(
+      { id: 'tk-1', report_id: 'report-1' },
+      expect.anything()
+    );
   });
 
   it('pede confirmacao antes de excluir o token e cancelar nao apaga', async () => {
@@ -63,6 +66,9 @@ describe('EmbedTokenManagerDialog — revogar e excluir token', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
 
     expect(data.remove).toHaveBeenCalledTimes(1);
-    expect(data.remove.mock.calls[0][0]).toEqual({ id: 'tk-1', report_id: 'report-1' });
+    expect(data.remove).toHaveBeenCalledWith(
+      { id: 'tk-1', report_id: 'report-1' },
+      expect.anything()
+    );
   });
 });

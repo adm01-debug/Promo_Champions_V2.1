@@ -48,7 +48,7 @@ describe('DealChatHistory — apagar pergunta', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 
     expect(data.mutate).toHaveBeenCalledTimes(1);
-    expect(data.mutate.mock.calls[0][0]).toBe('chat-1');
+    expect(data.mutate).toHaveBeenCalledWith('chat-1', expect.anything());
   });
 
   it('cancelar mantem a pergunta no historico', async () => {

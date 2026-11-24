@@ -43,7 +43,7 @@ describe('FeatureFlagsAdmin — excluir flag', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 
     expect(data.deleteMutate).toHaveBeenCalledTimes(1);
-    expect(data.deleteMutate.mock.calls[0][0]).toBe('flag-1');
+    expect(data.deleteMutate).toHaveBeenCalledWith('flag-1', expect.anything());
   });
 
   it('cancelar nao exclui a flag', async () => {
