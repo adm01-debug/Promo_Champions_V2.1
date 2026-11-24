@@ -8,7 +8,7 @@
    "Markdown (225)",
    "JavaScript (78)",
    "JSON (33)",
-   "YAML (29)",
+   "YAML (30)",
    "Shell (7)",
    "Python (5)"
   ],
@@ -902,6 +902,28 @@
    "actions": []
   },
   {
+   "arquivo": ".github/workflows/provisionar-secret-design-sync.yml",
+   "nome": "Provisionar secret do webhook Promo Design",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "provisionar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "DESIGN_SYNC_WEBHOOK_SECRET",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": []
+  },
+  {
    "arquivo": ".github/workflows/qa-exhaustive.yml",
    "nome": "QA Exhaustive (Weekly)",
    "gatilhos": [
@@ -1569,6 +1591,7 @@
    "AWS_BACKUP_ACCESS_KEY_ID",
    "AWS_BACKUP_SECRET_ACCESS_KEY",
    "BACKUP_ENCRYPTION_KEY",
+   "DESIGN_SYNC_WEBHOOK_SECRET",
    "E2E_TEST_EMAIL",
    "E2E_TEST_PASSWORD",
    "GITHUB_TOKEN",

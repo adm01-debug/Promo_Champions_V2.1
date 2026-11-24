@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a35b9ea8ac318690a37d5b5b18da8c8358fd4859` (2026-11-24T03:34:26-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6938bccd0dfdfa1a9acc816145a5aba6eec5fd2d` (2026-11-24T07:05:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2536), SQL (722), Markdown (225), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2536), SQL (722), Markdown (225), JavaScript (78), JSON (33), YAML (30), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3675 |
+| arquivos_total | 3676 |
 | arquivos_codigo | 2617 |
 | linhas_codigo | 448887 |
 | rotas | 170 |
@@ -49,7 +49,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | migrations | 712 |
 | cron_jobs | 39 |
 | testes | 279 |
-| workflows | 27 |
+| workflows | 28 |
 | scripts | 78 |
 | docs_md | 225 |
 
@@ -586,8 +586,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24311 nós · 74735 arestas · 1202 comunidades · grafo do commit `a35b9ea8`
-- comunidades maiores: Button (595), Card (568), schema.sql (562), lucide-react (478), Badge (308), date-fns (297), client.ts (285), framer-motion (269), public (263), getCorsHeaders (236), public.register_race_daily_checkin (220), public.sales (212)
+- 24341 nós · 74764 arestas · 1162 comunidades · grafo do commit `6938bccd`
+- comunidades maiores: schema.sql (570), CardContent (509), Card (406), framer-motion (368), client.ts (347), vitest (311), Badge (309), lucide-react (299), Input (282), DialogContent (272), formatBRL (260), public (258)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -632,6 +632,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `migrations-drift.yml` — Migrations Drift (pull_request, push, schedule, workflow_dispatch; cron 0 7 * * *)
 - `pr-checks.yml` — PR Checks (pull_request, push, workflow_dispatch)
 - `pr-review-sla.yml` — PR Review SLA (schedule, workflow_dispatch; cron 0 12 * * 1-5)
+- `provisionar-secret-design-sync.yml` — Provisionar secret do webhook Promo Design (workflow_dispatch)
 - `qa-exhaustive.yml` — QA Exhaustive (Weekly) (schedule, workflow_dispatch; cron 0 3 * * 1)
 - `quote-to-sale-e2e.yml` — Quote-to-Sale Guard Rails (pull_request, workflow_dispatch)
 - `release-please.yml` — Release Please (push, workflow_dispatch)
@@ -766,6 +767,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `6938bcc` chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)
 - 2026-11-24 `a35b9ea` fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)
 - 2026-11-24 `dd14171` fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)
 - 2026-11-24 `7b75ef8` fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)
@@ -780,7 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `e4459d7` test: guarda de console passa a reprovar o teste que emite erro (QA-149) (#719)
 - 2026-11-24 `adedb79` docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)
 - 2026-11-24 `9db0028` test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)
-- 2026-11-24 `312d10e` fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

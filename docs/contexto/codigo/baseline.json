@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a35b9ea8ac318690a37d5b5b18da8c8358fd4859",
+  "commit": "6938bccd0dfdfa1a9acc816145a5aba6eec5fd2d",
   "branch": "main",
-  "data_commit": "2026-11-24T03:34:26-03:00",
+  "data_commit": "2026-11-24T07:05:15-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "6938bcc",
+    "data": "2026-11-24",
+    "assunto": "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)"
+   },
    {
     "sha": "a35b9ea",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "06ff5fe",
     "data": "2026-11-24",
     "assunto": "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)"
-   },
-   {
-    "sha": "737d0c0",
-    "data": "2026-11-24",
-    "assunto": "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)"
    }
   ],
-  "arquivos_mudados_7d": 383,
+  "arquivos_mudados_7d": 378,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3675,
+  "arquivos_total": 3676,
   "arquivos_codigo": 2617,
   "linhas_codigo": 448887,
   "rotas": 170,
@@ -329,7 +329,7 @@
   "migrations": 712,
   "cron_jobs": 39,
   "testes": 279,
-  "workflows": 27,
+  "workflows": 28,
   "scripts": 78,
   "docs_md": 225
  },
