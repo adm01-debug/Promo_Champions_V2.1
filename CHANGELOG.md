@@ -1,5 +1,42 @@
 # Changelog
 
+## [1.8.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.4...promo-champions-v2-v1.8.0) (2026-11-24)
+
+
+### Funcionalidades
+
+* acoes do modulo de inteligencia de compras passam a funcionar (QA-104) ([#713](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/713)) ([66ebe3f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/66ebe3f60e29255e1a6459b54ffb1db7043ce63c))
+* botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) ([#712](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/712)) ([e514cbc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694))
+* botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) ([#709](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/709)) ([97e44d8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/97e44d8a8e92127b8d8202fc6465faaf798633db))
+* botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) ([#714](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/714)) ([22f284a](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/22f284a5707a9b3e55589cb63636bc70825d6e48))
+* dialogo "Configurar IA" passa a salvar os limiares de verdade (QA-107) ([#715](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/715)) ([83bacfb](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/83bacfbc1acae0dd996eeb246bd9c84c11bdbf19))
+* filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) ([#711](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/711)) ([b48da88](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b48da889288547218935f6088b291ec1117bb4c7))
+* mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) ([#703](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/703)) ([aab4737](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/aab47375a6b63267d65d7398212c51515deb9a71))
+* telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) ([#707](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/707)) ([06ff5fe](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b))
+* telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) ([#710](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/710)) ([5c0431f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5c0431f79892366d337d7d41da0b2e35990f9093))
+
+
+### Correções
+
+* busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) ([#708](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/708)) ([7291cdd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7291cdd869ffe6e2cbbb78f3e6b92212cdff6986))
+* card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) ([#691](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/691)) ([f0b094b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5))
+* comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) ([#701](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/701)) ([01dd7e3](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/01dd7e3fe4ab1e06d58adde7653c86934f85a248))
+* confirma exclusao de flag, conversa, token e supressao (QA-177) ([#727](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/727)) ([bf7fc73](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/bf7fc73c56c502c51cb858d057f1dc87018865ad))
+* confirma exclusoes P2 com dialogo acessivel (QA-257) ([#729](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/729)) ([dd14171](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/dd14171eb0bc2b665eb6852ebc7df69babc37673))
+* escopa leitura de entidade e limita busca semantica por usuario (QA-213) ([#696](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/696)) ([78beba2](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/78beba22b2e57869bb1e220beddb5780b0b51ad0))
+* exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) ([#693](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/693)) ([fccaef3](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fccaef3c82d77bf89f388e5ee55d6156e4dabb3a))
+* exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) ([#697](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/697)) ([6598301](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/659830120d94b8e1e383173dc4b561dd14a5375b))
+* inscricao em liga vai para o cache com o identificador do usuario (QA-139) ([#716](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/716)) ([312d10e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/312d10e5b11305cd54b36b7f3675afcb11bc8bff))
+* inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) ([#690](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/690)) ([812f690](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/812f690274e4e194164f2e2fff6ecbe9c17fd3f9))
+* meta e ranking ignoram venda excluida logicamente (QA-069) ([#692](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/692)) ([a35b9ea](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a35b9ea8ac318690a37d5b5b18da8c8358fd4859))
+* modo calmo assina o evento uma vez por consumidor com provider (QA-135) ([#720](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/720)) ([ceeefa8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c))
+* precedencia explicita de papeis no useUserRoles (QA-251) ([#684](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/684)) ([e84935e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e84935ef49e90478c9606677ecfc1320688ee947))
+* ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) ([#682](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/682)) ([27e826b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/27e826bc2342b1d53f59799c86ef3e7625c6d775))
+* restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) ([#695](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/695)) ([41972be](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/41972be665cb1c6f375414a9df41385757fbb32e))
+* sincroniza types.ts com a tabela designs_inbound do banco (drift) ([#687](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/687)) ([99efd08](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/99efd08c9b8bdeab44d6c5caaa5103c351da11d6))
+* troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) ([#728](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/728)) ([7b75ef8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7b75ef89a8535f32253cabc48051cdb09f3b0cfe))
+* valida colunas pedidas no external-db-bridge contra allowlist (QA-219) ([#694](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/694)) ([554eb39](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384))
+
 ## [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 
