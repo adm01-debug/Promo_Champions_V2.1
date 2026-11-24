@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9650,
+ "arestas": 9655,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -50,7 +50,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 129
+   "importado_por": 130
   },
   {
    "arquivo": "src/components/transitions/PageTransition.tsx",
@@ -125,12 +125,12 @@
    "importado_por": 41
   },
   {
-   "arquivo": "supabase/functions/_shared/chunked-in.ts",
+   "arquivo": "src/utils/dateHelpers.ts",
    "importado_por": 40
   },
   {
-   "arquivo": "src/utils/dateHelpers.ts",
-   "importado_por": 38
+   "arquivo": "supabase/functions/_shared/chunked-in.ts",
+   "importado_por": 40
   },
   {
    "arquivo": "supabase/functions/_shared/business-date.ts",
@@ -299,7 +299,7 @@
   {
    "modulo": "utils",
    "depende_de": 3,
-   "importado_por": 28
+   "importado_por": 29
   },
   {
    "modulo": "components/dashboard",

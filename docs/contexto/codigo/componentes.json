@@ -10835,7 +10835,7 @@
     "ClientPurchaseHistory"
    ],
    "export_default": null,
-   "linhas": 543,
+   "linhas": 539,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [
     "usePurchaseHistory"
@@ -10867,7 +10867,7 @@
     "DuplicateBlockAudit"
    ],
    "export_default": null,
-   "linhas": 176,
+   "linhas": 240,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [],
    "tabelas": [
@@ -10911,7 +10911,7 @@
     "PurchaseHeatmapGrid"
    ],
    "export_default": null,
-   "linhas": 463,
+   "linhas": 488,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [
     "usePurchaseHeatmap"
@@ -10941,7 +10941,7 @@
     "PurchasePredictionCard"
    ],
    "export_default": null,
-   "linhas": 433,
+   "linhas": 442,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [
     "usePurchaseIntelligence"
@@ -16097,7 +16097,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 129,
+   "usado_por": 130,
    "orfao": false
   },
   {

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
+  "commit": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
   "branch": "main",
-  "data_commit": "2026-11-24T01:27:33-03:00",
+  "data_commit": "2026-11-24T01:31:56-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "66ebe3f",
+    "data": "2026-11-24",
+    "assunto": "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)"
+   },
    {
     "sha": "e514cbc",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "dd3a3f9",
     "data": "2026-11-24",
     "assunto": "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)"
-   },
-   {
-    "sha": "99efd08",
-    "data": "2026-11-24",
-    "assunto": "fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)"
    }
   ],
-  "arquivos_mudados_7d": 299,
+  "arquivos_mudados_7d": 304,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 34
+    "mudancas": 33
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3653,
-  "arquivos_codigo": 2597,
-  "linhas_codigo": 446489,
+  "arquivos_total": 3655,
+  "arquivos_codigo": 2599,
+  "linhas_codigo": 446838,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 259,
+  "testes": 261,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1231,
-   "linhas": 193799
+   "arquivos": 1233,
+   "linhas": 194148
   },
   "src/config": {
    "arquivos": 4,

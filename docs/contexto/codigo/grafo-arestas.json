@@ -5094,9 +5094,12 @@
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
    "src/components/ui/table.tsx",
    "src/integrations/supabase/client.ts",
-   "src/lib/utils.ts"
+   "src/lib/utils.ts",
+   "src/utils/csvExport.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/components/purchase-intelligence/EmptyStateGuide.tsx": [
    "src/components/ui/button.tsx",
@@ -5119,7 +5122,9 @@
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tooltip.tsx",
    "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts",
-   "src/lib/utils.ts"
+   "src/lib/utils.ts",
+   "src/utils/csvExport.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx": [
    "src/components/analytics/LTVBySegment.tsx",

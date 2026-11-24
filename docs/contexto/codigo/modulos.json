@@ -6614,8 +6614,8 @@
   {
    "modulo": "components/purchase-intelligence",
    "arquivos": 10,
-   "testes": 1,
-   "linhas": 2459,
+   "testes": 3,
+   "linhas": 2553,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6672,7 +6672,8 @@
     "hooks/orders",
     "hooks/purchase-intelligence",
     "integrations/supabase",
-    "lib"
+    "lib",
+    "utils"
    ],
    "pacotes_externos": [
     "@tanstack/react-query",
@@ -6680,6 +6681,7 @@
     "framer-motion",
     "lucide-react",
     "react-helmet-async",
+    "react-router-dom",
     "recharts"
    ]
   },
@@ -19861,6 +19863,7 @@
     "components/forecast",
     "components/lead-scoring",
     "components/pricing",
+    "components/purchase-intelligence",
     "components/race",
     "components/revenue-intelligence",
     "components/sdr",

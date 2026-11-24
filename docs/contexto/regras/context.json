@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
+  "sha": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:29 UTC",
-  "files_total": 3668,
-  "code_files": 3319,
-  "code_lines": 481600
+  "generated_at": "2026-11-24 04:32 UTC",
+  "files_total": 3670,
+  "code_files": 3321,
+  "code_lines": 481949
  },
  "version": "1.3.2",
- "facts_hash": "fe56d25a0bed196c",
+ "facts_hash": "1d49fcdbac26e292",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1386,
+   ".tsx": 1388,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -96089,7 +96089,7 @@
      "get_client_purchase_heatmap",
      "get_purchase_intelligence_summary"
     ],
-    "deps_count": 37
+    "deps_count": 39
    },
    {
     "path": "/inteligencia-preditiva",
@@ -101646,6 +101646,13 @@
    },
    {
     "path": "/agenda",
+    "component": "div",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx"
+   },
+   {
+    "path": "/agenda",
     "component": "Agenda",
     "guard": "",
     "roles": [],
@@ -102255,6 +102262,13 @@
    },
    {
     "path": "/inteligencia-compras",
+    "component": "PurchasePredictionCard",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx"
+   },
+   {
+    "path": "/inteligencia-compras",
     "component": "PurchaseIntelligence",
     "guard": "",
     "roles": [],
@@ -102392,6 +102406,13 @@
     "guard": "",
     "roles": [],
     "file": "src/routes/AppRoutes.tsx"
+   },
+   {
+    "path": "/orcamentos",
+    "component": "div",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx"
    },
    {
     "path": "/orcamentos",
@@ -102915,7 +102936,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1231,
+  "components_count": 1233,
   "hooks": [
    {
     "name": "useContacts",
@@ -106871,8 +106892,8 @@
   },
   {
    "module": "src/components",
-   "files": 1231,
-   "lines": 193798,
+   "files": 1233,
+   "lines": 194147,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -143939,6 +143960,18 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+    "field": "status",
+    "value": "Blocked",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+    "field": "status",
+    "value": "Blocked",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/purchase-intelligence/PurchasePredictionCard.tsx",
     "field": "type",
     "value": "spring",
@@ -159347,6 +159380,42 @@
    {
     "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
     "name": "mostra erro da consulta em vez de lista vazia"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    "name": "filtra por status e exporta apenas as linhas filtradas"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    "name": "desabilita a exportação quando nenhum registro corresponde ao filtro"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+    "name": "PurchaseHeatmapGrid — exportação do mapa de compras (etapa 104)"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+    "name": "exporta em CSV as células visíveis, somando receita por cliente e mês"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+    "name": "mostra estado vazio, sem exportação, quando não há compras no período"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+    "name": "PurchasePredictionCard — ações da recomendação (etapa 104)"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+    "name": "leva para a agenda ao clicar em Agendar"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+    "name": "leva para os orçamentos ao clicar em Proposta"
+   },
+   {
+    "file": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+    "name": "recarrega a análise quando a IA falha"
    },
    {
     "file": "src/components/reporting/funnelReportHelpers.test.ts",
@@ -241920,7 +241989,7 @@
   },
   "src/components/purchase-intelligence/ClientPurchaseHistory.tsx": {
    "path": "src/components/purchase-intelligence/ClientPurchaseHistory.tsx",
-   "lines": 543,
+   "lines": 539,
    "exports": [
     "function ClientPurchaseHistory"
    ],
@@ -241953,17 +242022,19 @@
   },
   "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx": {
    "path": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
-   "lines": 70,
+   "lines": 142,
    "is_test": true,
    "tests": [
     "DuplicateBlockAudit — busca e erro da consulta (etapa 106)",
     "filtra a lista pelo termo digitado",
-    "mostra erro da consulta em vez de lista vazia"
+    "mostra erro da consulta em vez de lista vazia",
+    "filtra por status e exporta apenas as linhas filtradas",
+    "desabilita a exportação quando nenhum registro corresponde ao filtro"
    ]
   },
   "src/components/purchase-intelligence/DuplicateBlockAudit.tsx": {
    "path": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
-   "lines": 176,
+   "lines": 240,
    "exports": [
     "const DuplicateBlockAudit"
    ],
@@ -241974,6 +242045,16 @@
     }
    ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "Blocked",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "Blocked",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "Blocked",
@@ -242008,9 +242089,19 @@
     "const IntelligenceSettings"
    ]
   },
+  "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx": {
+   "path": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+   "lines": 86,
+   "is_test": true,
+   "tests": [
+    "PurchaseHeatmapGrid — exportação do mapa de compras (etapa 104)",
+    "exporta em CSV as células visíveis, somando receita por cliente e mês",
+    "mostra estado vazio, sem exportação, quando não há compras no período"
+   ]
+  },
   "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx": {
    "path": "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx",
-   "lines": 463,
+   "lines": 488,
    "exports": [
     "function PurchaseHeatmapGrid"
    ],
@@ -242032,11 +242123,46 @@
     "+4.2% mês"
    ]
   },
+  "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx": {
+   "path": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+   "lines": 97,
+   "is_test": true,
+   "routes": [
+    {
+     "path": "/inteligencia-compras",
+     "component": "PurchasePredictionCard",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/agenda",
+     "component": "div",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/orcamentos",
+     "component": "div",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "tests": [
+    "PurchasePredictionCard — ações da recomendação (etapa 104)",
+    "leva para a agenda ao clicar em Agendar",
+    "leva para os orçamentos ao clicar em Proposta",
+    "recarrega a análise quando a IA falha"
+   ]
+  },
   "src/components/purchase-intelligence/PurchasePredictionCard.tsx": {
    "path": "src/components/purchase-intelligence/PurchasePredictionCard.tsx",
-   "lines": 433,
+   "lines": 442,
    "exports": [
     "const PurchasePredictionCard"
+   ],
+   "navigates": [
+    "/agenda",
+    "/orcamentos"
    ],
    "status_values": [
     {
@@ -299247,10 +299373,25 @@
   }
  },
  "git": {
-  "sha": "e514cbc7b1e9e7ac2ab8a8a73f6a3652a31ca694",
+  "sha": "66ebe3f60e29255e1a6459b54ffb1db7043ce63c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "66ebe3f",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)",
+    "files": [
+     "src/components/purchase-intelligence/ClientPurchaseHistory.tsx",
+     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+     "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+     "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+     "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx",
+     "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+     "src/components/purchase-intelligence/PurchasePredictionCard.tsx"
+    ]
+   },
    {
     "sha": "e514cbc",
     "date": "2026-11-24",
@@ -299572,23 +299713,20 @@
      "docs/qa/05-PROGRESSO.md",
      "scripts/check-typecheck-baseline.mjs"
     ]
-   },
-   {
-    "sha": "421ad72",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
     16
+   ],
+   [
+    "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    2
+   ],
+   [
+    "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+    2
    ],
    [
     "src/components/admin/AdminQuickLinks.test.tsx",
@@ -299601,6 +299739,26 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/purchase-intelligence/ClientPurchaseHistory.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/PurchasePredictionCard.tsx",
+    1
    ],
    [
     "src/components/pricing/PricingHealthBanner.test.tsx",
@@ -299636,34 +299794,6 @@
    ],
    [
     "src/pages/WinLossAnalysisPage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/WinLossAnalysisPage.tsx",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
-    1
-   ],
-   [
-    "docs/estado/03_DOMINIO_SDR_CADENCIAS.md",
-    1
-   ],
-   [
-    "docs/estado/10_EDGE_FUNCTIONS.md",
-    1
-   ],
-   [
-    "docs/estado/ESTADO_ATUAL.md",
-    1
-   ],
-   [
-    "docs/API.md",
     1
    ]
   ]

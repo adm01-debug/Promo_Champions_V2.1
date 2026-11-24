@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 259,
+ "total": 261,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 191
+  "unit": 193
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 174
+   "arquivos": 176
   },
   {
    "padrao": "tests/",
@@ -489,11 +489,31 @@
   {
    "arquivo": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
    "tipo": "unit",
-   "linhas": 70,
+   "linhas": 142,
    "testa": [
     "src/components/purchase-intelligence/DuplicateBlockAudit.tsx"
    ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx",
+    "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts"
+   ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/components/purchase-intelligence/PurchasePredictionCard.tsx",
+    "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/components/reporting/funnelReportHelpers.test.ts",
@@ -2251,6 +2271,8 @@
   "src/components/pricing/PricingHealthBanner.tsx": 1,
   "src/components/pricing/RevenueLeakageCard.tsx": 1,
   "src/components/purchase-intelligence/DuplicateBlockAudit.tsx": 1,
+  "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx": 1,
+  "src/components/purchase-intelligence/PurchasePredictionCard.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,
   "src/components/reports/EmailReportConfig.tsx": 1,
   "src/components/sales/SaleHUDCard.tsx": 1,
@@ -2302,6 +2324,7 @@
   "src/hooks/pipeline/useDealCardContext.ts": 1,
   "src/hooks/pipeline/useWeeklyWonDeals.ts": 1,
   "src/hooks/playbooks/usePlaybookMutations.ts": 1,
+  "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts": 2,
   "src/hooks/quoteErrorMessages.ts": 5,
   "src/hooks/race/useGhostCar.ts": 1,
   "src/hooks/reports/salesReportHelpers.ts": 1,
@@ -2718,7 +2741,6 @@
    "src/hooks/pipeline-pulse/useQuickAction.ts",
    "src/hooks/pipeline/usePipelineHealthScore.ts",
    "src/hooks/playbooks/usePlaybookQueries.ts",
-   "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts",
    "src/hooks/race/useCalmMode.ts",
    "src/hooks/race/useChampionsHistory.ts",
    "src/hooks/race/useDailyBriefing.ts",

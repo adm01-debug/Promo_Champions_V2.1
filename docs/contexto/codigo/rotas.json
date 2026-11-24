@@ -6598,6 +6598,7 @@
     "useGlobalSeasonality",
     "useLocation",
     "useMemo",
+    "useNavigate",
     "useNavigationType",
     "useOrder",
     "usePageTransitionConfig",
@@ -6636,7 +6637,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 38
+   "arquivos_puxados": 40
   },
   {
    "protegida": false,

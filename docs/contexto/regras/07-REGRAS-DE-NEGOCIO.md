@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e514cbc7b1` · branch `main` · 2026-11-24 04:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `66ebe3f60e` · branch `main` · 2026-11-24 04:32 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1752 testes em 224 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1761 testes em 226 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4380,6 +4380,7 @@ _nenhum item encontrado_
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/pipeline/PipelineBoard.test.tsx` | 5 | PipelineBoard — vendas ganhas na semana · mostra a contagem real de vendas ganhas nos últimos 7 dias · não exibe o indicador fixo de Pipeline Health (92.4%) · usa singular quando há uma única venda ganha … |
 | `src/components/predictive/PredictiveScenarioPlanner.test.tsx` | 5 | PredictiveScenarioPlanner · mostra skeleton enquanto carrega a base real · mostra erro honesto quando a consulta falha · mostra estado vazio sem vendas ganhas, sem projeção inventada … |
+| `src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx` | 5 | DuplicateBlockAudit — busca e erro da consulta (etapa 106) · filtra a lista pelo termo digitado · mostra erro da consulta em vez de lista vazia · filtra por status e exporta apenas as linhas filtradas … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/sales/cadence/CadenceReportPanel.test.tsx` | 5 | CadenceReportPanel · busca o período semanal (7 dias) por padrão · sem dados mostra estado vazio honesto e nenhum valor fixo antigo · mostra métricas consolidadas e execução por canal vindas do banco … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
@@ -4415,6 +4416,7 @@ _nenhum item encontrado_
 | `src/components/competitive/FeatureComparison.test.tsx` | 4 | FeatureComparison (Market Intel) · mostra estado vazio honesto quando não há concorrentes cadastrados · lista concorrentes reais com menções e battle card vinculado · mostra erro com ação de tentar novamente |
 | `src/components/conversational/BattleCardSuggestion.test.tsx` | 4 | BattleCardSuggestion · busca só battle card ativo (arquivado não é sugerido) · não renderiza nada quando o material não volta (arquivado ou inexistente) · mostra o material ativo sugerido |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
+| `src/components/purchase-intelligence/PurchasePredictionCard.test.tsx` | 4 | PurchasePredictionCard — ações da recomendação (etapa 104) · leva para a agenda ao clicar em Agendar · leva para os orçamentos ao clicar em Proposta · recarrega a análise quando a IA falha |
 | `src/components/sales/cadence/EliteCadenceAnalytics.test.tsx` | 4 | EliteCadenceAnalytics · mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios · mostra estado vazio quando não há tarefas no período · mostra erro quando a consulta falha |
 | `src/components/vendedor/EligibleBonusesCard.test.tsx` | 4 | EligibleBonusesCard (QA-061) · mostra erro com nova tentativa quando a leitura falha · avisa que o dado é parcial quando sequência ou total de vendas falharam · nao mostra o aviso de parcial quando todas as leituras funcionaram |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
@@ -4442,7 +4444,7 @@ _nenhum item encontrado_
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |
 | `src/components/pricing/PricingHealthBanner.test.tsx` | 3 | PricingHealthBanner — exportação da auditoria (etapa 103) · exporta resumo, faixas, vendedores e produtos em CSV · exporta apenas o resumo quando o hub não passa os detalhes |
-| `src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx` | 3 | DuplicateBlockAudit — busca e erro da consulta (etapa 106) · filtra a lista pelo termo digitado · mostra erro da consulta em vez de lista vazia |
+| `src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx` | 3 | PurchaseHeatmapGrid — exportação do mapa de compras (etapa 104) · exporta em CSV as células visíveis, somando receita por cliente e mês · mostra estado vazio, sem exportação, quando não há compras no período |
 | `src/components/sales/cadence/ApprovalQueue.test.tsx` | 3 | Filas de aprovação de cadência · ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos · aba Fila de Aprovação do gerenciador não exibe itens fictícios |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useEvolutionCurves.test.tsx` | 3 | useEvolutionCurves · indexa a receita acumulada pelo id, sem somar vendedores homônimos · filtra pelos ids selecionados |
