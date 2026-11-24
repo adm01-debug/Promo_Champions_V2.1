@@ -3159,7 +3159,7 @@
    "nome": "generate-revenue-forecast",
    "entrada": "supabase/functions/generate-revenue-forecast/index.ts",
    "arquivos": 1,
-   "linhas": 281,
+   "linhas": 296,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3182,6 +3182,7 @@
    "hosts_externos": [],
    "usa_shared": [
     "ai-gateway.ts",
+    "auth-client.ts",
     "business-date.ts",
     "chunked-in.ts",
     "cors.ts",
@@ -4424,7 +4425,7 @@
    "nome": "qbr-generator",
    "entrada": "supabase/functions/qbr-generator/index.ts",
    "arquivos": 1,
-   "linhas": 151,
+   "linhas": 166,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -4444,6 +4445,7 @@
    "hosts_externos": [],
    "usa_shared": [
     "ai-gateway.ts",
+    "auth-client.ts",
     "business-date.ts",
     "cors.ts",
     "fetch-with-timeout.ts",
@@ -4502,7 +4504,7 @@
    "nome": "race-commentary",
    "entrada": "supabase/functions/race-commentary/index.ts",
    "arquivos": 2,
-   "linhas": 226,
+   "linhas": 241,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -4519,6 +4521,7 @@
    "hosts_externos": [],
    "usa_shared": [
     "ai-gateway.ts",
+    "auth-client.ts",
     "cors.ts",
     "rate-limit.ts",
     "request-id.ts"
@@ -6083,7 +6086,7 @@
    "nome": "summarize-call-recording",
    "entrada": "supabase/functions/summarize-call-recording/index.ts",
    "arquivos": 1,
-   "linhas": 226,
+   "linhas": 238,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -6106,6 +6109,7 @@
    "hosts_externos": [],
    "usa_shared": [
     "ai-gateway.ts",
+    "auth-client.ts",
     "cors.ts",
     "fetch-with-timeout.ts",
     "rate-limit.ts",

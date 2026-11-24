@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
+  "sha": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 01:09 UTC",
+  "generated_at": "2026-11-24 01:55 UTC",
   "files_total": 3663,
   "code_files": 3314,
-  "code_lines": 480557
+  "code_lines": 480614
  },
  "version": "1.3.2",
- "facts_hash": "818db538a210cc67",
+ "facts_hash": "190ffeebbd2f1232",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -108241,7 +108241,7 @@
   {
    "module": "supabase/functions",
    "files": 330,
-   "lines": 67695,
+   "lines": 67752,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -124460,7 +124460,7 @@
    },
    {
     "file": "supabase/functions/generate-revenue-forecast/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    },
    {
     "file": "supabase/functions/geocode-proxy/index.ts",
@@ -124604,11 +124604,11 @@
    },
    {
     "file": "supabase/functions/qbr-generator/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    },
    {
     "file": "supabase/functions/race-commentary/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    },
    {
     "file": "supabase/functions/receive-design-sync/mapping.ts",
@@ -124772,7 +124772,7 @@
    },
    {
     "file": "supabase/functions/summarize-call-recording/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    },
    {
     "file": "supabase/functions/test-integration-connection/index.ts",
@@ -284551,7 +284551,7 @@
   },
   "supabase/functions/generate-revenue-forecast/index.ts": {
    "path": "supabase/functions/generate-revenue-forecast/index.ts",
-   "lines": 281,
+   "lines": 296,
    "tables": [
     {
      "table": "stage_probabilities",
@@ -284689,7 +284689,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    ],
    "pagination": [
     "10000",
@@ -287761,7 +287761,7 @@
   },
   "supabase/functions/qbr-generator/index.ts": {
    "path": "supabase/functions/qbr-generator/index.ts",
-   "lines": 151,
+   "lines": 166,
    "tables": [
     {
      "table": "sales",
@@ -287821,7 +287821,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    ],
    "pagination": [
     "10000"
@@ -287922,7 +287922,7 @@
   },
   "supabase/functions/race-commentary/index.ts": {
    "path": "supabase/functions/race-commentary/index.ts",
-   "lines": 181,
+   "lines": 196,
    "env": [
     "OPENROUTER_API_KEY"
    ],
@@ -287945,7 +287945,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    ],
    "temporal": [
     "const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s cap"
@@ -291210,7 +291210,7 @@
   },
   "supabase/functions/summarize-call-recording/index.ts": {
    "path": "supabase/functions/summarize-call-recording/index.ts",
-   "lines": 226,
+   "lines": 238,
    "tables": [
     {
      "table": "call_recordings",
@@ -291397,7 +291397,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    ]
   },
   "supabase/functions/territory-optimization/index.ts": {
@@ -299103,10 +299103,23 @@
   }
  },
  "git": {
-  "sha": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
+  "sha": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "fccaef3",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/generate-revenue-forecast/index.ts",
+     "supabase/functions/qbr-generator/index.ts",
+     "supabase/functions/race-commentary/index.ts",
+     "supabase/functions/summarize-call-recording/index.ts"
+    ]
+   },
    {
     "sha": "f0b094b",
     "date": "2026-11-23",
@@ -299432,16 +299445,6 @@
     "files": [
      "src/components/shared/GlobalErrorBoundary.tsx"
     ]
-   },
-   {
-    "sha": "6781397",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/pages/ImportExport.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -299478,6 +299481,22 @@
     2
    ],
    [
+    "supabase/functions/generate-revenue-forecast/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/qbr-generator/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/race-commentary/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/summarize-call-recording/index.ts",
+    1
+   ],
+   [
     "src/components/vendedor/EligibleBonusesCard.test.tsx",
     1
    ],
@@ -299507,22 +299526,6 @@
    ],
    [
     "docs/graphify/README.md",
-    1
-   ],
-   [
-    "graphify-out/GRAPH_REPORT.md",
-    1
-   ],
-   [
-    "graphify-out/manifest.json",
-    1
-   ],
-   [
-    "graphify.local.json",
-    1
-   ],
-   [
-    "scripts/graphify/extract-code-only.mjs",
     1
    ]
   ]

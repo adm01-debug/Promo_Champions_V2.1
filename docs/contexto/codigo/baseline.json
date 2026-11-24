@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f0b094b90d4c3cf5a8a75b8c880a42ca4e7e16d5",
+  "commit": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
   "branch": "main",
-  "data_commit": "2026-11-24T01:08:32Z",
+  "data_commit": "2026-11-23T22:55:05-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "fccaef3",
+    "data": "2026-11-23",
+    "assunto": "fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)"
+   },
    {
     "sha": "f0b094b",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "5a8ce99",
     "data": "2026-11-23",
     "assunto": "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)"
-   },
-   {
-    "sha": "7dfe259",
-    "data": "2026-11-23",
-    "assunto": "fix: menu e paleta respeitam o papel do usuario (QA-171/172) (#675)"
    }
   ],
-  "arquivos_mudados_7d": 276,
+  "arquivos_mudados_7d": 270,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -188,33 +188,33 @@
     "mudancas": 44
    },
    {
-    "pasta": "package.json",
+    "pasta": "src/components/gamification",
     "mudancas": 42
    },
    {
-    "pasta": "src/components/gamification",
+    "pasta": "src/components/revenue-intelligence",
     "mudancas": 42
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 42
+    "mudancas": 41
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "deno.lock",
     "mudancas": 20
    },
    {
-    "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 15
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
+    "arquivo": "CHANGELOG.md",
     "mudancas": 14
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 248
+    "commits": 249
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 28
+    "commits": 27
    },
    {
     "autor": "github-actions[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3648,
   "arquivos_codigo": 2592,
-  "linhas_codigo": 445446,
+  "linhas_codigo": 445503,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "supabase/functions": {
    "arquivos": 330,
-   "linhas": 67695
+   "linhas": 67752
   },
   "tailwind.config.ts": {
    "arquivos": 1,

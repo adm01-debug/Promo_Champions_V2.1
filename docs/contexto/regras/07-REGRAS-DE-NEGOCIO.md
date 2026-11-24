@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f0b094b90d` · branch `main` · 2026-11-24 01:09 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fccaef3c82` · branch `main` · 2026-11-24 01:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5059,7 +5059,7 @@ _nenhum item encontrado_
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/generate-coaching-actions/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/generate-executive-briefing/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos | `supabase/functions/generate-loss-coaching/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/generate-revenue-forecast/index.ts` |
+| Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
