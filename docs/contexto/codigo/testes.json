@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 269,
+ "total": 270,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 201
+  "unit": 202
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 183
+   "arquivos": 184
   },
   {
    "padrao": "tests/",
@@ -1207,6 +1207,15 @@
    "linhas": 142,
    "testa": [
     "src/hooks/useScrollRestoration.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/useSyncedSetting.test.tsx",
+   "tipo": "unit",
+   "linhas": 184,
+   "testa": [
+    "src/hooks/useSyncedSetting.ts"
    ],
    "casos": 5
   },
@@ -2432,6 +2441,7 @@
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,
+  "src/hooks/useSyncedSetting.ts": 1,
   "src/hooks/useUserRoles.ts": 1,
   "src/hooks/useVictoryFeed.ts": 1,
   "src/hooks/win-loss/useWinLossAggregations.ts": 1,
@@ -3000,7 +3010,6 @@
    "src/hooks/useStagnantTasks.ts",
    "src/hooks/useStockForecast.ts",
    "src/hooks/useSuppliers.ts",
-   "src/hooks/useSyncedSetting.ts",
    "src/hooks/useSystemSoundSettings.ts",
    "src/hooks/useTasks.ts",
    "src/hooks/useTeamAchievementStats.ts",

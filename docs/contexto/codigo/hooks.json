@@ -10786,7 +10786,7 @@
     "src/components/purchase-intelligence/IntelligenceSettings.tsx",
     "src/hooks/win-loss/useAtRiskSettings.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useSystemSoundSettings.ts",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ceeefa8d6f` · branch `main` · 2026-11-24 04:57 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a6562167d2` · branch `main` · 2026-11-24 05:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1797 testes em 233 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1803 testes em 234 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4362,6 +4362,7 @@ _nenhum item encontrado_
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
+| `src/hooks/useSyncedSetting.test.tsx` | 6 | useSyncedSetting · A-88: reenvio para o servidor usa o valor corrente, nao o da primeira renderizacao · carimbos iguais entre local e servidor nao disparam upsert · valor do servidor mais novo vence e atualiza o cache local … |
 | `src/hooks/activities/useActivities.test.tsx` | 6 | useUpdateActivity · atualiza só atividades não excluídas e invalida lista, stats e ranking · mostra erro quando a RLS bloqueia a alteração (0 linhas afetadas) · useDeleteActivity … |
 | `src/hooks/cadences/useCadenceChannelStats.test.ts` | 6 | fetchCadenceChannelStats · conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas · usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje) · calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas) … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c",
+  "commit": "a6562167d2a8503581204e39ffad0e46be5e8d97",
   "branch": "main",
-  "data_commit": "2026-11-24T01:56:46-03:00",
+  "data_commit": "2026-11-24T05:10:49Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a656216",
+    "data": "2026-11-24",
+    "assunto": "test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)"
+   },
+   {
+    "sha": "1cf9183",
+    "data": "2026-11-24",
+    "assunto": "docs: varredura completa por erro de leitura engolido (QA-127) (#721)"
+   },
    {
     "sha": "ceeefa8",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "6598301",
     "data": "2026-11-23",
     "assunto": "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)"
-   },
-   {
-    "sha": "41972be",
-    "data": "2026-11-23",
-    "assunto": "fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)"
-   },
-   {
-    "sha": "78beba2",
-    "data": "2026-11-23",
-    "assunto": "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)"
    }
   ],
-  "arquivos_mudados_7d": 320,
+  "arquivos_mudados_7d": 323,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 24
+    "mudancas": 26
    },
    {
     "arquivo": "deno.lock",
@@ -242,10 +242,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 5
-   },
-   {
     "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 5
    },
@@ -270,15 +266,15 @@
     "mudancas": 5
    },
    {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 4
+   },
+   {
     "arquivo": ".github/workflows/db-backup.yml",
     "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/migrations-drift.yml",
-    "mudancas": 4
-   },
-   {
-    "arquivo": ".github/workflows/types-sync.yml",
     "mudancas": 4
    },
    {
@@ -295,6 +291,10 @@
    },
    {
     "arquivo": "inventario/estado/banco.json",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "inventario/estado/edges.json",
     "mudancas": 4
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3663,
-  "arquivos_codigo": 2607,
-  "linhas_codigo": 447570,
+  "arquivos_total": 3665,
+  "arquivos_codigo": 2608,
+  "linhas_codigo": 447754,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,10 +328,10 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 269,
+  "testes": 270,
   "workflows": 27,
   "scripts": 78,
-  "docs_md": 223
+  "docs_md": 224
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 551,
-   "linhas": 65168
+   "arquivos": 552,
+   "linhas": 65352
   },
   "src/integrations": {
    "arquivos": 4,

@@ -3,9 +3,9 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2526)",
+   "TypeScript (2527)",
    "SQL (722)",
-   "Markdown (223)",
+   "Markdown (224)",
    "JavaScript (78)",
    "JSON (33)",
    "YAML (29)",
@@ -1115,7 +1115,7 @@
   {
    "arquivo": "CONTRIBUTING.md",
    "titulo": "Contribuindo com Promo Champions v2",
-   "linhas": 73
+   "linhas": 78
   },
   {
    "arquivo": "PENDENCIAS.md",
@@ -1413,7 +1413,7 @@
   },
   {
    "pasta": "docs/qa",
-   "arquivos_md": 6
+   "arquivos_md": 7
   },
   {
    "pasta": "docs/pendencias",
