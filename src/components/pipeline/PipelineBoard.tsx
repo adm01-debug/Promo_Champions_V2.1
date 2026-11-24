@@ -178,9 +178,12 @@ export const PipelineBoard = () => {
 
   const probabilities = useMemo(() => {
     if (!rawProbabilities) return undefined;
-    const mapped: Record<string, { probability: number; factors: string[] }> = {};
+    const mapped: Record<
+      string,
+      { probability: number; factors: string[]; source: 'servidor' | 'estimativa' }
+    > = {};
     for (const [id, prob] of Object.entries(rawProbabilities)) {
-      mapped[id] = { probability: prob, factors: [] };
+      mapped[id] = { probability: prob.probability, factors: [], source: prob.source };
     }
     return mapped;
   }, [rawProbabilities]);

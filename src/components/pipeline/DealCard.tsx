@@ -49,6 +49,8 @@ interface DealCardProps {
   probability?: {
     probability: number;
     factors: string[];
+    /** `estimativa` = calculada localmente porque a análise do servidor não veio. */
+    source?: 'servidor' | 'estimativa';
   };
   leadScore?: {
     score: number;
@@ -368,6 +370,16 @@ export const DealCard = ({
             >
               <Zap className="h-2.5 w-2.5 mr-0.5 fill-current" />
               {probability.probability}% CHANCE DE GANHO
+            </Badge>
+          )}
+
+          {probability?.source === 'estimativa' && (
+            <Badge
+              variant="outline"
+              className="text-[9px] font-semibold uppercase tracking-tighter px-1.5 py-0 border-none bg-amber-500/10 text-amber-600"
+              title="Calculada localmente: a análise do servidor não estava disponível"
+            >
+              Estimativa local
             </Badge>
           )}
 
