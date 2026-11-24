@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9656,
+ "arestas": 9660,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -158,7 +158,7 @@
   },
   {
    "arquivo": "src/components/ui/alert-dialog.tsx",
-   "importado_por": 26
+   "importado_por": 27
   },
   {
    "arquivo": "src/components/ui/popover.tsx",

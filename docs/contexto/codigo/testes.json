@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 270,
+ "total": 274,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 202
+  "unit": 206
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 184
+   "arquivos": 188
   },
   {
    "padrao": "tests/",
@@ -302,6 +302,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/assistant/DealChatHistory.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/assistant/DealChatHistory.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/components/cadences/ContactRulesDialog.test.tsx",
    "tipo": "unit",
    "linhas": 159,
@@ -534,6 +543,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/reporting/EmbedTokenManagerDialog.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/components/reporting/funnelReportHelpers.test.ts",
    "tipo": "unit",
    "linhas": 121,
@@ -630,6 +648,15 @@
     "src/components/sequences/sendTimeHelpers.ts"
    ],
    "casos": 7
+  },
+  {
+   "arquivo": "src/components/settings/FeatureFlagsAdmin.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/components/settings/FeatureFlagsAdmin.tsx"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/components/tasks/CreateTaskDialog.test.tsx",
@@ -1523,6 +1550,15 @@
    "casos": 4
   },
   {
+   "arquivo": "src/pages/AdminSupressaoEmails.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/pages/AdminSupressaoEmails.tsx"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/pages/DealVelocityPage.test.tsx",
    "tipo": "unit",
    "linhas": 47,
@@ -2328,6 +2364,7 @@
   "src/components/analytics/ABCActionableAutomations.tsx": 1,
   "src/components/analytics/ABCAnalysis.tsx": 1,
   "src/components/analytics/ABCMatrixShift.tsx": 1,
+  "src/components/assistant/DealChatHistory.tsx": 1,
   "src/components/auth/ProtectedRoute.tsx": 2,
   "src/components/cadences/ContactRulesDialog.tsx": 1,
   "src/components/cadences/EnrollCadenceDialog.tsx": 1,
@@ -2353,6 +2390,7 @@
   "src/components/purchase-intelligence/IntelligenceSettings.tsx": 1,
   "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx": 1,
   "src/components/purchase-intelligence/PurchasePredictionCard.tsx": 1,
+  "src/components/reporting/EmbedTokenManagerDialog.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,
   "src/components/reports/EmailReportConfig.tsx": 1,
   "src/components/sales/SaleHUDCard.tsx": 1,
@@ -2363,6 +2401,7 @@
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": 1,
   "src/components/security/KnownDevices.tsx": 1,
   "src/components/sequences/sendTimeHelpers.ts": 1,
+  "src/components/settings/FeatureFlagsAdmin.tsx": 1,
   "src/components/tasks/CreateTaskDialog.tsx": 1,
   "src/components/ui/tooltip.tsx": 1,
   "src/components/vendedor/EligibleBonusesCard.tsx": 1,
@@ -2477,6 +2516,7 @@
   "src/lib/winloss/severityFromScore.ts": 2,
   "src/pages/AccountBasedSelling.tsx": 1,
   "src/pages/AdminComissoes.tsx": 1,
+  "src/pages/AdminSupressaoEmails.tsx": 1,
   "src/pages/Auth.tsx": 1,
   "src/pages/Clientes.tsx": 1,
   "src/pages/DealVelocityPage.tsx": 1,
@@ -2527,7 +2567,6 @@
    "src/pages/AdminPremiacoes.tsx",
    "src/pages/AdminRegrasInatividade.tsx",
    "src/pages/AdminSolicitacoesTitular.tsx",
-   "src/pages/AdminSupressaoEmails.tsx",
    "src/pages/AdminTasksPage.tsx",
    "src/pages/AdminTelemetria.tsx",
    "src/pages/Agenda.tsx",

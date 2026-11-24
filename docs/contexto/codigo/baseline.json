@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "be7b39be260df574bc11daf023d7e36ec66e8865",
+  "commit": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
   "branch": "main",
-  "data_commit": "2026-11-24T02:48:05-03:00",
+  "data_commit": "2026-11-24T03:19:53-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "bf7fc73",
+    "data": "2026-11-24",
+    "assunto": "fix: confirma exclusao de flag, conversa, token e supressao (QA-177) (#727)"
+   },
+   {
+    "sha": "93d5215",
+    "data": "2026-11-24",
+    "assunto": "docs: varre acoes destrutivas sem confirmacao (QA-177) (#726)"
+   },
    {
     "sha": "be7b39b",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "aab4737",
     "data": "2026-11-24",
     "assunto": "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)"
-   },
-   {
-    "sha": "01dd7e3",
-    "data": "2026-11-24",
-    "assunto": "fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)"
-   },
-   {
-    "sha": "20279aa",
-    "data": "2026-11-23",
-    "assunto": "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)"
    }
   ],
-  "arquivos_mudados_7d": 351,
+  "arquivos_mudados_7d": 359,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 29
+    "mudancas": 30
    },
    {
     "arquivo": "deno.lock",
@@ -266,10 +266,6 @@
     "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/db-backup.yml",
-    "mudancas": 4
-   },
-   {
     "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 4
    },
@@ -286,37 +282,41 @@
     "mudancas": 4
    },
    {
-    "arquivo": "inventario/estado/banco.json",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "inventario/estado/edges.json",
-    "mudancas": 4
-   },
-   {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/pipeline/DealCard.test.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/pipeline/PipelineColumn.tsx",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 259
+    "commits": 261
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 21
+    "commits": 20
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 20
+    "commits": 19
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3665,
-  "arquivos_codigo": 2608,
-  "linhas_codigo": 447745,
+  "arquivos_total": 3670,
+  "arquivos_codigo": 2612,
+  "linhas_codigo": 448147,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,10 +328,10 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 270,
+  "testes": 274,
   "workflows": 27,
   "scripts": 78,
-  "docs_md": 224
+  "docs_md": 225
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1235,
-   "linhas": 194409
+   "arquivos": 1238,
+   "linhas": 194698
   },
   "src/config": {
    "arquivos": 4,
@@ -623,8 +623,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 184,
-   "linhas": 45072
+   "arquivos": 185,
+   "linhas": 45185
   },
   "src/routes": {
    "arquivos": 5,

@@ -1534,7 +1534,7 @@
    "papeis": [
     "img"
    ],
-   "arquivos_puxados": 38
+   "arquivos_puxados": 40
   },
   {
    "protegida": true,
@@ -2858,7 +2858,7 @@
     "status",
     "user"
    ],
-   "arquivos_puxados": 40
+   "arquivos_puxados": 42
   },
   {
    "protegida": false,
@@ -4459,7 +4459,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 102
+   "arquivos_puxados": 103
   },
   {
    "protegida": false,
@@ -9356,7 +9356,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 45
+   "arquivos_puxados": 46
   },
   {
    "protegida": false,
@@ -9432,7 +9432,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 45
+   "arquivos_puxados": 46
   },
   {
    "protegida": false,

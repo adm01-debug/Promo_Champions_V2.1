@@ -1114,6 +1114,7 @@
    "src/lib/utils.ts"
   ],
   "src/components/assistant/DealChatHistory.tsx": [
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/scroll-area.tsx",
@@ -5738,6 +5739,7 @@
   ],
   "src/components/reporting/EmbedTokenManagerDialog.tsx": [
    "src/components/reporting/embedHelpers.ts",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -6897,6 +6899,7 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/components/settings/FeatureFlagsAdmin.tsx": [
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -10068,6 +10071,7 @@
    "src/components/email/EmailSuppressionMetricsCard.tsx",
    "src/components/email/FailedDraftsCard.tsx",
    "src/components/email/RecoveryRateCard.tsx",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",

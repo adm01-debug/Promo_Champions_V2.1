@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `be7b39be26` · branch `main` · 2026-11-24 05:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bf7fc73c56` · branch `main` · 2026-11-24 06:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1803 testes em 234 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1815 testes em 238 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4446,13 +4446,16 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
+| `src/components/assistant/DealChatHistory.test.tsx` | 3 | DealChatHistory — apagar pergunta · pede confirmacao antes de apagar e so apaga no confirmar · cancelar mantem a pergunta no historico |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |
 | `src/components/pricing/PricingHealthBanner.test.tsx` | 3 | PricingHealthBanner — exportação da auditoria (etapa 103) · exporta resumo, faixas, vendedores e produtos em CSV · exporta apenas o resumo quando o hub não passa os detalhes |
 | `src/components/purchase-intelligence/EmptyStateGuide.test.tsx` | 3 | EmptyStateGuide — guia de estado vazio com ações reais (etapa 105) · leva para a configuração ao clicar em Começar Configuração · leva para a documentação ao clicar em Ver Documentação |
 | `src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx` | 3 | PurchaseHeatmapGrid — exportação do mapa de compras (etapa 104) · exporta em CSV as células visíveis, somando receita por cliente e mês · mostra estado vazio, sem exportação, quando não há compras no período |
+| `src/components/reporting/EmbedTokenManagerDialog.test.tsx` | 3 | EmbedTokenManagerDialog — revogar e excluir token · pede confirmacao antes de revogar o link publico · pede confirmacao antes de excluir o token e cancelar nao apaga |
 | `src/components/sales/cadence/ApprovalQueue.test.tsx` | 3 | Filas de aprovação de cadência · ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos · aba Fila de Aprovação do gerenciador não exibe itens fictícios |
+| `src/components/settings/FeatureFlagsAdmin.test.tsx` | 3 | FeatureFlagsAdmin — excluir flag · pede confirmacao citando a chave antes de excluir a flag · cancelar nao exclui a flag |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useEvolutionCurves.test.tsx` | 3 | useEvolutionCurves · indexa a receita acumulada pelo id, sem somar vendedores homônimos · filtra pelos ids selecionados |
 | `src/hooks/useMultichannel.test.tsx` | 3 | useUpdateTemplate · atualiza a linha em message_templates pelo id · propaga erro do banco sem toast de sucesso |
@@ -4468,6 +4471,7 @@ _nenhum item encontrado_
 | `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
 | `src/lib/recordingMime.test.ts` | 3 | resolveRecordingMimeType · normaliza %s (%s) para %s · preserva MIME desconhecido para o Storage rejeitá-lo |
 | `src/lib/usageAnalytics.test.ts` | 3 | usage analytics · agrega visualizações a partir de eventos reais · mantém somente a última atividade observada por usuário |
+| `src/pages/AdminSupressaoEmails.test.tsx` | 3 | AdminSupressaoEmails \u2014 remover da supressao · pede confirmacao antes de liberar o e-mail para disparo · cancelar mantem o e-mail suprimido |
 | `src/pages/PowerDialer.test.tsx` | 3 | PowerDialer — permissão de editar/excluir fila · usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas · admin vê Editar/Excluir em todas as filas |
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
 | `src/test/activities-soft-delete-functions.test.ts` | 3 | funções SQL ignoram activities apagadas (soft delete) · %s: toda leitura de activities filtra deleted_at IS NULL · a correção não desfaz o status canônico nem o alias anti-ambiguidade |

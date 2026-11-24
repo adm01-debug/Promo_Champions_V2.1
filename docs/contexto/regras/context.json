@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "be7b39be260df574bc11daf023d7e36ec66e8865",
+  "sha": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 05:48 UTC",
-  "files_total": 3680,
-  "code_files": 3330,
-  "code_lines": 482856
+  "generated_at": "2026-11-24 06:20 UTC",
+  "files_total": 3685,
+  "code_files": 3334,
+  "code_lines": 483258
  },
  "version": "1.3.2",
- "facts_hash": "b87d7e37b04b1329",
+ "facts_hash": "07262ff5da95ff2f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1395,
+   ".tsx": 1399,
    ".ts": 1131,
    ".sql": 722,
    ".mjs": 72,
@@ -93891,6 +93891,15 @@
    },
    {
     "path": "",
+    "file": "src/pages/AdminSupressaoEmails.test.tsx",
+    "component": "AdminSupressaoEmails.test",
+    "tables_transitive": [],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 0
+   },
+   {
+    "path": "",
     "file": "src/pages/AdminSupressaoEmails.tsx",
     "component": "AdminSupressaoEmails",
     "tables_transitive": [
@@ -93906,7 +93915,7 @@
      "get_campaign_recovery_rates",
      "get_recovery_by_failure_type"
     ],
-    "deps_count": 37
+    "deps_count": 39
    },
    {
     "path": "",
@@ -95389,7 +95398,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 39
+    "deps_count": 40
    },
    {
     "path": "/atividades",
@@ -95708,7 +95717,7 @@
      "verify_mfa_code",
      "verify_reauth_request"
     ],
-    "deps_count": 101
+    "deps_count": 102
    },
    {
     "path": "/conversational-intelligence",
@@ -96510,7 +96519,7 @@
      "report-builder-execute"
     ],
     "rpc_transitive": [],
-    "deps_count": 43
+    "deps_count": 44
    },
    {
     "path": "/relatorios-email",
@@ -102976,7 +102985,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1235,
+  "components_count": 1238,
   "hooks": [
    {
     "name": "useContacts",
@@ -106932,8 +106941,8 @@
   },
   {
    "module": "src/components",
-   "files": 1235,
-   "lines": 194408,
+   "files": 1238,
+   "lines": 194697,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107899,8 +107908,8 @@
   },
   {
    "module": "src/pages",
-   "files": 184,
-   "lines": 45072,
+   "files": 185,
+   "lines": 45185,
    "tables": [
     "achievements",
     "activities",
@@ -108031,6 +108040,7 @@
     "src/pages/AdminPremiacoes.tsx",
     "src/pages/AdminRegrasInatividade.tsx",
     "src/pages/AdminSolicitacoesTitular.tsx",
+    "src/pages/AdminSupressaoEmails.test.tsx",
     "src/pages/AdminSupressaoEmails.tsx",
     "src/pages/AdminTasksPage.tsx",
     "src/pages/AdminTelemetria.tsx",
@@ -108090,8 +108100,7 @@
     "src/pages/EvolutionCurvesPage.test.tsx",
     "src/pages/EvolutionCurvesPage.tsx",
     "src/pages/FeatureFlagsAdmin.tsx",
-    "src/pages/FollowUpAudit.tsx",
-    "src/pages/FollowUpInteligente.tsx"
+    "src/pages/FollowUpAudit.tsx"
    ]
   },
   {
@@ -159073,6 +159082,18 @@
     "name": "não divide por zero quando a janela anterior tinha receita 0"
    },
    {
+    "file": "src/components/assistant/DealChatHistory.test.tsx",
+    "name": "DealChatHistory — apagar pergunta"
+   },
+   {
+    "file": "src/components/assistant/DealChatHistory.test.tsx",
+    "name": "pede confirmacao antes de apagar e so apaga no confirmar"
+   },
+   {
+    "file": "src/components/assistant/DealChatHistory.test.tsx",
+    "name": "cancelar mantem a pergunta no historico"
+   },
+   {
     "file": "src/components/cadences/ContactRulesDialog.test.tsx",
     "name": "ContactRulesDialog"
    },
@@ -159509,6 +159530,18 @@
     "name": "recarrega a análise quando a IA falha"
    },
    {
+    "file": "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+    "name": "EmbedTokenManagerDialog — revogar e excluir token"
+   },
+   {
+    "file": "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+    "name": "pede confirmacao antes de revogar o link publico"
+   },
+   {
+    "file": "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+    "name": "pede confirmacao antes de excluir o token e cancelar nao apaga"
+   },
+   {
     "file": "src/components/reporting/funnelReportHelpers.test.ts",
     "name": "funnelReportHelpers.computeStageDeltas"
    },
@@ -159783,6 +159816,18 @@
    {
     "file": "src/components/sequences/sendTimeHelpers.test.ts",
     "name": "devolve 0 para valores nao finitos"
+   },
+   {
+    "file": "src/components/settings/FeatureFlagsAdmin.test.tsx",
+    "name": "FeatureFlagsAdmin — excluir flag"
+   },
+   {
+    "file": "src/components/settings/FeatureFlagsAdmin.test.tsx",
+    "name": "pede confirmacao citando a chave antes de excluir a flag"
+   },
+   {
+    "file": "src/components/settings/FeatureFlagsAdmin.test.tsx",
+    "name": "cancelar nao exclui a flag"
    },
    {
     "file": "src/components/tasks/CreateTaskDialog.test.tsx",
@@ -163059,6 +163104,18 @@
    {
     "file": "src/pages/AdminComissoes.test.tsx",
     "name": "busca pelo cliente mesmo sem vendedor vinculado"
+   },
+   {
+    "file": "src/pages/AdminSupressaoEmails.test.tsx",
+    "name": "AdminSupressaoEmails \\u2014 remover da supressao"
+   },
+   {
+    "file": "src/pages/AdminSupressaoEmails.test.tsx",
+    "name": "pede confirmacao antes de liberar o e-mail para disparo"
+   },
+   {
+    "file": "src/pages/AdminSupressaoEmails.test.tsx",
+    "name": "cancelar mantem o e-mail suprimido"
    },
    {
     "file": "src/pages/DealVelocityPage.test.tsx",
@@ -233196,9 +233253,19 @@
     "cutoffDate = subMonths(now, 3);"
    ]
   },
+  "src/components/assistant/DealChatHistory.test.tsx": {
+   "path": "src/components/assistant/DealChatHistory.test.tsx",
+   "lines": 64,
+   "is_test": true,
+   "tests": [
+    "DealChatHistory — apagar pergunta",
+    "pede confirmacao antes de apagar e so apaga no confirmar",
+    "cancelar mantem a pergunta no historico"
+   ]
+  },
   "src/components/assistant/DealChatHistory.tsx": {
    "path": "src/components/assistant/DealChatHistory.tsx",
-   "lines": 141,
+   "lines": 158,
    "exports": [
     "function DealChatHistory"
    ]
@@ -244048,9 +244115,19 @@
     "const CrossObjectJoinPanel"
    ]
   },
+  "src/components/reporting/EmbedTokenManagerDialog.test.tsx": {
+   "path": "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+   "lines": 75,
+   "is_test": true,
+   "tests": [
+    "EmbedTokenManagerDialog — revogar e excluir token",
+    "pede confirmacao antes de revogar o link publico",
+    "pede confirmacao antes de excluir o token e cancelar nao apaga"
+   ]
+  },
   "src/components/reporting/EmbedTokenManagerDialog.tsx": {
    "path": "src/components/reporting/EmbedTokenManagerDialog.tsx",
-   "lines": 199,
+   "lines": 254,
    "exports": [
     "function EmbedTokenManagerDialog"
    ]
@@ -246778,9 +246855,19 @@
     "transition={{ delay: i * 0.04 }}"
    ]
   },
+  "src/components/settings/FeatureFlagsAdmin.test.tsx": {
+   "path": "src/components/settings/FeatureFlagsAdmin.test.tsx",
+   "lines": 59,
+   "is_test": true,
+   "tests": [
+    "FeatureFlagsAdmin — excluir flag",
+    "pede confirmacao citando a chave antes de excluir a flag",
+    "cancelar nao exclui a flag"
+   ]
+  },
   "src/components/settings/FeatureFlagsAdmin.tsx": {
    "path": "src/components/settings/FeatureFlagsAdmin.tsx",
-   "lines": 309,
+   "lines": 328,
    "exports": [
     "const FeatureFlagsAdmin"
    ],
@@ -271706,9 +271793,19 @@
     }
    ]
   },
+  "src/pages/AdminSupressaoEmails.test.tsx": {
+   "path": "src/pages/AdminSupressaoEmails.test.tsx",
+   "lines": 90,
+   "is_test": true,
+   "tests": [
+    "AdminSupressaoEmails \\u2014 remover da supressao",
+    "pede confirmacao antes de liberar o e-mail para disparo",
+    "cancelar mantem o e-mail suprimido"
+   ]
+  },
   "src/pages/AdminSupressaoEmails.tsx": {
    "path": "src/pages/AdminSupressaoEmails.tsx",
-   "lines": 384,
+   "lines": 407,
    "exports": [
     "default AdminSupressaoEmails"
    ],
@@ -299767,10 +299864,36 @@
   }
  },
  "git": {
-  "sha": "be7b39be260df574bc11daf023d7e36ec66e8865",
+  "sha": "bf7fc73c56c502c51cb858d057f1dc87018865ad",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "bf7fc73",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: confirma exclusao de flag, conversa, token e supressao (QA-177) (#727)",
+    "files": [
+     "src/components/assistant/DealChatHistory.test.tsx",
+     "src/components/assistant/DealChatHistory.tsx",
+     "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+     "src/components/reporting/EmbedTokenManagerDialog.tsx",
+     "src/components/settings/FeatureFlagsAdmin.test.tsx",
+     "src/components/settings/FeatureFlagsAdmin.tsx",
+     "src/pages/AdminSupressaoEmails.test.tsx",
+     "src/pages/AdminSupressaoEmails.tsx"
+    ]
+   },
+   {
+    "sha": "93d5215",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "docs: varre acoes destrutivas sem confirmacao (QA-177) (#726)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "docs/qa/07-ACOES-DESTRUTIVAS.md"
+    ]
+   },
    {
     "sha": "be7b39b",
     "date": "2026-11-24",
@@ -300106,35 +300229,12 @@
      "supabase/functions/predictive-intelligence/index.ts",
      "supabase/functions/revenue-forecast-ai/index.ts"
     ]
-   },
-   {
-    "sha": "41972be",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/functions/bitrix24-oauth/index.ts",
-     "supabase/functions/simulate-load/index.ts"
-    ]
-   },
-   {
-    "sha": "78beba2",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "supabase/functions/semantic-index-entity/index.ts",
-     "supabase/functions/semantic-search/index.ts",
-     "supabase/functions/visual-search/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    12
    ],
    [
     "src/components/pipeline/PipelineBoard.tsx",
@@ -300157,6 +300257,42 @@
     2
    ],
    [
+    "src/components/assistant/DealChatHistory.test.tsx",
+    1
+   ],
+   [
+    "src/components/assistant/DealChatHistory.tsx",
+    1
+   ],
+   [
+    "src/components/reporting/EmbedTokenManagerDialog.test.tsx",
+    1
+   ],
+   [
+    "src/components/reporting/EmbedTokenManagerDialog.tsx",
+    1
+   ],
+   [
+    "src/components/settings/FeatureFlagsAdmin.test.tsx",
+    1
+   ],
+   [
+    "src/components/settings/FeatureFlagsAdmin.tsx",
+    1
+   ],
+   [
+    "src/pages/AdminSupressaoEmails.test.tsx",
+    1
+   ],
+   [
+    "src/pages/AdminSupressaoEmails.tsx",
+    1
+   ],
+   [
+    "docs/qa/07-ACOES-DESTRUTIVAS.md",
+    1
+   ],
+   [
     "src/components/analytics/ActivityHeatmap.tsx",
     1
    ],
@@ -300174,42 +300310,6 @@
    ],
    [
     "src/components/reporting/ReportPreview.tsx",
-    1
-   ],
-   [
-    "src/components/security/KnownDevices.tsx",
-    1
-   ],
-   [
-    "src/hooks/revenue-intelligence/useRevenueForecast.ts",
-    1
-   ],
-   [
-    "src/hooks/win-loss/useWinLossFilters.ts",
-    1
-   ],
-   [
-    "src/pages/WinLossIntelligence.tsx",
-    1
-   ],
-   [
-    "src/pages/admin/WebhooksDeadLettersAdmin.tsx",
-    1
-   ],
-   [
-    "src/components/dashboard/Speedometer.tsx",
-    1
-   ],
-   [
-    "src/components/race/PitStopPanel.tsx",
-    1
-   ],
-   [
-    "src/components/race/ReactionFloater.tsx",
-    1
-   ],
-   [
-    "src/components/race/track/TrackDustParticles.tsx",
     1
    ]
   ]

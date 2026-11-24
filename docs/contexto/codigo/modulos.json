@@ -717,8 +717,8 @@
   {
    "modulo": "components/assistant",
    "arquivos": 13,
-   "testes": 0,
-   "linhas": 2527,
+   "testes": 1,
+   "linhas": 2544,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -800,6 +800,7 @@
    ],
    "depende_de_modulos": [
     "components/atoms",
+    "components/shared",
     "components/ui",
     "contexts",
     "hooks",
@@ -6994,8 +6995,8 @@
   {
    "modulo": "components/reporting",
    "arquivos": 15,
-   "testes": 1,
-   "linhas": 2447,
+   "testes": 2,
+   "linhas": 2502,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8054,8 +8055,8 @@
   {
    "modulo": "components/settings",
    "arquivos": 25,
-   "testes": 0,
-   "linhas": 5384,
+   "testes": 1,
+   "linhas": 5403,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8172,6 +8173,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/shared",
     "components/ui",
     "contexts",
     "hooks",
@@ -8236,11 +8238,13 @@
    },
    "importado_por_outros_modulos": [
     "components/activities",
+    "components/assistant",
     "components/coaching",
     "components/comparador",
     "components/competitive",
     "components/conversational",
     "components/portfolio",
+    "components/settings",
     "pages"
    ],
    "depende_de_modulos": [
@@ -16060,8 +16064,8 @@
   {
    "modulo": "pages",
    "arquivos": 160,
-   "testes": 10,
-   "linhas": 39538,
+   "testes": 11,
+   "linhas": 39561,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

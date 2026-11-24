@@ -2315,7 +2315,7 @@
     "DealChatHistory"
    ],
    "export_default": null,
-   "linhas": 141,
+   "linhas": 158,
    "dominio": "components/assistant",
    "hooks_locais": [
     "useDealChatHistory"
@@ -12587,7 +12587,7 @@
     "EmbedTokenManagerDialog"
    ],
    "export_default": null,
-   "linhas": 199,
+   "linhas": 254,
    "dominio": "components/reporting",
    "hooks_locais": [
     "useCreateReportEmbedToken",
@@ -14874,7 +14874,7 @@
     "FeatureFlagsAdmin"
    ],
    "export_default": null,
-   "linhas": 309,
+   "linhas": 328,
    "dominio": "components/settings",
    "hooks_locais": [
     "useAdminFeatureFlags",
@@ -15177,7 +15177,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -15672,7 +15672,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "orfao": false
   },
   {
@@ -18158,7 +18158,7 @@
     "AdminSupressaoEmails"
    ],
    "export_default": "AdminSupressaoEmails",
-   "linhas": 384,
+   "linhas": 407,
    "dominio": "pages",
    "hooks_locais": [
     "useAddEmailOptOut",
