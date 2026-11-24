@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9db002899c` · branch `main` · 2026-11-24 04:48 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e4459d7894` · branch `main` · 2026-11-24 04:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1775 testes em 229 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1781 testes em 230 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4367,6 +4367,7 @@ _nenhum item encontrado_
 | `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
 | `src/lib/supabase/chunkedIn.test.ts` | 6 | chunkedIn · short-circuits on empty array · splits into chunks of chunkSize and concatenates data · preserves order in sequential mode … |
 | `src/pages/Index.test.tsx` | 6 | Dashboard Integration Tests · recalculates KPIs when period is changed · shows skeleton states while loading · handles data fetch failure and recovery … |
+| `src/test/consoleGuard.test.ts` | 6 | consoleGuard · formata erro, string e objeto numa linha · trunca mensagens longas · aponta o que não foi declarado e silencia o que foi … |
 | `supabase/functions/_shared/retry.test.ts` | 6 | withRetry — sucesso na primeira tentativa não retorna RetryError · withRetry — success_after_retry após 5xx transient · withRetry — retry_exhausted lança RetryError com attempts=maxAttempts · withRetry — non_retryable (4xx) não faz retry … |
 | `supabase/functions/check-v4-callback-alerts/index.test.ts` | 6 | no alerts when under thresholds · skips failure rate when below min_events · fires high_failure_rate · fires exhausted_spike … |
 | `supabase/functions/notify-v4-quote-status/index.test.ts` | 6 | isValidUrl rejeita string vazia e valores mal formados · isValidUrl aceita https e http · backoff cresce exponencialmente até saturar · MAX_ATTEMPTS é 5 (contrato do painel) … |

@@ -21,9 +21,9 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (179)",
+   "co-localizado (*.test) (180)",
    "tests/ (59)",
-   "outro (18)"
+   "outro (19)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "test: guarda de console passa a reprovar o teste que emite erro (QA-149) (#719)",
+   "docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)",
    "test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)",
    "fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)",
-   "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)",
-   "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)",
-   "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)"
+   "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

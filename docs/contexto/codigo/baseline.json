@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9db002899cb6a4bfa43563c4cb05af5956585e68",
+  "commit": "e4459d7894edc3073e0b2e0d470cde48cfc20460",
   "branch": "main",
-  "data_commit": "2026-11-24T01:45:45-03:00",
+  "data_commit": "2026-11-24T01:51:34-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e4459d7",
+    "data": "2026-11-24",
+    "assunto": "test: guarda de console passa a reprovar o teste que emite erro (QA-149) (#719)"
+   },
+   {
+    "sha": "adedb79",
+    "data": "2026-11-24",
+    "assunto": "docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)"
+   },
    {
     "sha": "9db0028",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "554eb39",
     "data": "2026-11-23",
     "assunto": "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)"
-   },
-   {
-    "sha": "fccaef3",
-    "data": "2026-11-23",
-    "assunto": "fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)"
-   },
-   {
-    "sha": "f0b094b",
-    "data": "2026-11-24",
-    "assunto": "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691"
    }
   ],
-  "arquivos_mudados_7d": 309,
+  "arquivos_mudados_7d": 315,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "deno.lock",
@@ -234,10 +234,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 6
-   },
-   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
@@ -250,11 +246,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/migrations-drift.yml",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 5
    },
    {
@@ -282,11 +274,11 @@
     "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/types-sync.yml",
+    "arquivo": ".github/workflows/migrations-drift.yml",
     "mudancas": 4
    },
    {
-    "arquivo": "AGENTS.md",
+    "arquivo": ".github/workflows/types-sync.yml",
     "mudancas": 4
    },
    {
@@ -295,6 +287,14 @@
    },
    {
     "arquivo": "docs/agentes/branches-encerradas-261117.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "inventario/estado/banco.json",
     "mudancas": 4
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3658,
-  "arquivos_codigo": 2602,
-  "linhas_codigo": 447171,
+  "arquivos_total": 3660,
+  "arquivos_codigo": 2604,
+  "linhas_codigo": 447355,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 264,
+  "testes": 266,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1235,
-   "linhas": 194411
+   "linhas": 194417
   },
   "src/config": {
    "arquivos": 4,
@@ -608,7 +608,7 @@
   },
   "src/hooks": {
    "arquivos": 550,
-   "linhas": 65079
+   "linhas": 65090
   },
   "src/integrations": {
    "arquivos": 4,
@@ -635,8 +635,8 @@
    "linhas": 1330
   },
   "src/test": {
-   "arquivos": 15,
-   "linhas": 1326
+   "arquivos": 17,
+   "linhas": 1493
   },
   "src/types": {
    "arquivos": 4,
