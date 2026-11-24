@@ -11,11 +11,16 @@ function read(): boolean {
 /**
  * Modo Calm: desliga partículas, screen-shake, fireworks, neon trails, exhaust.
  * Mantém todas as informações textuais. Persistido em localStorage.
+ *
+ * `enabled=false` deixa o estado local mas não assina nada — usado por quem já
+ * está dentro do `RaceCalmProvider` e não precisa de uma segunda instância.
  */
-export function useCalmMode() {
+export function useCalmMode(enabled = true) {
   const [calm, setCalm] = useState<boolean>(read);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const handler = () => setCalm(read());
     const storageHandler = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) handler();
@@ -26,7 +31,7 @@ export function useCalmMode() {
       window.removeEventListener(EVENT, handler);
       window.removeEventListener('storage', storageHandler);
     };
-  }, []);
+  }, [enabled]);
 
   const toggle = useCallback(() => {
     setCalm(prev => {
