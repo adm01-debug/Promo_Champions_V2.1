@@ -35,3 +35,23 @@ describe('AdminQuickLinks — telas de alerta de webhook (etapa 110)', () => {
     );
   });
 });
+
+describe('AdminQuickLinks — telas de conformidade (etapa 111)', () => {
+  it('leva às solicitações do titular (LGPD)', () => {
+    renderLinks();
+
+    expect(screen.getByRole('link', { name: /LGPD — Titular/ })).toHaveAttribute(
+      'href',
+      '/admin/solicitacoes-titular'
+    );
+  });
+
+  it('leva à supressão de e-mails', () => {
+    renderLinks();
+
+    expect(screen.getByRole('link', { name: /Supressão de E-mails/ })).toHaveAttribute(
+      'href',
+      '/admin/supressao-emails'
+    );
+  });
+});

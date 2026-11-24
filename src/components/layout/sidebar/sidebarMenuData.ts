@@ -25,6 +25,7 @@ import {
   LayoutGrid,
   Columns,
   MailCheck,
+  MailX,
   DollarSign,
   Swords,
   MapPin,
@@ -366,6 +367,12 @@ export const adminOnlyItems: MenuItem[] = [
   { title: 'Feature Flags', url: '/feature-flags', icon: Flag },
   { title: 'Webhooks', url: '/webhooks', icon: Webhook },
   { title: 'Segurança', url: '/seguranca', icon: Shield },
+  {
+    title: 'LGPD — Solicitações do Titular',
+    url: '/admin/solicitacoes-titular',
+    icon: ShieldCheck,
+  },
+  { title: 'Supressão de E-mails', url: '/admin/supressao-emails', icon: MailX },
 ];
 
 export const viewModes: {
