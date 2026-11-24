@@ -220,7 +220,7 @@ Exemplo:
 - [ ] 187 — Varrer a documentação de estado por medições feitas fora do banco oficial — onda 7 — Média
 - [ ] 188 — Registrar quais crons da máquina de vendas estão realmente ativos — onda 7 — Baixa
 - [ ] 189 — Reagendar os crons da máquina de vendas que estiverem faltando — onda 7 — Média · **APROV**
-- [ ] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa
+- [x] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa — PR #688 - regra registrada no `AGENTS.md` §7: função nova ou tocada usa `_shared/http-envelope.ts`, webhook de saída só troca de formato com contrato conferido; gate `check-claude-md-integrity.mjs` exit 0 (134849 bytes, 8 seções)
 
 ## Onda 8 — Higiene, CI e observabilidade
 - [ ] 191 — Revogar o grant anônimo — lote de gamificação e corrida — onda 8 — Média · **APROV**
