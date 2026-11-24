@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   useDashboardLayout,
   useSaveDashboardLayout,
@@ -168,8 +168,7 @@ export function CustomizableDashboard() {
   const [hasChanges, setHasChanges] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const currentLayout = layout || savedLayout || [];
+  const currentLayout = useMemo(() => layout || savedLayout || [], [layout, savedLayout]);
   const editingWidget = currentLayout.find(w => w.id === editingId) ?? null;
 
   const handleToggleWidget = useCallback(

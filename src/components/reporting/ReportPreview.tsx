@@ -49,8 +49,7 @@ const COLORS = [
 
 export const ReportPreview = memo(
   ({ result, isLoading, error, vizType, columns }: Props) => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-    const rows = result?.rows ?? [];
+    const rows = useMemo(() => result?.rows ?? [], [result?.rows]);
 
     const chartData = useMemo(() => {
       if (rows.length === 0 || columns.length < 2) return [];

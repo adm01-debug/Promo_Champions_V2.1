@@ -96,11 +96,12 @@ export function ActivityHeatmap({
     enabled: !externalData && !!salesperson?.id,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const data = externalData || fetchedData || [];
+  const data = useMemo(
+    () => externalData || fetchedData || [],
+    [externalData, fetchedData]
+  );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
   const startDate = startOfWeek(subDays(today, DAYS_TO_SHOW - 1));
 
   const calendarData = useMemo(() => {

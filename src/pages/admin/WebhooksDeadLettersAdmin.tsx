@@ -61,8 +61,7 @@ function WebhooksDeadLettersAdminContent() {
   const [dateRange, setDateRange] = useState<DateRange>('all');
   const { data: errorGroups } = useDeadLetterErrorGroups();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const subscriptions = subsList.data ?? [];
+  const subscriptions = useMemo(() => subsList.data ?? [], [subsList.data]);
   const eventOptions = useMemo(() => {
     const set = new Set<string>();
     subscriptions.forEach(s => s.events?.forEach(e => set.add(e)));

@@ -34,7 +34,7 @@ export function useWinLossFilters() {
       }
     }, DEBOUNCE_MS);
     return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite sp e setSp: sp e lido so para comparar com a URL atual antes de gravar; incluir sp faria o debounce reescrever a URL a cada navegacao externa
   }, [localFilters]);
 
   const setFilters = useCallback((patch: Partial<WinLossFilterState>) => {

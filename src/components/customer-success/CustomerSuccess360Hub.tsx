@@ -85,18 +85,15 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
   }, [orderSortOrder]);
 
   const s = data?.summary;
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const accounts = data?.accounts ?? [];
+  const accounts = useMemo(() => data?.accounts ?? [], [data]);
   const tickets = data?.tickets ?? [];
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const renewals = data?.renewals ?? [];
+  const renewals = useMemo(() => data?.renewals ?? [], [data]);
   const usage = data?.usage ?? [];
   const onboarding = data?.onboarding ?? [];
   const expansion = data?.expansion ?? [];
   const surveys = data?.surveys ?? [];
   const qbrs = data?.qbrs ?? [];
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const orders = data?.orders ?? [];
+  const orders = useMemo(() => data?.orders ?? [], [data]);
 
   const accountById = useMemo(() => {
     const map = new Map<string, (typeof accounts)[0]>();

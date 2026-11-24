@@ -228,7 +228,7 @@ export default function WinLossIntelligence() {
       hasSegment: filters.segments.length > 0,
       minAmount: filters.minAmount,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite track: emissor de analytics recriado a cada render; o gatilho e a mudanca de filters
   }, [filters]);
 
   useWinLossShortcuts({
