@@ -149,7 +149,7 @@ export function RaceArena({
   const replay = useRaceReplay();
   useEffect(() => {
     if (cars.length > 0) replay.recordSnapshot(cars);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite cars (a chave car_id:progress/100 cobre o conteudo) e replay (recriado a cada render; incluir gravaria um snapshot por render)
   }, [cars.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 100)}`).join('|')]);
 
   const wearTrackRef = useRef<Map<string, { lastProgress: number; smoothDelta: number }>>(
@@ -176,13 +176,13 @@ export function RaceArena({
       map.set(c.car_id, wear);
     });
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite sorted: a chave car_id:progress*200 muda quando a posicao muda, e o array e recriado a cada ordenacao
   }, [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   const leader = sorted[0];
   const leaderPos = useMemo(
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite leader: o objeto e recriado a cada recalculo do ranking; car_id e progress identificam o que o memo le
     [leader?.car_id, leader?.progress]
   );
 
@@ -204,7 +204,7 @@ export function RaceArena({
     } else {
       lastLeaderProgressRef.current = { progress: p, at: now };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite leader: as deps car_id e progress ja identificam a leitura (leader.progress); o objeto troca de identidade a cada recalculo
   }, [leader?.car_id, leader?.progress]);
 
   useEffect(() => {
@@ -218,12 +218,11 @@ export function RaceArena({
     if (showFinaleFlag) return 'checkered';
     if (Date.now() < yellowFlagUntil) return 'yellow';
     return 'green';
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  }, [showFinaleFlag, yellowFlagUntil, leaderSpeed]);
+  }, [showFinaleFlag, yellowFlagUntil]);
 
   const tireMarkCars = useMemo(
     () => sorted.map(c => ({ id: c.car_id, progress: Number(c.progress) })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite sorted: a chave car_id:progress*200 cobre o conteudo usado pelo memo (car_id e progress)
     [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]
   );
 
@@ -239,7 +238,7 @@ export function RaceArena({
       map.set(c.car_id, isInDRSZone(Number(c.progress)) && gap > 0 && gap < 0.06);
     });
     return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite sorted: a chave car_id:progress*200 cobre o conteudo; o array muda de identidade a cada render
   }, [sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 200)}`).join('|')]);
 
   const timingCount = viewMode.isFocus || viewMode.isImmersive ? 3 : 5;
@@ -255,18 +254,18 @@ export function RaceArena({
     if (!showGapLine || !leader || !second) return null;
     const midProgress = (Number(leader.progress) + Number(second.progress)) / 2;
     return getPositionOnTrack(midProgress, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite leader e second: a dep usa progress, a unica grandeza lida; os objetos sao recriados a cada recalculo
   }, [showGapLine, leader?.progress, second?.progress]);
 
   const leaderPosForLine = useMemo(
     () => (leader ? getPositionOnTrack(Number(leader.progress), 0) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite leader: a dep leader?.progress cobre a leitura do memo
     [leader?.car_id, leader?.progress]
   );
 
   const secondPos = useMemo(
     () => (second ? getPositionOnTrack(Number(second.progress), 0) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite second: a dep second?.progress cobre a leitura do memo
     [second?.car_id, second?.progress]
   );
 
@@ -291,7 +290,7 @@ export function RaceArena({
   );
   const nextCornerInfo = useMemo(
     () => (currentUserCar ? getNextCornerInfo(Number(currentUserCar.progress)) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite currentUserCar: as deps car_id e progress cobrem a leitura; o objeto e recriado a cada recalculo
     [currentUserCar?.car_id, currentUserCar?.progress]
   );
 
@@ -393,9 +392,9 @@ export function RaceArena({
       }
     });
     if (mutated) setPitStopCars(next);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite pitStopCars (o efeito escreve nesse estado via setPitStopCars; incluir criaria laco) e sorted (chave por conteudo na dep abaixo)
   }, [
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- chave de comparacao rasa intencional (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chave derivada inline de proposito: comparar car_id:progress*500 evita reexecutar o efeito a cada novo array de sorted
     sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'),
     reducedMotion,
   ]);

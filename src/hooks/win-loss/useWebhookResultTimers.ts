@@ -84,7 +84,7 @@ export function useWebhookResultTimers(retentionMs: number) {
       }, remaining);
       timersRef.current.set(id, handle);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite resultTimestamps: e lido so para recalcular o tempo restante; incluir limparia e rearmaria todos os timers a cada novo resultado
   }, [retentionMs]);
 
   useEffect(() => {

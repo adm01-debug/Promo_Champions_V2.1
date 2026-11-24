@@ -217,7 +217,7 @@ export function useRaceDetection({
       if (newLeaderId) prevLeaderIdRef.current = newLeaderId;
     }
     prevSnapshotRef.current = curr;
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite sortedCars (a chave car_id:progress cobre o conteudo), flashingCars (estado escrito pela propria deteccao; incluir reexecutaria em cascata) e os emissores push*/play*/triggerShake, recriados a cada render
   }, [sortedCars.map(c => `${c.car_id}:${c.progress}`).join('|'), reducedMotion]);
 
   return {

@@ -241,7 +241,7 @@ Exemplo:
 - [x] 206 — Classificar as 31 tabelas órfãs — onda 8 — Baixa — PR #700 - seção D de `docs/DEAD_TABLES.md` classifica as 31 do inventário: 2 estão em uso real no front (`useUserDashboardLayout.ts:52` é posterior ao snapshot; `useInsightComments.ts:26` usa `.from(variavel)`), 4 são infra de webhook/relatório mantidas, 3 são de autenticação (2FA caseiro e política de senha) e 22 seguem candidatas a limpeza — cada uma com migration de criação, bytes, policies e gatilhos; conferência provou 31 linhas, 0 faltando e 0 sobrando
 - [ ] 207 — Remover as policies e gatilhos das tabelas órfãs confirmadas — onda 8 — Baixa · **APROV**
 - [ ] 208 — Remover as tabelas órfãs aprovadas pelo dono — onda 8 — Baixa · **APROV**
-- [ ] 209 — Revisar supressões da regra de dependências — os 10 ganchos que escrevem no banco — onda 8 — Média
+- [x] 209 — Revisar supressões da regra de dependências — os 10 ganchos que escrevem no banco — onda 8 — Média — PR #723 - as 19 diretivas restantes dos 10 arquivos agora nomeiam a dependencia omitida e o motivo (levantado rodando o eslint sem as diretivas); 3 supressoes foram removidas por esconderem defeito: allLeads em LeadScoringDashboard e rawItems em WebhookDeadLetterPanel viraram useMemo, e leaderSpeed saiu da dep do memo currentFlag em RaceArena, que nao a lia
 - [ ] 210 — Revisar supressões da regra de dependências — os 15 de leitura de dado de negócio — onda 8 — Média
 - [ ] 211 — Revisar supressões da regra de dependências — os 15 de interface e gamificação — onda 8 — Média
 - [ ] 212 — Revisar supressões da regra de dependências — os restantes — onda 8 — Média

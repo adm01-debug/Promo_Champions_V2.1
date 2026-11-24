@@ -239,7 +239,7 @@ export const ClientsMap = () => {
       const needsGeo = clients.filter(c => !c.lat && !c.lng && c.company);
       if (needsGeo.length > 0) geocodeClients();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite geocodeClients (recriado a cada render) e isGeocoding: o gatilho e clients, invalidado depois de gravar lat/lng; incluir isGeocoding reexecutaria ao fim da propria geocodificacao
   }, [clients]);
 
   const allMappable = useMemo(() => {

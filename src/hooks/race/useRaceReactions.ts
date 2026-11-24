@@ -61,7 +61,7 @@ export function useRaceReactions(carIds: string[], seasonId?: string | null) {
     return () => {
       supabase.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite carIds: a dep carIds.join(',') cobre mudanca de conteudo e o array e recriado a cada render
   }, [carIds.join(','), seasonId, qc]);
 
   return { ...query, liveBurst: recent };

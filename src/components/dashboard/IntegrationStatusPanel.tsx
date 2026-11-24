@@ -161,7 +161,7 @@ export const IntegrationStatusPanel = () => {
 
   useEffect(() => {
     fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite fetchLogs: o diagnostico roda so na montagem e fetchLogs e recriado a cada render; incluir dispararia ida a rede a cada render
   }, []);
 
   const testIntegration = async (type: 'email' | 'push') => {
