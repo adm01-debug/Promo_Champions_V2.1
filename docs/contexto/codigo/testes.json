@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 257,
+ "total": 258,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 189
+  "unit": 190
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 172
+   "arquivos": 173
   },
   {
    "padrao": "tests/",
@@ -268,11 +268,11 @@
   {
    "arquivo": "src/components/admin/AdminQuickLinks.test.tsx",
    "tipo": "unit",
-   "linhas": 38,
+   "linhas": 58,
    "testa": [
     "src/components/admin/AdminQuickLinks.tsx"
    ],
-   "casos": 2
+   "casos": 4
   },
   {
    "arquivo": "src/components/analytics/ABCActionableAutomations.test.ts",
@@ -1419,6 +1419,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/admin/AdminComercial.test.tsx",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "src/pages/admin/AdminComercial.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/pages/AdminComissoes.test.tsx",
    "tipo": "unit",
    "linhas": 124,
@@ -2359,6 +2368,7 @@
   "src/pages/NotFound.tsx": 1,
   "src/pages/PowerDialer.tsx": 1,
   "src/pages/WinLossAnalysisPage.tsx": 1,
+  "src/pages/admin/AdminComercial.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
   "src/routes/routeAccess.ts": 1,
   "src/services/callFeedbackService.ts": 1,
@@ -2524,7 +2534,6 @@
    "src/pages/WebhooksPage.tsx",
    "src/pages/WinLossIntelligence.tsx",
    "src/pages/WorkflowsPage.tsx",
-   "src/pages/admin/AdminComercial.tsx",
    "src/pages/admin/AdminConexoesPage.tsx",
    "src/pages/admin/AdminDesignInboundPage.tsx",
    "src/pages/admin/AdminPlatformSLOPage.tsx",

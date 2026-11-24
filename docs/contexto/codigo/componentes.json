@@ -504,7 +504,7 @@
     "AdminQuickLinks"
    ],
    "export_default": null,
-   "linhas": 162,
+   "linhas": 176,
    "dominio": "components/admin",
    "hooks_locais": [
     "useDeadLettersCounts"
@@ -17775,7 +17775,7 @@
     "AdminComercial"
    ],
    "export_default": "AdminComercial",
-   "linhas": 807,
+   "linhas": 872,
    "dominio": "pages/admin",
    "hooks_locais": [],
    "tabelas": [

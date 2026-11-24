@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9645,
+ "arestas": 9647,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -129,12 +129,12 @@
    "importado_por": 40
   },
   {
-   "arquivo": "supabase/functions/_shared/business-date.ts",
+   "arquivo": "src/utils/dateHelpers.ts",
    "importado_por": 37
   },
   {
-   "arquivo": "src/utils/dateHelpers.ts",
-   "importado_por": 36
+   "arquivo": "supabase/functions/_shared/business-date.ts",
+   "importado_por": 37
   },
   {
    "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
@@ -304,7 +304,7 @@
   {
    "modulo": "utils",
    "depende_de": 3,
-   "importado_por": 26
+   "importado_por": 27
   },
   {
    "modulo": "types",
@@ -342,14 +342,14 @@
    "importado_por": 9
   },
   {
+   "modulo": "pages/admin",
+   "depende_de": 16,
+   "importado_por": 1
+  },
+  {
    "modulo": "components/activities",
    "depende_de": 14,
    "importado_por": 2
-  },
-  {
-   "modulo": "pages/admin",
-   "depende_de": 15,
-   "importado_por": 1
   }
  ],
  "arestas_em": "docs/contexto/codigo/grafo-arestas.json"

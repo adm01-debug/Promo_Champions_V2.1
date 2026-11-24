@@ -2475,7 +2475,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "usado_por_modulos": [
     "components/activities",
     "components/analytics",
@@ -2487,6 +2487,7 @@
     "hooks/win-loss",
     "lib",
     "pages",
+    "pages/admin",
     "utils"
    ],
    "coberto_por_testes": 2,
@@ -2510,7 +2511,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "usado_por_modulos": [
     "components/ai",
     "components/analytics",
@@ -2530,7 +2531,8 @@
     "hooks/sales",
     "hooks/tasks",
     "hooks/win-loss",
-    "pages"
+    "pages",
+    "pages/admin"
    ],
    "coberto_por_testes": 2,
    "orfao": false

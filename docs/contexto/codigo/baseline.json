@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "97e44d8a8e92127b8d8202fc6465faaf798633db",
+  "commit": "b48da889288547218935f6088b291ec1117bb4c7",
   "branch": "main",
-  "data_commit": "2026-11-24T01:25:09-03:00",
+  "data_commit": "2026-11-24T01:25:19-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b48da88",
+    "data": "2026-11-24",
+    "assunto": "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)"
+   },
+   {
+    "sha": "5c0431f",
+    "data": "2026-11-24",
+    "assunto": "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)"
+   },
    {
     "sha": "97e44d8",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "2809674",
     "data": "2026-11-24",
     "assunto": "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)"
-   },
-   {
-    "sha": "e84935e",
-    "data": "2026-11-23",
-    "assunto": "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)"
-   },
-   {
-    "sha": "546a229",
-    "data": "2026-11-23",
-    "assunto": "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)"
    }
   ],
-  "arquivos_mudados_7d": 294,
+  "arquivos_mudados_7d": 296,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -156,12 +156,12 @@
     "mudancas": 77
    },
    {
-    "pasta": "src/components/conversational",
-    "mudancas": 73
+    "pasta": "src/components/admin",
+    "mudancas": 74
    },
    {
-    "pasta": "src/components/admin",
-    "mudancas": 72
+    "pasta": "src/components/conversational",
+    "mudancas": 73
    },
    {
     "pasta": "src/components/competitive",
@@ -242,10 +242,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 6
    },
@@ -259,6 +255,14 @@
    },
    {
     "arquivo": "AGENTS.md",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/components/admin/AdminQuickLinks.tsx",
     "mudancas": 5
    },
    {
@@ -292,16 +296,12 @@
    {
     "arquivo": "docs/agentes/branches-encerradas-261117.md",
     "mudancas": 4
-   },
-   {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 254
+    "commits": 255
    },
    {
     "autor": "dependabot[bot]",
@@ -309,18 +309,18 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 23
+    "commits": 22
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3651,
-  "arquivos_codigo": 2595,
-  "linhas_codigo": 446030,
+  "arquivos_total": 3652,
+  "arquivos_codigo": 2596,
+  "linhas_codigo": 446280,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 131,
+  "itens_menu": 133,
   "modulos": 176,
   "componentes": 1290,
   "hooks": 483,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 257,
+  "testes": 258,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1230,
-   "linhas": 193549
+   "linhas": 193590
   },
   "src/config": {
    "arquivos": 4,
@@ -623,8 +623,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 182,
-   "linhas": 44811
+   "arquivos": 183,
+   "linhas": 45020
   },
   "src/routes": {
    "arquivos": 5,
@@ -733,6 +733,10 @@
    "linhas": 891
   },
   {
+   "arquivo": "src/pages/admin/AdminComercial.tsx",
+   "linhas": 872
+  },
+  {
    "arquivo": "scripts/maintenance/lib.mjs",
    "linhas": 859
   },
@@ -743,10 +747,6 @@
   {
    "arquivo": "supabase/functions/winloss-webhook-health-monitor/index.ts",
    "linhas": 811
-  },
-  {
-   "arquivo": "src/pages/admin/AdminComercial.tsx",
-   "linhas": 807
   },
   {
    "arquivo": "src/components/dashboard/Speedometer.tsx",

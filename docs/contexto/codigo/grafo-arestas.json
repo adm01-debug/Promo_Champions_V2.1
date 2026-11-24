@@ -11796,7 +11796,9 @@
    "src/integrations/supabase/types.ts",
    "src/lib/money.ts",
    "src/lib/supabase/parseRows.ts",
-   "src/types/index.ts"
+   "src/types/index.ts",
+   "src/utils/csvExport.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/pages/admin/AdminConexoesPage.tsx": [
    "src/components/admin/connections/AutoTestIntervalCard.tsx",

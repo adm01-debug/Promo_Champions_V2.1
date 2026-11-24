@@ -239,7 +239,7 @@
    "modulo": "components/admin",
    "arquivos": 60,
    "testes": 1,
-   "linhas": 8176,
+   "linhas": 8190,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3887,7 +3887,7 @@
    "modulo": "components/layout",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 403,
+   "linhas": 410,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -16114,6 +16114,7 @@
     "Kanban Clientes",
     "Lead Routing",
     "Lead Scoring",
+    "LGPD — Solicitações do Titular",
     "Mapa Clientes",
     "Metas",
     "Metas Atividades",
@@ -16149,6 +16150,7 @@
     "Send Time IA",
     "Sequências",
     "SLA Tracking",
+    "Supressão de E-mails",
     "Tarefas",
     "Telemetria",
     "Temporadas",
@@ -17893,8 +17895,8 @@
   {
    "modulo": "pages/admin",
    "arquivos": 13,
-   "testes": 0,
-   "linhas": 4264,
+   "testes": 1,
+   "linhas": 4329,
    "itens_menu": [
     "Admin Race Circuito 🏎️"
    ],
@@ -18141,7 +18143,8 @@
     "integrations/supabase",
     "lib",
     "lib/supabase",
-    "types"
+    "types",
+    "utils"
    ],
    "pacotes_externos": [
     "@tanstack/react-query",
@@ -19872,6 +19875,7 @@
     "hooks/win-loss",
     "lib",
     "pages",
+    "pages/admin",
     "services"
    ],
    "depende_de_modulos": [

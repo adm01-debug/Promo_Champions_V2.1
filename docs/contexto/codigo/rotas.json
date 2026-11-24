@@ -5,7 +5,7 @@
   "urls": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 131,
+  "itens_menu": 133,
   "lazy": 233
  },
  "urls": [
@@ -684,7 +684,7 @@
    "papeis": [
     "admin"
    ],
-   "arquivos_puxados": 21
+   "arquivos_puxados": 23
   },
   {
    "protegida": true,
@@ -12237,6 +12237,15 @@
    "resolve_para": "src/pages/LeadScoring.tsx"
   },
   {
+   "rotulo": "LGPD — Solicitações do Titular",
+   "destino": "/admin/solicitacoes-titular",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminSolicitacoesTitular.tsx"
+  },
+  {
    "rotulo": "Mapa Clientes",
    "destino": "/mapa-clientes",
    "grupo": null,
@@ -12649,6 +12658,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/SLATrackingPage.tsx"
+  },
+  {
+   "rotulo": "Supressão de E-mails",
+   "destino": "/admin/supressao-emails",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminSupressaoEmails.tsx"
   },
   {
    "rotulo": "Tarefas",

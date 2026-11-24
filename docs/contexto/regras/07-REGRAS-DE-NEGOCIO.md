@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `97e44d8a8e` · branch `main` · 2026-11-24 04:25 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b48da88928` · branch `main` · 2026-11-24 04:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1742 testes em 222 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1749 testes em 223 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4356,6 +4356,7 @@ _nenhum item encontrado_
 | `src/hooks/win-loss/useWinLossAggregations.test.ts` | 7 | aggregateBySalesperson (usa lib winRate) · calcula winRate = wins/(wins+losses) por vendedor · vendedor sem deals decididos não aparece (sale_id sem mapa é ignorado) · 0 wins e 0 losses → winRate 0 … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
+| `src/components/admin/AdminQuickLinks.test.tsx` | 6 | AdminQuickLinks — telas de alerta de webhook (etapa 110) · leva às configurações de alerta de webhook · leva ao histórico de alertas de webhook · AdminQuickLinks — telas de conformidade (etapa 111) … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
@@ -4425,6 +4426,7 @@ _nenhum item encontrado_
 | `src/lib/qbr/qbrSchedulerAgendaEvent.test.ts` | 4 | qbr-scheduler — linha de agenda_events · respeita os CHECKs de event_type, status e priority · mantém dono, horário e título reconhecível pelo dedup · a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
 | `src/pages/WinLossAnalysisPage.test.tsx` | 4 | WinLossAnalysisPage · exporta todos os negocios carregados quando nao ha filtro · filtra por resultado, reflete na tela e exporta so o que sobrou · filtra por vendedor e limpa os filtros |
+| `src/pages/admin/AdminComercial.test.tsx` | 4 | AdminComercial — histórico de auditoria (etapa 102) · filtra o histórico pelo termo digitado · exporta apenas as linhas que passam pelo filtro · avisa quando o filtro não encontra nenhum registro |
 | `src/test/activities-bets-migration.test.ts` | 4 | migration 20261112140200 — apostas de performance · remove os dois triggers de process_performance_bet_event (activities e sales) · update_performance_bet_progress credita XP da aposta ganha só via xp_history · handle_performance_update credita XP só via xp_history |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
@@ -4436,7 +4438,6 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
-| `src/components/admin/AdminQuickLinks.test.tsx` | 3 | AdminQuickLinks — telas de alerta de webhook (etapa 110) · leva às configurações de alerta de webhook · leva ao histórico de alertas de webhook |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |

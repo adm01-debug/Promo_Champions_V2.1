@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (172)",
+   "co-localizado (*.test) (173)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)",
+   "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)",
    "feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)",
    "fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)",
-   "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)",
-   "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)",
-   "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)"
+   "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
