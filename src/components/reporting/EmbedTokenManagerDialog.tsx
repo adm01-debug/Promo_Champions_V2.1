@@ -6,6 +6,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +49,10 @@ export function EmbedTokenManagerDialog({ open, onOpenChange, reportId }: Props)
 
   const [expiresAt, setExpiresAt] = useState('');
   const [originsInput, setOriginsInput] = useState('');
+  const [pendingAction, setPendingAction] = useState<{
+    id: string;
+    kind: 'revoke' | 'delete';
+  } | null>(null);
 
   const handleCreate = useCallback(async () => {
     const origins = originsInput
@@ -150,7 +164,7 @@ export function EmbedTokenManagerDialog({ open, onOpenChange, reportId }: Props)
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => revoke.mutate({ id: t.id, report_id: reportId })}
+                          onClick={() => setPendingAction({ id: t.id, kind: 'revoke' })}
                           className="h-7 px-2 gap-1 text-xs"
                         >
                           <Ban className="h-3 w-3" /> Revogar
@@ -159,7 +173,8 @@ export function EmbedTokenManagerDialog({ open, onOpenChange, reportId }: Props)
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => remove.mutate({ id: t.id, report_id: reportId })}
+                        onClick={() => setPendingAction({ id: t.id, kind: 'delete' })}
+                        aria-label="Excluir token"
                         className="h-7 px-2 text-xs text-destructive"
                       >
                         <Trash2 className="h-3 w-3" />
@@ -193,6 +208,46 @@ export function EmbedTokenManagerDialog({ open, onOpenChange, reportId }: Props)
           </div>
         </ScrollArea>
       </DialogContent>
+
+      <AlertDialog
+        open={!!pendingAction}
+        onOpenChange={open => !open && setPendingAction(null)}
+      >
+        <AlertDialogContent className="glass border-border/50">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-section-title text-destructive">
+              {pendingAction?.kind === 'revoke'
+                ? 'Revogar este link público?'
+                : 'Excluir este token?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingAction?.kind === 'revoke'
+                ? 'Quem já recebeu o link perde o acesso na hora e o token não pode ser reativado. Para voltar a compartilhar, gere outro token.'
+                : 'O token sai da lista junto com a contagem de acessos. Quem já tem o link perde o acesso ao relatório.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={revoke.isPending || remove.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={revoke.isPending || remove.isPending}
+              onClick={() => {
+                if (!pendingAction) return;
+                const payload = { id: pendingAction.id, report_id: reportId };
+                if (pendingAction.kind === 'revoke') {
+                  revoke.mutate(payload, { onSuccess: () => setPendingAction(null) });
+                } else {
+                  remove.mutate(payload, { onSuccess: () => setPendingAction(null) });
+                }
+              }}
+            >
+              {pendingAction?.kind === 'revoke' ? 'Revogar' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

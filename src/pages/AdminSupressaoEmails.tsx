@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { QueryErrorState } from '@/components/QueryErrorState';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -96,6 +97,10 @@ function AdminSupressaoEmails() {
     useEmailOptOuts(filters);
   const addMutation = useAddEmailOptOut();
   const removeMutation = useRemoveEmailOptOut();
+  const [pendingRemoval, setPendingRemoval] = useState<{
+    id: string;
+    email: string;
+  } | null>(null);
 
   const rows = data?.rows ?? [];
   const total = data?.total ?? 0;
@@ -335,7 +340,7 @@ function AdminSupressaoEmails() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => void handleRemove(row.id, row.email)}
+                    onClick={() => setPendingRemoval({ id: row.id, email: row.email })}
                     disabled={removeMutation.isPending}
                     aria-label={`Remover ${row.email} da supressão`}
                   >
@@ -375,6 +380,24 @@ function AdminSupressaoEmails() {
             )}
           </CardContent>
         </Card>
+
+        <DeleteConfirmDialog
+          open={!!pendingRemoval}
+          onOpenChange={open => !open && setPendingRemoval(null)}
+          onConfirm={() => {
+            if (!pendingRemoval) return;
+            void handleRemove(pendingRemoval.id, pendingRemoval.email).finally(() =>
+              setPendingRemoval(null)
+            );
+          }}
+          title="Remover este e-mail da supressão?"
+          description={
+            pendingRemoval
+              ? `${pendingRemoval.email} volta a receber disparos. Remova apenas com consentimento registrado — remoção indevida expõe a empresa em LGPD.`
+              : ''
+          }
+          isDeleting={removeMutation.isPending}
+        />
       </div>
     </PageTransition>
   );
