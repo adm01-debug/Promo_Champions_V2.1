@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6938bccd0dfdfa1a9acc816145a5aba6eec5fd2d",
+  "commit": "9a949f0d64410fd33f9fb4a28c47a261e1947246",
   "branch": "main",
-  "data_commit": "2026-11-24T07:05:15-03:00",
+  "data_commit": "2026-11-24T07:22:14-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9a949f0",
+    "data": "2026-11-24",
+    "assunto": "chore(main): release 1.8.0 (#661)"
+   },
    {
     "sha": "6938bcc",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "7291cdd",
     "data": "2026-11-24",
     "assunto": "fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)"
-   },
-   {
-    "sha": "06ff5fe",
-    "data": "2026-11-24",
-    "assunto": "feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)"
    }
   ],
   "arquivos_mudados_7d": 378,
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 8
+    "mudancas": 7
    },
    {
     "arquivo": "src/components/pipeline/DealCard.tsx",
@@ -258,15 +258,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 4
-   },
-   {
     "arquivo": ".github/workflows/contexto.yml",
-    "mudancas": 4
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 4
    },
    {
@@ -295,6 +287,14 @@
    },
    {
     "arquivo": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/bi/useABCAnalysis.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/gamification/useLeagues.ts",
     "mudancas": 4
    }
   ],
