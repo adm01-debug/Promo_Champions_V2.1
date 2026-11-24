@@ -10,7 +10,7 @@ Legenda:
 - `[-]` não aplicável — outra etapa tornou esta desnecessária; diga qual
 
 `APROV` marca as etapas que **terminam com a PR aberta** aguardando o dono
-(`Precisa de aprovação humana antes do merge: sim`). São 121 das 255.
+(`Precisa de aprovação humana antes do merge: sim`). São 119 das 255.
 
 Ao concluir, acrescente na própria linha: o número da PR e a evidência em uma frase.
 Exemplo:
@@ -79,10 +79,10 @@ Exemplo:
 - [ ] 056 — Tornar transacional a mudança de status de orçamento — onda 2 — Alta · **APROV**
 - [x] 057 — Consertar a atualização otimista do pipeline — onda 2 — Alta — PR #650 - usePipeline: getQueriesData/setQueriesData por prefixo e restauracao por estagio no onError
 - [x] 058 — Consertar a atualização otimista de clientes — onda 2 — Alta — PR #691 - useClients: chave sem filtro morto (A-100) e invalidacao por prefixo confirmadas na main
-- [ ] 059 — Consertar a atualização otimista de produtos — onda 2 — Média
+- [x] 059 — Consertar a atualização otimista de produtos — onda 2 — Média — PR #654 - useProducts usa getQueriesData/setQueriesData por prefixo ['products'] com restauracao por estagio no onError; reconferido na main e nos testes
 - [x] 060 — Fazer a previsão de receita falhar visivelmente em vez de mentir — onda 2 — Alta - PR #651 - forecast falha visivelmente quando as metas falham
 - [x] 061 — Tratar o erro das consultas paralelas de premiação — onda 2 — Alta — PR #691 - card exibe erro com "Tentar de novo" e sela "dado parcial" quando sequencia/total falham; teste prova 2 falhas sem o fix
-- [ ] 062 — Tratar o erro das consultas paralelas de metas, perfil e relatório de vendas — onda 2 — Média
+- [x] 062 — Tratar o erro das consultas paralelas de metas, perfil e relatório de vendas — onda 2 — Média — PR #653 (b0ac35101) - useSalesReport.ts:70-72 e os hooks de metas e perfil checam os tres erros; reconferido na main, 14 testes passam
 
 ## Onda 3 — Integridade de dados e regras de negócio
 - [ ] 063 — Unificar a data de fechamento de venda em uma definição — onda 3 — Alta · **APROV**
@@ -125,23 +125,23 @@ Exemplo:
 - [ ] 100 — Fazer a comissão recusar venda sem regra, em vez de pagar 5% — onda 3 — Alta · **APROV**
 
 ## Onda 4 — Funcionalidades incompletas
-- [ ] 101 — Decidir o destino dos botões de exportação de Win/Loss — onda 4 — Média
-- [ ] 102 — Decidir o destino dos botões de filtro e exportação da auditoria comercial — onda 4 — Média
-- [ ] 103 — Decidir o destino do botão de exportação de auditoria de preço — onda 4 — Média
-- [ ] 104 — Decidir o destino dos cinco botões da inteligência de compras — onda 4 — Média · **APROV**
-- [ ] 105 — Decidir o destino dos botões do guia de estado vazio — onda 4 — Baixa
-- [ ] 106 — Fazer o campo de busca da auditoria de duplicados buscar — onda 4 — Média
-- [ ] 107 — Fazer o diálogo "Configurar IA" salvar ou sair da tela — onda 4 — Média · **APROV**
+- [x] 101 — Decidir o destino dos botões de exportação de Win/Loss — onda 4 — Média — PR #709 - 3 passed: exporta os 2 negocios, filtro "Perdas" reduz a 1 e exporta 1 linha com Desfecho: Perdido, "Limpar" volta a 2; contraprova com os 3 arquivos de producao em stash deu 3 failed
+- [x] 102 — Decidir o destino dos botões de filtro e exportação da auditoria comercial — onda 4 — Média — PR #711 - 3 passed (filtro, exportacao so das linhas filtradas com colunas e nome do arquivo, estado vazio com botao desabilitado); contraprova 3 failed
+- [x] 103 — Decidir o destino do botão de exportação de auditoria de preço — onda 4 — Média — PR #712 - 2 passed (CSV com as 4 secoes e fallback so-resumo); contraprova 2 failed
+- [x] 104 — Decidir o destino dos cinco botões da inteligência de compras — onda 4 — Média — PR #713 - 9 passed (card leva a /agenda e a /orcamentos, exportacao do mapa de compras e do CSV de duplicados); contraprova 6 failed
+- [x] 105 — Decidir o destino dos botões do guia de estado vazio — onda 4 — Baixa — PR #714 - 2 passed ("Comecar Configuracao" vai para /configuracoes e "Ver Documentacao" para /docs); contraprova 2 failed
+- [x] 106 — Fazer o campo de busca da auditoria de duplicados buscar — onda 4 — Média — PR #708 - 2 passed: o campo de busca filtra de verdade e a falha de leitura vira estado de erro em vez de "nenhum bloqueio registrado"
+- [x] 107 — Fazer o diálogo "Configurar IA" salvar ou sair da tela — onda 4 — Média — PR #715 - 7 passed (limiares salvos em user_app_settings, reset volta ao padrao, aviso quando offline); contraprova 7 failed
 - [x] 108 — Tirar os números fabricados do painel de Segurança — onda 4 — Média - PR #662 - painel de Seguranca sem dados falsos
 - [x] 109 — Esconder os botões de teste de gamificação em produção — onda 4 — Média - PR #662 - botoes de teste ocultos no painel de Seguranca
-- [ ] 110 — Dar entrada no menu às duas telas de alerta de webhook — onda 4 — Média
-- [ ] 111 — Dar entrada no menu às telas de conformidade (LGPD e opt-out) — onda 4 — Alta
-- [ ] 112 — Remover a página de teste de retentativa de produção — onda 4 — Média
+- [x] 110 — Dar entrada no menu às duas telas de alerta de webhook — onda 4 — Média — PR #707 - 2 passed em AdminQuickLinks (alertas de webhook no Acesso Rapido); contraprova 2 failed
+- [x] 111 — Dar entrada no menu às telas de conformidade (LGPD e opt-out) — onda 4 — Alta — PR #710 - 18 passed (LGPD e supressao de e-mails admin-only, travado por routeAccess.test.ts); contraprova 2 failed
+- [x] 112 — Remover a página de teste de retentativa de produção — onda 4 — Média — PR #704 - /admin/retry-test-status e o hook orfao removidos; gate no-orphans do dependency-cruiser segue verde
 - [ ] 113 — Varrer as 24 rotas órfãs e decidir cada uma — onda 4 — Média
 - [ ] 114 — Fazer a página pública da corrida dizer o que está acontecendo — onda 4 — Média · **APROV**
 - [ ] 115 — Restringir o painel de vendedor por papel e validar o identificador — onda 4 — Média · **APROV**
 - [ ] 116 — Ligar a recompensa de cadência ao provedor que falta — onda 4 — Média · **APROV**
-- [ ] 117 — Marcar quando a probabilidade de fechamento é estimativa local — onda 4 — Média
+- [x] 117 — Marcar quando a probabilidade de fechamento é estimativa local — onda 4 — Média — PR #703 - 18 passed, 6 novos: card mostra "Estimativa local" quando o servidor nao responde e nao mostra quando responde
 - [ ] 118 — Fazer o contador de visualizações do relatório público ser atômico — onda 4 — Baixa · **APROV**
 - [ ] 119 — Tirar o salário e o LTV fixos do painel de ROI — onda 4 — Média · **APROV**
 - [ ] 120 — Decidir o destino de `salesperson_commission_configs` — onda 4 — Média · **APROV**
@@ -162,10 +162,10 @@ Exemplo:
 - [x] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média - PR #666 - assinaturas realtime de XP
 - [ ] 134 — Unificar as duas versões do funil de prospecção — onda 5 — Baixa · **APROV**
 - [ ] 135 — Persistir a preferência de tema do painel — onda 5 — Baixa
-- [ ] 136 — Remover o filtro declarado e ignorado em `useClients` — onda 5 — Baixa
+- [x] 136 — Remover o filtro declarado e ignorado em `useClients` — onda 5 — Baixa — PR #691 - a chave nao carrega mais filtro morto: src/hooks/crm/useClients.ts:14 e ['clients'] e a paginada (:24) usa a query que clientService.getClientsPage consome de fato
 - [x] 137 — Filtrar as assinaturas em tempo real dos painéis — onda 5 — Baixa - PR #666 - aviso de XP nao conta duas vezes
-- [ ] 138 — Liberar os canais de tempo real da corrida — onda 5 — Média
-- [ ] 139 — Acrescentar o usuário às chaves de cache por pessoa — onda 5 — Baixa
+- [x] 138 — Liberar os canais de tempo real da corrida — onda 5 — Média — PR #717 - RaceSpectator.test.tsx prova removeChannel 1x no unmount; contraprova sem a linha de producao deu 1 failed; useRaceLeaderboard/useRaceEvents mantem cache de modulo documentado (1 canal por season, limpo no HMR)
+- [x] 139 — Acrescentar o usuário às chaves de cache por pessoa — onda 5 — Baixa — PR #716 - teste novo prova a chave ['league-enrollment','auth-1']; as outras seis consultas da etapa ja carregavam o id na chave na main
 - [ ] 140 — Dar justificativa real às supressões da regra de dependências — onda 5 — Média
 - [x] 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting` — onda 5 — Alta - PR #667 - reconcile do useSyncedSetting le valor corrente e trata empate
 - [x] 142 — Avisar quando a conversa do assistente não for gravada — onda 5 — Média - PR #668 - aviso na conversa quando a mensagem do assistente nao for salva
@@ -216,8 +216,8 @@ Exemplo:
 - [ ] 183 — Corrigir o remetente da escalação de alerta — onda 7 — Média · **APROV**
 - [ ] 184 — Dar reenvio ao webhook genérico de saída — onda 7 — Média · **APROV**
 - [ ] 185 — Incluir timestamp na assinatura dos webhooks de saída — onda 7 — Média
-- [ ] 186 — Corrigir o documento de integrações que descreve outro banco — onda 7 — Média
-- [ ] 187 — Varrer a documentação de estado por medições feitas fora do banco oficial — onda 7 — Média
+- [x] 186 — Corrigir o documento de integrações que descreve outro banco — onda 7 — Média — PR #705 - lote 13 de integracoes marcado como obsoleto, com as fontes vivas conferidas (inventario/estado/banco.json e edges.json)
+- [x] 187 — Varrer a documentação de estado por medições feitas fora do banco oficial — onda 7 — Média — PR #706 - docs de estado medidos no banco antigo marcados como obsoletos
 - [ ] 188 — Registrar quais crons da máquina de vendas estão realmente ativos — onda 7 — Baixa
 - [ ] 189 — Reagendar os crons da máquina de vendas que estiverem faltando — onda 7 — Média · **APROV**
 - [x] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa — PR #688 - regra registrada no `AGENTS.md` §7: função nova ou tocada usa `_shared/http-envelope.ts`, webhook de saída só troca de formato com contrato conferido; gate `check-claude-md-integrity.mjs` exit 0 (134849 bytes, 8 seções)
