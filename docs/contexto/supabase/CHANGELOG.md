@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 10:13 UTC
+
+- **lints** removido (5): `policy_auth_fn_not_wrapped:public.commercial_approval_requests.Criar solicitações`, `policy_auth_fn_not_wrapped:public.salespeople.Users can read own salesperson record`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can delete their own saved filters`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can insert own filters`, `policy_auth_fn_not_wrapped:public.saved_filters.Users can view their own saved filters`
+- **policies (RLS)** removido (12): `public.commercial_approval_requests.Criar solicitações`, `public.pipeline_stages.pipeline_stages_select_authenticated`, `public.pipelines.pipelines_select_authenticated`, `public.salespeople.Users can read own salesperson record`, `public.salesperson_xp.Authenticated users can view XP`, `public.saved_filters.Users can delete their own saved filters`, `public.saved_filters.Users can insert own filters`, `public.saved_filters.Users can view their own saved filters`, `public.sms_verification_codes.Deny insert on sms_verification_codes`, `public.sms_verification_codes.Deny select on sms_verification_codes`, `public.sms_verification_codes.Deny update on sms_verification_codes`, `public.stage_velocity_baselines.svb_select_authenticated`
+
 ## 2026-11-24 05:15 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_20`

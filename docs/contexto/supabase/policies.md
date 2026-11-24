@@ -209,7 +209,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.combo_tracking | Anyone can read combo_tracking | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.combo_tracking | Users can insert own combo_tracking | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid())  LIMIT 1))` |
 | public.combo_tracking | Users can update own combo_tracking | UPDATE | PERMISSIVE | authenticated | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` | `(salesperson_id = ( SELECT s.id    FROM salespeople s   WHERE (s.auth_user_id = auth.uid())  LIMIT 1))` |
-| public.commercial_approval_requests | Criar solicitações | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = requester_id)` |
 | public.commercial_approval_requests | Only admins and managers can update approval requests | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.commercial_approval_requests | Users can create approval requests | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = requester_id)` |
 | public.commercial_approval_requests | Users can view their own approval requests | SELECT | PERMISSIVE | authenticated | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |  |
@@ -565,12 +564,10 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.pipeline_stages | Only admins can manage pipeline stages | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.pipeline_stages | pipeline_stages_delete_admin_manager | DELETE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.pipeline_stages | pipeline_stages_insert_admin_manager | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
-| public.pipeline_stages | pipeline_stages_select_authenticated | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.pipeline_stages | pipeline_stages_update_admin_manager | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.pipelines | Authenticated users can view pipelines | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.pipelines | pipelines_delete_admin_manager | DELETE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.pipelines | pipelines_insert_admin_manager | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
-| public.pipelines | pipelines_select_authenticated | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.pipelines | pipelines_update_admin_manager | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.plan_rollback_ddl | Internal admin only - service_role bypasses RLS | ALL | PERMISSIVE | service_role | `true` | `true` |
 | public.playbook_items | Admins and managers can delete playbook_items | DELETE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
@@ -751,7 +748,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.salespeople | Admins can insert salespeople | INSERT | PERMISSIVE | authenticated |  | `is_admin_or_manager(auth.uid())` |
 | public.salespeople | Users can delete own salesperson record | DELETE | PERMISSIVE | authenticated | `(auth_user_id = auth.uid())` |  |
 | public.salespeople | Users can read own full salesperson data | SELECT | PERMISSIVE | authenticated | `((auth_user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
-| public.salespeople | Users can read own salesperson record | SELECT | PERMISSIVE | authenticated | `((auth_user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
 | public.salesperson_badges | Authenticated can view earned badges | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.salesperson_badges | System can insert badges | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
 | public.salesperson_badges | Users can update own badges | UPDATE | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
@@ -769,15 +765,11 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.salesperson_preferences | Users can update own preferences | UPDATE | PERMISSIVE | public | `(salesperson_id = get_current_salesperson_id())` |  |
 | public.salesperson_xp | Admins can update salesperson_xp | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.salesperson_xp | Authenticated users can read salesperson_xp | SELECT | PERMISSIVE | authenticated | `true` |  |
-| public.salesperson_xp | Authenticated users can view XP | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.saved_filters | Users can create their own saved filters | INSERT | PERMISSIVE | public |  | `(auth.uid() = user_id)` |
 | public.saved_filters | Users can delete own filters | DELETE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
-| public.saved_filters | Users can delete their own saved filters | DELETE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
-| public.saved_filters | Users can insert own filters | INSERT | PERMISSIVE | public |  | `(auth.uid() = user_id)` |
 | public.saved_filters | Users can update own filters | UPDATE | PERMISSIVE | public | `(auth.uid() = user_id)` | `(auth.uid() = user_id)` |
 | public.saved_filters | Users can update their own saved filters | UPDATE | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.saved_filters | Users can view own filters | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
-| public.saved_filters | Users can view their own saved filters | SELECT | PERMISSIVE | public | `(auth.uid() = user_id)` |  |
 | public.scheduled_report_runs | owner or manager can view scheduled_report_runs | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM scheduled_reports sr   WHERE ((sr.id = scheduled_report_runs.schedule_id) AND ((sr.created_by = auth.uid()) OR is_admin_or_manager(auth.uid())))))` |  |
 | public.scheduled_reports | owner can insert scheduled_reports | INSERT | PERMISSIVE | public |  | `(created_by = auth.uid())` |
 | public.scheduled_reports | owner or manager can delete scheduled_reports | DELETE | PERMISSIVE | public | `((created_by = auth.uid()) OR is_admin_or_manager(auth.uid()))` |  |
@@ -838,9 +830,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.sms_verification_codes | Deny delete on sms_verification_codes | DELETE | PERMISSIVE | authenticated | `false` |  |
 | public.sms_verification_codes | Deny direct INSERT - use RPCs | INSERT | PERMISSIVE | authenticated |  | `false` |
 | public.sms_verification_codes | Deny direct SELECT - use RPCs | SELECT | PERMISSIVE | authenticated | `false` |  |
-| public.sms_verification_codes | Deny insert on sms_verification_codes | INSERT | PERMISSIVE | authenticated |  | `false` |
-| public.sms_verification_codes | Deny select on sms_verification_codes | SELECT | PERMISSIVE | authenticated | `false` |  |
-| public.sms_verification_codes | Deny update on sms_verification_codes | UPDATE | PERMISSIVE | authenticated | `false` |  |
 | public.squad_members | Squad members admin manage | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
 | public.squad_members | Squad members viewable by authenticated | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.squads | Squads admin manage | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
@@ -857,7 +846,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.stage_velocity_baselines | admin manager write baselines | ALL | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.stage_velocity_baselines | auth read baselines | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.stage_velocity_baselines | svb_admin_write | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
-| public.stage_velocity_baselines | svb_select_authenticated | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.status_transitions | admin manager write status transitions | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.status_transitions | authenticated read status transitions | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.stock_movements | Admin/manager can view stock movements | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |

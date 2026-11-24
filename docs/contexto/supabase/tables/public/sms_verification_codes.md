@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 11 |
+| policies | 8 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -118,36 +118,6 @@
 | campo | valor |
 |---|---|
 | comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `false` |
-| WITH CHECK |  |
-
-### `Deny insert on sms_verification_codes`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING |  |
-| WITH CHECK | `false` |
-
-### `Deny select on sms_verification_codes`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `false` |
-| WITH CHECK |  |
-
-### `Deny update on sms_verification_codes`
-
-| campo | valor |
-|---|---|
-| comando | UPDATE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `false` |

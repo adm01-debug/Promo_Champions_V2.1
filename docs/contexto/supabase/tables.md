@@ -87,7 +87,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cohort_analyses](tables/public/cohort_analyses.md) | table | sim | 1 | 10 | não |  |
 | [public.collectible_badges](tables/public/collectible_badges.md) | table | sim | 1 | 10 | não |  |
 | [public.combo_tracking](tables/public/combo_tracking.md) | table | sim | 4 | 9 | não |  |
-| [public.commercial_approval_requests](tables/public/commercial_approval_requests.md) | table | sim | 4 | 14 | não |  |
+| [public.commercial_approval_requests](tables/public/commercial_approval_requests.md) | table | sim | 3 | 14 | não |  |
 | [public.commission_bonus_awards](tables/public/commission_bonus_awards.md) | table | sim | 4 | 12 | sim |  |
 | [public.commission_bonuses](tables/public/commission_bonuses.md) | table | sim | 2 | 12 | não |  |
 | [public.commission_rules](tables/public/commission_rules.md) | table | sim | 2 | 13 | não |  |
@@ -239,8 +239,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.pipeline_coverage_snapshots](tables/public/pipeline_coverage_snapshots.md) | table | sim | 4 | 16 | sim |  |
 | [public.pipeline_inspection_snapshots](tables/public/pipeline_inspection_snapshots.md) | table | sim | 2 | 9 | não |  |
 | [public.pipeline_inspections](tables/public/pipeline_inspections.md) | table | sim | 2 | 10 | não |  |
-| [public.pipeline_stages](tables/public/pipeline_stages.md) | table | sim | 6 | 9 | não |  |
-| [public.pipelines](tables/public/pipelines.md) | table | sim | 5 | 9 | não |  |
+| [public.pipeline_stages](tables/public/pipeline_stages.md) | table | sim | 5 | 9 | não |  |
+| [public.pipelines](tables/public/pipelines.md) | table | sim | 4 | 9 | não |  |
 | [public.plan_rollback_ddl](tables/public/plan_rollback_ddl.md) | table | sim | 1 | 6 | não |  |
 | [public.playbook_items](tables/public/playbook_items.md) | table | sim | 4 | 9 | não |  |
 | [public.playbook_progress](tables/public/playbook_progress.md) | table | sim | 6 | 5 | não |  |
@@ -305,7 +305,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.sales_goals](tables/public/sales_goals.md) | table | sim | 4 | 5 | não |  |
 | [public.sales_streaks](tables/public/sales_streaks.md) | table | sim | 3 | 7 | sim |  |
 | [public.sales_territories](tables/public/sales_territories.md) | table | sim | 3 | 10 | sim |  |
-| [public.salespeople](tables/public/salespeople.md) | table | sim | 5 | 14 | não |  |
+| [public.salespeople](tables/public/salespeople.md) | table | sim | 4 | 14 | não |  |
 | [public.salesperson_badges](tables/public/salesperson_badges.md) | table | sim | 3 | 5 | sim |  |
 | [public.salesperson_coaching_aggregates](tables/public/salesperson_coaching_aggregates.md) | table | sim | 2 | 14 | sim |  |
 | [public.salesperson_commission_configs](tables/public/salesperson_commission_configs.md) | table | sim | 2 | 5 | não |  |
@@ -313,8 +313,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.salesperson_leagues](tables/public/salesperson_leagues.md) | table | sim | 2 | 9 | não |  |
 | [public.salesperson_performance_telemetry](tables/public/salesperson_performance_telemetry.md) | table | sim | 1 | 5 | não |  |
 | [public.salesperson_preferences](tables/public/salesperson_preferences.md) | table | sim | 3 | 10 | não |  |
-| [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 3 | 7 | sim |  |
-| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 8 | 8 | não | Filtros salvos por usuários para diferentes entidades |
+| [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 2 | 7 | sim |  |
+| [public.saved_filters](tables/public/saved_filters.md) | table | sim | 5 | 8 | não | Filtros salvos por usuários para diferentes entidades |
 | [public.scheduled_report_runs](tables/public/scheduled_report_runs.md) | table | sim | 1 | 8 | não |  |
 | [public.scheduled_reports](tables/public/scheduled_reports.md) | table | sim | 4 | 15 | não |  |
 | [public.scheduled_sends](tables/public/scheduled_sends.md) | table | sim | 3 | 13 | não |  |
@@ -339,14 +339,14 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.sla_policies](tables/public/sla_policies.md) | table | sim | 2 | 9 | não |  |
 | [public.sla_violations](tables/public/sla_violations.md) | table | sim | 2 | 11 | não |  |
 | [public.slow_query_alerts](tables/public/slow_query_alerts.md) | table | sim | 2 | 15 | não | G6: consultas SQL detectadas como lentas. Dedupe por query_hash enquanto não reconhecidas. |
-| [public.sms_verification_codes](tables/public/sms_verification_codes.md) | table | sim | 11 | 7 | não |  |
+| [public.sms_verification_codes](tables/public/sms_verification_codes.md) | table | sim | 8 | 7 | não |  |
 | [public.squad_members](tables/public/squad_members.md) | table | sim | 2 | 3 | não |  |
 | [public.squads](tables/public/squads.md) | table | sim | 2 | 7 | não |  |
 | [public.stage_bottleneck_insights](tables/public/stage_bottleneck_insights.md) | table | sim | 3 | 11 | sim |  |
 | [public.stage_conversion_metrics](tables/public/stage_conversion_metrics.md) | table | sim | 3 | 14 | sim |  |
 | [public.stage_inactivity_rules](tables/public/stage_inactivity_rules.md) | table | sim | 2 | 9 | não |  |
 | [public.stage_probabilities](tables/public/stage_probabilities.md) | table | sim | 1 | 3 | não |  |
-| [public.stage_velocity_baselines](tables/public/stage_velocity_baselines.md) | table | sim | 4 | 15 | sim |  |
+| [public.stage_velocity_baselines](tables/public/stage_velocity_baselines.md) | table | sim | 3 | 15 | sim |  |
 | [public.status_transitions](tables/public/status_transitions.md) | table | sim | 2 | 4 | não | Máquina de estados: transições de status válidas por entidade (sales, commissions). |
 | [public.stock_movements](tables/public/stock_movements.md) | table | sim | 2 | 8 | não |  |
 | [public.supplier_order_items](tables/public/supplier_order_items.md) | table | sim | 2 | 7 | não |  |

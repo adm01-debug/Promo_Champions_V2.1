@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 4 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -53,16 +53,6 @@
 
 
 ## Policies (RLS)
-
-### `Criar solicitações`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING |  |
-| WITH CHECK | `(auth.uid() = requester_id)` |
 
 ### `Only admins and managers can update approval requests`
 

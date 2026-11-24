@@ -164,7 +164,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.combo_tracking.Admins can update combo_tracking | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.combo_tracking.Users can insert own combo_tracking | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.combo_tracking.Users can update own combo_tracking | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.commercial_approval_requests.Criar solicitações | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.commercial_approval_requests.Only admins and managers can update approval requests | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.commercial_approval_requests.Users can create approval requests | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.commercial_approval_requests.Users can view their own approval requests | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -614,7 +613,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.salespeople.Admins can insert salespeople | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.salespeople.Users can delete own salesperson record | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.salespeople.Users can read own full salesperson data | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.salespeople.Users can read own salesperson record | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.salesperson_coaching_aggregates.sca_write_admin_manager | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.salesperson_commission_configs.Admins can manage commission configs | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.salesperson_custom_field_values.Admins can manage field values | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
@@ -625,12 +623,9 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.salesperson_xp.Admins can update salesperson_xp | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can create their own saved filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can delete own filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can delete their own saved filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can insert own filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can update own filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can update their own saved filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can view own filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.saved_filters.Users can view their own saved filters | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.scheduled_report_runs.owner or manager can view scheduled_report_runs | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.scheduled_reports.owner can insert scheduled_reports | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.scheduled_reports.owner or manager can delete scheduled_reports | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

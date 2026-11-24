@@ -8,7 +8,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 8 |
+| policies | 5 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -71,26 +71,6 @@
 | USING | `(auth.uid() = user_id)` |
 | WITH CHECK |  |
 
-### `Users can delete their own saved filters`
-
-| campo | valor |
-|---|---|
-| comando | DELETE |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() = user_id)` |
-| WITH CHECK |  |
-
-### `Users can insert own filters`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING |  |
-| WITH CHECK | `(auth.uid() = user_id)` |
-
 ### `Users can update own filters`
 
 | campo | valor |
@@ -112,16 +92,6 @@
 | WITH CHECK |  |
 
 ### `Users can view own filters`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() = user_id)` |
-| WITH CHECK |  |
-
-### `Users can view their own saved filters`
 
 | campo | valor |
 |---|---|

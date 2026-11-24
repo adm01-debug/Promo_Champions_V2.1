@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 3 |
+| policies | 2 |
 | realtime (publication) | sim |
 | replica identity | default |
 | vem de extensão | não |
@@ -55,16 +55,6 @@
 | WITH CHECK |  |
 
 ### `Authenticated users can read salesperson_xp`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
-| WITH CHECK |  |
-
-### `Authenticated users can view XP`
 
 | campo | valor |
 |---|---|

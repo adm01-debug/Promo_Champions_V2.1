@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 4 |
+| policies | 3 |
 | realtime (publication) | sim |
 | replica identity | full |
 | vem de extensão | não |
@@ -82,16 +82,6 @@
 | roles | authenticated |
 | USING | `has_role(auth.uid(), 'admin'::app_role)` |
 | WITH CHECK | `has_role(auth.uid(), 'admin'::app_role)` |
-
-### `svb_select_authenticated`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
-| WITH CHECK |  |
 
 
 ## Triggers

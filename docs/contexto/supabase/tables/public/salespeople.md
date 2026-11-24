@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 5 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -206,16 +206,6 @@
 | WITH CHECK |  |
 
 ### `Users can read own full salesperson data`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `((auth_user_id = auth.uid()) OR is_admin_or_manager(auth.uid()))` |
-| WITH CHECK |  |
-
-### `Users can read own salesperson record`
 
 | campo | valor |
 |---|---|

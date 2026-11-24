@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 6 |
+| policies | 5 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -85,16 +85,6 @@
 | roles | authenticated |
 | USING |  |
 | WITH CHECK | `is_admin_or_manager(auth.uid())` |
-
-### `pipeline_stages_select_authenticated`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
-| WITH CHECK |  |
 
 ### `pipeline_stages_update_admin_manager`
 
