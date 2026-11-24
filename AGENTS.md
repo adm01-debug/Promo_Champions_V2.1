@@ -63,6 +63,7 @@ Escrita no GitHub (`adm01-debug`): MCP **`GITHUB - MCP - FOREVER`** (o padrão d
 - SQL via MCP: gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev`. Conector falhou: ler docs/agentes/banco-e-mcp.md.
 - Migrations: DDL direto com `db_query` no MCP (não `supabase_apply_migration`); versão = timestamp `YYYYMMDDHHmmss` crescente (`SELECT max(version)` antes); toda DDL vira arquivo comentado em `supabase/migrations/`; `CREATE INDEX CONCURRENTLY` falha — use `CREATE INDEX`; functions `SECURITY INVOKER`, grants mínimos; RLS + `updated_at` obrigatórios; resto em docs/SCHEMA_CONVENTIONS.md. `npm run check:migrations` valida.
 - Edge Functions: 171 no repo, plano limita a 100 deployadas. `migrate-helper` foi removida (expunha service_role).
+- Edge Functions — formato de erro: função **nova ou tocada** responde erro via `_shared/http-envelope.ts` (`errorEnvelope` + `jsonResponse`), nunca com `{error}` ou `{code,message}` soltos. Exceção: webhook de saída só troca de formato com o contrato do parceiro conferido. Modelos já conformes: `challenge-expiration-alerts`, `check-lead-sla`, `csat-ces-trigger`. Não faça varredura das 171 — a camada converge conforme cada função é tocada.
 
 ## 8. Comandos, segurança e contexto gerado
 
