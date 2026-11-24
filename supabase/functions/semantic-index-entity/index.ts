@@ -1,4 +1,3 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
@@ -9,7 +8,7 @@ import {
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
-import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { getServiceClient, getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
 import {
   buildSemanticContent,
@@ -91,9 +90,10 @@ Deno.serve(
 
     try {
       // Autorização: chamada interna (service_role) ou usuário autenticado.
+      let caller: Awaited<ReturnType<typeof getUserClient>> | null = null;
       if (!isInternalServiceRequest(req)) {
         try {
-          await getUserClient(req);
+          caller = await getUserClient(req);
         } catch (error) {
           if (error instanceof UnauthorizedError) {
             return new Response(JSON.stringify({ error: 'unauthorized' }), {
@@ -124,13 +124,17 @@ Deno.serve(
       const apiKey = Deno.env.get('OPENROUTER_API_KEY');
       if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured');
 
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      // Escrita no índice semântico compartilhado: não existe policy de escrita
+      // para usuário, então o bypass de RLS é necessário.
+      const supabase = getServiceClient(
+        'escreve no índice semântico compartilhado e atualiza o hash de frescor'
       );
+      // Leitura da entidade de origem: com o client do chamador a RLS decide se o
+      // registro existe para ele; chamada interna mantém o bypass.
+      const reader = caller?.client ?? supabase;
 
       const cfg = TABLE_BY_TYPE[entity_type];
-      const { data: row, error: rowErr } = await supabase
+      const { data: row, error: rowErr } = await reader
         .from(cfg.table)
         .select('*')
         .eq('id', entity_id)
@@ -182,7 +186,7 @@ Deno.serve(
         ? ((row[cfg.ownerCol] as string | null) ?? null)
         : null;
       if (entity_type === 'client' && !salesperson_id) {
-        const { data: cp } = await supabase
+        const { data: cp } = await reader
           .from('client_portfolio')
           .select('salesperson_id')
           .eq('client_id', entity_id)
