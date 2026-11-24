@@ -35,6 +35,11 @@ Exemplo: `fix(bi): corrigir classificação ABC com receita zero`
 - **Hooks**: `camelCase` com prefixo `use`
 - **Arquivos**: `kebab-case` para utilitários, `PascalCase` para componentes
 - **TODO/FIXME**: `// TODO(@user): #issue-id — descrição`
+- **Supressões de lint**: `// eslint-disable-next-line <regra> — <motivo>`. Para
+  `react-hooks/exhaustive-deps` o motivo precisa nomear **qual** dependência ficou de fora e por quê
+  (ex.: `— omite opts: literal recriado a cada render, lido por ref`). O mesmo texto genérico repetido
+  em N arquivos não é justificativa revisável: o contador é acompanhado em
+  [docs/TECH_DEBT.md](./docs/TECH_DEBT.md) e só pode diminuir.
 - Veja [docs/style-guide.md](./docs/style-guide.md) e [docs/component-guidelines.md](./docs/component-guidelines.md)
 
 ## Testes

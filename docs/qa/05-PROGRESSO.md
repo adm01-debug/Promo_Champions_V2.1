@@ -166,7 +166,7 @@ Exemplo:
 - [x] 137 — Filtrar as assinaturas em tempo real dos painéis — onda 5 — Baixa - PR #666 - aviso de XP nao conta duas vezes
 - [x] 138 — Liberar os canais de tempo real da corrida — onda 5 — Média — PR #717 - RaceSpectator.test.tsx prova removeChannel 1x no unmount; contraprova sem a linha de producao deu 1 failed; useRaceLeaderboard/useRaceEvents mantem cache de modulo documentado (1 canal por season, limpo no HMR)
 - [x] 139 — Acrescentar o usuário às chaves de cache por pessoa — onda 5 — Baixa — PR #716 - teste novo prova a chave ['league-enrollment','auth-1']; as outras seis consultas da etapa ja carregavam o id na chave na main
-- [ ] 140 — Dar justificativa real às supressões da regra de dependências — onda 5 — Média
+- [x] 140 — Dar justificativa real às supressões da regra de dependências — onda 5 — Média — PR #FIXME — `useSyncedSetting.ts` já estava sem a supressão (A-88 corrigido com `valueRef` + carimbos iguais) e ganhou `src/hooks/useSyncedSetting.test.tsx` (5 casos; contraprova com o valor da 1a render falha como o achado descreve); convenção de supressão registrada no `CONTRIBUTING.md`; restam 48 diretivas de `exhaustive-deps` para revisão em lotes
 - [x] 141 — Corrigir o reenvio da preferência antiga em `useSyncedSetting` — onda 5 — Alta - PR #667 - reconcile do useSyncedSetting le valor corrente e trata empate
 - [x] 142 — Avisar quando a conversa do assistente não for gravada — onda 5 — Média - PR #668 - aviso na conversa quando a mensagem do assistente nao for salva
 - [ ] 143 — Dar asserções aos testes de fluxo principal — onda 5 — Alta
