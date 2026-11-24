@@ -39,6 +39,7 @@ import {
 import { CadenciasLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { useState, useMemo, useEffect } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CadenceTemplateManager } from '@/components/sales/cadence/CadenceTemplateManager';
@@ -66,6 +67,10 @@ export default function Cadencias() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const { data: allProspects } = useProspectCadences();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [cadenceToDelete, setCadenceToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Auto-process trigger
   useEffect(() => {
@@ -328,7 +333,12 @@ export default function Cadencias() {
                                 <CadenceCardWithSteps
                                   key={cadence.id}
                                   cadence={cadence}
-                                  onDelete={() => deleteCadence.mutate(cadence.id)}
+                                  onDelete={() =>
+                                    setCadenceToDelete({
+                                      id: cadence.id,
+                                      name: cadence.name,
+                                    })
+                                  }
                                   isDeleting={deleteCadence.isPending}
                                 />
                               ))}
@@ -469,6 +479,24 @@ export default function Cadencias() {
             </div>
           </div>
         </SkeletonTransition>
+
+        <DeleteConfirmDialog
+          open={!!cadenceToDelete}
+          onOpenChange={open => !open && setCadenceToDelete(null)}
+          onConfirm={() => {
+            if (!cadenceToDelete) return;
+            deleteCadence.mutate(cadenceToDelete.id, {
+              onSuccess: () => setCadenceToDelete(null),
+            });
+          }}
+          title="Excluir esta cadencia?"
+          description={
+            cadenceToDelete
+              ? `A cadencia "${cadenceToDelete.name}" e os passos dela sao apagados. Leads em andamento param de receber as acoes.`
+              : ''
+          }
+          isDeleting={deleteCadence.isPending}
+        />
       </>
     </PageTransition>
   );

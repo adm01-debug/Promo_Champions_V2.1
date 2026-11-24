@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -96,6 +97,9 @@ export function EditCadenceDialog({
   const deleteStep = useDeleteCadenceStep();
   const [newSteps, setNewSteps] = useState<NewStepInput[]>([]);
   const [stepErrors, setStepErrors] = useState<Record<number, string[]>>({});
+  const [stepToDelete, setStepToDelete] = useState<{ id: string; title: string } | null>(
+    null
+  );
 
   const form = useForm<CadenceFormData>({
     resolver: zodResolver(cadenceSchema),
@@ -291,9 +295,7 @@ export function EditCadenceDialog({
                 key={step.id}
                 step={step}
                 onSave={handleSaveStep}
-                onDelete={id =>
-                  deleteStep.mutateAsync({ stepId: id, cadenceId: cadence.id })
-                }
+                onDelete={() => setStepToDelete({ id: step.id, title: step.title })}
                 isSaving={updateStep.isPending}
               />
             ))}
@@ -451,6 +453,25 @@ export function EditCadenceDialog({
           </Button>
         </div>
       </DialogContent>
+
+      <DeleteConfirmDialog
+        open={!!stepToDelete}
+        onOpenChange={open => !open && setStepToDelete(null)}
+        onConfirm={() => {
+          if (!stepToDelete) return;
+          void deleteStep.mutateAsync(
+            { stepId: stepToDelete.id, cadenceId: cadence.id },
+            { onSuccess: () => setStepToDelete(null) }
+          );
+        }}
+        title="Excluir esta etapa da cadencia?"
+        description={
+          stepToDelete
+            ? `A etapa "${stepToDelete.title}" sai da cadencia. Leads que ja passaram por ela mantem o historico.`
+            : ''
+        }
+        isDeleting={deleteStep.isPending}
+      />
     </Dialog>
   );
 }

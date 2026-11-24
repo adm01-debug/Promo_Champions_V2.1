@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +51,9 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
   const recalc = useRecalculateCoverage();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<DealStakeholder | null>(null);
+  const [stakeholderToDelete, setStakeholderToDelete] = useState<DealStakeholder | null>(
+    null
+  );
 
   const grouped = useMemo(() => {
     const map = new Map<DMURole, DealStakeholder[]>();
@@ -69,7 +73,6 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
     setEditing(null);
     setDialogOpen(true);
   };
-  const handleDelete = (id: string) => del.mutate({ id, sale_id: saleId });
 
   return (
     <Card
@@ -183,7 +186,7 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
                       key={s.id}
                       stakeholder={s}
                       onEdit={handleEdit}
-                      onDelete={handleDelete}
+                      onDelete={() => setStakeholderToDelete(s)}
                     />
                   ))}
                 </div>
@@ -199,6 +202,25 @@ export function BuyingCommitteeCard({ saleId, ownerId, latestRecordingId }: Prop
         saleId={saleId}
         ownerId={ownerId}
         initial={editing}
+      />
+
+      <DeleteConfirmDialog
+        open={!!stakeholderToDelete}
+        onOpenChange={open => !open && setStakeholderToDelete(null)}
+        onConfirm={() => {
+          if (!stakeholderToDelete) return;
+          del.mutate(
+            { id: stakeholderToDelete.id, sale_id: saleId },
+            { onSuccess: () => setStakeholderToDelete(null) }
+          );
+        }}
+        title="Remover este membro do comite?"
+        description={
+          stakeholderToDelete
+            ? `${stakeholderToDelete.name} sai do mapa de influencia desta venda. O historico de contato dele nao e apagado.`
+            : ''
+        }
+        isDeleting={del.isPending}
       />
     </Card>
   );

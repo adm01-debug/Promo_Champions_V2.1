@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import {
   Dialog,
   DialogContent,
@@ -63,6 +64,9 @@ export function EnrollmentRulesDialog() {
   });
 
   const [running, setRunning] = useState(false);
+  const [ruleToDelete, setRuleToDelete] = useState<{ id: string; name: string } | null>(
+    null
+  );
 
   const handleCreate = () => {
     if (!form.cadence_id || !form.name) {
@@ -300,7 +304,7 @@ export function EnrollmentRulesDialog() {
                         variant="ghost"
                         aria-label="Excluir regra"
                         className="h-8 w-8"
-                        onClick={() => deleteRule.mutate(rule.id)}
+                        onClick={() => setRuleToDelete({ id: rule.id, name: rule.name })}
                       >
                         <Trash2 className="h-3.5 w-3.5 text-destructive" />
                       </Button>
@@ -318,6 +322,22 @@ export function EnrollmentRulesDialog() {
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <DeleteConfirmDialog
+        open={!!ruleToDelete}
+        onOpenChange={open => !open && setRuleToDelete(null)}
+        onConfirm={() => {
+          if (!ruleToDelete) return;
+          deleteRule.mutate(ruleToDelete.id, { onSuccess: () => setRuleToDelete(null) });
+        }}
+        title="Excluir esta regra de inscricao?"
+        description={
+          ruleToDelete
+            ? `A regra "${ruleToDelete.name}" deixa de inscrever leads na cadencia. Quem ja entrou continua no fluxo.`
+            : ''
+        }
+        isDeleting={deleteRule.isPending}
+      />
     </Dialog>
   );
 }

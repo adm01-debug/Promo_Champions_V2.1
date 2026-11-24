@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -56,6 +57,9 @@ export function TaskCatalogManager() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<TaskCatalogItem | null>(null);
   const [form, setForm] = useState<TaskCatalogInput>(emptyForm);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; title: string } | null>(
+    null
+  );
 
   const openCreate = () => {
     setEditing(null);
@@ -234,7 +238,7 @@ export function TaskCatalogManager() {
                       size="icon"
                       variant="ghost"
                       aria-label="Excluir tarefa"
-                      onClick={() => remove.mutate(item.id)}
+                      onClick={() => setItemToDelete({ id: item.id, title: item.title })}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -255,6 +259,22 @@ export function TaskCatalogManager() {
           </Table>
         </div>
       )}
+
+      <DeleteConfirmDialog
+        open={!!itemToDelete}
+        onOpenChange={open => !open && setItemToDelete(null)}
+        onConfirm={() => {
+          if (!itemToDelete) return;
+          remove.mutate(itemToDelete.id, { onSuccess: () => setItemToDelete(null) });
+        }}
+        title="Excluir esta tarefa do catalogo?"
+        description={
+          itemToDelete
+            ? `A tarefa "${itemToDelete.title}" sai do catalogo e nao pode mais ser atribuida. Tarefas ja concluidas mantem o historico.`
+            : ''
+        }
+        isDeleting={remove.isPending}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,10 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [category, setCategory] = useState('geral');
+  const [templateToDelete, setTemplateToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const { salesperson } = useAuth();
   const createTemplate = useCreateTemplate();
   const deleteTemplate = useDeleteTemplate();
@@ -216,7 +221,9 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
                         size="icon"
                         aria-label="Excluir"
                         className="h-7 w-7 text-status-error hover:text-status-error"
-                        onClick={() => deleteTemplate.mutate(tpl.id)}
+                        onClick={() =>
+                          setTemplateToDelete({ id: tpl.id, name: tpl.name })
+                        }
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -244,6 +251,24 @@ export function TemplateManager({ templates, isLoading, channelConfig }: Props) 
           })}
         </div>
       )}
+
+      <DeleteConfirmDialog
+        open={!!templateToDelete}
+        onOpenChange={open => !open && setTemplateToDelete(null)}
+        onConfirm={() => {
+          if (!templateToDelete) return;
+          deleteTemplate.mutate(templateToDelete.id, {
+            onSuccess: () => setTemplateToDelete(null),
+          });
+        }}
+        title="Excluir este template de mensagem?"
+        description={
+          templateToDelete
+            ? `O template "${templateToDelete.name}" sai da lista e nao pode mais ser usado nas cadences. Nao ha copia.`
+            : ''
+        }
+        isDeleting={deleteTemplate.isPending}
+      />
     </div>
   );
 }

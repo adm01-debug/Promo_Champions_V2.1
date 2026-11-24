@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -262,6 +263,7 @@ function EventCard({
 }) {
   const complete = useCompleteAgendaEvent();
   const remove = useDeleteAgendaEvent();
+  const [confirmRemove, setConfirmRemove] = useState(false);
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -313,7 +315,7 @@ function EventCard({
             <Button
               size="icon"
               variant="ghost"
-              onClick={() => remove.mutate(event.id)}
+              onClick={() => setConfirmRemove(true)}
               aria-label="Remover"
             >
               <Trash2 className="h-4 w-4 text-destructive" />
@@ -321,6 +323,17 @@ function EventCard({
           </div>
         </div>
       </CardContent>
+
+      <DeleteConfirmDialog
+        open={confirmRemove}
+        onOpenChange={setConfirmRemove}
+        onConfirm={() => {
+          remove.mutate(event.id, { onSuccess: () => setConfirmRemove(false) });
+        }}
+        title="Remover este evento da agenda?"
+        description={`"${event.title}" sai da agenda e o lembrete nao aparece mais. Nao ha copia.`}
+        isDeleting={remove.isPending}
+      />
     </Card>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,6 +52,9 @@ export function FollowUpTerritoryRules() {
   const [selectedTerritory, setSelectedTerritory] = useState('');
   const [selectedSalesperson, setSelectedSalesperson] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [ruleToDelete, setRuleToDelete] = useState<{ id: string; label: string } | null>(
+    null
+  );
 
   const { data: rules, isLoading: isLoadingRules } = useQuery({
     queryKey: ['follow-up-territory-rules'],
@@ -232,7 +236,9 @@ export function FollowUpTerritoryRules() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => deleteRule.mutate(rule.id)}
+                    onClick={() =>
+                      setRuleToDelete({ id: rule.id, label: rule.territory || 'Global' })
+                    }
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
@@ -242,6 +248,22 @@ export function FollowUpTerritoryRules() {
           )}
         </CardContent>
       </Card>
+
+      <DeleteConfirmDialog
+        open={!!ruleToDelete}
+        onOpenChange={open => !open && setRuleToDelete(null)}
+        onConfirm={() => {
+          if (!ruleToDelete) return;
+          deleteRule.mutate(ruleToDelete.id, { onSuccess: () => setRuleToDelete(null) });
+        }}
+        title="Excluir esta regra de territorio?"
+        description={
+          ruleToDelete
+            ? `A regra do territorio "${ruleToDelete.label}" sai do follow-up automatico. Leads deixam de ser roteados por ela.`
+            : ''
+        }
+        isDeleting={deleteRule.isPending}
+      />
     </div>
   );
 }
