@@ -69,7 +69,7 @@ Exemplo:
 - [ ] 046 — Aplicar as regras de aprovação que a tela promete — onda 2 — Alta · **APROV**
 - [ ] 047 — Só marcar "aprovado" depois de a mudança ser aplicada — onda 2 — Alta · **APROV**
 - [ ] 048 — Decidir e resolver a entrada de cotações do parceiro — onda 2 — Alta · **APROV**
-- [ ] 049 — Fazer o botão "Reprocessar" reprocessar — onda 2 — Alta
+- [x] 049 — Fazer o botão "Reprocessar" reprocessar — onda 2 — Alta — PR #649 - useV4Callbacks: Reprocessar desabilitado com attempts>=5 e "Resetar tentativas" zera attempts/next_retry_at
 - [ ] 050 — Dar policy de escrita a `cadence_alert_templates` — onda 2 — Alta · **APROV**
 - [ ] 051 — Dar policy de escrita a `cadence_outcome_rules` — onda 2 — Alta · **APROV**
 - [ ] 052 — Resolver a gravação de `integration_logs` — onda 2 — Média
@@ -77,11 +77,11 @@ Exemplo:
 - [ ] 054 — Permitir marcar follow-up como enviado (e parar de engolir o erro) — onda 2 — Alta · **APROV**
 - [ ] 055 — Permitir excluir a conversa do assistente — onda 2 — Média · **APROV**
 - [ ] 056 — Tornar transacional a mudança de status de orçamento — onda 2 — Alta · **APROV**
-- [ ] 057 — Consertar a atualização otimista do pipeline — onda 2 — Alta
-- [ ] 058 — Consertar a atualização otimista de clientes — onda 2 — Alta
+- [x] 057 — Consertar a atualização otimista do pipeline — onda 2 — Alta — PR #650 - usePipeline: getQueriesData/setQueriesData por prefixo e restauracao por estagio no onError
+- [x] 058 — Consertar a atualização otimista de clientes — onda 2 — Alta — PR #691 - useClients: chave sem filtro morto (A-100) e invalidacao por prefixo confirmadas na main
 - [ ] 059 — Consertar a atualização otimista de produtos — onda 2 — Média
 - [x] 060 — Fazer a previsão de receita falhar visivelmente em vez de mentir — onda 2 — Alta - PR #651 - forecast falha visivelmente quando as metas falham
-- [ ] 061 — Tratar o erro das consultas paralelas de premiação — onda 2 — Alta
+- [x] 061 — Tratar o erro das consultas paralelas de premiação — onda 2 — Alta — PR #691 - card exibe erro com "Tentar de novo" e sela "dado parcial" quando sequencia/total falham; teste prova 2 falhas sem o fix
 - [ ] 062 — Tratar o erro das consultas paralelas de metas, perfil e relatório de vendas — onda 2 — Média
 
 ## Onda 3 — Integridade de dados e regras de negócio
@@ -154,11 +154,11 @@ Exemplo:
 - [x] 125 — Mostrar erro nas telas de deduplicação e de chaves de funcionalidade — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [x] 126 — Mostrar erro na tela de supressão de e-mails — onda 5 — Média — PR #663 - QueryErrorState com refetch nas 6 paginas; estado de erro em vez de "sem dados"
 - [ ] 127 — Varrer o repositório por erro de leitura engolido — onda 5 — Média
-- [ ] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta
+- [x] 128 — Impedir que uma seção inválida de painel trave a página inicial — onda 5 — Alta — PR #664 - VALID_DASHBOARD_SECTIONS em lib/dashboardSections valida antes de gravar e limpa valor invalido na leitura
 - [ ] 129 — Tornar a importação de clientes capaz de ler CSV de verdade — onda 5 — Alta · **APROV**
 - [x] 130 — Pedir confirmação explícita do volume antes de importar — onda 5 — Média — PR #669 - ImportExport pede confirmacao do volume antes de gravar
 - [x] 131 — Fazer o aviso de XP refletir o que foi creditado — onda 5 — Média - PR #666 - aviso de XP usa valor do servidor
-- [ ] 132 — Invalidar o contador de tarefas de follow-up após mutação — onda 5 — Média
+- [x] 132 — Invalidar o contador de tarefas de follow-up após mutação — onda 5 — Média — PR #665 - todays-cadence-tasks invalidado nas mutacoes e chave com userId
 - [x] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média - PR #666 - assinaturas realtime de XP
 - [ ] 134 — Unificar as duas versões do funil de prospecção — onda 5 — Baixa · **APROV**
 - [ ] 135 — Persistir a preferência de tema do painel — onda 5 — Baixa
@@ -178,7 +178,7 @@ Exemplo:
 - [ ] 149 — Fazer a guarda de console realmente reprovar o teste — onda 5 — Média
 - [ ] 150 — Remover a duplicação de execução dos testes de interface — onda 5 — Baixa
 - [ ] 151 — Ligar o destino do registro de erro do front — onda 5 — Alta · **APROV**
-- [ ] 152 — Parar de dizer ao usuário que a equipe foi notificada — onda 5 — Alta
+- [x] 152 — Parar de dizer ao usuário que a equipe foi notificada — onda 5 — Alta — PR #672 - frase "equipe ja foi notificada" removida: grep por "notificada" em src/ sem ocorrencias
 - [ ] 153 — Descobrir por que o histórico de execução de rotina não diminui — onda 5 — Média
 - [ ] 154 — Fazer o filtro de comissões não descartar linha sem nome — onda 5 — Baixa
 - [ ] 155 — Validar valor de venda no servidor, não só no navegador — onda 5 — Baixa · **APROV**
@@ -195,7 +195,7 @@ Exemplo:
 - [ ] 164 — Agregar no banco os indicadores de BI de vendas — onda 6 — Média · **APROV**
 - [ ] 165 — Agregar no banco as métricas de closer e de vendedor — onda 6 — Média · **APROV**
 - [ ] 166 — Agregar no banco as análises de cliente — onda 6 — Média
-- [ ] 167 — Remover a consulta de 957 linhas cujo resultado é descartado — onda 6 — Baixa
+- [x] 167 — Remover a consulta de 957 linhas cujo resultado é descartado — onda 6 — Baixa — PR #673 - consulta descartada _allTeamSales removida de useSalespersonCoaching
 - [ ] 168 — Medir as consultas lentas em produção antes de otimizar mais — onda 6 — Média
 - [ ] 169 — Criar os índices que a medição apontar — onda 6 — Média · **APROV**
 - [ ] 170 — Reduzir o peso das assinaturas em tempo real nos painéis mais abertos — onda 6 — Média
