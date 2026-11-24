@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e84935ef49` · branch `main` · 2026-11-23 23:40 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `99efd08c9b` · branch `main` · 2026-11-24 00:15 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4765,6 +4765,7 @@ _nenhum item encontrado_
 | apenas quando o teste falha definitivamente (Playwright já descarta | `playwright.config.ts` |
 | Page-level smoke tests — all pages must load with correct title/heading | `playwright.config.ts` |
 | `vendor-????????.js` casa apenas o hash de 8 chars, excluindo os | `vite.config.ts` |
+| sobrar no pacote publicado — e a remocao nao pode depender do token existir. | `vite.config.ts` |
 | Somente exportações em PDF e o assistente de IA carregado via React.lazy() | `vite.config.ts` |
 | regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de | `vite.config.ts` |
 | shadcn/ui: primitivas geradas, sem lógica de negócio própria. | `vitest.config.ts` |
@@ -5061,5 +5062,4 @@ _nenhum item encontrado_
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
-| Marca APENAS a execução enviada mais recente — senão uma | `supabase/functions/inbound-email-webhook/index.ts` |
-| … +139 linhas — lista completa em `context.json` | |
+| … +140 linhas — lista completa em `context.json` | |

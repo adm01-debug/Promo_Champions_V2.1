@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)",
+   "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)",
    "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)",
    "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)",
-   "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)",
-   "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)",
-   "docs: marca etapas 121-126 no checklist de QA (#680)"
+   "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

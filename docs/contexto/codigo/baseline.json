@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e84935ef49e90478c9606677ecfc1320688ee947",
+  "commit": "99efd08c9b8bdeab44d6c5caaa5103c351da11d6",
   "branch": "main",
-  "data_commit": "2026-11-23T23:38:31Z",
+  "data_commit": "2026-11-24T00:14:39Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "99efd08",
+    "data": "2026-11-24",
+    "assunto": "fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)"
+   },
+   {
+    "sha": "2809674",
+    "data": "2026-11-24",
+    "assunto": "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)"
+   },
    {
     "sha": "e84935e",
     "data": "2026-11-23",
@@ -121,19 +131,9 @@
     "sha": "6781397",
     "data": "2026-11-23",
     "assunto": "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)"
-   },
-   {
-    "sha": "19fe244",
-    "data": "2026-11-23",
-    "assunto": "perf: remove a consulta de sales cujo resultado era descartado (QA-167) (#673)"
-   },
-   {
-    "sha": "a7c2da3",
-    "data": "2026-11-23",
-    "assunto": "fix: corrigir cache key, theme toggle e eslint-disable (QA-132+135+139+140) (#665)"
    }
   ],
-  "arquivos_mudados_7d": 284,
+  "arquivos_mudados_7d": 279,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -215,11 +215,11 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3647,
   "arquivos_codigo": 2591,
-  "linhas_codigo": 445193,
+  "linhas_codigo": 445273,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -612,7 +612,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25729
+   "linhas": 25783
   },
   "src/lib": {
    "arquivos": 81,
@@ -668,7 +668,7 @@
   },
   "vite.config.ts": {
    "arquivos": 1,
-   "linhas": 265
+   "linhas": 291
   },
   "vitest.config.ts": {
    "arquivos": 1,
@@ -678,7 +678,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25660
+   "linhas": 25714
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
