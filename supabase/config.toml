@@ -30,6 +30,12 @@ verify_jwt = false
 [functions.email-bulk-retry]
 verify_jwt = false
 
+# Job interno do cron `supply-dispatch-1min`: entrega a fila supply_outbox ao
+# Promo Supply. Sem JWT; autenticação por X-Cron-Secret + assinatura HMAC
+# (PROMO_SUPPLY_WEBHOOK_SECRET) verificadas no handler.
+[functions.supply-dispatch]
+verify_jwt = false
+
 # Telemetria pública: sem JWT; proteção por rate-limit + validação estrita
 # de payload no handler (amostras anônimas de Web Vitals).
 [functions.log-web-vitals]
