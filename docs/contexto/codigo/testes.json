@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 256,
+ "total": 257,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 188
+  "unit": 189
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 171
+   "arquivos": 172
   },
   {
    "padrao": "tests/",
@@ -1490,6 +1490,16 @@
    "casos": 2
   },
   {
+   "arquivo": "src/pages/WinLossAnalysisPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/pages/WinLossAnalysisPage.tsx",
+    "src/utils/csvExport.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/routes/routeAccess.test.ts",
    "tipo": "unit",
    "linhas": 146,
@@ -2348,6 +2358,7 @@
   "src/pages/MetasAtividades.tsx": 1,
   "src/pages/NotFound.tsx": 1,
   "src/pages/PowerDialer.tsx": 1,
+  "src/pages/WinLossAnalysisPage.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
   "src/routes/routeAccess.ts": 1,
   "src/services/callFeedbackService.ts": 1,
@@ -2357,7 +2368,7 @@
   "src/types/index.ts": 1,
   "src/types/sales.ts": 1,
   "src/utils/bi-helpers.ts": 2,
-  "src/utils/csvExport.ts": 1,
+  "src/utils/csvExport.ts": 2,
   "src/utils/dateHelpers.ts": 2,
   "supabase/functions/_shared/campaign-health.ts": 1,
   "supabase/functions/_shared/retry-policy.ts": 1,
@@ -2511,7 +2522,6 @@
    "src/pages/Vendedores.tsx",
    "src/pages/VictoryFeedPage.tsx",
    "src/pages/WebhooksPage.tsx",
-   "src/pages/WinLossAnalysisPage.tsx",
    "src/pages/WinLossIntelligence.tsx",
    "src/pages/WorkflowsPage.tsx",
    "src/pages/admin/AdminComercial.tsx",

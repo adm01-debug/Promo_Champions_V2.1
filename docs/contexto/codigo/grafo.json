@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2345,
- "arestas": 9639,
+ "arestas": 9645,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 554
+   "importado_por": 555
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -70,7 +70,7 @@
   },
   {
    "arquivo": "src/constants/index.ts",
-   "importado_por": 97
+   "importado_por": 98
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",
@@ -134,7 +134,7 @@
   },
   {
    "arquivo": "src/utils/dateHelpers.ts",
-   "importado_por": 35
+   "importado_por": 36
   },
   {
    "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
@@ -161,7 +161,7 @@
    "importado_por": 26
   },
   {
-   "arquivo": "src/components/ui/slider.tsx",
+   "arquivo": "src/components/ui/popover.tsx",
    "importado_por": 26
   }
  ],

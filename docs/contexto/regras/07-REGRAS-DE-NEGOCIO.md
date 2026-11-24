@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7291cdd869` · branch `main` · 2026-11-24 04:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `97e44d8a8e` · branch `main` · 2026-11-24 04:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1738 testes em 221 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1742 testes em 222 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4424,6 +4424,7 @@ _nenhum item encontrado_
 | `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |
 | `src/lib/qbr/qbrSchedulerAgendaEvent.test.ts` | 4 | qbr-scheduler — linha de agenda_events · respeita os CHECKs de event_type, status e priority · mantém dono, horário e título reconhecível pelo dedup · a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
+| `src/pages/WinLossAnalysisPage.test.tsx` | 4 | WinLossAnalysisPage · exporta todos os negocios carregados quando nao ha filtro · filtra por resultado, reflete na tela e exporta so o que sobrou · filtra por vendedor e limpa os filtros |
 | `src/test/activities-bets-migration.test.ts` | 4 | migration 20261112140200 — apostas de performance · remove os dois triggers de process_performance_bet_event (activities e sales) · update_performance_bet_progress credita XP da aposta ganha só via xp_history · handle_performance_update credita XP só via xp_history |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |

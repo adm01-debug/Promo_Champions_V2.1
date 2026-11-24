@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
+  "commit": "97e44d8a8e92127b8d8202fc6465faaf798633db",
   "branch": "main",
-  "data_commit": "2026-11-24T00:59:52-03:00",
+  "data_commit": "2026-11-24T01:25:09-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "97e44d8",
+    "data": "2026-11-24",
+    "assunto": "feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)"
+   },
    {
     "sha": "7291cdd",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "546a229",
     "data": "2026-11-23",
     "assunto": "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)"
-   },
-   {
-    "sha": "27e826b",
-    "data": "2026-11-23",
-    "assunto": "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)"
    }
   ],
-  "arquivos_mudados_7d": 290,
+  "arquivos_mudados_7d": 294,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/components/analytics",
-    "mudancas": 101
+    "mudancas": 102
    },
    {
     "pasta": "src/components/dashboard",
@@ -262,14 +262,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "inventario/estado/banco.json",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "inventario/estado/edges.json",
-    "mudancas": 5
-   },
-   {
     "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
     "mudancas": 5
    },
@@ -296,6 +288,14 @@
    {
     "arquivo": "docs/DEPLOYMENT.md",
     "mudancas": 4
+   },
+   {
+    "arquivo": "docs/agentes/branches-encerradas-261117.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 4
    }
   ],
   "autores_30d": [
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3650,
-  "arquivos_codigo": 2594,
-  "linhas_codigo": 445771,
+  "arquivos_total": 3651,
+  "arquivos_codigo": 2595,
+  "linhas_codigo": 446030,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 256,
+  "testes": 257,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1230,
-   "linhas": 193544
+   "linhas": 193549
   },
   "src/config": {
    "arquivos": 4,
@@ -623,8 +623,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 181,
-   "linhas": 44557
+   "arquivos": 182,
+   "linhas": 44811
   },
   "src/routes": {
    "arquivos": 5,

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
+  "sha": "97e44d8a8e92127b8d8202fc6465faaf798633db",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:00 UTC",
-  "files_total": 3665,
-  "code_files": 3316,
-  "code_lines": 480882
+  "generated_at": "2026-11-24 04:25 UTC",
+  "files_total": 3666,
+  "code_files": 3317,
+  "code_lines": 481141
  },
  "version": "1.3.2",
- "facts_hash": "430881491d2cad9f",
+ "facts_hash": "e6d023c17ea212f6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1383,
+   ".tsx": 1384,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -95167,6 +95167,17 @@
    },
    {
     "path": "",
+    "file": "src/pages/WinLossAnalysisPage.test.tsx",
+    "component": "WinLossAnalysisPage.test",
+    "tables_transitive": [
+     "deal_outcomes"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 22
+   },
+   {
+    "path": "",
     "file": "src/pages/WinLossAnalysisPage.tsx",
     "component": "WinLossAnalysisPage",
     "tables_transitive": [
@@ -95174,7 +95185,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 18
+    "deps_count": 21
    },
    {
     "path": "",
@@ -106861,7 +106872,7 @@
   {
    "module": "src/components",
    "files": 1230,
-   "lines": 193543,
+   "lines": 193548,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107823,8 +107834,8 @@
   },
   {
    "module": "src/pages",
-   "files": 181,
-   "lines": 44557,
+   "files": 182,
+   "lines": 44811,
    "tables": [
     "achievements",
     "activities",
@@ -107908,6 +107919,7 @@
     "@tanstack/react-query",
     "@testing-library/dom",
     "@testing-library/react",
+    "@testing-library/user-event",
     "@xyflow/react",
     "date-fns",
     "framer-motion",
@@ -162851,6 +162863,22 @@
    {
     "file": "src/pages/PowerDialer.test.tsx",
     "name": "admin vê Editar/Excluir em todas as filas"
+   },
+   {
+    "file": "src/pages/WinLossAnalysisPage.test.tsx",
+    "name": "WinLossAnalysisPage"
+   },
+   {
+    "file": "src/pages/WinLossAnalysisPage.test.tsx",
+    "name": "exporta todos os negocios carregados quando nao ha filtro"
+   },
+   {
+    "file": "src/pages/WinLossAnalysisPage.test.tsx",
+    "name": "filtra por resultado, reflete na tela e exporta so o que sobrou"
+   },
+   {
+    "file": "src/pages/WinLossAnalysisPage.test.tsx",
+    "name": "filtra por vendedor e limpa os filtros"
    },
    {
     "file": "src/routes/routeAccess.test.ts",
@@ -232656,7 +232684,7 @@
   },
   "src/components/analytics/WinLossAnalysis.tsx": {
    "path": "src/components/analytics/WinLossAnalysis.tsx",
-   "lines": 86,
+   "lines": 91,
    "exports": [
     "const WinLossAnalysis"
    ],
@@ -255004,6 +255032,7 @@
    "path": "src/hooks/useWinLossAnalysis.ts",
    "lines": 141,
    "exports": [
+    "interface WinLossDetail",
     "const useWinLossAnalysis"
    ],
    "tables": [
@@ -273471,9 +273500,20 @@
     }
    ]
   },
+  "src/pages/WinLossAnalysisPage.test.tsx": {
+   "path": "src/pages/WinLossAnalysisPage.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "tests": [
+    "WinLossAnalysisPage",
+    "exporta todos os negocios carregados quando nao ha filtro",
+    "filtra por resultado, reflete na tela e exporta so o que sobrou",
+    "filtra por vendedor e limpa os filtros"
+   ]
+  },
   "src/pages/WinLossAnalysisPage.tsx": {
    "path": "src/pages/WinLossAnalysisPage.tsx",
-   "lines": 118,
+   "lines": 243,
    "exports": [
     "function WinLossAnalysisPage"
    ],
@@ -299143,10 +299183,22 @@
   }
  },
  "git": {
-  "sha": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
+  "sha": "97e44d8a8e92127b8d8202fc6465faaf798633db",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "97e44d8",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)",
+    "files": [
+     "src/components/analytics/WinLossAnalysis.tsx",
+     "src/hooks/useWinLossAnalysis.ts",
+     "src/pages/WinLossAnalysisPage.test.tsx",
+     "src/pages/WinLossAnalysisPage.tsx"
+    ]
+   },
    {
     "sha": "7291cdd",
     "date": "2026-11-24",
@@ -299466,17 +299518,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "cdee014",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -299486,19 +299527,35 @@
    ],
    [
     "deno.lock",
-    4
+    3
    ],
    [
     "package-lock.json",
-    4
+    3
    ],
    [
     "package.json",
-    4
+    3
    ],
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/analytics/WinLossAnalysis.tsx",
+    1
+   ],
+   [
+    "src/hooks/useWinLossAnalysis.ts",
+    1
+   ],
+   [
+    "src/pages/WinLossAnalysisPage.test.tsx",
+    1
+   ],
+   [
+    "src/pages/WinLossAnalysisPage.tsx",
+    1
    ],
    [
     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
@@ -299542,22 +299599,6 @@
    ],
    [
     "src/hooks/useRetryTestRun.ts",
-    1
-   ],
-   [
-    "src/pages/RetryTestStatusPage.tsx",
-    1
-   ],
-   [
-    "src/routes/AppRoutes.tsx",
-    1
-   ],
-   [
-    "src/routes/lazyPages.ts",
-    1
-   ],
-   [
-    "src/routes/routeAccess.ts",
     1
    ]
   ]

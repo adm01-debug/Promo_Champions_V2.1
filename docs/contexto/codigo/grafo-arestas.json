@@ -11704,8 +11704,14 @@
   "src/pages/WinLossAnalysisPage.tsx": [
    "src/components/analytics/WinLossAnalysis.tsx",
    "src/components/transitions/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx"
+   "src/components/ui/card.tsx",
+   "src/components/ui/popover.tsx",
+   "src/constants/index.ts",
+   "src/hooks/useWinLossAnalysis.ts",
+   "src/utils/csvExport.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/pages/WinLossIntelligence.tsx": [
    "src/components/transitions/PageTransition.tsx",

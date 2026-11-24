@@ -2209,7 +2209,7 @@
     "WinLossAnalysis"
    ],
    "export_default": null,
-   "linhas": 86,
+   "linhas": 91,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useWinLossAnalysis"
@@ -15735,7 +15735,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 554,
+   "usado_por": 555,
    "orfao": false
   },
   {
@@ -16007,7 +16007,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 25,
+   "usado_por": 26,
    "orfao": false
   },
   {
@@ -20552,9 +20552,11 @@
     "WinLossAnalysisPage"
    ],
    "export_default": "WinLossAnalysisPage",
-   "linhas": 118,
+   "linhas": 243,
    "dominio": "pages",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useWinLossAnalysis"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,

@@ -11309,10 +11309,11 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/analytics/WinLossAnalysis.tsx",
-    "src/pages/Analytics.tsx"
+    "src/pages/Analytics.tsx",
+    "src/pages/WinLossAnalysisPage.tsx"
    ],
    "coberto_por_testes": 0
   },
