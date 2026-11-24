@@ -261,7 +261,7 @@ Exemplo:
 - [ ] 226 — Corrigir as violações de acessibilidade nos fluxos de dinheiro — onda 8 — Média
 - [ ] 227 — Definir o piso de acessibilidade que o CI vai exigir — onda 8 — Baixa · **APROV**
 - [ ] 228 — Unificar as duas tabelas de nível do vendedor — onda 8 — Média · **APROV**
-- [ ] 229 — Corrigir o alerta de inventário que marca funções vivas como sem deploy — onda 8 — Alta
+- [x] 229 — Corrigir o alerta de inventário que marca funções vivas como sem deploy — onda 8 — Alta — PR #690 - causa real era a página cheia: `GET /functions` devolveu 100 (teto) para 171 pastas, e 171−100 era o "71 sem deploy"; `compararEdges` agora marca `publicadas_truncadas` e devolve `no_repo_sem_deploy: null`, e o relatório emite `edge_lista_truncada` em vez de `edge_sem_deploy`/`edge_limite_do_plano`; simular o código antigo com os dados reais reproduz os dois alertas do `banco.json`, o corrigido não; 18/18 no teste unitário e `not ok 10` com o código da main
 - [ ] 230 — Alinhar a premissa de limite de edge functions na documentação de agentes — onda 8 — Média
 - [ ] 231 — Corrigir a matriz de RLS da documentação — onda 8 — Alta
 - [ ] 232 — Criar o procedimento que mantém a matriz de RLS verdadeira — onda 8 — Média

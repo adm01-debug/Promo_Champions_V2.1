@@ -181,9 +181,20 @@ export function edgesNoRepo(raiz) {
     .map((d) => d.name).sort();
 }
 
-/** Edges publicadas (resposta de GET /functions) x repo. `publicadas` null = nao consultado. */
+/**
+ * Edges publicadas (resposta de GET /functions) x repo. `publicadas` null = nao consultado.
+ *
+ * A resposta de GET /functions vem paginada no teto do plano (100 itens; o snapshot de 2026-11-12
+ * trouxe exatamente 100 com 171 pastas no repo). Uma pagina no teto nao prova ausencia: as 171
+ * respondem 200/401 a sonda OPTIONS, e nomes inventados devolvem 404. Por isso, no teto, o
+ * inventario registra `publicadas_truncadas: true` e `no_repo_sem_deploy: null` (nao medido) em
+ * vez de 71 falsos "sem deploy". `publicadas_sem_codigo_no_repo` continua conclusivo nos dois
+ * casos: todo slug listado e real.
+ */
 export function compararEdges(publicadasApi, noRepo) {
-  if (!publicadasApi) return { publicadas: null, no_repo: noRepo.length, publicadas_sem_codigo_no_repo: null, no_repo_sem_deploy: null };
+  if (!publicadasApi) {
+    return { publicadas: null, no_repo: noRepo.length, publicadas_truncadas: false, publicadas_sem_codigo_no_repo: null, no_repo_sem_deploy: null };
+  }
   const publicadas = publicadasApi.map((f) => ({
     slug: f.slug,
     versao: f.version,
@@ -192,11 +203,13 @@ export function compararEdges(publicadasApi, noRepo) {
     atualizada_em: f.updated_at ? new Date(f.updated_at).toISOString().slice(0, 16) + 'Z' : null,
   })).sort((a, b) => a.slug.localeCompare(b.slug));
   const slugs = new Set(publicadas.map((f) => f.slug));
+  const publicadas_truncadas = publicadas.length >= LIMIARES.edgesPublicadasMax;
   return {
     publicadas,
     no_repo: noRepo.length,
+    publicadas_truncadas,
     publicadas_sem_codigo_no_repo: [...slugs].filter((s) => !noRepo.includes(s)).sort(),
-    no_repo_sem_deploy: noRepo.filter((s) => !slugs.has(s)),
+    no_repo_sem_deploy: publicadas_truncadas ? null : noRepo.filter((s) => !slugs.has(s)),
   };
 }
 
@@ -262,11 +275,20 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
     .filter((t) => /dead_letter/.test(t.nome) && !/_audit$|_history$|_log$/.test(t.nome) && t.linhas > 0)
     .map((t) => `${t.nome}: ${t.linhas} linhas`);
   if (deadLetters.length) alertas.push({ tipo: 'dead_letters_pendentes', detalhe: deadLetters });
-  if (edges.no_repo_sem_deploy?.length) alertas.push({ tipo: 'edge_sem_deploy', detalhe: edges.no_repo_sem_deploy });
+  if (edges.publicadas_truncadas) {
+    // Lista no teto da pagina: o total de publicadas nao foi medido, entao nem "sem deploy" nem
+    // "limite do plano" se concluem dai (sonda OPTIONS achou as 171 no ar).
+    alertas.push({
+      tipo: 'edge_lista_truncada',
+      detalhe: [`GET /functions devolveu ${edges.publicadas.length} (teto do plano: ${LIMIARES.edgesPublicadasMax}) com ${edges.no_repo} pastas no repo: "sem deploy" nao foi medido`],
+    });
+  } else if (edges.no_repo_sem_deploy?.length) {
+    alertas.push({ tipo: 'edge_sem_deploy', detalhe: edges.no_repo_sem_deploy });
+  }
   if (edges.publicadas_sem_codigo_no_repo?.length) {
     alertas.push({ tipo: 'edge_publicada_sem_codigo', detalhe: edges.publicadas_sem_codigo_no_repo });
   }
-  if (edges.publicadas && edges.publicadas.length >= LIMIARES.edgesPublicadasAviso) {
+  if (!edges.publicadas_truncadas && edges.publicadas && edges.publicadas.length >= LIMIARES.edgesPublicadasAviso) {
     alertas.push({ tipo: 'edge_limite_do_plano', detalhe: [`${edges.publicadas.length} publicadas de ${LIMIARES.edgesPublicadasMax} permitidas`] });
   }
 
