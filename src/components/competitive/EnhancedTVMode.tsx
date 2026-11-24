@@ -43,7 +43,7 @@ function EnhancedTVModeComponent() {
       });
     }, ROTATION_INTERVAL);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite screens (lista literal recriada a cada render; incluir reiniciaria o intervalo de rotacao a cada render)
   }, [autoRotate]);
 
   const { data: salespeople = [] } = useQuery({

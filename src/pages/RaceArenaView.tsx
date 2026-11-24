@@ -152,7 +152,7 @@ export default function RaceArenaView({ roleType }: Props) {
 
   useEffect(() => {
     if (recentOvertakes.length > 0) play('overtake');
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite play: o retorno do hook e recriado a cada render; o gatilho e o numero de ultrapassagens novas
   }, [recentOvertakes.length]);
 
   useEffect(() => {

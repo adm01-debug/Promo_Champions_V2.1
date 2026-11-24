@@ -77,8 +77,7 @@ export function WebhookDeadLetterPanel({
   const [asyncQueueOpen, setAsyncQueueOpen] = useState(false);
   const [asyncQueueIds, setAsyncQueueIds] = useState<string[]>([]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const rawItems = list.data ?? [];
+  const rawItems = useMemo(() => list.data ?? [], [list.data]);
   const items = useMemo(() => {
     const needle = filterText?.trim().toLowerCase();
     return rawItems.filter(d => {
