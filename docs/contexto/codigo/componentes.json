@@ -9182,7 +9182,7 @@
     "LeadScoringDashboard"
    ],
    "export_default": "LeadScoringDashboard",
-   "linhas": 260,
+   "linhas": 259,
    "dominio": "components/lead-scoring",
    "hooks_locais": [
     "useExplainBatch",
@@ -11632,7 +11632,7 @@
     "RaceArena"
    ],
    "export_default": null,
-   "linhas": 631,
+   "linhas": 630,
    "dominio": "components/race",
    "hooks_locais": [
     "useRaceCalm",
@@ -17216,7 +17216,7 @@
     "WebhookDeadLetterPanel"
    ],
    "export_default": null,
-   "linhas": 568,
+   "linhas": 567,
    "dominio": "components/win-loss",
    "hooks_locais": [
     "useLatestReplayAuditByDeadLetters",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a6562167d2a8503581204e39ffad0e46be5e8d97",
+  "sha": "462499f3fc67e2258a0b94591de1cc6392cb2808",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 05:11 UTC",
+  "generated_at": "2026-11-24 05:24 UTC",
   "files_total": 3680,
   "code_files": 3330,
-  "code_lines": 482865
+  "code_lines": 482862
  },
  "version": "1.3.2",
- "facts_hash": "18ed313ff64c2988",
+ "facts_hash": "02e0cded8581a176",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106933,7 +106933,7 @@
   {
    "module": "src/components",
    "files": 1235,
-   "lines": 194416,
+   "lines": 194413,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -240337,7 +240337,7 @@
   },
   "src/components/lead-scoring/LeadScoringDashboard.tsx": {
    "path": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-   "lines": 260,
+   "lines": 259,
    "exports": [
     "function LeadScoringDashboard"
    ],
@@ -242999,7 +242999,7 @@
   },
   "src/components/race/RaceArena.tsx": {
    "path": "src/components/race/RaceArena.tsx",
-   "lines": 631,
+   "lines": 630,
    "exports": [
     "function RaceArena"
    ],
@@ -248582,7 +248582,7 @@
   },
   "src/components/win-loss/WebhookDeadLetterPanel.tsx": {
    "path": "src/components/win-loss/WebhookDeadLetterPanel.tsx",
-   "lines": 568,
+   "lines": 567,
    "exports": [
     "function WebhookDeadLetterPanel"
    ],
@@ -299767,10 +299767,29 @@
   }
  },
  "git": {
-  "sha": "a6562167d2a8503581204e39ffad0e46be5e8d97",
+  "sha": "462499f3fc67e2258a0b94591de1cc6392cb2808",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "462499f",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/competitive/EnhancedTVMode.tsx",
+     "src/components/dashboard/IntegrationStatusPanel.tsx",
+     "src/components/lead-scoring/LeadScoringDashboard.tsx",
+     "src/components/map/ClientsMap.tsx",
+     "src/components/race/RaceArena.tsx",
+     "src/components/win-loss/WebhookDeadLetterPanel.tsx",
+     "src/hooks/race/useRaceDetection.ts",
+     "src/hooks/race/useRaceReactions.ts",
+     "src/hooks/win-loss/useWebhookResultTimers.ts",
+     "src/pages/RaceArenaView.tsx"
+    ]
+   },
    {
     "sha": "a656216",
     "date": "2026-11-24",
@@ -300096,19 +300115,6 @@
      "supabase/functions/race-commentary/index.ts",
      "supabase/functions/summarize-call-recording/index.ts"
     ]
-   },
-   {
-    "sha": "f0b094b",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/vendedor/EligibleBonusesCard.test.tsx",
-     "src/components/vendedor/EligibleBonusesCard.tsx",
-     "src/hooks/crm/useClients.ts",
-     "src/hooks/useEligibleBonuses.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -300133,6 +300139,46 @@
     2
    ],
    [
+    "src/components/competitive/EnhancedTVMode.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/IntegrationStatusPanel.tsx",
+    1
+   ],
+   [
+    "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    1
+   ],
+   [
+    "src/components/map/ClientsMap.tsx",
+    1
+   ],
+   [
+    "src/components/race/RaceArena.tsx",
+    1
+   ],
+   [
+    "src/components/win-loss/WebhookDeadLetterPanel.tsx",
+    1
+   ],
+   [
+    "src/hooks/race/useRaceDetection.ts",
+    1
+   ],
+   [
+    "src/hooks/race/useRaceReactions.ts",
+    1
+   ],
+   [
+    "src/hooks/win-loss/useWebhookResultTimers.ts",
+    1
+   ],
+   [
+    "src/pages/RaceArenaView.tsx",
+    1
+   ],
+   [
     "CONTRIBUTING.md",
     1
    ],
@@ -300150,46 +300196,6 @@
    ],
    [
     "src/contexts/RaceCalmContext.test.tsx",
-    1
-   ],
-   [
-    "src/contexts/RaceCalmContext.tsx",
-    1
-   ],
-   [
-    "src/hooks/race/useCalmMode.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/race/useCalmMode.ts",
-    1
-   ],
-   [
-    "src/components/sales/SaleHUDCard.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/sales/useSalespersonPreferences.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/useEligibleBonuses.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useLoginRateLimiter.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/useUserRoles.test.ts",
-    1
-   ],
-   [
-    "src/test/consoleGuard.test.ts",
-    1
-   ],
-   [
-    "src/test/consoleGuard.ts",
     1
    ]
   ]

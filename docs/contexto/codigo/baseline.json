@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a6562167d2a8503581204e39ffad0e46be5e8d97",
+  "commit": "462499f3fc67e2258a0b94591de1cc6392cb2808",
   "branch": "main",
-  "data_commit": "2026-11-24T05:10:49Z",
+  "data_commit": "2026-11-24T02:23:49-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "462499f",
+    "data": "2026-11-24",
+    "assunto": "chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)"
+   },
    {
     "sha": "a656216",
     "data": "2026-11-24",
@@ -126,18 +131,13 @@
     "sha": "cdf709f",
     "data": "2026-11-23",
     "assunto": "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)"
-   },
-   {
-    "sha": "6598301",
-    "data": "2026-11-23",
-    "assunto": "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)"
    }
   ],
-  "arquivos_mudados_7d": 323,
+  "arquivos_mudados_7d": 333,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
-    "mudancas": 127
+    "mudancas": 128
    },
    {
     "pasta": "src/components/analytics",
@@ -145,11 +145,11 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 98
+    "mudancas": 99
    },
    {
     "pasta": "src/components/win-loss",
-    "mudancas": 78
+    "mudancas": 79
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -160,31 +160,31 @@
     "mudancas": 74
    },
    {
-    "pasta": "src/components/conversational",
+    "pasta": "src/components/competitive",
     "mudancas": 73
    },
    {
-    "pasta": "src/components/competitive",
-    "mudancas": 72
+    "pasta": "src/components/conversational",
+    "mudancas": 73
    },
    {
     "pasta": "src/components/ui",
     "mudancas": 64
    },
    {
+    "pasta": "src/hooks/win-loss",
+    "mudancas": 56
+   },
+   {
     "pasta": "src/components/deal-intelligence",
     "mudancas": 55
    },
    {
-    "pasta": "src/hooks/win-loss",
-    "mudancas": 55
+    "pasta": "src/hooks/race",
+    "mudancas": 48
    },
    {
     "pasta": "src/components/bi",
-    "mudancas": 46
-   },
-   {
-    "pasta": "src/hooks/race",
     "mudancas": 46
    },
    {
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 26
+    "mudancas": 27
    },
    {
     "arquivo": "deno.lock",
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 9
+    "mudancas": 8
    },
    {
     "arquivo": "src/components/pipeline/DealCard.tsx",
@@ -240,10 +240,6 @@
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 6
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 5
    },
    {
     "arquivo": "src/components/admin/AdminQuickLinks.tsx",
@@ -274,7 +270,7 @@
     "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/migrations-drift.yml",
+    "arquivo": ".github/workflows/pr-checks.yml",
     "mudancas": 4
    },
    {
@@ -296,16 +292,20 @@
    {
     "arquivo": "inventario/estado/edges.json",
     "mudancas": 4
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 256
+    "commits": 257
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 23
+    "commits": 22
    },
    {
     "autor": "github-actions[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3665,
   "arquivos_codigo": 2608,
-  "linhas_codigo": 447754,
+  "linhas_codigo": 447751,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1235,
-   "linhas": 194417
+   "linhas": 194414
   },
   "src/config": {
    "arquivos": 4,
