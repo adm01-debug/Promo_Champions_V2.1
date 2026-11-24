@@ -37,6 +37,7 @@ import {
 } from '@/hooks/useCommissionRules';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { motion } from 'framer-motion';
 
 export default function CommissionRules() {
@@ -47,6 +48,7 @@ export default function CommissionRules() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingRule, setEditingRule] = useState<Partial<CommissionRule> | null>(null);
+  const [ruleToDelete, setRuleToDelete] = useState<CommissionRule | null>(null);
 
   const handleEdit = (
     rule: Partial<CommissionRule> = { is_active: true, priority: 1, percentage: 5 }
@@ -61,10 +63,10 @@ export default function CommissionRules() {
     setIsDialogOpen(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir esta regra?')) {
-      await deleteRule.mutateAsync(id);
-    }
+  const confirmDelete = async () => {
+    if (!ruleToDelete) return;
+    await deleteRule.mutateAsync(ruleToDelete.id);
+    setRuleToDelete(null);
   };
 
   return (
@@ -208,7 +210,7 @@ export default function CommissionRules() {
                               size="icon"
                               variant="ghost"
                               className="h-8 w-8 text-rose-500 hover:text-rose-400 hover:bg-rose-500/10"
-                              onClick={() => handleDelete(rule.id)}
+                              onClick={() => setRuleToDelete(rule)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -371,6 +373,19 @@ export default function CommissionRules() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DeleteConfirmDialog
+        open={!!ruleToDelete}
+        onOpenChange={open => !open && setRuleToDelete(null)}
+        onConfirm={() => void confirmDelete()}
+        title="Excluir esta regra de comissão?"
+        description={
+          ruleToDelete
+            ? `A regra "${ruleToDelete.name}" deixa de valer para os cálculos novos. Comissões já calculadas não são recalculadas.`
+            : ''
+        }
+        isDeleting={deleteRule.isPending}
+      />
     </>
   );
 }

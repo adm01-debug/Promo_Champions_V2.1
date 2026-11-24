@@ -121,6 +121,25 @@ congela a aba. Em `CommissionRules.tsx:66` ele nem nomeia a regra que vai apagar
 | 257 | bloquear as 13 chamadas P2, mesma padronizacao | Media |
 | 258 | trocar os 6 `confirm()` nativo por `DeleteConfirmDialog` | Media |
 
+### Proposta 258 - concluida (PR de codigo)
+
+Os 6 `confirm()` nativos foram substituidos por `DeleteConfirmDialog` com o nome do registro no titulo/descricao:
+
+| Arquivo | Antes | Depois |
+| --- | --- | --- |
+| `src/pages/CommissionRules.tsx` | `confirm('Tem certeza que deseja excluir esta regra?')` | `DeleteConfirmDialog` com `ruleToDelete` |
+| `src/pages/WebhooksPage.tsx` | `window.confirm('Remover webhook?')` | `DeleteConfirmDialog` com `webhookToDelete` |
+| `src/pages/ScheduledReports.tsx` | `confirm(\`Remover agendamento "${r.name}"?\`)` | `DeleteConfirmDialog` com `scheduleToDelete` |
+| `src/pages/CustomReports.tsx` | `confirm(\`Remover "${r.name}"?\`)` | `DeleteConfirmDialog` com `reportToDelete` |
+| `src/components/admin/connections/WebhooksTab.tsx` | `confirm(\`Remover "${w.name}"?\`)` | `DeleteConfirmDialog` com `webhookToDelete` |
+| `src/components/admin/connections/ConnectionsOverviewTable.tsx` | `confirm(\`Remover "${c.label}"?\`)` | `DeleteConfirmDialog` com `connToDelete` |
+
+Ganho: a confirmacao passou a ser um dialogo acessivel (foco, `Escape`, `role=alertdialog`) em vez do `confirm()`
+do navegador, e cada texto diz o que sai do ar - nao apenas "tem certeza?".
+
+Testes: `WebhooksTab.test.tsx` (3 casos) e `ConnectionsOverviewTable.test.tsx` (2 casos) cobrem
+"nao remove antes de confirmar", "remove ao confirmar" e "cancelar mantem".
+
 As P3 ficam como estao, por decisao do plano: nao se pede confirmacao para o que se desfaz em dois cliques.
 
 ## Como validar depois de corrigir

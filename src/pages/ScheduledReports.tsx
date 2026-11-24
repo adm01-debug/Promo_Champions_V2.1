@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +32,10 @@ const ScheduledReports = () => {
   const [showForm, setShowForm] = useState(false);
   const [historyId, setHistoryId] = useState<string | null>(null);
   const [historyName, setHistoryName] = useState<string>();
+  const [scheduleToDelete, setScheduleToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const openHistory = useCallback((id: string, name: string) => {
     setHistoryId(id);
@@ -135,9 +140,7 @@ const ScheduledReports = () => {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 text-destructive"
-                  onClick={() => {
-                    if (confirm(`Remover agendamento "${r.name}"?`)) del.mutate(r.id);
-                  }}
+                  onClick={() => setScheduleToDelete({ id: r.id, name: r.name })}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -146,6 +149,22 @@ const ScheduledReports = () => {
           </motion.div>
         </div>
       </PageTransition>
+
+      <DeleteConfirmDialog
+        open={!!scheduleToDelete}
+        onOpenChange={open => !open && setScheduleToDelete(null)}
+        onConfirm={() => {
+          if (!scheduleToDelete) return;
+          del.mutate(scheduleToDelete.id, { onSuccess: () => setScheduleToDelete(null) });
+        }}
+        title="Remover este agendamento?"
+        description={
+          scheduleToDelete
+            ? `O relatório "${scheduleToDelete.name}" deixa de ser enviado nos horários configurados. O histórico de envios já feitos continua disponível.`
+            : ''
+        }
+        isDeleting={del.isPending}
+      />
 
       <ScheduledReportFormDialog open={showForm} onOpenChange={setShowForm} />
       <ScheduledReportRunsDrawer

@@ -10,6 +10,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { TestTube2, Trash2, Loader2 } from 'lucide-react';
 import {
   useIntegrationConnections,
@@ -20,7 +21,7 @@ import {
   type IntegrationConnection,
 } from '@/hooks/admin/useIntegrationConnections';
 import { useCredentialsSource } from './useCredentialsSource';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -49,6 +50,7 @@ export function ConnectionsOverviewTable() {
   const test = useTestConnection();
   const update = useUpdateConnection();
   const del = useDeleteConnection();
+  const [connToDelete, setConnToDelete] = useState<IntegrationConnection | null>(null);
 
   const lastByConn = useMemo(() => {
     const m = new Map<
@@ -163,9 +165,8 @@ export function ConnectionsOverviewTable() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            if (confirm(`Remover "${c.label}"?`)) del.mutate(c.id);
-                          }}
+                          aria-label={`Remover conexão ${c.label}`}
+                          onClick={() => setConnToDelete(c)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -178,6 +179,22 @@ export function ConnectionsOverviewTable() {
           </Table>
         )}
       </CardContent>
+
+      <DeleteConfirmDialog
+        open={!!connToDelete}
+        onOpenChange={open => !open && setConnToDelete(null)}
+        onConfirm={() => {
+          if (!connToDelete) return;
+          del.mutate(connToDelete.id, { onSuccess: () => setConnToDelete(null) });
+        }}
+        title="Remover esta conexão?"
+        description={
+          connToDelete
+            ? `A conexão "${connToDelete.label}" e as credenciais salvas são apagadas. Integrações que dependem dela param de funcionar.`
+            : ''
+        }
+        isDeleting={del.isPending}
+      />
     </Card>
   );
 }

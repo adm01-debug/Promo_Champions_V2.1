@@ -14,12 +14,18 @@ import {
   WEBHOOK_EVENTS,
 } from '@/hooks/useWebhooks';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { TestTube2, Trash2, Loader2 } from 'lucide-react';
 
 export function WebhooksTab() {
   const { data: webhooks = [], isLoading } = useWebhooks();
   const test = useTestWebhook();
   const del = useDeleteWebhook();
+  const [webhookToDelete, setWebhookToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   return (
     <Card className="glass border-border/40">
@@ -80,9 +86,8 @@ export function WebhooksTab() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => {
-                      if (confirm(`Remover "${w.name}"?`)) del.mutate(w.id);
-                    }}
+                    aria-label={`Remover webhook ${w.name}`}
+                    onClick={() => setWebhookToDelete({ id: w.id, name: w.name })}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
@@ -92,6 +97,22 @@ export function WebhooksTab() {
           </ul>
         )}
       </CardContent>
+
+      <DeleteConfirmDialog
+        open={!!webhookToDelete}
+        onOpenChange={open => !open && setWebhookToDelete(null)}
+        onConfirm={() => {
+          if (!webhookToDelete) return;
+          del.mutate(webhookToDelete.id, { onSuccess: () => setWebhookToDelete(null) });
+        }}
+        title="Remover este webhook?"
+        description={
+          webhookToDelete
+            ? `"${webhookToDelete.name}" para de receber eventos e sai da lista.`
+            : ''
+        }
+        isDeleting={del.isPending}
+      />
     </Card>
   );
 }
