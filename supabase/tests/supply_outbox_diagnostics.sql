@@ -10,6 +10,8 @@
 --   3. o cron supply-dispatch-1min está rodando e o que o pg_net devolveu?
 --   4. houve timeout/DNS do dispatcher para supply-dispatch?
 --   5. existe linha pendente travada (fila parada há mais de 15 min)?
+--   6. os retries registrados em edge_retry_events chegaram a um desfecho?
+--   7. o timeout dedicado de 60s do supply-dispatch está vigente em produção?
 
 \echo '## 1. supply_outbox por status'
 SELECT status,
@@ -73,3 +75,69 @@ SELECT count(*)        AS travadas,
 FROM public.supply_outbox
 WHERE status IN ('pending', 'processing')
   AND created_at < now() - interval '15 minutes';
+
+\echo '## 8. edge_retry_events de supply-dispatch por outcome (7 dias)'
+SELECT outcome,
+       count(*)        AS eventos,
+       min(created_at) AS primeiro,
+       max(created_at) AS ultimo
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND created_at > now() - interval '7 days'
+GROUP BY outcome
+ORDER BY eventos DESC;
+
+\echo '## 9. ultimos 12 eventos de supply-dispatch (detalhe)'
+SELECT created_at,
+       operation,
+       outcome,
+       attempt,
+       total_attempts,
+       left(coalesce(request_id, ''), 12)   AS req12,
+       status_code,
+       left(coalesce(error_name, ''), 40)   AS erro
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+ORDER BY created_at DESC
+LIMIT 12;
+
+-- `withRetry` grava um evento por tentativa: `retry` abre o ciclo e o mesmo
+-- request_id recebe `success_after_retry` (concluiu), `exhausted` (esgotou) ou
+-- `non_retryable` (não vale repetir). Um `retry` sem nenhum desses depois dele
+-- significa que o processo morreu no meio (timeout do job do pg_net) e o ciclo
+-- ficou aberto — é o que alimenta o edge-retry-threshold-alert sem falha real.
+\echo '## 10. retries sem desfecho (7 dias)'
+WITH r AS (
+  SELECT request_id, created_at
+  FROM public.edge_retry_events
+  WHERE function_name = 'supply-dispatch'
+    AND outcome = 'retry'
+    AND created_at > now() - interval '7 days'
+)
+SELECT count(*)                                                     AS abertos,
+       count(*) FILTER (WHERE r.request_id IS NULL)                 AS sem_request_id,
+       round(100.0 * count(*) FILTER (WHERE r.request_id IS NULL)
+             / greatest(count(*), 1), 1)                            AS pct_sem_request_id,
+       min(r.created_at)                                            AS mais_antigo,
+       max(r.created_at)                                            AS mais_recente,
+       round(extract(epoch FROM (now() - min(r.created_at))) / 60)  AS idade_min_mais_antigo
+FROM r
+WHERE r.request_id IS NULL          -- sem request_id não há como correlacionar: fica aberto
+   OR NOT EXISTS (
+  SELECT 1
+  FROM public.edge_retry_events e
+  WHERE e.function_name = 'supply-dispatch'
+    AND e.request_id = r.request_id
+    AND e.outcome IN ('success_after_retry', 'exhausted', 'non_retryable')
+    AND e.created_at >= r.created_at
+);
+
+\echo '## 11. timeout interno vigente por funcao (prova da 20261127000000)'
+SELECT fn AS funcao,
+       public.internal_edge_job_timeout_ms(fn) AS timeout_ms
+FROM unnest(ARRAY[
+  'supply-dispatch',
+  'process-call-recording-ingest',
+  'semantic-reindex-batch',
+  'check-lead-sla'
+]) AS fn;
