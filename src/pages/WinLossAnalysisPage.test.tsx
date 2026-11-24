@@ -4,12 +4,16 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import WinLossAnalysisPage from './WinLossAnalysisPage';
 
-const exportToCSV = vi.fn();
+const exportToCSV = vi.fn<(rows: Record<string, unknown>[], filename: string) => void>();
 
 vi.mock('@/utils/csvExport', async () => {
   const actual =
     await vi.importActual<typeof import('@/utils/csvExport')>('@/utils/csvExport');
-  return { ...actual, exportToCSV: (...args: unknown[]) => exportToCSV(...args) };
+  return {
+    ...actual,
+    exportToCSV: (rows: Record<string, unknown>[], filename: string) =>
+      exportToCSV(rows, filename),
+  };
 });
 
 vi.mock('@/components/analytics/WinLossAnalysis', () => ({
