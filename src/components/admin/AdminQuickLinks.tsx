@@ -60,6 +60,18 @@ const QUICK_LINKS = [
     color: 'text-chart-4',
   },
   {
+    to: '/admin/webhooks-alert-settings',
+    icon: Bell,
+    label: 'Alertas de Webhook',
+    color: 'text-warning',
+  },
+  {
+    to: '/admin/webhooks-alert-history',
+    icon: AlertTriangle,
+    label: 'Histórico de Alertas',
+    color: 'text-chart-2',
+  },
+  {
     to: '/admin/platform-slo',
     icon: Gauge,
     label: 'Platform SLO',
