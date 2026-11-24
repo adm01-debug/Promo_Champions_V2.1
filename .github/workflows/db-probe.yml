@@ -62,3 +62,16 @@ jobs:
           -v "$PWD/probe.sql:/probe.sql:ro"
           postgres:17.6
           sh -c 'psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql'
+
+      - name: Ler estado da fila Champions -> Supply (read-only)
+        run: |
+          docker run --rm -i -e SUPABASE_DB_URL postgres:17.6 sh -c '
+            q() { echo "== $1"; psql "$SUPABASE_DB_URL" -At -F"|" -c "$2" || true; }
+            q orders_total "select count(*) from public.orders"
+            q outbox_total "select count(*) from public.supply_outbox"
+            q outbox_status "select status, count(*) from public.supply_outbox group by 1 order by 2 desc"
+            q outbox_ultimas "select id, order_id, status, attempts, coalesce(last_error, chr(45)), created_at from public.supply_outbox order by created_at desc limit 10"
+            q net_respostas "select id, status_code, left(coalesce(content, chr(45)), 180), created from net._http_response order by id desc limit 10"
+            q cron_jobs "select jobname, schedule, active from cron.job order by 1"
+            q cron_ultima "select jobid, status, start_time from cron.job_run_details order by start_time desc limit 8"
+          '
