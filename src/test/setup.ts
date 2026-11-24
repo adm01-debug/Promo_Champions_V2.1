@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom/vitest';
-import { vi, afterEach } from 'vitest';
+import { vi, afterEach, beforeEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import {
+  installConsoleGuard,
+  resetConsoleGuard,
+  unexpectedConsoleOutput,
+} from './consoleGuard';
 
 // Mock Supabase
 vi.mock('@supabase/supabase-js', () => ({
@@ -49,6 +54,23 @@ if (typeof window !== 'undefined') {
   });
 }
 
+installConsoleGuard();
+
+beforeEach(() => {
+  resetConsoleGuard();
+});
+
 afterEach(() => {
   cleanup();
+
+  // Etapa 149: saída de console não declarada reprova o teste. Se o erro é o
+  // objeto do teste, declare-o com allowConsoleError/allowConsoleWarn.
+  const unexpected = unexpectedConsoleOutput();
+  if (unexpected.length > 0) {
+    resetConsoleGuard();
+    throw new Error(
+      `Saída inesperada no console durante o teste:\n${unexpected.join('\n')}\n` +
+        'Declare a exceção com allowConsoleError()/allowConsoleWarn() se for intencional.'
+    );
+  }
 });

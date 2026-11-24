@@ -13,6 +13,7 @@ import { renderHook } from '@testing-library/react';
 import { waitFor } from '@testing-library/dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AppRole } from './useUserRoles';
+import { allowConsoleError } from '@/test/consoleGuard';
 
 interface RoleRow {
   id: string;
@@ -144,6 +145,8 @@ describe('useUserRoles', () => {
   });
 
   it('nao concede papel quando a consulta falha', async () => {
+    // O log do caminho de erro é justamente o que este teste exercita.
+    allowConsoleError('Error fetching user role');
     queryError = { message: 'boom' };
 
     const { result } = renderHook(() => useUserRoles(), { wrapper });
