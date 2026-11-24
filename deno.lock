@@ -53,9 +53,9 @@
     "npm:@tailwindcss/postcss@^4.3.5": "4.3.5",
     "npm:@tanstack/react-query@^5.105.1": "5.106.0_@types+react@19.3.0_react@19.3.1",
     "npm:@testing-library/dom@^10.4.2": "10.4.2",
-    "npm:@testing-library/jest-dom@^7.0.1": "7.0.1_@testing-library+dom@10.4.2_vitest@5.1.0__@vitest+coverage-v8@5.1.0__jsdom@31.0.1__vite@8.3.8_jsdom@31.0.1",
+    "npm:@testing-library/jest-dom@8": "8.0.0_@testing-library+dom@10.4.2_vitest@5.1.1_@vitest+coverage-v8@5.1.1_jsdom@31.0.1_vite@8.3.8",
     "npm:@testing-library/react@^16.3.3": "16.3.3_@testing-library+dom@10.4.2_@types+react@19.3.0_@types+react-dom@19.3.0_react@19.3.1_react-dom@19.3.1",
-    "npm:@testing-library/user-event@^14.6.10": "14.6.10_@testing-library+dom@10.4.2",
+    "npm:@testing-library/user-event@^14.6.13": "14.6.13_@testing-library+dom@10.4.2",
     "npm:@types/canvas-confetti@^1.9.0": "1.9.0",
     "npm:@types/leaflet.markercluster@^1.5.6": "1.5.6",
     "npm:@types/leaflet@^1.9.22": "1.9.22",
@@ -65,7 +65,7 @@
     "npm:@types/react-window@2": "2.0.0_@types+react@19.3.0_react@19.3.1_react-dom@19.3.1",
     "npm:@types/react@^19.3.0": "19.3.0",
     "npm:@vitejs/plugin-react-swc@^4.3.3": "4.3.3_vite@8.3.8_tsx@4.23.15",
-    "npm:@vitest/coverage-v8@^5.1.0": "5.1.0_vitest@5.1.0_jsdom@31.0.1_vite@8.3.8",
+    "npm:@vitest/coverage-v8@^5.1.1": "5.1.1_vitest@5.1.1_jsdom@31.0.1_vite@8.3.8",
     "npm:@xyflow/react@^12.12.1": "12.12.1_@types+react@19.3.0_@types+react-dom@19.3.0_react@19.3.1_react-dom@19.3.1",
     "npm:autoprefixer@^10.7.0": "10.7.0_postcss@8.5.33",
     "npm:canvas-confetti@^1.9.4": "1.9.4",
@@ -123,7 +123,7 @@
     "npm:vaul@^1.1.2": "1.1.2_react@19.3.1_react-dom@19.3.1_@types+react@19.3.0_@types+react-dom@19.3.0",
     "npm:vite-plugin-pwa@2": "2.0.0_vite@8.3.8_tsx@4.23.15",
     "npm:vite@^8.3.8": "8.3.8_tsx@4.23.15",
-    "npm:vitest@^5.1.0": "5.1.0_@vitest+coverage-v8@5.1.0_jsdom@31.0.1_vite@8.3.8",
+    "npm:vitest@^5.1.1": "5.1.1_@vitest+coverage-v8@5.1.1_jsdom@31.0.1_vite@8.3.8",
     "npm:web-vitals@^6.2.3": "6.2.3",
     "npm:zod@3": "3.25.76",
     "npm:zod@^4.6.7": "4.6.7"
@@ -3462,8 +3462,8 @@
         "pretty-format"
       ]
     },
-    "@testing-library/jest-dom@7.0.1_@testing-library+dom@10.4.2_vitest@5.1.0__@vitest+coverage-v8@5.1.0__jsdom@31.0.1__vite@8.3.8_jsdom@31.0.1": {
-      "integrity": "sha512-oMDTC3oA+6CXSO2JZnvOI7CA6oVub6kij5ggk9ohwye5slmkwxYDXcPOVxgMw/RQlticjtO0C1RZkR97HgrWMw==",
+    "@testing-library/jest-dom@8.0.0_@testing-library+dom@10.4.2_vitest@5.1.1_@vitest+coverage-v8@5.1.1_jsdom@31.0.1_vite@8.3.8": {
+      "integrity": "sha512-Nu45KEeFgP/ydCMipnisMblq6YHViqEFi3fKN0a40s+zdKDDD7vEPCEavS0i7i4RxmclcEIL8q2o42pu+WgNgg==",
       "dependencies": [
         "@adobe/css-tools",
         "@testing-library/dom",
@@ -3493,8 +3493,8 @@
         "@types/react-dom"
       ]
     },
-    "@testing-library/user-event@14.6.10_@testing-library+dom@10.4.2": {
-      "integrity": "sha512-tA4stGNp3mLGOGO+lh87UA56Tz4c8NVGBSkyIF58O+W/bs2Re9BCI9xihnL70+DsThncFznE0skS88SM1D2hyg==",
+    "@testing-library/user-event@14.6.13_@testing-library+dom@10.4.2": {
+      "integrity": "sha512-2LVZGptuB5un1Cu/u31o9adkCwbsUTMp4B4p04xupI7uobvTIpgKidSdShqZiReo/mQmvR9xjgdgTgge4oAbYA==",
       "dependencies": [
         "@testing-library/dom"
       ]
@@ -3812,8 +3812,8 @@
         "vite"
       ]
     },
-    "@vitest/coverage-v8@5.1.0_vitest@5.1.0_jsdom@31.0.1_vite@8.3.8": {
-      "integrity": "sha512-OY9aShBQG5KOIw2zCo9fDoCHI9RHliNHJ//nM7m6jGg41Hyke9JOGWmeMlK74xYErsxMoK8mIB3gAeEyFVA7LA==",
+    "@vitest/coverage-v8@5.1.1_vitest@5.1.1_jsdom@31.0.1_vite@8.3.8": {
+      "integrity": "sha512-xL4NkbVx/UqqDHaXSOyvB8qsSoLQ+dVNGR9H2Bh/4ggQtmaPFNPUC9gZQwKZePLOQ6WDcgwXVnPulFW9eCHt0w==",
       "dependencies": [
         "@bcoe/v8-coverage",
         "@vitest/istanbul-lib-coverage",
@@ -3826,17 +3826,17 @@
         "vitest"
       ]
     },
-    "@vitest/istanbul-lib-coverage@2.1.0": {
-      "integrity": "sha512-WOjuS+xcjSIy7ruYBQ+9BUcV7XZQ0FyVcbWbWxW9TRx/kLGx5SQaeFRIFDJxjNplb6YsT7SpKo2zuXXUo91OIQ=="
+    "@vitest/istanbul-lib-coverage@2.1.1": {
+      "integrity": "sha512-pF9nMHHuyQzyEXdkWX3d4wElEKjymfL5TEoofegJn/jK2WjmTLOcJKfJ7/YwYGYdbZf8Ebrt4VDUoBPiTuO9zg=="
     },
-    "@vitest/istanbul-lib-report@2.1.0": {
-      "integrity": "sha512-+ZFta25nWtGCOBG9/IET8w1RO5Oawsd6H8Uf6AJ9EA/StFuKVtKAEJEJ6uRt84OH+T4YkI0ASmIHAhRA+0KVxw==",
+    "@vitest/istanbul-lib-report@2.1.1": {
+      "integrity": "sha512-Qba+8OpQQAbWrmq3u1olh6jqE/vyW4OYJe6TLrrTBpXhjJhbY7Os69wyVvMQmNA64KJhGd5nQ/c7l4io8tPCHQ==",
       "dependencies": [
         "@vitest/istanbul-lib-coverage"
       ]
     },
-    "@vitest/mocker@5.1.0_vite@8.3.8_tsx@4.23.15": {
-      "integrity": "sha512-5umB9/jlWcqVS6fsrFmv5Gdnpu6wAUio/lEOwAmvB7v+lFo/IW2B9FhAD0p19GCULTgMzLCdUmuCDCnAzWgppQ==",
+    "@vitest/mocker@5.1.1_vite@8.3.8": {
+      "integrity": "sha512-b2OgTB4+3ImWIVafXKazJXwLKwQxUNnix6b3xUvUTMh7RyXlrtzoxfZr8aEz9zkHOMAS4K5lu3TvFWoiVeVTQg==",
       "dependencies": [
         "@jridgewell/trace-mapping",
         "@vitest/spy",
@@ -3848,8 +3848,8 @@
         "vite"
       ]
     },
-    "@vitest/spy@5.1.0": {
-      "integrity": "sha512-2DPO5OMHWKrBngC+fCmTQqemNF0gidRhp3lxbBmRhW+M1XJrfgPpqNqWVevXtn2f2ufD5ZaR1B6B641aAlcX5A=="
+    "@vitest/spy@5.1.1": {
+      "integrity": "sha512-6K8C6alQG1/Yc8/ZI22iJS7JEsxPdVzqtqDq+/xM4Z0mGVykemMVjLhqMy/q6/IHYG3kKD8hKSwRen/ZdyI9vQ=="
     },
     "@xyflow/react@12.12.1_@types+react@19.3.0_@types+react-dom@19.3.0_react@19.3.1_react-dom@19.3.1": {
       "integrity": "sha512-g41OHmP+GL5wDBQKpgYt8AF6RlB4CrABtiStXhCMqdItK6gPdSpsuDk8V0YtdyvIvMPTjDJvkuLkz0JbSYu5Cw==",
@@ -4038,12 +4038,12 @@
     "assertion-error@2.0.1": {
       "integrity": "sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA=="
     },
-    "ast-v8-to-istanbul@1.0.7": {
-      "integrity": "sha512-kFL68AG6ajd8fg248zwM9GQrUWEp79gsmjum34OEXjs4yHuUMZfYKwOLW9GMmB4oNvVrj+EAGxsP7ye2UR9UlA==",
+    "ast-v8-to-istanbul@1.0.8": {
+      "integrity": "sha512-lPdpagk13ANXV+HClJEpCZM7kUsl5XcvgqKzZhaj6Ve1ZFICcY2sGhAN1n1vT0tML6EclT7bfVgTxqL57Gkpow==",
       "dependencies": [
         "@jridgewell/trace-mapping",
         "estree-walker@3.0.3",
-        "js-tokens@10.0.0"
+        "js-tokens@10.0.1"
       ]
     },
     "async-function@1.0.0": {
@@ -5940,8 +5940,8 @@
     "js-cookie@3.0.8": {
       "integrity": "sha512-yeJd4aNAdYZQjaon2bpD/Gb0B/omw7HQOsynXXcOiWVCacbBcPlgn8S/d1X6blFSaHao7ozqtW7NZW19xpCtIw=="
     },
-    "js-tokens@10.0.0": {
-      "integrity": "sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q=="
+    "js-tokens@10.0.1": {
+      "integrity": "sha512-XMt+uh+yEs6srFvEb/pEe4IMvbtoXVdNxF7lZFU+I9sdWI641L97L+gXQMTGm1x3RjPUVizNVjHueclXr0U7sw=="
     },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -7860,8 +7860,8 @@
     "tiny-invariant@1.3.3": {
       "integrity": "sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg=="
     },
-    "tinybench@6.2.2": {
-      "integrity": "sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA=="
+    "tinybench@6.2.4": {
+      "integrity": "sha512-SQ52jEncXxbMCzJuY2A/jGIbbAu6NYsBWW7grz2pNE+EnzQdoGaoBfpk4qC/opE7qiUcGmGgaGIz5EoHdS1O9w=="
     },
     "tinyexec@1.3.1": {
       "integrity": "sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA=="
@@ -8254,8 +8254,8 @@
       ],
       "bin": true
     },
-    "vitest@5.1.0_@vitest+coverage-v8@5.1.0_jsdom@31.0.1_vite@8.3.8": {
-      "integrity": "sha512-MzmNFnrwa8v8lF1bLxw3UJ4EREwVOVb75VqJZmUDRjJ6EluK/x9th7qTbaeDk41WxE1GxWqmTXcdsfobfH5sOA==",
+    "vitest@5.1.1_@vitest+coverage-v8@5.1.1_jsdom@31.0.1_vite@8.3.8": {
+      "integrity": "sha512-trVmzUFOSraCZcI3uZIMD5FqBh4atFkC/XuJP/IU7qtyQay0FCs3Ia+0QiQ2JJwGyWG/xrcBoJNel2+O7kEZ0g==",
       "dependencies": [
         "@types/chai",
         "@vitest/coverage-v8",
@@ -8822,9 +8822,9 @@
         "npm:@tailwindcss/postcss@^4.3.5",
         "npm:@tanstack/react-query@^5.105.1",
         "npm:@testing-library/dom@^10.4.2",
-        "npm:@testing-library/jest-dom@^7.0.1",
+        "npm:@testing-library/jest-dom@8",
         "npm:@testing-library/react@^16.3.3",
-        "npm:@testing-library/user-event@^14.6.10",
+        "npm:@testing-library/user-event@^14.6.13",
         "npm:@types/canvas-confetti@^1.9.0",
         "npm:@types/leaflet.markercluster@^1.5.6",
         "npm:@types/leaflet@^1.9.22",
@@ -8834,7 +8834,7 @@
         "npm:@types/react-window@2",
         "npm:@types/react@^19.3.0",
         "npm:@vitejs/plugin-react-swc@^4.3.3",
-        "npm:@vitest/coverage-v8@^5.1.0",
+        "npm:@vitest/coverage-v8@^5.1.1",
         "npm:@xyflow/react@^12.12.1",
         "npm:autoprefixer@^10.7.0",
         "npm:canvas-confetti@^1.9.4",
@@ -8890,7 +8890,7 @@
         "npm:vaul@^1.1.2",
         "npm:vite-plugin-pwa@2",
         "npm:vite@^8.3.8",
-        "npm:vitest@^5.1.0",
+        "npm:vitest@^5.1.1",
         "npm:web-vitals@^6.2.3",
         "npm:zod@^4.6.7"
       ],
