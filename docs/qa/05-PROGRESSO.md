@@ -220,7 +220,7 @@ Exemplo:
 - [ ] 187 — Varrer a documentação de estado por medições feitas fora do banco oficial — onda 7 — Média
 - [ ] 188 — Registrar quais crons da máquina de vendas estão realmente ativos — onda 7 — Baixa
 - [ ] 189 — Reagendar os crons da máquina de vendas que estiverem faltando — onda 7 — Média · **APROV**
-- [ ] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa
+- [x] 190 — Padronizar o formato de resposta de erro das funções — onda 7 — Baixa — PR #688 - regra registrada no `AGENTS.md` §7: função nova ou tocada usa `_shared/http-envelope.ts`, webhook de saída só troca de formato com contrato conferido; gate `check-claude-md-integrity.mjs` exit 0 (134849 bytes, 8 seções)
 
 ## Onda 8 — Higiene, CI e observabilidade
 - [ ] 191 — Revogar o grant anônimo — lote de gamificação e corrida — onda 8 — Média · **APROV**
@@ -277,17 +277,17 @@ Exemplo:
 - [ ] 242 — Verificar e registrar o fechamento da Onda 3 — onda 8 — Alta
 - [ ] 243 — Verificar e registrar o fechamento das Ondas 4 a 8 — onda 8 — Média
 - [ ] 244 — Tornar o portão de cobertura honesto sobre o que protege — onda 8 — Alta · **APROV**
-- [ ] 245 — Fazer o verificador de tipos estritos falhar quando não conseguir rodar — onda 8 — Alta
+- [x] 245 — Fazer o verificador de tipos estritos falhar quando não conseguir rodar — onda 8 — Alta — PR #682 - config ausente, ENOENT/ENOBUFS, status nulo e status != 0 sem erro reconhecido saem com exit 1; os 4 caminhos foram forcados e provados
 - [ ] 246 — Corrigir o filtro de status do LTV por segmento — onda 8 — Média · **APROV**
 - [ ] 247 — Levar as escritas de sistema para a máquina de estados — onda 8 — Média · **APROV**
 - [ ] 248 — Resolver a contradição do `ranking-api` — onda 8 — Média · **APROV**
 - [ ] 249 — Fazer o Deploy Pipeline falhar quando não deployar — onda 8 — Média · **APROV**
-- [ ] 250 — Completar o `.env.example` com as variáveis que o sistema realmente lê — onda 8 — Média
-- [ ] 251 — Tornar explícita a ordem de precedência de papéis — onda 8 — Baixa
+- [x] 250 — Completar o `.env.example` com as variáveis que o sistema realmente lê — onda 8 — Média — PR #683 - inventário dos 3 destinos (Vite, GitHub Secrets, Supabase Secrets) cobre as 84 variáveis lidas; VITE_APP_URL, VITE_CANONICAL_URL e VITE_SUPABASE_TEST_MODE incluídas; nenhum valor sensível
+- [x] 251 — Tornar explícita a ordem de precedência de papéis — onda 8 — Baixa — PR #684 - `pickHighestRole` com precedência explícita (admin > manager > salesperson) substitui `.order('role').limit(1)`; 10 testes novos provam que a escolha não depende do alfabeto e que sem o fix 6 falham
 - [ ] 252 — Decidir sobre o bucket público de fotos de perfil — onda 8 — Baixa · **APROV**
 - [ ] 253 — Fazer o guard-rail de `service_role` ser verificado — onda 8 — Baixa · **APROV**
 - [ ] 254 — Reduzir o risco do workflow com `pull_request_target` — onda 8 — Baixa · **APROV**
-- [ ] 255 — Garantir a remoção dos mapas de código-fonte do pacote publicado — onda 8 — Baixa
+- [x] 255 — Garantir a remoção dos mapas de código-fonte do pacote publicado — onda 8 — Baixa — PR #685 - plugin `remove-sourcemaps-after-upload` (`closeBundle`, `enforce:'post'`) apaga `dist/assets/*.map` com ou sem `SENTRY_AUTH_TOKEN`; build real provou 466 mapas antes e 0 depois, com o entry JS intacto
 
 ---
 

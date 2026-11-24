@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
+import { readdirSync, rmSync } from 'node:fs';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
@@ -86,6 +87,31 @@ export default defineConfig({
         telemetry: false,
         sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
       }),
+    // Higiene: os .map sao gerados com sourcemap:'hidden' para dar pilha legivel ao
+    // registro de erro (etapa 151). Depois do upload (quando ha token) eles nao podem
+    // sobrar no pacote publicado — e a remocao nao pode depender do token existir.
+    // `enforce:'post'` mantem este closeBundle depois do plugin do Sentry.
+    {
+      name: 'remove-sourcemaps-after-upload',
+      apply: 'build',
+      enforce: 'post',
+      closeBundle() {
+        const assetsDir = resolve(__dirname, 'dist/assets');
+        let removed = 0;
+        try {
+          for (const entry of readdirSync(assetsDir)) {
+            if (!entry.endsWith('.map')) continue;
+            rmSync(resolve(assetsDir, entry), { force: true });
+            removed += 1;
+          }
+        } catch {
+          return; // dist/assets ausente: nada a remover
+        }
+        if (removed > 0) {
+          console.info(`[sourcemaps] ${removed} mapa(s) removido(s) de dist/assets`);
+        }
+      },
+    },
   ].filter((p): p is Exclude<typeof p, false | '' | null | undefined> => Boolean(p)),
   resolve: {
     alias: {
