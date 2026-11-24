@@ -28,6 +28,8 @@ import {
   monthLabelFromIso,
 } from './purchaseIntelligenceHelpers';
 import { motion, AnimatePresence } from 'framer-motion';
+import { exportToCSV } from '@/utils/csvExport';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -131,6 +133,22 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
     );
   }, [matrix.clients, searchTerm]);
 
+  const handleExport = () => {
+    exportToCSV(
+      filteredClients.flatMap(client =>
+        Array.from(client.cells.values()).map(cell => ({
+          Cliente: client.name,
+          Mes: cell.month,
+          'Receita Total (R$)': Number(cell.totalRevenue.toFixed(2)),
+          'Minha Receita (R$)': Number(cell.myRevenue.toFixed(2)),
+          Deals: cell.dealCount,
+          Anomalia: cell.anomaly ?? '',
+        }))
+      ),
+      `mapa_de_compras_${getLocalISODate()}`
+    );
+  };
+
   if (isLoading) {
     return <Skeleton className="h-[500px] w-full rounded-2xl" />;
   }
@@ -207,7 +225,14 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
                 <Maximize2 className="h-4 w-4" />
               )}
             </Button>
-            <Button variant="outline" size="icon" className="h-9 w-9 border-border/50">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 border-border/50"
+              onClick={handleExport}
+              disabled={filteredClients.length === 0}
+              aria-label="Exportar mapa de compras em CSV"
+            >
               <Download className="h-4 w-4" />
             </Button>
           </div>

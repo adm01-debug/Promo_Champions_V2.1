@@ -14,12 +14,25 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Filter, Download, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { exportToCSV } from '@/utils/csvExport';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+type StatusFilter = 'all' | 'blocked' | 'review';
+
 export const DuplicateBlockAudit = () => {
   const [search, setSearch] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const {
     data: logs,
     isLoading,
@@ -40,13 +53,31 @@ export const DuplicateBlockAudit = () => {
   const normalizedSearch = search.trim().toLowerCase();
   const filteredLogs = useMemo(() => {
     const rows = logs ?? [];
-    if (!normalizedSearch) return rows;
-    return rows.filter(
-      log =>
+    return rows.filter(log => {
+      const isBlocked = log.status === 'Blocked';
+      if (statusFilter === 'blocked' && !isBlocked) return false;
+      if (statusFilter === 'review' && isBlocked) return false;
+      if (!normalizedSearch) return true;
+      return (
         (log.entity_name ?? '').toLowerCase().includes(normalizedSearch) ||
         (log.block_type ?? '').toLowerCase().includes(normalizedSearch)
+      );
+    });
+  }, [logs, normalizedSearch, statusFilter]);
+
+  const handleExport = () => {
+    exportToCSV(
+      filteredLogs.map(log => ({
+        'Data/Hora': format(new Date(log.created_at), 'dd/MM/yyyy HH:mm'),
+        Entidade: log.entity_name ?? '',
+        'Tipo de Bloqueio': log.block_type ?? '',
+        Status: log.status === 'Blocked' ? 'Bloqueado' : 'Em Revisão',
+        Auditor: log.auditor ?? '',
+        'Confianca IA (%)': Number(((log.confidence_score ?? 0) * 100).toFixed(1)),
+      })),
+      `auditoria_bloqueios_${getLocalISODate()}`
     );
-  }, [logs, normalizedSearch]);
+  };
 
   return (
     <div className="space-y-6">
@@ -62,21 +93,54 @@ export const DuplicateBlockAudit = () => {
         </div>
         <div className="flex gap-2">
           <Button
-            variant="outline"
+            variant={showFilters ? 'default' : 'outline'}
             size="sm"
             className="gap-2 border-white/10 bg-black/20"
+            onClick={() => setShowFilters(value => !value)}
+            aria-pressed={showFilters}
           >
             <Filter className="h-4 w-4" /> Filtros
+            {statusFilter !== 'all' && (
+              <Badge variant="secondary" className="text-[9px] h-4 py-0 px-1">
+                {statusFilter === 'blocked' ? 'Bloqueado' : 'Em Revisão'}
+              </Badge>
+            )}
           </Button>
           <Button
             variant="outline"
             size="sm"
             className="gap-2 border-white/10 bg-black/20"
+            onClick={handleExport}
+            disabled={filteredLogs.length === 0}
           >
             <Download className="h-4 w-4" /> Exportar
           </Button>
         </div>
       </div>
+
+      {showFilters && (
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Status
+          </span>
+          <Select
+            value={statusFilter}
+            onValueChange={value => setStatusFilter(value as StatusFilter)}
+          >
+            <SelectTrigger className="h-8 w-44 text-xs" aria-label="Filtrar por status">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="blocked">Bloqueado</SelectItem>
+              <SelectItem value="review">Em Revisão</SelectItem>
+            </SelectContent>
+          </Select>
+          <span className="text-[10px] font-mono text-muted-foreground">
+            {filteredLogs.length} de {logs?.length ?? 0} registros
+          </span>
+        </div>
+      )}
 
       <Card className="border-white/5 bg-black/40 backdrop-blur-xl overflow-hidden min-h-[400px]">
         {isLoading ? (
@@ -92,8 +156,8 @@ export const DuplicateBlockAudit = () => {
           <div className="p-10 text-center">
             <Search className="mx-auto h-10 w-10 text-muted-foreground/40 mb-2" />
             <p className="text-sm text-muted-foreground">
-              {normalizedSearch
-                ? 'Nenhum bloqueio encontrado para a busca.'
+              {normalizedSearch || statusFilter !== 'all'
+                ? 'Nenhum bloqueio encontrado para a busca ou filtro.'
                 : 'Nenhum bloqueio registrado.'}
             </p>
           </div>
