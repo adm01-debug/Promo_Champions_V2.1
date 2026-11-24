@@ -1,5 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
@@ -55,8 +56,22 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
-    const rl = enforceRateLimit(req, { name: "race-commentary", limit: 20, windowSeconds: 60 });
+    // QA-217 — endpoint de IA pago: identidade do chamador antes de consumir créditos.
+    let caller: Awaited<ReturnType<typeof getUserClient>>;
+    try {
+      caller = await getUserClient(req);
+    } catch (err) {
+      if (err instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw err;
+    }
+
+    // Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT).
+    const rl = enforceRateLimit(req, { name: "race-commentary", limit: 20, windowSeconds: 60, key: caller.userId });
     if (rl) return rl;
 
   try {
