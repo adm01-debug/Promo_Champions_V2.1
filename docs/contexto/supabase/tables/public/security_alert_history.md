@@ -1,5 +1,7 @@
 # public.security_alert_history
 
+> Histórico de alertas de segurança emitidos e dos limiares usados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `alert_type` | `text` | não | `'access_denied_spike'::text` |  |  |
-| 3 | `recipients` | `text[]` | não |  |  |  |
-| 4 | `access_count` | `integer` | não |  |  |  |
-| 5 | `time_window_hours` | `integer` | não |  |  |  |
-| 6 | `threshold_used` | `integer` | não |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do alerta registrado. |
+| 2 | `alert_type` | `text` | não | `'access_denied_spike'::text` |  | Tipo do alerta de segurança. |
+| 3 | `recipients` | `text[]` | não |  |  | Lista de destinatários notificados. |
+| 4 | `access_count` | `integer` | não |  |  | Quantidade de eventos de acesso observada no alerta. |
+| 5 | `time_window_hours` | `integer` | não |  |  | Janela de observação usada, em horas. |
+| 6 | `threshold_used` | `integer` | não |  |  | Limiar usado para decidir se o alerta deveria ser emitido. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro do alerta. |
 
 
 ## Constraints

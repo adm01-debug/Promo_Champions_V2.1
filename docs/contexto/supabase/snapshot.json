@@ -71,7 +71,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do evento de acesso negado.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -84,7 +84,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário associado à tentativa, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -97,7 +97,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "E-mail do usuário associado à tentativa, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -110,7 +110,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Caminho ou recurso que o usuário tentou acessar.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -123,7 +123,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Papel do usuário no momento da tentativa, quando registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -136,7 +136,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Papel exigido para o recurso solicitado, quando registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -149,7 +149,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP de origem da tentativa, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -162,7 +162,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "User-Agent do cliente, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -175,7 +175,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do evento de acesso negado.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -188,7 +188,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da atividade da conta.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -201,7 +201,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial relacionada à atividade.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -214,7 +214,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Contato da conta relacionado à atividade, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -227,7 +227,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor associado à atividade, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -240,7 +240,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo da atividade conforme informado pela aplicação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -253,7 +253,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Título da atividade.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -266,7 +266,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da atividade.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -279,7 +279,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que a atividade ocorreu.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -292,7 +292,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Metadados adicionais da atividade em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -305,7 +305,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro da atividade.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -318,7 +318,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do contato da conta.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -331,7 +331,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial à qual o contato pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -344,7 +344,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -357,7 +357,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "E-mail do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -370,7 +370,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Telefone do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -383,7 +383,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Cargo do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -396,7 +396,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Departamento do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -409,7 +409,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Papel do contato na compra: decision_maker, champion, influencer, blocker, user ou technical.",
         "default": "'user'::text",
         "generated": null,
         "identity": null,
@@ -422,7 +422,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Nível de influência de 1 a 5.",
         "default": "3",
         "generated": null,
         "identity": null,
@@ -435,7 +435,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Sentimento registrado: positive, neutral ou negative.",
         "default": "'neutral'::text",
         "generated": null,
         "identity": null,
@@ -448,7 +448,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "URL do perfil profissional do contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -461,7 +461,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do último contato registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -474,7 +474,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Observações sobre o contato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -487,7 +487,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do contato.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -500,7 +500,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do contato.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -513,7 +513,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Negócio associado ao contato, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -526,7 +526,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nível de senioridade: c_level, vp, director, manager ou ic.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -539,7 +539,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se este é o contato principal da conta.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -760,7 +760,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da conta.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -773,7 +773,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da conta empresarial.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -786,7 +786,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial hierarquicamente superior, quando houver.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -799,7 +799,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Setor de atuação da conta, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -812,7 +812,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Faixa comercial da conta: strategic, enterprise, mid_market ou smb.",
         "default": "'smb'::text",
         "generated": null,
         "identity": null,
@@ -825,7 +825,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Receita anual estimada da conta, em BRL.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -838,7 +838,7 @@
         "type": "numeric(15,2)"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de colaboradores da conta, quando conhecida.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -851,7 +851,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Endereço do site da conta.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -864,7 +864,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "País da conta.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -877,7 +877,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Pontuação da conta, limitada a 0–100 pela constraint da coluna.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -890,7 +890,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Estado de saúde da conta: healthy, at_risk, critical ou unknown.",
         "default": "'unknown'::text",
         "generated": null,
         "identity": null,
@@ -903,7 +903,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pela conta, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -916,7 +916,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Observações sobre a conta.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -929,7 +929,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da conta.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -942,7 +942,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da conta.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -955,7 +955,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Domínio principal da conta, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -968,7 +968,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Faixa de porte da conta: smb, mid ou enterprise.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -981,7 +981,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indicador numérico de cobertura da conta; a escala não é fixada por constraint.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -994,7 +994,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de contatos engajados associada à conta.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -1007,7 +1007,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de contatos identificados como champions.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -1020,7 +1020,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de contatos identificados como decisores.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -1033,7 +1033,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da agregação mais recente dos indicadores da conta.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1046,7 +1046,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da conquista registrada.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -1059,7 +1059,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que obteve a conquista.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -1072,7 +1072,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo de conquista obtida.",
         "default": "'daily_goal'::text",
         "generated": null,
         "identity": null,
@@ -1085,7 +1085,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data em que a conquista foi obtida.",
         "default": "CURRENT_DATE",
         "generated": null,
         "identity": null,
@@ -1098,7 +1098,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Detalhes adicionais da conquista em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -1111,7 +1111,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro da conquista.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -3945,7 +3945,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da execução da automação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -3958,7 +3958,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Automação executada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -3971,7 +3971,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Resultado da execução: success, failed, skipped ou partial.",
         "default": "'success'::text",
         "generated": null,
         "identity": null,
@@ -3984,7 +3984,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Dados recebidos pelo gatilho em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -3997,7 +3997,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Ações realizadas durante a execução, em formato JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -4010,7 +4010,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Mensagem de erro, quando aplicável.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4023,7 +4023,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Duração da execução em milissegundos.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4036,7 +4036,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de início da execução.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4049,7 +4049,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de conclusão da execução.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4062,7 +4062,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da automação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -4075,7 +4075,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da automação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4088,7 +4088,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da automação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4101,7 +4101,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Evento que pode iniciar a automação; os valores aceitos são definidos pela constraint.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4114,7 +4114,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Parâmetros do gatilho em JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -4127,7 +4127,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Condições que determinam se a automação deve executar, em JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -4140,7 +4140,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Ações configuradas para a automação, em JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -4153,7 +4153,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Indica se a automação está habilitada.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -4166,7 +4166,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Usuário que criou a automação, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4179,7 +4179,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de execuções registradas.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -4192,7 +4192,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da execução mais recente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4205,7 +4205,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da automação.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4218,7 +4218,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da automação.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4283,7 +4283,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da participação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -4296,7 +4296,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Disputa da qual o vendedor participa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4309,7 +4309,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor participante.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4322,7 +4322,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da equipe associado à participação, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4335,7 +4335,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Pontuação atual do participante na disputa.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -4348,7 +4348,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o vendedor entrou na disputa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4504,7 +4504,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do bloqueio.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -4517,7 +4517,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP bloqueado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4530,7 +4530,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Motivo do bloqueio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4543,7 +4543,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Usuário que aplicou o bloqueio, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4556,7 +4556,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o bloqueio foi aplicado.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4569,7 +4569,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de expiração do bloqueio, quando definida.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -4582,7 +4582,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se o bloqueio foi configurado como permanente.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -4595,7 +4595,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de vezes que o endereço foi bloqueado.",
         "default": "1",
         "generated": null,
         "identity": null,
@@ -4608,7 +4608,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -4621,7 +4621,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -9210,7 +9210,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro de progresso.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -9223,7 +9223,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Desafio semanal acompanhado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -9236,7 +9236,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor cujo progresso está registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -9249,7 +9249,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Valor atual de progresso em direção à meta do desafio.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -9262,7 +9262,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o desafio foi concluído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -9275,7 +9275,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se a recompensa de XP foi reivindicada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -9288,7 +9288,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro de progresso.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -9301,7 +9301,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do progresso.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -10302,7 +10302,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da atribuição de portfólio.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -10315,7 +10315,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Cliente incluído no portfólio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10328,7 +10328,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pelo cliente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10341,7 +10341,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Estado do relacionamento no portfólio: active, nurturing, at_risk, inactive ou churned.",
         "default": "'inactive'::text",
         "generated": null,
         "identity": null,
@@ -10354,7 +10354,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data da última compra registrada para o cliente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10367,7 +10367,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o cliente foi atribuído ao vendedor.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -10380,7 +10380,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que realizou a atribuição, quando registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10393,7 +10393,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Origem da atribuição do cliente ao portfólio.",
         "default": "'database'::text",
         "generated": null,
         "identity": null,
@@ -10406,7 +10406,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -10419,7 +10419,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -10432,7 +10432,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se a atribuição está ativa.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -10445,7 +10445,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Origem do lead associada ao cliente, quando informada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10471,7 +10471,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Usuário que marcou a atribuição como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -10484,7 +10484,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Motivo informado para marcar a atribuição como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15814,7 +15814,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro de progresso.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -15827,7 +15827,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Desafio diário acompanhado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15840,7 +15840,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor cujo progresso está registrado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15853,7 +15853,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Valor atual de progresso em direção à meta do desafio.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -15866,7 +15866,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o desafio foi concluído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15879,7 +15879,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se a recompensa de XP foi reivindicada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -15892,7 +15892,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro de progresso.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -15905,7 +15905,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do progresso.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -15944,7 +15944,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do desafio diário.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -15957,7 +15957,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Título do desafio diário.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15970,7 +15970,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do desafio diário.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -15983,7 +15983,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de atividade ou objetivo acompanhado pelo desafio.",
         "default": "'calls'::text",
         "generated": null,
         "identity": null,
@@ -15996,7 +15996,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Valor-alvo necessário para concluir o desafio.",
         "default": "5",
         "generated": null,
         "identity": null,
@@ -16009,7 +16009,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de XP concedida como recompensa.",
         "default": "25",
         "generated": null,
         "identity": null,
@@ -16022,7 +16022,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data a que o desafio se aplica.",
         "default": "CURRENT_DATE",
         "generated": null,
         "identity": null,
@@ -16035,7 +16035,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Indica se o desafio está ativo.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -16048,7 +16048,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do desafio.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -16061,7 +16061,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do desafio.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -16282,7 +16282,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do layout.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -16295,7 +16295,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor proprietário do layout.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -16308,7 +16308,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Configuração dos componentes e da organização do painel, em JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -16321,7 +16321,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do layout.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -16334,7 +16334,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do layout.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -22184,7 +22184,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da feature flag.",
         "default": "uuid_generate_v4()",
         "generated": null,
         "identity": null,
@@ -22197,7 +22197,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da feature flag.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -22210,7 +22210,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Chave única usada pela aplicação para identificar a funcionalidade.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22223,7 +22223,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da funcionalidade controlada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22236,7 +22236,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Indica se a funcionalidade está habilitada.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -22249,7 +22249,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Percentual de usuários incluídos no rollout, de 0 a 100.",
         "default": "100",
         "generated": null,
         "identity": null,
@@ -22262,7 +22262,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Lista de papéis autorizados a acessar a funcionalidade, quando definida.",
         "default": "'{}'::text[]",
         "generated": null,
         "identity": null,
@@ -22275,7 +22275,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Metadados adicionais da feature flag em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -22288,7 +22288,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da feature flag.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -22301,7 +22301,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do comentário.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -22314,7 +22314,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Evento do feed ao qual o comentário pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22327,7 +22327,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que escreveu o comentário.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22340,7 +22340,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conteúdo textual do comentário.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22353,7 +22353,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o comentário foi criado.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -22366,7 +22366,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da reação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -22379,7 +22379,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Evento do feed ao qual a reação foi adicionada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22392,7 +22392,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que adicionou a reação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -22405,7 +22405,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Emoji ou conteúdo textual usado como reação.",
         "default": "'🔥'::text",
         "generated": null,
         "identity": null,
@@ -22418,7 +22418,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que a reação foi criada.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -25265,7 +25265,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da entrada de allowlist.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -25278,7 +25278,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP autorizado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -25291,7 +25291,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição ou justificativa da autorização.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -25304,7 +25304,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Usuário que adicionou o endereço, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -25317,7 +25317,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de inclusão do endereço.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -25330,7 +25330,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da entrada.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -26097,7 +26097,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do evento de roteamento.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -26110,7 +26110,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Cliente encaminhado, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26123,7 +26123,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor de origem da atribuição, quando existente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26136,7 +26136,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que recebeu a atribuição, quando definido.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26149,7 +26149,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Motivo do encaminhamento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26162,7 +26162,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Observações adicionais sobre o encaminhamento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26175,7 +26175,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do evento de roteamento.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -26643,7 +26643,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro de pontuação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -26656,7 +26656,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Negócio cuja pontuação está registrada; cada negócio possui no máximo um registro.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -26669,7 +26669,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Pontuação do lead, limitada a 0–100 pela constraint da coluna.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -26682,7 +26682,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Fatores usados no cálculo da pontuação, armazenados em JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -26695,7 +26695,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do cálculo mais recente da pontuação.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -26708,7 +26708,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -26721,7 +26721,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -29100,7 +29100,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da jornada.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -29113,7 +29113,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial em onboarding.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -29126,7 +29126,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Chave do modelo de jornada utilizado.",
         "default": "'standard'::text",
         "generated": null,
         "identity": null,
@@ -29139,7 +29139,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Estado do onboarding: not_started, in_progress, completed ou stalled.",
         "default": "'not_started'::onboarding_status",
         "generated": null,
         "identity": null,
@@ -29152,7 +29152,7 @@
         "type": "onboarding_status"
       },
       {
-        "comment": null,
+        "comment": "Etapa atual da jornada.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -29165,7 +29165,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade total de etapas da jornada.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -29178,7 +29178,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pelo onboarding, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -29191,7 +29191,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de início do onboarding.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -29204,7 +29204,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de conclusão do onboarding.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -29217,7 +29217,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da jornada.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -29230,7 +29230,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da jornada.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -33962,7 +33962,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do agendamento QBR.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -33975,7 +33975,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial para a qual a revisão está agendada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -33988,7 +33988,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Frequência da revisão: monthly, quarterly, biannual ou annual.",
         "default": "'quarterly'::qbr_frequency",
         "generated": null,
         "identity": null,
@@ -34001,7 +34001,7 @@
         "type": "qbr_frequency"
       },
       {
-        "comment": null,
+        "comment": "Data prevista para a próxima revisão.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -34014,7 +34014,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Data da revisão mais recente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -34027,7 +34027,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pela revisão, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -34040,7 +34040,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Indica se relatórios QBR devem ser gerados automaticamente.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -34053,7 +34053,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Indica se o agendamento está ativo.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -34066,7 +34066,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do agendamento.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -34079,7 +34079,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do agendamento.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -38811,7 +38811,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da renovação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -38824,7 +38824,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial associada ao contrato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -38837,7 +38837,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Valor do contrato a renovar, em BRL.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -38850,7 +38850,7 @@
         "type": "numeric(14,2)"
       },
       {
-        "comment": null,
+        "comment": "Código da moeda do contrato; o padrão do projeto é BRL.",
         "default": "'BRL'::text",
         "generated": null,
         "identity": null,
@@ -38863,7 +38863,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data prevista para renovação do contrato.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -38876,7 +38876,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Antecedência, em dias, usada para aviso de renovação.",
         "default": "30",
         "generated": null,
         "identity": null,
@@ -38889,7 +38889,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Indica se o contrato está configurado para renovação automática.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -38902,7 +38902,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Estado da renovação: upcoming, at_risk, renewed, churned ou lost.",
         "default": "'upcoming'::renewal_status",
         "generated": null,
         "identity": null,
@@ -38915,7 +38915,7 @@
         "type": "renewal_status"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pela renovação, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -38928,7 +38928,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Observações sobre a renovação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -38941,7 +38941,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -38954,7 +38954,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do registro.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -40709,7 +40709,7 @@
         "type": "deal_status"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da disputa.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -40722,7 +40722,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Título da disputa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -40735,7 +40735,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo ou formato da disputa, conforme definido pela aplicação.",
         "default": "'1v1'::text",
         "generated": null,
         "identity": null,
@@ -40748,7 +40748,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Métrica usada para acompanhar a disputa.",
         "default": "'calls'::text",
         "generated": null,
         "identity": null,
@@ -40761,7 +40761,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Valor-alvo da métrica, quando definido.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -40774,7 +40774,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de início da disputa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -40787,7 +40787,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de encerramento da disputa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -40800,7 +40800,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Estado atual da disputa.",
         "default": "'active'::text",
         "generated": null,
         "identity": null,
@@ -40813,7 +40813,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Vendedor vencedor da disputa, quando definido.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -40826,7 +40826,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de XP oferecida como recompensa.",
         "default": "100",
         "generated": null,
         "identity": null,
@@ -40839,7 +40839,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que criou a disputa, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -40852,7 +40852,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da disputa.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -41112,7 +41112,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do resumo de sequência.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -41125,7 +41125,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor a que a sequência pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -41138,7 +41138,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de períodos consecutivos na sequência atual.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -41151,7 +41151,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Maior sequência consecutiva registrada.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -41164,7 +41164,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data da venda mais recente usada no cálculo da sequência.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -41177,7 +41177,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Multiplicador de XP associado à sequência.",
         "default": "1.0",
         "generated": null,
         "identity": null,
@@ -41190,7 +41190,7 @@
         "type": "numeric(3,1)"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do resumo.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -41203,7 +41203,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do território comercial.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -41216,7 +41216,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome do território.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -41229,7 +41229,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de território: segment, region, product ou niche.",
         "default": "'segment'::text",
         "generated": null,
         "identity": null,
@@ -41242,7 +41242,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Vendedor responsável pelo território, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -41255,7 +41255,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Receita total contabilizada no território, em BRL.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -41268,7 +41268,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Quantidade total de negócios contabilizados no território.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -41281,7 +41281,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o território foi conquistado, quando registrada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -41294,7 +41294,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Indica se o território está marcado como disputado.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -41307,7 +41307,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do território.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -41320,7 +41320,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do território.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -42412,7 +42412,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único das preferências.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -42425,7 +42425,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor proprietário das preferências.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -42438,7 +42438,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome escolhido para o assistente de IA.",
         "default": "'Coach IA'::text",
         "generated": null,
         "identity": null,
@@ -42451,7 +42451,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "URL do avatar escolhido para o assistente, quando definido.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -42464,7 +42464,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação das preferências.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -42477,7 +42477,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização das preferências.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -42490,7 +42490,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": "How the AI should respond: text only, audio only, or both",
+        "comment": "Formato de resposta do assistente: text, audio ou both.",
         "default": "'text'::text",
         "generated": null,
         "identity": null,
@@ -42503,7 +42503,7 @@
         "type": "text"
       },
       {
-        "comment": "ElevenLabs voice ID for TTS",
+        "comment": "Identificador da voz de síntese selecionada, quando configurado.",
         "default": "'CwhRBWXzGAHq8TQ4Fs17'::text",
         "generated": null,
         "identity": null,
@@ -42516,7 +42516,7 @@
         "type": "text"
       },
       {
-        "comment": "Human-readable name of the selected voice",
+        "comment": "Nome legível da voz de síntese selecionada, quando configurado.",
         "default": "'Roger'::text",
         "generated": null,
         "identity": null,
@@ -42529,7 +42529,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Regras de contato do assistente em formato JSON.",
         "default": "'{\"quiet_hours\": {\"end\": \"08:00\", \"start\": \"20:00\"}, \"prioritize_human\": true, \"max_calls_per_day\": 3}'::jsonb",
         "generated": null,
         "identity": null,
@@ -42542,7 +42542,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do resumo de XP.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -42555,7 +42555,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor a que o resumo de XP pertence.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -42568,7 +42568,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade total de pontos de experiência acumulados.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -42581,7 +42581,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Nível atual do vendedor no sistema de gamificação.",
         "default": "1",
         "generated": null,
         "identity": null,
@@ -42594,7 +42594,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de XP necessária para alcançar o próximo nível.",
         "default": "100",
         "generated": null,
         "identity": null,
@@ -42607,7 +42607,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do resumo.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -42620,7 +42620,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do resumo.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -43595,7 +43595,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do alerta registrado.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -43608,7 +43608,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo do alerta de segurança.",
         "default": "'access_denied_spike'::text",
         "generated": null,
         "identity": null,
@@ -43621,7 +43621,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Lista de destinatários notificados.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43634,7 +43634,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de eventos de acesso observada no alerta.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43647,7 +43647,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Janela de observação usada, em horas.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43660,7 +43660,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Limiar usado para decidir se o alerta deveria ser emitido.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43673,7 +43673,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro do alerta.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -43686,7 +43686,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único das configurações.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -43699,7 +43699,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de eventos usada como limiar para detectar um aumento anormal.",
         "default": "5",
         "generated": null,
         "identity": null,
@@ -43712,7 +43712,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Janela de observação do alerta, em horas.",
         "default": "1",
         "generated": null,
         "identity": null,
@@ -43725,7 +43725,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Intervalo mínimo entre alertas repetidos, em horas.",
         "default": "24",
         "generated": null,
         "identity": null,
@@ -43738,7 +43738,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação das configurações.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -43751,7 +43751,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização das configurações.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -43764,7 +43764,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do evento de segurança.",
         "default": "uuid_generate_v4()",
         "generated": null,
         "identity": null,
@@ -43777,7 +43777,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário associado ao evento, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43790,7 +43790,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo do evento de segurança.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43803,7 +43803,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Severidade do evento: low, medium, high ou critical.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43816,7 +43816,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do evento de segurança.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43829,7 +43829,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Endereço IP associado ao evento, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43842,7 +43842,7 @@
         "type": "inet"
       },
       {
-        "comment": null,
+        "comment": "User-Agent associado ao evento, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43855,7 +43855,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Metadados adicionais do evento em formato JSON.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -43868,7 +43868,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de registro do evento.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -47963,7 +47963,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do ticket.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -47976,7 +47976,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Conta empresarial associada ao ticket.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -47989,7 +47989,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Identificador do ticket no sistema externo, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48002,7 +48002,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Sistema ou origem do ticket.",
         "default": "'internal'::text",
         "generated": null,
         "identity": null,
@@ -48015,7 +48015,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Assunto do ticket.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48028,7 +48028,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do problema ou solicitação.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48041,7 +48041,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Estado do ticket conforme o tipo support_ticket_status.",
         "default": "'open'::support_ticket_status",
         "generated": null,
         "identity": null,
@@ -48054,7 +48054,7 @@
         "type": "support_ticket_status"
       },
       {
-        "comment": null,
+        "comment": "Prioridade do ticket conforme o tipo support_ticket_priority.",
         "default": "'normal'::support_ticket_priority",
         "generated": null,
         "identity": null,
@@ -48067,7 +48067,7 @@
         "type": "support_ticket_priority"
       },
       {
-        "comment": null,
+        "comment": "Sentimento associado ao ticket, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48080,7 +48080,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "E-mail de quem abriu o ticket, quando informado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48093,7 +48093,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "E-mail do responsável pelo ticket, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48106,7 +48106,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Marcadores associados ao ticket.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48119,7 +48119,7 @@
         "type": "text[]"
       },
       {
-        "comment": null,
+        "comment": "Metadados adicionais do ticket em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -48132,7 +48132,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do ticket.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -48145,7 +48145,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do ticket.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -48158,7 +48158,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de resolução do ticket.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48938,7 +48938,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da associação.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -48951,7 +48951,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Equipe à qual o Closer está associado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48964,7 +48964,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor associado à equipe como Closer.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -48977,7 +48977,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da associação.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -49094,7 +49094,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da equipe.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -49107,7 +49107,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da equipe.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49120,7 +49120,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "SDR associado à equipe, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49133,7 +49133,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Indica se a equipe está ativa.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -49146,7 +49146,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de dias usada pela configuração de inatividade da equipe.",
         "default": "365",
         "generated": null,
         "identity": null,
@@ -49159,7 +49159,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da equipe.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -49172,7 +49172,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da equipe.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -49198,7 +49198,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Usuário que marcou a equipe como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49211,7 +49211,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Motivo informado para marcar a equipe como excluída.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49224,7 +49224,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do território.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -49237,7 +49237,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome do território.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49250,7 +49250,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Vendedor atualmente responsável pelo território, quando atribuído.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49263,7 +49263,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Receita total acumulada no território, em BRL.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -49276,7 +49276,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Quantidade total de negócios contabilizados no território.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -49289,7 +49289,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que o território foi conquistado, quando registrada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49302,7 +49302,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do território.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -49315,7 +49315,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do registro histórico.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -49328,7 +49328,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Território ao qual o registro histórico se refere.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49341,7 +49341,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor cuja participação está registrada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49354,7 +49354,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Receita atribuída ao vendedor no território, em BRL.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -49367,7 +49367,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de negócios atribuídos ao vendedor no território.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -49380,7 +49380,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que a participação foi iniciada ou conquistada, quando registrada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49393,7 +49393,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora em que a participação no território foi encerrada, quando registrada.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -49406,7 +49406,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do registro histórico.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -53761,7 +53761,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do evento do feed.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -53774,7 +53774,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor associado ao evento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -53787,7 +53787,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Tipo do evento publicado no feed.",
         "default": "'sale'::text",
         "generated": null,
         "identity": null,
@@ -53800,7 +53800,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Título do evento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -53813,7 +53813,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição adicional do evento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -53826,7 +53826,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Valor numérico associado ao evento; unidade determinada pelo tipo do evento.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -53839,7 +53839,7 @@
         "type": "numeric"
       },
       {
-        "comment": null,
+        "comment": "Metadados adicionais do evento em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -53852,7 +53852,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de publicação do evento.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -55451,7 +55451,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do desafio semanal.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -55464,7 +55464,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Título do desafio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -55477,7 +55477,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do desafio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -55490,7 +55490,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de atividade ou objetivo acompanhado pelo desafio.",
         "default": "'activity'::text",
         "generated": null,
         "identity": null,
@@ -55503,7 +55503,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Valor-alvo necessário para concluir o desafio.",
         "default": "10",
         "generated": null,
         "identity": null,
@@ -55516,7 +55516,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de XP concedida como recompensa.",
         "default": "100",
         "generated": null,
         "identity": null,
@@ -55529,7 +55529,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data de início do desafio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -55542,7 +55542,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Data de término do desafio.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -55555,7 +55555,7 @@
         "type": "date"
       },
       {
-        "comment": null,
+        "comment": "Indica se o desafio está ativo.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -55568,7 +55568,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do desafio.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -55581,7 +55581,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do desafio.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -57986,7 +57986,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da execução.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -57999,7 +57999,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Workflow executado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58012,7 +58012,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Usuário que iniciou a execução, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58025,7 +58025,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Estado da execução, conforme utilizado pela aplicação.",
         "default": "'pending'::text",
         "generated": null,
         "identity": null,
@@ -58038,7 +58038,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Dados de entrada da execução em formato JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -58051,7 +58051,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Registro das etapas da execução em formato JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -58064,7 +58064,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Mensagem de erro, quando a execução falhou.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58077,7 +58077,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Duração da execução em milissegundos.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58090,7 +58090,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de início da execução.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -58103,7 +58103,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de término da execução.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58116,7 +58116,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único da regra de workflow.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -58129,7 +58129,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome da regra.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58142,7 +58142,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição da regra.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58155,7 +58155,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de evento que pode acionar a regra.",
         "default": "'deal_stagnant'::text",
         "generated": null,
         "identity": null,
@@ -58168,7 +58168,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Parâmetros do gatilho em JSON; a estrutura é definida pela aplicação.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -58181,7 +58181,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Tipo de ação executada pela regra.",
         "default": "'create_task'::text",
         "generated": null,
         "identity": null,
@@ -58194,7 +58194,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Parâmetros da ação em JSON; a estrutura é definida pela aplicação.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -58207,7 +58207,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Indica se a regra está habilitada.",
         "default": "true",
         "generated": null,
         "identity": null,
@@ -58220,7 +58220,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Vendedor ao qual a regra se aplica, quando restrita a uma pessoa.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58233,7 +58233,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de execuções registradas para a regra.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -58246,7 +58246,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da execução mais recente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58259,7 +58259,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação da regra.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -58272,7 +58272,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização da regra.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -58285,7 +58285,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do workflow.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -58298,7 +58298,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Nome do workflow.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58311,7 +58311,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do workflow.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58324,7 +58324,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Tipo de gatilho do workflow.",
         "default": "'manual'::text",
         "generated": null,
         "identity": null,
@@ -58337,7 +58337,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Configuração do gatilho em JSON.",
         "default": "'{}'::jsonb",
         "generated": null,
         "identity": null,
@@ -58350,7 +58350,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Nós que compõem o fluxo, armazenados em JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -58363,7 +58363,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Conexões entre os nós do fluxo, armazenadas em JSON.",
         "default": "'[]'::jsonb",
         "generated": null,
         "identity": null,
@@ -58376,7 +58376,7 @@
         "type": "jsonb"
       },
       {
-        "comment": null,
+        "comment": "Indica se o workflow está habilitado.",
         "default": "false",
         "generated": null,
         "identity": null,
@@ -58389,7 +58389,7 @@
         "type": "boolean"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de execuções registradas para o workflow.",
         "default": "0",
         "generated": null,
         "identity": null,
@@ -58402,7 +58402,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da execução mais recente.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58415,7 +58415,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Usuário que criou o workflow, quando identificado.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58428,7 +58428,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Data e hora de criação do workflow.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -58441,7 +58441,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Data e hora da última atualização do workflow.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -58558,7 +58558,7 @@
         "type": "timestamp with time zone"
       },
       {
-        "comment": null,
+        "comment": "Identificador único do lançamento de XP.",
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -58571,7 +58571,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Vendedor que recebeu ou teve ajustado o XP.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58584,7 +58584,7 @@
         "type": "uuid"
       },
       {
-        "comment": null,
+        "comment": "Quantidade de pontos de experiência do lançamento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58597,7 +58597,7 @@
         "type": "integer"
       },
       {
-        "comment": null,
+        "comment": "Tipo de evento ou origem que gerou o lançamento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58610,7 +58610,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Identificador da origem do lançamento, quando disponível.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58623,7 +58623,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Descrição do motivo do lançamento.",
         "default": null,
         "generated": null,
         "identity": null,
@@ -58636,7 +58636,7 @@
         "type": "text"
       },
       {
-        "comment": null,
+        "comment": "Data e hora do lançamento de XP.",
         "default": "now()",
         "generated": null,
         "identity": null,
@@ -147552,7 +147552,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Registro de tentativas de acesso negadas, incluindo usuário, recurso solicitado e contexto da tentativa.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147567,7 +147567,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Atividades registradas no relacionamento com contas e seus contatos.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147582,7 +147582,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Contatos associados a contas empresariais e seus papéis no processo de compra.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147612,7 +147612,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Contas empresariais acompanhadas no processo comercial e de sucesso do cliente.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147627,7 +147627,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Conquistas obtidas por vendedores e detalhes associados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147927,7 +147927,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Histórico de execuções de automações, com resultado, ações e erros.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147942,7 +147942,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Definições de automações comerciais acionadas por eventos ou horários.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -147972,7 +147972,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Participantes e pontuação atual em disputas comerciais.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148002,7 +148002,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Lista de endereços IP bloqueados e informações sobre duração e motivo do bloqueio.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148467,7 +148467,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Progresso individual de vendedores em desafios semanais.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -148602,7 +148602,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Atribuição e acompanhamento do relacionamento entre clientes e vendedores.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149112,7 +149112,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Progresso individual de vendedores em desafios diários.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149142,7 +149142,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Desafios de gamificação definidos para uma data específica.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149187,7 +149187,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Configuração de layout do painel de cada vendedor.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149892,7 +149892,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Configuração de funcionalidades controladas por ativação e percentual de rollout.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149907,7 +149907,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Comentários de vendedores em eventos publicados no feed.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -149922,7 +149922,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Reações de vendedores a eventos publicados no feed.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150297,7 +150297,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Lista de endereços IP explicitamente autorizados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150402,7 +150402,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Histórico de encaminhamento de clientes ou leads entre vendedores.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150477,7 +150477,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Pontuação atual de cada negócio para apoiar sua qualificação e priorização.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -150762,7 +150762,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Jornadas de onboarding de contas, com progresso e responsável.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -151362,7 +151362,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Agendamento de revisões trimestrais de negócio (QBR) por conta.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -151842,7 +151842,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Contratos de contas empresariais acompanhados para renovação.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -151962,7 +151962,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Disputas comerciais temporárias entre vendedores, acompanhadas por métrica e pontuação.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152007,7 +152007,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Sequências atuais e recordes de vendas consecutivas por vendedor.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152022,7 +152022,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Territórios comerciais tipados, com responsável e resultados agregados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152142,7 +152142,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Preferências individuais do vendedor para o assistente de IA e regras de contato.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152157,7 +152157,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Resumo do total de XP e do nível atual de cada vendedor.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152292,7 +152292,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Histórico de alertas de segurança emitidos e dos limiares usados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152307,7 +152307,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Parâmetros de limiar e intervalo para alertas de segurança.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152322,7 +152322,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Eventos de segurança associados a usuários, com severidade, contexto de rede e metadados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152787,7 +152787,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Tickets de suporte associados a contas empresariais.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152847,7 +152847,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Associação entre equipes e vendedores com papel de Closer.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152877,7 +152877,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Equipes comerciais e configurações de atividade e inatividade.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152892,7 +152892,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Territórios comerciais e seus responsáveis e resultados acumulados.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -152907,7 +152907,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Histórico de participação de vendedores em territórios e da contribuição associada.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153147,7 +153147,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Feed de eventos e conquistas comerciais dos vendedores.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153342,7 +153342,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Desafios de gamificação disponíveis durante um intervalo semanal.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153627,7 +153627,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Execuções individuais de workflows, incluindo estado, entrada, etapas e duração.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153642,7 +153642,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Regras de automação associadas a gatilhos e ações comerciais.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153657,7 +153657,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Definições de workflows com gatilhos, nós e conexões de execução.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -153687,7 +153687,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "Lançamentos históricos de pontos de experiência concedidos a vendedores.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",

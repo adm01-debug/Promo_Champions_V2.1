@@ -1,5 +1,7 @@
 # public.sales_territories
 
+> Territórios comerciais tipados, com responsável e resultados agregados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `territory_name` | `text` | não |  |  |  |
-| 3 | `territory_type` | `text` | não | `'segment'::text` |  |  |
-| 4 | `current_owner_id` | `uuid` | sim |  |  |  |
-| 5 | `total_revenue` | `numeric` | não | `0` |  |  |
-| 6 | `total_deals` | `integer` | não | `0` |  |  |
-| 7 | `conquered_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `is_contested` | `boolean` | não | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do território comercial. |
+| 2 | `territory_name` | `text` | não |  |  | Nome do território. |
+| 3 | `territory_type` | `text` | não | `'segment'::text` |  | Tipo de território: segment, region, product ou niche. |
+| 4 | `current_owner_id` | `uuid` | sim |  |  | Vendedor responsável pelo território, quando atribuído. |
+| 5 | `total_revenue` | `numeric` | não | `0` |  | Receita total contabilizada no território, em BRL. |
+| 6 | `total_deals` | `integer` | não | `0` |  | Quantidade total de negócios contabilizados no território. |
+| 7 | `conquered_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o território foi conquistado, quando registrada. |
+| 8 | `is_contested` | `boolean` | não | `false` |  | Indica se o território está marcado como disputado. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do território. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do território. |
 
 
 ## Constraints

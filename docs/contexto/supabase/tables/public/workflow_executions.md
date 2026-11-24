@@ -1,5 +1,7 @@
 # public.workflow_executions
 
+> Execuções individuais de workflows, incluindo estado, entrada, etapas e duração.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `workflow_id` | `uuid` | não |  |  |  |
-| 3 | `triggered_by` | `uuid` | sim |  |  |  |
-| 4 | `status` | `text` | não | `'pending'::text` |  |  |
-| 5 | `input_payload` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 6 | `step_log` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `error_message` | `text` | sim |  |  |  |
-| 8 | `duration_ms` | `integer` | sim |  |  |  |
-| 9 | `started_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `finished_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da execução. |
+| 2 | `workflow_id` | `uuid` | não |  |  | Workflow executado. |
+| 3 | `triggered_by` | `uuid` | sim |  |  | Usuário que iniciou a execução, quando identificado. |
+| 4 | `status` | `text` | não | `'pending'::text` |  | Estado da execução, conforme utilizado pela aplicação. |
+| 5 | `input_payload` | `jsonb` | sim | `'{}'::jsonb` |  | Dados de entrada da execução em formato JSON. |
+| 6 | `step_log` | `jsonb` | não | `'[]'::jsonb` |  | Registro das etapas da execução em formato JSON. |
+| 7 | `error_message` | `text` | sim |  |  | Mensagem de erro, quando a execução falhou. |
+| 8 | `duration_ms` | `integer` | sim |  |  | Duração da execução em milissegundos. |
+| 9 | `started_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de início da execução. |
+| 10 | `finished_at` | `timestamp with time zone` | sim |  |  | Data e hora de término da execução. |
 
 
 ## Constraints

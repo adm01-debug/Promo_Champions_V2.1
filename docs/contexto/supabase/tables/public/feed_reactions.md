@@ -1,5 +1,7 @@
 # public.feed_reactions
 
+> Reações de vendedores a eventos publicados no feed.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `feed_item_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `reaction` | `text` | não | `'🔥'::text` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da reação. |
+| 2 | `feed_item_id` | `uuid` | não |  |  | Evento do feed ao qual a reação foi adicionada. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor que adicionou a reação. |
+| 4 | `reaction` | `text` | não | `'🔥'::text` |  | Emoji ou conteúdo textual usado como reação. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a reação foi criada. |
 
 
 ## Constraints

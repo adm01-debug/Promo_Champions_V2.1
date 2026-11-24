@@ -1,5 +1,7 @@
 # public.workflows
 
+> Definições de workflows com gatilhos, nós e conexões de execução.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `trigger_type` | `text` | não | `'manual'::text` |  |  |
-| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `nodes` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `edges` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `is_active` | `boolean` | não | `false` |  |  |
-| 9 | `execution_count` | `integer` | não | `0` |  |  |
-| 10 | `last_executed_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `created_by` | `uuid` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do workflow. |
+| 2 | `name` | `text` | não |  |  | Nome do workflow. |
+| 3 | `description` | `text` | sim |  |  | Descrição do workflow. |
+| 4 | `trigger_type` | `text` | não | `'manual'::text` |  | Tipo de gatilho do workflow. |
+| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  | Configuração do gatilho em JSON. |
+| 6 | `nodes` | `jsonb` | não | `'[]'::jsonb` |  | Nós que compõem o fluxo, armazenados em JSON. |
+| 7 | `edges` | `jsonb` | não | `'[]'::jsonb` |  | Conexões entre os nós do fluxo, armazenadas em JSON. |
+| 8 | `is_active` | `boolean` | não | `false` |  | Indica se o workflow está habilitado. |
+| 9 | `execution_count` | `integer` | não | `0` |  | Quantidade de execuções registradas para o workflow. |
+| 10 | `last_executed_at` | `timestamp with time zone` | sim |  |  | Data e hora da execução mais recente. |
+| 11 | `created_by` | `uuid` | sim |  |  | Usuário que criou o workflow, quando identificado. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do workflow. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do workflow. |
 
 
 ## Constraints

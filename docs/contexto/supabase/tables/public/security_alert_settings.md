@@ -1,5 +1,7 @@
 # public.security_alert_settings
 
+> Parâmetros de limiar e intervalo para alertas de segurança.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `spike_threshold` | `integer` | não | `5` |  |  |
-| 3 | `time_window_hours` | `integer` | não | `1` |  |  |
-| 4 | `cooldown_hours` | `integer` | não | `24` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único das configurações. |
+| 2 | `spike_threshold` | `integer` | não | `5` |  | Quantidade de eventos usada como limiar para detectar um aumento anormal. |
+| 3 | `time_window_hours` | `integer` | não | `1` |  | Janela de observação do alerta, em horas. |
+| 4 | `cooldown_hours` | `integer` | não | `24` |  | Intervalo mínimo entre alertas repetidos, em horas. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação das configurações. |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização das configurações. |
 
 
 ## Constraints

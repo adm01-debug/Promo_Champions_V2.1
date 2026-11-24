@@ -1,5 +1,7 @@
 # public.achievements
 
+> Conquistas obtidas por vendedores e detalhes associados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,12 +19,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `achievement_type` | `text` | não | `'daily_goal'::text` |  |  |
-| 4 | `achievement_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 5 | `details` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da conquista registrada. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor que obteve a conquista. |
+| 3 | `achievement_type` | `text` | não | `'daily_goal'::text` |  | Tipo de conquista obtida. |
+| 4 | `achievement_date` | `date` | não | `CURRENT_DATE` |  | Data em que a conquista foi obtida. |
+| 5 | `details` | `jsonb` | sim | `'{}'::jsonb` |  | Detalhes adicionais da conquista em formato JSON. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da conquista. |
 
 
 ## Constraints

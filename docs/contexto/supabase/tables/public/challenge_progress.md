@@ -1,5 +1,7 @@
 # public.challenge_progress
 
+> Progresso individual de vendedores em desafios semanais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `challenge_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `current_value` | `integer` | não | `0` |  |  |
-| 5 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `xp_claimed` | `boolean` | não | `false` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de progresso. |
+| 2 | `challenge_id` | `uuid` | não |  |  | Desafio semanal acompanhado. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor cujo progresso está registrado. |
+| 4 | `current_value` | `integer` | não | `0` |  | Valor atual de progresso em direção à meta do desafio. |
+| 5 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o desafio foi concluído. |
+| 6 | `xp_claimed` | `boolean` | não | `false` |  | Indica se a recompensa de XP foi reivindicada. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro de progresso. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do progresso. |
 
 
 ## Constraints

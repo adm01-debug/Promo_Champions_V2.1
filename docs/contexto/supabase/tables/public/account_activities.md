@@ -1,5 +1,7 @@
 # public.account_activities
 
+> Atividades registradas no relacionamento com contas e seus contatos.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `contact_id` | `uuid` | sim |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `activity_type` | `text` | não |  |  |  |
-| 6 | `title` | `text` | não |  |  |  |
-| 7 | `description` | `text` | sim |  |  |  |
-| 8 | `occurred_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da atividade da conta. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial relacionada à atividade. |
+| 3 | `contact_id` | `uuid` | sim |  |  | Contato da conta relacionado à atividade, quando houver. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Vendedor associado à atividade, quando identificado. |
+| 5 | `activity_type` | `text` | não |  |  | Tipo da atividade conforme informado pela aplicação. |
+| 6 | `title` | `text` | não |  |  | Título da atividade. |
+| 7 | `description` | `text` | sim |  |  | Descrição da atividade. |
+| 8 | `occurred_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a atividade ocorreu. |
+| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados adicionais da atividade em formato JSON. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da atividade. |
 
 
 ## Constraints

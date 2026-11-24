@@ -1,5 +1,7 @@
 # public.xp_history
 
+> Lançamentos históricos de pontos de experiência concedidos a vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `xp_amount` | `integer` | não |  |  |  |
-| 4 | `source_type` | `text` | não |  |  |  |
-| 5 | `source_id` | `text` | sim |  |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do lançamento de XP. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor que recebeu ou teve ajustado o XP. |
+| 3 | `xp_amount` | `integer` | não |  |  | Quantidade de pontos de experiência do lançamento. |
+| 4 | `source_type` | `text` | não |  |  | Tipo de evento ou origem que gerou o lançamento. |
+| 5 | `source_id` | `text` | sim |  |  | Identificador da origem do lançamento, quando disponível. |
+| 6 | `description` | `text` | sim |  |  | Descrição do motivo do lançamento. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora do lançamento de XP. |
 
 
 ## Constraints

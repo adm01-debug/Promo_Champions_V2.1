@@ -1,5 +1,7 @@
 # public.team_closers
 
+> Associação entre equipes e vendedores com papel de Closer.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `team_id` | `uuid` | não |  |  |  |
-| 3 | `closer_id` | `uuid` | não |  |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da associação. |
+| 2 | `team_id` | `uuid` | não |  |  | Equipe à qual o Closer está associado. |
+| 3 | `closer_id` | `uuid` | não |  |  | Vendedor associado à equipe como Closer. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da associação. |
 
 
 ## Constraints

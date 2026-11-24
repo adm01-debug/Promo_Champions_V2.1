@@ -1,5 +1,7 @@
 # public.support_tickets
 
+> Tickets de suporte associados a contas empresariais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,22 +18,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `external_id` | `text` | sim |  |  |  |
-| 4 | `source` | `text` | não | `'internal'::text` |  |  |
-| 5 | `subject` | `text` | não |  |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `status` | `support_ticket_status` | não | `'open'::support_ticket_status` |  |  |
-| 8 | `priority` | `support_ticket_priority` | não | `'normal'::support_ticket_priority` |  |  |
-| 9 | `sentiment` | `text` | sim |  |  |  |
-| 10 | `requester_email` | `text` | sim |  |  |  |
-| 11 | `assignee_email` | `text` | sim |  |  |  |
-| 12 | `tags` | `text[]` | sim |  |  |  |
-| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `resolved_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do ticket. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial associada ao ticket. |
+| 3 | `external_id` | `text` | sim |  |  | Identificador do ticket no sistema externo, quando disponível. |
+| 4 | `source` | `text` | não | `'internal'::text` |  | Sistema ou origem do ticket. |
+| 5 | `subject` | `text` | não |  |  | Assunto do ticket. |
+| 6 | `description` | `text` | sim |  |  | Descrição do problema ou solicitação. |
+| 7 | `status` | `support_ticket_status` | não | `'open'::support_ticket_status` |  | Estado do ticket conforme o tipo support_ticket_status. |
+| 8 | `priority` | `support_ticket_priority` | não | `'normal'::support_ticket_priority` |  | Prioridade do ticket conforme o tipo support_ticket_priority. |
+| 9 | `sentiment` | `text` | sim |  |  | Sentimento associado ao ticket, quando disponível. |
+| 10 | `requester_email` | `text` | sim |  |  | E-mail de quem abriu o ticket, quando informado. |
+| 11 | `assignee_email` | `text` | sim |  |  | E-mail do responsável pelo ticket, quando atribuído. |
+| 12 | `tags` | `text[]` | sim |  |  | Marcadores associados ao ticket. |
+| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Metadados adicionais do ticket em formato JSON. |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do ticket. |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do ticket. |
+| 16 | `resolved_at` | `timestamp with time zone` | sim |  |  | Data e hora de resolução do ticket. |
 
 
 ## Constraints

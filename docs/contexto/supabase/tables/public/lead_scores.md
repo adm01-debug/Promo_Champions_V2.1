@@ -1,5 +1,7 @@
 # public.lead_scores
 
+> Pontuação atual de cada negócio para apoiar sua qualificação e priorização.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `score` | `integer` | não | `0` |  |  |
-| 4 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 5 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de pontuação. |
+| 2 | `sale_id` | `uuid` | não |  |  | Negócio cuja pontuação está registrada; cada negócio possui no máximo um registro. |
+| 3 | `score` | `integer` | não | `0` |  | Pontuação do lead, limitada a 0–100 pela constraint da coluna. |
+| 4 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Fatores usados no cálculo da pontuação, armazenados em JSON. |
+| 5 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora do cálculo mais recente da pontuação. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

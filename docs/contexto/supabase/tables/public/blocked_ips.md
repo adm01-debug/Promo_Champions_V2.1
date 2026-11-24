@@ -1,5 +1,7 @@
 # public.blocked_ips
 
+> Lista de endereços IP bloqueados e informações sobre duração e motivo do bloqueio.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `ip_address` | `text` | não |  |  |  |
-| 3 | `reason` | `text` | não |  |  |  |
-| 4 | `blocked_by` | `uuid` | sim |  |  |  |
-| 5 | `blocked_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `expires_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `is_permanent` | `boolean` | sim | `false` |  |  |
-| 8 | `block_count` | `integer` | sim | `1` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do bloqueio. |
+| 2 | `ip_address` | `text` | não |  |  | Endereço IP bloqueado. |
+| 3 | `reason` | `text` | não |  |  | Motivo do bloqueio. |
+| 4 | `blocked_by` | `uuid` | sim |  |  | Usuário que aplicou o bloqueio, quando identificado. |
+| 5 | `blocked_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora em que o bloqueio foi aplicado. |
+| 6 | `expires_at` | `timestamp with time zone` | sim |  |  | Data e hora de expiração do bloqueio, quando definida. |
+| 7 | `is_permanent` | `boolean` | sim | `false` |  | Indica se o bloqueio foi configurado como permanente. |
+| 8 | `block_count` | `integer` | sim | `1` |  | Quantidade de vezes que o endereço foi bloqueado. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do registro. |
+| 10 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

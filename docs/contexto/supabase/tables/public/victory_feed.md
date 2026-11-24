@@ -1,5 +1,7 @@
 # public.victory_feed
 
+> Feed de eventos e conquistas comerciais dos vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `event_type` | `text` | não | `'sale'::text` |  |  |
-| 4 | `title` | `text` | não |  |  |  |
-| 5 | `description` | `text` | sim |  |  |  |
-| 6 | `value` | `numeric` | sim | `0` |  |  |
-| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento do feed. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor associado ao evento. |
+| 3 | `event_type` | `text` | não | `'sale'::text` |  | Tipo do evento publicado no feed. |
+| 4 | `title` | `text` | não |  |  | Título do evento. |
+| 5 | `description` | `text` | sim |  |  | Descrição adicional do evento. |
+| 6 | `value` | `numeric` | sim | `0` |  | Valor numérico associado ao evento; unidade determinada pelo tipo do evento. |
+| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados adicionais do evento em formato JSON. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de publicação do evento. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.renewals
 
+> Contratos de contas empresariais acompanhados para renovação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `contract_value` | `numeric(14,2)` | não | `0` |  |  |
-| 4 | `currency` | `text` | não | `'BRL'::text` |  |  |
-| 5 | `renewal_date` | `date` | não |  |  |  |
-| 6 | `notice_period_days` | `integer` | não | `30` |  |  |
-| 7 | `auto_renew` | `boolean` | não | `false` |  |  |
-| 8 | `status` | `renewal_status` | não | `'upcoming'::renewal_status` |  |  |
-| 9 | `owner_salesperson_id` | `uuid` | sim |  |  |  |
-| 10 | `notes` | `text` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da renovação. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial associada ao contrato. |
+| 3 | `contract_value` | `numeric(14,2)` | não | `0` |  | Valor do contrato a renovar, em BRL. |
+| 4 | `currency` | `text` | não | `'BRL'::text` |  | Código da moeda do contrato; o padrão do projeto é BRL. |
+| 5 | `renewal_date` | `date` | não |  |  | Data prevista para renovação do contrato. |
+| 6 | `notice_period_days` | `integer` | não | `30` |  | Antecedência, em dias, usada para aviso de renovação. |
+| 7 | `auto_renew` | `boolean` | não | `false` |  | Indica se o contrato está configurado para renovação automática. |
+| 8 | `status` | `renewal_status` | não | `'upcoming'::renewal_status` |  | Estado da renovação: upcoming, at_risk, renewed, churned ou lost. |
+| 9 | `owner_salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pela renovação, quando atribuído. |
+| 10 | `notes` | `text` | sim |  |  | Observações sobre a renovação. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

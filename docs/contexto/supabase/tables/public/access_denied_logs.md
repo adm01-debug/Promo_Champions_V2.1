@@ -1,5 +1,7 @@
 # public.access_denied_logs
 
+> Registro de tentativas de acesso negadas, incluindo usuário, recurso solicitado e contexto da tentativa.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `user_email` | `text` | sim |  |  |  |
-| 4 | `attempted_path` | `text` | não |  |  |  |
-| 5 | `user_role` | `text` | sim |  |  |  |
-| 6 | `required_role` | `text` | sim |  |  |  |
-| 7 | `ip_address` | `text` | sim |  |  |  |
-| 8 | `user_agent` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento de acesso negado. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário associado à tentativa, quando identificado. |
+| 3 | `user_email` | `text` | sim |  |  | E-mail do usuário associado à tentativa, quando disponível. |
+| 4 | `attempted_path` | `text` | não |  |  | Caminho ou recurso que o usuário tentou acessar. |
+| 5 | `user_role` | `text` | sim |  |  | Papel do usuário no momento da tentativa, quando registrado. |
+| 6 | `required_role` | `text` | sim |  |  | Papel exigido para o recurso solicitado, quando registrado. |
+| 7 | `ip_address` | `text` | sim |  |  | Endereço IP de origem da tentativa, quando disponível. |
+| 8 | `user_agent` | `text` | sim |  |  | User-Agent do cliente, quando disponível. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora do evento de acesso negado. |
 
 
 ## Constraints

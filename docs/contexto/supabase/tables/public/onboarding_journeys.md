@@ -1,5 +1,7 @@
 # public.onboarding_journeys
 
+> Jornadas de onboarding de contas, com progresso e responsável.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `template_key` | `text` | não | `'standard'::text` |  |  |
-| 4 | `status` | `onboarding_status` | não | `'not_started'::onboarding_status` |  |  |
-| 5 | `current_step` | `integer` | não | `0` |  |  |
-| 6 | `total_steps` | `integer` | não | `0` |  |  |
-| 7 | `owner_salesperson_id` | `uuid` | sim |  |  |  |
-| 8 | `started_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da jornada. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial em onboarding. |
+| 3 | `template_key` | `text` | não | `'standard'::text` |  | Chave do modelo de jornada utilizado. |
+| 4 | `status` | `onboarding_status` | não | `'not_started'::onboarding_status` |  | Estado do onboarding: not_started, in_progress, completed ou stalled. |
+| 5 | `current_step` | `integer` | não | `0` |  | Etapa atual da jornada. |
+| 6 | `total_steps` | `integer` | não | `0` |  | Quantidade total de etapas da jornada. |
+| 7 | `owner_salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pelo onboarding, quando atribuído. |
+| 8 | `started_at` | `timestamp with time zone` | sim |  |  | Data e hora de início do onboarding. |
+| 9 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora de conclusão do onboarding. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da jornada. |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da jornada. |
 
 
 ## Constraints

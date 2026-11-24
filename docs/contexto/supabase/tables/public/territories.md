@@ -1,5 +1,7 @@
 # public.territories
 
+> Territórios comerciais e seus responsáveis e resultados acumulados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `current_owner_id` | `uuid` | sim |  |  |  |
-| 4 | `total_revenue` | `numeric` | sim | `0` |  |  |
-| 5 | `total_deals` | `integer` | sim | `0` |  |  |
-| 6 | `conquered_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do território. |
+| 2 | `name` | `text` | não |  |  | Nome do território. |
+| 3 | `current_owner_id` | `uuid` | sim |  |  | Vendedor atualmente responsável pelo território, quando atribuído. |
+| 4 | `total_revenue` | `numeric` | sim | `0` |  | Receita total acumulada no território, em BRL. |
+| 5 | `total_deals` | `integer` | sim | `0` |  | Quantidade total de negócios contabilizados no território. |
+| 6 | `conquered_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o território foi conquistado, quando registrada. |
+| 7 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do território. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.client_portfolio
 
+> Atribuição e acompanhamento do relacionamento entre clientes e vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,21 +19,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `status` | `text` | não | `'inactive'::text` |  |  |
-| 5 | `last_purchase_date` | `date` | sim |  |  |  |
-| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `assigned_by` | `uuid` | sim |  |  |  |
-| 8 | `source` | `text` | sim | `'database'::text` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `is_active` | `boolean` | sim | `true` |  |  |
-| 12 | `lead_source` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da atribuição de portfólio. |
+| 2 | `client_id` | `uuid` | não |  |  | Cliente incluído no portfólio. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor responsável pelo cliente. |
+| 4 | `status` | `text` | não | `'inactive'::text` |  | Estado do relacionamento no portfólio: active, nurturing, at_risk, inactive ou churned. |
+| 5 | `last_purchase_date` | `date` | sim |  |  | Data da última compra registrada para o cliente. |
+| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o cliente foi atribuído ao vendedor. |
+| 7 | `assigned_by` | `uuid` | sim |  |  | Vendedor que realizou a atribuição, quando registrado. |
+| 8 | `source` | `text` | sim | `'database'::text` |  | Origem da atribuição do cliente ao portfólio. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
+| 11 | `is_active` | `boolean` | sim | `true` |  | Indica se a atribuição está ativa. |
+| 12 | `lead_source` | `text` | sim |  |  | Origem do lead associada ao cliente, quando informada. |
 | 13 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 14 | `deleted_by` | `uuid` | sim |  |  |  |
-| 15 | `delete_reason` | `text` | sim |  |  |  |
+| 14 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou a atribuição como excluída. |
+| 15 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar a atribuição como excluída. |
 
 
 ## Constraints

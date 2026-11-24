@@ -1,5 +1,7 @@
 # public.sales_streaks
 
+> Sequências atuais e recordes de vendas consecutivas por vendedor.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `current_streak` | `integer` | não | `0` |  |  |
-| 4 | `longest_streak` | `integer` | não | `0` |  |  |
-| 5 | `last_sale_date` | `date` | sim |  |  |  |
-| 6 | `xp_multiplier` | `numeric(3,1)` | não | `1.0` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do resumo de sequência. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor a que a sequência pertence. |
+| 3 | `current_streak` | `integer` | não | `0` |  | Quantidade de períodos consecutivos na sequência atual. |
+| 4 | `longest_streak` | `integer` | não | `0` |  | Maior sequência consecutiva registrada. |
+| 5 | `last_sale_date` | `date` | sim |  |  | Data da venda mais recente usada no cálculo da sequência. |
+| 6 | `xp_multiplier` | `numeric(3,1)` | não | `1.0` |  | Multiplicador de XP associado à sequência. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do resumo. |
 
 
 ## Constraints

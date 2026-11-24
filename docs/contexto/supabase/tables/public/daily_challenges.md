@@ -1,5 +1,7 @@
 # public.daily_challenges
 
+> Desafios de gamificação definidos para uma data específica.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `challenge_type` | `text` | não | `'calls'::text` |  |  |
-| 5 | `target_value` | `integer` | não | `5` |  |  |
-| 6 | `xp_reward` | `integer` | não | `25` |  |  |
-| 7 | `challenge_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 8 | `is_active` | `boolean` | não | `true` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do desafio diário. |
+| 2 | `title` | `text` | não |  |  | Título do desafio diário. |
+| 3 | `description` | `text` | sim |  |  | Descrição do desafio diário. |
+| 4 | `challenge_type` | `text` | não | `'calls'::text` |  | Tipo de atividade ou objetivo acompanhado pelo desafio. |
+| 5 | `target_value` | `integer` | não | `5` |  | Valor-alvo necessário para concluir o desafio. |
+| 6 | `xp_reward` | `integer` | não | `25` |  | Quantidade de XP concedida como recompensa. |
+| 7 | `challenge_date` | `date` | não | `CURRENT_DATE` |  | Data a que o desafio se aplica. |
+| 8 | `is_active` | `boolean` | não | `true` |  | Indica se o desafio está ativo. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do desafio. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do desafio. |
 
 
 ## Constraints

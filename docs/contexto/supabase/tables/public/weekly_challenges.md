@@ -1,5 +1,7 @@
 # public.weekly_challenges
 
+> Desafios de gamificação disponíveis durante um intervalo semanal.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `challenge_type` | `text` | não | `'activity'::text` |  |  |
-| 5 | `target_value` | `integer` | não | `10` |  |  |
-| 6 | `xp_reward` | `integer` | não | `100` |  |  |
-| 7 | `start_date` | `date` | não |  |  |  |
-| 8 | `end_date` | `date` | não |  |  |  |
-| 9 | `is_active` | `boolean` | não | `true` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do desafio semanal. |
+| 2 | `title` | `text` | não |  |  | Título do desafio. |
+| 3 | `description` | `text` | sim |  |  | Descrição do desafio. |
+| 4 | `challenge_type` | `text` | não | `'activity'::text` |  | Tipo de atividade ou objetivo acompanhado pelo desafio. |
+| 5 | `target_value` | `integer` | não | `10` |  | Valor-alvo necessário para concluir o desafio. |
+| 6 | `xp_reward` | `integer` | não | `100` |  | Quantidade de XP concedida como recompensa. |
+| 7 | `start_date` | `date` | não |  |  | Data de início do desafio. |
+| 8 | `end_date` | `date` | não |  |  | Data de término do desafio. |
+| 9 | `is_active` | `boolean` | não | `true` |  | Indica se o desafio está ativo. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do desafio. |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do desafio. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.account_contacts
 
+> Contatos associados a contas empresariais e seus papéis no processo de compra.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,24 +18,24 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `email` | `text` | sim |  |  |  |
-| 5 | `phone` | `text` | sim |  |  |  |
-| 6 | `job_title` | `text` | sim |  |  |  |
-| 7 | `department` | `text` | sim |  |  |  |
-| 8 | `buying_role` | `text` | não | `'user'::text` |  |  |
-| 9 | `influence_level` | `integer` | não | `3` |  |  |
-| 10 | `sentiment` | `text` | não | `'neutral'::text` |  |  |
-| 11 | `linkedin_url` | `text` | sim |  |  |  |
-| 12 | `last_contacted_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `notes` | `text` | sim |  |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `sale_id` | `uuid` | sim |  |  |  |
-| 17 | `seniority` | `text` | sim |  |  |  |
-| 18 | `is_primary` | `boolean` | sim | `false` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do contato da conta. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial à qual o contato pertence. |
+| 3 | `name` | `text` | não |  |  | Nome do contato. |
+| 4 | `email` | `text` | sim |  |  | E-mail do contato. |
+| 5 | `phone` | `text` | sim |  |  | Telefone do contato. |
+| 6 | `job_title` | `text` | sim |  |  | Cargo do contato. |
+| 7 | `department` | `text` | sim |  |  | Departamento do contato. |
+| 8 | `buying_role` | `text` | não | `'user'::text` |  | Papel do contato na compra: decision_maker, champion, influencer, blocker, user ou technical. |
+| 9 | `influence_level` | `integer` | não | `3` |  | Nível de influência de 1 a 5. |
+| 10 | `sentiment` | `text` | não | `'neutral'::text` |  | Sentimento registrado: positive, neutral ou negative. |
+| 11 | `linkedin_url` | `text` | sim |  |  | URL do perfil profissional do contato. |
+| 12 | `last_contacted_at` | `timestamp with time zone` | sim |  |  | Data e hora do último contato registrado. |
+| 13 | `notes` | `text` | sim |  |  | Observações sobre o contato. |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do contato. |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do contato. |
+| 16 | `sale_id` | `uuid` | sim |  |  | Negócio associado ao contato, quando houver. |
+| 17 | `seniority` | `text` | sim |  |  | Nível de senioridade: c_level, vp, director, manager ou ic. |
+| 18 | `is_primary` | `boolean` | sim | `false` |  | Indica se este é o contato principal da conta. |
 
 
 ## Constraints

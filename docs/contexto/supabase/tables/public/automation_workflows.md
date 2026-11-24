@@ -1,5 +1,7 @@
 # public.automation_workflows
 
+> Definições de automações comerciais acionadas por eventos ou horários.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `trigger_type` | `text` | não |  |  |  |
-| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `conditions` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `actions` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `is_active` | `boolean` | não | `true` |  |  |
-| 9 | `created_by` | `uuid` | sim |  |  |  |
-| 10 | `run_count` | `integer` | não | `0` |  |  |
-| 11 | `last_run_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da automação. |
+| 2 | `name` | `text` | não |  |  | Nome da automação. |
+| 3 | `description` | `text` | sim |  |  | Descrição da automação. |
+| 4 | `trigger_type` | `text` | não |  |  | Evento que pode iniciar a automação; os valores aceitos são definidos pela constraint. |
+| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  | Parâmetros do gatilho em JSON. |
+| 6 | `conditions` | `jsonb` | não | `'[]'::jsonb` |  | Condições que determinam se a automação deve executar, em JSON. |
+| 7 | `actions` | `jsonb` | não | `'[]'::jsonb` |  | Ações configuradas para a automação, em JSON. |
+| 8 | `is_active` | `boolean` | não | `true` |  | Indica se a automação está habilitada. |
+| 9 | `created_by` | `uuid` | sim |  |  | Usuário que criou a automação, quando identificado. |
+| 10 | `run_count` | `integer` | não | `0` |  | Quantidade de execuções registradas. |
+| 11 | `last_run_at` | `timestamp with time zone` | sim |  |  | Data e hora da execução mais recente. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da automação. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da automação. |
 
 
 ## Constraints

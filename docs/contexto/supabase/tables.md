@@ -6,12 +6,12 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 |---|---|---|---|---|---|---|
 | [public._internal_secrets](tables/public/internal_secrets.md) | table | sim | 1 | 3 | não |  |
 | [public.ab_tests](tables/public/ab_tests.md) | table | sim | 1 | 2 | não |  |
-| [public.access_denied_logs](tables/public/access_denied_logs.md) | table | sim | 4 | 9 | não |  |
-| [public.account_activities](tables/public/account_activities.md) | table | sim | 2 | 10 | não |  |
-| [public.account_contacts](tables/public/account_contacts.md) | table | sim | 2 | 18 | não |  |
+| [public.access_denied_logs](tables/public/access_denied_logs.md) | table | sim | 4 | 9 | não | Registro de tentativas de acesso negadas, incluindo usuário, recurso solicitado e contexto da tentativa. |
+| [public.account_activities](tables/public/account_activities.md) | table | sim | 2 | 10 | não | Atividades registradas no relacionamento com contas e seus contatos. |
+| [public.account_contacts](tables/public/account_contacts.md) | table | sim | 2 | 18 | não | Contatos associados a contas empresariais e seus papéis no processo de compra. |
 | [public.account_plans](tables/public/account_plans.md) | table | sim | 3 | 16 | não |  |
-| [public.accounts](tables/public/accounts.md) | table | sim | 4 | 22 | não |  |
-| [public.achievements](tables/public/achievements.md) | table | sim | 2 | 6 | não |  |
+| [public.accounts](tables/public/accounts.md) | table | sim | 4 | 22 | não | Contas empresariais acompanhadas no processo comercial e de sucesso do cliente. |
+| [public.achievements](tables/public/achievements.md) | table | sim | 2 | 6 | não | Conquistas obtidas por vendedores e detalhes associados. |
 | [public.active_power_ups](tables/public/active_power_ups.md) | table | sim | 2 | 8 | não |  |
 | [public.active_sessions](tables/public/active_sessions.md) | table | sim | 6 | 12 | não | Registro de sessões ativas e metadados de atividade e expiração. |
 | [public.activities](tables/public/activities.md) | table | sim | 4 | 16 | sim | Registro de atividades comerciais realizadas com clientes e negócios. |
@@ -31,12 +31,12 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.audit_log](tables/public/audit_log.md) | table | sim | 2 | 8 | não | superseded por public.audit_logs (20261001193100_audit_log_canonical). Mantida só para leitura histórica. |
 | [public.audit_logs](tables/public/audit_logs.md) | table | sim | 2 | 16 | não |  |
 | [public.auto_task_queue_settings](tables/public/auto_task_queue_settings.md) | table | sim | 2 | 11 | não |  |
-| [public.automation_runs](tables/public/automation_runs.md) | table | sim | 1 | 9 | não |  |
-| [public.automation_workflows](tables/public/automation_workflows.md) | table | sim | 2 | 13 | não |  |
+| [public.automation_runs](tables/public/automation_runs.md) | table | sim | 1 | 9 | não | Histórico de execuções de automações, com resultado, ações e erros. |
+| [public.automation_workflows](tables/public/automation_workflows.md) | table | sim | 2 | 13 | não | Definições de automações comerciais acionadas por eventos ou horários. |
 | [public.available_spins](tables/public/available_spins.md) | table | sim | 3 | 4 | não |  |
-| [public.battle_participants](tables/public/battle_participants.md) | table | sim | 4 | 6 | sim |  |
+| [public.battle_participants](tables/public/battle_participants.md) | table | sim | 4 | 6 | sim | Participantes e pontuação atual em disputas comerciais. |
 | [public.bitrix24_sync_logs](tables/public/bitrix24_sync_logs.md) | table | sim | 1 | 11 | não |  |
-| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 10 | não |  |
+| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 10 | não | Lista de endereços IP bloqueados e informações sobre duração e motivo do bloqueio. |
 | [public.buying_committee](tables/public/buying_committee.md) | table | sim | 2 | 9 | não |  |
 | [public.buying_committee_members](tables/public/buying_committee_members.md) | table | sim | 4 | 13 | não |  |
 | [public.buying_signals](tables/public/buying_signals.md) | table | sim | 1 | 8 | não |  |
@@ -67,7 +67,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.call_transcripts](tables/public/call_transcripts.md) | table | sim | 2 | 8 | não |  |
 | [public.campaign_health_alerts](tables/public/campaign_health_alerts.md) | table | sim | 2 | 10 | não |  |
 | [public.category_metrics](tables/public/category_metrics.md) | table | sim | 4 | 5 | não | Métricas agregadas por categoria e data. |
-| [public.challenge_progress](tables/public/challenge_progress.md) | table | sim | 1 | 8 | não |  |
+| [public.challenge_progress](tables/public/challenge_progress.md) | table | sim | 1 | 8 | não | Progresso individual de vendedores em desafios semanais. |
 | [public.channel_credentials](tables/public/channel_credentials.md) | table | sim | 4 | 11 | não |  |
 | [public.channel_interactions](tables/public/channel_interactions.md) | table | sim | 4 | 12 | não |  |
 | [public.chat_conversations](tables/public/chat_conversations.md) | table | sim | 4 | 5 | não |  |
@@ -76,7 +76,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.circuit_breaker_events](tables/public/circuit_breaker_events.md) | table | sim | 3 | 8 | não |  |
 | [public.client_churn_alerts_state](tables/public/client_churn_alerts_state.md) | table | sim | 2 | 12 | não |  |
 | [public.client_interactions](tables/public/client_interactions.md) | table | sim | 3 | 7 | não |  |
-| [public.client_portfolio](tables/public/client_portfolio.md) | table | sim | 4 | 15 | não |  |
+| [public.client_portfolio](tables/public/client_portfolio.md) | table | sim | 4 | 15 | não | Atribuição e acompanhamento do relacionamento entre clientes e vendedores. |
 | [public.client_renewals](tables/public/client_renewals.md) | table | sim | 1 | 10 | não |  |
 | [public.clients](tables/public/clients.md) | table | sim | 7 | 22 | não | Cadastro de clientes e informações de contato, relacionamento, origem e ativação. |
 | [public.coaching_actions](tables/public/coaching_actions.md) | table | sim | 4 | 14 | não |  |
@@ -110,12 +110,12 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cs_tickets](tables/public/cs_tickets.md) | table | sim | 1 | 11 | não |  |
 | [public.csat_ces_surveys](tables/public/csat_ces_surveys.md) | table | sim | 2 | 10 | não |  |
 | [public.custom_reports](tables/public/custom_reports.md) | table | sim | 2 | 9 | não |  |
-| [public.daily_challenge_progress](tables/public/daily_challenge_progress.md) | table | sim | 1 | 8 | não |  |
+| [public.daily_challenge_progress](tables/public/daily_challenge_progress.md) | table | sim | 1 | 8 | não | Progresso individual de vendedores em desafios diários. |
 | [public.daily_challenge_rotations](tables/public/daily_challenge_rotations.md) | table | sim | 1 | 2 | não |  |
-| [public.daily_challenges](tables/public/daily_challenges.md) | table | sim | 4 | 10 | não |  |
+| [public.daily_challenges](tables/public/daily_challenges.md) | table | sim | 4 | 10 | não | Desafios de gamificação definidos para uma data específica. |
 | [public.daily_metrics](tables/public/daily_metrics.md) | table | sim | 4 | 9 | não | Métricas comerciais agregadas por data, incluindo receita, metas, vendas, novos clientes e indicadores de conversão. |
 | [public.daily_streak_achievements](tables/public/daily_streak_achievements.md) | table | sim | 1 | 7 | não |  |
-| [public.dashboard_layouts](tables/public/dashboard_layouts.md) | table | sim | 1 | 5 | não |  |
+| [public.dashboard_layouts](tables/public/dashboard_layouts.md) | table | sim | 1 | 5 | não | Configuração de layout do painel de cada vendedor. |
 | [public.data_access_log](tables/public/data_access_log.md) | table | sim | 1 | 6 | não |  |
 | [public.data_retention_policies](tables/public/data_retention_policies.md) | table | sim | 1 | 7 | não |  |
 | [public.data_subject_requests](tables/public/data_subject_requests.md) | table | sim | 3 | 16 | não |  |
@@ -162,9 +162,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.experiment_variants](tables/public/experiment_variants.md) | table | sim | 2 | 5 | não |  |
 | [public.experiments](tables/public/experiments.md) | table | sim | 2 | 7 | não |  |
 | [public.external_seller_map](tables/public/external_seller_map.md) | table | sim | 2 | 8 | não |  |
-| [public.feature_flags](tables/public/feature_flags.md) | table | sim | 2 | 9 | não |  |
-| [public.feed_comments](tables/public/feed_comments.md) | table | sim | 4 | 5 | não |  |
-| [public.feed_reactions](tables/public/feed_reactions.md) | table | sim | 3 | 5 | não |  |
+| [public.feature_flags](tables/public/feature_flags.md) | table | sim | 2 | 9 | não | Configuração de funcionalidades controladas por ativação e percentual de rollout. |
+| [public.feed_comments](tables/public/feed_comments.md) | table | sim | 4 | 5 | não | Comentários de vendedores em eventos publicados no feed. |
+| [public.feed_reactions](tables/public/feed_reactions.md) | table | sim | 3 | 5 | não | Reações de vendedores a eventos publicados no feed. |
 | [public.follow_up_audit_logs](tables/public/follow_up_audit_logs.md) | table | sim | 2 | 8 | não |  |
 | [public.follow_up_notifications](tables/public/follow_up_notifications.md) | table | sim | 1 | 8 | não |  |
 | [public.follow_up_settings](tables/public/follow_up_settings.md) | table | sim | 2 | 7 | não |  |
@@ -189,19 +189,19 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.integration_secret_refs](tables/public/integration_secret_refs.md) | table | sim | 4 | 7 | não |  |
 | [public.intent_audit_logs](tables/public/intent_audit_logs.md) | table | sim | 4 | 6 | não |  |
 | [public.inventory_levels](tables/public/inventory_levels.md) | table | sim | 4 | 10 | não | Nível atual de estoque e parâmetros de reposição por produto. |
-| [public.ip_whitelist](tables/public/ip_whitelist.md) | table | sim | 1 | 6 | não |  |
+| [public.ip_whitelist](tables/public/ip_whitelist.md) | table | sim | 1 | 6 | não | Lista de endereços IP explicitamente autorizados. |
 | [public.known_devices](tables/public/known_devices.md) | table | sim | 4 | 12 | não |  |
 | [public.kudos](tables/public/kudos.md) | table | sim | 3 | 7 | sim |  |
 | [public.lead_assignments](tables/public/lead_assignments.md) | table | sim | 2 | 7 | não |  |
 | [public.lead_churn_risk](tables/public/lead_churn_risk.md) | table | sim | 2 | 7 | não |  |
 | [public.lead_detailed_logs](tables/public/lead_detailed_logs.md) | table | sim | 4 | 7 | não |  |
 | [public.lead_intelligence_metrics](tables/public/lead_intelligence_metrics.md) | table | sim | 1 | 7 | não |  |
-| [public.lead_routing_log](tables/public/lead_routing_log.md) | table | sim | 2 | 7 | não |  |
+| [public.lead_routing_log](tables/public/lead_routing_log.md) | table | sim | 2 | 7 | não | Histórico de encaminhamento de clientes ou leads entre vendedores. |
 | [public.lead_routing_rules](tables/public/lead_routing_rules.md) | table | sim | 2 | 15 | não |  |
 | [public.lead_score_explanations](tables/public/lead_score_explanations.md) | table | sim | 3 | 11 | não |  |
 | [public.lead_score_history](tables/public/lead_score_history.md) | table | sim | 2 | 5 | não |  |
 | [public.lead_score_trends](tables/public/lead_score_trends.md) | table | sim | 1 | 4 | não |  |
-| [public.lead_scores](tables/public/lead_scores.md) | table | sim | 4 | 7 | não |  |
+| [public.lead_scores](tables/public/lead_scores.md) | table | sim | 4 | 7 | não | Pontuação atual de cada negócio para apoiar sua qualificação e priorização. |
 | [public.lead_source_configs](tables/public/lead_source_configs.md) | table | sim | 1 | 6 | não |  |
 | [public.league_history](tables/public/league_history.md) | table | sim | 1 | 9 | não |  |
 | [public.league_members](tables/public/league_members.md) | table | sim | 3 | 11 | sim |  |
@@ -220,7 +220,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.nps_surveys](tables/public/nps_surveys.md) | table | sim | 7 | 12 | não |  |
 | [public.objection_library](tables/public/objection_library.md) | table | sim | 2 | 8 | sim |  |
 | [public.objections_library](tables/public/objections_library.md) | table | sim | 4 | 10 | não |  |
-| [public.onboarding_journeys](tables/public/onboarding_journeys.md) | table | sim | 2 | 11 | não |  |
+| [public.onboarding_journeys](tables/public/onboarding_journeys.md) | table | sim | 2 | 11 | não | Jornadas de onboarding de contas, com progresso e responsável. |
 | [public.onboarding_steps](tables/public/onboarding_steps.md) | table | sim | 2 | 9 | não |  |
 | [public.order_items](tables/public/order_items.md) | table | sim | 3 | 6 | não |  |
 | [public.order_status_events](tables/public/order_status_events.md) | table | sim | 2 | 5 | não |  |
@@ -260,7 +260,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.prospect_cadences](tables/public/prospect_cadences.md) | table | sim | 5 | 17 | sim | Inscrição de um prospect ou orçamento em uma cadência e acompanhamento de seu progresso. |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 8 | 7 | não |  |
 | [public.qbr_reports](tables/public/qbr_reports.md) | table | sim | 3 | 10 | não |  |
-| [public.qbr_schedule](tables/public/qbr_schedule.md) | table | sim | 2 | 10 | não |  |
+| [public.qbr_schedule](tables/public/qbr_schedule.md) | table | sim | 2 | 10 | não | Agendamento de revisões trimestrais de negócio (QBR) por conta. |
 | [public.query_telemetry](tables/public/query_telemetry.md) | table | sim | 3 | 13 | não |  |
 | [public.quota_attainment_actions](tables/public/quota_attainment_actions.md) | table | sim | 2 | 8 | sim |  |
 | [public.quota_attainment_alerts](tables/public/quota_attainment_alerts.md) | table | sim | 2 | 8 | sim |  |
@@ -292,7 +292,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.rate_limit_logs](tables/public/rate_limit_logs.md) | table | sim | 2 | 9 | não |  |
 | [public.rate_limit_settings](tables/public/rate_limit_settings.md) | table | sim | 2 | 8 | não |  |
 | [public.reauthentication_requests](tables/public/reauthentication_requests.md) | table | sim | 3 | 9 | não |  |
-| [public.renewals](tables/public/renewals.md) | table | sim | 2 | 12 | não |  |
+| [public.renewals](tables/public/renewals.md) | table | sim | 2 | 12 | não | Contratos de contas empresariais acompanhados para renovação. |
 | [public.report_embed_tokens](tables/public/report_embed_tokens.md) | table | sim | 4 | 10 | não |  |
 | [public.report_executions](tables/public/report_executions.md) | table | sim | 1 | 10 | não |  |
 | [public.report_schedules](tables/public/report_schedules.md) | table | sim | 1 | 14 | não |  |
@@ -300,11 +300,11 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.role_permissions](tables/public/role_permissions.md) | table | sim | 2 | 4 | não |  |
 | [public.sale_notifications_audit](tables/public/sale_notifications_audit.md) | table | sim | 1 | 14 | não |  |
 | [public.sales](tables/public/sales.md) | table | sim | 13 | 49 | sim | Negócios e vendas acompanhados no pipeline comercial, incluindo responsáveis, valores, estágio e dados de fechamento. |
-| [public.sales_battles](tables/public/sales_battles.md) | table | sim | 2 | 12 | sim |  |
+| [public.sales_battles](tables/public/sales_battles.md) | table | sim | 2 | 12 | sim | Disputas comerciais temporárias entre vendedores, acompanhadas por métrica e pontuação. |
 | [public.sales_enablement_assets](tables/public/sales_enablement_assets.md) | table | sim | 2 | 14 | não |  |
 | [public.sales_goals](tables/public/sales_goals.md) | table | sim | 4 | 5 | não | Metas de venda definidas por vendedor e mês. |
-| [public.sales_streaks](tables/public/sales_streaks.md) | table | sim | 3 | 7 | sim |  |
-| [public.sales_territories](tables/public/sales_territories.md) | table | sim | 3 | 10 | sim |  |
+| [public.sales_streaks](tables/public/sales_streaks.md) | table | sim | 3 | 7 | sim | Sequências atuais e recordes de vendas consecutivas por vendedor. |
+| [public.sales_territories](tables/public/sales_territories.md) | table | sim | 3 | 10 | sim | Territórios comerciais tipados, com responsável e resultados agregados. |
 | [public.salespeople](tables/public/salespeople.md) | table | sim | 4 | 14 | não | Cadastro de vendedores e seus atributos operacionais, comerciais e de notificação. |
 | [public.salesperson_badges](tables/public/salesperson_badges.md) | table | sim | 3 | 5 | sim |  |
 | [public.salesperson_coaching_aggregates](tables/public/salesperson_coaching_aggregates.md) | table | sim | 2 | 14 | sim |  |
@@ -312,8 +312,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.salesperson_custom_field_values](tables/public/salesperson_custom_field_values.md) | table | sim | 2 | 7 | não |  |
 | [public.salesperson_leagues](tables/public/salesperson_leagues.md) | table | sim | 2 | 9 | não |  |
 | [public.salesperson_performance_telemetry](tables/public/salesperson_performance_telemetry.md) | table | sim | 1 | 5 | não |  |
-| [public.salesperson_preferences](tables/public/salesperson_preferences.md) | table | sim | 3 | 10 | não |  |
-| [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 2 | 7 | sim |  |
+| [public.salesperson_preferences](tables/public/salesperson_preferences.md) | table | sim | 3 | 10 | não | Preferências individuais do vendedor para o assistente de IA e regras de contato. |
+| [public.salesperson_xp](tables/public/salesperson_xp.md) | table | sim | 2 | 7 | sim | Resumo do total de XP e do nível atual de cada vendedor. |
 | [public.saved_filters](tables/public/saved_filters.md) | table | sim | 5 | 8 | não | Filtros salvos por usuários, associados a um tipo de entidade e aplicáveis individualmente ou como padrão. |
 | [public.scheduled_report_runs](tables/public/scheduled_report_runs.md) | table | sim | 1 | 8 | não |  |
 | [public.scheduled_reports](tables/public/scheduled_reports.md) | table | sim | 4 | 15 | não |  |
@@ -322,9 +322,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.sdr_alert_configs](tables/public/sdr_alert_configs.md) | table | sim | 1 | 7 | não |  |
 | [public.sdr_alert_history](tables/public/sdr_alert_history.md) | table | sim | 1 | 7 | não |  |
 | [public.sdr_performance_settings](tables/public/sdr_performance_settings.md) | table | sim | 1 | 6 | não |  |
-| [public.security_alert_history](tables/public/security_alert_history.md) | table | sim | 1 | 7 | não |  |
-| [public.security_alert_settings](tables/public/security_alert_settings.md) | table | sim | 3 | 6 | não |  |
-| [public.security_events](tables/public/security_events.md) | table | sim | 1 | 9 | não |  |
+| [public.security_alert_history](tables/public/security_alert_history.md) | table | sim | 1 | 7 | não | Histórico de alertas de segurança emitidos e dos limiares usados. |
+| [public.security_alert_settings](tables/public/security_alert_settings.md) | table | sim | 3 | 6 | não | Parâmetros de limiar e intervalo para alertas de segurança. |
+| [public.security_events](tables/public/security_events.md) | table | sim | 1 | 9 | não | Eventos de segurança associados a usuários, com severidade, contexto de rede e metadados. |
 | [public.semantic_index](tables/public/semantic_index.md) | table | sim | 1 | 10 | não |  |
 | [public.send_time_profiles](tables/public/send_time_profiles.md) | table | sim | 1 | 11 | não |  |
 | [public.sequence_enrollments](tables/public/sequence_enrollments.md) | table | sim | 4 | 18 | não |  |
@@ -355,15 +355,15 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.supplier_risk_assessments](tables/public/supplier_risk_assessments.md) | table | sim | 3 | 12 | não |  |
 | [public.suppliers](tables/public/suppliers.md) | table | sim | 4 | 21 | não | Cadastro de fornecedores, informações de contato, condições comerciais e avaliação operacional. |
 | [public.supply_outbox](tables/public/supply_outbox.md) | table | sim | 1 | 12 | não |  |
-| [public.support_tickets](tables/public/support_tickets.md) | table | sim | 4 | 16 | não |  |
+| [public.support_tickets](tables/public/support_tickets.md) | table | sim | 4 | 16 | não | Tickets de suporte associados a contas empresariais. |
 | [public.task_assignments](tables/public/task_assignments.md) | table | sim | 4 | 15 | não |  |
 | [public.task_catalog](tables/public/task_catalog.md) | table | sim | 4 | 10 | não |  |
 | [public.tasks](tables/public/tasks.md) | table | sim | 4 | 18 | não | Tarefas comerciais associadas a vendedores, negócios ou clientes, com prazo, prioridade e estado. |
-| [public.team_closers](tables/public/team_closers.md) | table | sim | 3 | 4 | não |  |
+| [public.team_closers](tables/public/team_closers.md) | table | sim | 3 | 4 | não | Associação entre equipes e vendedores com papel de Closer. |
 | [public.team_custom_fields](tables/public/team_custom_fields.md) | table | sim | 2 | 8 | não |  |
-| [public.teams](tables/public/teams.md) | table | sim | 4 | 10 | não |  |
-| [public.territories](tables/public/territories.md) | table | sim | 1 | 7 | não |  |
-| [public.territory_history](tables/public/territory_history.md) | table | sim | 3 | 8 | não |  |
+| [public.teams](tables/public/teams.md) | table | sim | 4 | 10 | não | Equipes comerciais e configurações de atividade e inatividade. |
+| [public.territories](tables/public/territories.md) | table | sim | 1 | 7 | não | Territórios comerciais e seus responsáveis e resultados acumulados. |
+| [public.territory_history](tables/public/territory_history.md) | table | sim | 3 | 8 | não | Histórico de participação de vendedores em territórios e da contribuição associada. |
 | [public.tournament_matches](tables/public/tournament_matches.md) | table | sim | 3 | 13 | sim |  |
 | [public.tournament_participants](tables/public/tournament_participants.md) | table | sim | 3 | 8 | não |  |
 | [public.tournaments](tables/public/tournaments.md) | table | sim | 3 | 14 | não |  |
@@ -379,7 +379,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.v4_callback_alerts](tables/public/v4_callback_alerts.md) | table | sim | 3 | 6 | não |  |
 | [public.v4_callback_dead_letters](tables/public/v4_callback_dead_letters.md) | table | sim | 1 | 11 | sim |  |
 | [public.v4_callback_metrics](tables/public/v4_callback_metrics.md) | table | sim | 1 | 7 | não |  |
-| [public.victory_feed](tables/public/victory_feed.md) | table | sim | 2 | 8 | sim |  |
+| [public.victory_feed](tables/public/victory_feed.md) | table | sim | 2 | 8 | sim | Feed de eventos e conquistas comerciais dos vendedores. |
 | [public.web_vitals_samples](tables/public/web_vitals_samples.md) | table | sim | 1 | 12 | não |  |
 | [public.webauthn_challenges](tables/public/webauthn_challenges.md) | table | sim | 3 | 7 | não |  |
 | [public.webauthn_credentials](tables/public/webauthn_credentials.md) | table | sim | 4 | 11 | não | Credenciais WebAuthn registradas pelos usuários para autenticação. |
@@ -392,7 +392,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.webhook_logs](tables/public/webhook_logs.md) | table | sim | 1 | 9 | não |  |
 | [public.webhooks](tables/public/webhooks.md) | table | sim | 2 | 15 | não |  |
 | [public.website_visitor_logs](tables/public/website_visitor_logs.md) | table | sim | 1 | 11 | não |  |
-| [public.weekly_challenges](tables/public/weekly_challenges.md) | table | sim | 4 | 11 | não |  |
+| [public.weekly_challenges](tables/public/weekly_challenges.md) | table | sim | 4 | 11 | não | Desafios de gamificação disponíveis durante um intervalo semanal. |
 | [public.weekly_matchups](tables/public/weekly_matchups.md) | table | sim | 2 | 10 | não |  |
 | [public.whatsapp_conversations](tables/public/whatsapp_conversations.md) | table | sim | 2 | 9 | não |  |
 | [public.whatsapp_template_versions](tables/public/whatsapp_template_versions.md) | table | sim | 3 | 6 | não |  |
@@ -411,8 +411,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.winloss_webhook_replay_audit](tables/public/winloss_webhook_replay_audit.md) | table | sim | 1 | 13 | não |  |
 | [public.winloss_webhook_replay_invocations](tables/public/winloss_webhook_replay_invocations.md) | table | sim | 1 | 12 | não |  |
 | [public.winloss_webhook_subscriptions](tables/public/winloss_webhook_subscriptions.md) | table | sim | 1 | 11 | não |  |
-| [public.workflow_executions](tables/public/workflow_executions.md) | table | sim | 3 | 10 | não |  |
-| [public.workflow_rules](tables/public/workflow_rules.md) | table | sim | 1 | 13 | não |  |
-| [public.workflows](tables/public/workflows.md) | table | sim | 2 | 13 | não |  |
+| [public.workflow_executions](tables/public/workflow_executions.md) | table | sim | 3 | 10 | não | Execuções individuais de workflows, incluindo estado, entrada, etapas e duração. |
+| [public.workflow_rules](tables/public/workflow_rules.md) | table | sim | 1 | 13 | não | Regras de automação associadas a gatilhos e ações comerciais. |
+| [public.workflows](tables/public/workflows.md) | table | sim | 2 | 13 | não | Definições de workflows com gatilhos, nós e conexões de execução. |
 | [public.xp_adjustments](tables/public/xp_adjustments.md) | table | sim | 2 | 8 | não |  |
-| [public.xp_history](tables/public/xp_history.md) | table | sim | 1 | 7 | não |  |
+| [public.xp_history](tables/public/xp_history.md) | table | sim | 1 | 7 | não | Lançamentos históricos de pontos de experiência concedidos a vendedores. |

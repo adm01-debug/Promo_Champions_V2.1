@@ -1,5 +1,7 @@
 # public.salesperson_xp
 
+> Resumo do total de XP e do nível atual de cada vendedor.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `total_xp` | `integer` | não | `0` |  |  |
-| 4 | `current_level` | `integer` | não | `1` |  |  |
-| 5 | `xp_to_next_level` | `integer` | não | `100` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do resumo de XP. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor a que o resumo de XP pertence. |
+| 3 | `total_xp` | `integer` | não | `0` |  | Quantidade total de pontos de experiência acumulados. |
+| 4 | `current_level` | `integer` | não | `1` |  | Nível atual do vendedor no sistema de gamificação. |
+| 5 | `xp_to_next_level` | `integer` | não | `100` |  | Quantidade de XP necessária para alcançar o próximo nível. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do resumo. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do resumo. |
 
 
 ## Constraints

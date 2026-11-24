@@ -1,5 +1,7 @@
 # public.teams
 
+> Equipes comerciais e configurações de atividade e inatividade.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,16 +19,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `sdr_id` | `uuid` | sim |  |  |  |
-| 4 | `is_active` | `boolean` | não | `true` |  |  |
-| 5 | `inactivity_days` | `integer` | não | `365` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da equipe. |
+| 2 | `name` | `text` | não |  |  | Nome da equipe. |
+| 3 | `sdr_id` | `uuid` | sim |  |  | SDR associado à equipe, quando atribuído. |
+| 4 | `is_active` | `boolean` | não | `true` |  | Indica se a equipe está ativa. |
+| 5 | `inactivity_days` | `integer` | não | `365` |  | Quantidade de dias usada pela configuração de inatividade da equipe. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da equipe. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da equipe. |
 | 8 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 9 | `deleted_by` | `uuid` | sim |  |  |  |
-| 10 | `delete_reason` | `text` | sim |  |  |  |
+| 9 | `deleted_by` | `uuid` | sim |  |  | Usuário que marcou a equipe como excluída. |
+| 10 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar a equipe como excluída. |
 
 
 ## Constraints

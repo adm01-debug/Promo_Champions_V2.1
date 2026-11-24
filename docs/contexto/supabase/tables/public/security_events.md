@@ -1,5 +1,7 @@
 # public.security_events
 
+> Eventos de segurança associados a usuários, com severidade, contexto de rede e metadados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `severity` | `text` | não |  |  |  |
-| 5 | `description` | `text` | não |  |  |  |
-| 6 | `ip_address` | `inet` | sim |  |  |  |
-| 7 | `user_agent` | `text` | sim |  |  |  |
-| 8 | `metadata` | `jsonb` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Identificador único do evento de segurança. |
+| 2 | `user_id` | `uuid` | sim |  |  | Usuário associado ao evento, quando identificado. |
+| 3 | `event_type` | `text` | não |  |  | Tipo do evento de segurança. |
+| 4 | `severity` | `text` | não |  |  | Severidade do evento: low, medium, high ou critical. |
+| 5 | `description` | `text` | não |  |  | Descrição do evento de segurança. |
+| 6 | `ip_address` | `inet` | sim |  |  | Endereço IP associado ao evento, quando disponível. |
+| 7 | `user_agent` | `text` | sim |  |  | User-Agent associado ao evento, quando disponível. |
+| 8 | `metadata` | `jsonb` | sim |  |  | Metadados adicionais do evento em formato JSON. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de registro do evento. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.lead_routing_log
 
+> Histórico de encaminhamento de clientes ou leads entre vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | sim |  |  |  |
-| 3 | `from_salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `to_salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `routing_reason` | `text` | não |  |  |  |
-| 6 | `notes` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento de roteamento. |
+| 2 | `client_id` | `uuid` | sim |  |  | Cliente encaminhado, quando identificado. |
+| 3 | `from_salesperson_id` | `uuid` | sim |  |  | Vendedor de origem da atribuição, quando existente. |
+| 4 | `to_salesperson_id` | `uuid` | sim |  |  | Vendedor que recebeu a atribuição, quando definido. |
+| 5 | `routing_reason` | `text` | não |  |  | Motivo do encaminhamento. |
+| 6 | `notes` | `text` | sim |  |  | Observações adicionais sobre o encaminhamento. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora do evento de roteamento. |
 
 
 ## Constraints

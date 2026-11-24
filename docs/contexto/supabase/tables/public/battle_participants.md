@@ -1,5 +1,7 @@
 # public.battle_participants
 
+> Participantes e pontuação atual em disputas comerciais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `battle_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `team_name` | `text` | sim |  |  |  |
-| 5 | `current_score` | `integer` | não | `0` |  |  |
-| 6 | `joined_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da participação. |
+| 2 | `battle_id` | `uuid` | não |  |  | Disputa da qual o vendedor participa. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor participante. |
+| 4 | `team_name` | `text` | sim |  |  | Nome da equipe associado à participação, quando informado. |
+| 5 | `current_score` | `integer` | não | `0` |  | Pontuação atual do participante na disputa. |
+| 6 | `joined_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o vendedor entrou na disputa. |
 
 
 ## Constraints

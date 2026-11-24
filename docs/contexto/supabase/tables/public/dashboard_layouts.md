@@ -1,5 +1,7 @@
 # public.dashboard_layouts
 
+> Configuração de layout do painel de cada vendedor.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `layout_config` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do layout. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor proprietário do layout. |
+| 3 | `layout_config` | `jsonb` | não | `'[]'::jsonb` |  | Configuração dos componentes e da organização do painel, em JSON. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do layout. |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do layout. |
 
 
 ## Constraints

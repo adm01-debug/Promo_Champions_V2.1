@@ -1,5 +1,7 @@
 # public.territory_history
 
+> Histórico de participação de vendedores em territórios e da contribuição associada.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `territory_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `revenue_contribution` | `numeric` | não | `0` |  |  |
-| 5 | `deals_count` | `integer` | não | `0` |  |  |
-| 6 | `conquered_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `lost_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro histórico. |
+| 2 | `territory_id` | `uuid` | não |  |  | Território ao qual o registro histórico se refere. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor cuja participação está registrada. |
+| 4 | `revenue_contribution` | `numeric` | não | `0` |  | Receita atribuída ao vendedor no território, em BRL. |
+| 5 | `deals_count` | `integer` | não | `0` |  | Quantidade de negócios atribuídos ao vendedor no território. |
+| 6 | `conquered_at` | `timestamp with time zone` | sim |  |  | Data e hora em que a participação foi iniciada ou conquistada, quando registrada. |
+| 7 | `lost_at` | `timestamp with time zone` | sim |  |  | Data e hora em que a participação no território foi encerrada, quando registrada. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro histórico. |
 
 
 ## Constraints

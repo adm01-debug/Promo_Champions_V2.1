@@ -1,5 +1,7 @@
 # public.ip_whitelist
 
+> Lista de endereços IP explicitamente autorizados.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `ip_address` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `added_by` | `uuid` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da entrada de allowlist. |
+| 2 | `ip_address` | `text` | não |  |  | Endereço IP autorizado. |
+| 3 | `description` | `text` | sim |  |  | Descrição ou justificativa da autorização. |
+| 4 | `added_by` | `uuid` | sim |  |  | Usuário que adicionou o endereço, quando identificado. |
+| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de inclusão do endereço. |
+| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização da entrada. |
 
 
 ## Constraints

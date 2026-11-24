@@ -1,5 +1,7 @@
 # public.feature_flags
 
+> Configuração de funcionalidades controladas por ativação e percentual de rollout.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 3 | `key` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `is_enabled` | `boolean` | não | `false` |  |  |
-| 6 | `rollout_percentage` | `integer` | não | `100` |  |  |
-| 7 | `allowed_roles` | `text[]` | sim | `'{}'::text[]` |  |  |
-| 8 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Identificador único da feature flag. |
+| 2 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação da feature flag. |
+| 3 | `key` | `text` | não |  |  | Chave única usada pela aplicação para identificar a funcionalidade. |
+| 4 | `description` | `text` | sim |  |  | Descrição da funcionalidade controlada. |
+| 5 | `is_enabled` | `boolean` | não | `false` |  | Indica se a funcionalidade está habilitada. |
+| 6 | `rollout_percentage` | `integer` | não | `100` |  | Percentual de usuários incluídos no rollout, de 0 a 100. |
+| 7 | `allowed_roles` | `text[]` | sim | `'{}'::text[]` |  | Lista de papéis autorizados a acessar a funcionalidade, quando definida. |
+| 8 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados adicionais da feature flag em formato JSON. |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da feature flag. |
 
 
 ## Constraints

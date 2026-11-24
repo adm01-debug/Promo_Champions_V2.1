@@ -1,5 +1,7 @@
 # public.workflow_rules
 
+> Regras de automação associadas a gatilhos e ações comerciais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `trigger_type` | `text` | não | `'deal_stagnant'::text` |  |  |
-| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `action_type` | `text` | não | `'create_task'::text` |  |  |
-| 7 | `action_config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 8 | `is_active` | `boolean` | não | `true` |  |  |
-| 9 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 10 | `executions_count` | `integer` | não | `0` |  |  |
-| 11 | `last_executed_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da regra de workflow. |
+| 2 | `name` | `text` | não |  |  | Nome da regra. |
+| 3 | `description` | `text` | sim |  |  | Descrição da regra. |
+| 4 | `trigger_type` | `text` | não | `'deal_stagnant'::text` |  | Tipo de evento que pode acionar a regra. |
+| 5 | `trigger_config` | `jsonb` | não | `'{}'::jsonb` |  | Parâmetros do gatilho em JSON; a estrutura é definida pela aplicação. |
+| 6 | `action_type` | `text` | não | `'create_task'::text` |  | Tipo de ação executada pela regra. |
+| 7 | `action_config` | `jsonb` | não | `'{}'::jsonb` |  | Parâmetros da ação em JSON; a estrutura é definida pela aplicação. |
+| 8 | `is_active` | `boolean` | não | `true` |  | Indica se a regra está habilitada. |
+| 9 | `salesperson_id` | `uuid` | sim |  |  | Vendedor ao qual a regra se aplica, quando restrita a uma pessoa. |
+| 10 | `executions_count` | `integer` | não | `0` |  | Quantidade de execuções registradas para a regra. |
+| 11 | `last_executed_at` | `timestamp with time zone` | sim |  |  | Data e hora da execução mais recente. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da regra. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da regra. |
 
 
 ## Constraints

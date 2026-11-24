@@ -1,5 +1,7 @@
 # public.feed_comments
 
+> Comentários de vendedores em eventos publicados no feed.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `feed_item_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `content` | `text` | não |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do comentário. |
+| 2 | `feed_item_id` | `uuid` | não |  |  | Evento do feed ao qual o comentário pertence. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor que escreveu o comentário. |
+| 4 | `content` | `text` | não |  |  | Conteúdo textual do comentário. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o comentário foi criado. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.salesperson_preferences
 
+> Preferências individuais do vendedor para o assistente de IA e regras de contato.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `ai_assistant_name` | `text` | não | `'Coach IA'::text` |  |  |
-| 4 | `ai_assistant_avatar` | `text` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `response_mode` | `text` | não | `'text'::text` |  | How the AI should respond: text only, audio only, or both |
-| 8 | `voice_id` | `text` | sim | `'CwhRBWXzGAHq8TQ4Fs17'::text` |  | ElevenLabs voice ID for TTS |
-| 9 | `voice_name` | `text` | sim | `'Roger'::text` |  | Human-readable name of the selected voice |
-| 10 | `contact_rules` | `jsonb` | sim | `'{"quiet_hours": {"end": "08:00", "start": "20:00"}, "prioritize_human": true, "max_calls_per_day": 3}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único das preferências. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor proprietário das preferências. |
+| 3 | `ai_assistant_name` | `text` | não | `'Coach IA'::text` |  | Nome escolhido para o assistente de IA. |
+| 4 | `ai_assistant_avatar` | `text` | sim |  |  | URL do avatar escolhido para o assistente, quando definido. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação das preferências. |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização das preferências. |
+| 7 | `response_mode` | `text` | não | `'text'::text` |  | Formato de resposta do assistente: text, audio ou both. |
+| 8 | `voice_id` | `text` | sim | `'CwhRBWXzGAHq8TQ4Fs17'::text` |  | Identificador da voz de síntese selecionada, quando configurado. |
+| 9 | `voice_name` | `text` | sim | `'Roger'::text` |  | Nome legível da voz de síntese selecionada, quando configurado. |
+| 10 | `contact_rules` | `jsonb` | sim | `'{"quiet_hours": {"end": "08:00", "start": "20:00"}, "prioritize_human": true, "max_calls_per_day": 3}'::jsonb` |  | Regras de contato do assistente em formato JSON. |
 
 
 ## Constraints

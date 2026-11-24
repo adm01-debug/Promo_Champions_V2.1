@@ -1,5 +1,7 @@
 # public.qbr_schedule
 
+> Agendamento de revisões trimestrais de negócio (QBR) por conta.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `frequency` | `qbr_frequency` | não | `'quarterly'::qbr_frequency` |  |  |
-| 4 | `next_qbr_at` | `date` | sim |  |  |  |
-| 5 | `last_qbr_at` | `date` | sim |  |  |  |
-| 6 | `owner_salesperson_id` | `uuid` | sim |  |  |  |
-| 7 | `auto_generate` | `boolean` | não | `true` |  |  |
-| 8 | `is_active` | `boolean` | não | `true` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do agendamento QBR. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial para a qual a revisão está agendada. |
+| 3 | `frequency` | `qbr_frequency` | não | `'quarterly'::qbr_frequency` |  | Frequência da revisão: monthly, quarterly, biannual ou annual. |
+| 4 | `next_qbr_at` | `date` | sim |  |  | Data prevista para a próxima revisão. |
+| 5 | `last_qbr_at` | `date` | sim |  |  | Data da revisão mais recente. |
+| 6 | `owner_salesperson_id` | `uuid` | sim |  |  | Vendedor responsável pela revisão, quando atribuído. |
+| 7 | `auto_generate` | `boolean` | não | `true` |  | Indica se relatórios QBR devem ser gerados automaticamente. |
+| 8 | `is_active` | `boolean` | não | `true` |  | Indica se o agendamento está ativo. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do agendamento. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do agendamento. |
 
 
 ## Constraints

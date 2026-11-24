@@ -1,5 +1,7 @@
 # public.accounts
 
+> Contas empresariais acompanhadas no processo comercial e de sucesso do cliente.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,28 +18,28 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `parent_account_id` | `uuid` | sim |  |  |  |
-| 4 | `industry` | `text` | sim |  |  |  |
-| 5 | `tier` | `text` | não | `'smb'::text` |  |  |
-| 6 | `annual_revenue` | `numeric(15,2)` | sim |  |  |  |
-| 7 | `employee_count` | `integer` | sim |  |  |  |
-| 8 | `website` | `text` | sim |  |  |  |
-| 9 | `country` | `text` | sim |  |  |  |
-| 10 | `account_score` | `integer` | não | `0` |  |  |
-| 11 | `health_status` | `text` | não | `'unknown'::text` |  |  |
-| 12 | `owner_id` | `uuid` | sim |  |  |  |
-| 13 | `notes` | `text` | sim |  |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `domain` | `text` | sim |  |  |  |
-| 17 | `size_bucket` | `text` | sim |  |  |  |
-| 18 | `coverage` | `numeric` | sim | `0` |  |  |
-| 19 | `engaged_contacts` | `integer` | sim | `0` |  |  |
-| 20 | `champion_count` | `integer` | sim | `0` |  |  |
-| 21 | `decision_maker_count` | `integer` | sim | `0` |  |  |
-| 22 | `last_aggregated_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da conta. |
+| 2 | `name` | `text` | não |  |  | Nome da conta empresarial. |
+| 3 | `parent_account_id` | `uuid` | sim |  |  | Conta empresarial hierarquicamente superior, quando houver. |
+| 4 | `industry` | `text` | sim |  |  | Setor de atuação da conta, quando informado. |
+| 5 | `tier` | `text` | não | `'smb'::text` |  | Faixa comercial da conta: strategic, enterprise, mid_market ou smb. |
+| 6 | `annual_revenue` | `numeric(15,2)` | sim |  |  | Receita anual estimada da conta, em BRL. |
+| 7 | `employee_count` | `integer` | sim |  |  | Quantidade de colaboradores da conta, quando conhecida. |
+| 8 | `website` | `text` | sim |  |  | Endereço do site da conta. |
+| 9 | `country` | `text` | sim |  |  | País da conta. |
+| 10 | `account_score` | `integer` | não | `0` |  | Pontuação da conta, limitada a 0–100 pela constraint da coluna. |
+| 11 | `health_status` | `text` | não | `'unknown'::text` |  | Estado de saúde da conta: healthy, at_risk, critical ou unknown. |
+| 12 | `owner_id` | `uuid` | sim |  |  | Vendedor responsável pela conta, quando atribuído. |
+| 13 | `notes` | `text` | sim |  |  | Observações sobre a conta. |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da conta. |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da conta. |
+| 16 | `domain` | `text` | sim |  |  | Domínio principal da conta, quando informado. |
+| 17 | `size_bucket` | `text` | sim |  |  | Faixa de porte da conta: smb, mid ou enterprise. |
+| 18 | `coverage` | `numeric` | sim | `0` |  | Indicador numérico de cobertura da conta; a escala não é fixada por constraint. |
+| 19 | `engaged_contacts` | `integer` | sim | `0` |  | Quantidade de contatos engajados associada à conta. |
+| 20 | `champion_count` | `integer` | sim | `0` |  | Quantidade de contatos identificados como champions. |
+| 21 | `decision_maker_count` | `integer` | sim | `0` |  | Quantidade de contatos identificados como decisores. |
+| 22 | `last_aggregated_at` | `timestamp with time zone` | sim |  |  | Data e hora da agregação mais recente dos indicadores da conta. |
 
 
 ## Constraints

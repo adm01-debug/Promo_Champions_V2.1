@@ -1,5 +1,7 @@
 # public.automation_runs
 
+> Histórico de execuções de automações, com resultado, ações e erros.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `workflow_id` | `uuid` | não |  |  |  |
-| 3 | `status` | `text` | não | `'success'::text` |  |  |
-| 4 | `trigger_payload` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 5 | `actions_executed` | `jsonb` | sim | `'[]'::jsonb` |  |  |
-| 6 | `error_message` | `text` | sim |  |  |  |
-| 7 | `duration_ms` | `integer` | sim |  |  |  |
-| 8 | `started_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da execução da automação. |
+| 2 | `workflow_id` | `uuid` | não |  |  | Automação executada. |
+| 3 | `status` | `text` | não | `'success'::text` |  | Resultado da execução: success, failed, skipped ou partial. |
+| 4 | `trigger_payload` | `jsonb` | sim | `'{}'::jsonb` |  | Dados recebidos pelo gatilho em formato JSON. |
+| 5 | `actions_executed` | `jsonb` | sim | `'[]'::jsonb` |  | Ações realizadas durante a execução, em formato JSON. |
+| 6 | `error_message` | `text` | sim |  |  | Mensagem de erro, quando aplicável. |
+| 7 | `duration_ms` | `integer` | sim |  |  | Duração da execução em milissegundos. |
+| 8 | `started_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de início da execução. |
+| 9 | `completed_at` | `timestamp with time zone` | sim |  |  | Data e hora de conclusão da execução. |
 
 
 ## Constraints

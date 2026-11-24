@@ -1,5 +1,7 @@
 # public.sales_battles
 
+> Disputas comerciais temporárias entre vendedores, acompanhadas por métrica e pontuação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `battle_type` | `text` | não | `'1v1'::text` |  |  |
-| 4 | `metric` | `text` | não | `'calls'::text` |  |  |
-| 5 | `target_value` | `integer` | sim | `0` |  |  |
-| 6 | `starts_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `ends_at` | `timestamp with time zone` | não |  |  |  |
-| 8 | `status` | `text` | não | `'active'::text` |  |  |
-| 9 | `winner_id` | `uuid` | sim |  |  |  |
-| 10 | `xp_reward` | `integer` | não | `100` |  |  |
-| 11 | `created_by` | `uuid` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da disputa. |
+| 2 | `title` | `text` | não |  |  | Título da disputa. |
+| 3 | `battle_type` | `text` | não | `'1v1'::text` |  | Tipo ou formato da disputa, conforme definido pela aplicação. |
+| 4 | `metric` | `text` | não | `'calls'::text` |  | Métrica usada para acompanhar a disputa. |
+| 5 | `target_value` | `integer` | sim | `0` |  | Valor-alvo da métrica, quando definido. |
+| 6 | `starts_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de início da disputa. |
+| 7 | `ends_at` | `timestamp with time zone` | não |  |  | Data e hora de encerramento da disputa. |
+| 8 | `status` | `text` | não | `'active'::text` |  | Estado atual da disputa. |
+| 9 | `winner_id` | `uuid` | sim |  |  | Vendedor vencedor da disputa, quando definido. |
+| 10 | `xp_reward` | `integer` | não | `100` |  | Quantidade de XP oferecida como recompensa. |
+| 11 | `created_by` | `uuid` | sim |  |  | Vendedor que criou a disputa, quando identificado. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da disputa. |
 
 
 ## Constraints
