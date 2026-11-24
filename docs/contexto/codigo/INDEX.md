@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2e954fd9e68573ae8ae485be7cd29452ab1dc9c9` (2026-11-24T02:28:37-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `be7b39be260df574bc11daf023d7e36ec66e8865` (2026-11-24T02:48:05-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3665 |
 | arquivos_codigo | 2608 |
-| linhas_codigo | 447751 |
+| linhas_codigo | 447745 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -586,27 +586,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24269 nós · 74580 arestas · 1140 comunidades · grafo do commit `2e954fd9`
-- comunidades maiores: Card (718), Button (598), lucide-react (591), schema.sql (548), client.ts (351), getCorsHeaders (289), Badge (284), vitest (264), public (250), Skeleton (238), public.sales (233), constants/index.ts (223)
+- 24270 nós · 74581 arestas · 1169 comunidades · grafo do commit `be7b39be`
+- comunidades maiores: Card (592), schema.sql (582), cn (369), Skeleton (356), client.ts (322), vitest (300), Button (295), public (239), react (237), getCorsHeaders (228), formatBRL (222), public.register_race_daily_checkin (222)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package.json (35)
 - package-lock.json (33)
-- docs/qa/05-PROGRESSO.md (28)
+- docs/qa/05-PROGRESSO.md (29)
 - deno.lock (18)
 - CHANGELOG.md (13)
 - src/integrations/supabase/types.ts (12)
 - .github/workflows/deploy.yml (8)
 - src/components/pipeline/DealCard.tsx (7)
 - docs/pendencias/backlog-verificado.md (6)
+- src/components/pipeline/PipelineBoard.tsx (6)
 - src/hooks/abm/useAccounts.ts (6)
-- .github/workflows/codeql.yml (5)
 - src/components/admin/AdminQuickLinks.tsx (5)
 - src/components/analytics/ABCActionableAutomations.tsx (5)
 - src/components/analytics/ABCAnalysis.tsx (5)
-- src/components/pipeline/PipelineBoard.tsx (5)
+- src/hooks/abm/useAccounts.test.tsx (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -766,6 +766,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `be7b39b` chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)
 - 2026-11-24 `2e954fd` chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)
 - 2026-11-24 `462499f` chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)
 - 2026-11-24 `a656216` test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)
@@ -780,7 +781,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `66ebe3f` feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)
 - 2026-11-24 `e514cbc` feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)
 - 2026-11-24 `b48da88` feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)
-- 2026-11-24 `5c0431f` feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

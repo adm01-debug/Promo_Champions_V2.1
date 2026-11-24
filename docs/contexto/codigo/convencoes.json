@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)",
    "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)",
    "chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)",
    "test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)",
-   "docs: varredura completa por erro de leitura engolido (QA-127) (#721)",
-   "fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)"
+   "docs: varredura completa por erro de leitura engolido (QA-127) (#721)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

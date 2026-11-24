@@ -1552,7 +1552,7 @@
     "ActivityHeatmap"
    ],
    "export_default": null,
-   "linhas": 266,
+   "linhas": 267,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useAuth"
@@ -5763,7 +5763,7 @@
     "CustomerSuccess360Hub"
    ],
    "export_default": null,
-   "linhas": 429,
+   "linhas": 426,
    "dominio": "components/customer-success",
    "hooks_locais": [
     "useCustomerSuccess360",
@@ -5875,7 +5875,7 @@
     "CustomizableDashboard"
    ],
    "export_default": null,
-   "linhas": 343,
+   "linhas": 342,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useDashboardLayout",
@@ -6175,7 +6175,7 @@
     "IntelligenceAlerts"
    ],
    "export_default": null,
-   "linhas": 140,
+   "linhas": 139,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -12668,7 +12668,7 @@
     "ReportPreview"
    ],
    "export_default": null,
-   "linhas": 226,
+   "linhas": 225,
    "dominio": "components/reporting",
    "hooks_locais": [],
    "tabelas": [],
@@ -17962,7 +17962,7 @@
     "WebhooksDeadLettersAdmin"
    ],
    "export_default": "WebhooksDeadLettersAdmin",
-   "linhas": 248,
+   "linhas": 247,
    "dominio": "pages/admin",
    "hooks_locais": [
     "useDeadLetterErrorGroups",

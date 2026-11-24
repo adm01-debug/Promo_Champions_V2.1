@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2e954fd9e68573ae8ae485be7cd29452ab1dc9c9",
+  "commit": "be7b39be260df574bc11daf023d7e36ec66e8865",
   "branch": "main",
-  "data_commit": "2026-11-24T02:28:37-03:00",
+  "data_commit": "2026-11-24T02:48:05-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "be7b39b",
+    "data": "2026-11-24",
+    "assunto": "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)"
+   },
    {
     "sha": "2e954fd",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "20279aa",
     "data": "2026-11-23",
     "assunto": "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)"
-   },
-   {
-    "sha": "a73897a",
-    "data": "2026-11-23",
-    "assunto": "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)"
    }
   ],
-  "arquivos_mudados_7d": 341,
+  "arquivos_mudados_7d": 351,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -141,11 +141,11 @@
    },
    {
     "pasta": "src/components/analytics",
-    "mudancas": 102
+    "mudancas": 103
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 100
+    "mudancas": 102
    },
    {
     "pasta": "src/components/win-loss",
@@ -173,7 +173,7 @@
    },
    {
     "pasta": "src/hooks/win-loss",
-    "mudancas": 56
+    "mudancas": 57
    },
    {
     "pasta": "src/components/deal-intelligence",
@@ -188,11 +188,11 @@
     "mudancas": 46
    },
    {
-    "pasta": "src/components/gamification",
-    "mudancas": 42
+    "pasta": "src/components/pipeline",
+    "mudancas": 43
    },
    {
-    "pasta": "src/components/pipeline",
+    "pasta": "src/components/gamification",
     "mudancas": 42
    }
   ],
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 28
+    "mudancas": 29
    },
    {
     "arquivo": "deno.lock",
@@ -234,12 +234,12 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 6
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 5
+    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 6
    },
    {
     "arquivo": "src/components/admin/AdminQuickLinks.tsx",
@@ -254,12 +254,12 @@
     "mudancas": 5
    },
    {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
     "mudancas": 5
    },
    {
-    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
-    "mudancas": 5
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 4
    },
    {
     "arquivo": ".github/workflows/contexto.yml",
@@ -301,22 +301,22 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 258
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 21
+    "commits": 259
    },
    {
     "autor": "github-actions[bot]",
     "commits": 21
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 20
    }
   ]
  },
  "contagens": {
   "arquivos_total": 3665,
   "arquivos_codigo": 2608,
-  "linhas_codigo": 447751,
+  "linhas_codigo": 447745,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1235,
-   "linhas": 194414
+   "linhas": 194409
   },
   "src/config": {
    "arquivos": 4,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 184,
-   "linhas": 45073
+   "linhas": 45072
   },
   "src/routes": {
    "arquivos": 5,
