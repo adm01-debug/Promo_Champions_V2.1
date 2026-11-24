@@ -975,7 +975,7 @@
    "nome": "bitrix24-oauth",
    "entrada": "supabase/functions/bitrix24-oauth/index.ts",
    "arquivos": 1,
-   "linhas": 369,
+   "linhas": 375,
    "verify_jwt": false,
    "metodos": [
     "OPTIONS"
@@ -5951,13 +5951,15 @@
    "nome": "simulate-load",
    "entrada": "supabase/functions/simulate-load/index.ts",
    "arquivos": 1,
-   "linhas": 126,
+   "linhas": 145,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [],
-   "rpcs": [],
+   "rpcs": [
+    "is_admin_or_manager"
+   ],
    "env": [],
    "buckets": [],
    "chama_edges": [],

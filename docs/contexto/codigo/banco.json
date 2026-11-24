@@ -50335,7 +50335,7 @@
   {
    "nome": "is_admin_or_manager",
    "definida": true,
-   "usada_em": 69
+   "usada_em": 70
   },
   {
    "nome": "is_ip_blocked",

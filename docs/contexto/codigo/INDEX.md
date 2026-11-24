@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `78beba22b2e57869bb1e220beddb5780b0b51ad0` (2026-11-23T23:07:52-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `41972be665cb1c6f375414a9df41385757fbb32e` (2026-11-23T23:09:44-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3648 |
 | arquivos_codigo | 2592 |
-| linhas_codigo | 445606 |
+| linhas_codigo | 445631 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -587,7 +587,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24163 nós · 74339 arestas · 1171 comunidades · grafo do commit `78beba22`
+- 24163 nós · 74339 arestas · 1171 comunidades · grafo do commit `41972be6`
 - comunidades maiores: Card (607), schema.sql (565), Button (407), TabsTrigger (283), client.ts (282), framer-motion (255), vitest (255), public (247), getCorsHeaders (244), Badge (236), Label (232), public.sales (227)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -596,7 +596,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (39)
 - package-lock.json (37)
 - deno.lock (20)
-- docs/qa/05-PROGRESSO.md (17)
+- docs/qa/05-PROGRESSO.md (18)
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (12)
 - scripts/inventario/gerar-banco.mjs (10)
@@ -767,6 +767,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `41972be` fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)
 - 2026-11-23 `78beba2` fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)
 - 2026-11-23 `554eb39` fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)
 - 2026-11-23 `fccaef3` fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)
@@ -781,7 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `546a229` docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)
 - 2026-11-23 `27e826b` fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)
 - 2026-11-23 `421ad72` chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)
-- 2026-11-23 `96ca434` docs: marca etapas 121-126 no checklist de QA (#680)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)",
    "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)",
    "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)",
    "fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)",
-   "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)",
-   "fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)"
+   "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

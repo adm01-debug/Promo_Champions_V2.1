@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "78beba22b2e57869bb1e220beddb5780b0b51ad0",
+  "sha": "41972be665cb1c6f375414a9df41385757fbb32e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 02:08 UTC",
+  "generated_at": "2026-11-24 02:15 UTC",
   "files_total": 3663,
   "code_files": 3314,
-  "code_lines": 480717
+  "code_lines": 480742
  },
  "version": "1.3.2",
- "facts_hash": "2d7cd07dc8627190",
+ "facts_hash": "03fd78fdc657fb32",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -108242,7 +108242,7 @@
   {
    "module": "supabase/functions",
    "files": 330,
-   "lines": 67855,
+   "lines": 67880,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -116445,6 +116445,7 @@
     "supabase/functions/send-quote-to-client/index.ts",
     "supabase/functions/send-time-optimizer/index.ts",
     "supabase/functions/send-transactional-email/index.ts",
+    "supabase/functions/simulate-load/index.ts",
     "supabase/functions/stress-test-contracts/index.ts",
     "supabase/functions/territory-optimization/index.ts",
     "supabase/functions/test-integration-connection/index.ts",
@@ -279532,7 +279533,7 @@
   },
   "supabase/functions/bitrix24-oauth/index.ts": {
    "path": "supabase/functions/bitrix24-oauth/index.ts",
-   "lines": 369,
+   "lines": 375,
    "tables": [
     {
      "table": "portfolio_settings",
@@ -291059,7 +291060,10 @@
   },
   "supabase/functions/simulate-load/index.ts": {
    "path": "supabase/functions/simulate-load/index.ts",
-   "lines": 126,
+   "lines": 145,
+   "rpc": [
+    "is_admin_or_manager"
+   ],
    "uses_service_role": true
   },
   "supabase/functions/snapshot-forecast/index.ts": {
@@ -299121,10 +299125,21 @@
   }
  },
  "git": {
-  "sha": "78beba22b2e57869bb1e220beddb5780b0b51ad0",
+  "sha": "41972be665cb1c6f375414a9df41385757fbb32e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "41972be",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: restringe status do Bitrix24 e simulate-load a admin/gestor (QA-216) (#695)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/bitrix24-oauth/index.ts",
+     "supabase/functions/simulate-load/index.ts"
+    ]
+   },
    {
     "sha": "78beba2",
     "date": "2026-11-23",
@@ -299458,21 +299473,12 @@
      "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
      "supabase/functions/winloss-webhook-dispatcher/retry_test.ts"
     ]
-   },
-   {
-    "sha": "ff91ae9",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: desabilitar Reprocessar para itens com 5+ tentativas (QA-049) (#649)",
-    "files": [
-     "src/pages/admin/AdminV4CallbacksPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    14
+    15
    ],
    [
     "deno.lock",
@@ -299501,6 +299507,14 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "supabase/functions/bitrix24-oauth/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/simulate-load/index.ts",
+    1
    ],
    [
     "supabase/functions/semantic-index-entity/index.ts",
@@ -299540,14 +299554,6 @@
    ],
    [
     "src/components/vendedor/EligibleBonusesCard.tsx",
-    1
-   ],
-   [
-    "src/hooks/crm/useClients.ts",
-    1
-   ],
-   [
-    "src/hooks/useEligibleBonuses.ts",
     1
    ]
   ]
