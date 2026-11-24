@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "462499f3fc67e2258a0b94591de1cc6392cb2808",
+  "commit": "2e954fd9e68573ae8ae485be7cd29452ab1dc9c9",
   "branch": "main",
-  "data_commit": "2026-11-24T02:23:49-03:00",
+  "data_commit": "2026-11-24T02:28:37-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "2e954fd",
+    "data": "2026-11-24",
+    "assunto": "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)"
+   },
    {
     "sha": "462499f",
     "data": "2026-11-24",
@@ -126,18 +131,13 @@
     "sha": "a73897a",
     "data": "2026-11-23",
     "assunto": "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)"
-   },
-   {
-    "sha": "cdf709f",
-    "data": "2026-11-23",
-    "assunto": "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)"
    }
   ],
-  "arquivos_mudados_7d": 333,
+  "arquivos_mudados_7d": 341,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
-    "mudancas": 128
+    "mudancas": 132
    },
    {
     "pasta": "src/components/analytics",
@@ -145,11 +145,11 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 99
+    "mudancas": 100
    },
    {
     "pasta": "src/components/win-loss",
-    "mudancas": 79
+    "mudancas": 80
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/hooks/race",
-    "mudancas": 48
+    "mudancas": 49
    },
    {
     "pasta": "src/components/bi",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 27
+    "mudancas": 28
    },
    {
     "arquivo": "deno.lock",
@@ -230,16 +230,16 @@
     "mudancas": 7
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 6
-   },
-   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 6
+   },
+   {
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 5
    },
    {
     "arquivo": "src/components/admin/AdminQuickLinks.tsx",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 257
+    "commits": 258
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 22
+    "commits": 21
    },
    {
     "autor": "github-actions[bot]",
