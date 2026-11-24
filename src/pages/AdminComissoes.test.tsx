@@ -7,7 +7,10 @@ import { MemoryRouter } from 'react-router-dom';
 import type { Commission } from '@/hooks/useCommissions';
 import AdminComissoes from './AdminComissoes';
 
-const state = vi.hoisted(() => ({ data: [] as Commission[], error: null as Error | null }));
+const state = vi.hoisted(() => ({
+  data: [] as Commission[],
+  error: null as Error | null,
+}));
 
 vi.mock('@/hooks/useCommissions', () => ({
   useAllCommissions: () => ({
