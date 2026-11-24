@@ -187,7 +187,6 @@ import {
   // Entry Point & Special Pages
   Index,
   RaceSpectator,
-  RetryTestStatusPage,
   OrderDetailPage,
   SalesReportPage,
   AcompanhamentoPedidos,
@@ -1095,14 +1094,6 @@ export function AppRoutes() {
                           element={
                             <Admin>
                               <WebhookAlertSettingsPage />
-                            </Admin>
-                          }
-                        />
-                        <Route
-                          path="/admin/retry-test-status"
-                          element={
-                            <Admin>
-                              <RetryTestStatusPage />
                             </Admin>
                           }
                         />

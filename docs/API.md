@@ -446,7 +446,6 @@ Rotas declaradas em `src/routes/AppRoutes.tsx`. `autenticado` = dentro de
 | `/admin/webhooks-timeline`        | WebhookTimelinePage          | admin           |
 | `/admin/webhooks-alert-history`   | WebhookAlertHistoryPage      | admin           |
 | `/admin/webhooks-alert-settings`  | WebhookAlertSettingsPage     | admin           |
-| `/admin/retry-test-status`        | RetryTestStatusPage          | admin           |
 | `/meus-pedidos/:id`               | OrderDetailPage              | autenticado     |
 | `/acompanhamento-pedidos`         | AcompanhamentoPedidos        | autenticado     |
 | `/acompanhamento-pedidos/:id`     | AcompanhamentoPedidoDetalhe  | autenticado     |

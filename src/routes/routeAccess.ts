@@ -23,7 +23,6 @@ export const adminOnlyRoutes: readonly string[] = [
   '/admin/webhooks-timeline',
   '/admin/webhooks-alert-history',
   '/admin/webhooks-alert-settings',
-  '/admin/retry-test-status',
   '/usage-analytics',
   '/feature-flags',
   '/seguranca',
