@@ -62,7 +62,7 @@ export function useRevenueForecast(
     return () => {
       supabase.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite queryKey: array recriado a cada render; periodType, periodStart e ownerId definem o conteudo dele
   }, [periodType, periodStart, ownerId, qc]);
 
   return useQuery({

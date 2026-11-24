@@ -91,7 +91,7 @@ export const KnownDevices = () => {
     fetchGen.current++;
     fetchDevices();
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar o ref no cleanup é justamente o mecanismo de invalidação
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar fetchGen.current no cleanup e o mecanismo de invalidacao da resposta em voo; ler o valor corrente ali e proposital
       fetchGen.current++;
     };
   }, [user]);

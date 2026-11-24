@@ -20,41 +20,40 @@ interface IntelligenceAlertsProps {
   customAlerts?: Alert[];
 }
 
+const staticAlerts: Alert[] = [
+  {
+    id: 1,
+    title: 'Oportunidade de Upsell Iminente',
+    description: '5 clientes VIP atingiram 85% do ciclo de vida do produto atual.',
+    priority: 'high',
+    impact: '+R$ 45.000',
+    category: 'Retenção',
+  },
+  {
+    id: 2,
+    title: 'Anomalia Detectada: Ciclo de Compra',
+    description: "Aumento repentino no tempo de decisão na categoria 'Eletrônicos'.",
+    priority: 'medium',
+    impact: '-12% Conversão',
+    category: 'Análise',
+  },
+  {
+    id: 3,
+    title: "Lead 'Hot' Identificado",
+    description: 'Empresa XPTO realizou 12 interações nas últimas 2 horas.',
+    priority: 'high',
+    impact: 'Lead Scoring: 98',
+    category: 'Vendas',
+  },
+];
+
 export const IntelligenceAlerts = React.memo(
   ({ customAlerts }: IntelligenceAlertsProps) => {
-    const staticAlerts: Alert[] = [
-      {
-        id: 1,
-        title: 'Oportunidade de Upsell Iminente',
-        description: '5 clientes VIP atingiram 85% do ciclo de vida do produto atual.',
-        priority: 'high',
-        impact: '+R$ 45.000',
-        category: 'Retenção',
-      },
-      {
-        id: 2,
-        title: 'Anomalia Detectada: Ciclo de Compra',
-        description: "Aumento repentino no tempo de decisão na categoria 'Eletrônicos'.",
-        priority: 'medium',
-        impact: '-12% Conversão',
-        category: 'Análise',
-      },
-      {
-        id: 3,
-        title: "Lead 'Hot' Identificado",
-        description: 'Empresa XPTO realizou 12 interações nas últimas 2 horas.',
-        priority: 'high',
-        impact: 'Lead Scoring: 98',
-        category: 'Vendas',
-      },
-    ];
-
     const displayAlerts = useMemo(() => {
       if (customAlerts && customAlerts.length > 0) {
         return [...customAlerts, ...staticAlerts].slice(0, 5);
       }
       return staticAlerts;
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
     }, [customAlerts]);
 
     return (
