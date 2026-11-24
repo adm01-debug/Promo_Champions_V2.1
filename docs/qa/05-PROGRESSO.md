@@ -254,7 +254,7 @@ Exemplo:
 - [x] 219 — Validar a lista de colunas no `external-db-bridge` — onda 8 — Média — PR #694 - `columns` do corpo passou a ser validado contra allowlist explícita por tabela (206 colunas de `types.ts`); `*, outra_tabela(*)`, `senha_hash` e `id, outra_tabela(id)` deram 400 e pararam antes do banco externo (3 de 5 requisições chegaram lá; na main as 5 chegavam), default sem `columns` intacto
 - [ ] 220 — Redistribuir o esforço de teste de backend — onda 8 — Média
 - [ ] 221 — Incluir os testes de backend no comando de integração contínua local — onda 8 — Baixa
-- [ ] 222 — Devolver o teto de complexidade ao valor anterior — onda 8 — Média
+- [x] 222 — Devolver o teto de complexidade ao valor anterior — onda 8 — Média — PR #698 - medido `npm run lint:complexity` = 131 warnings (112 de complexidade e 19 de tamanho de arquivo) em 121 arquivos; o teto do `package.json` já era 131, ou seja igual ao medido e sem folga; devolver a 126 exigiria refatorar 5 funções em uso (nenhum ofensor é código morto — `BICloser`, `Index`, `BISDR`, `RaceArena` e `PredictiveIntelligenceDashboard` estão em rotas ativas), proibido pelo próprio plano, então o teto ficou e a dívida foi registrada no `docs/TECH_DEBT.md` com a data da medição
 - [ ] 223 — Tirar o `continue-on-error` do job de release — onda 8 — Baixa · **APROV**
 - [ ] 224 — Fazer o auto-merge do Dependabot respeitar os checks que importam — onda 8 — Média · **APROV**
 - [ ] 225 — Rodar a varredura de acessibilidade e registrar a linha de base — onda 8 — Média
