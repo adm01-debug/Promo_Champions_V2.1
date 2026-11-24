@@ -45,6 +45,11 @@ function renderCard(
   props: {
     stakeholders?: DealStakeholderSummary[];
     clientPhone?: string | null;
+    probability?: {
+      probability: number;
+      factors: string[];
+      source?: 'servidor' | 'estimativa';
+    };
   },
   cardDeal: Deal = deal
 ) {
@@ -165,5 +170,21 @@ describe('DealCard — saúde sem valor inventado', () => {
     renderCard({}, { ...deal, health_score: 20 });
 
     expect(screen.getByText(/Alerta de Churn Iminente/i)).toBeTruthy();
+  });
+});
+
+describe('DealCard — origem da probabilidade (etapa 117)', () => {
+  it('marca como estimativa local quando o servidor não respondeu', () => {
+    renderCard({ probability: { probability: 42, factors: [], source: 'estimativa' } });
+
+    expect(screen.getByText(/% CHANCE DE GANHO/)).toHaveTextContent('42%');
+    expect(screen.getByText('Estimativa local')).toBeInTheDocument();
+  });
+
+  it('não marca estimativa quando o número veio do servidor', () => {
+    renderCard({ probability: { probability: 42, factors: [], source: 'servidor' } });
+
+    expect(screen.getByText(/% CHANCE DE GANHO/)).toHaveTextContent('42%');
+    expect(screen.queryByText('Estimativa local')).toBeNull();
   });
 });

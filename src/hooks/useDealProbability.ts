@@ -2,8 +2,22 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
+/** De onde veio o número: análise do servidor ou heurística local. */
+export type ProbabilitySource = 'servidor' | 'estimativa';
+
+export interface DealProbabilityResult {
+  probability: number;
+  factors: string[];
+  source: ProbabilitySource;
+}
+
+export interface DealProbabilityEntry {
+  probability: number;
+  source: ProbabilitySource;
+}
+
 export const useDealProbability = (saleId: string) => {
-  return useQuery<{ probability: number; factors: string[] }>({
+  return useQuery<DealProbabilityResult>({
     queryKey: ['deal-probability', saleId],
     queryFn: async () => {
       // Try edge function first for richer analysis
@@ -13,7 +27,7 @@ export const useDealProbability = (saleId: string) => {
         });
 
         if (!error && data?.probabilities?.[saleId]) {
-          return data.probabilities[saleId];
+          return { ...data.probabilities[saleId], source: 'servidor' };
         }
       } catch {
         // Fallback to local calculation
@@ -52,7 +66,11 @@ export const useDealProbability = (saleId: string) => {
           4
       );
 
-      return { probability, factors: factors.length > 0 ? factors : ['Análise padrão'] };
+      return {
+        probability,
+        factors: factors.length > 0 ? factors : ['Análise padrão'],
+        source: 'estimativa',
+      };
     },
     enabled: !!saleId,
   });
@@ -60,7 +78,7 @@ export const useDealProbability = (saleId: string) => {
 
 // Batch probability calculation using edge function
 export const useDealProbabilities = () => {
-  return useQuery({
+  return useQuery<Record<string, DealProbabilityEntry>>({
     queryKey: ['deal-probabilities'],
     queryFn: async () => {
       const { data: sales } = await supabase
@@ -79,11 +97,11 @@ export const useDealProbabilities = () => {
         });
 
         if (!error && data?.probabilities) {
-          const result: Record<string, number> = {};
+          const result: Record<string, DealProbabilityEntry> = {};
           Object.entries(
             data.probabilities as Record<string, { probability: number }>
           ).forEach(([id, val]) => {
-            result[id] = val.probability;
+            result[id] = { probability: val.probability, source: 'servidor' };
           });
           return result;
         }
@@ -95,10 +113,13 @@ export const useDealProbabilities = () => {
       const stageProbabilities = await fetchStageProbabilities();
       return sales.reduce(
         (acc, sale) => {
-          acc[sale.id] = Math.round(calculateStageScore(sale.status, stageProbabilities));
+          acc[sale.id] = {
+            probability: Math.round(calculateStageScore(sale.status, stageProbabilities)),
+            source: 'estimativa',
+          };
           return acc;
         },
-        {} as Record<string, number>
+        {} as Record<string, DealProbabilityEntry>
       );
     },
   });

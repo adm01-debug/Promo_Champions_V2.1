@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Deal, PipelineStageConfig } from '@/hooks/usePipeline';
+import type { ProbabilitySource } from '@/hooks/useDealProbability';
 import { DealCard } from './DealCard';
 import { cn } from '@/lib/utils';
 import { ICPData } from '@/hooks/useICPData';
@@ -13,6 +14,7 @@ import { formatBRLCompact } from '@/lib/money';
 interface DealProbability {
   probability: number;
   factors: string[];
+  source?: ProbabilitySource;
 }
 
 interface LeadScoreData {
