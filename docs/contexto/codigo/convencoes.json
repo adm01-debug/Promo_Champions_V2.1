@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)",
    "fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)",
    "fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691)",
    "fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)",
-   "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)",
-   "chore: marca a etapa 190 no progresso (PR #688) (#689)"
+   "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

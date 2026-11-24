@@ -2839,7 +2839,7 @@
    "nome": "external-db-bridge",
    "entrada": "supabase/functions/external-db-bridge/index.ts",
    "arquivos": 1,
-   "linhas": 389,
+   "linhas": 482,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

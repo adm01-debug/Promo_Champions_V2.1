@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fccaef3c82` · branch `main` · 2026-11-24 01:55 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `554eb3911f` · branch `main` · 2026-11-24 01:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1267,7 +1267,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 ### E.2 Mapas de transição declarados no código
 
-_nenhum mapa explícito encontrado — transições só existem implicitamente nos `if`s (veja E.3)_
+- **ALLOWED_COLUMNS** (`supabase/functions/external-db-bridge/index.ts`):
+  ```ts
+  activities: [ 'activity_type', 'client_id', 'contact_name', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'duration_minutes', 'id', 'lead_status', 'mql_qualified_at', 'notes', 'outcome', 'qualification_score', 'sale_id', 'salesperson_id' ], clients: [ 'activated_at', 'company', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'email', 'email_verified', 'id', 'is_activated', 'last_enrichment_id', 'last_interaction_at', 'lat', 'lead_source', 'lng', 'name', 'phone', 'phone_verified', 'ramo_atividade', 'total_value', 'updated_at', 'user_id' ], icp_data: [ 'bitrix_id', 'capital_social', 'client_id', 'created_at', 'grupo_nicho', 'icp_score', 'id', 'is_icp_match', 'num_colabo …
+  ```
 
 ### E.3 Valores de status usados no código (escreve / compara / filtra)
 
@@ -4695,6 +4698,8 @@ _nenhum item encontrado_
 | `slack.error` | `supabase/functions/deal-risk-digest/index.ts` |
 | `slack.ok` | `supabase/functions/deal-risk-digest/index.ts` |
 | `.add('high'` | `supabase/functions/detect-winloss-at-risk/scenarios_test.ts` |
+| `notify_sales_email` | `supabase/functions/external-db-bridge/index.ts` |
+| `notify_sales_in_app` | `supabase/functions/external-db-bridge/index.ts` |
 | `invoke(` | `supabase/functions/extract-committee-from-call/index.ts` |
 | `resend.emails.send` | `supabase/functions/new-device-alert/index.ts` |
 | `notify` | `supabase/functions/notify-critical-pattern/index.ts` |

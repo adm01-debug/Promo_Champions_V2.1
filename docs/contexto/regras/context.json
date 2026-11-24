@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
+  "sha": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 01:55 UTC",
+  "generated_at": "2026-11-24 01:59 UTC",
   "files_total": 3663,
   "code_files": 3314,
-  "code_lines": 480614
+  "code_lines": 480707
  },
  "version": "1.3.2",
- "facts_hash": "190ffeebbd2f1232",
+ "facts_hash": "6ec544d9f10c995d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -98598,7 +98598,10 @@
     "invokes": [],
     "doc": "",
     "errors": [],
-    "side_effects": [],
+    "side_effects": [
+     "notify_sales_email",
+     "notify_sales_in_app"
+    ],
     "webhook_events": [],
     "idempotency": false
    },
@@ -108241,7 +108244,7 @@
   {
    "module": "supabase/functions",
    "files": 330,
-   "lines": 67752,
+   "lines": 67845,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -141109,7 +141112,13 @@
     "value": "25"
    }
   ],
-  "transition_maps": [],
+  "transition_maps": [
+   {
+    "file": "supabase/functions/external-db-bridge/index.ts",
+    "name": "ALLOWED_COLUMNS",
+    "body": "activities: [ 'activity_type', 'client_id', 'contact_name', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'duration_minutes', 'id', 'lead_status', 'mql_qualified_at', 'notes', 'outcome', 'qualification_score', 'sale_id', 'salesperson_id' ], clients: [ 'activated_at', 'company', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'email', 'email_verified', 'id', 'is_activated', 'last_enrichment_id', 'last_interaction_at', 'lat', 'lead_source', 'lng', 'name', 'phone', 'phone_verified', 'ramo_atividade', 'total_value', 'updated_at', 'user_id' ], icp_data: [ 'bitrix_id', 'capital_social', 'client_id', 'created_at', 'grupo_nicho', 'icp_score', 'id', 'is_icp_match', 'num_colabo …"
+   }
+  ],
   "status_values": [
    {
     "file": "public/sw.js",
@@ -166154,6 +166163,14 @@
    {
     "file": "supabase/functions/detect-winloss-at-risk/scenarios_test.ts",
     "call": ".add('high'"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/index.ts",
+    "call": "notify_sales_email"
+   },
+   {
+    "file": "supabase/functions/external-db-bridge/index.ts",
+    "call": "notify_sales_in_app"
    },
    {
     "file": "supabase/functions/extract-committee-from-call/index.ts",
@@ -227258,7 +227275,6 @@
    "`sales.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`sales.deal_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`deal_stage_history.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "`tasks.status` tem valores ['pending', 'in_progress', 'completed', 'cancelled'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.",
    "`playbooks.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`activities.lead_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`cadence_steps.step_order` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -227358,7 +227374,6 @@
    "`win_calibration_buckets.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`win_probability_deal_calibrations.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`coaching_sessions.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "`task_assignments.status` tem valores ['pending', 'in_progress', 'submitted', 'approved', 'rejected'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.",
    "`winloss_webhook_subscriptions.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`winloss_webhook_deliveries.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`winloss_webhook_dead_letters.last_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -227367,7 +227382,6 @@
    "`orders.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`order_status_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`winloss_webhook_replay_audit.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "`integration_health_checks.status` tem valores ['success', 'failure', 'degraded', 'pending'] mas nenhum mapa de transições foi encontrado no código — a ordem permitida (ex.: pago → cancelado?) não está declarada.",
    "`integration_autotest_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`commercial_approval_requests.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`follow_up_audit_logs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -283626,7 +283640,7 @@
   },
   "supabase/functions/external-db-bridge/index.ts": {
    "path": "supabase/functions/external-db-bridge/index.ts",
-   "lines": 389,
+   "lines": 482,
    "tables": [
     {
      "table": "query_telemetry",
@@ -283644,6 +283658,12 @@
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
+   ],
+   "transition_maps": [
+    {
+     "name": "ALLOWED_COLUMNS",
+     "body": "activities: [ 'activity_type', 'client_id', 'contact_name', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'duration_minutes', 'id', 'lead_status', 'mql_qualified_at', 'notes', 'outcome', 'qualification_score', 'sale_id', 'salesperson_id' ], clients: [ 'activated_at', 'company', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by', 'email', 'email_verified', 'id', 'is_activated', 'last_enrichment_id', 'last_interaction_at', 'lat', 'lead_source', 'lng', 'name', 'phone', 'phone_verified', 'ramo_atividade', 'total_value', 'updated_at', 'user_id' ], icp_data: [ 'bitrix_id', 'capital_social', 'client_id', 'created_at', 'grupo_nicho', 'icp_score', 'id', 'is_icp_match', 'num_colabo …"
+    }
    ],
    "status_values": [
     {
@@ -283746,6 +283766,10 @@
      "value": "eq",
      "kind": "compara"
     }
+   ],
+   "side_effects": [
+    "notify_sales_email",
+    "notify_sales_in_app"
    ],
    "uses_service_role": true
   },
@@ -299103,10 +299127,20 @@
   }
  },
  "git": {
-  "sha": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
+  "sha": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "554eb39",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/external-db-bridge/index.ts"
+    ]
+   },
    {
     "sha": "fccaef3",
     "date": "2026-11-23",
@@ -299436,21 +299470,12 @@
     "files": [
      "src/hooks/usePipeline.ts"
     ]
-   },
-   {
-    "sha": "d12f175",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)",
-    "files": [
-     "src/components/shared/GlobalErrorBoundary.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    12
+    13
    ],
    [
     "deno.lock",
@@ -299479,6 +299504,10 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "supabase/functions/external-db-bridge/index.ts",
+    1
    ],
    [
     "supabase/functions/generate-revenue-forecast/index.ts",
@@ -299522,10 +299551,6 @@
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
-    1
-   ],
-   [
-    "docs/graphify/README.md",
     1
    ]
   ]

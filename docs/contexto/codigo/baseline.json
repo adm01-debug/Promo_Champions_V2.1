@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fccaef3c82d77bf89f388e5ee55d6156e4dabb3a",
+  "commit": "554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384",
   "branch": "main",
-  "data_commit": "2026-11-23T22:55:05-03:00",
+  "data_commit": "2026-11-23T22:55:10-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "554eb39",
+    "data": "2026-11-23",
+    "assunto": "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)"
+   },
    {
     "sha": "fccaef3",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "9098770",
     "data": "2026-11-23",
     "assunto": "fix: confirmacao explicita nas acoes destrutivas de admin (QA-175/176) (#676)"
-   },
-   {
-    "sha": "5a8ce99",
-    "data": "2026-11-23",
-    "assunto": "fix: validar formato da resposta do helpdesk e logar corte (QA-098) (#658)"
    }
   ],
-  "arquivos_mudados_7d": 270,
+  "arquivos_mudados_7d": 271,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "arquivo": "deno.lock",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 249
+    "commits": 250
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 27
+    "commits": 26
    },
    {
     "autor": "github-actions[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3648,
   "arquivos_codigo": 2592,
-  "linhas_codigo": 445503,
+  "linhas_codigo": 445596,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "supabase/functions": {
    "arquivos": 330,
-   "linhas": 67752
+   "linhas": 67845
   },
   "tailwind.config.ts": {
    "arquivos": 1,

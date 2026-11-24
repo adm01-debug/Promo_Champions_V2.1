@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fccaef3c82d77bf89f388e5ee55d6156e4dabb3a` (2026-11-23T22:55:05-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `554eb3911fc4cb3e80f3c4dfab11f5dbe7a19384` (2026-11-23T22:55:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3648 |
 | arquivos_codigo | 2592 |
-| linhas_codigo | 445503 |
+| linhas_codigo | 445596 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -587,16 +587,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24161 nós · 74337 arestas · 1189 comunidades · grafo do commit `fccaef3c`
-- comunidades maiores: Card (615), schema.sql (562), react (480), Índice (395), Badge (351), formatBRL (309), client.ts (285), Input (261), public (260), lucide-react (256), DialogContent (254), getCorsHeaders (244)
+- 24163 nós · 74339 arestas · 1171 comunidades · grafo do commit `554eb391`
+- comunidades maiores: Card (607), schema.sql (565), Button (407), TabsTrigger (283), client.ts (282), framer-motion (255), vitest (255), public (247), getCorsHeaders (244), Badge (236), Label (232), public.sales (227)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (41)
-- package-lock.json (39)
+- package.json (40)
+- package-lock.json (38)
 - deno.lock (20)
-- docs/qa/05-PROGRESSO.md (15)
+- docs/qa/05-PROGRESSO.md (16)
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (12)
 - scripts/inventario/gerar-banco.mjs (10)
@@ -767,6 +767,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-23 `554eb39` fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)
 - 2026-11-23 `fccaef3` fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)
 - 2026-11-24 `f0b094b` fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691
 - 2026-11-24 `812f690` fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)
@@ -781,7 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `421ad72` chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)
 - 2026-11-23 `96ca434` docs: marca etapas 121-126 no checklist de QA (#680)
 - 2026-11-23 `f42eb57` chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)
-- 2026-11-23 `cef0dfd` chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
