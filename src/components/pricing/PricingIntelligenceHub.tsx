@@ -77,7 +77,11 @@ export function PricingIntelligenceHub() {
       <PricingHeader days={days} onDaysChange={setDays} />
 
       {/* Health banner Premium */}
-      <PricingHealthBanner health={data.health} dealsCount={data.kpis.deals_count} />
+      <PricingHealthBanner
+        health={data.health}
+        dealsCount={data.kpis.deals_count}
+        details={data}
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
