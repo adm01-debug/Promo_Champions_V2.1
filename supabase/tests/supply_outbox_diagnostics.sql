@@ -10,6 +10,8 @@
 --   3. o cron supply-dispatch-1min está rodando e o que o pg_net devolveu?
 --   4. houve timeout/DNS do dispatcher para supply-dispatch?
 --   5. existe linha pendente travada (fila parada há mais de 15 min)?
+--   6. os retries registrados em edge_retry_events chegaram a um desfecho?
+--   7. o timeout dedicado de 60s do supply-dispatch está vigente em produção?
 
 \echo '## 1. supply_outbox por status'
 SELECT status,
@@ -73,3 +75,127 @@ SELECT count(*)        AS travadas,
 FROM public.supply_outbox
 WHERE status IN ('pending', 'processing')
   AND created_at < now() - interval '15 minutes';
+
+\echo '## 8. edge_retry_events de supply-dispatch por outcome (7 dias)'
+SELECT outcome,
+       count(*)        AS eventos,
+       min(created_at) AS primeiro,
+       max(created_at) AS ultimo
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND created_at > now() - interval '7 days'
+GROUP BY outcome
+ORDER BY eventos DESC;
+
+\echo '## 9. ultimos 12 eventos de supply-dispatch (detalhe)'
+SELECT created_at,
+       operation,
+       outcome,
+       attempt,
+       total_attempts,
+       left(coalesce(request_id, ''), 12)   AS req12,
+       status_code,
+       left(coalesce(error_name, ''), 40)   AS erro
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+ORDER BY created_at DESC
+LIMIT 12;
+
+-- `withRetry` grava um evento por tentativa: `retry` abre o ciclo e o mesmo
+-- request_id recebe `success_after_retry` (concluiu), `exhausted` (esgotou) ou
+-- `non_retryable` (não vale repetir). Um `retry` sem nenhum desses depois dele
+-- significa que o processo morreu no meio (timeout do job do pg_net) e o ciclo
+-- ficou aberto — é o que alimenta o edge-retry-threshold-alert sem falha real.
+\echo '## 10. retries sem desfecho (7 dias)'
+-- request_id e' unico por tentativa (pg_net gera um id por disparo), logo correlacionar
+-- ciclo por request_id nunca fecha: a leitura correta e' por janela de tempo. Um
+-- retry e' considerado sem desfecho quando passou da janela do reconciliador
+-- (20 min) e nenhum evento terminal apareceu para a mesma funcao nesse intervalo.
+WITH r AS (
+  SELECT id, function_name, operation, attempt, error_name, created_at
+  FROM public.edge_retry_events
+  WHERE function_name = 'supply-dispatch'
+    AND outcome = 'retry'
+    AND created_at > now() - interval '7 days'
+    AND created_at < now() - interval '20 minutes'
+)
+SELECT count(*)                                                     AS sem_desfecho,
+       count(*) FILTER (WHERE r.error_name = 'pending')              AS marcador_pending,
+       count(*) FILTER (WHERE r.error_name IS DISTINCT FROM 'pending') AS reenfileirados,
+       min(r.created_at)                                            AS mais_antigo,
+       max(r.created_at)                                            AS mais_recente,
+       round(extract(epoch FROM (now() - max(r.created_at))) / 60)  AS idade_min_mais_recente
+FROM r
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.edge_retry_events e
+  WHERE e.function_name = r.function_name
+    AND e.operation = r.operation
+    AND e.outcome IN ('success_after_retry', 'exhausted', 'non_retryable')
+    AND e.created_at > r.created_at
+    AND e.created_at <= r.created_at + interval '20 minutes'
+);
+
+\echo '## 10b. desfechos na mesma janela de 20 min, por tipo de evento'
+SELECT outcome, error_name, count(*) AS eventos, max(created_at) AS ultimo
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND created_at > now() - interval '7 days'
+GROUP BY outcome, error_name
+ORDER BY eventos DESC;
+
+\echo '## 11. timeout interno vigente por funcao (prova da 20261127000000)'
+SELECT fn AS funcao,
+       public.internal_edge_job_timeout_ms(fn) AS timeout_ms
+FROM unnest(ARRAY[
+  'supply-dispatch',
+  'process-call-recording-ingest',
+  'semantic-reindex-batch',
+  'cron-failure-alerter',
+  'wal-health-alert',
+  'send-alert-notifications',
+  'access-denied-alerts',
+  'check-lead-sla'
+]) AS fn;
+
+\echo '## 12. ledger das migrations de timeout de 2026-11-27'
+SELECT version,
+       name,
+       left(regexp_replace(coalesce(statements::text, ''), '\s+', ' ', 'g'), 90) AS comandos
+FROM supabase_migrations.schema_migrations
+WHERE version LIKE '20261127%'
+ORDER BY version;
+
+-- Os eventos `error_name = 'pending'` são marcadores do disparo pelo pg_net: o
+-- fechador é public.retry_pending_internal_edge_jobs() (cron a cada 2 min). Se as
+-- linhas `pending` continuam abertas e o cron está ativo, o fechador não está
+-- encontrando a resposta em net._http_response.
+\echo '## 13. cron do fechador de pendencias (retry_pending_internal_edge_jobs)'
+SELECT jobid, jobname, schedule, active
+FROM cron.job
+WHERE jobname ILIKE '%pending%' OR command ILIKE '%retry_pending_internal_edge_jobs%';
+
+\echo '## 14. ultimas 5 execucoes do fechador'
+SELECT d.jobid, d.status, d.start_time, left(coalesce(d.return_message, ''), 120) AS retorno
+FROM cron.job_run_details d
+WHERE d.jobid IN (
+  SELECT jobid FROM cron.job
+  WHERE jobname ILIKE '%pending%' OR command ILIKE '%retry_pending_internal_edge_jobs%'
+)
+ORDER BY d.start_time DESC
+LIMIT 5;
+
+\echo '## 15. pendencias por idade (marcador pending do pg_net)'
+SELECT CASE
+         WHEN created_at > now() - interval '5 minutes'  THEN '0-5min'
+         WHEN created_at > now() - interval '20 minutes' THEN '5-20min'
+         WHEN created_at > now() - interval '2 hours'    THEN '20min-2h'
+         ELSE '>2h (fora da janela do fechador)'
+       END AS faixa,
+       count(*) AS eventos
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND outcome = 'retry'
+  AND error_name = 'pending'
+GROUP BY faixa
+ORDER BY faixa;
