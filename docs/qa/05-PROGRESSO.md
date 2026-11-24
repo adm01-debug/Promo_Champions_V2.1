@@ -180,7 +180,7 @@ Exemplo:
 - [ ] 151 — Ligar o destino do registro de erro do front — onda 5 — Alta · **APROV**
 - [x] 152 — Parar de dizer ao usuário que a equipe foi notificada — onda 5 — Alta — PR #672 - frase "equipe ja foi notificada" removida: grep por "notificada" em src/ sem ocorrencias
 - [ ] 153 — Descobrir por que o histórico de execução de rotina não diminui — onda 5 — Média
-- [ ] 154 — Fazer o filtro de comissões não descartar linha sem nome — onda 5 — Baixa
+- [x] 154 — Fazer o filtro de comissões não descartar linha sem nome — onda 5 — Baixa — PR #701 - o filtro aplicava `includes` sobre `salespeople?.name`/`sales?.client_name`: com os dois nulos o predicado virava `undefined` e a linha saía da tabela mesmo com a busca vazia; agora a busca é normalizada (`trim`) e o filtro só roda quando há termo, com `''` para campo ausente — 4 casos em `src/pages/AdminComissoes.test.tsx` passam 4/4 com o fix e falham 1/4 sem ele (contraprova com o fix revertido)
 - [ ] 155 — Validar valor de venda no servidor, não só no navegador — onda 5 — Baixa · **APROV**
 - [ ] 156 — Remover a marca de ordem de bytes das duas migrations — onda 5 — Baixa · **APROV**
 - [ ] 157 — Substituir a lista de nomes proibidos de `portfolio_settings` — onda 5 — Baixa · **APROV**

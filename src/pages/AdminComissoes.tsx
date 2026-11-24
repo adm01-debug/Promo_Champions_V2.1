@@ -78,11 +78,14 @@ export default function AdminComissoes() {
   } = useAllCommissions(statusFilter === 'all' ? undefined : statusFilter);
   const updateStatus = useUpdateCommissionStatus();
 
-  const filteredCommissions = commissions.filter(
-    c =>
-      c.salespeople?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.sales?.client_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredCommissions = normalizedSearch
+    ? commissions.filter(
+        c =>
+          (c.salespeople?.name ?? '').toLowerCase().includes(normalizedSearch) ||
+          (c.sales?.client_name ?? '').toLowerCase().includes(normalizedSearch)
+      )
+    : commissions;
 
   const handleAction = (commission: Commission, status: CommissionStatus) => {
     setSelectedCommission({ ...commission, targetStatus: status });
