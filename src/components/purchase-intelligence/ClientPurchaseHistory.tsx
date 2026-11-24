@@ -3,7 +3,6 @@ import {
   Search,
   Filter,
   ChevronDown,
-  ExternalLink,
   Calendar,
   User,
   Receipt,
@@ -509,9 +508,6 @@ export function ClientPurchaseHistory({ clientId }: Props) {
                   onClick={() => setSelectedOrder(null)}
                 >
                   Fechar
-                </Button>
-                <Button size="sm" className="gap-2 shadow-lg shadow-primary/20">
-                  <ExternalLink className="h-4 w-4" /> Ver Nota Fiscal
                 </Button>
               </div>
             </>

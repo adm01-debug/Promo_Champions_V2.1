@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,7 +48,11 @@ interface Props {
 }
 
 export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
-  const { data, isLoading, isFetching } = usePurchaseIntelligence(clientId, true);
+  const { data, isLoading, isFetching, refetch } = usePurchaseIntelligence(
+    clientId,
+    true
+  );
+  const navigate = useNavigate();
 
   if (!clientId) {
     return (
@@ -292,6 +297,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
                     <Button
                       size="sm"
                       className="w-full gap-2 font-bold shadow-lg shadow-primary/20"
+                      onClick={() => navigate('/agenda')}
                     >
                       <CalendarPlus className="h-4 w-4" /> Agendar
                     </Button>
@@ -299,6 +305,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
                       size="sm"
                       variant="outline"
                       className="w-full gap-2 font-bold border-primary/20 hover:bg-primary/5"
+                      onClick={() => navigate('/orcamentos')}
                     >
                       <FileText className="h-4 w-4" /> Proposta
                     </Button>
@@ -324,6 +331,8 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
                 variant="outline"
                 size="sm"
                 className="text-xs font-bold border-warning/20 text-warning hover:bg-warning/10"
+                onClick={() => refetch()}
+                disabled={isFetching}
               >
                 Tentar Recarregar
               </Button>
