@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Flag, Plus, Pencil, Trash2, Loader2, Shield, Percent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -23,6 +24,7 @@ type FeatureFlag = AdminFeatureFlag;
 export const FeatureFlagsAdmin: FC = () => {
   const [editFlag, setEditFlag] = useState<FeatureFlag | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [flagToDelete, setFlagToDelete] = useState<FeatureFlag | null>(null);
 
   const { data: flags = [], isLoading } = useAdminFeatureFlags();
   const updateFlag = useUpdateFeatureFlag();
@@ -119,11 +121,7 @@ export const FeatureFlagsAdmin: FC = () => {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive"
-                    onClick={() =>
-                      deleteFlag.mutate(flag.id, {
-                        onSuccess: () => toast.success('Flag removida'),
-                      })
-                    }
+                    onClick={() => setFlagToDelete(flag)}
                     aria-label={`Excluir flag ${flag.key}`}
                   >
                     <Trash2 className="h-3 w-3" />
@@ -167,6 +165,27 @@ export const FeatureFlagsAdmin: FC = () => {
           </CardContent>
         </Card>
       )}
+
+      <DeleteConfirmDialog
+        open={!!flagToDelete}
+        onOpenChange={open => !open && setFlagToDelete(null)}
+        onConfirm={() =>
+          flagToDelete &&
+          deleteFlag.mutate(flagToDelete.id, {
+            onSuccess: () => {
+              toast.success('Flag removida');
+              setFlagToDelete(null);
+            },
+          })
+        }
+        title="Excluir esta flag de funcionalidade?"
+        description={
+          flagToDelete
+            ? `A flag "${flagToDelete.key}" será apagada e a funcionalidade volta ao padrão para todos os usuários. Para apenas desligar, use o interruptor ao lado.`
+            : ''
+        }
+        isDeleting={deleteFlag.isPending}
+      />
 
       <CreateFlagDialog open={showCreate} onOpenChange={setShowCreate} />
       {editFlag && (

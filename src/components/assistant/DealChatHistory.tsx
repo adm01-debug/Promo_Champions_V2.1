@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { MessageSquare, Trash2, Clock, Loader2, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,6 +17,7 @@ import {
   QuestionType,
 } from '@/hooks/useDealChatHistory';
 import { Badge } from '@/components/ui/badge';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
 interface DealChatHistoryProps {
   dealId: string;
@@ -34,6 +36,7 @@ const TYPE_COLORS: Record<QuestionType, string> = {
 export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryProps) {
   const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } =
     useDealChatHistory(dealId);
+  const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -122,7 +125,7 @@ export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryPro
                       aria-label="Excluir conversa"
                       onClick={e => {
                         e.stopPropagation();
-                        deleteEntry.mutate(entry.id);
+                        setEntryToDelete(entry.id);
                       }}
                     >
                       <Trash2 className="h-3 w-3" />
@@ -135,6 +138,20 @@ export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryPro
           ))}
         </div>
       </ScrollArea>
+
+      <DeleteConfirmDialog
+        open={!!entryToDelete}
+        onOpenChange={open => !open && setEntryToDelete(null)}
+        onConfirm={() => {
+          if (!entryToDelete) return;
+          deleteEntry.mutate(entryToDelete, {
+            onSuccess: () => setEntryToDelete(null),
+          });
+        }}
+        title="Apagar esta pergunta do histórico?"
+        description="A pergunta e a resposta gerada saem deste deal, sem cópia. Não é possível recuperar depois."
+        isDeleting={deleteEntry.isPending}
+      />
     </div>
   );
 }
