@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.8.0...promo-champions-v2-v1.9.0) (2026-11-24)
+
+
+### Funcionalidades
+
+* aciona o Supply quando o orçamento vira pedido ([#731](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/731)) ([669c8a0](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/669c8a0686c5626e5c38a7c84404062ecbd52c13))
+
 ## [1.8.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.4...promo-champions-v2-v1.8.0) (2026-11-24)
 
 
