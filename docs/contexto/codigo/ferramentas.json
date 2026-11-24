@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2513)",
+   "TypeScript (2511)",
    "SQL (722)",
    "Markdown (223)",
    "JavaScript (78)",
@@ -1150,7 +1150,7 @@
   {
    "arquivo": "docs/API.md",
    "titulo": "API — Promo Champions V2.1",
-   "linhas": 801
+   "linhas": 800
   },
   {
    "arquivo": "docs/ARCHITECTURE.md",
@@ -1365,7 +1365,7 @@
   {
    "arquivo": "docs/prod-readiness.md",
    "titulo": "Prontidão para produção — Promo_Champions_V2.1",
-   "linhas": 1066
+   "linhas": 1065
   },
   {
    "arquivo": "docs/soft-delete.md",
@@ -2147,7 +2147,7 @@
    "src/components/auth/ProtectedRoute.tsx",
    "src/components/navigation/NavigationGuard.tsx"
   ],
-  "rotas_protegidas": 37,
+  "rotas_protegidas": 36,
   "rotas_publicas": [
    "/*",
    "/abm",

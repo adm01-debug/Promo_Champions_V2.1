@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 484,
+ "total": 483,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -10221,24 +10221,6 @@
    "usado_por": 1,
    "usado_por_arquivos": [
     "src/hooks/sales/useSalesData.ts"
-   ],
-   "coberto_por_testes": 0
-  },
-  {
-   "arquivo": "src/hooks/useRetryTestRun.ts",
-   "hooks_exportados": [
-    "useRetryTestRun"
-   ],
-   "linhas": 35,
-   "dominio": "hooks",
-   "tabelas": [],
-   "rpcs": [],
-   "edges": [],
-   "hooks_internos": [],
-   "canais_realtime": [],
-   "usado_por": 1,
-   "usado_por_arquivos": [
-    "src/pages/RetryTestStatusPage.tsx"
    ],
    "coberto_por_testes": 0
   },

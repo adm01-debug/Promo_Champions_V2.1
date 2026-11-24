@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "aab47375a6b63267d65d7398212c51515deb9a71",
+  "sha": "b05ca726f0a48a9419f34c6d1e7b8afb86d5151c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 03:42 UTC",
-  "files_total": 3665,
-  "code_files": 3316,
-  "code_lines": 481083
+  "generated_at": "2026-11-24 03:51 UTC",
+  "files_total": 3663,
+  "code_files": 3314,
+  "code_lines": 480728
  },
  "version": "1.3.2",
- "facts_hash": "ea277a872be075bc",
+ "facts_hash": "156c06f8447a2a8e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,8 +398,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1382,
-   ".ts": 1130,
+   ".tsx": 1381,
+   ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
    ".js": 6,
@@ -94918,15 +94918,6 @@
    },
    {
     "path": "",
-    "file": "src/pages/RetryTestStatusPage.tsx",
-    "component": "RetryTestStatusPage",
-    "tables_transitive": [],
-    "invokes_transitive": [],
-    "rpc_transitive": [],
-    "deps_count": 11
-   },
-   {
-    "path": "",
     "file": "src/pages/RevOpsHub.tsx",
     "component": "RevOpsHub",
     "tables_transitive": [],
@@ -101573,13 +101564,6 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
-    "path": "/admin/retry-test-status",
-    "component": "Admin",
-    "guard": "",
-    "roles": [],
-    "file": "src/routes/AppRoutes.tsx"
-   },
-   {
     "path": "/admin/solicitacoes-titular",
     "component": "Manager",
     "guard": "",
@@ -105915,10 +105899,6 @@
     "file": "src/hooks/useRetryMutation.ts"
    },
    {
-    "name": "useRetryTestRun",
-    "file": "src/hooks/useRetryTestRun.ts"
-   },
-   {
     "name": "useRevOpsHub",
     "file": "src/hooks/useRevOpsHub.ts"
    },
@@ -107209,8 +107189,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 551,
-   "lines": 65097,
+   "files": 550,
+   "lines": 65062,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107843,8 +107823,8 @@
   },
   {
    "module": "src/pages",
-   "files": 182,
-   "lines": 44864,
+   "files": 181,
+   "lines": 44557,
    "tables": [
     "achievements",
     "activities",
@@ -108040,7 +108020,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1898,
+   "lines": 1885,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -120430,10 +120410,6 @@
    {
     "file": "src/hooks/useReauthentication.ts",
     "msg": "Senha incorreta"
-   },
-   {
-    "file": "src/hooks/useRetryTestRun.ts",
-    "msg": "Resposta vazia da função run-retry-tests"
    },
    {
     "file": "src/hooks/useRevOpsHub.ts",
@@ -145931,12 +145907,6 @@
     "kind": "filtra"
    },
    {
-    "file": "src/hooks/useRetryTestRun.ts",
-    "field": "status",
-    "value": "passed",
-    "kind": "escreve"
-   },
-   {
     "file": "src/hooks/useSDRActivityTrend.ts",
     "field": "role",
     "value": "sdr",
@@ -148502,30 +148472,6 @@
     "file": "src/pages/RelatoriosExecutivos.tsx",
     "field": "status",
     "value": "abandoned",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/RetryTestStatusPage.tsx",
-    "field": "status",
-    "value": "passed",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/RetryTestStatusPage.tsx",
-    "field": "status",
-    "value": "failed",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/RetryTestStatusPage.tsx",
-    "field": "status",
-    "value": "failed",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/RetryTestStatusPage.tsx",
-    "field": "status",
-    "value": "ignored",
     "kind": "compara"
    },
    {
@@ -191911,7 +191857,6 @@
       "compara:src/hooks/useMultichannel.ts",
       "compara:src/pages/AutomationBuilder.tsx",
       "compara:src/pages/FollowUpAudit.tsx",
-      "compara:src/pages/RetryTestStatusPage.tsx",
       "compara:supabase/functions/run-retry-tests/index.ts",
       "compara:supabase/functions/twilio-call-status/index.ts",
       "escreve:src/hooks/win-loss/useAsyncReplayQueue.ts",
@@ -192165,12 +192110,6 @@
      "ativo": [
       "escreve:src/hooks/useProducts.ts"
      ],
-     "passed": [
-      "compara:src/pages/RetryTestStatusPage.tsx",
-      "compara:supabase/functions/run-retry-tests/index.ts",
-      "escreve:src/hooks/useRetryTestRun.ts",
-      "escreve:supabase/functions/run-retry-tests/index.ts"
-     ],
      "resolved": [
       "compara:src/hooks/admin/useV4Callbacks.ts",
       "escreve:src/hooks/useSLATracking.ts"
@@ -192220,11 +192159,6 @@
      ],
      "abandoned": [
       "compara:src/pages/RelatoriosExecutivos.tsx"
-     ],
-     "ignored": [
-      "compara:src/pages/RetryTestStatusPage.tsx",
-      "compara:supabase/functions/run-retry-tests/index.ts",
-      "escreve:supabase/functions/run-retry-tests/index.ts"
      ],
      "violated": [
       "compara:src/pages/SLATrackingPage.tsx"
@@ -192366,6 +192300,14 @@
      ],
      "hot": [
       "escreve:supabase/functions/run-retry-tests/contract_test.ts"
+     ],
+     "passed": [
+      "compara:supabase/functions/run-retry-tests/index.ts",
+      "escreve:supabase/functions/run-retry-tests/index.ts"
+     ],
+     "ignored": [
+      "compara:supabase/functions/run-retry-tests/index.ts",
+      "escreve:supabase/functions/run-retry-tests/index.ts"
      ],
      "underserved": [
       "compara:supabase/functions/territory-optimization/index.ts"
@@ -226100,16 +226042,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `passed` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/pages/RetryTestStatusPage.tsx",
-     "compara:supabase/functions/run-retry-tests/index.ts",
-     "escreve:src/hooks/useRetryTestRun.ts",
-     "escreve:supabase/functions/run-retry-tests/index.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `ready` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/pages/ConversationalIntelligence.tsx",
@@ -226165,15 +226097,6 @@
     "msg": "valor `abandoned` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/pages/RelatoriosExecutivos.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/pages/RetryTestStatusPage.tsx",
-     "compara:supabase/functions/run-retry-tests/index.ts",
-     "escreve:supabase/functions/run-retry-tests/index.ts"
     ]
    },
    {
@@ -226456,6 +226379,22 @@
     "msg": "valor `string` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:supabase/functions/receive-quote-sync/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `passed` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:supabase/functions/run-retry-tests/index.ts",
+     "escreve:supabase/functions/run-retry-tests/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:supabase/functions/run-retry-tests/index.ts",
+     "escreve:supabase/functions/run-retry-tests/index.ts"
     ]
    },
    {
@@ -253245,27 +253184,6 @@
     }
    ]
   },
-  "src/hooks/useRetryTestRun.ts": {
-   "path": "src/hooks/useRetryTestRun.ts",
-   "lines": 35,
-   "exports": [
-    "interface RetryTestResult",
-    "function useRetryTestRun"
-   ],
-   "errors": [
-    "Resposta vazia da função run-retry-tests"
-   ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "passed",
-     "kind": "escreve"
-    }
-   ],
-   "hooks": [
-    "useRetryTestRun"
-   ]
-  },
   "src/hooks/useRevOpsHub.ts": {
    "path": "src/hooks/useRevOpsHub.ts",
    "lines": 50,
@@ -273198,38 +273116,6 @@
     "setTimeout(() => { navigate('/'); }, 2000);"
    ]
   },
-  "src/pages/RetryTestStatusPage.tsx": {
-   "path": "src/pages/RetryTestStatusPage.tsx",
-   "lines": 307,
-   "exports": [
-    "function RetryTestStatusPage"
-   ],
-   "navigates": [
-    "/admin/retry-test-status"
-   ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "passed",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "failed",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "failed",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "ignored",
-     "kind": "compara"
-    }
-   ]
-  },
   "src/pages/RevOpsHub.tsx": {
    "path": "src/pages/RevOpsHub.tsx",
    "lines": 20,
@@ -274020,7 +273906,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1165,
+   "lines": 1156,
    "exports": [
     "function AppRoutes"
    ],
@@ -275052,12 +274938,6 @@
      "roles": []
     },
     {
-     "path": "/admin/retry-test-status",
-     "component": "Admin",
-     "guard": "",
-     "roles": []
-    },
-    {
      "path": "/meus-pedidos",
      "component": "Navigate",
      "guard": "",
@@ -275119,7 +274999,7 @@
   },
   "src/routes/lazyPages.ts": {
    "path": "src/routes/lazyPages.ts",
-   "lines": 362,
+   "lines": 359,
    "exports": [
     "const Index",
     "const Auth",
@@ -275219,7 +275099,7 @@
   },
   "src/routes/routeAccess.ts": {
    "path": "src/routes/routeAccess.ts",
-   "lines": 166,
+   "lines": 165,
    "exports": [
     "const adminOnlyRoutes",
     "const managerOnlyRoutes",
@@ -299219,10 +299099,35 @@
   }
  },
  "git": {
-  "sha": "aab47375a6b63267d65d7398212c51515deb9a71",
+  "sha": "b05ca726f0a48a9419f34c6d1e7b8afb86d5151c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b05ca72",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)",
+    "files": [
+     "docs/API.md",
+     "docs/estado/01_FRONTEND_ROTAS.md",
+     "docs/prod-readiness.md",
+     "src/hooks/useRetryTestRun.ts",
+     "src/pages/RetryTestStatusPage.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/lazyPages.ts",
+     "src/routes/routeAccess.ts"
+    ]
+   },
+   {
+    "sha": "d458d7b",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)",
+    "files": [
+     "docs/estado/13_INTEGRACOES.md"
+    ]
+   },
    {
     "sha": "aab4737",
     "date": "2026-11-24",
@@ -299530,32 +299435,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "e328672",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)",
-    "files": [
-     "src/components/QueryErrorState.tsx",
-     "src/hooks/useFeatureFlags.ts",
-     "src/pages/AdminAuditoriaPremiacoes.tsx",
-     "src/pages/AdminComissoes.tsx",
-     "src/pages/AdminSupressaoEmails.tsx",
-     "src/pages/AuditLogsPage.tsx",
-     "src/pages/Comissoes.tsx",
-     "src/pages/Deduplication.tsx",
-     "src/pages/FeatureFlagsAdmin.tsx"
-    ]
-   },
-   {
-    "sha": "aef48e8",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: receive-design-sync sem verify_jwt (webhook HMAC)",
-    "files": [
-     "supabase/config.toml"
-    ]
    }
   ],
   "hot_files": [
@@ -299576,12 +299455,44 @@
     7
    ],
    [
-    "src/pages/AdminComissoes.tsx",
+    "AGENTS.md",
     2
    ],
    [
-    "AGENTS.md",
-    2
+    "docs/API.md",
+    1
+   ],
+   [
+    "docs/estado/01_FRONTEND_ROTAS.md",
+    1
+   ],
+   [
+    "docs/prod-readiness.md",
+    1
+   ],
+   [
+    "src/hooks/useRetryTestRun.ts",
+    1
+   ],
+   [
+    "src/pages/RetryTestStatusPage.tsx",
+    1
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
+    1
+   ],
+   [
+    "src/routes/lazyPages.ts",
+    1
+   ],
+   [
+    "src/routes/routeAccess.ts",
+    1
+   ],
+   [
+    "docs/estado/13_INTEGRACOES.md",
+    1
    ],
    [
     "src/components/pipeline/DealCard.test.tsx",
@@ -299605,38 +299516,6 @@
    ],
    [
     "src/hooks/useDealProbability.ts",
-    1
-   ],
-   [
-    "src/pages/AdminComissoes.test.tsx",
-    1
-   ],
-   [
-    "docs/DEAD_TABLES.md",
-    1
-   ],
-   [
-    "docs/TECH_DEBT.md",
-    1
-   ],
-   [
-    "supabase/functions/behavioral-analysis/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/predictive-intelligence/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/revenue-forecast-ai/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/bitrix24-oauth/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/simulate-load/index.ts",
     1
    ]
   ]

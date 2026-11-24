@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1291,
+ "total": 1290,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -15735,7 +15735,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 555,
+   "usado_por": 554,
    "orfao": false
   },
   {
@@ -15769,7 +15769,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 544,
+   "usado_por": 543,
    "orfao": false
   },
   {
@@ -15801,7 +15801,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 716,
+   "usado_por": 715,
    "orfao": false
   },
   {
@@ -16065,7 +16065,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 104,
+   "usado_por": 103,
    "orfao": false
   },
   {
@@ -16188,7 +16188,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 321,
+   "usado_por": 320,
    "orfao": false
   },
   {
@@ -16235,7 +16235,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 56,
+   "usado_por": 55,
    "orfao": false
   },
   {
@@ -20092,22 +20092,6 @@
    "orfao": false
   },
   {
-   "arquivo": "src/pages/RetryTestStatusPage.tsx",
-   "exports": [
-    "RetryTestStatusPage"
-   ],
-   "export_default": "RetryTestStatusPage",
-   "linhas": 307,
-   "dominio": "pages",
-   "hooks_locais": [
-    "useRetryTestRun"
-   ],
-   "tabelas": [],
-   "edges": [],
-   "usado_por": 1,
-   "orfao": false
-  },
-  {
    "arquivo": "src/pages/RevenueForecast.tsx",
    "exports": [
     "RevenueForecast"
@@ -20633,7 +20617,7 @@
     "AppRoutes"
    ],
    "export_default": null,
-   "linhas": 1165,
+   "linhas": 1156,
    "dominio": "routes",
    "hooks_locais": [],
    "tabelas": [],

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aab47375a6` · branch `main` · 2026-11-24 03:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b05ca726f0` · branch `main` · 2026-11-24 03:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1522,7 +1522,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `expired` | compara, escreve | `src/components/security/PasswordResetApproval.tsx`<br>`src/hooks/useQuotes.ts`<br>`supabase/functions/check-quote-expiration/index.ts`<br>`supabase/functions/send-password-reset/index.ts` |
 | `status` | `external_quote_id_required` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `fail` | compara, escreve | `src/components/admin/connections/SmokeTestChecklist.tsx`<br>`src/components/admin/connections/smokeTestHelpers.ts` |
-| `status` | `failed` | compara, escreve | `src/components/conversational/TranscribeButton.tsx`<br>`src/components/engagement/SendTime/ScheduledSendsPanel.tsx`<br>`src/components/multichannel/multichannelHelpers.ts`<br>`src/components/reporting/ScheduledReportRunsDrawer.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +20 |
+| `status` | `failed` | compara, escreve | `src/components/conversational/TranscribeButton.tsx`<br>`src/components/engagement/SendTime/ScheduledSendsPanel.tsx`<br>`src/components/multichannel/multichannelHelpers.ts`<br>`src/components/reporting/ScheduledReportRunsDrawer.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +19 |
 | `status` | `finished` | compara, escreve, filtra | `src/components/race/admin/SeasonsManagerTable.tsx`<br>`src/hooks/race/useChampionsHistory.ts`<br>`src/hooks/race/useGhostCar.ts`<br>`src/hooks/race/useMonthlyChampion.ts`<br>`src/hooks/race/useMyCareer.ts`<br>… +2 |
 | `status` | `fired` | compara | `src/hooks/win-loss/useWebhookAlertHistory.ts` |
 | `status` | `fulfilled` | compara | `supabase/functions/process-call-recording-ingest/index.ts`<br>`supabase/functions/send-push-notification/index.ts` |
@@ -1535,7 +1535,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `hot` | escreve | `supabase/functions/run-retry-tests/contract_test.ts` |
 | `status` | `identified` | compara, escreve, filtra | `supabase/functions/customer-success-360/index.ts`<br>`supabase/functions/expansion-detector/index.ts` |
 | `status` | `idle` | compara, escreve | `src/components/admin/connections/SmokeTestChecklist.tsx`<br>`src/components/admin/connections/smokeTestHelpers.ts`<br>`src/components/dashboard/DevKpiDebugPanel.tsx` |
-| `status` | `ignored` | compara, escreve | `src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
+| `status` | `ignored` | compara, escreve | `supabase/functions/run-retry-tests/index.ts` |
 | `status` | `in_progress` | compara, escreve | `src/components/dashboard/MyAssignedTasks.tsx`<br>`src/hooks/admin/useDataSubjectRequests.ts`<br>`src/pages/AdminSolicitacoesTitular.tsx`<br>`src/pages/OnboardingTracking.tsx`<br>`supabase/functions/customer-success-360/index.ts`<br>… +1 |
 | `status` | `inactive` | compara, filtra | `src/components/portfolio/PortfolioCloserGrid.tsx`<br>`src/hooks/crm/useClientPortfolio.ts`<br>`supabase/functions/auto-reassign-inactive/index.ts` |
 | `status` | `inativo` | compara | `src/components/admin/AdminSystemStatus.tsx` |
@@ -1562,7 +1562,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `overdue` | escreve | `src/components/bi/ChurnTaskCompletionCard.tsx` |
 | `status` | `overloaded` | compara | `supabase/functions/territory-optimization/index.ts` |
 | `status` | `paid` | compara, escreve | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/hooks/useCommissionBonusAwards.ts`<br>`src/hooks/useCommissions.ts`<br>`src/pages/AdminAuditoriaPremiacoes.tsx`<br>`src/pages/Comissoes.tsx`<br>… +2 |
-| `status` | `passed` | compara, escreve | `src/hooks/useRetryTestRun.ts`<br>`src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
+| `status` | `passed` | compara, escreve | `supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
 | `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
 | `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +57 |
@@ -4171,7 +4171,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +697 linhas — lista completa em `context.json` | |
+| … +696 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

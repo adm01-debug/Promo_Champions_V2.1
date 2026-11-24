@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 171,
+  "urls": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
-  "lazy": 234
+  "lazy": 233
  },
  "urls": [
   {
@@ -1408,37 +1408,6 @@
    "flags": [],
    "papeis": [],
    "arquivos_puxados": 13
-  },
-  {
-   "protegida": true,
-   "wrappers": [
-    "Admin"
-   ],
-   "pai": null,
-   "indice": false,
-   "lazy": true,
-   "tipo": "tela",
-   "caminho": "/admin/retry-test-status",
-   "componente": "RetryTestStatusPage",
-   "arquivo": "src/pages/RetryTestStatusPage.tsx",
-   "definida_em": "src/routes/AppRoutes.tsx",
-   "redireciona": null,
-   "hooks": [
-    "useCallback",
-    "useEffect",
-    "useMemo",
-    "useRetryTestRun"
-   ],
-   "hooks_locais": [
-    "useRetryTestRun"
-   ],
-   "tabelas": [],
-   "rpcs": [],
-   "edges": [],
-   "canais_realtime": [],
-   "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 12
   },
   {
    "protegida": true,
@@ -13022,7 +12991,6 @@
   "RelatoriosEmail": "src/pages/RelatoriosEmail.tsx",
   "RelatoriosExecutivos": "src/pages/RelatoriosExecutivos.tsx",
   "ResetPassword": "src/pages/ResetPassword.tsx",
-  "RetryTestStatusPage": "src/pages/RetryTestStatusPage.tsx",
   "RevOpsHub": "src/pages/RevOpsHub.tsx",
   "RevenueAreaChart": "src/components/bi/charts/RevenueAreaChart.tsx",
   "RevenueForecast": "src/pages/RevenueForecast.tsx",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `aab47375a6b63267d65d7398212c51515deb9a71` (2026-11-24T00:42:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b05ca726f0a48a9419f34c6d1e7b8afb86d5151c` (2026-11-24T00:50:40-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2513), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2511), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,16 +34,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3650 |
-| arquivos_codigo | 2594 |
-| linhas_codigo | 445972 |
-| rotas | 171 |
+| arquivos_total | 3648 |
+| arquivos_codigo | 2592 |
+| linhas_codigo | 445617 |
+| rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 131 |
 | modulos | 176 |
-| componentes | 1291 |
-| hooks | 484 |
+| componentes | 1290 |
+| hooks | 483 |
 | edge_functions | 172 |
 | tabelas | 420 |
 | migrations | 712 |
@@ -54,9 +54,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | docs_md | 223 |
 
 ## Onde ficam as coisas
-- telas: src/pages (167)
-- componentes: src/components (1110), src/pages (174), src/contexts (5)
-- hooks: src/hooks (472), src/contexts (6), src/components (4)
+- telas: src/pages (166)
+- componentes: src/components (1110), src/pages (173), src/contexts (5)
+- hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
 - testes: co-localizado (*.test) (169), tests/ (59), outro (18)
 - edge_functions: supabase/functions
@@ -127,7 +127,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
 | components/win-loss | 0 | 0 | 62 | 45 | 5 | 22 |
 | contexts | 0 | 0 | 6 | 5 | 0 | 1 |
-| hooks | 0 | 0 | 148 | 202 | 23 | 110 |
+| hooks | 0 | 0 | 147 | 201 | 23 | 110 |
 | hooks/admin | 0 | 0 | 10 | 34 | 2 | 22 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
@@ -148,7 +148,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 29 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 108 | 155 | 161 | 820 | 115 | 299 |
+| pages | 108 | 154 | 160 | 819 | 115 | 299 |
 | pages/admin | 1 | 13 | 13 | 82 | 10 | 47 |
 | services | 0 | 0 | 6 | 0 | 0 | 13 |
 
@@ -175,7 +175,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/admin/race-arena` [tela] → src/pages/admin/RaceArenaAdmin.tsx (protegida)
 - `/admin/regras-comissao` [tela] → src/pages/CommissionRules.tsx
 - `/admin/regras-inatividade` [tela] → src/pages/AdminRegrasInatividade.tsx (protegida)
-- `/admin/retry-test-status` [tela] → src/pages/RetryTestStatusPage.tsx (protegida)
 - `/admin/solicitacoes-titular` [tela] → src/pages/AdminSolicitacoesTitular.tsx (protegida)
 - `/admin/supressao-emails` [tela] → src/pages/AdminSupressaoEmails.tsx (protegida)
 - `/admin/tarefas` [tela] → src/pages/AdminTasksPage.tsx (protegida)
@@ -566,7 +565,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Permissões / papéis
 - papéis no código: user (52), system (43), closer (22), admin (21), sdr (21), alert (14), hybrid (14), status (14), region (10), manager (9), authenticated (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), salesperson (2), tab (2), tool (2), Roles (1), account_owner (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
 - enums de papel: salesperson_role: sdr|closer|hybrid; app_role: admin|manager|salesperson
-- guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 37 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
+- guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 36 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
 - feature flags: ENABLE_RLS, FEATURE_X, experimental_ui, nova-tela, novo-inbox
 
 ## Alertas (baseline.json → alertas)
@@ -587,8 +586,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24178 nós · 74370 arestas · 1145 comunidades · grafo do commit `aab47375`
-- comunidades maiores: schema.sql (577), react (408), CardHeader (383), Card (335), client.ts (331), date-fns (322), getCorsHeaders (310), Button (300), vitest (262), public (244), formatBRL (232), Badge (228)
+- 24168 nós · 74307 arestas · 1162 comunidades · grafo do commit `b05ca726`
+- comunidades maiores: schema.sql (593), CardContent (443), Badge (430), react (399), Button (312), getCorsHeaders (288), client.ts (276), DialogContent (270), SelectContent (263), vitest (256), Card (241), public (235)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -600,14 +599,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (12)
 - .github/workflows/deploy.yml (9)
-- scripts/inventario/gerar-banco.mjs (9)
+- scripts/inventario/gerar-banco.mjs (8)
 - .github/workflows/pr-checks.yml (7)
 - src/components/pipeline/DealCard.tsx (7)
 - .github/workflows/codeql.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
-- inventario/estado/edges.json (6)
 - src/hooks/abm/useAccounts.ts (6)
 - .github/workflows/contexto.yml (5)
+- .github/workflows/migrations-drift.yml (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -717,7 +716,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `RELEASE_NOTES.md` — Release v2.1.0 — Mega-Jornada 10/10 (78 linhas)
 - `SECURITY.md` — 🔒 Política de Segurança (195 linhas)
 - `TEST_QUALITY_REPORT.md` — 📊 Relatório Real de Qualidade e Testes (61 linhas)
-- `docs/API.md` — API — Promo Champions V2.1 (801 linhas)
+- `docs/API.md` — API — Promo Champions V2.1 (800 linhas)
 - `docs/ARCHITECTURE.md` — Arquitetura — Promo Champions V2.1 (145 linhas)
 - `docs/AUTH_CONFIG.md` — Checklist — Configuração server-side do Supabase Auth (56 linhas)
 - `docs/AUTOMACAO_LOCAL.md` — Automação local — Promo_Champions_V2.1 (176 linhas)
@@ -760,13 +759,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/accessibility-checklist.md` — ♿ Accessibility Checklist — Promo Champions v2 (55 linhas)
 - `docs/auditoria_enterprise_v5.md` — 🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0) (95 linhas)
 - `docs/component-guidelines.md` — 🏗 Component Guidelines — Promo Champions v2 (42 linhas)
-- `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1065 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/qa (6), docs/pendencias (5), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `b05ca72` chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)
+- 2026-11-24 `d458d7b` docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)
 - 2026-11-24 `aab4737` feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)
 - 2026-11-24 `01dd7e3` fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)
 - 2026-11-23 `20279aa` chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)
@@ -780,8 +781,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `f0b094b` fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691
 - 2026-11-24 `812f690` fix: inventario nao confunde pagina cheia de edges com ausencia de deploy (QA-229) (#690)
 - 2026-11-24 `a7e02eb` chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)
-- 2026-11-24 `0ab02a5` chore: marca a etapa 190 no progresso (PR #688) (#689)
-- 2026-11-24 `dd3a3f9` chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

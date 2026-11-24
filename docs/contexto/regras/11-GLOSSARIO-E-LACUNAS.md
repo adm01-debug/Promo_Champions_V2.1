@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aab47375a6` · branch `main` · 2026-11-24 03:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b05ca726f0` · branch `main` · 2026-11-24 03:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -359,7 +359,6 @@
 | status | valor `responded` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useNPSSurveys.ts`<br>`compara:src/pages/NPSDashboard.tsx`<br>`escreve:src/hooks/useNPSSurveys.ts` |
 | status | valor `Proposta` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useNextBestAction.ts` |
 | status | valor `ativo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/useProducts.ts` |
-| status | valor `passed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RetryTestStatusPage.tsx`<br>`compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:src/hooks/useRetryTestRun.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
 | status | valor `ready` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ConversationalIntelligence.tsx`<br>`escreve:src/hooks/conversational/useUploadCallRecording.ts`<br>`escreve:supabase/functions/analyze-call/index.ts`<br>`escreve:supabase/functions/email-composer-bulk/index.ts` |
 | status | valor `snoozed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/dialer/usePowerDialer.ts` |
 | status | valor `queued` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/hooks/multichannel/useOutboundMessages.ts` |
@@ -368,7 +367,6 @@
 | status | valor `awaiting_approval` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AIAgents.tsx` |
 | status | valor `attempted` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/FollowUpInteligente.tsx` |
 | status | valor `abandoned` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RelatoriosExecutivos.tsx` |
-| status | valor `ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RetryTestStatusPage.tsx`<br>`compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
 | status | valor `violated` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/SLATrackingPage.tsx` |
 | status | valor `meta` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/admin/AdminPlatformSLOPage.tsx` |
 | status | valor `abaixo` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/admin/AdminPlatformSLOPage.tsx` |
@@ -408,6 +406,8 @@
 | status | valor `method_not_allowed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `missing_signature` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `string` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/receive-quote-sync/index.ts` |
+| status | valor `passed` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
+| status | valor `ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/run-retry-tests/index.ts`<br>`escreve:supabase/functions/run-retry-tests/index.ts` |
 | status | valor `transcribed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/transcribe-call-recording/index.ts` |
 | status | valor `no-answer` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/twilio-call-status/index.ts` |
 | status | valor `initiated` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/twilio-click-to-call/index.ts` |

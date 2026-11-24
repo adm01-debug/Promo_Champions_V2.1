@@ -1,24 +1,24 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2347,
- "arestas": 9648,
+ "nos": 2345,
+ "arestas": 9639,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 716
+   "importado_por": 715
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 555
-  },
-  {
-   "arquivo": "src/integrations/supabase/client.ts",
    "importado_por": 554
   },
   {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 553
+  },
+  {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 544
+   "importado_por": 543
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 321
+   "importado_por": 320
   },
   {
    "arquivo": "src/lib/money.ts",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 104
+   "importado_por": 103
   },
   {
    "arquivo": "src/constants/index.ts",
@@ -110,7 +110,7 @@
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 56
+   "importado_por": 55
   },
   {
    "arquivo": "src/lib/supabase/realtime.ts",

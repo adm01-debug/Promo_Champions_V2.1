@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "aab47375a6b63267d65d7398212c51515deb9a71",
+  "commit": "b05ca726f0a48a9419f34c6d1e7b8afb86d5151c",
   "branch": "main",
-  "data_commit": "2026-11-24T00:42:13-03:00",
+  "data_commit": "2026-11-24T00:50:40-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b05ca72",
+    "data": "2026-11-24",
+    "assunto": "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)"
+   },
+   {
+    "sha": "d458d7b",
+    "data": "2026-11-24",
+    "assunto": "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)"
+   },
    {
     "sha": "aab4737",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "f42eb57",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump react-helmet-async from 3.0.0 to 3.1.0 (#632)"
-   },
-   {
-    "sha": "cef0dfd",
-    "data": "2026-11-23",
-    "assunto": "chore(deps-dev): bump autoprefixer from 10.6.2 to 10.7.0 (#634)"
-   },
-   {
-    "sha": "cdee014",
-    "data": "2026-11-23",
-    "assunto": "chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)"
    }
   ],
-  "arquivos_mudados_7d": 278,
+  "arquivos_mudados_7d": 284,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -227,7 +227,7 @@
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 9
+    "mudancas": 8
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -243,10 +243,6 @@
    },
    {
     "arquivo": "docs/pendencias/backlog-verificado.md",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "inventario/estado/edges.json",
     "mudancas": 6
    },
    {
@@ -267,6 +263,10 @@
    },
    {
     "arquivo": "inventario/estado/banco.json",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "inventario/estado/edges.json",
     "mudancas": 5
    },
    {
@@ -314,16 +314,16 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3650,
-  "arquivos_codigo": 2594,
-  "linhas_codigo": 445972,
-  "rotas": 171,
+  "arquivos_total": 3648,
+  "arquivos_codigo": 2592,
+  "linhas_codigo": 445617,
+  "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 131,
   "modulos": 176,
-  "componentes": 1291,
-  "hooks": 484,
+  "componentes": 1290,
+  "hooks": 483,
   "edge_functions": 172,
   "tabelas": 420,
   "migrations": 712,
@@ -607,8 +607,8 @@
    "linhas": 610
   },
   "src/hooks": {
-   "arquivos": 551,
-   "linhas": 65097
+   "arquivos": 550,
+   "linhas": 65062
   },
   "src/integrations": {
    "arquivos": 4,
@@ -623,12 +623,12 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 182,
-   "linhas": 44864
+   "arquivos": 181,
+   "linhas": 44557
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1898
+   "linhas": 1885
   },
   "src/services": {
    "arquivos": 9,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1165
+   "linhas": 1156
   },
   {
    "arquivo": "scripts/graphify-local.mjs",
