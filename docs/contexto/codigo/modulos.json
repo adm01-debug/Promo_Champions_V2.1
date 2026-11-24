@@ -6614,8 +6614,8 @@
   {
    "modulo": "components/purchase-intelligence",
    "arquivos": 10,
-   "testes": 4,
-   "linhas": 2562,
+   "testes": 5,
+   "linhas": 2668,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6638,7 +6638,8 @@
     "order_items",
     "order_status_events",
     "orders",
-    "sales"
+    "sales",
+    "user_app_settings"
    ],
    "rpcs": [
     "get_client_purchase_heatmap",
@@ -6669,6 +6670,7 @@
     "components/dashboard",
     "components/orders",
     "components/ui",
+    "hooks",
     "hooks/orders",
     "hooks/purchase-intelligence",
     "integrations/supabase",
@@ -6682,7 +6684,8 @@
     "lucide-react",
     "react-helmet-async",
     "react-router-dom",
-    "recharts"
+    "recharts",
+    "sonner"
    ]
   },
   {
@@ -10883,6 +10886,7 @@
     "components/predictive",
     "components/pricing",
     "components/products",
+    "components/purchase-intelligence",
     "components/quotes",
     "components/race",
     "components/ranking",

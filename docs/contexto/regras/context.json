@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "22f284a5707a9b3e55589cb63636bc70825d6e48",
+  "sha": "83bacfbc1acae0dd996eeb246bd9c84c11bdbf19",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:35 UTC",
-  "files_total": 3671,
-  "code_files": 3322,
-  "code_lines": 481990
+  "generated_at": "2026-11-24 04:46 UTC",
+  "files_total": 3672,
+  "code_files": 3323,
+  "code_lines": 482212
  },
  "version": "1.3.2",
- "facts_hash": "2d1e6b745e4b5aa9",
+ "facts_hash": "ecb51ca6357e3083",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1389,
+   ".tsx": 1390,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -96080,7 +96080,8 @@
      "order_items",
      "order_status_events",
      "orders",
-     "sales"
+     "sales",
+     "user_app_settings"
     ],
     "invokes_transitive": [
      "purchase-intelligence-forecast"
@@ -96089,7 +96090,7 @@
      "get_client_purchase_heatmap",
      "get_purchase_intelligence_summary"
     ],
-    "deps_count": 39
+    "deps_count": 40
    },
    {
     "path": "/inteligencia-preditiva",
@@ -102957,7 +102958,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1234,
+  "components_count": 1235,
   "hooks": [
    {
     "name": "useContacts",
@@ -106913,8 +106914,8 @@
   },
   {
    "module": "src/components",
-   "files": 1234,
-   "lines": 194188,
+   "files": 1235,
+   "lines": 194410,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -159421,6 +159422,38 @@
    {
     "file": "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
     "name": "leva para a documentação ao clicar em Ver Documentação"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "IntelligenceSettings — diálogo que persiste parâmetros (etapa 107)"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "exibe os percentuais atuais em vez de texto fixo"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "salva o novo limiar de churn ao mover o slider"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "salva a frequência escolhida no seletor"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "restaura os padrões no botão Resetar"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "confirma e fecha o diálogo no botão Salvar Alterações"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "avisa quando as alterações ficam só neste dispositivo"
+   },
+   {
+    "file": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    "name": "normaliza valores inválidos vindos do cache ou do servidor"
    },
    {
     "file": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
@@ -242149,10 +242182,26 @@
     "transition={{ delay: 0.2 + i * 0.1 }}"
    ]
   },
+  "src/components/purchase-intelligence/IntelligenceSettings.test.tsx": {
+   "path": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+   "lines": 116,
+   "is_test": true,
+   "tests": [
+    "IntelligenceSettings — diálogo que persiste parâmetros (etapa 107)",
+    "exibe os percentuais atuais em vez de texto fixo",
+    "salva o novo limiar de churn ao mover o slider",
+    "salva a frequência escolhida no seletor",
+    "restaura os padrões no botão Resetar",
+    "confirma e fecha o diálogo no botão Salvar Alterações",
+    "avisa quando as alterações ficam só neste dispositivo",
+    "normaliza valores inválidos vindos do cache ou do servidor"
+   ]
+  },
   "src/components/purchase-intelligence/IntelligenceSettings.tsx": {
    "path": "src/components/purchase-intelligence/IntelligenceSettings.tsx",
-   "lines": 116,
+   "lines": 222,
    "exports": [
+    "function sanitizeThresholds",
     "const IntelligenceSettings"
    ]
   },
@@ -299440,10 +299489,20 @@
   }
  },
  "git": {
-  "sha": "22f284a5707a9b3e55589cb63636bc70825d6e48",
+  "sha": "83bacfbc1acae0dd996eeb246bd9c84c11bdbf19",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "83bacfb",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)",
+    "files": [
+     "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+     "src/components/purchase-intelligence/IntelligenceSettings.tsx"
+    ]
+   },
    {
     "sha": "22f284a",
     "date": "2026-11-24",
@@ -299770,22 +299829,12 @@
      "src/hooks/useUserRoles.test.ts",
      "src/hooks/useUserRoles.ts"
     ]
-   },
-   {
-    "sha": "546a229",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "docs: .env.example vira inventario completo das variaveis lidas (QA-250) (#683)",
-    "files": [
-     ".env.example",
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    15
+    14
    ],
    [
     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
@@ -299806,6 +299855,14 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/IntelligenceSettings.tsx",
+    1
    ],
    [
     "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
@@ -299853,14 +299910,6 @@
    ],
    [
     "src/pages/admin/AdminComercial.tsx",
-    1
-   ],
-   [
-    "src/components/layout/sidebar/sidebarMenuData.ts",
-    1
-   ],
-   [
-    "src/components/analytics/WinLossAnalysis.tsx",
     1
    ]
   ]

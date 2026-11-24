@@ -10781,8 +10781,9 @@
     "useRef"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/purchase-intelligence/IntelligenceSettings.tsx",
     "src/hooks/win-loss/useAtRiskSettings.ts"
    ],
    "coberto_por_testes": 0

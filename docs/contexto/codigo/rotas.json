@@ -6625,7 +6625,8 @@
     "order_items",
     "order_status_events",
     "orders",
-    "sales"
+    "sales",
+    "user_app_settings"
    ],
    "rpcs": [
     "get_client_purchase_heatmap",
@@ -6637,7 +6638,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 40
+   "arquivos_puxados": 41
   },
   {
    "protegida": false,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `22f284a570` · branch `main` · 2026-11-24 04:35 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `83bacfbc1a` · branch `main` · 2026-11-24 04:46 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1764 testes em 227 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1772 testes em 228 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4344,6 +4344,7 @@ _nenhum item encontrado_
 | `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/analytics/ABCMatrixShift.test.ts` | 8 | buildAbcMatrixShifts · não gera nada quando falta uma das janelas · ignora cliente que não mudou de classe · ignora cliente ausente de uma das janelas (sem comparação possível) … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
+| `src/components/purchase-intelligence/IntelligenceSettings.test.tsx` | 8 | IntelligenceSettings — diálogo que persiste parâmetros (etapa 107) · exibe os percentuais atuais em vez de texto fixo · salva o novo limiar de churn ao mover o slider · salva a frequência escolhida no seletor … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |

@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (177)",
+   "co-localizado (*.test) (178)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)",
    "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)",
    "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)",
    "feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)",
-   "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)",
-   "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)"
+   "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

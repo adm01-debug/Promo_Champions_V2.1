@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 262,
+ "total": 263,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 194
+  "unit": 195
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 177
+   "arquivos": 178
   },
   {
    "padrao": "tests/",
@@ -503,6 +503,15 @@
     "src/components/purchase-intelligence/EmptyStateGuide.tsx"
    ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/components/purchase-intelligence/IntelligenceSettings.tsx"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
@@ -2281,6 +2290,7 @@
   "src/components/pricing/RevenueLeakageCard.tsx": 1,
   "src/components/purchase-intelligence/DuplicateBlockAudit.tsx": 1,
   "src/components/purchase-intelligence/EmptyStateGuide.tsx": 1,
+  "src/components/purchase-intelligence/IntelligenceSettings.tsx": 1,
   "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx": 1,
   "src/components/purchase-intelligence/PurchasePredictionCard.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,

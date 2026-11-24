@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "22f284a5707a9b3e55589cb63636bc70825d6e48",
+  "commit": "83bacfbc1acae0dd996eeb246bd9c84c11bdbf19",
   "branch": "main",
-  "data_commit": "2026-11-24T01:34:24-03:00",
+  "data_commit": "2026-11-24T01:45:34-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "83bacfb",
+    "data": "2026-11-24",
+    "assunto": "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)"
+   },
    {
     "sha": "22f284a",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "a7e02eb",
     "data": "2026-11-24",
     "assunto": "chore(deps): sobe graphifyy de 0.9.70 para 0.9.115 em tools/graphify (#681)"
-   },
-   {
-    "sha": "0ab02a5",
-    "data": "2026-11-24",
-    "assunto": "chore: marca a etapa 190 no progresso (PR #688) (#689)"
    }
   ],
-  "arquivos_mudados_7d": 306,
+  "arquivos_mudados_7d": 308,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -254,10 +254,6 @@
     "mudancas": 5
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 5
-   },
-   {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 5
    },
@@ -290,6 +286,10 @@
     "mudancas": 4
    },
    {
+    "arquivo": "AGENTS.md",
+    "mudancas": 4
+   },
+   {
     "arquivo": "docs/DEPLOYMENT.md",
     "mudancas": 4
    },
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3656,
-  "arquivos_codigo": 2600,
-  "linhas_codigo": 446879,
+  "arquivos_total": 3657,
+  "arquivos_codigo": 2601,
+  "linhas_codigo": 447101,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 262,
+  "testes": 263,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1234,
-   "linhas": 194189
+   "arquivos": 1235,
+   "linhas": 194411
   },
   "src/config": {
    "arquivos": 4,
