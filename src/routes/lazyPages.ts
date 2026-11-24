@@ -348,9 +348,6 @@ export const Competencias = lazyWithPrefetch(() => import('@/pages/Competencias'
 
 // ─── Special Pages (no MainLayout) ──────────────────────────────────
 export const RaceSpectator = lazyWithPrefetch(() => import('@/pages/RaceSpectator'));
-export const RetryTestStatusPage = lazyWithPrefetch(
-  () => import('@/pages/RetryTestStatusPage')
-);
 export const OrderDetailPage = lazyWithPrefetch(() => import('@/pages/OrderDetailPage'));
 export const SalesReportPage = lazyWithPrefetch(() => import('@/pages/SalesReportPage'));
 export const AcompanhamentoPedidos = lazyWithPrefetch(
