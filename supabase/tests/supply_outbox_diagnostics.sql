@@ -107,30 +107,42 @@ LIMIT 12;
 -- significa que o processo morreu no meio (timeout do job do pg_net) e o ciclo
 -- ficou aberto — é o que alimenta o edge-retry-threshold-alert sem falha real.
 \echo '## 10. retries sem desfecho (7 dias)'
+-- request_id e' unico por tentativa (pg_net gera um id por disparo), logo correlacionar
+-- ciclo por request_id nunca fecha: a leitura correta e' por janela de tempo. Um
+-- retry e' considerado sem desfecho quando passou da janela do reconciliador
+-- (20 min) e nenhum evento terminal apareceu para a mesma funcao nesse intervalo.
 WITH r AS (
-  SELECT request_id, created_at
+  SELECT id, function_name, operation, attempt, error_name, created_at
   FROM public.edge_retry_events
   WHERE function_name = 'supply-dispatch'
     AND outcome = 'retry'
     AND created_at > now() - interval '7 days'
+    AND created_at < now() - interval '20 minutes'
 )
-SELECT count(*)                                                     AS abertos,
-       count(*) FILTER (WHERE r.request_id IS NULL)                 AS sem_request_id,
-       round(100.0 * count(*) FILTER (WHERE r.request_id IS NULL)
-             / greatest(count(*), 1), 1)                            AS pct_sem_request_id,
+SELECT count(*)                                                     AS sem_desfecho,
+       count(*) FILTER (WHERE r.error_name = 'pending')              AS marcador_pending,
+       count(*) FILTER (WHERE r.error_name IS DISTINCT FROM 'pending') AS reenfileirados,
        min(r.created_at)                                            AS mais_antigo,
        max(r.created_at)                                            AS mais_recente,
-       round(extract(epoch FROM (now() - min(r.created_at))) / 60)  AS idade_min_mais_antigo
+       round(extract(epoch FROM (now() - max(r.created_at))) / 60)  AS idade_min_mais_recente
 FROM r
-WHERE r.request_id IS NULL          -- sem request_id não há como correlacionar: fica aberto
-   OR NOT EXISTS (
+WHERE NOT EXISTS (
   SELECT 1
   FROM public.edge_retry_events e
-  WHERE e.function_name = 'supply-dispatch'
-    AND e.request_id = r.request_id
+  WHERE e.function_name = r.function_name
+    AND e.operation = r.operation
     AND e.outcome IN ('success_after_retry', 'exhausted', 'non_retryable')
-    AND e.created_at >= r.created_at
+    AND e.created_at > r.created_at
+    AND e.created_at <= r.created_at + interval '20 minutes'
 );
+
+\echo '## 10b. desfechos na mesma janela de 20 min, por tipo de evento'
+SELECT outcome, error_name, count(*) AS eventos, max(created_at) AS ultimo
+FROM public.edge_retry_events
+WHERE function_name = 'supply-dispatch'
+  AND created_at > now() - interval '7 days'
+GROUP BY outcome, error_name
+ORDER BY eventos DESC;
 
 \echo '## 11. timeout interno vigente por funcao (prova da 20261127000000)'
 SELECT fn AS funcao,
