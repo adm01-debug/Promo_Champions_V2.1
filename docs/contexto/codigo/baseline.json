@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d7d7f739bc65a3ceee5d77676709a8365fe059e0",
+  "commit": "4f3aabbdf16bf3cc048ed253d23f1481730d9657",
   "branch": "main",
-  "data_commit": "2026-11-24T12:08:20-03:00",
+  "data_commit": "2026-11-24T12:15:23-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4f3aabb",
+    "data": "2026-11-24",
+    "assunto": "chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)"
+   },
    {
     "sha": "d7d7f73",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "1cf9183",
     "data": "2026-11-24",
     "assunto": "docs: varredura completa por erro de leitura engolido (QA-127) (#721)"
-   },
-   {
-    "sha": "ceeefa8",
-    "data": "2026-11-24",
-    "assunto": "fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)"
    }
   ],
   "arquivos_mudados_7d": 387,
@@ -193,17 +193,17 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 33
+    "mudancas": 32
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 33
+    "mudancas": 32
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 32
+    "mudancas": 31
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 261
+    "commits": 262
    },
    {
     "autor": "github-actions[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 19
+    "commits": 18
    }
   ]
  },
