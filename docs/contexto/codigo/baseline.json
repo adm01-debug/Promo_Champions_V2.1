@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "41972be665cb1c6f375414a9df41385757fbb32e",
+  "commit": "659830120d94b8e1e383173dc4b561dd14a5375b",
   "branch": "main",
-  "data_commit": "2026-11-23T23:09:44-03:00",
+  "data_commit": "2026-11-23T23:17:53-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "6598301",
+    "data": "2026-11-23",
+    "assunto": "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)"
+   },
    {
     "sha": "41972be",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "aef48e8",
     "data": "2026-11-23",
     "assunto": "fix: receive-design-sync sem verify_jwt (webhook HMAC)"
-   },
-   {
-    "sha": "4e1ca24",
-    "data": "2026-11-23",
-    "assunto": "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)"
    }
   ],
-  "arquivos_mudados_7d": 272,
+  "arquivos_mudados_7d": 271,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "arquivo": "deno.lock",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3648,
   "arquivos_codigo": 2592,
-  "linhas_codigo": 445631,
+  "linhas_codigo": 445677,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -648,7 +648,7 @@
   },
   "supabase/functions": {
    "arquivos": 330,
-   "linhas": 67880
+   "linhas": 67926
   },
   "tailwind.config.ts": {
    "arquivos": 1,

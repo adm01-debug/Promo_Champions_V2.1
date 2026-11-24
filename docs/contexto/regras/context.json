@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "41972be665cb1c6f375414a9df41385757fbb32e",
+  "sha": "659830120d94b8e1e383173dc4b561dd14a5375b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 02:15 UTC",
+  "generated_at": "2026-11-24 02:18 UTC",
   "files_total": 3663,
   "code_files": 3314,
-  "code_lines": 480742
+  "code_lines": 480788
  },
  "version": "1.3.2",
- "facts_hash": "03fd78fdc657fb32",
+ "facts_hash": "4156d235a14ba6a6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -99927,10 +99927,7 @@
      "revenue_forecast_view"
     ],
     "env": [
-     "OPENROUTER_API_KEY",
-     "SUPABASE_ANON_KEY",
-     "SUPABASE_SERVICE_ROLE_KEY",
-     "SUPABASE_URL"
+     "OPENROUTER_API_KEY"
     ],
     "external": [],
     "invokes": [],
@@ -108242,7 +108239,7 @@
   {
    "module": "supabase/functions",
    "files": 330,
-   "lines": 67880,
+   "lines": 67926,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -115641,7 +115638,6 @@
     "supabase/functions/purchase-intelligence-forecast/index.ts",
     "supabase/functions/qbr-generator/index.ts",
     "supabase/functions/report-builder-execute/index.ts",
-    "supabase/functions/revenue-forecast-ai/index.ts",
     "supabase/functions/revenue-intelligence/index.ts",
     "supabase/functions/semantic-coverage/index.ts",
     "supabase/functions/semantic-reindex-batch/index.ts",
@@ -115736,7 +115732,6 @@
     "supabase/functions/receive-quote-sync/index.ts",
     "supabase/functions/receive-quote-webhook/index.ts",
     "supabase/functions/report-embed-public/index.ts",
-    "supabase/functions/revenue-forecast-ai/index.ts",
     "supabase/functions/revops-hub/index.ts",
     "supabase/functions/sales-assistant-chat/index.ts",
     "supabase/functions/schedule-optimal-send/index.ts",
@@ -115849,7 +115844,6 @@
     "supabase/functions/receive-quote-webhook/index.ts",
     "supabase/functions/report-builder-execute/index.ts",
     "supabase/functions/report-embed-public/index.ts",
-    "supabase/functions/revenue-forecast-ai/index.ts",
     "supabase/functions/revenue-intelligence/index.ts",
     "supabase/functions/revops-hub/index.ts",
     "supabase/functions/sales-assistant-chat/index.ts",
@@ -124148,7 +124142,7 @@
    },
    {
     "file": "supabase/functions/behavioral-analysis/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    },
    {
     "file": "supabase/functions/bitrix24-oauth/index.ts",
@@ -124564,7 +124558,7 @@
    },
    {
     "file": "supabase/functions/predictive-intelligence/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    },
    {
     "file": "supabase/functions/predictive-scoring-explain/index.ts",
@@ -124636,7 +124630,7 @@
    },
    {
     "file": "supabase/functions/revenue-forecast-ai/index.ts",
-    "text": "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "text": "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    },
    {
     "file": "supabase/functions/run-retry-tests/index.ts",
@@ -198752,7 +198746,6 @@
    "supabase/functions/pipeline-pulse-aggregator/index.ts",
    "supabase/functions/predict-deal-velocity/index.ts",
    "supabase/functions/predict-quota-attainment/index.ts",
-   "supabase/functions/predictive-intelligence/index.ts",
    "supabase/functions/predictive-scoring-explain/index.ts",
    "supabase/functions/pricing-intelligence/index.ts",
    "supabase/functions/process-cadence-tasks/index.ts",
@@ -198764,7 +198757,6 @@
    "supabase/functions/receive-quote-sync/index.ts",
    "supabase/functions/receive-quote-webhook/index.ts",
    "supabase/functions/report-embed-public/index.ts",
-   "supabase/functions/revenue-forecast-ai/index.ts",
    "supabase/functions/revops-hub/index.ts",
    "supabase/functions/sales-assistant-chat/index.ts",
    "supabase/functions/salesperson-coaching/index.ts",
@@ -279490,7 +279482,7 @@
   },
   "supabase/functions/behavioral-analysis/index.ts": {
    "path": "supabase/functions/behavioral-analysis/index.ts",
-   "lines": 163,
+   "lines": 180,
    "tables": [
     {
      "table": "automation_runs",
@@ -279527,7 +279519,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    ],
    "uses_service_role": true
   },
@@ -286888,7 +286880,7 @@
   },
   "supabase/functions/predictive-intelligence/index.ts": {
    "path": "supabase/functions/predictive-intelligence/index.ts",
-   "lines": 337,
+   "lines": 352,
    "tables": [
     {
      "table": "sales",
@@ -286989,7 +286981,7 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    ],
    "percents": [
     "worst += amt * (prob * 0.6);"
@@ -286997,8 +286989,7 @@
    "pagination": [
     "1000",
     "500"
-   ],
-   "uses_service_role": true
+   ]
   },
   "supabase/functions/predictive-scoring-explain/index.ts": {
    "path": "supabase/functions/predictive-scoring-explain/index.ts",
@@ -288814,7 +288805,7 @@
   },
   "supabase/functions/revenue-forecast-ai/index.ts": {
    "path": "supabase/functions/revenue-forecast-ai/index.ts",
-   "lines": 263,
+   "lines": 277,
    "tables": [
     {
      "table": "revenue_forecast_view",
@@ -288840,10 +288831,7 @@
     ]
    },
    "env": [
-    "OPENROUTER_API_KEY",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
+    "OPENROUTER_API_KEY"
    ],
    "status_values": [
     {
@@ -288898,12 +288886,11 @@
     }
    ],
    "rule_comments": [
-    "Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)"
+    "Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o"
    ],
    "pagination": [
     "500"
-   ],
-   "uses_service_role": true
+   ]
   },
   "supabase/functions/revenue-intelligence/index.ts": {
    "path": "supabase/functions/revenue-intelligence/index.ts",
@@ -299125,10 +299112,22 @@
   }
  },
  "git": {
-  "sha": "41972be665cb1c6f375414a9df41385757fbb32e",
+  "sha": "659830120d94b8e1e383173dc4b561dd14a5375b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "6598301",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "supabase/functions/behavioral-analysis/index.ts",
+     "supabase/functions/predictive-intelligence/index.ts",
+     "supabase/functions/revenue-forecast-ai/index.ts"
+    ]
+   },
    {
     "sha": "41972be",
     "date": "2026-11-23",
@@ -299463,22 +299462,12 @@
      "src/routes/routeAccess.test.ts",
      "src/routes/routeAccess.ts"
     ]
-   },
-   {
-    "sha": "7370b42",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: testes do dispatcher Win/Loss acompanham a assinatura HMAC (QA-092) (#677)",
-    "files": [
-     "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
-     "supabase/functions/winloss-webhook-dispatcher/retry_test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    15
+    16
    ],
    [
     "deno.lock",
@@ -299507,6 +299496,18 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "supabase/functions/behavioral-analysis/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/predictive-intelligence/index.ts",
+    1
+   ],
+   [
+    "supabase/functions/revenue-forecast-ai/index.ts",
+    1
    ],
    [
     "supabase/functions/bitrix24-oauth/index.ts",
@@ -299542,18 +299543,6 @@
    ],
    [
     "supabase/functions/race-commentary/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/summarize-call-recording/index.ts",
-    1
-   ],
-   [
-    "src/components/vendedor/EligibleBonusesCard.test.tsx",
-    1
-   ],
-   [
-    "src/components/vendedor/EligibleBonusesCard.tsx",
     1
    ]
   ]

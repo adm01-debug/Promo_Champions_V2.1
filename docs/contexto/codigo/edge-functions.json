@@ -940,7 +940,7 @@
    "nome": "behavioral-analysis",
    "entrada": "supabase/functions/behavioral-analysis/index.ts",
    "arquivos": 1,
-   "linhas": 163,
+   "linhas": 180,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -4072,7 +4072,7 @@
    "nome": "predictive-intelligence",
    "entrada": "supabase/functions/predictive-intelligence/index.ts",
    "arquivos": 1,
-   "linhas": 337,
+   "linhas": 352,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -4832,7 +4832,7 @@
    "nome": "revenue-forecast-ai",
    "entrada": "supabase/functions/revenue-forecast-ai/index.ts",
    "arquivos": 1,
-   "linhas": 263,
+   "linhas": 277,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -4843,10 +4843,7 @@
    ],
    "rpcs": [],
    "env": [
-    "OPENROUTER_API_KEY",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_URL"
+    "OPENROUTER_API_KEY"
    ],
    "buckets": [],
    "chama_edges": [],

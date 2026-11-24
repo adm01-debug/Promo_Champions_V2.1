@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `41972be665` · branch `main` · 2026-11-24 02:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `659830120d` · branch `main` · 2026-11-24 02:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4986,7 +4986,7 @@ _nenhum item encontrado_
 | Phase 1: run all rule-match RPCs in parallel (was sequential per saleId) | `supabase/functions/auto-enroll-cadence/index.ts` |
 | 86400000).toISOString()).limit(50), | `supabase/functions/automation-suggestions/index.ts` |
 | 86400000).toISOString()).limit(10000), | `supabase/functions/automation-suggestions/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/behavioral-analysis/index.ts` |
+| Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o | `supabase/functions/behavioral-analysis/index.ts` |
 | Refresh token — apenas chamadas internas (service_role) ou admin/manager. | `supabase/functions/bitrix24-oauth/index.ts` |
 | Margem de segurança: o access token do Bitrix24 expira em ~1h; renovamos | `supabase/functions/bitrix24-sync/index.ts` |
 | Os métodos *.list do Bitrix24 retornam no máximo 50 itens por chamada e | `supabase/functions/bitrix24-sync/index.ts` |

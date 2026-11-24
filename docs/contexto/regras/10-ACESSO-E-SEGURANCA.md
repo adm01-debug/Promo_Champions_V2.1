@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `41972be665` · branch `main` · 2026-11-24 02:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `659830120d` · branch `main` · 2026-11-24 02:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 331 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 329 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -425,7 +425,6 @@
 - `supabase/functions/pipeline-pulse-aggregator/index.ts`
 - `supabase/functions/predict-deal-velocity/index.ts`
 - `supabase/functions/predict-quota-attainment/index.ts`
-- `supabase/functions/predictive-intelligence/index.ts`
 - `supabase/functions/predictive-scoring-explain/index.ts`
 - `supabase/functions/pricing-intelligence/index.ts`
 - `supabase/functions/process-cadence-tasks/index.ts`
@@ -437,7 +436,6 @@
 - `supabase/functions/receive-quote-sync/index.ts`
 - `supabase/functions/receive-quote-webhook/index.ts`
 - `supabase/functions/report-embed-public/index.ts`
-- `supabase/functions/revenue-forecast-ai/index.ts`
 - `supabase/functions/revops-hub/index.ts`
 - `supabase/functions/sales-assistant-chat/index.ts`
 - `supabase/functions/salesperson-coaching/index.ts`
@@ -472,7 +470,9 @@
 - `supabase/functions/visual-search/index.ts`
 - `supabase/functions/wal-health-alert/index.ts`
 - `supabase/functions/webauthn/index.ts`
-- … +181 (lista completa em `context.json`)
+- `supabase/functions/webvitals-regression-alert/index.ts`
+- `supabase/functions/whatsapp-inbound-webhook/index.ts`
+- … +179 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
