@@ -118,8 +118,9 @@ describe('AdminComercial — histórico de auditoria (etapa 102)', () => {
     ];
     expect(filename).toContain('auditoria_comercial_');
     expect(rows).toHaveLength(1);
-    expect(rows[0].Evento).toBe('create_approval_commission');
-    expect(rows[0].Entidade).toBe('commission');
+    const first = rows[0];
+    expect(first?.Evento).toBe('create_approval_commission');
+    expect(first?.Entidade).toBe('commission');
   });
 
   it('avisa quando o filtro não encontra nenhum registro', async () => {
