@@ -3,7 +3,6 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
-  getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
@@ -62,21 +61,37 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o
+    // `x-forwarded-for` é falsificável e compartilhado por NAT.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('predictive-intelligence authorization failed:', error);
+      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const rl = enforceRateLimit(req, {
       name: 'predictive-intelligence',
       limit: 20,
       windowSeconds: 60,
+      key: caller.userId,
     });
     if (rl) return rl;
 
     try {
-      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-      await getUserClient(req);
-
-      const supabase = getServiceClient(
-        'lê visão agregada cross-user do pipeline para o painel preditivo'
-      );
+      // Leituras com o client do chamador: a RLS de `sales`, `clients` e
+      // `lead_scores` escopa o agregado (admin e gestor veem tudo).
+      const supabase = caller.client;
 
       const body = await req.json().catch(() => ({}));
       const horizonDays = Number(body.horizon_days ?? 90);

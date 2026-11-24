@@ -1,4 +1,3 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
@@ -41,23 +40,38 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o
+    // `x-forwarded-for` é falsificável e compartilhado por NAT.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('revenue-forecast-ai authorization failed:', error);
+      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const rl = enforceRateLimit(req, {
       name: 'revenue-forecast-ai',
       limit: 20,
       windowSeconds: 60,
+      key: caller.userId,
     });
     if (rl) return rl;
 
     try {
-      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-      await getUserClient(req);
-
-      const serviceKey =
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY')!;
-      const supabase = createClient(Deno.env.get('SUPABASE_URL')!, serviceKey, {
-        auth: { persistSession: false },
-      });
+      // Lê a visão com o client do chamador: `revenue_forecast_view` é
+      // `security_invoker`, então a RLS de `sales` decide o escopo (admin e
+      // gestor veem tudo, o vendedor vê o próprio pipeline).
+      const supabase = caller.client;
 
       const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
 

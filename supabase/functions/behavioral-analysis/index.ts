@@ -46,17 +46,34 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Autenticação antes do limite: o bucket é chaveado pelo usuário, porque o
+    // `x-forwarded-for` é falsificável e compartilhado por NAT.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('behavioral-analysis authorization failed:', error);
+      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const rl = enforceRateLimit(req, {
       name: 'behavioral-analysis',
       limit: 20,
       windowSeconds: 60,
+      key: caller.userId,
     });
     if (rl) return rl;
 
     try {
-      await getUserClient(req);
-
       const { interactionId, text, contactName, channel, dealId } =
         (await req.json()) as AnalysisRequest;
 
