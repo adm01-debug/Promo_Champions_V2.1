@@ -9,13 +9,9 @@ import type { TableInsert, TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export type { Client } from '@/types';
 
-interface UseClientsOptions {
-  segment?: string;
-}
-
-export const useClients = (filters?: UseClientsOptions) => {
+export const useClients = () => {
   return useQuery<Client[]>({
-    queryKey: ['clients', filters],
+    queryKey: ['clients'],
     queryFn: () => clientService.getClients(),
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,

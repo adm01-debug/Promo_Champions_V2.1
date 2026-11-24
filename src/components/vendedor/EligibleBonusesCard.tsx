@@ -1,9 +1,14 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Sparkles, Award, Target } from 'lucide-react';
-import { useEligibleBonuses, type EligibleBonus } from '@/hooks/useEligibleBonuses';
+import { Trophy, Sparkles, Award, Target, AlertTriangle } from 'lucide-react';
+import {
+  useEligibleBonuses,
+  type EligibleBonus,
+  type EligibleBonusesResult,
+} from '@/hooks/useEligibleBonuses';
 import { useAutoAwardBonuses } from '@/hooks/useAutoAwardBonuses';
 import type { BonusType } from '@/hooks/useCommissionBonuses';
 import { cn } from '@/lib/utils';
@@ -88,8 +93,11 @@ function BonusRow({ b }: { b: EligibleBonus }) {
   );
 }
 
+const SEM_PREMIACOES: EligibleBonusesResult = [];
+
 export function EligibleBonusesCard({ salespersonId }: Props) {
-  const { data: bonuses = [], isLoading } = useEligibleBonuses(salespersonId);
+  const { data, isLoading, isError, refetch } = useEligibleBonuses(salespersonId);
+  const bonuses: EligibleBonusesResult = data ?? SEM_PREMIACOES;
 
   const { achieved, inProgress } = useMemo(() => {
     const a: EligibleBonus[] = [];
@@ -100,6 +108,36 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
   }, [bonuses]);
 
   useAutoAwardBonuses(achieved, salespersonId);
+
+  if (isError) {
+    return (
+      <Card className="p-4 border-destructive/30 bg-destructive/5">
+        <div className="flex items-start gap-3">
+          <AlertTriangle
+            className="h-5 w-5 text-destructive shrink-0 mt-0.5"
+            aria-hidden="true"
+          />
+          <div className="flex-1">
+            <p className="text-sm font-semibold">
+              Não foi possível carregar as premiações
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Sem a receita do mês não é possível dizer o que foi atingido — nada aqui foi
+              descartado por falta de dado.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-2"
+              onClick={() => void refetch()}
+            >
+              Tentar de novo
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -131,6 +169,15 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
             </div>
           </div>
           <div className="flex gap-2">
+            {bonuses.partial && (
+              <Badge
+                variant="outline"
+                className="bg-amber-500/10 text-amber-600 border-amber-500/30"
+                title="Sequência ou total de vendas não pôde ser lido: o progresso pode estar incompleto"
+              >
+                dado parcial
+              </Badge>
+            )}
             {achieved.length > 0 && (
               <Badge
                 variant="outline"

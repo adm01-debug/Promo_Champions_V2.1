@@ -10,6 +10,13 @@ export interface EligibleBonus extends CommissionBonus {
   remainingLabel?: string;
 }
 
+/**
+ * `partial` indica que a leitura de sequência ou da contagem total de vendas
+ * falhou e as premiações foram avaliadas com esses valores zerados (QA-061).
+ * A receita do mês, que sustenta marcos, continua sendo erro fatal.
+ */
+export type EligibleBonusesResult = EligibleBonus[] & { partial?: boolean };
+
 interface EvaluationContext {
   salespersonId: string;
   mtdRevenue: number;
@@ -111,7 +118,7 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
     queryKey: ['eligible-bonuses', salespersonId],
     enabled: !!salespersonId,
     staleTime: 60_000,
-    queryFn: async (): Promise<EligibleBonus[]> => {
+    queryFn: async (): Promise<EligibleBonusesResult> => {
       if (!salespersonId) return [];
 
       const monthStart = new Date();
@@ -143,6 +150,7 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
 
       if (bonusesRes.error) throw bonusesRes.error;
       if (salesRes.error) throw salesRes.error;
+      const partial = Boolean(streakRes.error || allSalesRes.error);
 
       // eslint-disable-next-line no-restricted-syntax
       const bonuses = (bonusesRes.data ?? []) as unknown as CommissionBonus[];
@@ -161,9 +169,11 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
         monthlyRank: null, // pode ser injetado depois via prop
       };
 
-      return bonuses
+      const result: EligibleBonusesResult = bonuses
         .map(b => evaluateBonus(b, ctx))
         .filter((b): b is EligibleBonus => b !== null);
+      if (partial) result.partial = true;
+      return result;
     },
   });
 }
