@@ -92,6 +92,71 @@ const ALLOWED_TABLES = new Set([
   'notifications',
 ]);
 
+// QA-219 — allowlist de colunas por tabela, espelhando o schema versionado em
+// src/integrations/supabase/types.ts. A allowlist de tabelas não bastava: o
+// `select` aceitava a sintaxe de recurso embutido do PostgREST
+// (`*, outra_tabela(*)`), alcançando tabelas relacionadas fora da lista.
+const SAFE_COLUMN = /^[a-z_][a-z0-9_]*$/;
+const ALLOWED_COLUMNS: Record<string, readonly string[]> = {
+  activities: [
+    'activity_type', 'client_id', 'contact_name', 'created_at', 'delete_reason',
+    'deleted_at', 'deleted_by', 'duration_minutes', 'id', 'lead_status', 'mql_qualified_at',
+    'notes', 'outcome', 'qualification_score', 'sale_id', 'salesperson_id'
+  ],
+  clients: [
+    'activated_at', 'company', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by',
+    'email', 'email_verified', 'id', 'is_activated', 'last_enrichment_id',
+    'last_interaction_at', 'lat', 'lead_source', 'lng', 'name', 'phone', 'phone_verified',
+    'ramo_atividade', 'total_value', 'updated_at', 'user_id'
+  ],
+  icp_data: [
+    'bitrix_id', 'capital_social', 'client_id', 'created_at', 'grupo_nicho', 'icp_score',
+    'id', 'is_icp_match', 'num_colaboradores', 'ramo_atividade', 'updated_at'
+  ],
+  notifications: [
+    'action_label', 'action_url', 'archived_at', 'category', 'created_at', 'expires_at',
+    'icon', 'id', 'message', 'metadata', 'priority', 'read_at', 'title', 'type', 'user_id'
+  ],
+  products: [
+    'category', 'cost_synced_at', 'created_at', 'default_cost', 'delete_reason',
+    'deleted_at', 'deleted_by', 'description', 'id', 'min_stock_level', 'name', 'price',
+    'rating', 'sales_count', 'sku', 'status', 'stock_quantity', 'updated_at'
+  ],
+  quotes: [
+    'approved_at', 'billing_status', 'client_email', 'client_id', 'client_name',
+    'client_phone', 'contract_end_date', 'contract_start_date', 'created_at', 'created_by',
+    'currency', 'delete_reason', 'deleted_at', 'deleted_by', 'description',
+    'discount_amount', 'discount_percent', 'exchange_rate', 'external_quote_id',
+    'external_reference', 'external_seller_id', 'id', 'items', 'last_synced_at', 'notes',
+    'pdf_url', 'quote_number', 'rejected_at', 'rejection_reason', 'sale_id', 'seller_name',
+    'sent_at', 'source', 'status', 'subscription_type', 'subtotal', 'sync_status',
+    'synced_from_external', 'title', 'total_value', 'updated_at', 'valid_until', 'version'
+  ],
+  sales: [
+    'account_id', 'ai_prediction_reasoning', 'ai_prediction_score', 'amount',
+    'broadcast_sent_at', 'category', 'client_id', 'client_name', 'closed_at', 'closer_id',
+    'competitor_name', 'competitor_price_at_deal', 'cost_source', 'cost_synced_at',
+    'created_at', 'deal_status', 'delete_reason', 'deleted_at', 'deleted_by',
+    'enrichment_data', 'enrichment_status', 'external_deal_id', 'forecast_category', 'id',
+    'is_first_sale', 'loss_reason', 'lost_to_competitor_id', 'margin_amount', 'markup_pct',
+    'notes', 'pipeline_id', 'product_id', 'product_name', 'salesperson_id',
+    'script_variant', 'sdr_id', 'segment', 'sku', 'source', 'stage', 'status',
+    'stock_reduced', 'territory_id', 'total_cost', 'unit_cost', 'updated_at', 'version',
+    'whatsapp_last_interaction', 'whatsapp_status'
+  ],
+  salespeople: [
+    'auth_user_id', 'avatar_url', 'commission_rate', 'created_at', 'email', 'id',
+    'is_active', 'name', 'notify_sales_email', 'notify_sales_in_app', 'role', 'score_total',
+    'squad_id', 'updated_at'
+  ],
+  tasks: [
+    'client_id', 'completed_at', 'created_at', 'delete_reason', 'deleted_at', 'deleted_by',
+    'description', 'due_date', 'due_time', 'id', 'priority', 'sale_id', 'salesperson_id',
+    'source_insight_id', 'status', 'task_type', 'title', 'updated_at'
+  ],
+};
+
+
 // Allowlist de RPCs executáveis via `operation: 'rpc'`. Vazia por padrão:
 // nenhum consumidor conhecido chama rpc hoje e rpc livre num banco externo
 // equivale a SQL arbitrário. Habilite nomes pontuais via secret
@@ -104,6 +169,27 @@ const ALLOWED_RPCS = new Set(
     .filter(Boolean),
 );
 const RPC_NAME_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+/**
+ * Resolve as colunas pedidas contra a allowlist da tabela. Recusa `*`, alias
+ * (`apelido:coluna`), recursos embutidos (`tabela(*)`) e qualquer coluna fora da
+ * lista — a sintaxe do PostgREST é ampla demais para confiar no corpo.
+ */
+function resolveSelectColumns(
+  table: string,
+  raw: unknown,
+): { columns: string } | { error: string } {
+  if (raw === undefined || raw === null || raw === '') return { columns: '*' };
+  if (typeof raw !== 'string') return { error: 'columns deve ser uma string' };
+  const requested = raw.split(',').map((c) => c.trim()).filter(Boolean);
+  if (requested.length === 0) return { columns: '*' };
+  const allowed = ALLOWED_COLUMNS[table];
+  const invalid = requested.filter(
+    (c) => !SAFE_COLUMN.test(c) || (allowed ? !allowed.includes(c) : false),
+  );
+  if (invalid.length > 0) return { error: `colunas não permitidas: ${invalid.join(', ')}` };
+  return { columns: requested.join(',') };
+}
 
 Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -205,7 +291,14 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
 
     const externalClient = createClient(externalUrl, externalKey);
 
-    const selectColumns = columns || '*';
+    const resolvedColumns = resolveSelectColumns(table, columns);
+    if ('error' in resolvedColumns) {
+      return new Response(JSON.stringify({ error: resolvedColumns.error }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const selectColumns = resolvedColumns.columns;
     const queryLimit = limit || 100;
     const queryOffset = offset || 0;
     const queryCountMode = countMode || 'none';
