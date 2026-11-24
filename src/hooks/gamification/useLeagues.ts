@@ -152,8 +152,11 @@ interface LeagueEnrollment {
 }
 
 export function useLeagueEnrollment() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['league-enrollment'],
+    // A inscrição é do vendedor ligado ao usuário logado: o id entra na chave
+    // para o cache de uma conta nunca servir outra na mesma aba.
+    queryKey: ['league-enrollment', user?.id ?? null],
     queryFn: async (): Promise<LeagueEnrollment> => {
       const {
         data: { user },
