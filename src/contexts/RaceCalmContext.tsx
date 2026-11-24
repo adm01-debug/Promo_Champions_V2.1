@@ -21,6 +21,8 @@ export function RaceCalmProvider({ children }: { children: ReactNode }) {
 export function useRaceCalm(): RaceCalmContextValue {
   const ctx = useContext(RaceCalmContext);
 
-  const fallback = useCalmMode();
+  // Com provider, o contexto é a única fonte: o hook de baixo fica ligado mas
+  // sem assinatura própria, em vez de manter uma instância por consumidor.
+  const fallback = useCalmMode(ctx === null);
   return ctx ?? fallback;
 }
