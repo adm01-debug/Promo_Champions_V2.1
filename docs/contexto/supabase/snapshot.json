@@ -18657,6 +18657,201 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "designs_inbound",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "design_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "name",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "product_name",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "product_sku",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "thumbnail_url",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "seller_email",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_event",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_correlation_key",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "'promo_design'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "source",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "source_updated_at",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "'{}'::jsonb",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "raw_payload",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "received_at",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 14,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 15,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "dialer_queue_items",
         "type": "uuid"
       },
@@ -65864,6 +66059,40 @@
       },
       {
         "columns": [
+          "design_id"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (design_id)",
+        "name": "designs_inbound_design_id_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "designs_inbound_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "designs_inbound",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "id"
         ],
         "deferrable": false,
@@ -93660,6 +93889,43 @@
         "volatility": "volatile"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261125150000_designs_inbound.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.designs_inbound.trg_designs_inbound_updated_at"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "abf890341e8c7f3d",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "set_designs_inbound_updated_at",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "p_method text",
         "callers": {
           "code": [
@@ -99166,6 +99432,24 @@
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "demand_forecasts"
+        },
+        {
+          "grantee": "anon",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
+          "schema": "public",
+          "table": "designs_inbound"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
+          "schema": "public",
+          "table": "designs_inbound"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "designs_inbound"
         },
         {
           "grantee": "anon",
@@ -110984,6 +111268,76 @@
         "predicate": null,
         "schema": "public",
         "table": "demand_forecasts"
+      },
+      {
+        "columns": [
+          "design_id"
+        ],
+        "definition": "CREATE UNIQUE INDEX designs_inbound_design_id_key ON public.designs_inbound USING btree (design_id)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "designs_inbound_design_id_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "designs_inbound"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX designs_inbound_pkey ON public.designs_inbound USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "designs_inbound_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "designs_inbound"
+      },
+      {
+        "columns": [
+          "product_sku"
+        ],
+        "definition": "CREATE INDEX idx_designs_inbound_product_sku ON public.designs_inbound USING btree (product_sku)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_designs_inbound_product_sku",
+        "predicate": null,
+        "schema": "public",
+        "table": "designs_inbound"
+      },
+      {
+        "columns": [
+          "received_at"
+        ],
+        "definition": "CREATE INDEX idx_designs_inbound_received_at ON public.designs_inbound USING btree (received_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_designs_inbound_received_at",
+        "predicate": null,
+        "schema": "public",
+        "table": "designs_inbound"
+      },
+      {
+        "columns": [
+          "seller_email"
+        ],
+        "definition": "CREATE INDEX idx_designs_inbound_seller_email ON public.designs_inbound USING btree (seller_email)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_designs_inbound_seller_email",
+        "predicate": null,
+        "schema": "public",
+        "table": "designs_inbound"
       },
       {
         "columns": [
@@ -126317,6 +126671,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.designs_inbound.Admins e managers podem ler designs_inbound",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.dialer_queue_items.Manage items via queue ownership",
         "severity": "BAIXA"
       },
@@ -133702,6 +134062,11 @@
         "name": "espalha_schedules_cron_evita_startup_timeout",
         "statements": null,
         "version": "20261125110000"
+      },
+      {
+        "name": "20261125150000_designs_inbound",
+        "statements": null,
+        "version": "20261125150000"
       }
     ],
     "policies": [
@@ -134471,18 +134836,6 @@
         ],
         "schema": "public",
         "table": "auto_task_queue_settings",
-        "using": "true",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
-        "name": "Authenticated users can view runs",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "automation_runs",
         "using": "true",
         "with_check": null
       },
@@ -136215,18 +136568,6 @@
         "with_check": null
       },
       {
-        "cmd": "SELECT",
-        "name": "Ver solicitações",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "commercial_approval_requests",
-        "using": "true",
-        "with_check": null
-      },
-      {
         "cmd": "DELETE",
         "name": "Admins delete awards",
         "permissive": "PERMISSIVE",
@@ -136381,18 +136722,6 @@
         "table": "committee_extraction_runs",
         "using": "(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))",
         "with_check": "(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))"
-      },
-      {
-        "cmd": "SELECT",
-        "name": "auth read extraction runs",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "committee_extraction_runs",
-        "using": "true",
-        "with_check": null
       },
       {
         "cmd": "INSERT",
@@ -137485,6 +137814,18 @@
         "schema": "public",
         "table": "demand_forecasts",
         "using": "is_authenticated()",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "Admins e managers podem ler designs_inbound",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "designs_inbound",
+        "using": "(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (seller_email = (auth.jwt() ->> 'email'::text)))",
         "with_check": null
       },
       {
@@ -148850,6 +149191,21 @@
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
+        "name": "designs_inbound",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": null,
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
         "name": "dialer_queue_items",
         "owner": "postgres",
         "parent": null,
@@ -154453,6 +154809,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "demand_forecasts",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_designs_inbound_updated_at BEFORE UPDATE ON designs_inbound FOR EACH ROW EXECUTE FUNCTION set_designs_inbound_updated_at()",
+        "events": "UPDATE",
+        "function": "public.set_designs_inbound_updated_at",
+        "level": "ROW",
+        "name": "trg_designs_inbound_updated_at",
+        "schema": "public",
+        "status": "enabled",
+        "table": "designs_inbound",
         "timing": "BEFORE"
       },
       {

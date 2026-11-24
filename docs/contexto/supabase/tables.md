@@ -31,7 +31,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.audit_log](tables/public/audit_log.md) | table | sim | 2 | 8 | não | superseded por public.audit_logs (20261001193100_audit_log_canonical). Mantida só para leitura histórica. |
 | [public.audit_logs](tables/public/audit_logs.md) | table | sim | 2 | 16 | não |  |
 | [public.auto_task_queue_settings](tables/public/auto_task_queue_settings.md) | table | sim | 2 | 11 | não |  |
-| [public.automation_runs](tables/public/automation_runs.md) | table | sim | 2 | 9 | não |  |
+| [public.automation_runs](tables/public/automation_runs.md) | table | sim | 1 | 9 | não |  |
 | [public.automation_workflows](tables/public/automation_workflows.md) | table | sim | 2 | 13 | não |  |
 | [public.available_spins](tables/public/available_spins.md) | table | sim | 3 | 4 | não |  |
 | [public.battle_participants](tables/public/battle_participants.md) | table | sim | 4 | 6 | sim |  |
@@ -87,13 +87,13 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.cohort_analyses](tables/public/cohort_analyses.md) | table | sim | 1 | 10 | não |  |
 | [public.collectible_badges](tables/public/collectible_badges.md) | table | sim | 1 | 10 | não |  |
 | [public.combo_tracking](tables/public/combo_tracking.md) | table | sim | 4 | 9 | não |  |
-| [public.commercial_approval_requests](tables/public/commercial_approval_requests.md) | table | sim | 5 | 14 | não |  |
+| [public.commercial_approval_requests](tables/public/commercial_approval_requests.md) | table | sim | 4 | 14 | não |  |
 | [public.commission_bonus_awards](tables/public/commission_bonus_awards.md) | table | sim | 4 | 12 | sim |  |
 | [public.commission_bonuses](tables/public/commission_bonuses.md) | table | sim | 2 | 12 | não |  |
 | [public.commission_rules](tables/public/commission_rules.md) | table | sim | 2 | 13 | não |  |
 | [public.commissions](tables/public/commissions.md) | table | sim | 2 | 17 | não |  |
 | [public.committee_coverage_history](tables/public/committee_coverage_history.md) | table | sim | 2 | 7 | sim |  |
-| [public.committee_extraction_runs](tables/public/committee_extraction_runs.md) | table | sim | 2 | 9 | sim |  |
+| [public.committee_extraction_runs](tables/public/committee_extraction_runs.md) | table | sim | 1 | 9 | sim |  |
 | [public.competitive_chat_messages](tables/public/competitive_chat_messages.md) | table | sim | 3 | 9 | sim |  |
 | [public.competitive_seasons](tables/public/competitive_seasons.md) | table | sim | 2 | 9 | não |  |
 | [public.competitor_mentions](tables/public/competitor_mentions.md) | table | sim | 3 | 8 | não |  |
@@ -134,6 +134,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.deal_velocity_alerts](tables/public/deal_velocity_alerts.md) | table | sim | 2 | 9 | sim |  |
 | [public.deal_velocity_predictions](tables/public/deal_velocity_predictions.md) | table | sim | 2 | 17 | sim |  |
 | [public.demand_forecasts](tables/public/demand_forecasts.md) | table | sim | 4 | 10 | não |  |
+| [public.designs_inbound](tables/public/designs_inbound.md) | table | sim | 1 | 15 | não |  |
 | [public.dialer_queue_items](tables/public/dialer_queue_items.md) | table | sim | 2 | 9 | não |  |
 | [public.dialer_queues](tables/public/dialer_queues.md) | table | sim | 2 | 9 | não |  |
 | [public.digital_signatures](tables/public/digital_signatures.md) | table | sim | 4 | 10 | não |  |

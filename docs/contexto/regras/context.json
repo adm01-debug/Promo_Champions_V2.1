@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "99efd08c9b8bdeab44d6c5caaa5103c351da11d6",
+  "sha": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 00:15 UTC",
+  "generated_at": "2026-11-24 00:32 UTC",
   "files_total": 3662,
   "code_files": 3313,
   "code_lines": 480384
@@ -299071,10 +299071,28 @@
   }
  },
  "git": {
-  "sha": "99efd08c9b8bdeab44d6c5caaa5103c351da11d6",
+  "sha": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "0ab02a5",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: marca a etapa 190 no progresso (PR #688) (#689)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md"
+    ]
+   },
+   {
+    "sha": "dd3a3f9",
+    "date": "2026-11-23",
+    "author": "adm01-debug",
+    "subject": "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)",
+    "files": [
+     "AGENTS.md"
+    ]
+   },
    {
     "sha": "99efd08",
     "date": "2026-11-23",
@@ -299386,36 +299404,12 @@
      "src/hooks/crm/useClients.ts",
      "src/hooks/useProducts.ts"
     ]
-   },
-   {
-    "sha": "b0ac351",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: tratar todos os erros de Promise.all em 4 hooks (QA-061+062) (#653)",
-    "files": [
-     "src/hooks/dashboard/useGoalsDashboard.ts",
-     "src/hooks/gamification/useGamifiedProfile.ts",
-     "src/hooks/reports/useSalesReport.test.tsx",
-     "src/hooks/reports/useSalesReport.ts",
-     "src/hooks/useEligibleBonuses.ts"
-    ]
-   },
-   {
-    "sha": "84b35ed",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: impedir que seção inválida do dashboard trave a página inicial (QA-128) (#664)",
-    "files": [
-     "src/hooks/dashboard/useDashboardRedirect.ts",
-     "src/lib/dashboardSections.ts",
-     "src/pages/Index.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    9
+    10
    ],
    [
     "deno.lock",
@@ -299444,6 +299438,10 @@
    [
     "src/routes/routeAccess.ts",
     2
+   ],
+   [
+    "AGENTS.md",
+    1
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -299487,10 +299485,6 @@
    ],
    [
     "src/pages/AuditLogsPage.tsx",
-    1
-   ],
-   [
-    "src/pages/Comissoes.tsx",
     1
    ]
   ]

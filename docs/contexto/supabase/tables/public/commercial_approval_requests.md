@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 5 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -92,16 +92,6 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |
-| WITH CHECK |  |
-
-### `Ver solicitações`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `true` |
 | WITH CHECK |  |
 
 

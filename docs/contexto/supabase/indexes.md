@@ -452,6 +452,11 @@ Uso e tamanho em `stats.md`.
 | public.demand_forecasts | demand_forecasts_pkey | btree | id | sim | sim |  |
 | public.demand_forecasts | idx_demand_forecasts_date | btree | forecast_date | não | sim |  |
 | public.demand_forecasts | idx_demand_forecasts_product_id | btree | product_id | não | sim |  |
+| public.designs_inbound | designs_inbound_design_id_key | btree | design_id | sim | sim |  |
+| public.designs_inbound | designs_inbound_pkey | btree | id | sim | sim |  |
+| public.designs_inbound | idx_designs_inbound_product_sku | btree | product_sku | não | sim |  |
+| public.designs_inbound | idx_designs_inbound_received_at | btree | received_at | não | sim |  |
+| public.designs_inbound | idx_designs_inbound_seller_email | btree | seller_email | não | sim |  |
 | public.dialer_queue_items | dialer_queue_items_pkey | btree | id | sim | sim |  |
 | public.dialer_queue_items | dialer_queue_items_queue_id_sale_id_key | btree | queue_id, sale_id | sim | sim |  |
 | public.dialer_queue_items | idx_champ_dialer_queue_items_sale_id | btree | sale_id | não | sim |  |

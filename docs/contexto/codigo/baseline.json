@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "99efd08c9b8bdeab44d6c5caaa5103c351da11d6",
+  "commit": "0ab02a594fca76495f833bd38b446bf4e5e208f3",
   "branch": "main",
-  "data_commit": "2026-11-24T00:14:39Z",
+  "data_commit": "2026-11-24T00:23:06Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "0ab02a5",
+    "data": "2026-11-24",
+    "assunto": "chore: marca a etapa 190 no progresso (PR #688) (#689)"
+   },
+   {
+    "sha": "dd3a3f9",
+    "data": "2026-11-24",
+    "assunto": "chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)"
+   },
    {
     "sha": "99efd08",
     "data": "2026-11-24",
@@ -121,19 +131,9 @@
     "sha": "45b9b02",
     "data": "2026-11-23",
     "assunto": "fix: corrigir atualizacao otimista do pipeline (QA-057) (#650)"
-   },
-   {
-    "sha": "d12f175",
-    "data": "2026-11-23",
-    "assunto": "fix: parar de afirmar notificacao automatica que nao ocorre (QA-152) (#672)"
-   },
-   {
-    "sha": "6781397",
-    "data": "2026-11-23",
-    "assunto": "feat: confirmar o volume antes de gravar a importacao de clientes (QA-130) (#669)"
    }
   ],
-  "arquivos_mudados_7d": 279,
+  "arquivos_mudados_7d": 274,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -214,12 +214,12 @@
     "mudancas": 14
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "docs/qa/05-PROGRESSO.md",
     "mudancas": 12
    },
    {
-    "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 11
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 12
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -282,10 +282,6 @@
     "mudancas": 4
    },
    {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 4
-   },
-   {
     "arquivo": ".github/workflows/types-sync.yml",
     "mudancas": 4
    },
@@ -294,18 +290,22 @@
     "mudancas": 4
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": "docs/DEPLOYMENT.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/agentes/branches-encerradas-261117.md",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 246
+    "commits": 247
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 30
+    "commits": 29
    },
    {
     "autor": "github-actions[bot]",

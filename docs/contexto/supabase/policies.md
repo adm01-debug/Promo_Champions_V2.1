@@ -69,7 +69,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.audit_logs | Users can insert own audit entries | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = actor_id)` |
 | public.auto_task_queue_settings | auto_task_queue_settings_admin_write | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
 | public.auto_task_queue_settings | auto_task_queue_settings_read_auth | SELECT | PERMISSIVE | authenticated | `true` |  |
-| public.automation_runs | Authenticated users can view runs | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.automation_runs | automation_runs_select_admin_manager | SELECT | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.automation_workflows | Admins/managers manage workflows | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.automation_workflows | Authenticated users can view active workflows | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
@@ -214,7 +213,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.commercial_approval_requests | Only admins and managers can update approval requests | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` |  |
 | public.commercial_approval_requests | Users can create approval requests | INSERT | PERMISSIVE | authenticated |  | `(auth.uid() = requester_id)` |
 | public.commercial_approval_requests | Users can view their own approval requests | SELECT | PERMISSIVE | authenticated | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |  |
-| public.commercial_approval_requests | Ver solicitações | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.commission_bonus_awards | Admins delete awards | DELETE | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | public.commission_bonus_awards | Admins insert awards | INSERT | PERMISSIVE | authenticated |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.commission_bonus_awards | Admins update awards | UPDATE | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
@@ -228,7 +226,6 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.committee_coverage_history | admin manager write coverage history | ALL | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | public.committee_coverage_history | auth read coverage history | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.committee_extraction_runs | admin manager write extraction runs | ALL | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
-| public.committee_extraction_runs | auth read extraction runs | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.competitive_chat_messages | Competitive Chat - INSERT | INSERT | PERMISSIVE | public |  | `(((squad_id IS NULL) OR (squad_id IN ( SELECT salespeople.squad_id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid())))) AND (salesperson_id IN ( SELECT salespeople.id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid()))))` |
 | public.competitive_chat_messages | Competitive Chat - SELECT | SELECT | PERMISSIVE | public | `((squad_id IS NULL) OR (squad_id IN ( SELECT salespeople.squad_id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid()))))` |  |
 | public.competitive_chat_messages | Competitive Chat - UPDATE | UPDATE | PERMISSIVE | public | `((squad_id IS NULL) OR (squad_id IN ( SELECT salespeople.squad_id    FROM salespeople   WHERE (salespeople.auth_user_id = auth.uid()))))` |  |
@@ -320,6 +317,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.demand_forecasts | Admins and managers can insert demand forecasts | INSERT | PERMISSIVE | public |  | `is_admin_or_manager(auth.uid())` |
 | public.demand_forecasts | Admins and managers can update demand forecasts | UPDATE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.demand_forecasts | Authenticated users can view demand forecasts | SELECT | PERMISSIVE | public | `is_authenticated()` |  |
+| public.designs_inbound | Admins e managers podem ler designs_inbound | SELECT | PERMISSIVE | authenticated | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (seller_email = (auth.jwt() ->> 'email'::text)))` |  |
 | public.dialer_queue_items | Manage items via queue ownership | ALL | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM dialer_queues q   WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)))))` | `(EXISTS ( SELECT 1    FROM dialer_queues q   WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role)))))` |
 | public.dialer_queue_items | View items via queue ownership | SELECT | PERMISSIVE | public | `(EXISTS ( SELECT 1    FROM dialer_queues q   WHERE ((q.id = dialer_queue_items.queue_id) AND ((q.owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role)))))` |  |
 | public.dialer_queues | Owners manage own queues | ALL | PERMISSIVE | public | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` | `((owner_id = auth.uid()) OR has_role(auth.uid(), 'admin'::app_role))` |

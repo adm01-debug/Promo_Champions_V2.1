@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `99efd08c9b8bdeab44d6c5caaa5103c351da11d6` (2026-11-24T00:14:39Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0ab02a594fca76495f833bd38b446bf4e5e208f3` (2026-11-24T00:23:06Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -587,8 +587,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 22457 nós · 67774 arestas · 1606 comunidades · grafo do commit `99efd08c`
-- comunidades maiores: schema.sql (785), Card (556), cn (396), client.ts (322), Button (299), Índice (272), Badge (248), react-helmet-async (247), getCorsHeaders (232), SelectContent (217), ref_npm_supabase (193), date-fns (185)
+- 22457 nós · 67775 arestas · 1614 comunidades · grafo do commit `0ab02a59`
+- comunidades maiores: schema.sql (785), lucide-react (363), client.ts (332), Input (314), Índice (272), DialogContent (271), getCorsHeaders (259), Badge (238), CardHeader (235), CardTitle (233), Card (224), date-fns (214)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -597,8 +597,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (42)
 - deno.lock (20)
 - CHANGELOG.md (14)
+- docs/qa/05-PROGRESSO.md (12)
 - src/integrations/supabase/types.ts (12)
-- docs/qa/05-PROGRESSO.md (11)
 - .github/workflows/deploy.yml (9)
 - scripts/inventario/gerar-banco.mjs (9)
 - .github/workflows/pr-checks.yml (7)
@@ -706,7 +706,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Documentos (raiz e docs/)
 - `.github/ENVIRONMENTS.md` — GitHub Environments — Modelo de Segurança (73 linhas)
 - `.github/pull_request_template.md` (84 linhas)
-- `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (73 linhas)
+- `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (74 linhas)
 - `CHANGELOG.md` — Changelog (306 linhas)
 - `CLAUDE.md` (2 linhas)
 - `CODE_OF_CONDUCT.md` — Código de Conduta — Promo Champions (38 linhas)
@@ -767,6 +767,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `0ab02a5` chore: marca a etapa 190 no progresso (PR #688) (#689)
+- 2026-11-24 `dd3a3f9` chore: registra convencao de resposta de erro das edge functions (QA-190) (#688)
 - 2026-11-24 `99efd08` fix: sincroniza types.ts com a tabela designs_inbound do banco (drift) (#687)
 - 2026-11-24 `2809674` infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)
 - 2026-11-23 `e84935e` fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)
@@ -780,8 +782,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `4a38ccf` chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)
 - 2026-11-23 `c5edf84` chore(deps): bump react-router-dom from 7.18.5 to 7.18.6 in the react-core group (#626)
 - 2026-11-23 `6979cae` chore(deps): bump @hookform/resolvers from 7.0.6 to 7.0.7 (#636)
-- 2026-11-23 `e328672` feat: exibir erro de leitura em vez de estado vazio em 6 páginas (QA-121 a QA-126) (#663)
-- 2026-11-23 `aef48e8` fix: receive-design-sync sem verify_jwt (webhook HMAC)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

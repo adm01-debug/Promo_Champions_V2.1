@@ -2,6 +2,20 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 00:32 UTC
+
+- **colunas** adicionado (15): `public.designs_inbound.created_at`, `public.designs_inbound.design_id`, `public.designs_inbound.id`, `public.designs_inbound.last_correlation_key`, `public.designs_inbound.last_event`, `public.designs_inbound.name`, `public.designs_inbound.product_name`, `public.designs_inbound.product_sku`, `public.designs_inbound.raw_payload`, `public.designs_inbound.received_at`, `public.designs_inbound.seller_email`, `public.designs_inbound.source`, `public.designs_inbound.source_updated_at`, `public.designs_inbound.thumbnail_url`, `public.designs_inbound.updated_at`
+- **constraints** adicionado (2): `public.designs_inbound.designs_inbound_design_id_key`, `public.designs_inbound.designs_inbound_pkey`
+- **functions** adicionado (1): `public.set_designs_inbound_updated_at()`
+- **grants** adicionado (3): `public.designs_inbound:anon`, `public.designs_inbound:authenticated`, `public.designs_inbound:service_role`
+- **indexes** adicionado (5): `public.designs_inbound_design_id_key`, `public.designs_inbound_pkey`, `public.idx_designs_inbound_product_sku`, `public.idx_designs_inbound_received_at`, `public.idx_designs_inbound_seller_email`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.designs_inbound.Admins e managers podem ler designs_inbound`
+- **migrations** adicionado (1): `20261125150000_20261125150000_designs_inbound`
+- **policies (RLS)** adicionado (1): `public.designs_inbound.Admins e managers podem ler designs_inbound`
+- **policies (RLS)** removido (3): `public.automation_runs.Authenticated users can view runs`, `public.commercial_approval_requests.Ver solicitações`, `public.committee_extraction_runs.auth read extraction runs`
+- **tabelas** adicionado (1): `public.designs_inbound`
+- **triggers** adicionado (1): `public.designs_inbound.trg_designs_inbound_updated_at`
+
 ## 2026-11-23 23:19 UTC
 
 - **functions** alterado (48): `public.audit_log_row_change()`, `public.audit_trigger()`, `public.audit_trigger_func()`, `public.auto_add_client_to_portfolio()`, `public.auto_victory_post()`, `public.check_battle_achievements()`, `public.check_failed_attempts(p_email text, p_minutes integer)`, `public.cleanup_deleted_records()`, `public.cleanup_old_audit_logs()`, `public.convert_quote_to_order()`, `public.create_version()`, `public.data_subject_requests_guard_payload()`, `public.enqueue_v4_callback()`, `public.ensure_single_default_filter()`, `public.fn_auto_map_inbound_seller()`, `public.fn_calculate_icp_score()`, `public.fn_quotes_inbound_ordering_guard()`, `public.generate_cadence_tasks()`, `public.increment_asset_view_count()`, `public.log_audit_event()`, `public.log_data_access()`, `public.log_soft_delete()`, `public.maintain_sales_streaks()`, `public.manage_stock_on_sale()`, `public.notify_salesperson_on_bonus_paid()`, `public.process_audit_log()`, `public.protect_pa_nudge_content()`, `public.record_lead_score_history()`, `public.record_price_history()`, `public.record_sale_stage_transition()`, `public.refresh_materialized_views()`, `public.reindex_tables()`, `public.set_sdr_id_on_insert()`, `public.snapshot_committee_coverage()`, `public.snapshot_engagement_score()`, `public.sync_battle_score()`, `public.sync_performance_bets()`, `public.sync_quote_to_sale_status()`, `public.sync_territory_ownership()`, `public.sync_total_xp()` … (+8)

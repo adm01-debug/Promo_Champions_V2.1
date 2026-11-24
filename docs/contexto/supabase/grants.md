@@ -413,6 +413,9 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.demand_forecasts | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.demand_forecasts | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.demand_forecasts | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.designs_inbound | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
+| public.designs_inbound | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
+| public.designs_inbound | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.dialer_queue_items | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.dialer_queue_items | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.dialer_queue_items | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
