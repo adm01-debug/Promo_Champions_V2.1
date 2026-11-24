@@ -3208,7 +3208,7 @@
    "hooks_exportados": [
     "useGoalsDashboard"
    ],
-   "linhas": 183,
+   "linhas": 184,
    "dominio": "hooks/dashboard",
    "tabelas": [
     "quota_attainment_predictions",
@@ -4679,7 +4679,7 @@
    "hooks_exportados": [
     "useWeeklyRanking"
    ],
-   "linhas": 61,
+   "linhas": 62,
    "dominio": "hooks/gamification",
    "tabelas": [
     "sales"
@@ -4696,7 +4696,7 @@
    "usado_por_arquivos": [
     "src/components/competitive/WeeklyRanking.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/multichannel/useChannelCredentials.ts",

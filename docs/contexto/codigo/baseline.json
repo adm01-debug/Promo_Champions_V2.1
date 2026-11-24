@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dd14171eb0bc2b665eb6852ebc7df69babc37673",
+  "commit": "a35b9ea8ac318690a37d5b5b18da8c8358fd4859",
   "branch": "main",
-  "data_commit": "2026-11-24T03:33:08-03:00",
+  "data_commit": "2026-11-24T03:34:26-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a35b9ea",
+    "data": "2026-11-24",
+    "assunto": "fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)"
+   },
    {
     "sha": "dd14171",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "737d0c0",
     "data": "2026-11-24",
     "assunto": "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)"
-   },
-   {
-    "sha": "b05ca72",
-    "data": "2026-11-24",
-    "assunto": "chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)"
    }
   ],
-  "arquivos_mudados_7d": 381,
+  "arquivos_mudados_7d": 383,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3674,
-  "arquivos_codigo": 2616,
-  "linhas_codigo": 448816,
+  "arquivos_total": 3675,
+  "arquivos_codigo": 2617,
+  "linhas_codigo": 448887,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 278,
+  "testes": 279,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 225
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 552,
-   "linhas": 65352
+   "arquivos": 553,
+   "linhas": 65423
   },
   "src/integrations": {
    "arquivos": 4,

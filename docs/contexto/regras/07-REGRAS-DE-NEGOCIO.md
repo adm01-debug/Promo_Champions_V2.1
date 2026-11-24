@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dd14171eb0` · branch `main` · 2026-11-24 06:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a35b9ea8ac` · branch `main` · 2026-11-24 06:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1827 testes em 242 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1830 testes em 243 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4469,6 +4469,7 @@ _nenhum item encontrado_
 | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts` | 3 | computeSalespersonVelocity · calcula média de dias até o ganho por vendedor, do mais rápido ao mais lento · ignora vendedores sem deal ganho e vendas sem vendedor |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
+| `src/hooks/gamification/useWeeklyRanking.test.ts` | 3 | useWeeklyRanking (QA-069) · consulta sales com deleted_at nulo · mantem o recorte de status ganho e de janela da semana |
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
 | `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
