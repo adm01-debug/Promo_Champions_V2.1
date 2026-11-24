@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b241da210f` · branch `main` · 2026-11-24 11:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `669c8a0686` · branch `main` · 2026-11-24 12:40 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -96,6 +96,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `leads` | leads_authenticated_all | ALL | authenticated | permissive | `true` | `true` |
 | `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
 | `designs_inbound` | Admins e managers podem ler designs_inbound | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'` |  |
+| `supply_outbox` | supply_outbox_admin_read | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
 | `_internal_secrets` | Deny all access to _internal_secrets | ALL | authenticated, anon | permissive | `false` | `false` |
 | `ab_tests` | Admins and managers can manage ab_tests | ALL | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `access_denied_logs` | Admins can view access logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))` |  |
@@ -310,8 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `commission_bonus_awards` | Admins delete awards | DELETE | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
 | `commission_bonus_awards` | Admins insert awards | INSERT | authenticated | permissive |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | `commission_bonus_awards` | Admins update awards | UPDATE | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
-| `commission_bonus_awards` | Salespeople view own awards | SELECT | authenticated | permissive | `((salesperson_id IN ( SELECT salespeople.id FROM salespeople WHERE (salespeople.auth_user_id = auth.uid()))) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |  |
-| … +802 linhas — lista completa em `context.json` | | | | | | |
+| … +803 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chat_conversations` | `updated_at` | default now() |
 | `chat_messages` | `id` | default gen_random_uuid() |
 | `chat_messages` | `conversation_id` | obrigatório |
-| … +2660 linhas — lista completa em `context.json` | | |
+| … +2672 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -633,6 +633,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | audit_sales_changes | AFTER UPDATE | `sales` | `handle_audit_logging` |  |
 | update_cadence_tasks_updated_at | BEFORE UPDATE | `cadence_tasks` | `update_updated_at_column` |  |
 | trg_designs_inbound_updated_at | BEFORE UPDATE | `designs_inbound` | `set_designs_inbound_updated_at` |  |
+| trg_supply_enqueue_from_order_item | AFTER INSERT | `order_items` | `tg_supply_enqueue_from_order_item` |  |
 | set_updated_at | BEFORE UPDATE | `account_contacts` | `handle_updated_at` |  |
 | trg_account_contacts_updated_at | BEFORE UPDATE | `account_contacts` | `update_updated_at_column` |  |
 | set_updated_at | BEFORE UPDATE | `account_plans` | `handle_updated_at` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | update_salespeople_updated_at | BEFORE UPDATE | `salespeople` | `update_updated_at_column` |  |
 | set_updated_at | BEFORE UPDATE | `salesperson_commission_configs` | `handle_updated_at` |  |
 | set_updated_at | BEFORE UPDATE | `salesperson_custom_field_values` | `handle_updated_at` |  |
-| set_updated_at | BEFORE UPDATE | `salesperson_leagues` | `handle_updated_at` |  |
-| … +88 linhas — lista completa em `context.json` | | | | |
+| … +89 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1264,6 +1264,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status_transitions` | `status_destino` | **livre (sem enum/CHECK)** |  |
 | `stage_probabilities` | `stage` | **livre (sem enum/CHECK)** |  |
 | `plan_rollback_ddl` | `etapa` | **livre (sem enum/CHECK)** |  |
+| `supply_outbox` | `status` | `dead`, `delivered`, `pending`, `processing` | `pending` |
 
 ### E.2 Mapas de transição declarados no código
 
@@ -3223,6 +3224,7 @@ _nenhum item encontrado_
 | `DELIVERY_RETRY_MS` | `15` | `supabase/functions/sequence-runner/index.ts` |
 | `SKIPPED_RETRY_MS` | `24` | `supabase/functions/sequence-runner/index.ts` |
 | `MAX_ITERATIONS` | `1000` | `supabase/functions/stress-test-contracts/index.ts` |
+| `BATCH_SIZE` | `25` | `supabase/functions/supply-dispatch/index.ts` |
 | `DEFAULT_SLOT_LAG` | `64` | `supabase/functions/wal-health-alert/index.ts` |
 | `DEFAULT_WAL_SIZE` | `500` | `supabase/functions/wal-health-alert/index.ts` |
 | `RP_ID_HEADER` | `'x-rp-id'` | `supabase/functions/webauthn/index.ts` |
@@ -3559,7 +3561,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +155 linhas — lista completa em `context.json` | |
+| … +157 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4171,7 +4173,7 @@ _nenhum item encontrado_
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +696 linhas — lista completa em `context.json` | |
+| … +697 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4277,7 +4279,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1830 testes em 243 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1833 testes em 244 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4480,6 +4482,7 @@ _nenhum item encontrado_
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
 | `src/test/activities-soft-delete-functions.test.ts` | 3 | funções SQL ignoram activities apagadas (soft delete) · %s: toda leitura de activities filtra deleted_at IS NULL · a correção não desfaz o status canônico nem o alias anti-ambiguidade |
 | `src/test/security/battle-participants-insert-policy.test.ts` | 3 | battle_participants — INSERT para admin/gestor · existe policy de INSERT viva liberando is_admin_or_manager(auth.uid()) · vendedor continua limitado à auto-inscrição |
+| `supabase/functions/supply-dispatch/contract.test.ts` | 3 | assinatura HMAC confere com vetor conhecido · envelope preserva payload e usa id da fila como correlation_key · apenas 2xx conta como entregue |
 | `tests/e2e/quote-to-sale-error-payload-ui.spec.ts` | 3 | Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN) · TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada · FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada |
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
 | `tests/e2e/quote-to-sale-won-path.spec.ts` | 3 | Path novo (won): RPC cria ORC-* e avança sequence · won: 1 conversão gera ORC-* e sequence +1 · won x3 quotes independentes: sequence avança exatamente +3, números únicos |
@@ -4789,6 +4792,7 @@ _nenhum item encontrado_
 | `notify` | `supabase/migrations/20261124120000_retry_trigger_internal_edge_job.sql` |
 | `notify` | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
 | `notify` | `supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql` |
+| `notify` | `supabase/migrations/20261126090000_champions_supply_outbox.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código
@@ -5095,4 +5099,4 @@ _nenhum item encontrado_
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
-| … +140 linhas — lista completa em `context.json` | |
+| … +141 linhas — lista completa em `context.json` | |

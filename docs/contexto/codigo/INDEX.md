@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b241da210fb341a90a72db539b842979e4a66f23` (2026-11-24T08:33:11-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `669c8a0686c5626e5c38a7c84404062ecbd52c13` (2026-11-24T09:40:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2536), SQL (722), Markdown (225), JavaScript (78), JSON (33), YAML (31), Shell (7), Python (5)
+- linguagens: TypeScript (2539), SQL (723), Markdown (225), JavaScript (78), JSON (33), YAML (31), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3677 |
-| arquivos_codigo | 2617 |
-| linhas_codigo | 448887 |
+| arquivos_total | 3681 |
+| arquivos_codigo | 2620 |
+| linhas_codigo | 449136 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -44,11 +44,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | modulos | 176 |
 | componentes | 1290 |
 | hooks | 483 |
-| edge_functions | 172 |
-| tabelas | 420 |
-| migrations | 712 |
-| cron_jobs | 39 |
-| testes | 279 |
+| edge_functions | 173 |
+| tabelas | 421 |
+| migrations | 713 |
+| cron_jobs | 40 |
+| testes | 280 |
 | workflows | 29 |
 | scripts | 78 |
 | docs_md | 225 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1110), src/pages (173), src/contexts (5)
 - hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (193), tests/ (59), outro (19)
+- testes: co-localizado (*.test) (194), tests/ (59), outro (19)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -497,6 +497,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `start-race-season` — tabelas: race_cars, race_powerups, race_scoring_rules, race_seasons, salespeople; chamada por 1 arquivo(s) do front
 - `stress-test-contracts` — tabelas: -; chamada por 1 arquivo(s) do front
 - `summarize-call-recording` — tabelas: call_recordings, clients, sales; chamada por 2 arquivo(s) do front
+- `supply-dispatch` (verify_jwt=false) — tabelas: _internal_secrets; chamada por 0 arquivo(s) do front
 - `territory-optimization` — tabelas: sales, sales_territories, salespeople_public; chamada por 1 arquivo(s) do front
 - `test-integration-connection` — tabelas: integration_connections, integration_health_checks; chamada por 1 arquivo(s) do front
 - `transcribe-call-recording` — tabelas: call_recordings, salespeople; chamada por 1 arquivo(s) do front
@@ -549,6 +550,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `semantic-reindex-daily` 0 5 * * * (20261122000000_schedule_semantic_reindex_cron.sql)
 - `send-alert-notifications-5min` 2-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `sequence-runner-5min` 4-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
+- `supply-dispatch-1min` * * * * * (20261126090000_champions_supply_outbox.sql)
 - `wal-health-alert-5min` 3-59/5 * * * * (20261125110000_espalha_schedules_cron_evita_startup_timeout.sql)
 - `webvitals-regression-alert-daily` 15 11 * * * (20261002010000_webvitals_regression_alert_cron.sql)
 - `weekly-league-reset` 0 0 * * 1 (20260512144635_35f7f178-2af8-41cb-98c9-aabc4cdc043f.sql)
@@ -559,8 +561,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
 - hosts mais citados: openrouter.ai, x.test, api.resend.com, example.test, promo-champions-v2-1.vercel.app, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, exemplo.test, promochampions.com.br, wa.me, x.supabase.co
-- webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-design-sync, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
-- env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, DESIGN_SYNC_WEBHOOK_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, METRICS_INGEST_TOKEN, OPENROUTER_API_KEY, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
+- webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-design-sync, receive-quote-sync, receive-quote-webhook, report-embed-public, supply-dispatch, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
+- env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, DESIGN_SYNC_WEBHOOK_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, METRICS_INGEST_TOKEN, OPENROUTER_API_KEY, PROMOGIFTS_WEBHOOK_SECRET, PROMO_SUPPLY_WEBHOOK_SECRET, PROMO_SUPPLY_WEBHOOK_URL, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
 ## Permissões / papéis
 - papéis no código: user (52), system (43), closer (22), admin (21), sdr (21), alert (14), hybrid (14), status (14), region (10), manager (9), authenticated (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), salesperson (2), tab (2), tool (2), Roles (1), account_owner (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
@@ -573,7 +575,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes_ambiguos: 0
 - menu_sem_destino: 22 — ex.: Análises -> /dashboard/analises, Colete um power-up -> powerup, Competição -> /dashboard/competicao
 - edges_orfas: 32 — ex.: activity-goal-alerts, admin-conversion-trail, ai-agent-orchestrator
-- edges_chamadas_sem_pasta: 0
+- edges_chamadas_sem_pasta: 1 — ex.: receive-os-sync
 - tabelas_sem_rls: 6 — ex.: ab_tests, experiment_assignments, experiment_variants
 - tabelas_usadas_sem_definicao: 3 — ex.: auth_users_view, table, team_members
 - tabelas_com_drift_migration_vs_types: 0
@@ -586,8 +588,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24374 nós · 74796 arestas · 1175 comunidades · grafo do commit `b241da21`
-- comunidades maiores: schema.sql (555), vitest (345), client.ts (339), CardContent (313), react-helmet-async (311), Skeleton (287), getCorsHeaders (283), button.tsx (282), public (249), Avatar (247), card.tsx (235), DialogContent (230)
+- 24392 nós · 74856 arestas · 1169 comunidades · grafo do commit `669c8a06`
+- comunidades maiores: schema.sql (593), CardContent (442), vitest (314), Label (307), Card (301), Input (295), client.ts (274), react (261), public (249), Avatar (247), Skeleton (247), Badge (234)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -768,6 +770,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.8.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.4...promo-champions-v2-v1.8.0) (2026-11-24)
 
 ## Últimos commits
+- 2026-11-24 `669c8a0` feat: aciona o Supply quando o orçamento vira pedido (#731)
 - 2026-11-24 `b241da2` ci: provisiona o segredo do webhook Promo Supply (#732)
 - 2026-11-24 `5d5329c` chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)
 - 2026-11-24 `b1e8ab3` chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)
@@ -782,7 +785,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `2e954fd` chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)
 - 2026-11-24 `462499f` chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)
 - 2026-11-24 `a656216` test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)
-- 2026-11-24 `1cf9183` docs: varredura completa por erro de leitura engolido (QA-127) (#721)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

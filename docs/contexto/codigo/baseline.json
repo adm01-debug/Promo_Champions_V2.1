@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b241da210fb341a90a72db539b842979e4a66f23",
+  "commit": "669c8a0686c5626e5c38a7c84404062ecbd52c13",
   "branch": "main",
-  "data_commit": "2026-11-24T08:33:11-03:00",
+  "data_commit": "2026-11-24T09:40:10-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "669c8a0",
+    "data": "2026-11-24",
+    "assunto": "feat: aciona o Supply quando o orçamento vira pedido (#731)"
+   },
    {
     "sha": "b241da2",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "e514cbc",
     "data": "2026-11-24",
     "assunto": "feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)"
-   },
-   {
-    "sha": "b48da88",
-    "data": "2026-11-24",
-    "assunto": "feat: filtro e exportacao do historico de auditoria comercial passam a funcionar (QA-102) (#711)"
    }
   ],
-  "arquivos_mudados_7d": 379,
+  "arquivos_mudados_7d": 381,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -258,7 +258,7 @@
     "mudancas": 5
    },
    {
-    "arquivo": ".github/workflows/contexto.yml",
+    "arquivo": "AGENTS.md",
     "mudancas": 4
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3677,
-  "arquivos_codigo": 2617,
-  "linhas_codigo": 448887,
+  "arquivos_total": 3681,
+  "arquivos_codigo": 2620,
+  "linhas_codigo": 449136,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,11 +324,11 @@
   "modulos": 176,
   "componentes": 1290,
   "hooks": 483,
-  "edge_functions": 172,
-  "tabelas": 420,
-  "migrations": 712,
-  "cron_jobs": 39,
-  "testes": 279,
+  "edge_functions": 173,
+  "tabelas": 421,
+  "migrations": 713,
+  "cron_jobs": 40,
+  "testes": 280,
   "workflows": 29,
   "scripts": 78,
   "docs_md": 225
@@ -647,8 +647,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 330,
-   "linhas": 67926
+   "arquivos": 333,
+   "linhas": 68175
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -892,7 +892,9 @@
    "winloss-webhook-replay-batch",
    "winloss-webhook-timeline"
   ],
-  "edges_chamadas_sem_pasta": [],
+  "edges_chamadas_sem_pasta": [
+   "receive-os-sync"
+  ],
   "tabelas_sem_rls": [
    "ab_tests",
    "experiment_assignments",

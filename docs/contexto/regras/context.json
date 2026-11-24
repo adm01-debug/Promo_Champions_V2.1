@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b241da210fb341a90a72db539b842979e4a66f23",
+  "sha": "669c8a0686c5626e5c38a7c84404062ecbd52c13",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 11:33 UTC",
-  "files_total": 3692,
-  "code_files": 3339,
-  "code_lines": 483998
+  "generated_at": "2026-11-24 12:40 UTC",
+  "files_total": 3696,
+  "code_files": 3343,
+  "code_lines": 484503
  },
  "version": "1.3.2",
- "facts_hash": "832552d68af0ede7",
+ "facts_hash": "622c630d46a026ff",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -413,8 +413,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1403,
-   ".ts": 1132,
-   ".sql": 722,
+   ".ts": 1135,
+   ".sql": 723,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -433,6 +433,7 @@
     "edge-retry-threshold-alert",
     "deal-risk-digest",
     "email-bulk-retry",
+    "supply-dispatch",
     "log-web-vitals",
     "receive-quote-sync",
     "receive-design-sync",
@@ -32223,6 +32224,101 @@
     "src": "supabase/migrations/20261125150000_designs_inbound.sql",
     "comment": "",
     "origin": "migration"
+   },
+   "supply_outbox": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "order_id",
+      "type": "uuid NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE",
+      "fk": "orders.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "order_item_id",
+      "type": "uuid NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "event",
+      "type": "text NOT NULL DEFAULT 'pedido.criado'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "payload",
+      "type": "jsonb NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "status",
+      "type": "text NOT NULL DEFAULT 'pending'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "attempts",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "last_error",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "next_attempt_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "delivered_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT supply_outbox_status_check CHECK (status = ANY (ARRAY['pending', 'processing', 'delivered', 'dead']::text[]))",
+     "CONSTRAINT supply_outbox_item_event_key UNIQUE (order_item_id, event)"
+    ],
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "comment": "",
+    "origin": "migration"
    }
   },
   "policies": [
@@ -33075,6 +33171,16 @@
     "using": "public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'",
     "check": "",
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "name": "supply_outbox_admin_read",
+    "table": "supply_outbox",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -43339,6 +43445,15 @@
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
+    "name": "trg_supply_enqueue_from_order_item",
+    "when": "AFTER INSERT",
+    "table": "order_items",
+    "function": "tg_supply_enqueue_from_order_item",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -52525,6 +52640,53 @@
     "raises": [],
     "tables": []
    },
+   "tg_supply_enqueue_from_order_item": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity, 1), 1), 'empresa', v_cliente, 'observacoes', 'Pedido ' || v_order.order …",
+    "raises": [],
+    "tables": [
+     "orders",
+     "salespeople",
+     "supply_outbox",
+     "v_email",
+     "v_order"
+    ]
+   },
+   "claim_supply_outbox": {
+    "args": "p_limit integer DEFAULT 25",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_rows jsonb; BEGIN WITH due AS ( SELECT o.id FROM public.supply_outbox o WHERE ( o.status = 'pending' AND o.next_attempt_at <= now() ) OR ( o.status = 'processing' AND o.updated_at < now() - interval '5 minutes' ) ORDER BY o.next_attempt_at LIMIT GREATEST(COALESCE(p_limit, 25), 1) FOR UPDATE SKIP LOCKED ), claimed AS ( UPDATE public.supply_outbox o SET status = 'processing', attempts = o.attempts + 1, updated_at = now() FROM due WHERE o.id = due.id RETURNING o.id, o.event, o.payload, o.attempts ) SELECT COALESCE( jsonb_agg( jsonb_build_object( 'id', c.id, 'event', c.event, 'payload', c.payload, 'attempts', c.attempts ) ), '[]'::jsonb ) INTO v_rows FROM claimed c; RETURN v_rows; END;",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "claimed",
+     "due",
+     "supply_outbox",
+     "v_rows"
+    ]
+   },
+   "finish_supply_outbox": {
+    "args": "p_ids uuid[], p_ok boolean, p_error text DEFAULT NULL",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_count integer; BEGIN IF p_ids IS NULL OR array_length(p_ids, 1) IS NULL THEN RETURN 0; END IF; UPDATE public.supply_outbox o SET status = CASE WHEN p_ok THEN 'delivered' WHEN o.attempts >= 5 THEN 'dead' ELSE 'pending' END, delivered_at = CASE WHEN p_ok THEN now() ELSE o.delivered_at END, last_error = CASE WHEN p_ok THEN NULL ELSE left(COALESCE(p_error, 'unknown'), 1000) END, next_attempt_at = CASE WHEN p_ok OR o.attempts >= 5 THEN o.next_attempt_at ELSE now() + (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute') END, updated_at = now() WHERE o.id = ANY (p_ids); GET DIAGNOSTICS v_count = ROW_COUNT; RETURN v_count; END;",
+    "raises": [],
+    "tables": [
+     "supply_outbox"
+    ]
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -59649,6 +59811,22 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "name": "idx_supply_outbox_due",
+    "table": "supply_outbox",
+    "columns": "next_attempt_at",
+    "unique": false,
+    "where": "WHERE status = 'pending'",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "name": "idx_supply_outbox_order",
+    "table": "supply_outbox",
+    "columns": "order_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
     "name": "account_plans_account_id_key",
@@ -67063,6 +67241,12 @@
     "schedule": "5-59/15 * * * *",
     "body": "SELECT public.trigger_internal_edge_job(",
     "src": "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
+   },
+   {
+    "job": "supply-dispatch-1min",
+    "schedule": "* * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    }
   ],
   "views": {
@@ -67936,6 +68120,7 @@
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
    "supabase/migrations/20261125150000_designs_inbound.sql",
+   "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -68359,6 +68544,7 @@
    "cron_job_last_run": "enabled",
    "cron_job_last_run_cursor": "enabled",
    "designs_inbound": "enabled",
+   "supply_outbox": "enabled",
    "ab_tests": "enabled",
    "experiment_assignments": "enabled",
    "experiment_variants": "enabled",
@@ -73663,6 +73849,70 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "supply_outbox",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "supply_outbox",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_supply_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_supply_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_supply_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_supply_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
     "kind": "grant",
@@ -100820,6 +101070,30 @@
     "idempotency": false
    },
    {
+    "name": "supply-dispatch",
+    "file": "supabase/functions/supply-dispatch/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
+    "tables": [
+     "_internal_secrets"
+    ],
+    "env": [
+     "PROMO_SUPPLY_WEBHOOK_SECRET",
+     "PROMO_SUPPLY_WEBHOOK_URL",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "Dispatcher Champions -> Supply. O pedido nasce de um orcamento aprovado (fase 2). Cada item do pedido vira uma linha em `supply_outbox`; este job entrega essas linhas ao `receive-os-sync` do Promo Supply com HMAC SHA-256. Entrega por linha: sucesso marca `delivered`, falha devolve para a fila com ba …",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": false
+   },
+   {
     "name": "territory-optimization",
     "file": "supabase/functions/territory-optimization/index.ts",
     "methods": [
@@ -108335,8 +108609,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 330,
-   "lines": 67926,
+   "files": 333,
+   "lines": 68175,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -108686,8 +108960,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 712,
-   "lines": 59580,
+   "files": 713,
+   "lines": 59836,
    "tables": [
     "user_permissions_cache"
    ],
@@ -108936,6 +109210,7 @@
      "supabase/functions/sdr-consecutive-alerts/index.ts",
      "supabase/functions/semantic-reindex-batch/index.ts",
      "supabase/functions/send-alert-notifications/index.ts",
+     "supabase/functions/supply-dispatch/index.ts",
      "supabase/functions/wal-health-alert/index.ts",
      "supabase/functions/webvitals-regression-alert/index.ts",
      "supabase/functions/winloss-webhook-dispatcher/index.ts",
@@ -115626,6 +115901,12 @@
    "PROMO_CHAMPIONS_MCP_URL": [
     "scripts/db/simulate-migrations-via-mcp.ts"
    ],
+   "PROMO_SUPPLY_WEBHOOK_SECRET": [
+    "supabase/functions/supply-dispatch/index.ts"
+   ],
+   "PROMO_SUPPLY_WEBHOOK_URL": [
+    "supabase/functions/supply-dispatch/index.ts"
+   ],
    "PW_RUN_ID": [
     "playwright.config.ts",
     "tests/e2e/helpers/quote-to-sale-failure-reporter.ts",
@@ -115844,6 +116125,7 @@
     "supabase/functions/sequence-enroll/index.ts",
     "supabase/functions/sequence-record-reply/index.ts",
     "supabase/functions/sequence-runner/index.ts",
+    "supabase/functions/supply-dispatch/index.ts",
     "supabase/functions/territory-optimization/index.ts",
     "supabase/functions/test-integration-connection/index.ts",
     "supabase/functions/twilio-call-status/index.ts",
@@ -115962,6 +116244,7 @@
     "supabase/functions/sequence-runner/index.ts",
     "supabase/functions/snapshot-forecast/index.ts",
     "supabase/functions/summarize-call-recording/index.ts",
+    "supabase/functions/supply-dispatch/index.ts",
     "supabase/functions/territory-optimization/index.ts",
     "supabase/functions/test-integration-connection/index.ts",
     "supabase/functions/twilio-call-status/index.ts",
@@ -116212,6 +116495,9 @@
    "claim_streak_achievements": [
     "src/hooks/gamification/useDailyStreakAchievements.ts"
    ],
+   "claim_supply_outbox": [
+    "supabase/functions/supply-dispatch/index.ts"
+   ],
    "claim_weekly_challenge_reward": [
     "src/hooks/gamification/useWeeklyChallenges.ts"
    ],
@@ -116271,6 +116557,9 @@
    ],
    "find_matching_cadence_rule": [
     "supabase/functions/auto-enroll-cadence/index.ts"
+   ],
+   "finish_supply_outbox": [
+    "supabase/functions/supply-dispatch/index.ts"
    ],
    "fixture_rpc": [
     "scripts/ai-context/gerar.unit.mjs"
@@ -117259,6 +117548,9 @@
   "cascade_chains": {
    "users": [
     "call_tracking"
+   ],
+   "orders": [
+    "supply_outbox"
    ]
   },
   "tables_only_in_code": [
@@ -117356,6 +117648,7 @@
    "slow_query_alerts",
    "sms_verification_codes",
    "status_transitions",
+   "supply_outbox",
    "territories",
    "user_2fa",
    "user_2fa_backup_codes",
@@ -122955,6 +123248,10 @@
     "msg": " THEN 60000\n    WHEN "
    },
    {
+    "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "msg": ",\n      "
+   },
+   {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
     "msg": ",\n  ];\n  for (const endpoint of endpoints) {\n    assertMatch(sql, new RegExp("
    },
@@ -124865,6 +125162,10 @@
    {
     "file": "supabase/functions/summarize-call-recording/index.ts",
     "text": "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
+   },
+   {
+    "file": "supabase/functions/supply-dispatch/index.ts",
+    "text": "Corpo e opcional: o cron manda apenas `scheduled_at`. `limit` serve para"
    },
    {
     "file": "supabase/functions/test-integration-connection/index.ts",
@@ -139927,6 +140228,66 @@
     "table": "designs_inbound",
     "column": "updated_at",
     "rule": "default now()"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "order_id",
+    "rule": "obrigatório; FK → orders.id ON DELETE CASCADE"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "order_item_id",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "event",
+    "rule": "default 'pedido.criado'"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "payload",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "status",
+    "rule": "default 'pending'"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "attempts",
+    "rule": "default 0"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "next_attempt_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT supply_outbox_status_check CHECK (status = ANY (ARRAY['pending', 'processing', 'delivered', 'dead']::text[]))"
+   },
+   {
+    "table": "supply_outbox",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT supply_outbox_item_event_key UNIQUE (order_item_id, event)"
    }
   ],
   "params": [
@@ -141044,6 +141405,11 @@
     "file": "supabase/functions/stress-test-contracts/index.ts",
     "name": "MAX_ITERATIONS",
     "value": "1000"
+   },
+   {
+    "file": "supabase/functions/supply-dispatch/index.ts",
+    "name": "BATCH_SIZE",
+    "value": "25"
    },
    {
     "file": "supabase/functions/wal-health-alert/index.ts",
@@ -157138,6 +157504,14 @@
    {
     "file": "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
     "line": "v_last_run := now() - interval '30 days';"
+   },
+   {
+    "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "line": "+ (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute')"
+   },
+   {
+    "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "line": "AND o.updated_at < now() - interval '5 minutes'"
    }
   ],
   "percents": [
@@ -164224,6 +164598,18 @@
     "name": "V4 sem correlation_key retorna 400"
    },
    {
+    "file": "supabase/functions/supply-dispatch/contract.test.ts",
+    "name": "assinatura HMAC confere com vetor conhecido"
+   },
+   {
+    "file": "supabase/functions/supply-dispatch/contract.test.ts",
+    "name": "envelope preserva payload e usa id da fila como correlation_key"
+   },
+   {
+    "file": "supabase/functions/supply-dispatch/contract.test.ts",
+    "name": "apenas 2xx conta como entregue"
+   },
+   {
     "file": "tests/a11y/axe-sweep.spec.ts",
     "name": "Onda Q — a11y sweep (axe-core)"
    },
@@ -166936,6 +167322,10 @@
     "call": "notify"
    },
    {
+    "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "call": "notify"
+   },
+   {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
     "call": "notify"
    }
@@ -167790,6 +168180,16 @@
     "using": "public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'",
     "check": "",
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "name": "supply_outbox_admin_read",
+    "table": "supply_outbox",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -178054,6 +178454,15 @@
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
    },
    {
+    "name": "trg_supply_enqueue_from_order_item",
+    "when": "AFTER INSERT",
+    "table": "order_items",
+    "function": "tg_supply_enqueue_from_order_item",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -187240,6 +187649,53 @@
     "raises": [],
     "tables": []
    },
+   "tg_supply_enqueue_from_order_item": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity, 1), 1), 'empresa', v_cliente, 'observacoes', 'Pedido ' || v_order.order …",
+    "raises": [],
+    "tables": [
+     "orders",
+     "salespeople",
+     "supply_outbox",
+     "v_email",
+     "v_order"
+    ]
+   },
+   "claim_supply_outbox": {
+    "args": "p_limit integer DEFAULT 25",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_rows jsonb; BEGIN WITH due AS ( SELECT o.id FROM public.supply_outbox o WHERE ( o.status = 'pending' AND o.next_attempt_at <= now() ) OR ( o.status = 'processing' AND o.updated_at < now() - interval '5 minutes' ) ORDER BY o.next_attempt_at LIMIT GREATEST(COALESCE(p_limit, 25), 1) FOR UPDATE SKIP LOCKED ), claimed AS ( UPDATE public.supply_outbox o SET status = 'processing', attempts = o.attempts + 1, updated_at = now() FROM due WHERE o.id = due.id RETURNING o.id, o.event, o.payload, o.attempts ) SELECT COALESCE( jsonb_agg( jsonb_build_object( 'id', c.id, 'event', c.event, 'payload', c.payload, 'attempts', c.attempts ) ), '[]'::jsonb ) INTO v_rows FROM claimed c; RETURN v_rows; END;",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "claimed",
+     "due",
+     "supply_outbox",
+     "v_rows"
+    ]
+   },
+   "finish_supply_outbox": {
+    "args": "p_ids uuid[], p_ok boolean, p_error text DEFAULT NULL",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_count integer; BEGIN IF p_ids IS NULL OR array_length(p_ids, 1) IS NULL THEN RETURN 0; END IF; UPDATE public.supply_outbox o SET status = CASE WHEN p_ok THEN 'delivered' WHEN o.attempts >= 5 THEN 'dead' ELSE 'pending' END, delivered_at = CASE WHEN p_ok THEN now() ELSE o.delivered_at END, last_error = CASE WHEN p_ok THEN NULL ELSE left(COALESCE(p_error, 'unknown'), 1000) END, next_attempt_at = CASE WHEN p_ok OR o.attempts >= 5 THEN o.next_attempt_at ELSE now() + (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute') END, updated_at = now() WHERE o.id = ANY (p_ids); GET DIAGNOSTICS v_count = ROW_COUNT; RETURN v_count; END;",
+    "raises": [],
+    "tables": [
+     "supply_outbox"
+    ]
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -191001,6 +191457,19 @@
      "allowed": [],
      "default": "",
      "type": "integer NOT NULL"
+    },
+    {
+     "table": "supply_outbox",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "dead",
+      "delivered",
+      "pending",
+      "processing"
+     ],
+     "default": "pending",
+     "type": "text NOT NULL DEFAULT 'pending'"
     }
    ],
    "usage": {
@@ -198317,6 +198786,15 @@
      "authenticated: is_admin_or_manager(auth.uid())"
     ]
    },
+   "supply_outbox": {
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: public.is_admin_or_manager(auth.uid())"
+    ],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "support_tickets": {
     "rls": "enabled",
     "SELECT": [
@@ -199303,6 +199781,7 @@
    "supabase/functions/sequence-runner/index.ts",
    "supabase/functions/sequence-runner/integrity_test.ts",
    "supabase/functions/simulate-load/index.ts",
+   "supabase/functions/supply-dispatch/index.ts",
    "supabase/functions/territory-optimization/index.ts",
    "supabase/functions/test-integration-connection/index.ts",
    "supabase/functions/twilio-call-status/index.ts",
@@ -199488,6 +199967,7 @@
    "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/migrations/20261125150000_designs_inbound.sql",
+   "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -199547,6 +200027,7 @@
    "claim_daily_challenge_reward",
    "claim_pending_cadence_tasks",
    "claim_streak_achievements",
+   "claim_supply_outbox",
    "claim_weekly_challenge_reward",
    "cleanup_expired_narrative_cache",
    "coaching_progress_by_salesperson",
@@ -199579,6 +200060,7 @@
    "enroll_quote_in_cadence",
    "finalize_race_season",
    "find_matching_cadence_rule",
+   "finish_supply_outbox",
    "fn_admin_cleanup_stale_logs",
    "fn_admin_conversion_trail",
    "fn_admin_cron_alert_breakdown",
@@ -199751,6 +200233,7 @@
    "sync_territory_ownership",
    "sync_total_xp",
    "sync_weekly_xp",
+   "tg_supply_enqueue_from_order_item",
    "toggle_workflow_active",
    "track_deal_health_change",
    "transition_commission_status",
@@ -199805,6 +200288,7 @@
    "edge-retry-threshold-alert",
    "deal-risk-digest",
    "email-bulk-retry",
+   "supply-dispatch",
    "log-web-vitals",
    "receive-quote-sync",
    "receive-design-sync",
@@ -205116,6 +205600,70 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261125150000_designs_inbound.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "supply_outbox",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "supply_outbox",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_supply_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_supply_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_supply_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_supply_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
     "kind": "grant",
@@ -225867,6 +226415,10 @@
    "designs_inbound": [
     "created_at",
     "updated_at"
+   ],
+   "supply_outbox": [
+    "created_at",
+    "updated_at"
    ]
   },
   "pii": [
@@ -226741,15 +227293,6 @@
     "where": [
      "compara:supabase/functions/process-call-recording-ingest/index.ts",
      "compara:supabase/functions/send-push-notification/index.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `processing` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:supabase/functions/process-scheduled-sends/index.ts",
-     "escreve:supabase/functions/receive-quote-webhook/index.ts",
-     "filtra:supabase/functions/process-scheduled-sends/index.ts"
     ]
    },
    {
@@ -227921,7 +228464,7 @@
    "`status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "404/413 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
+   "405/414 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
  },
@@ -292290,6 +292833,65 @@
     "Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT)."
    ]
   },
+  "supabase/functions/supply-dispatch/contract.test.ts": {
+   "path": "supabase/functions/supply-dispatch/contract.test.ts",
+   "lines": 30,
+   "is_test": true,
+   "tests": [
+    "assinatura HMAC confere com vetor conhecido",
+    "envelope preserva payload e usa id da fila como correlation_key",
+    "apenas 2xx conta como entregue"
+   ]
+  },
+  "supabase/functions/supply-dispatch/contract.ts": {
+   "path": "supabase/functions/supply-dispatch/contract.ts",
+   "lines": 53,
+   "exports": [
+    "interface SupplyOutboxRow",
+    "interface SupplyEnvelope",
+    "function buildEnvelope",
+    "function signatureFor",
+    "function isDelivered"
+   ],
+   "doc": "Contrato de entrega Champions -> Supply. Fica sem Supabase e sem rede para poder ser testado: o que quebra uma integracao quase sempre e o envelope ou a assinatura, nao o HTTP."
+  },
+  "supabase/functions/supply-dispatch/index.ts": {
+   "path": "supabase/functions/supply-dispatch/index.ts",
+   "lines": 166,
+   "tables": [
+    {
+     "table": "_internal_secrets",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "_internal_secrets": [
+     "key",
+     "value"
+    ]
+   },
+   "rpc": [
+    "claim_supply_outbox",
+    "finish_supply_outbox"
+   ],
+   "env": [
+    "PROMO_SUPPLY_WEBHOOK_SECRET",
+    "PROMO_SUPPLY_WEBHOOK_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "BATCH_SIZE",
+     "value": "25"
+    }
+   ],
+   "rule_comments": [
+    "Corpo e opcional: o cron manda apenas `scheduled_at`. `limit` serve para"
+   ],
+   "doc": "Dispatcher Champions -> Supply. O pedido nasce de um orcamento aprovado (fase 2). Cada item do pedido vira uma linha em `supply_outbox`; este job entrega essas linhas ao `receive-os-sync` do Promo Supply com HMAC SHA-256. Entrega por linha: sucesso marca `delivered`, falha devolve para a fila com ba …",
+   "uses_service_role": true
+  },
   "supabase/functions/territory-optimization/index.ts": {
    "path": "supabase/functions/territory-optimization/index.ts",
    "lines": 379,
@@ -297918,6 +298520,21 @@
    "lines": 59,
    "uses_service_role": true
   },
+  "supabase/migrations/20261126090000_champions_supply_outbox.sql": {
+   "path": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+   "lines": 256,
+   "errors": [
+    ",\n      "
+   ],
+   "temporal": [
+    "+ (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute')",
+    "AND o.updated_at < now() - interval '5 minutes'"
+   ],
+   "side_effects": [
+    "notify"
+   ],
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -299993,10 +300610,24 @@
   }
  },
  "git": {
-  "sha": "b241da210fb341a90a72db539b842979e4a66f23",
+  "sha": "669c8a0686c5626e5c38a7c84404062ecbd52c13",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "669c8a0",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: aciona o Supply quando o orçamento vira pedido (#731)",
+    "files": [
+     "AGENTS.md",
+     "supabase/config.toml",
+     "supabase/functions/supply-dispatch/contract.test.ts",
+     "supabase/functions/supply-dispatch/contract.ts",
+     "supabase/functions/supply-dispatch/index.ts",
+     "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+    ]
+   },
    {
     "sha": "b241da2",
     "date": "2026-11-24",
@@ -300358,17 +300989,6 @@
      "src/components/admin/AdminQuickLinks.test.tsx",
      "src/components/admin/AdminQuickLinks.tsx"
     ]
-   },
-   {
-    "sha": "737d0c0",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)",
-    "files": [
-     "docs/estado/03_DOMINIO_SDR_CADENCIAS.md",
-     "docs/estado/10_EDGE_FUNCTIONS.md",
-     "docs/estado/ESTADO_ATUAL.md"
-    ]
    }
   ],
   "hot_files": [
@@ -300409,6 +301029,30 @@
     2
    ],
    [
+    "AGENTS.md",
+    1
+   ],
+   [
+    "supabase/config.toml",
+    1
+   ],
+   [
+    "supabase/functions/supply-dispatch/contract.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/supply-dispatch/contract.ts",
+    1
+   ],
+   [
+    "supabase/functions/supply-dispatch/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    1
+   ],
+   [
     ".github/workflows/provisionar-secret-supply-webhook.yml",
     1
    ],
@@ -300426,30 +301070,6 @@
    ],
    [
     "src/hooks/dashboard/useGoalsDashboard.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useWeeklyRanking.test.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useWeeklyRanking.ts",
-    1
-   ],
-   [
-    "src/components/admin/task-console/SquadManager.test.tsx",
-    1
-   ],
-   [
-    "src/components/admin/task-console/SquadManager.tsx",
-    1
-   ],
-   [
-    "src/components/admin/task-console/TaskCatalogManager.tsx",
-    1
-   ],
-   [
-    "src/components/analytics/ObjectionsLibrary.tsx",
     1
    ]
   ]

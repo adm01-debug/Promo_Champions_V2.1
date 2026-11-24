@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (193)",
+   "co-localizado (*.test) (194)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: aciona o Supply quando o orçamento vira pedido (#731)",
    "ci: provisiona o segredo do webhook Promo Supply (#732)",
    "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)",
    "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)",
-   "chore(main): release 1.8.0 (#661)",
-   "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)"
+   "chore(main): release 1.8.0 (#661)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

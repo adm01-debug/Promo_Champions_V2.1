@@ -13573,6 +13573,15 @@
    "supabase/functions/_shared/rate-limit.ts",
    "supabase/functions/_shared/request-id.ts"
   ],
+  "supabase/functions/supply-dispatch/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/cron-request-auth.ts",
+   "supabase/functions/_shared/fetch-with-timeout.ts",
+   "supabase/functions/_shared/http-envelope.ts",
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/validation.ts",
+   "supabase/functions/supply-dispatch/contract.ts"
+  ],
   "supabase/functions/territory-optimization/index.ts": [
    "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/cors.ts",

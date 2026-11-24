@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 712,
+ "migrations": 713,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -299,6 +299,7 @@
   "claim_daily_challenge_reward",
   "claim_pending_cadence_tasks",
   "claim_streak_achievements",
+  "claim_supply_outbox",
   "claim_weekly_challenge_reward",
   "cleanup_deleted_records",
   "cleanup_expired_narrative_cache",
@@ -338,6 +339,7 @@
   "extensions",
   "finalize_race_season",
   "find_matching_cadence_rule",
+  "finish_supply_outbox",
   "fn_admin_cleanup_stale_logs",
   "fn_admin_conversion_trail",
   "fn_admin_cron_alert_breakdown",
@@ -548,6 +550,7 @@
   "sync_territory_ownership",
   "sync_total_xp",
   "sync_weekly_xp",
+  "tg_supply_enqueue_from_order_item",
   "toggle_workflow_active",
   "touch_winloss_alert_settings",
   "track_bulk_draft_recovery",
@@ -1382,6 +1385,13 @@
    "evento": "update",
    "tabela": "onboarding_journeys",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_supply_enqueue_from_order_item",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "order_items",
+   "funcao": "tg_supply_enqueue_from_order_item"
   },
   {
    "nome": "trg_log_order_creation",
@@ -2420,6 +2430,11 @@
    "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
   },
   {
+   "nome": "supply-dispatch-1min",
+   "agenda": "* * * * *",
+   "migration": "20261126090000_champions_supply_outbox.sql"
+  },
+  {
    "nome": "wal-health-alert-5min",
    "agenda": "3-59/5 * * * *",
    "migration": "20261125110000_espalha_schedules_cron_evita_startup_timeout.sql"
@@ -2548,6 +2563,7 @@
     "sdr-consecutive-alerts",
     "semantic-reindex-batch",
     "send-alert-notifications",
+    "supply-dispatch",
     "wal-health-alert",
     "webvitals-regression-alert",
     "winloss-webhook-dispatcher",
@@ -27393,7 +27409,9 @@
    "criada_em": "20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0.sql",
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "trg_supply_enqueue_from_order_item"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
@@ -42935,6 +42953,124 @@
    "sem_rls": false,
    "nao_usada": false
   },
+  "supply_outbox": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "delivered_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "event": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'pedido.criado'",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "next_attempt_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "order_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "orders"
+    },
+    "order_item_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'pending'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "supply_outbox_admin_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_supply_outbox_due",
+     "colunas": "next_attempt_at",
+     "unico": false
+    },
+    {
+     "nome": "idx_supply_outbox_order",
+     "colunas": "order_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "order_id->orders"
+   ],
+   "criada_em": "20261126090000_champions_supply_outbox.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
   "support_tickets": {
    "colunas": {
     "account_id": {
@@ -50018,6 +50154,11 @@
    "usada_em": 1
   },
   {
+   "nome": "claim_supply_outbox",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "claim_weekly_challenge_reward",
    "definida": true,
    "usada_em": 1
@@ -50104,6 +50245,11 @@
   },
   {
    "nome": "find_matching_cadence_rule",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "finish_supply_outbox",
    "definida": true,
    "usada_em": 1
   },

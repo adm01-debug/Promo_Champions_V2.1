@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 172,
+ "total": 173,
  "verify_jwt_false": [
   "bitrix24-oauth",
   "campaign-health-alert",
@@ -24,6 +24,7 @@
   "receive-quote-sync",
   "receive-quote-webhook",
   "report-embed-public",
+  "supply-dispatch",
   "twilio-call-status",
   "twilio-call-twiml",
   "whatsapp-inbound-webhook"
@@ -6122,6 +6123,48 @@
    "testes": 0
   },
   {
+   "nome": "supply-dispatch",
+   "entrada": "supabase/functions/supply-dispatch/index.ts",
+   "arquivos": 2,
+   "linhas": 219,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "_internal_secrets"
+   ],
+   "rpcs": [
+    "claim_supply_outbox",
+    "finish_supply_outbox"
+   ],
+   "env": [
+    "PROMO_SUPPLY_WEBHOOK_SECRET",
+    "PROMO_SUPPLY_WEBHOOK_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [
+    "receive-os-sync"
+   ],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cron-request-auth.ts",
+    "fetch-with-timeout.ts",
+    "http-envelope.ts",
+    "request-id.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
    "nome": "territory-optimization",
    "entrada": "supabase/functions/territory-optimization/index.ts",
    "arquivos": 1,
@@ -6807,5 +6850,7 @@
    "testes": 0
   }
  ],
- "chamadas_sem_pasta": []
+ "chamadas_sem_pasta": [
+  "receive-os-sync"
+ ]
 }

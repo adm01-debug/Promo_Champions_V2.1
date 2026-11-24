@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2536)",
-   "SQL (722)",
+   "TypeScript (2539)",
+   "SQL (723)",
    "Markdown (225)",
    "JavaScript (78)",
    "JSON (33)",
@@ -1547,6 +1547,8 @@
    "OPENROUTER_BASE_URL",
    "OPENROUTER_EMBEDDINGS_BASE_URL",
    "PROMOGIFTS_WEBHOOK_SECRET",
+   "PROMO_SUPPLY_WEBHOOK_SECRET",
+   "PROMO_SUPPLY_WEBHOOK_URL",
    "QUOTE_CONVERSION_WEBHOOK_URL",
    "QUOTE_SYNC_API_KEY",
    "QUOTE_SYNC_WEBHOOK_SECRET",
@@ -1815,6 +1817,10 @@
     "arquivos": 1
    },
    {
+    "host": "lmypcdfsrgfftzhxawao.supabase.co",
+    "arquivos": 1
+   },
+   {
     "host": "lovable.app",
     "arquivos": 1
    },
@@ -1889,6 +1895,8 @@
    "METRICS_INGEST_TOKEN",
    "OPENROUTER_API_KEY",
    "PROMOGIFTS_WEBHOOK_SECRET",
+   "PROMO_SUPPLY_WEBHOOK_SECRET",
+   "PROMO_SUPPLY_WEBHOOK_URL",
    "QUOTE_CONVERSION_WEBHOOK_URL",
    "QUOTE_SYNC_API_KEY",
    "QUOTE_SYNC_WEBHOOK_SECRET",
@@ -1928,6 +1936,7 @@
    "receive-quote-sync",
    "receive-quote-webhook",
    "report-embed-public",
+   "supply-dispatch",
    "twilio-call-status",
    "twilio-call-twiml",
    "whatsapp-inbound-webhook"

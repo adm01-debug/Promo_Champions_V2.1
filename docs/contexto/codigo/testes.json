@@ -5,9 +5,9 @@
   "vitest",
   "playwright"
  ],
- "total": 279,
+ "total": 280,
  "por_tipo": {
-  "contrato": 5,
+  "contrato": 6,
   "e2e": 54,
   "pytest": 2,
   "unit": 211
@@ -15,7 +15,7 @@
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 193
+   "arquivos": 194
   },
   {
    "padrao": "tests/",
@@ -1957,6 +1957,15 @@
    "casos": 5
   },
   {
+   "arquivo": "supabase/functions/supply-dispatch/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 30,
+   "testa": [
+    "supabase/functions/supply-dispatch/contract.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "tests/a11y/axe-sweep.spec.ts",
    "tipo": "unit",
    "linhas": 151,
@@ -2600,7 +2609,8 @@
   "supabase/functions/detect-winloss-at-risk/scoring.ts": 1,
   "supabase/functions/execute-workflow/actions.ts": 1,
   "supabase/functions/qbr-scheduler/agenda-event.ts": 1,
-  "supabase/functions/receive-design-sync/mapping.ts": 1
+  "supabase/functions/receive-design-sync/mapping.ts": 1,
+  "supabase/functions/supply-dispatch/contract.ts": 1
  },
  "sem_teste": {
   "telas": [
