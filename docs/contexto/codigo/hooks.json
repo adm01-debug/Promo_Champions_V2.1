@@ -240,7 +240,7 @@
     "src/components/organisms/AppSidebar.tsx",
     "src/components/organisms/DesktopTopBar.tsx"
    ],
-   "coberto_por_testes": 1
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/contexts/GamificationContext.tsx",
@@ -292,7 +292,7 @@
    "hooks_exportados": [
     "useRaceCalm"
    ],
-   "linhas": 27,
+   "linhas": 29,
    "dominio": "contexts",
    "tabelas": [],
    "rpcs": [],
@@ -308,7 +308,7 @@
     "src/components/race/RaceAudioPreferences.tsx",
     "src/pages/RaceArenaHub.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/abm/useAccounts.ts",
@@ -5087,7 +5087,7 @@
    "hooks_exportados": [
     "useCalmMode"
    ],
-   "linhas": 56,
+   "linhas": 61,
    "dominio": "hooks/race",
    "tabelas": [],
    "rpcs": [],
@@ -5101,7 +5101,7 @@
    "usado_por_arquivos": [
     "src/contexts/RaceCalmContext.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/race/useChampionsHistory.ts",

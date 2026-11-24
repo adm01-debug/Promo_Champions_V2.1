@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e4459d7894edc3073e0b2e0d470cde48cfc20460` (2026-11-24T01:51:34-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c` (2026-11-24T01:56:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2523), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2526), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3660 |
-| arquivos_codigo | 2604 |
-| linhas_codigo | 447355 |
+| arquivos_total | 3663 |
+| arquivos_codigo | 2607 |
+| linhas_codigo | 447570 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 420 |
 | migrations | 712 |
 | cron_jobs | 39 |
-| testes | 266 |
+| testes | 269 |
 | workflows | 27 |
 | scripts | 78 |
 | docs_md | 223 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1110), src/pages (173), src/contexts (5)
 - hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (180), tests/ (59), outro (19)
+- testes: co-localizado (*.test) (183), tests/ (59), outro (19)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -586,8 +586,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24239 nós · 74531 arestas · 1184 comunidades · grafo do commit `e4459d78`
-- comunidades maiores: Card (705), schema.sql (580), cn (524), Button (492), Skeleton (446), client.ts (386), getCorsHeaders (288), vitest (283), formatBRL (260), public (253), set_updated_at (233), lucide-react (232)
+- 24245 nós · 74552 arestas · 1216 comunidades · grafo do commit `ceeefa8d`
+- comunidades maiores: Card (781), Button (733), schema.sql (593), cn (387), Badge (351), react (344), client.ts (298), getCorsHeaders (263), set_updated_at (238), public (230), public.sales (223), public.register_race_daily_checkin (209)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -766,6 +766,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `ceeefa8` fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)
 - 2026-11-24 `e4459d7` test: guarda de console passa a reprovar o teste que emite erro (QA-149) (#719)
 - 2026-11-24 `adedb79` docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)
 - 2026-11-24 `9db0028` test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)
@@ -780,7 +781,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `7291cdd` fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)
 - 2026-11-24 `06ff5fe` feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)
 - 2026-11-24 `737d0c0` docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)
-- 2026-11-24 `b05ca72` chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

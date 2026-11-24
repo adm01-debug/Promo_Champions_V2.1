@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e4459d7894edc3073e0b2e0d470cde48cfc20460",
+  "sha": "ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:52 UTC",
-  "files_total": 3675,
-  "code_files": 3326,
-  "code_lines": 482466
+  "generated_at": "2026-11-24 04:57 UTC",
+  "files_total": 3678,
+  "code_files": 3329,
+  "code_lines": 482681
  },
  "version": "1.3.2",
- "facts_hash": "cb6330863c331898",
+ "facts_hash": "c067696886adf79a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1391,
+   ".tsx": 1394,
    ".ts": 1131,
    ".sql": 722,
    ".mjs": 72,
@@ -107227,8 +107227,8 @@
   },
   {
    "module": "src/contexts",
-   "files": 6,
-   "lines": 610,
+   "files": 8,
+   "lines": 747,
    "tables": [
     "salespeople"
    ],
@@ -107243,7 +107243,9 @@
    "docs": [],
    "deps": [
     "@supabase/supabase-js",
-    "react"
+    "@testing-library/react",
+    "react",
+    "vitest"
    ],
    "imports_modules": [
     "src/components",
@@ -107253,16 +107255,18 @@
    "file_list": [
     "src/contexts/AudioContext.tsx",
     "src/contexts/AuthContext.tsx",
+    "src/contexts/DashboardThemeContext.test.tsx",
     "src/contexts/DashboardThemeContext.tsx",
     "src/contexts/GamificationContext.tsx",
     "src/contexts/I18nContext.tsx",
+    "src/contexts/RaceCalmContext.test.tsx",
     "src/contexts/RaceCalmContext.tsx"
    ]
   },
   {
    "module": "src/hooks",
-   "files": 550,
-   "lines": 65090,
+   "files": 551,
+   "lines": 65168,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -159829,6 +159833,42 @@
     "name": "robots.txt aponta o sitemap do domínio de produção"
    },
    {
+    "file": "src/contexts/DashboardThemeContext.test.tsx",
+    "name": "DashboardThemeContext"
+   },
+   {
+    "file": "src/contexts/DashboardThemeContext.test.tsx",
+    "name": "usa cyber como padrão quando não há preferência salva"
+   },
+   {
+    "file": "src/contexts/DashboardThemeContext.test.tsx",
+    "name": "respeita a preferência salva ao montar"
+   },
+   {
+    "file": "src/contexts/DashboardThemeContext.test.tsx",
+    "name": "alterna, aplica a classe e grava a preferência para a próxima sessão"
+   },
+   {
+    "file": "src/contexts/DashboardThemeContext.test.tsx",
+    "name": "cai no padrão sem quebrar quando o valor salvo é inválido"
+   },
+   {
+    "file": "src/contexts/RaceCalmContext.test.tsx",
+    "name": "RaceCalmContext"
+   },
+   {
+    "file": "src/contexts/RaceCalmContext.test.tsx",
+    "name": "com provider, mantém uma única assinatura para vários consumidores"
+   },
+   {
+    "file": "src/contexts/RaceCalmContext.test.tsx",
+    "name": "com provider, um consumidor alterna e os outros veem o mesmo estado"
+   },
+   {
+    "file": "src/contexts/RaceCalmContext.test.tsx",
+    "name": "fora do provider, o consumidor segue funcionando sozinho"
+   },
+   {
     "file": "src/hooks/rolePermissions.test.ts",
     "name": "fonte única de permissões (role-permissions.json)"
    },
@@ -161151,6 +161191,34 @@
    {
     "file": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
     "name": "não insere se a consulta do vendedor falhar"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "useCalmMode"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "lê a preferência salva na montagem"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "assume desligado quando não há preferência ou o valor é inválido"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "alterna, grava e sincroniza as outras instâncias pela mesma fonte"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "setCalmMode grava o valor pedido"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "não assina nada quando desabilitado (evita instância duplicada)"
+   },
+   {
+    "file": "src/hooks/race/useCalmMode.test.tsx",
+    "name": "assina uma vez quando habilitado"
    },
    {
     "file": "src/hooks/race/useGhostCar.test.tsx",
@@ -248954,6 +249022,18 @@
     "notify_sales_in_app"
    ]
   },
+  "src/contexts/DashboardThemeContext.test.tsx": {
+   "path": "src/contexts/DashboardThemeContext.test.tsx",
+   "lines": 73,
+   "is_test": true,
+   "tests": [
+    "DashboardThemeContext",
+    "usa cyber como padrão quando não há preferência salva",
+    "respeita a preferência salva ao montar",
+    "alterna, aplica a classe e grava a preferência para a próxima sessão",
+    "cai no padrão sem quebrar quando o valor salvo é inválido"
+   ]
+  },
   "src/contexts/DashboardThemeContext.tsx": {
    "path": "src/contexts/DashboardThemeContext.tsx",
    "lines": 71,
@@ -248989,9 +249069,20 @@
     "useI18n"
    ]
   },
+  "src/contexts/RaceCalmContext.test.tsx": {
+   "path": "src/contexts/RaceCalmContext.test.tsx",
+   "lines": 62,
+   "is_test": true,
+   "tests": [
+    "RaceCalmContext",
+    "com provider, mantém uma única assinatura para vários consumidores",
+    "com provider, um consumidor alterna e os outros veem o mesmo estado",
+    "fora do provider, o consumidor segue funcionando sozinho"
+   ]
+  },
   "src/contexts/RaceCalmContext.tsx": {
    "path": "src/contexts/RaceCalmContext.tsx",
-   "lines": 27,
+   "lines": 29,
    "exports": [
     "function RaceCalmProvider",
     "function useRaceCalm"
@@ -263940,9 +264031,29 @@
     "invoke("
    ]
   },
+  "src/hooks/race/useCalmMode.test.tsx": {
+   "path": "src/hooks/race/useCalmMode.test.tsx",
+   "lines": 73,
+   "is_test": true,
+   "params": [
+    {
+     "name": "EVENT",
+     "value": "'race-calm-mode-change'"
+    }
+   ],
+   "tests": [
+    "useCalmMode",
+    "lê a preferência salva na montagem",
+    "assume desligado quando não há preferência ou o valor é inválido",
+    "alterna, grava e sincroniza as outras instâncias pela mesma fonte",
+    "setCalmMode grava o valor pedido",
+    "não assina nada quando desabilitado (evita instância duplicada)",
+    "assina uma vez quando habilitado"
+   ]
+  },
   "src/hooks/race/useCalmMode.ts": {
    "path": "src/hooks/race/useCalmMode.ts",
-   "lines": 56,
+   "lines": 61,
    "exports": [
     "function useCalmMode"
    ],
@@ -299613,10 +299724,23 @@
   }
  },
  "git": {
-  "sha": "e4459d7894edc3073e0b2e0d470cde48cfc20460",
+  "sha": "ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "ceeefa8",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)",
+    "files": [
+     "src/contexts/DashboardThemeContext.test.tsx",
+     "src/contexts/RaceCalmContext.test.tsx",
+     "src/contexts/RaceCalmContext.tsx",
+     "src/hooks/race/useCalmMode.test.tsx",
+     "src/hooks/race/useCalmMode.ts"
+    ]
+   },
    {
     "sha": "e4459d7",
     "date": "2026-11-24",
@@ -299949,21 +300073,12 @@
      "tools/graphify/pyproject.toml",
      "tools/graphify/uv.lock"
     ]
-   },
-   {
-    "sha": "0ab02a5",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: marca a etapa 190 no progresso (PR #688) (#689)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    13
+    12
    ],
    [
     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
@@ -299980,6 +300095,26 @@
    [
     "src/components/admin/AdminQuickLinks.tsx",
     2
+   ],
+   [
+    "src/contexts/DashboardThemeContext.test.tsx",
+    1
+   ],
+   [
+    "src/contexts/RaceCalmContext.test.tsx",
+    1
+   ],
+   [
+    "src/contexts/RaceCalmContext.tsx",
+    1
+   ],
+   [
+    "src/hooks/race/useCalmMode.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/race/useCalmMode.ts",
+    1
    ],
    [
     "src/components/sales/SaleHUDCard.test.tsx",
@@ -300019,26 +300154,6 @@
    ],
    [
     "src/hooks/gamification/useLeagues.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/gamification/useLeagues.ts",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/IntelligenceSettings.tsx",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
-    1
-   ],
-   [
-    "src/components/purchase-intelligence/EmptyStateGuide.tsx",
     1
    ]
   ]

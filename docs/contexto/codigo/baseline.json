@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e4459d7894edc3073e0b2e0d470cde48cfc20460",
+  "commit": "ceeefa8d6f0a2dfa649354fc1a691d9e64502e7c",
   "branch": "main",
-  "data_commit": "2026-11-24T01:51:34-03:00",
+  "data_commit": "2026-11-24T01:56:46-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ceeefa8",
+    "data": "2026-11-24",
+    "assunto": "fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)"
+   },
    {
     "sha": "e4459d7",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "78beba2",
     "data": "2026-11-23",
     "assunto": "fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)"
-   },
-   {
-    "sha": "554eb39",
-    "data": "2026-11-23",
-    "assunto": "fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)"
    }
   ],
-  "arquivos_mudados_7d": 315,
+  "arquivos_mudados_7d": 320,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": "src/hooks/race",
-    "mudancas": 44
+    "mudancas": 46
    },
    {
     "pasta": "src/components/gamification",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3660,
-  "arquivos_codigo": 2604,
-  "linhas_codigo": 447355,
+  "arquivos_total": 3663,
+  "arquivos_codigo": 2607,
+  "linhas_codigo": 447570,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 266,
+  "testes": 269,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -603,12 +603,12 @@
    "linhas": 136
   },
   "src/contexts": {
-   "arquivos": 6,
-   "linhas": 610
+   "arquivos": 8,
+   "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 550,
-   "linhas": 65090
+   "arquivos": 551,
+   "linhas": 65168
   },
   "src/integrations": {
    "arquivos": 4,

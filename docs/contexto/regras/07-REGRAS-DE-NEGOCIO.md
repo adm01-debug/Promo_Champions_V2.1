@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e4459d7894` · branch `main` · 2026-11-24 04:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ceeefa8d6f` · branch `main` · 2026-11-24 04:57 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1781 testes em 230 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1797 testes em 233 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4354,6 +4354,7 @@ _nenhum item encontrado_
 | `src/hooks/automation/useAutomationWorkflows.test.tsx` | 7 | useUpdateWorkflow · atualiza o mesmo registro com os campos do construtor · mostra toast de erro quando o banco recusa · trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso … |
 | `src/hooks/cadences/useCadenceReport.test.tsx` | 7 | aggregateCadenceReport · sem linhas devolve zeros (sem número inventado) · pondera resposta/conversão pelo número de inscritos de cada cadência · useCadenceChannelExecution … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
+| `src/hooks/race/useCalmMode.test.tsx` | 7 | useCalmMode · lê a preferência salva na montagem · assume desligado quando não há preferência ou o valor é inválido · alterna, grava e sincroniza as outras instâncias pela mesma fonte … |
 | `src/hooks/win-loss/useWinLossAggregations.test.ts` | 7 | aggregateBySalesperson (usa lib winRate) · calcula winRate = wins/(wins+losses) por vendedor · vendedor sem deals decididos não aparece (sale_id sem mapa é ignorado) · 0 wins e 0 losses → winRate 0 … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
@@ -4387,6 +4388,7 @@ _nenhum item encontrado_
 | `src/components/sales/cadence/CadenceReportPanel.test.tsx` | 5 | CadenceReportPanel · busca o período semanal (7 dias) por padrão · sem dados mostra estado vazio honesto e nenhum valor fixo antigo · mostra métricas consolidadas e execução por canal vindas do banco … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/config/dominio-publico.test.ts` | 5 | domínio público do app · %s não referencia domínio legado da Lovable · APP_URL padrão é o domínio de produção · canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção … |
+| `src/contexts/DashboardThemeContext.test.tsx` | 5 | DashboardThemeContext · usa cyber como padrão quando não há preferência salva · respeita a preferência salva ao montar · alterna, aplica a classe e grava a preferência para a próxima sessão … |
 | `src/hooks/useDealProbability.test.tsx` | 5 | useDealProbability — origem do número (etapa 117) · marca a análise vinda do servidor como  · marca a heurística local como  · marca como  … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
@@ -4421,6 +4423,7 @@ _nenhum item encontrado_
 | `src/components/purchase-intelligence/PurchasePredictionCard.test.tsx` | 4 | PurchasePredictionCard — ações da recomendação (etapa 104) · leva para a agenda ao clicar em Agendar · leva para os orçamentos ao clicar em Proposta · recarrega a análise quando a IA falha |
 | `src/components/sales/cadence/EliteCadenceAnalytics.test.tsx` | 4 | EliteCadenceAnalytics · mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios · mostra estado vazio quando não há tarefas no período · mostra erro quando a consulta falha |
 | `src/components/vendedor/EligibleBonusesCard.test.tsx` | 4 | EligibleBonusesCard (QA-061) · mostra erro com nova tentativa quando a leitura falha · avisa que o dado é parcial quando sequência ou total de vendas falharam · nao mostra o aviso de parcial quando todas as leituras funcionaram |
+| `src/contexts/RaceCalmContext.test.tsx` | 4 | RaceCalmContext · com provider, mantém uma única assinatura para vários consumidores · com provider, um consumidor alterna e os outros veem o mesmo estado · fora do provider, o consumidor segue funcionando sozinho |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/useVictoryFeed.test.tsx` | 4 | useVictoryFeed — comentários próprios · edita o conteúdo do comentário pelo id · exclui o comentário pelo id · falha com toast de erro quando o RLS não afeta nenhuma linha |

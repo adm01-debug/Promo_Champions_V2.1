@@ -9933,8 +9933,8 @@
   {
    "modulo": "contexts",
    "arquivos": 6,
-   "testes": 0,
-   "linhas": 610,
+   "testes": 2,
+   "linhas": 612,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13898,8 +13898,8 @@
   {
    "modulo": "hooks/race",
    "arquivos": 41,
-   "testes": 1,
-   "linhas": 3619,
+   "testes": 2,
+   "linhas": 3624,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
