@@ -93,6 +93,12 @@ remote_checks() {
   fi
   remote_suite_psql quote-to-sale-stress.sql \
     -v admin_uuid="'$ADMIN'" -v salesperson_uuid="'$SP'" || return 1
+
+  # Sonda read-only da fila de entrega ao Supply (#731): relatório, não gate.
+  # Não falha por dado — fila vazia é estado válido; falha só se o SQL quebrar.
+  echo "[sql-tests] remote — supply_outbox_diagnostics.sql (sonda read-only da fila)"
+  psql "$SUPABASE_DB_URL" --single-transaction -v ON_ERROR_STOP=1 \
+    -f supabase/tests/supply_outbox_diagnostics.sql || return 1
 }
 
 case "$MODE" in
