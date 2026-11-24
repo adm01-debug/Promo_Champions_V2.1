@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "01dd7e3fe4ab1e06d58adde7653c86934f85a248",
+  "commit": "aab47375a6b63267d65d7398212c51515deb9a71",
   "branch": "main",
-  "data_commit": "2026-11-24T00:29:23-03:00",
+  "data_commit": "2026-11-24T00:42:13-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "aab4737",
+    "data": "2026-11-24",
+    "assunto": "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)"
+   },
    {
     "sha": "01dd7e3",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "cdee014",
     "data": "2026-11-23",
     "assunto": "chore(deps-dev): bump postcss from 8.5.32 to 8.5.33 (#630)"
-   },
-   {
-    "sha": "4a38ccf",
-    "data": "2026-11-23",
-    "assunto": "chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)"
    }
   ],
-  "arquivos_mudados_7d": 273,
+  "arquivos_mudados_7d": 278,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -192,7 +192,7 @@
     "mudancas": 42
    },
    {
-    "pasta": "src/components/revenue-intelligence",
+    "pasta": "src/components/pipeline",
     "mudancas": 42
    }
   ],
@@ -234,6 +234,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "mudancas": 7
+   },
+   {
     "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 6
    },
@@ -243,10 +247,6 @@
    },
    {
     "arquivo": "inventario/estado/edges.json",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 6
    },
    {
@@ -278,6 +278,10 @@
     "mudancas": 5
    },
    {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/hooks/abm/useAccounts.test.tsx",
     "mudancas": 5
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "docs/DEPLOYMENT.md",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "docs/agentes/branches-encerradas-261117.md",
     "mudancas": 4
    }
   ],
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3649,
-  "arquivos_codigo": 2593,
-  "linhas_codigo": 445804,
+  "arquivos_total": 3650,
+  "arquivos_codigo": 2594,
+  "linhas_codigo": 445972,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 253,
+  "testes": 254,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1228,
-   "linhas": 193352
+   "linhas": 193390
   },
   "src/config": {
    "arquivos": 4,
@@ -607,8 +607,8 @@
    "linhas": 610
   },
   "src/hooks": {
-   "arquivos": 550,
-   "linhas": 64967
+   "arquivos": 551,
+   "linhas": 65097
   },
   "src/integrations": {
    "arquivos": 4,
@@ -783,7 +783,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 7,
-  "arquivos_acima_500_linhas": 70
+  "arquivos_acima_500_linhas": 71
  },
  "todos": [
   {

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "01dd7e3fe4ab1e06d58adde7653c86934f85a248",
+  "sha": "aab47375a6b63267d65d7398212c51515deb9a71",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 03:30 UTC",
-  "files_total": 3664,
-  "code_files": 3315,
-  "code_lines": 480915
+  "generated_at": "2026-11-24 03:42 UTC",
+  "files_total": 3665,
+  "code_files": 3316,
+  "code_lines": 481083
  },
  "version": "1.3.2",
- "facts_hash": "1e9e33798bc4908e",
+ "facts_hash": "ea277a872be075bc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1381,
+   ".tsx": 1382,
    ".ts": 1130,
    ".sql": 722,
    ".mjs": 72,
@@ -106881,7 +106881,7 @@
   {
    "module": "src/components",
    "files": 1228,
-   "lines": 193351,
+   "lines": 193389,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107209,8 +107209,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 550,
-   "lines": 64967,
+   "files": 551,
+   "lines": 65097,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107512,7 +107512,7 @@
     "useCustomTheme.ts: AccentColor, ThemeMode, useCustomTheme",
     "useCustomerSuccess.ts: AccountHealth, useCustomerSuccess",
     "useDealChatHistory.ts: QuestionType, QUESTION_TYPES, useDealChatHistory",
-    "useDealProbability.ts: useDealProbability, useDealProbabilities",
+    "useDealProbability.ts: ProbabilitySource, DealProbabilityResult, DealProbabilityEntry, useDealProbability, useDealProbabilities",
     "useDealSLAs.ts: DealSLAStatus, useDealSLAs",
     "useDealTimeline.ts: TimelineEventType, DealTimelineEvent, useDealTimeline",
     "useDebouncedValue.ts: useDebouncedValue",
@@ -107599,6 +107599,7 @@
     "src/hooks/useCustomTheme.ts",
     "src/hooks/useCustomerSuccess.ts",
     "src/hooks/useDealChatHistory.ts",
+    "src/hooks/useDealProbability.test.tsx",
     "src/hooks/useDealProbability.ts",
     "src/hooks/useDealSLAs.ts",
     "src/hooks/useDealTimeline.ts",
@@ -107640,8 +107641,7 @@
     "src/hooks/useMFA.ts",
     "src/hooks/useMediaQuery.ts",
     "src/hooks/useMicroGoals.ts",
-    "src/hooks/useMobileNavigation.ts",
-    "src/hooks/useMultichannel.test.tsx"
+    "src/hooks/useMobileNavigation.ts"
    ]
   },
   {
@@ -118291,6 +118291,11 @@
     "file": "src/hooks/useDealChatHistory.ts",
     "name": "QuestionType",
     "values": "general | analysis | objections | closing | strategy"
+   },
+   {
+    "file": "src/hooks/useDealProbability.ts",
+    "name": "ProbabilitySource",
+    "values": "servidor | estimativa"
    },
    {
     "file": "src/hooks/useDealTimeline.ts",
@@ -159246,6 +159251,18 @@
     "name": "deal com health_score baixo real continua mostrando o alerta"
    },
    {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "DealCard — origem da probabilidade (etapa 117)"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "marca como estimativa local quando o servidor não respondeu"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "não marca estimativa quando o número veio do servidor"
+   },
+   {
     "file": "src/components/pipeline/InactivityPanel.test.tsx",
     "name": "InactivityPanel"
    },
@@ -159696,6 +159713,26 @@
    {
     "file": "src/hooks/useClientsNeedingContact.test.tsx",
     "name": "particiona a busca de contatos para carteiras grandes"
+   },
+   {
+    "file": "src/hooks/useDealProbability.test.tsx",
+    "name": "useDealProbability — origem do número (etapa 117)"
+   },
+   {
+    "file": "src/hooks/useDealProbability.test.tsx",
+    "name": "marca a análise vinda do servidor como "
+   },
+   {
+    "file": "src/hooks/useDealProbability.test.tsx",
+    "name": "marca a heurística local como "
+   },
+   {
+    "file": "src/hooks/useDealProbability.test.tsx",
+    "name": "marca como "
+   },
+   {
+    "file": "src/hooks/useDealProbability.test.tsx",
+    "name": "o lote também informa a origem de cada número"
    },
    {
     "file": "src/hooks/useDigitalSignatures.test.tsx",
@@ -240752,7 +240789,7 @@
   },
   "src/components/pipeline/DealCard.test.tsx": {
    "path": "src/components/pipeline/DealCard.test.tsx",
-   "lines": 170,
+   "lines": 191,
    "is_test": true,
    "routes": [
     {
@@ -240779,12 +240816,15 @@
     "não oferece o botão simulado de enriquecimento",
     "DealCard — saúde sem valor inventado",
     "deal sem health_score e sem lead score não recebe saúde 50 nem ",
-    "deal com health_score baixo real continua mostrando o alerta"
+    "deal com health_score baixo real continua mostrando o alerta",
+    "DealCard — origem da probabilidade (etapa 117)",
+    "marca como estimativa local quando o servidor não respondeu",
+    "não marca estimativa quando o número veio do servidor"
    ]
   },
   "src/components/pipeline/DealCard.tsx": {
    "path": "src/components/pipeline/DealCard.tsx",
-   "lines": 499,
+   "lines": 511,
    "exports": [
     "const DealCard"
    ],
@@ -241018,14 +241058,14 @@
   },
   "src/components/pipeline/PipelineBoard.tsx": {
    "path": "src/components/pipeline/PipelineBoard.tsx",
-   "lines": 610,
+   "lines": 613,
    "exports": [
     "const PipelineBoard"
    ]
   },
   "src/components/pipeline/PipelineColumn.tsx": {
    "path": "src/components/pipeline/PipelineColumn.tsx",
-   "lines": 186,
+   "lines": 188,
    "exports": [
     "const PipelineColumn"
    ],
@@ -249827,10 +249867,25 @@
     "20"
    ]
   },
+  "src/hooks/useDealProbability.test.tsx": {
+   "path": "src/hooks/useDealProbability.test.tsx",
+   "lines": 109,
+   "is_test": true,
+   "tests": [
+    "useDealProbability — origem do número (etapa 117)",
+    "marca a análise vinda do servidor como ",
+    "marca a heurística local como ",
+    "marca como ",
+    "o lote também informa a origem de cada número"
+   ]
+  },
   "src/hooks/useDealProbability.ts": {
    "path": "src/hooks/useDealProbability.ts",
-   "lines": 126,
+   "lines": 147,
    "exports": [
+    "type ProbabilitySource",
+    "interface DealProbabilityResult",
+    "interface DealProbabilityEntry",
     "const useDealProbability",
     "const useDealProbabilities"
    ],
@@ -249867,6 +249922,12 @@
    ],
    "errors": [
     "Deal not found"
+   ],
+   "enums": [
+    {
+     "name": "ProbabilitySource",
+     "values": "servidor | estimativa"
+    }
    ],
    "status_values": [
     {
@@ -299158,10 +299219,24 @@
   }
  },
  "git": {
-  "sha": "01dd7e3fe4ab1e06d58adde7653c86934f85a248",
+  "sha": "aab47375a6b63267d65d7398212c51515deb9a71",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "aab4737",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)",
+    "files": [
+     "src/components/pipeline/DealCard.test.tsx",
+     "src/components/pipeline/DealCard.tsx",
+     "src/components/pipeline/PipelineBoard.tsx",
+     "src/components/pipeline/PipelineColumn.tsx",
+     "src/hooks/useDealProbability.test.tsx",
+     "src/hooks/useDealProbability.ts"
+    ]
+   },
    {
     "sha": "01dd7e3",
     "date": "2026-11-24",
@@ -299481,25 +299556,12 @@
     "files": [
      "supabase/config.toml"
     ]
-   },
-   {
-    "sha": "4e1ca24",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: unifica o prefetch de rotas, remove orfao e trava acesso da assinatura digital (QA-178/179/180) (#679)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/navigation/NavLink.tsx",
-     "src/components/ui/level-up-celebration.tsx",
-     "src/routes/pagePrefetchMap.ts",
-     "src/routes/routeAccess.test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    18
+    17
    ],
    [
     "deno.lock",
@@ -299520,6 +299582,30 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/pipeline/DealCard.test.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/DealCard.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/PipelineBoard.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/PipelineColumn.tsx",
+    1
+   ],
+   [
+    "src/hooks/useDealProbability.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/useDealProbability.ts",
+    1
    ],
    [
     "src/pages/AdminComissoes.test.tsx",
@@ -299551,30 +299637,6 @@
    ],
    [
     "supabase/functions/simulate-load/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/semantic-index-entity/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/semantic-search/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/visual-search/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/external-db-bridge/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/generate-revenue-forecast/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/qbr-generator/index.ts",
     1
    ]
   ]

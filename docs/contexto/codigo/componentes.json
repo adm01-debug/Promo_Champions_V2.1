@@ -10046,7 +10046,7 @@
     "DealCard"
    ],
    "export_default": null,
-   "linhas": 499,
+   "linhas": 511,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useDealPlaybookProgress",
@@ -10178,7 +10178,7 @@
     "PipelineBoard"
    ],
    "export_default": null,
-   "linhas": 610,
+   "linhas": 613,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
@@ -10208,7 +10208,7 @@
     "PipelineColumn"
    ],
    "export_default": null,
-   "linhas": 186,
+   "linhas": 188,
    "dominio": "components/pipeline",
    "hooks_locais": [],
    "tabelas": [],

@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 253,
+ "total": 254,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 185
+  "unit": 186
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 168
+   "arquivos": 169
   },
   {
    "padrao": "tests/",
@@ -409,14 +409,14 @@
   {
    "arquivo": "src/components/pipeline/DealCard.test.tsx",
    "tipo": "unit",
-   "linhas": 170,
+   "linhas": 191,
    "testa": [
     "src/components/pipeline/DealCard.tsx",
     "src/components/ui/tooltip.tsx",
     "src/hooks/pipeline/useDealCardContext.ts",
     "src/hooks/usePipeline.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/pipeline/InactivityPanel.test.tsx",
@@ -970,6 +970,15 @@
     "src/hooks/useClientsNeedingContact.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/useDealProbability.test.tsx",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/hooks/useDealProbability.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/hooks/useDigitalSignatures.test.tsx",
@@ -2259,6 +2268,7 @@
   "src/hooks/useClientsNeedingContact.ts": 1,
   "src/hooks/useCommissionBonuses.ts": 1,
   "src/hooks/useCommissions.ts": 1,
+  "src/hooks/useDealProbability.ts": 1,
   "src/hooks/useDigitalSignatures.ts": 1,
   "src/hooks/useEligibleBonuses.ts": 1,
   "src/hooks/useEvolutionCurves.ts": 1,
@@ -2775,7 +2785,6 @@
    "src/hooks/useCustomerSuccess.ts",
    "src/hooks/useCustomTheme.ts",
    "src/hooks/useDealChatHistory.ts",
-   "src/hooks/useDealProbability.ts",
    "src/hooks/useDealSLAs.ts",
    "src/hooks/useDealTimeline.ts",
    "src/hooks/useDebouncedValue.ts",

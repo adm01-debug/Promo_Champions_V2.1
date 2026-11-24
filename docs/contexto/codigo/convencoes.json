@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (168)",
+   "co-localizado (*.test) (169)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)",
    "fix: comissao sem vendedor e cliente nao some mais na busca vazia (QA-154) (#701)",
    "chore: classifica as 31 tabelas orfas e separa o que esta em uso do que e limpeza (QA-206) (#700)",
    "docs: alinha a premissa de edge functions no AGENTS.md ao medido (QA-230) (#699)",
-   "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)",
-   "fix: exige identidade antes do limite e le com RLS nas funcoes de previsao (QA-214) (#697)"
+   "chore: registra o teto de complexidade medido e o que o sustenta (QA-222) (#698)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

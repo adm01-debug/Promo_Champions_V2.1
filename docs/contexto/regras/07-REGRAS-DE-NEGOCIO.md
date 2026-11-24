@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `01dd7e3fe4` · branch `main` · 2026-11-24 03:30 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `aab47375a6` · branch `main` · 2026-11-24 03:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1672,6 +1672,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | AccentColor | purple \| blue \| green \| orange \| pink \| cyan \| amber \| rose | `src/hooks/useCustomTheme.ts` |
 | ThemeMode | light \| dark \| system | `src/hooks/useCustomTheme.ts` |
 | QuestionType | general \| analysis \| objections \| closing \| strategy | `src/hooks/useDealChatHistory.ts` |
+| ProbabilitySource | servidor \| estimativa | `src/hooks/useDealProbability.ts` |
 | TimelineEventType | activity \| stage_change \| task_completed \| outcome \| chat | `src/hooks/useDealTimeline.ts` |
 | LeadSource | linkedin \| referral \| inbound \| outbound \| event \| website \| paid_ads \| other | `src/hooks/useLeadSourceAnalysis.ts` |
 | Channel | whatsapp \| email \| linkedin \| sms \| phone | `src/hooks/useMultichannel.ts` |
@@ -4276,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1724 testes em 218 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1732 testes em 219 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4308,6 +4309,7 @@ _nenhum item encontrado_
 | `supabase/functions/cron-failure-alerter/index.test.ts` | 16 | fn_cron_expected_interval → cada schedule mapeia para o intervalo correto · fn_cron_stalled_threshold → 5min job usa piso de 30min · fn_cron_stalled_threshold → 15min job usa 30min (2× intervalo) · fn_cron_stalled_threshold → 30min job usa 60min (2× intervalo) … |
 | `src/lib/winloss/riskReasons.test.ts` | 15 | getReasonKindMeta · todos os códigos retornam meta com label + variant · STAGNATION_HIGH tem contribMax=50 e source=stagnation · COMPETITOR_PRESSURE tem source=competitor e variant=destructive … |
 | `src/test/quote-conversion-errors.test.ts` | 15 | parseConvertQuoteError · extrai código de  · devolve UNKNOWN para mensagens sem prefixo, vazias ou desconhecidas · tolera espaços em branco antes do prefixo … |
+| `src/components/pipeline/DealCard.test.tsx` | 14 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/lib/winloss/riskSeverity.test.ts` | 14 | deriveSeverity — matriz de severidade Win/Loss · classifica como critical apenas quando final≥80 E conf≥0.7 · classifica como high para final entre 65 e 79 (independente de conf) · classifica como medium para final entre 50 e 64 … |
 | `src/lib/winloss/winlossContract.test.ts` | 14 | contrato front/edge — severity · deriveSeverity (front) === severityFromScore (edge) para toda a grade · adapter score-only do front (conf=1) === edge com conf plena · SEVERITY_RULES (tabela UI) bate com o contrato em toda a grade … |
 | `src/test/regressions.test.ts` | 14 | Regression: ABC Analysis · handles empty performance array · handles zero total revenue · classifies by Pareto 80/15/5 … |
@@ -4326,7 +4328,6 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
 | `supabase/functions/receive-design-sync/mapping.test.ts` | 12 | isUuid aceita uuid v4 minusculo · isUuid rejeita string vazia, null e uuid truncado · schema aceita o payload completo que o Promo Design emite · toDesignRow traduz todos os campos do payload … |
 | `scripts/lib/seguranca-processo.test.mjs` | 11 | resolverExecutavel devolve caminho absoluto existente igual ao do shell · resolverExecutavel lanca para comando inexistente · estaDentro aceita a raiz e subpastas · estaDentro recusa  … |
-| `src/components/pipeline/DealCard.test.tsx` | 11 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/hooks/useRunRateProjection.test.ts` | 11 | computeRunRateProjection · primeiro dia do mês: paceDaily = mtd, projeta para todos os dias do mês · meio do mês com bom ritmo: confidence media, projeção acima da meta · gap grande: dailyPaceRequired calculado corretamente … |
 | `src/hooks/sales/useContactFrequencyRules.test.tsx` | 11 | parseContactRules / serializeContactRules · retorna null quando não há regras salvas · lê o formato gravado por ContactRulesDialog e completa o que falta com o padrão · ignora valores inválidos no jsonb … |
 | `src/lib/navigationGuard.test.tsx` | 11 | navigationGuard · requestNavigation executa direto sem sujeira · requestNavigation confirma antes de sair com sujeira · requestNavigation bloqueia quando o usuário cancela … |
@@ -4382,6 +4383,7 @@ _nenhum item encontrado_
 | `src/components/sales/cadence/CadenceReportPanel.test.tsx` | 5 | CadenceReportPanel · busca o período semanal (7 dias) por padrão · sem dados mostra estado vazio honesto e nenhum valor fixo antigo · mostra métricas consolidadas e execução por canal vindas do banco … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/config/dominio-publico.test.ts` | 5 | domínio público do app · %s não referencia domínio legado da Lovable · APP_URL padrão é o domínio de produção · canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção … |
+| `src/hooks/useDealProbability.test.tsx` | 5 | useDealProbability — origem do número (etapa 117) · marca a análise vinda do servidor como  · marca a heurística local como  · marca como  … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
 | `src/hooks/automation/executeWorkflowActions.test.ts` | 5 | execute-workflow — log_activity · usa um outcome que existe no enum activity_outcome · grava o salespeople.id recebido e um activity_type válido · execute-workflow — create_task … |

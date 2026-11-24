@@ -4769,6 +4769,7 @@
    "src/components/pipeline/DealCard.tsx",
    "src/components/ui/badge.tsx",
    "src/hooks/pipeline/useDealCardContext.ts",
+   "src/hooks/useDealProbability.ts",
    "src/hooks/useICPData.ts",
    "src/hooks/usePipeline.ts",
    "src/lib/money.ts",

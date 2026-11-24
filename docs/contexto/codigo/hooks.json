@@ -8427,7 +8427,7 @@
     "useDealProbabilities",
     "useDealProbability"
    ],
-   "linhas": 126,
+   "linhas": 147,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8437,15 +8437,14 @@
    "edges": [
     "deal-probability"
    ],
-   "hooks_internos": [
-    "useQuery"
-   ],
+   "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
-    "src/components/pipeline/PipelineBoard.tsx"
+    "src/components/pipeline/PipelineBoard.tsx",
+    "src/components/pipeline/PipelineColumn.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useDealSLAs.ts",
