@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b",
+  "sha": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 03:56 UTC",
-  "files_total": 3664,
-  "code_files": 3315,
-  "code_lines": 480778
+  "generated_at": "2026-11-24 04:00 UTC",
+  "files_total": 3665,
+  "code_files": 3316,
+  "code_lines": 480882
  },
  "version": "1.3.2",
- "facts_hash": "a50acdb787f36773",
+ "facts_hash": "430881491d2cad9f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1382,
+   ".tsx": 1383,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -102904,7 +102904,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1229,
+  "components_count": 1230,
   "hooks": [
    {
     "name": "useContacts",
@@ -106860,8 +106860,8 @@
   },
   {
    "module": "src/components",
-   "files": 1229,
-   "lines": 193439,
+   "files": 1230,
+   "lines": 193543,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -159299,6 +159299,18 @@
    {
     "file": "src/components/pricing/RevenueLeakageCard.test.tsx",
     "name": "leva às vendas com markup crítico em vez de só exibir um toast"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    "name": "DuplicateBlockAudit — busca e erro da consulta (etapa 106)"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    "name": "filtra a lista pelo termo digitado"
+   },
+   {
+    "file": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    "name": "mostra erro da consulta em vez de lista vazia"
    },
    {
     "file": "src/components/reporting/funnelReportHelpers.test.ts",
@@ -241858,9 +241870,19 @@
     "100"
    ]
   },
+  "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx": {
+   "path": "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+   "lines": 70,
+   "is_test": true,
+   "tests": [
+    "DuplicateBlockAudit — busca e erro da consulta (etapa 106)",
+    "filtra a lista pelo termo digitado",
+    "mostra erro da consulta em vez de lista vazia"
+   ]
+  },
   "src/components/purchase-intelligence/DuplicateBlockAudit.tsx": {
    "path": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
-   "lines": 142,
+   "lines": 176,
    "exports": [
     "const DuplicateBlockAudit"
    ],
@@ -299121,10 +299143,20 @@
   }
  },
  "git": {
-  "sha": "06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b",
+  "sha": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7291cdd",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)",
+    "files": [
+     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+     "src/components/purchase-intelligence/DuplicateBlockAudit.tsx"
+    ]
+   },
    {
     "sha": "06ff5fe",
     "date": "2026-11-24",
@@ -299445,17 +299477,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "4a38ccf",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump jsdom from 30.1.3 to 31.0.1 (#635)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -299465,19 +299486,27 @@
    ],
    [
     "deno.lock",
-    5
+    4
    ],
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
+    1
+   ],
+   [
+    "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
+    1
    ],
    [
     "src/components/admin/AdminQuickLinks.test.tsx",
@@ -299529,14 +299558,6 @@
    ],
    [
     "src/routes/routeAccess.ts",
-    1
-   ],
-   [
-    "docs/estado/13_INTEGRACOES.md",
-    1
-   ],
-   [
-    "src/components/pipeline/DealCard.test.tsx",
     1
    ]
   ]

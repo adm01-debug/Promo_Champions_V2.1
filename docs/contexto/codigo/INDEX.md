@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b` (2026-11-24T00:56:10-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7291cdd869ffe6e2cbbb78f3e6b92212cdff6986` (2026-11-24T00:59:52-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2512), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
+- linguagens: TypeScript (2513), SQL (722), Markdown (223), JavaScript (78), JSON (33), YAML (29), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3649 |
-| arquivos_codigo | 2593 |
-| linhas_codigo | 445667 |
+| arquivos_total | 3650 |
+| arquivos_codigo | 2594 |
+| linhas_codigo | 445771 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 420 |
 | migrations | 712 |
 | cron_jobs | 39 |
-| testes | 255 |
+| testes | 256 |
 | workflows | 27 |
 | scripts | 78 |
 | docs_md | 223 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1110), src/pages (173), src/contexts (5)
 - hooks: src/hooks (471), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (170), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (171), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -586,8 +586,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24170 nós · 74314 arestas · 1141 comunidades · grafo do commit `06ff5fe8`
-- comunidades maiores: schema.sql (574), cn (388), DialogContent (313), SelectContent (273), client.ts (271), vitest (269), CardHeader (267), CardContent (263), Card (261), public (256), getCorsHeaders (250), Button (233)
+- 24174 nós · 74325 arestas · 1152 comunidades · grafo do commit `7291cdd8`
+- comunidades maiores: Card (802), schema.sql (585), Button (515), formatBRL (393), lucide-react (384), badge.tsx (367), client.ts (348), getCorsHeaders (293), Badge (274), public (255), vitest (250), public.sales (234)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -599,11 +599,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG.md (14)
 - src/integrations/supabase/types.ts (12)
 - .github/workflows/deploy.yml (9)
-- scripts/inventario/gerar-banco.mjs (7)
 - src/components/pipeline/DealCard.tsx (7)
 - .github/workflows/codeql.yml (6)
 - .github/workflows/pr-checks.yml (6)
 - docs/pendencias/backlog-verificado.md (6)
+- scripts/inventario/gerar-banco.mjs (6)
 - src/hooks/abm/useAccounts.ts (6)
 - .github/workflows/contexto.yml (5)
 - .github/workflows/migrations-drift.yml (5)
@@ -766,6 +766,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.7.4](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.7.3...promo-champions-v2-v1.7.4) (2026-11-22)
 
 ## Últimos commits
+- 2026-11-24 `7291cdd` fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)
 - 2026-11-24 `06ff5fe` feat: telas de alerta de webhook ganham entrada no Acesso Rapido (QA-110) (#707)
 - 2026-11-24 `737d0c0` docs: marca como obsoletos os docs de estado medidos no banco antigo (QA-187) (#706)
 - 2026-11-24 `b05ca72` chore: remove pagina de teste de retentativa exposta em producao (QA-112) (#704)
@@ -780,7 +781,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `78beba2` fix: escopa leitura de entidade e limita busca semantica por usuario (QA-213) (#696)
 - 2026-11-23 `554eb39` fix: valida colunas pedidas no external-db-bridge contra allowlist (QA-219) (#694)
 - 2026-11-23 `fccaef3` fix: exige identidade antes do gateway de IA nas 4 funcoes pagas (QA-217) (#693)
-- 2026-11-24 `f0b094b` fix: card de premiacoes mostra erro em vez de 'nao atingido' e chave de clientes sem filtro morto (QA-058, QA-061) (#691
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

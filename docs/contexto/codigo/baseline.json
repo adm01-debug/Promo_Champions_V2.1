@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "06ff5fe80d2d7c68922d527ea3b8151f0c3ea30b",
+  "commit": "7291cdd869ffe6e2cbbb78f3e6b92212cdff6986",
   "branch": "main",
-  "data_commit": "2026-11-24T00:56:10-03:00",
+  "data_commit": "2026-11-24T00:59:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7291cdd",
+    "data": "2026-11-24",
+    "assunto": "fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)"
+   },
    {
     "sha": "06ff5fe",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "27e826b",
     "data": "2026-11-23",
     "assunto": "fix: ratchet de typecheck falha explicito quando o tsc nao roda (QA-245) (#682)"
-   },
-   {
-    "sha": "421ad72",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump lucide-react from 1.49.0 to 1.76.0 (#631)"
    }
   ],
-  "arquivos_mudados_7d": 288,
+  "arquivos_mudados_7d": 290,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -226,10 +226,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 7
    },
@@ -243,6 +239,10 @@
    },
    {
     "arquivo": "docs/pendencias/backlog-verificado.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 6
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3649,
-  "arquivos_codigo": 2593,
-  "linhas_codigo": 445667,
+  "arquivos_total": 3650,
+  "arquivos_codigo": 2594,
+  "linhas_codigo": 445771,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 420,
   "migrations": 712,
   "cron_jobs": 39,
-  "testes": 255,
+  "testes": 256,
   "workflows": 27,
   "scripts": 78,
   "docs_md": 223
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1229,
-   "linhas": 193440
+   "arquivos": 1230,
+   "linhas": 193544
   },
   "src/config": {
    "arquivos": 4,

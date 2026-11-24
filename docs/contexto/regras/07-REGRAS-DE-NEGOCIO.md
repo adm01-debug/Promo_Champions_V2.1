@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `06ff5fe80d` · branch `main` · 2026-11-24 03:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7291cdd869` · branch `main` · 2026-11-24 04:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1735 testes em 220 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1738 testes em 221 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4439,6 +4439,7 @@ _nenhum item encontrado_
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |
+| `src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx` | 3 | DuplicateBlockAudit — busca e erro da consulta (etapa 106) · filtra a lista pelo termo digitado · mostra erro da consulta em vez de lista vazia |
 | `src/components/sales/cadence/ApprovalQueue.test.tsx` | 3 | Filas de aprovação de cadência · ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos · aba Fila de Aprovação do gerenciador não exibe itens fictícios |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useEvolutionCurves.test.tsx` | 3 | useEvolutionCurves · indexa a receita acumulada pelo id, sem somar vendedores homônimos · filtra pelos ids selecionados |

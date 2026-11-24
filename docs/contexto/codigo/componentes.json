@@ -10867,7 +10867,7 @@
     "DuplicateBlockAudit"
    ],
    "export_default": null,
-   "linhas": 142,
+   "linhas": 176,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [],
    "tabelas": [
