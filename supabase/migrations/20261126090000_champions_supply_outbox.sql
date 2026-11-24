@@ -187,18 +187,17 @@ GRANT EXECUTE ON FUNCTION public.claim_supply_outbox(integer) TO service_role;
 REVOKE ALL ON FUNCTION public.finish_supply_outbox(uuid[], boolean, text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.finish_supply_outbox(uuid[], boolean, text) TO service_role;
 
--- Allowlist do dispatcher interno: inclui o novo job sem abrir proxy arbitrario.
+-- Allowlist do dispatcher interno: acrescenta o novo job sem abrir proxy
+-- arbitrario e sem regredir o dispatcher vigente. A versao anterior desta
+-- migration recriava a funcao com uma allowlist de 6 nomes e SEM o retry /
+-- reconciliacao introduzidos em 20261124130000; aplicar por ultimo (timestamp
+-- maior) derrubaria 19 jobs autorizados (inclusive semantic-reindex-batch).
 CREATE OR REPLACE FUNCTION public.trigger_internal_edge_job(p_function_name text)
-RETURNS bigint
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, net
-AS $$
-DECLARE
-  v_base_url text;
-  v_anon_key text;
-  v_cron_secret text;
-  v_request_id bigint;
+ RETURNS bigint
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'net'
+AS $function$
 BEGIN
   IF p_function_name IS NULL OR NOT (
     p_function_name = ANY (ARRAY[
@@ -207,41 +206,35 @@ BEGIN
       'cron-failure-alerter',
       'process-call-recording-ingest',
       'edge-retry-threshold-alert',
+      'deal-risk-digest',
+      'email-bulk-retry',
+      'wal-health-alert',
+      'winloss-webhook-health-monitor',
+      'webvitals-regression-alert',
+      'sequence-runner',
+      'process-cadence-tasks',
+      'process-scheduled-sends',
+      'check-quote-expiration',
+      'check-lead-sla',
+      'sdr-consecutive-alerts',
+      'activity-goal-alerts',
+      'challenge-expiration-alerts',
+      'send-alert-notifications',
+      'auto-reassign-inactive',
+      'access-denied-alerts',
+      'scheduled-reports-runner',
+      'rotate-daily-challenges',
+      'bitrix24-sync',
+      'semantic-reindex-batch',
       'supply-dispatch'
     ]::text[])
   ) THEN
     RAISE EXCEPTION 'internal_edge_job_not_allowed';
   END IF;
 
-  SELECT
-    max(s.value) FILTER (WHERE s.key = 'functions_base_url'),
-    max(s.value) FILTER (WHERE s.key = 'anon_key'),
-    max(s.value) FILTER (WHERE s.key = 'coaching_cron_secret')
-  INTO v_base_url, v_anon_key, v_cron_secret
-  FROM public._internal_secrets AS s;
-
-  IF v_base_url IS NULL OR v_anon_key IS NULL OR v_cron_secret IS NULL THEN
-    RAISE EXCEPTION 'internal_edge_job_secrets_missing';
-  END IF;
-  IF v_base_url !~ '^https://[^[:space:]]+$' THEN
-    RAISE EXCEPTION 'internal_edge_job_base_url_must_be_https';
-  END IF;
-
-  SELECT net.http_post(
-    url := rtrim(v_base_url, '/') || '/' || p_function_name,
-    headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'apikey', v_anon_key,
-      'Authorization', 'Bearer ' || v_anon_key,
-      'X-Cron-Secret', v_cron_secret
-    ),
-    body := jsonb_build_object('scheduled_at', now())
-  )
-  INTO v_request_id;
-
-  RETURN v_request_id;
+  RETURN public.post_internal_edge_job(p_function_name, 1, 3);
 END;
-$$;
+$function$;
 
 REVOKE ALL ON FUNCTION public.trigger_internal_edge_job(text)
   FROM PUBLIC, anon, authenticated;
