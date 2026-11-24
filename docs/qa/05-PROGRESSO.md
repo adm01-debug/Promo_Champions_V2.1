@@ -167,7 +167,7 @@ Exemplo:
 - [x] 132 — Invalidar o contador de tarefas de follow-up após mutação — onda 5 — Média — PR #665 - todays-cadence-tasks invalidado nas mutacoes e chave com userId
 - [x] 133 — Unificar os dois ganchos que marcam etapa de playbook — onda 5 — Média - PR #666 - assinaturas realtime de XP
 - [ ] 134 — Unificar as duas versões do funil de prospecção — onda 5 — Baixa · **APROV**
-- [ ] 135 — Persistir a preferência de tema do painel — onda 5 — Baixa
+- [x] 135 — Persistir a preferência de tema do painel — onda 5 — Baixa — PR #665 - ja resolvida: src/contexts/DashboardThemeContext.tsx:25-44 le e valida dashboard-style-theme no localStorage e setTheme/toggleTheme gravam; confirmado no main
 - [x] 136 — Remover o filtro declarado e ignorado em `useClients` — onda 5 — Baixa — PR #691 - a chave nao carrega mais filtro morto: src/hooks/crm/useClients.ts:14 e ['clients'] e a paginada (:24) usa a query que clientService.getClientsPage consome de fato
 - [x] 137 — Filtrar as assinaturas em tempo real dos painéis — onda 5 — Baixa - PR #666 - aviso de XP nao conta duas vezes
 - [x] 138 — Liberar os canais de tempo real da corrida — onda 5 — Média — PR #717 - RaceSpectator.test.tsx prova removeChannel 1x no unmount; contraprova sem a linha de producao deu 1 failed; useRaceLeaderboard/useRaceEvents mantem cache de modulo documentado (1 canal por season, limpo no HMR)
@@ -215,7 +215,7 @@ Exemplo:
 - [x] 174 — Dar acesso à administração no celular — onda 7 — Alta — PR #675 - MobileDrawer renderiza adminOnlyItems em grupo colapsavel
 - [x] 175 — Pedir confirmação antes de excluir chave de funcionalidade — onda 7 — Alta — PR #676 - AlertDialog com nome da chave e desativar como opcao reversivel
 - [x] 176 — Corrigir os dois botões destrutivos da auditoria de premiações — onda 7 — Alta — PR #676 - icone Trash2, aria-label e AlertDialog nomeando vendedor e premio
-- [ ] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média
+- [x] 177 — Varrer as demais ações destrutivas sem confirmação — onda 7 — Média — docs/qa/07-ACOES-DESTRUTIVAS.md - 46 chamadas irreversiveis classificadas: 21 ja protegidas, 5 P1 e 13 P2 sem confirmacao, 6 confirm() nativo a trocar, 4 delegam a filho que confirma, 3 reversiveis
 - [x] 178 — Corrigir a rota de assinatura digital no menu do Closer — onda 7 — Baixa — PR #678 - /assinatura-digital segue managerOnlyRoutes e o filtro por papel tira o item do menu do Closer; teste em routeAccess.test.ts
 - [x] 179 — Unificar as duas listas de pré-carregamento de rota — onda 7 — Baixa — PR #678 - NavLink consome routePrefetchMap; lista interna removida e as 12 rotas exclusivas do NavLink levadas para o mapa
 - [x] 180 — Remover o componente órfão e o módulo usado só por teste — onda 7 — Baixa — PR #678 - level-up-celebration.tsx removido; orderTracking/stages.ts mantido (decisão do dono pendente)
