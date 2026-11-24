@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 02:20 UTC
+
+- **functions** alterado (2): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_27`
+
 ## 2026-11-24 00:32 UTC
 
 - **colunas** adicionado (15): `public.designs_inbound.created_at`, `public.designs_inbound.design_id`, `public.designs_inbound.id`, `public.designs_inbound.last_correlation_key`, `public.designs_inbound.last_event`, `public.designs_inbound.name`, `public.designs_inbound.product_name`, `public.designs_inbound.product_sku`, `public.designs_inbound.raw_payload`, `public.designs_inbound.received_at`, `public.designs_inbound.seller_email`, `public.designs_inbound.source`, `public.designs_inbound.source_updated_at`, `public.designs_inbound.thumbnail_url`, `public.designs_inbound.updated_at`
