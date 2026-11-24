@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { allowConsoleError } from '@/test/consoleGuard';
 
 const rpc = vi.fn();
 
@@ -65,6 +66,7 @@ describe('useLoginRateLimiter', () => {
   });
 
   it('falha aberta quando o resumo não está disponível', async () => {
+    allowConsoleError('Erro ao verificar tentativas de login');
     rpc.mockResolvedValueOnce({
       data: null,
       error: { message: 'indisponível' },

@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { allowConsoleError } from '@/test/consoleGuard';
 
 const state: {
   upsertError: { message: string } | null;
@@ -88,6 +89,7 @@ describe('useSalespersonPreferences.updatePreferences', () => {
   });
 
   it('mostra erro e não confirma quando o banco recusa', async () => {
+    allowConsoleError('Error updating preferences');
     state.upsertError = { message: 'violates row-level security' };
     const { result } = setup();
     act(() => result.current.updatePreferences({ response_mode: 'audio' }));

@@ -10,6 +10,12 @@ vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => ({ salesperson: null }
 vi.mock('@/hooks/useUserRoles', () => ({
   useUserRoles: () => ({ isAdminOrManager: false }),
 }));
+// O diálogo de cadência lê `useCadences` assim que o card monta; sem mock a
+// consulta devolvia `undefined` e o React Query reclamava a cada render.
+vi.mock('@/hooks/cadences/useCadenceQueries', async importOriginal => ({
+  ...(await importOriginal<typeof import('@/hooks/cadences/useCadenceQueries')>()),
+  useCadences: () => ({ data: [], isLoading: false, error: null }),
+}));
 
 const mockSale = {
   id: 'SALE-001',

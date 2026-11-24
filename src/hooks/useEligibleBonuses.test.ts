@@ -1,5 +1,6 @@
 ﻿import { describe, it, expect } from 'vitest';
 import { evaluateBonus } from './useEligibleBonuses';
+import { allowConsoleWarn } from '@/test/consoleGuard';
 import type { CommissionBonus } from './useCommissionBonuses';
 
 const base: CommissionBonus = {
@@ -64,11 +65,14 @@ describe('evaluateBonus', () => {
   });
 
   it('empty trigger: returns achieved=false (condicao nao reconhecida)', () => {
+    // O aviso "condicao nao reconhecida" é o objeto deste teste.
+    allowConsoleWarn('[useEligibleBonuses] condicao nao reconhecida');
     expect(evaluateBonus(base, ctx)?.achieved).toBe(false);
     expect(evaluateBonus(base, ctx)?.progress).toBe(0);
   });
 
   it('malformed trigger: does not throw', () => {
+    allowConsoleWarn('[useEligibleBonuses] condicao nao reconhecida');
     const b = {
       ...base,
       // eslint-disable-next-line no-restricted-syntax
