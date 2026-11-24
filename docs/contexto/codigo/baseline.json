@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b45a2bfdcb306216df24c856a77182f442fe768c",
+  "commit": "456503415639eadafe23010d05805c26c1061119",
   "branch": "main",
-  "data_commit": "2026-11-24T11:33:39-03:00",
+  "data_commit": "2026-11-24T11:48:21-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4565034",
+    "data": "2026-11-24",
+    "assunto": "fix: restaura timeouts de DNS lento derrubados pela 20261127000000 (#742)"
+   },
    {
     "sha": "b45a2bf",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "e4459d7",
     "data": "2026-11-24",
     "assunto": "test: guarda de console passa a reprovar o teste que emite erro (QA-149) (#719)"
-   },
-   {
-    "sha": "adedb79",
-    "data": "2026-11-24",
-    "assunto": "docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)"
    }
   ],
-  "arquivos_mudados_7d": 385,
+  "arquivos_mudados_7d": 386,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -234,15 +234,15 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 5
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.test.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 5
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 260
+    "commits": 261
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 21
+    "commits": 20
    },
    {
     "autor": "dependabot[bot]",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3685,
+  "arquivos_total": 3686,
   "arquivos_codigo": 2620,
   "linhas_codigo": 449194,
   "rotas": 170,
@@ -326,7 +326,7 @@
   "hooks": 483,
   "edge_functions": 173,
   "tabelas": 421,
-  "migrations": 714,
+  "migrations": 715,
   "cron_jobs": 40,
   "testes": 281,
   "workflows": 31,

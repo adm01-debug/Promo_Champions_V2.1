@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b45a2bfdcb306216df24c856a77182f442fe768c",
+  "sha": "456503415639eadafe23010d05805c26c1061119",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 14:34 UTC",
-  "files_total": 3700,
-  "code_files": 3345,
-  "code_lines": 484615
+  "generated_at": "2026-11-24 14:49 UTC",
+  "files_total": 3701,
+  "code_files": 3346,
+  "code_lines": 484663
  },
  "version": "1.3.2",
- "facts_hash": "9ff27f293842b787",
+ "facts_hash": "0428aba30f0ad8ed",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -428,7 +428,7 @@
   "languages": {
    ".tsx": 1403,
    ".ts": 1135,
-   ".sql": 725,
+   ".sql": 726,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -52616,10 +52616,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -68136,6 +68136,7 @@
    "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+   "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -73945,6 +73946,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
    },
    {
     "kind": "grant",
@@ -108992,8 +109009,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 714,
-   "lines": 59873,
+   "files": 715,
+   "lines": 59921,
    "tables": [
     "user_permissions_cache"
    ],
@@ -123283,6 +123300,10 @@
    {
     "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
     "msg": ",\n      "
+   },
+   {
+    "file": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+    "msg": " THEN 60000\n    WHEN "
    },
    {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
@@ -187644,10 +187665,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -200002,6 +200023,7 @@
    "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+   "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -205714,6 +205736,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
    },
    {
     "kind": "grant",
@@ -298590,6 +298628,14 @@
    "lines": 37,
    "uses_service_role": true
   },
+  "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql": {
+   "path": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+   "lines": 48,
+   "errors": [
+    " THEN 60000\n    WHEN "
+   ],
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -300674,10 +300720,19 @@
   }
  },
  "git": {
-  "sha": "b45a2bfdcb306216df24c856a77182f442fe768c",
+  "sha": "456503415639eadafe23010d05805c26c1061119",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4565034",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: restaura timeouts de DNS lento derrubados pela 20261127000000 (#742)",
+    "files": [
+     "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
+    ]
+   },
    {
     "sha": "b45a2bf",
     "date": "2026-11-24",
@@ -301033,21 +301088,6 @@
      "src/components/purchase-intelligence/EmptyStateGuide.test.tsx",
      "src/components/purchase-intelligence/EmptyStateGuide.tsx"
     ]
-   },
-   {
-    "sha": "66ebe3f",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)",
-    "files": [
-     "src/components/purchase-intelligence/ClientPurchaseHistory.tsx",
-     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
-     "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
-     "src/components/purchase-intelligence/PurchaseHeatmapGrid.test.tsx",
-     "src/components/purchase-intelligence/PurchaseHeatmapGrid.tsx",
-     "src/components/purchase-intelligence/PurchasePredictionCard.test.tsx",
-     "src/components/purchase-intelligence/PurchasePredictionCard.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301078,6 +301118,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+    1
    ],
    [
     ".github/workflows/provisionar-secret-resend.yml",
@@ -301125,10 +301169,6 @@
    ],
    [
     "supabase/functions/supply-dispatch/index.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
     1
    ]
   ]
