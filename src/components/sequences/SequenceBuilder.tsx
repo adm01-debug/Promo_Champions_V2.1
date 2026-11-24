@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Inbox } from 'lucide-react';
@@ -24,6 +25,7 @@ export function SequenceBuilder({ sequenceId }: Props) {
   const del = useDeleteSequenceStep();
   const [editing, setEditing] = useState<SequenceStep | null>(null);
   const [open, setOpen] = useState(false);
+  const [stepToDelete, setStepToDelete] = useState<SequenceStep | null>(null);
 
   const nextOrder = steps?.length ?? 0;
 
@@ -80,7 +82,7 @@ export function SequenceBuilder({ sequenceId }: Props) {
               step={s}
               index={i}
               onEdit={() => handleEdit(s)}
-              onDelete={() => del.mutate({ id: s.id, sequence_id: sequenceId })}
+              onDelete={() => setStepToDelete(s)}
             />
           ))}
           <Button variant="outline" className="w-full" onClick={handleNew}>
@@ -98,6 +100,27 @@ export function SequenceBuilder({ sequenceId }: Props) {
           nextOrder={nextOrder}
         />
       )}
+
+      <DeleteConfirmDialog
+        open={!!stepToDelete}
+        onOpenChange={open => !open && setStepToDelete(null)}
+        onConfirm={() => {
+          if (!stepToDelete) return;
+          del.mutate(
+            { id: stepToDelete.id, sequence_id: sequenceId },
+            { onSuccess: () => setStepToDelete(null) }
+          );
+        }}
+        title="Excluir este passo da sequencia?"
+        description={
+          stepToDelete
+            ? `O passo ${stepToDelete.step_order}${
+                stepToDelete.subject ? ` ("${stepToDelete.subject.slice(0, 60)}")` : ''
+              } sai da sequencia. Leads que ja passaram por ele mantem o historico.`
+            : ''
+        }
+        isDeleting={del.isPending}
+      />
     </div>
   );
 }

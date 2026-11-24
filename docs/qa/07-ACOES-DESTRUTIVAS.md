@@ -113,13 +113,50 @@ congela a aba. Em `CommissionRules.tsx:66` ele nem nomeia a regra que vai apagar
 `AccountBasedSelling.tsx:205` e `:268`, `ApprovalWorkflowsPage.tsx:243`, `AssinaturaDigital.tsx:160` e `:517`,
 `AutomationBuilder.tsx:179`, `pages/FeatureFlagsAdmin.tsx:324`, `PowerDialer.tsx:61`.
 
-## Etapas propostas (nao abertas ainda)
+## Etapas propostas (concluidas)
 
-| Proposta | Escopo | Prioridade |
+| Proposta | Escopo | Prioridade | Status |
+| --- | --- | --- | --- |
+| 256 | bloquear as 5 chamadas P1 com `DeleteConfirmDialog`, com o nome do registro e o efeito no corpo | Alta | concluida (PR #727) |
+| 257 | bloquear as 13 chamadas P2, mesma padronizacao | Media | concluida (PR #729) |
+| 258 | trocar os 6 `confirm()` nativo por `DeleteConfirmDialog` | Media | concluida (PR #728) |
+
+### Proposta 256 - concluida (PR de codigo)
+
+As 5 chamadas P1 passaram a pedir confirmacao com o registro nomeado:
+
+| Arquivo | Antes | Depois |
 | --- | --- | --- |
-| 256 | bloquear as 5 chamadas P1 com `DeleteConfirmDialog`, com o nome do registro e o efeito no corpo | Alta |
-| 257 | bloquear as 13 chamadas P2, mesma padronizacao | Media |
-| 258 | trocar os 6 `confirm()` nativo por `DeleteConfirmDialog` | Media |
+| `src/components/settings/FeatureFlagsAdmin.tsx` | excluia a flag no clique | `DeleteConfirmDialog` nomeando a flag e avisando que a funcionalidade sai do ar para todos |
+| `src/components/reporting/EmbedTokenManagerDialog.tsx` (revogar) | revogava no clique | dialogo explicando que o link ja entregue para de funcionar |
+| `src/components/reporting/EmbedTokenManagerDialog.tsx` (excluir) | excluia no clique | dialogo avisando que o historico da revogacao se perde |
+| `src/pages/AdminSupressaoEmails.tsx` | removia da supressao no clique | dialogo avisando do risco de voltar a disparar e-mail para quem pediu descadastro (LGPD) |
+| `src/components/assistant/DealChatHistory.tsx` | apagava a conversa no clique | dialogo avisando que o historico do cliente nao tem copia |
+
+Testes: `DealChatHistory.test.tsx`, `EmbedTokenManagerDialog.test.tsx` e `FeatureFlagsAdmin.test.tsx` (8 casos)
+cobrem "nao age antes de confirmar", "age ao confirmar" e "cancelar mantem".
+
+### Proposta 257 - concluida (PR de codigo)
+
+As 13 chamadas P2 passaram pelo mesmo padrao:
+
+| Arquivo | Acao protegida |
+| --- | --- |
+| `src/components/admin/task-console/SquadManager.tsx` | excluir squad (avisa que os vinculos com membros sao apagados, nada e transferido) e remover membro |
+| `src/components/admin/task-console/TaskCatalogManager.tsx` | excluir item do catalogo de tarefas |
+| `src/components/analytics/ObjectionsLibrary.tsx` | excluir objecao da biblioteca |
+| `src/components/cadences/EditCadenceDialog.tsx` | excluir passo da cadencia |
+| `src/components/cadences/EnrollmentRulesDialog.tsx` | excluir regra de inscricao |
+| `src/components/deal-intelligence/BuyingCommitteeCard.tsx` | remover membro do comite de compras |
+| `src/components/multichannel/TemplateManager.tsx` | excluir template de mensagem |
+| `src/components/playbooks/PlaybookItemRow.tsx` | excluir item do playbook (o pai `PlaybookCard` segue delegando) |
+| `src/components/sequences/SequenceBuilder.tsx` | excluir passo da sequencia |
+| `src/components/settings/FollowUpTerritoryRules.tsx` | excluir regra de territorio do follow-up |
+| `src/pages/Agenda.tsx` | remover evento da agenda |
+| `src/pages/Cadencias.tsx` | excluir cadencia pela lista |
+
+Testes: `SquadManager.test.tsx` (2 casos) e `PlaybookItemRow.test.tsx` (1 caso) cobrem "nao exclui antes de
+confirmar", "exclui ao confirmar com o id certo" e "cancelar mantem".
 
 ### Proposta 258 - concluida (PR de codigo)
 

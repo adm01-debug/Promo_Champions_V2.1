@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import Fuse from 'fuse.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,6 +83,10 @@ export function ObjectionsLibrary() {
     effectiveness_score: 5,
   });
   const [tagInput, setTagInput] = useState('');
+  const [objectionToDelete, setObjectionToDelete] = useState<{
+    id: string;
+    text: string;
+  } | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -481,7 +486,9 @@ export function ObjectionsLibrary() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover:bg-status-error/20 text-muted-foreground hover:text-status-error"
-                        onClick={() => deleteObjection.mutate(obj.id)}
+                        onClick={() =>
+                          setObjectionToDelete({ id: obj.id, text: obj.objection })
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -512,6 +519,24 @@ export function ObjectionsLibrary() {
           </div>
         )}
       </CardContent>
+
+      <DeleteConfirmDialog
+        open={!!objectionToDelete}
+        onOpenChange={open => !open && setObjectionToDelete(null)}
+        onConfirm={() => {
+          if (!objectionToDelete) return;
+          deleteObjection.mutate(objectionToDelete.id, {
+            onSuccess: () => setObjectionToDelete(null),
+          });
+        }}
+        title="Excluir esta objecao da biblioteca?"
+        description={
+          objectionToDelete
+            ? `"${objectionToDelete.text.slice(0, 80)}" e a resposta associada saem da biblioteca. Nao ha copia.`
+            : ''
+        }
+        isDeleting={deleteObjection.isPending}
+      />
     </Card>
   );
 }

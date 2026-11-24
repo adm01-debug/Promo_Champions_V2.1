@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ interface PlaybookItemRowProps {
 export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(item.content);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id });
@@ -126,12 +128,23 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
             size="icon"
             aria-label="Excluir"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-destructive/10 hover:scale-110"
-            onClick={() => onDelete(item.id)}
+            onClick={() => setConfirmDelete(true)}
           >
             <Trash2 className="h-3 w-3 text-destructive" />
           </Button>
         </>
       )}
+
+      <DeleteConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          onDelete(item.id);
+        }}
+        title="Excluir este item do playbook?"
+        description={`"${item.content.slice(0, 80)}" sai do playbook e os itens abaixo sobem uma posicao.`}
+      />
     </div>
   );
 };

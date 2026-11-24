@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,13 @@ export function SquadManager() {
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(SQUAD_COLOR_PRESETS[0]);
   const [activeSquad, setActiveSquad] = useState<string | null>(null);
+  const [squadToDelete, setSquadToDelete] = useState<{ id: string; name: string } | null>(
+    null
+  );
+  const [memberToRemove, setMemberToRemove] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const { data: salespeople } = useSalespeopleMin();
 
   const { data: members } = useSquadMembers(activeSquad ?? undefined);
@@ -152,7 +160,7 @@ export function SquadManager() {
                         aria-label="Excluir squad"
                         onClick={e => {
                           e.stopPropagation();
-                          remove.mutate(s.id);
+                          setSquadToDelete({ id: s.id, name: s.name });
                         }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -196,9 +204,7 @@ export function SquadManager() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() =>
-                            removeMember.mutate({ squad_id: activeSquad, user_id: s.id })
-                          }
+                          onClick={() => setMemberToRemove({ id: s.id, name: s.name })}
                         >
                           <X className="h-3 w-3 mr-1" />
                           Remover
@@ -223,6 +229,41 @@ export function SquadManager() {
           </div>
         )}
       </Card>
+
+      <DeleteConfirmDialog
+        open={!!squadToDelete}
+        onOpenChange={open => !open && setSquadToDelete(null)}
+        onConfirm={() => {
+          if (!squadToDelete) return;
+          remove.mutate(squadToDelete.id, { onSuccess: () => setSquadToDelete(null) });
+        }}
+        title="Excluir este squad?"
+        description={
+          squadToDelete
+            ? `O squad "${squadToDelete.name}" e os vinculos com os membros sao apagados. Nada e transferido para outro squad.`
+            : ''
+        }
+        isDeleting={remove.isPending}
+      />
+
+      <DeleteConfirmDialog
+        open={!!memberToRemove}
+        onOpenChange={open => !open && setMemberToRemove(null)}
+        onConfirm={() => {
+          if (!memberToRemove || !activeSquad) return;
+          removeMember.mutate(
+            { squad_id: activeSquad, user_id: memberToRemove.id },
+            { onSuccess: () => setMemberToRemove(null) }
+          );
+        }}
+        title="Remover este membro do squad?"
+        description={
+          memberToRemove
+            ? `${memberToRemove.name} sai do squad e deixa de receber as tarefas dele. Pode ser adicionado de volta depois.`
+            : ''
+        }
+        isDeleting={removeMember.isPending}
+      />
     </div>
   );
 }
