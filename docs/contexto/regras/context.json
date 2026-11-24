@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ed11613e08ddc3ce092ac57a8a45371636475fd5",
+  "sha": "930e42e3ed4d2252001c4c473ccf907137d41877",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 13:38 UTC",
+  "generated_at": "2026-11-24 13:49 UTC",
   "files_total": 3697,
   "code_files": 3343,
   "code_lines": 484503
@@ -300617,10 +300617,22 @@
   }
  },
  "git": {
-  "sha": "ed11613e08ddc3ce092ac57a8a45371636475fd5",
+  "sha": "930e42e3ed4d2252001c4c473ccf907137d41877",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "930e42e",
+    "date": "2026-11-24",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.9.0 (#733)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "ed11613",
     "date": "2026-11-24",
@@ -300982,18 +300994,6 @@
      "src/components/admin/AdminQuickLinks.tsx",
      "src/components/layout/sidebar/sidebarMenuData.ts"
     ]
-   },
-   {
-    "sha": "97e44d8",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)",
-    "files": [
-     "src/components/analytics/WinLossAnalysis.tsx",
-     "src/hooks/useWinLossAnalysis.ts",
-     "src/pages/WinLossAnalysisPage.test.tsx",
-     "src/pages/WinLossAnalysisPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301003,15 +301003,23 @@
    ],
    [
     "package-lock.json",
-    3
+    4
    ],
    [
     "package.json",
-    3
+    4
    ],
    [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
     3
+   ],
+   [
+    ".release-please-manifest.json",
+    2
+   ],
+   [
+    "CHANGELOG.md",
+    2
    ],
    [
     "deno.lock",
@@ -301051,14 +301059,6 @@
    ],
    [
     ".github/workflows/provisionar-secret-supply-webhook.yml",
-    1
-   ],
-   [
-    ".release-please-manifest.json",
-    1
-   ],
-   [
-    "CHANGELOG.md",
     1
    ],
    [

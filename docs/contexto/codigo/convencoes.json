@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.9.0 (#733)",
    "ci: dispara apply-migration no merge de migration (#734)",
    "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)",
    "feat: aciona o Supply quando o orçamento vira pedido (#731)",
-   "ci: provisiona o segredo do webhook Promo Supply (#732)",
-   "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)"
+   "ci: provisiona o segredo do webhook Promo Supply (#732)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

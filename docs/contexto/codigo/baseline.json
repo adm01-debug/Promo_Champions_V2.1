@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ed11613e08ddc3ce092ac57a8a45371636475fd5",
+  "commit": "930e42e3ed4d2252001c4c473ccf907137d41877",
   "branch": "main",
-  "data_commit": "2026-11-24T10:36:33-03:00",
+  "data_commit": "2026-11-24T10:48:23-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "930e42e",
+    "data": "2026-11-24",
+    "assunto": "chore(main): release 1.9.0 (#733)"
+   },
    {
     "sha": "ed11613",
     "data": "2026-11-24",
@@ -126,50 +131,37 @@
     "sha": "83bacfb",
     "data": "2026-11-24",
     "assunto": "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)"
-   },
-   {
-    "sha": "22f284a",
-    "data": "2026-11-24",
-    "assunto": "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)"
    }
   ],
   "arquivos_mudados_7d": 382,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
-    "mudancas": 132
-   },
-   {
-    "pasta": "src/components/dashboard",
-    "mudancas": 99
-   },
-   {
-    "pasta": "src/components/analytics",
-    "mudancas": 96
-   },
-   {
-    "pasta": "src/components/admin",
-    "mudancas": 79
-   },
-   {
-    "pasta": "src/components/win-loss",
-    "mudancas": 78
+    "mudancas": 108
    },
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 77
    },
    {
-    "pasta": "src/components/competitive",
+    "pasta": "src/components/admin",
     "mudancas": 72
    },
    {
-    "pasta": "src/components/conversational",
+    "pasta": "src/components/analytics",
     "mudancas": 70
    },
    {
-    "pasta": "src/components/ui",
-    "mudancas": 63
+    "pasta": "src/components/win-loss",
+    "mudancas": 67
+   },
+   {
+    "pasta": "src/components/dashboard",
+    "mudancas": 65
+   },
+   {
+    "pasta": "src/components/conversational",
+    "mudancas": 64
    },
    {
     "pasta": "src/hooks/win-loss",
@@ -177,23 +169,31 @@
    },
    {
     "pasta": "src/components/deal-intelligence",
-    "mudancas": 53
+    "mudancas": 50
    },
    {
     "pasta": "src/hooks/race",
     "mudancas": 49
    },
    {
+    "pasta": "src/components/competitive",
+    "mudancas": 48
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 47
+   },
+   {
+    "pasta": "src/components/revenue-intelligence",
+    "mudancas": 38
+   },
+   {
     "pasta": "src/components/pipeline",
-    "mudancas": 43
+    "mudancas": 37
    },
    {
-    "pasta": "src/components/gamification",
-    "mudancas": 42
-   },
-   {
-    "pasta": "src/components/bi",
-    "mudancas": 40
+    "pasta": "package.json",
+    "mudancas": 36
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -211,11 +211,11 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -226,15 +226,11 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 7
-   },
-   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 6
    },
    {
@@ -242,15 +238,7 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/admin/AdminQuickLinks.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 5
    },
    {
@@ -274,19 +262,19 @@
     "mudancas": 4
    },
    {
-    "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "arquivo": "src/components/admin/AdminQuickLinks.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
     "mudancas": 4
    },
    {
     "arquivo": "src/components/pipeline/DealCard.test.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/components/pipeline/PipelineColumn.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/components/purchase-intelligence/DuplicateBlockAudit.tsx",
     "mudancas": 4
    },
    {
@@ -296,16 +284,28 @@
    {
     "arquivo": "src/hooks/gamification/useLeagues.ts",
     "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/sales/useSalesEnablement.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/useEligibleBonuses.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/useInactiveDeals.ts",
+    "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 259
+    "commits": 258
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 21
+    "commits": 22
    },
    {
     "autor": "dependabot[bot]",
