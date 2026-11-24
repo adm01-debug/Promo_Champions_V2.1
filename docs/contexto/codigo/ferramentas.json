@@ -8,7 +8,7 @@
    "Markdown (225)",
    "JavaScript (78)",
    "JSON (33)",
-   "YAML (31)",
+   "YAML (32)",
    "Shell (7)",
    "Python (5)"
   ],
@@ -221,6 +221,32 @@
    "npm_scripts": [],
    "secrets": [
     "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/auto-apply-migrations.yml",
+   "nome": "Auto Apply Migrations",
+   "gatilhos": [
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "dispatch"
+   ],
+   "permissoes": [
+    "contents: read",
+    "actions: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN"
    ],
    "actions": [
     "actions/checkout"

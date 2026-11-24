@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "669c8a0686c5626e5c38a7c84404062ecbd52c13",
+  "commit": "ed11613e08ddc3ce092ac57a8a45371636475fd5",
   "branch": "main",
-  "data_commit": "2026-11-24T09:40:10-03:00",
+  "data_commit": "2026-11-24T10:36:33-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ed11613",
+    "data": "2026-11-24",
+    "assunto": "ci: dispara apply-migration no merge de migration (#734)"
+   },
+   {
+    "sha": "652e105",
+    "data": "2026-11-24",
+    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)"
+   },
    {
     "sha": "669c8a0",
     "data": "2026-11-24",
@@ -121,39 +131,29 @@
     "sha": "22f284a",
     "data": "2026-11-24",
     "assunto": "feat: botoes do guia de estado vazio levam a configuracao e a documentacao (QA-105) (#714)"
-   },
-   {
-    "sha": "66ebe3f",
-    "data": "2026-11-24",
-    "assunto": "feat: acoes do modulo de inteligencia de compras passam a funcionar (QA-104) (#713)"
-   },
-   {
-    "sha": "e514cbc",
-    "data": "2026-11-24",
-    "assunto": "feat: botao de exportar auditoria de pricing passa a gerar CSV real (QA-103) (#712)"
    }
   ],
-  "arquivos_mudados_7d": 381,
+  "arquivos_mudados_7d": 382,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
     "mudancas": 132
    },
    {
-    "pasta": "src/components/analytics",
-    "mudancas": 104
+    "pasta": "src/components/dashboard",
+    "mudancas": 99
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 102
+    "pasta": "src/components/analytics",
+    "mudancas": 96
    },
    {
     "pasta": "src/components/admin",
-    "mudancas": 81
+    "mudancas": 79
    },
    {
     "pasta": "src/components/win-loss",
-    "mudancas": 80
+    "mudancas": 78
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -161,15 +161,15 @@
    },
    {
     "pasta": "src/components/competitive",
-    "mudancas": 73
+    "mudancas": 72
    },
    {
     "pasta": "src/components/conversational",
-    "mudancas": 73
+    "mudancas": 70
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 64
+    "mudancas": 63
    },
    {
     "pasta": "src/hooks/win-loss",
@@ -177,15 +177,11 @@
    },
    {
     "pasta": "src/components/deal-intelligence",
-    "mudancas": 56
+    "mudancas": 53
    },
    {
     "pasta": "src/hooks/race",
     "mudancas": 49
-   },
-   {
-    "pasta": "src/components/bi",
-    "mudancas": 46
    },
    {
     "pasta": "src/components/pipeline",
@@ -194,16 +190,20 @@
    {
     "pasta": "src/components/gamification",
     "mudancas": 42
+   },
+   {
+    "pasta": "src/components/bi",
+    "mudancas": 40
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -219,7 +219,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -301,22 +301,22 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 260
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 20
+    "commits": 259
    },
    {
     "autor": "github-actions[bot]",
+    "commits": 21
+   },
+   {
+    "autor": "dependabot[bot]",
     "commits": 20
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3681,
+  "arquivos_total": 3682,
   "arquivos_codigo": 2620,
-  "linhas_codigo": 449136,
+  "linhas_codigo": 449194,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -329,7 +329,7 @@
   "migrations": 713,
   "cron_jobs": 40,
   "testes": 280,
-  "workflows": 29,
+  "workflows": 30,
   "scripts": 78,
   "docs_md": 225
  },
@@ -612,7 +612,7 @@
   },
   "src/integrations": {
    "arquivos": 4,
-   "linhas": 25783
+   "linhas": 25841
   },
   "src/lib": {
    "arquivos": 81,
@@ -678,7 +678,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25714
+   "linhas": 25772
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
