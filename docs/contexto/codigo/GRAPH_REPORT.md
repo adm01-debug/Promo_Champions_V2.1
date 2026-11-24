@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9a949f0d`
+- Built from commit: `5d5329c8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1739,7 +1739,7 @@ Nodes (22): CompetitorRadarCard(), CompetitorRadarCardProps, fmtCurrency(), heal
 
 ### Community 183 - "consoleGuard.ts"
 Cohesion: 0.10
-Nodes (23): Como foi medido, Onda 8 — Higiene, CI e observabilidade, @testing-library/jest-dom@^7.0.1, @testing-library/jest-dom, base, ctx, rpc, pickHighestRole() (+15 more)
+Nodes (23): Como foi medido, Onda 8 — Higiene, CI e observabilidade, @testing-library/jest-dom@^8.0.0, @testing-library/jest-dom, base, ctx, rpc, pickHighestRole() (+15 more)
 
 ### Community 184 - "Anexo B — Funcionalidades prometidas × código (docs de funcionalidades, gaps e débito)"
 Cohesion: 0.08
@@ -3079,7 +3079,7 @@ Nodes (9): defaults, run, jobs, name, on, schedule, workflow_dispatch, shell (+1
 
 ### Community 520 - "axe-sweep.spec.ts"
 Cohesion: 0.22
-Nodes (6): @axe-core/playwright@^4.12.1, @axe-core/playwright, AxeViolation, AxeViolationNode, A11Y_ROUTES, A11yRoute
+Nodes (6): @axe-core/playwright@^4.14.0, @axe-core/playwright, AxeViolation, AxeViolationNode, A11Y_ROUTES, A11yRoute
 
 ### Community 521 - ".prettierrc.json"
 Cohesion: 0.20

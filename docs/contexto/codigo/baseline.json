@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9a949f0d64410fd33f9fb4a28c47a261e1947246",
+  "commit": "5d5329c8873ad1ba965f50bebc50b6b5f685c68f",
   "branch": "main",
-  "data_commit": "2026-11-24T07:22:14-03:00",
+  "data_commit": "2026-11-24T08:08:16-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "5d5329c",
+    "data": "2026-11-24",
+    "assunto": "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)"
+   },
+   {
+    "sha": "b1e8ab3",
+    "data": "2026-11-24",
+    "assunto": "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)"
+   },
    {
     "sha": "9a949f0",
     "data": "2026-11-24",
@@ -121,16 +131,6 @@
     "sha": "5c0431f",
     "data": "2026-11-24",
     "assunto": "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)"
-   },
-   {
-    "sha": "97e44d8",
-    "data": "2026-11-24",
-    "assunto": "feat: botoes de exportacao e filtros da analise de ganhos e perdas passam a funcionar (QA-101) (#709)"
-   },
-   {
-    "sha": "7291cdd",
-    "data": "2026-11-24",
-    "assunto": "fix: busca da auditoria de duplicados nao filtrava e erro da consulta virava lista vazia (QA-106) (#708)"
    }
   ],
   "arquivos_mudados_7d": 378,
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 36
+    "mudancas": 37
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 34
+    "mudancas": 36
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 18
+    "mudancas": 20
    },
    {
     "arquivo": "CHANGELOG.md",
@@ -301,15 +301,15 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 261
+    "commits": 260
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 20
    },
    {
     "autor": "github-actions[bot]",
     "commits": 20
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 19
    }
   ]
  },

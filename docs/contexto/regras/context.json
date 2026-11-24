@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9a949f0d64410fd33f9fb4a28c47a261e1947246",
+  "sha": "5d5329c8873ad1ba965f50bebc50b6b5f685c68f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 10:23 UTC",
+  "generated_at": "2026-11-24 11:08 UTC",
   "files_total": 3691,
   "code_files": 3339,
   "code_lines": 483998
  },
  "version": "1.3.2",
- "facts_hash": "5f740257d89902bf",
+ "facts_hash": "790a653db74dca87",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -87,7 +87,7 @@
     "in": "package.json"
    },
    "vitest": {
-    "version": "^5.1.0",
+    "version": "^5.1.1",
     "role": "Testes Vitest",
     "in": "package.json"
    }
@@ -299986,10 +299986,32 @@
   }
  },
  "git": {
-  "sha": "9a949f0d64410fd33f9fb4a28c47a261e1947246",
+  "sha": "5d5329c8873ad1ba965f50bebc50b6b5f685c68f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "5d5329c",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "b1e8ab3",
+    "date": "2026-11-24",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "9a949f0",
     "date": "2026-11-24",
@@ -300347,29 +300369,6 @@
      "src/routes/lazyPages.ts",
      "src/routes/routeAccess.ts"
     ]
-   },
-   {
-    "sha": "d458d7b",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs: marca o lote 13 de integracoes como obsoleto (QA-186) (#705)",
-    "files": [
-     "docs/estado/13_INTEGRACOES.md"
-    ]
-   },
-   {
-    "sha": "aab4737",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: mostra na UI quando a probabilidade de ganho e estimativa local (QA-117) (#703)",
-    "files": [
-     "src/components/pipeline/DealCard.test.tsx",
-     "src/components/pipeline/DealCard.tsx",
-     "src/components/pipeline/PipelineBoard.tsx",
-     "src/components/pipeline/PipelineColumn.tsx",
-     "src/hooks/useDealProbability.test.tsx",
-     "src/hooks/useDealProbability.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -300378,11 +300377,19 @@
     7
    ],
    [
+    "package-lock.json",
+    3
+   ],
+   [
+    "package.json",
+    3
+   ],
+   [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
     3
    ],
    [
-    "src/components/pipeline/PipelineBoard.tsx",
+    "deno.lock",
     2
    ],
    [
@@ -300407,14 +300414,6 @@
    ],
    [
     "CHANGELOG.md",
-    1
-   ],
-   [
-    "package-lock.json",
-    1
-   ],
-   [
-    "package.json",
     1
    ],
    [
