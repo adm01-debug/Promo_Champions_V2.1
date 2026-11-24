@@ -1,5 +1,7 @@
 # public.playbooks
 
+> Playbooks comerciais organizados por estágio do processo de venda.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `stage` | `text` | não |  |  |  |
-| 3 | `title` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do playbook. |
+| 2 | `stage` | `text` | não |  |  | Estágio comercial ao qual o playbook se aplica. |
+| 3 | `title` | `text` | não |  |  | Título do playbook. |
+| 4 | `description` | `text` | sim |  |  | Descrição do playbook. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do playbook. |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do playbook. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.follow_up_audit_logs
 
+> Tabela public.follow_up_audit_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, user_id uuid NULLABLE, action_type text NOT NULL, details jsonb NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(), status text NULLABLE DEFAULT 'pending'::text, retry_count integer NULLABLE DEFAULT 0. Relacionamentos FK: sale_id → public.sales(id); user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,14 +19,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `user_id` | `uuid` | sim |  |  |  |
-| 4 | `action_type` | `text` | não |  |  |  |
-| 5 | `details` | `jsonb` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `status` | `text` | sim | `'pending'::text` |  |  |
-| 8 | `retry_count` | `integer` | sim | `0` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.follow_up_audit_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.follow_up_audit_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.follow_up_audit_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `action_type` | `text` | não |  |  | Coluna action_type da tabela public.follow_up_audit_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `details` | `jsonb` | sim |  |  | Coluna details da tabela public.follow_up_audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.follow_up_audit_logs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `status` | `text` | sim | `'pending'::text` |  | Coluna status da tabela public.follow_up_audit_logs. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'pending'::text. |
+| 8 | `retry_count` | `integer` | sim | `0` |  | Coluna retry_count da tabela public.follow_up_audit_logs. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.lead_score_explanations
 
+> Tabela public.lead_score_explanations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, score integer NOT NULL, baseline_score numeric NOT NULL DEFAULT 0, top_drivers jsonb NOT NULL DEFAULT '[]'::jsonb, recommendations jsonb NOT NULL DEFAULT '[]'::jsonb, narrative text NULLABLE, model_version text NOT NULL DEFAULT 'v1'::text, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `score` | `integer` | não |  |  |  |
-| 4 | `baseline_score` | `numeric` | não | `0` |  |  |
-| 5 | `top_drivers` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 6 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `narrative` | `text` | sim |  |  |  |
-| 8 | `model_version` | `text` | não | `'v1'::text` |  |  |
-| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.lead_score_explanations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.lead_score_explanations. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `score` | `integer` | não |  |  | Coluna score da tabela public.lead_score_explanations. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `baseline_score` | `numeric` | não | `0` |  | Coluna baseline_score da tabela public.lead_score_explanations. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `top_drivers` | `jsonb` | não | `'[]'::jsonb` |  | Coluna top_drivers da tabela public.lead_score_explanations. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 6 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  | Coluna recommendations da tabela public.lead_score_explanations. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 7 | `narrative` | `text` | sim |  |  | Coluna narrative da tabela public.lead_score_explanations. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `model_version` | `text` | não | `'v1'::text` |  | Coluna model_version da tabela public.lead_score_explanations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'v1'::text. |
+| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.lead_score_explanations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.lead_score_explanations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.lead_score_explanations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

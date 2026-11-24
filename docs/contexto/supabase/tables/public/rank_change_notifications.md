@@ -1,5 +1,7 @@
 # public.rank_change_notifications
 
+> Tabela public.rank_change_notifications. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, overtaken_by_id uuid NOT NULL, old_rank integer NOT NULL, new_rank integer NOT NULL, context text NULLABLE DEFAULT 'monthly'::text, is_read boolean NULLABLE DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: overtaken_by_id → public.salespeople(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `overtaken_by_id` | `uuid` | não |  |  |  |
-| 4 | `old_rank` | `integer` | não |  |  |  |
-| 5 | `new_rank` | `integer` | não |  |  |  |
-| 6 | `context` | `text` | sim | `'monthly'::text` |  |  |
-| 7 | `is_read` | `boolean` | sim | `false` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.rank_change_notifications. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.rank_change_notifications. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `overtaken_by_id` | `uuid` | não |  |  | Coluna overtaken_by_id da tabela public.rank_change_notifications. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `old_rank` | `integer` | não |  |  | Coluna old_rank da tabela public.rank_change_notifications. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 5 | `new_rank` | `integer` | não |  |  | Coluna new_rank da tabela public.rank_change_notifications. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 6 | `context` | `text` | sim | `'monthly'::text` |  | Coluna context da tabela public.rank_change_notifications. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'monthly'::text. |
+| 7 | `is_read` | `boolean` | sim | `false` |  | Coluna is_read da tabela public.rank_change_notifications. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.rank_change_notifications. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.call_coaching_scorecards
 
+> Tabela public.call_coaching_scorecards. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, salesperson_id uuid NULLABLE, overall_score numeric NOT NULL DEFAULT 0, talk_score numeric NOT NULL DEFAULT 0, question_score numeric NOT NULL DEFAULT 0, objection_score numeric NOT NULL DEFAULT 0, sentiment_score numeric NOT NULL DEFAULT 0, moments_score numeric NOT NULL DEFAULT 0, health text NOT NULL DEFAULT 'fair'::text, top_strengths jsonb NOT NULL DEFAULT '[]'::jsonb, top_gaps jsonb NOT NULL DEFAULT '[]'::jsonb, recommendations jsonb NOT NULL DEFAULT '[]'::jsonb, factors jsonb NOT NULL DEFAULT '{}'::jsonb, calculated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,21 +19,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `overall_score` | `numeric` | não | `0` |  |  |
-| 5 | `talk_score` | `numeric` | não | `0` |  |  |
-| 6 | `question_score` | `numeric` | não | `0` |  |  |
-| 7 | `objection_score` | `numeric` | não | `0` |  |  |
-| 8 | `sentiment_score` | `numeric` | não | `0` |  |  |
-| 9 | `moments_score` | `numeric` | não | `0` |  |  |
-| 10 | `health` | `text` | não | `'fair'::text` |  |  |
-| 11 | `top_strengths` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 12 | `top_gaps` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 13 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 14 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_coaching_scorecards. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_coaching_scorecards. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.call_coaching_scorecards. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `overall_score` | `numeric` | não | `0` |  | Coluna overall_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `talk_score` | `numeric` | não | `0` |  | Coluna talk_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `question_score` | `numeric` | não | `0` |  | Coluna question_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `objection_score` | `numeric` | não | `0` |  | Coluna objection_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `sentiment_score` | `numeric` | não | `0` |  | Coluna sentiment_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `moments_score` | `numeric` | não | `0` |  | Coluna moments_score da tabela public.call_coaching_scorecards. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `health` | `text` | não | `'fair'::text` |  | Coluna health da tabela public.call_coaching_scorecards. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'fair'::text. Validação CHECK: CHECK (health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])). |
+| 11 | `top_strengths` | `jsonb` | não | `'[]'::jsonb` |  | Coluna top_strengths da tabela public.call_coaching_scorecards. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 12 | `top_gaps` | `jsonb` | não | `'[]'::jsonb` |  | Coluna top_gaps da tabela public.call_coaching_scorecards. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 13 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  | Coluna recommendations da tabela public.call_coaching_scorecards. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 14 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.call_coaching_scorecards. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.call_coaching_scorecards. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.email_opt_outs
 
+> Tabela public.email_opt_outs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), email text NOT NULL, reason text NULLABLE, source text NOT NULL DEFAULT 'unsubscribe_link'::text, owner_id uuid NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `email` | `text` | não |  |  |  |
-| 3 | `reason` | `text` | sim |  |  |  |
-| 4 | `source` | `text` | não | `'unsubscribe_link'::text` |  |  |
-| 5 | `owner_id` | `uuid` | sim |  |  |  |
-| 6 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.email_opt_outs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `email` | `text` | não |  |  | Coluna email da tabela public.email_opt_outs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `reason` | `text` | sim |  |  | Coluna reason da tabela public.email_opt_outs. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `source` | `text` | não | `'unsubscribe_link'::text` |  | Coluna source da tabela public.email_opt_outs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'unsubscribe_link'::text. |
+| 5 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.email_opt_outs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.email_opt_outs. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.email_opt_outs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

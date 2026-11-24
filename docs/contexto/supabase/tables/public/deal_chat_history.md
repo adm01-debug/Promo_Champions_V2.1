@@ -1,5 +1,7 @@
 # public.deal_chat_history
 
+> Histórico de perguntas e respostas do assistente sobre negócios.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `deal_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `question` | `text` | não |  |  |  |
-| 5 | `response` | `text` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `question_type` | `text` | não | `'general'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da interação. |
+| 2 | `deal_id` | `uuid` | não |  |  | Negócio ao qual a pergunta se refere. |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Vendedor que fez a pergunta, quando identificado. |
+| 4 | `question` | `text` | não |  |  | Pergunta enviada sobre o negócio. |
+| 5 | `response` | `text` | sim |  |  | Resposta gerada, quando disponível. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da interação. |
+| 7 | `question_type` | `text` | não | `'general'::text` |  | Tipo de pergunta conforme utilizado pela aplicação. |
 
 
 ## Constraints

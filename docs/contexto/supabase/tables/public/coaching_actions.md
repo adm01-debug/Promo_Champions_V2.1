@@ -1,5 +1,7 @@
 # public.coaching_actions
 
+> Tabela public.coaching_actions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, salesperson_id uuid NOT NULL, tip text NOT NULL, category text NOT NULL DEFAULT 'discovery'::text, severity text NOT NULL DEFAULT 'info'::text, timestamp_sec integer NULLABLE, quote text NULLABLE, status text NOT NULL DEFAULT 'pending'::text, manager_note text NULLABLE, accepted_at timestamp with time zone NULLABLE, created_by_ai boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `tip` | `text` | não |  |  |  |
-| 5 | `category` | `text` | não | `'discovery'::text` |  |  |
-| 6 | `severity` | `text` | não | `'info'::text` |  |  |
-| 7 | `timestamp_sec` | `integer` | sim |  |  |  |
-| 8 | `quote` | `text` | sim |  |  |  |
-| 9 | `status` | `text` | não | `'pending'::text` |  |  |
-| 10 | `manager_note` | `text` | sim |  |  |  |
-| 11 | `accepted_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_by_ai` | `boolean` | não | `true` |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.coaching_actions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.coaching_actions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.coaching_actions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `tip` | `text` | não |  |  | Coluna tip da tabela public.coaching_actions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `category` | `text` | não | `'discovery'::text` |  | Coluna category da tabela public.coaching_actions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'discovery'::text. Validação CHECK: CHECK (category = ANY (ARRAY['opening'::text, 'discovery'::text, 'objection'::text, 'closing'::text, 'talk_ratio'::text, 'pace'::text, 'empathy'::text, 'other'::text])). |
+| 6 | `severity` | `text` | não | `'info'::text` |  | Coluna severity da tabela public.coaching_actions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'info'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])). |
+| 7 | `timestamp_sec` | `integer` | sim |  |  | Coluna timestamp_sec da tabela public.coaching_actions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 8 | `quote` | `text` | sim |  |  | Coluna quote da tabela public.coaching_actions. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.coaching_actions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text, 'practiced'::text])). |
+| 10 | `manager_note` | `text` | sim |  |  | Coluna manager_note da tabela public.coaching_actions. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `accepted_at` | `timestamp with time zone` | sim |  |  | Coluna accepted_at da tabela public.coaching_actions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `created_by_ai` | `boolean` | não | `true` |  | Coluna created_by_ai da tabela public.coaching_actions. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.coaching_actions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.coaching_actions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

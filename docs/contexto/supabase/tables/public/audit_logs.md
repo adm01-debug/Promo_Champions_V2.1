@@ -1,5 +1,7 @@
 # public.audit_logs
 
+> Tabela public.audit_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), actor_id uuid NULLABLE, actor_email text NULLABLE, action text NOT NULL, entity_type text NOT NULL, entity_id text NULLABLE, changes jsonb NULLABLE DEFAULT '{}'::jsonb, ip_address text NULLABLE, user_agent text NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), table_name text NULLABLE, record_id text NULLABLE, old_data jsonb NULLABLE, new_data jsonb NULLABLE, request_id text NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,22 +18,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `actor_id` | `uuid` | sim |  |  |  |
-| 3 | `actor_email` | `text` | sim |  |  |  |
-| 4 | `action` | `text` | não |  |  |  |
-| 5 | `entity_type` | `text` | não |  |  |  |
-| 6 | `entity_id` | `text` | sim |  |  |  |
-| 7 | `changes` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `ip_address` | `text` | sim |  |  |  |
-| 9 | `user_agent` | `text` | sim |  |  |  |
-| 10 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `table_name` | `text` | sim |  |  |  |
-| 13 | `record_id` | `text` | sim |  |  |  |
-| 14 | `old_data` | `jsonb` | sim |  |  |  |
-| 15 | `new_data` | `jsonb` | sim |  |  |  |
-| 16 | `request_id` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.audit_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `actor_id` | `uuid` | sim |  |  | Coluna actor_id da tabela public.audit_logs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `actor_email` | `text` | sim |  |  | Coluna actor_email da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `action` | `text` | não |  |  | Coluna action da tabela public.audit_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `entity_type` | `text` | não |  |  | Coluna entity_type da tabela public.audit_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `entity_id` | `text` | sim |  |  | Coluna entity_id da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `changes` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna changes da tabela public.audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `ip_address` | `text` | sim |  |  | Coluna ip_address da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `user_agent` | `text` | sim |  |  | Coluna user_agent da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.audit_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `table_name` | `text` | sim |  |  | Coluna table_name da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `record_id` | `text` | sim |  |  | Coluna record_id da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `old_data` | `jsonb` | sim |  |  | Coluna old_data da tabela public.audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 15 | `new_data` | `jsonb` | sim |  |  | Coluna new_data da tabela public.audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 16 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.audit_logs. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

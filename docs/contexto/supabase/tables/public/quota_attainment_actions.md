@@ -1,5 +1,7 @@
 # public.quota_attainment_actions
 
+> Tabela public.quota_attainment_actions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), forecast_id uuid NOT NULL, action_type text NOT NULL, title text NOT NULL, description text NULLABLE, expected_impact numeric NOT NULL DEFAULT 0, priority integer NOT NULL DEFAULT 1, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: forecast_id → public.quota_attainment_forecasts(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `forecast_id` | `uuid` | não |  |  |  |
-| 3 | `action_type` | `text` | não |  |  |  |
-| 4 | `title` | `text` | não |  |  |  |
-| 5 | `description` | `text` | sim |  |  |  |
-| 6 | `expected_impact` | `numeric` | não | `0` |  |  |
-| 7 | `priority` | `integer` | não | `1` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quota_attainment_actions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `forecast_id` | `uuid` | não |  |  | Coluna forecast_id da tabela public.quota_attainment_actions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.quota_attainment_forecasts(id). |
+| 3 | `action_type` | `text` | não |  |  | Coluna action_type da tabela public.quota_attainment_actions. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (action_type = ANY (ARRAY['close_deal'::text, 'generate_pipeline'::text, 'increase_ticket'::text, 'accelerate_stage'::text])). |
+| 4 | `title` | `text` | não |  |  | Coluna title da tabela public.quota_attainment_actions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `description` | `text` | sim |  |  | Coluna description da tabela public.quota_attainment_actions. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `expected_impact` | `numeric` | não | `0` |  | Coluna expected_impact da tabela public.quota_attainment_actions. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `priority` | `integer` | não | `1` |  | Coluna priority da tabela public.quota_attainment_actions. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.quota_attainment_actions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

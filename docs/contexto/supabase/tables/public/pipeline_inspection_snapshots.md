@@ -1,5 +1,7 @@
 # public.pipeline_inspection_snapshots
 
+> Tabela public.pipeline_inspection_snapshots. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, stage text NOT NULL, days_in_stage integer NOT NULL DEFAULT 0, last_activity_at timestamp with time zone NULLABLE, days_since_activity integer NULLABLE, risk_flags jsonb NOT NULL DEFAULT '[]'::jsonb, health_score integer NULLABLE, inspected_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `stage` | `text` | não |  |  |  |
-| 4 | `days_in_stage` | `integer` | não | `0` |  |  |
-| 5 | `last_activity_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `days_since_activity` | `integer` | sim |  |  |  |
-| 7 | `risk_flags` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `health_score` | `integer` | sim |  |  |  |
-| 9 | `inspected_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `stage` | `text` | não |  |  | Coluna stage da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `days_in_stage` | `integer` | não | `0` |  | Coluna days_in_stage da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `last_activity_at` | `timestamp with time zone` | sim |  |  | Coluna last_activity_at da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 6 | `days_since_activity` | `integer` | sim |  |  | Coluna days_since_activity da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: integer. Aceita NULL. |
+| 7 | `risk_flags` | `jsonb` | não | `'[]'::jsonb` |  | Coluna risk_flags da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 8 | `health_score` | `integer` | sim |  |  | Coluna health_score da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: integer. Aceita NULL. |
+| 9 | `inspected_at` | `timestamp with time zone` | não | `now()` |  | Coluna inspected_at da tabela public.pipeline_inspection_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

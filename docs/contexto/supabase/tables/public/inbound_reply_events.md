@@ -1,5 +1,7 @@
 # public.inbound_reply_events
 
+> Tabela public.inbound_reply_events. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), provider text NOT NULL, message_id text NULLABLE, from_email text NULLABLE, subject text NULLABLE, received_at timestamp with time zone NOT NULL DEFAULT now(), matched_enrollment_id uuid NULLABLE, event_type text NOT NULL DEFAULT 'reply'::text, payload jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: matched_enrollment_id → public.sequence_enrollments(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `provider` | `text` | não |  |  |  |
-| 3 | `message_id` | `text` | sim |  |  |  |
-| 4 | `from_email` | `text` | sim |  |  |  |
-| 5 | `subject` | `text` | sim |  |  |  |
-| 6 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `matched_enrollment_id` | `uuid` | sim |  |  |  |
-| 8 | `event_type` | `text` | não | `'reply'::text` |  |  |
-| 9 | `payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.inbound_reply_events. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `provider` | `text` | não |  |  | Coluna provider da tabela public.inbound_reply_events. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `message_id` | `text` | sim |  |  | Coluna message_id da tabela public.inbound_reply_events. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `from_email` | `text` | sim |  |  | Coluna from_email da tabela public.inbound_reply_events. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `subject` | `text` | sim |  |  | Coluna subject da tabela public.inbound_reply_events. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.inbound_reply_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `matched_enrollment_id` | `uuid` | sim |  |  | Coluna matched_enrollment_id da tabela public.inbound_reply_events. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sequence_enrollments(id). |
+| 8 | `event_type` | `text` | não | `'reply'::text` |  | Coluna event_type da tabela public.inbound_reply_events. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'reply'::text. |
+| 9 | `payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna payload da tabela public.inbound_reply_events. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.inbound_reply_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

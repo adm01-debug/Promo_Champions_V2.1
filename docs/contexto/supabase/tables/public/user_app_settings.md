@@ -1,5 +1,7 @@
 # public.user_app_settings
 
+> Tabela public.user_app_settings. Estrutura registrada no catálogo do PostgreSQL: user_id uuid NOT NULL, key text NOT NULL, value jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `user_id` | `uuid` | não |  |  |  |
-| 2 | `key` | `text` | não |  |  |  |
-| 3 | `value` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.user_app_settings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Referência FK: auth.users(id). |
+| 2 | `key` | `text` | não |  |  | Coluna key da tabela public.user_app_settings. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 3 | `value` | `jsonb` | não | `'{}'::jsonb` |  | Coluna value da tabela public.user_app_settings. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.user_app_settings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.user_app_settings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

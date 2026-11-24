@@ -1,5 +1,7 @@
 # public.custom_reports
 
+> Tabela public.custom_reports. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, name text NOT NULL, description text NULLABLE, entity text NOT NULL, config jsonb NOT NULL DEFAULT '{}'::jsonb, is_shared boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `entity` | `text` | não |  |  |  |
-| 6 | `config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `is_shared` | `boolean` | não | `false` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.custom_reports. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.custom_reports. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.custom_reports. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.custom_reports. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `entity` | `text` | não |  |  | Coluna entity da tabela public.custom_reports. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (entity = ANY (ARRAY['sales'::text, 'accounts'::text, 'activities'::text, 'leads'::text, 'salespeople'::text, 'clients'::text, 'cross'::text])). |
+| 6 | `config` | `jsonb` | não | `'{}'::jsonb` |  | Coluna config da tabela public.custom_reports. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `is_shared` | `boolean` | não | `false` |  | Coluna is_shared da tabela public.custom_reports. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.custom_reports. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.custom_reports. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

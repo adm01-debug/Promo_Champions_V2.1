@@ -1,5 +1,7 @@
 # public.geo_access_logs
 
+> Tabela public.geo_access_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), ip_address text NOT NULL, country_code text NULLABLE, country_name text NULLABLE, city text NULLABLE, region text NULLABLE, blocked boolean NULLABLE DEFAULT false, user_agent text NULLABLE, attempted_path text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `ip_address` | `text` | não |  |  |  |
-| 3 | `country_code` | `text` | sim |  |  |  |
-| 4 | `country_name` | `text` | sim |  |  |  |
-| 5 | `city` | `text` | sim |  |  |  |
-| 6 | `region` | `text` | sim |  |  |  |
-| 7 | `blocked` | `boolean` | sim | `false` |  |  |
-| 8 | `user_agent` | `text` | sim |  |  |  |
-| 9 | `attempted_path` | `text` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.geo_access_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `ip_address` | `text` | não |  |  | Coluna ip_address da tabela public.geo_access_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `country_code` | `text` | sim |  |  | Coluna country_code da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `country_name` | `text` | sim |  |  | Coluna country_name da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `city` | `text` | sim |  |  | Coluna city da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `region` | `text` | sim |  |  | Coluna region da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `blocked` | `boolean` | sim | `false` |  | Coluna blocked da tabela public.geo_access_logs. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 8 | `user_agent` | `text` | sim |  |  | Coluna user_agent da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `attempted_path` | `text` | sim |  |  | Coluna attempted_path da tabela public.geo_access_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.geo_access_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

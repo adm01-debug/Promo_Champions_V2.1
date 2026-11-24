@@ -1,5 +1,7 @@
 # public.chat_conversations
 
+> Conversas do assistente associadas a vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `title` | `text` | não | `'Nova conversa'::text` |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da conversa. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor proprietário da conversa. |
+| 3 | `title` | `text` | não | `'Nova conversa'::text` |  | Título da conversa. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da conversa. |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da conversa. |
 
 
 ## Constraints

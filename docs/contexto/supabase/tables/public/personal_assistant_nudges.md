@@ -1,5 +1,7 @@
 # public.personal_assistant_nudges
 
+> Tabela public.personal_assistant_nudges. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, content text NOT NULL, model text NULLABLE, feedback text NOT NULL DEFAULT 'pending'::text, feedback_at timestamp with time zone NULLABLE, context_snapshot jsonb NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `content` | `text` | não |  |  |  |
-| 4 | `model` | `text` | sim |  |  |  |
-| 5 | `feedback` | `text` | não | `'pending'::text` |  |  |
-| 6 | `feedback_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `context_snapshot` | `jsonb` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.personal_assistant_nudges. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.personal_assistant_nudges. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `content` | `text` | não |  |  | Coluna content da tabela public.personal_assistant_nudges. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `model` | `text` | sim |  |  | Coluna model da tabela public.personal_assistant_nudges. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `feedback` | `text` | não | `'pending'::text` |  | Coluna feedback da tabela public.personal_assistant_nudges. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (feedback = ANY (ARRAY['pending'::text, 'accepted'::text, 'dismissed'::text])). |
+| 6 | `feedback_at` | `timestamp with time zone` | sim |  |  | Coluna feedback_at da tabela public.personal_assistant_nudges. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 7 | `context_snapshot` | `jsonb` | sim |  |  | Coluna context_snapshot da tabela public.personal_assistant_nudges. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.personal_assistant_nudges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.personal_assistant_nudges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

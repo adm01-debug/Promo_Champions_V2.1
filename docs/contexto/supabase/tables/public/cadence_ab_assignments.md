@@ -1,5 +1,7 @@
 # public.cadence_ab_assignments
 
+> Tabela public.cadence_ab_assignments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), ab_test_id uuid NOT NULL, prospect_cadence_id uuid NOT NULL, variant text NOT NULL, assigned_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: ab_test_id → public.cadence_ab_tests(id); prospect_cadence_id → public.prospect_cadences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `ab_test_id` | `uuid` | não |  |  |  |
-| 3 | `prospect_cadence_id` | `uuid` | não |  |  |  |
-| 4 | `variant` | `text` | não |  |  |  |
-| 5 | `assigned_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cadence_ab_assignments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `ab_test_id` | `uuid` | não |  |  | Coluna ab_test_id da tabela public.cadence_ab_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.cadence_ab_tests(id). |
+| 3 | `prospect_cadence_id` | `uuid` | não |  |  | Coluna prospect_cadence_id da tabela public.cadence_ab_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.prospect_cadences(id). |
+| 4 | `variant` | `text` | não |  |  | Coluna variant da tabela public.cadence_ab_assignments. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (variant = ANY (ARRAY['a'::text, 'b'::text])). |
+| 5 | `assigned_at` | `timestamp with time zone` | não | `now()` |  | Coluna assigned_at da tabela public.cadence_ab_assignments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

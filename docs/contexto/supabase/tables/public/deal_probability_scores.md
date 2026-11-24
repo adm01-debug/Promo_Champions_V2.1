@@ -1,5 +1,7 @@
 # public.deal_probability_scores
 
+> Tabela public.deal_probability_scores. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, raw_probability numeric NOT NULL DEFAULT 0, calibrated_probability numeric NOT NULL DEFAULT 0, confidence numeric NOT NULL DEFAULT 0, factors jsonb NOT NULL DEFAULT '{}'::jsonb, calculated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `raw_probability` | `numeric` | não | `0` |  |  |
-| 4 | `calibrated_probability` | `numeric` | não | `0` |  |  |
-| 5 | `confidence` | `numeric` | não | `0` |  |  |
-| 6 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_probability_scores. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_probability_scores. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `raw_probability` | `numeric` | não | `0` |  | Coluna raw_probability da tabela public.deal_probability_scores. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `calibrated_probability` | `numeric` | não | `0` |  | Coluna calibrated_probability da tabela public.deal_probability_scores. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `confidence` | `numeric` | não | `0` |  | Coluna confidence da tabela public.deal_probability_scores. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (confidence >= 0::numeric AND confidence <= 1::numeric). |
+| 6 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.deal_probability_scores. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.deal_probability_scores. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

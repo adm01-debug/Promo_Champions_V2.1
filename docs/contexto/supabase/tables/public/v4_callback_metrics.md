@@ -1,5 +1,7 @@
 # public.v4_callback_metrics
 
+> Tabela public.v4_callback_metrics. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), day date NOT NULL DEFAULT ((now() AT TIME ZONE 'utc'::text))::date, sent_ok integer NOT NULL DEFAULT 0, failed integer NOT NULL DEFAULT 0, exhausted integer NOT NULL DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,13 +19,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `day` | `date` | não | `((now() AT TIME ZONE 'utc'::text))::date` |  |  |
-| 3 | `sent_ok` | `integer` | não | `0` |  |  |
-| 4 | `failed` | `integer` | não | `0` |  |  |
-| 5 | `exhausted` | `integer` | não | `0` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.v4_callback_metrics. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `day` | `date` | não | `((now() AT TIME ZONE 'utc'::text))::date` |  | Coluna day da tabela public.v4_callback_metrics. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: ((now() AT TIME ZONE 'utc'::text))::date. |
+| 3 | `sent_ok` | `integer` | não | `0` |  | Coluna sent_ok da tabela public.v4_callback_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 4 | `failed` | `integer` | não | `0` |  | Coluna failed da tabela public.v4_callback_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `exhausted` | `integer` | não | `0` |  | Coluna exhausted da tabela public.v4_callback_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.v4_callback_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.v4_callback_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

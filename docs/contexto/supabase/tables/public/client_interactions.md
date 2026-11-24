@@ -1,5 +1,7 @@
 # public.client_interactions
 
+> Tabela public.client_interactions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), client_id uuid NULLABLE, user_id uuid NULLABLE, type text NOT NULL, content text NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: client_id → public.clients(id); user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | sim |  |  |  |
-| 3 | `user_id` | `uuid` | sim |  |  |  |
-| 4 | `type` | `text` | não |  |  |  |
-| 5 | `content` | `text` | sim |  |  |  |
-| 6 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.client_interactions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `client_id` | `uuid` | sim |  |  | Coluna client_id da tabela public.client_interactions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.clients(id). |
+| 3 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.client_interactions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `type` | `text` | não |  |  | Coluna type da tabela public.client_interactions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `content` | `text` | sim |  |  | Coluna content da tabela public.client_interactions. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.client_interactions. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.client_interactions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

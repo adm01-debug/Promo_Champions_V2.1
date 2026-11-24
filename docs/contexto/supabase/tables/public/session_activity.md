@@ -1,5 +1,7 @@
 # public.session_activity
 
+> Tabela public.session_activity. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), user_id uuid NOT NULL, action text NOT NULL, ip_address inet NULLABLE, user_agent text NULLABLE, metadata jsonb NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `action` | `text` | não |  |  |  |
-| 4 | `ip_address` | `inet` | sim |  |  |  |
-| 5 | `user_agent` | `text` | sim |  |  |  |
-| 6 | `metadata` | `jsonb` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.session_activity. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.session_activity. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 3 | `action` | `text` | não |  |  | Coluna action da tabela public.session_activity. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `ip_address` | `inet` | sim |  |  | Coluna ip_address da tabela public.session_activity. Tipo PostgreSQL: inet. Aceita NULL. |
+| 5 | `user_agent` | `text` | sim |  |  | Coluna user_agent da tabela public.session_activity. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `metadata` | `jsonb` | sim |  |  | Coluna metadata da tabela public.session_activity. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.session_activity. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

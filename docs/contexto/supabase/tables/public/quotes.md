@@ -59,7 +59,7 @@
 | 38 | `external_seller_id` | `text` | sim |  |  | Identificador do vendedor no sistema externo, quando disponível. |
 | 39 | `client_id` | `uuid` | sim |  |  | Cliente cadastrado associado ao orçamento, quando houver. |
 | 40 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 41 | `deleted_by` | `uuid` | sim |  |  |  |
+| 41 | `deleted_by` | `uuid` | sim |  |  | Coluna deleted_by da tabela public.quotes. Tipo PostgreSQL: uuid. Aceita NULL. |
 | 42 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar o orçamento como excluído. |
 | 43 | `version` | `integer` | não | `1` |  | Número da versão do registro usado para controle de concorrência otimista. |
 

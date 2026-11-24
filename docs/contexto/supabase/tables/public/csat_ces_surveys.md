@@ -1,5 +1,7 @@
 # public.csat_ces_surveys
 
+> Tabela public.csat_ces_surveys. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), account_id uuid NULLABLE, contact_email text NULLABLE, survey_type cs_survey_type NOT NULL DEFAULT 'csat'::cs_survey_type, score integer NULLABLE, comment text NULLABLE, trigger_event text NULLABLE, sent_at timestamp with time zone NOT NULL DEFAULT now(), responded_at timestamp with time zone NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb. Relacionamentos FK: account_id → public.accounts(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | sim |  |  |  |
-| 3 | `contact_email` | `text` | sim |  |  |  |
-| 4 | `survey_type` | `cs_survey_type` | não | `'csat'::cs_survey_type` |  |  |
-| 5 | `score` | `integer` | sim |  |  |  |
-| 6 | `comment` | `text` | sim |  |  |  |
-| 7 | `trigger_event` | `text` | sim |  |  |  |
-| 8 | `sent_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `responded_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.csat_ces_surveys. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `account_id` | `uuid` | sim |  |  | Coluna account_id da tabela public.csat_ces_surveys. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.accounts(id). |
+| 3 | `contact_email` | `text` | sim |  |  | Coluna contact_email da tabela public.csat_ces_surveys. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `survey_type` | `cs_survey_type` | não | `'csat'::cs_survey_type` |  | Coluna survey_type da tabela public.csat_ces_surveys. Tipo PostgreSQL: cs_survey_type. Não aceita NULL. Valor padrão: 'csat'::cs_survey_type. Valores do enum: 'csat', 'ces'. |
+| 5 | `score` | `integer` | sim |  |  | Coluna score da tabela public.csat_ces_surveys. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `comment` | `text` | sim |  |  | Coluna comment da tabela public.csat_ces_surveys. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `trigger_event` | `text` | sim |  |  | Coluna trigger_event da tabela public.csat_ces_surveys. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `sent_at` | `timestamp with time zone` | não | `now()` |  | Coluna sent_at da tabela public.csat_ces_surveys. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `responded_at` | `timestamp with time zone` | sim |  |  | Coluna responded_at da tabela public.csat_ces_surveys. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.csat_ces_surveys. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
 
 
 ## Constraints

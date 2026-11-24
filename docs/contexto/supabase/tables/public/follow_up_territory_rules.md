@@ -1,5 +1,7 @@
 # public.follow_up_territory_rules
 
+> Tabela public.follow_up_territory_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), territory text NULLABLE, salesperson_id uuid NULLABLE, cadence_id uuid NULLABLE, whatsapp_template_id uuid NULLABLE, priority integer NULLABLE DEFAULT 0, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: salesperson_id → auth.users(id); whatsapp_template_id → public.follow_up_templates(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `territory` | `text` | sim |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `cadence_id` | `uuid` | sim |  |  |  |
-| 5 | `whatsapp_template_id` | `uuid` | sim |  |  |  |
-| 6 | `priority` | `integer` | sim | `0` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.follow_up_territory_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `territory` | `text` | sim |  |  | Coluna territory da tabela public.follow_up_territory_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.follow_up_territory_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `cadence_id` | `uuid` | sim |  |  | Coluna cadence_id da tabela public.follow_up_territory_rules. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `whatsapp_template_id` | `uuid` | sim |  |  | Coluna whatsapp_template_id da tabela public.follow_up_territory_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.follow_up_templates(id). |
+| 6 | `priority` | `integer` | sim | `0` |  | Coluna priority da tabela public.follow_up_territory_rules. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.follow_up_territory_rules. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.follow_up_territory_rules. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

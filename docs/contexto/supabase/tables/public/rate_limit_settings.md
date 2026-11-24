@@ -1,5 +1,7 @@
 # public.rate_limit_settings
 
+> Limites de requisições e duração de bloqueio configurados por ação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `action` | `text` | não |  |  |  |
-| 3 | `max_requests` | `integer` | não | `100` |  |  |
-| 4 | `window_seconds` | `integer` | não | `3600` |  |  |
-| 5 | `block_duration_seconds` | `integer` | não | `3600` |  |  |
-| 6 | `is_active` | `boolean` | sim | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da configuração de limite. |
+| 2 | `action` | `text` | não |  |  | Ação ou endpoint ao qual o limite se aplica. |
+| 3 | `max_requests` | `integer` | não | `100` |  | Número máximo de requisições permitidas na janela. |
+| 4 | `window_seconds` | `integer` | não | `3600` |  | Duração da janela de contagem, em segundos. |
+| 5 | `block_duration_seconds` | `integer` | não | `3600` |  | Duração do bloqueio após exceder o limite, em segundos. |
+| 6 | `is_active` | `boolean` | sim | `true` |  | Indica se a configuração de limite está ativa. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação da configuração. |
+| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização da configuração. |
 
 
 ## Constraints

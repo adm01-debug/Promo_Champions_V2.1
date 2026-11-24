@@ -1,5 +1,7 @@
 # public.approval_decisions
 
+> Tabela public.approval_decisions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), request_id uuid NOT NULL, approver_id uuid NOT NULL, decision text NOT NULL, comments text NULLABLE, level integer NOT NULL DEFAULT 1, decided_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: approver_id → auth.users(id); request_id → public.approval_requests(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `request_id` | `uuid` | não |  |  |  |
-| 3 | `approver_id` | `uuid` | não |  |  |  |
-| 4 | `decision` | `text` | não |  |  |  |
-| 5 | `comments` | `text` | sim |  |  |  |
-| 6 | `level` | `integer` | não | `1` |  |  |
-| 7 | `decided_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.approval_decisions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `request_id` | `uuid` | não |  |  | Coluna request_id da tabela public.approval_decisions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.approval_requests(id). |
+| 3 | `approver_id` | `uuid` | não |  |  | Coluna approver_id da tabela public.approval_decisions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 4 | `decision` | `text` | não |  |  | Coluna decision da tabela public.approval_decisions. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (decision = ANY (ARRAY['approved'::text, 'rejected'::text])). |
+| 5 | `comments` | `text` | sim |  |  | Coluna comments da tabela public.approval_decisions. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `level` | `integer` | não | `1` |  | Coluna level da tabela public.approval_decisions. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 7 | `decided_at` | `timestamp with time zone` | não | `now()` |  | Coluna decided_at da tabela public.approval_decisions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.activity_audit_logs
 
+> Tabela public.activity_audit_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), activity_id uuid NOT NULL, changed_by uuid NULLABLE, old_data jsonb NULLABLE, new_data jsonb NULLABLE, action text NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: activity_id → public.activities(id); changed_by → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `activity_id` | `uuid` | não |  |  |  |
-| 3 | `changed_by` | `uuid` | sim |  |  |  |
-| 4 | `old_data` | `jsonb` | sim |  |  |  |
-| 5 | `new_data` | `jsonb` | sim |  |  |  |
-| 6 | `action` | `text` | não |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.activity_audit_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `activity_id` | `uuid` | não |  |  | Coluna activity_id da tabela public.activity_audit_logs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.activities(id). |
+| 3 | `changed_by` | `uuid` | sim |  |  | Coluna changed_by da tabela public.activity_audit_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `old_data` | `jsonb` | sim |  |  | Coluna old_data da tabela public.activity_audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 5 | `new_data` | `jsonb` | sim |  |  | Coluna new_data da tabela public.activity_audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 6 | `action` | `text` | não |  |  | Coluna action da tabela public.activity_audit_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.activity_audit_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

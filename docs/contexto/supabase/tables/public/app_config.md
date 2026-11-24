@@ -18,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `key` | `text` | não |  |  |  |
-| 2 | `value` | `jsonb` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `key` | `text` | não |  |  | Coluna key da tabela public.app_config. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `value` | `jsonb` | não |  |  | Coluna value da tabela public.app_config. Tipo PostgreSQL: jsonb. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.app_config. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.app_config. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.webhook_dispatch_rate
 
+> Tabela public.webhook_dispatch_rate. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), subscription_id uuid NOT NULL, dispatched_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: subscription_id → public.winloss_webhook_subscriptions(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `subscription_id` | `uuid` | não |  |  |  |
-| 3 | `dispatched_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webhook_dispatch_rate. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `subscription_id` | `uuid` | não |  |  | Coluna subscription_id da tabela public.webhook_dispatch_rate. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.winloss_webhook_subscriptions(id). |
+| 3 | `dispatched_at` | `timestamp with time zone` | não | `now()` |  | Coluna dispatched_at da tabela public.webhook_dispatch_rate. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.webhook_dispatch_rate. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.webhook_dispatch_rate. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

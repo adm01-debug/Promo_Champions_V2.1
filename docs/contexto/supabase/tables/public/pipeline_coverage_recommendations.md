@@ -1,5 +1,7 @@
 # public.pipeline_coverage_recommendations
 
+> Tabela public.pipeline_coverage_recommendations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), snapshot_id uuid NOT NULL, priority text NOT NULL DEFAULT 'medium'::text, title text NOT NULL, action text NOT NULL, expected_impact_amount numeric NOT NULL DEFAULT 0, ai_generated boolean NOT NULL DEFAULT true, acted_on boolean NOT NULL DEFAULT false, acted_on_at timestamp with time zone NULLABLE, acted_on_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: snapshot_id → public.pipeline_coverage_snapshots(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `snapshot_id` | `uuid` | não |  |  |  |
-| 3 | `priority` | `text` | não | `'medium'::text` |  |  |
-| 4 | `title` | `text` | não |  |  |  |
-| 5 | `action` | `text` | não |  |  |  |
-| 6 | `expected_impact_amount` | `numeric` | não | `0` |  |  |
-| 7 | `ai_generated` | `boolean` | não | `true` |  |  |
-| 8 | `acted_on` | `boolean` | não | `false` |  |  |
-| 9 | `acted_on_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `acted_on_by` | `uuid` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `snapshot_id` | `uuid` | não |  |  | Coluna snapshot_id da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.pipeline_coverage_snapshots(id). |
+| 3 | `priority` | `text` | não | `'medium'::text` |  | Coluna priority da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'medium'::text. Validação CHECK: CHECK (priority = ANY (ARRAY['high'::text, 'medium'::text, 'low'::text])). |
+| 4 | `title` | `text` | não |  |  | Coluna title da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `action` | `text` | não |  |  | Coluna action da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `expected_impact_amount` | `numeric` | não | `0` |  | Coluna expected_impact_amount da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `ai_generated` | `boolean` | não | `true` |  | Coluna ai_generated da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 8 | `acted_on` | `boolean` | não | `false` |  | Coluna acted_on da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 9 | `acted_on_at` | `timestamp with time zone` | sim |  |  | Coluna acted_on_at da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `acted_on_by` | `uuid` | sim |  |  | Coluna acted_on_by da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.pipeline_coverage_recommendations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

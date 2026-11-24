@@ -1,5 +1,7 @@
 # public.nps_surveys
 
+> Tabela public.nps_surveys. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, client_name text NOT NULL, salesperson_id uuid NULLABLE, survey_type text NOT NULL DEFAULT 'nps'::text, score integer NULLABLE, comment text NULLABLE, status text NOT NULL DEFAULT 'pending'::text, sent_at timestamp with time zone NULLABLE, responded_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), score_ces integer NULLABLE. Relacionamentos FK: sale_id → public.sales(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `client_name` | `text` | não |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `survey_type` | `text` | não | `'nps'::text` |  |  |
-| 6 | `score` | `integer` | sim |  |  |  |
-| 7 | `comment` | `text` | sim |  |  |  |
-| 8 | `status` | `text` | não | `'pending'::text` |  |  |
-| 9 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `responded_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `score_ces` | `integer` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.nps_surveys. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.nps_surveys. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `client_name` | `text` | não |  |  | Coluna client_name da tabela public.nps_surveys. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.nps_surveys. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 5 | `survey_type` | `text` | não | `'nps'::text` |  | Coluna survey_type da tabela public.nps_surveys. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'nps'::text. Validação CHECK: CHECK (survey_type = ANY (ARRAY['nps'::text, 'csat'::text])). |
+| 6 | `score` | `integer` | sim |  |  | Coluna score da tabela public.nps_surveys. Tipo PostgreSQL: integer. Aceita NULL. Validação CHECK: CHECK (score >= 0 AND score <= 10). |
+| 7 | `comment` | `text` | sim |  |  | Coluna comment da tabela public.nps_surveys. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.nps_surveys. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'sent'::text, 'responded'::text])). |
+| 9 | `sent_at` | `timestamp with time zone` | sim |  |  | Coluna sent_at da tabela public.nps_surveys. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `responded_at` | `timestamp with time zone` | sim |  |  | Coluna responded_at da tabela public.nps_surveys. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.nps_surveys. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `score_ces` | `integer` | sim |  |  | Coluna score_ces da tabela public.nps_surveys. Tipo PostgreSQL: integer. Aceita NULL. |
 
 
 ## Constraints

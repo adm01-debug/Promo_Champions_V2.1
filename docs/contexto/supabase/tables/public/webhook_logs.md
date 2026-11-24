@@ -1,5 +1,7 @@
 # public.webhook_logs
 
+> Histórico de tentativas de entrega de webhooks e respectivas respostas.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `webhook_id` | `uuid` | sim |  |  |  |
-| 3 | `status` | `text` | não |  |  |  |
-| 4 | `request_body` | `jsonb` | sim |  |  |  |
-| 5 | `response_status` | `integer` | sim |  |  |  |
-| 6 | `response_body` | `jsonb` | sim |  |  |  |
-| 7 | `error_message` | `text` | sim |  |  |  |
-| 8 | `attempt` | `integer` | sim | `1` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de entrega. |
+| 2 | `webhook_id` | `uuid` | sim |  |  | Webhook associado à tentativa, quando identificado. |
+| 3 | `status` | `text` | não |  |  | Estado da tentativa de entrega. |
+| 4 | `request_body` | `jsonb` | sim |  |  | Corpo JSON enviado ao destino, quando registrado. |
+| 5 | `response_status` | `integer` | sim |  |  | Código HTTP retornado pelo destino, quando disponível. |
+| 6 | `response_body` | `jsonb` | sim |  |  | Corpo da resposta retornada pelo destino, quando registrado. |
+| 7 | `error_message` | `text` | sim |  |  | Mensagem de erro da tentativa, quando aplicável. |
+| 8 | `attempt` | `integer` | sim | `1` |  | Número ordinal da tentativa de entrega. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de registro da tentativa. |
 
 
 ## Constraints

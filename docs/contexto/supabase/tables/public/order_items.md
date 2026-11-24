@@ -1,5 +1,7 @@
 # public.order_items
 
+> Tabela public.order_items. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), order_id uuid NOT NULL, product_name text NOT NULL, quantity integer NOT NULL DEFAULT 1, unit_price numeric(12,2) NOT NULL DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: order_id → public.orders(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `order_id` | `uuid` | não |  |  |  |
-| 3 | `product_name` | `text` | não |  |  |  |
-| 4 | `quantity` | `integer` | não | `1` |  |  |
-| 5 | `unit_price` | `numeric(12,2)` | não | `0` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.order_items. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `order_id` | `uuid` | não |  |  | Coluna order_id da tabela public.order_items. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.orders(id). |
+| 3 | `product_name` | `text` | não |  |  | Coluna product_name da tabela public.order_items. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `quantity` | `integer` | não | `1` |  | Coluna quantity da tabela public.order_items. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 5 | `unit_price` | `numeric(12,2)` | não | `0` |  | Coluna unit_price da tabela public.order_items. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.order_items. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

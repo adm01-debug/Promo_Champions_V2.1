@@ -1,5 +1,7 @@
 # public.lead_routing_rules
 
+> Regras que determinam como leads são distribuídos entre vendedores.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `strategy` | `text` | não | `'round_robin'::text` |  |  |
-| 4 | `priority` | `integer` | não | `0` |  |  |
-| 5 | `is_active` | `boolean` | não | `true` |  |  |
-| 6 | `filter_state` | `text` | sim |  |  |  |
-| 7 | `filter_min_value` | `numeric` | sim |  |  |  |
-| 8 | `filter_source` | `text` | sim |  |  |  |
-| 9 | `filter_role` | `text` | sim |  |  |  |
-| 10 | `description` | `text` | sim |  |  |  |
-| 11 | `created_by` | `uuid` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `filter_job_titles` | `text[]` | sim |  |  |  |
-| 15 | `filter_products` | `text[]` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da regra de roteamento. |
+| 2 | `name` | `text` | não |  |  | Nome da regra. |
+| 3 | `strategy` | `text` | não | `'round_robin'::text` |  | Estratégia de distribuição definida para a regra. |
+| 4 | `priority` | `integer` | não | `0` |  | Prioridade usada para ordenar a aplicação das regras. |
+| 5 | `is_active` | `boolean` | não | `true` |  | Indica se a regra está habilitada. |
+| 6 | `filter_state` | `text` | sim |  |  | Estado usado como critério de filtragem, quando configurado. |
+| 7 | `filter_min_value` | `numeric` | sim |  |  | Valor monetário mínimo usado como critério, em BRL, quando configurado. |
+| 8 | `filter_source` | `text` | sim |  |  | Origem do lead usada como critério de filtragem, quando configurada. |
+| 9 | `filter_role` | `text` | sim |  |  | Papel comercial usado como critério de filtragem, quando configurado. |
+| 10 | `description` | `text` | sim |  |  | Descrição da regra de roteamento. |
+| 11 | `created_by` | `uuid` | sim |  |  | Usuário que criou a regra, quando identificado. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da regra. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da regra. |
+| 14 | `filter_job_titles` | `text[]` | sim |  |  | Lista de cargos usados como critério de filtragem. |
+| 15 | `filter_products` | `text[]` | sim |  |  | Lista de produtos usados como critério de filtragem. |
 
 
 ## Constraints

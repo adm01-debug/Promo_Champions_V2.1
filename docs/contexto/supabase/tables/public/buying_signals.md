@@ -1,5 +1,7 @@
 # public.buying_signals
 
+> Tabela public.buying_signals. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), company_id uuid NULLABLE, signal_type text NOT NULL, signal_description text NULLABLE, source_url text NULLABLE, significance_score integer NULLABLE, occurred_at timestamp with time zone NULLABLE DEFAULT now(), created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: company_id → public.enriched_company_intelligence(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `company_id` | `uuid` | sim |  |  |  |
-| 3 | `signal_type` | `text` | não |  |  |  |
-| 4 | `signal_description` | `text` | sim |  |  |  |
-| 5 | `source_url` | `text` | sim |  |  |  |
-| 6 | `significance_score` | `integer` | sim |  |  |  |
-| 7 | `occurred_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.buying_signals. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `company_id` | `uuid` | sim |  |  | Coluna company_id da tabela public.buying_signals. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.enriched_company_intelligence(id). |
+| 3 | `signal_type` | `text` | não |  |  | Coluna signal_type da tabela public.buying_signals. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `signal_description` | `text` | sim |  |  | Coluna signal_description da tabela public.buying_signals. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `source_url` | `text` | sim |  |  | Coluna source_url da tabela public.buying_signals. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `significance_score` | `integer` | sim |  |  | Coluna significance_score da tabela public.buying_signals. Tipo PostgreSQL: integer. Aceita NULL. Validação CHECK: CHECK (significance_score >= 1 AND significance_score <= 100). |
+| 7 | `occurred_at` | `timestamp with time zone` | sim | `now()` |  | Coluna occurred_at da tabela public.buying_signals. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.buying_signals. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

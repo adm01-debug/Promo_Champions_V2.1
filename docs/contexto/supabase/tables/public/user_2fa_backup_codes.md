@@ -1,5 +1,7 @@
 # public.user_2fa_backup_codes
 
+> Tabela public.user_2fa_backup_codes. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), user_id uuid NOT NULL, code text NOT NULL, used boolean NULLABLE DEFAULT false, used_at timestamp with time zone NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `code` | `text` | não |  |  |  |
-| 4 | `used` | `boolean` | sim | `false` |  |  |
-| 5 | `used_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 3 | `code` | `text` | não |  |  | Coluna code da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `used` | `boolean` | sim | `false` |  | Coluna used da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 5 | `used_at` | `timestamp with time zone` | sim |  |  | Coluna used_at da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.user_2fa_backup_codes. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.task_assignments
 
+> Tabela public.task_assignments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), catalog_id uuid NOT NULL, assigned_to uuid NOT NULL, assigned_by uuid NOT NULL, due_date date NULLABLE, status task_assignment_status NOT NULL DEFAULT 'pending'::task_assignment_status, submission_note text NULLABLE, reviewed_by uuid NULLABLE, reviewed_at timestamp with time zone NULLABLE, xp_granted integer NULLABLE DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), squad_id uuid NULLABLE, recurrence_rule text NULLABLE, parent_recurrence_id uuid NULLABLE. Relacionamentos FK: catalog_id → public.task_catalog(id); squad_id → public.squads(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `catalog_id` | `uuid` | não |  |  |  |
-| 3 | `assigned_to` | `uuid` | não |  |  |  |
-| 4 | `assigned_by` | `uuid` | não |  |  |  |
-| 5 | `due_date` | `date` | sim |  |  |  |
-| 6 | `status` | `task_assignment_status` | não | `'pending'::task_assignment_status` |  |  |
-| 7 | `submission_note` | `text` | sim |  |  |  |
-| 8 | `reviewed_by` | `uuid` | sim |  |  |  |
-| 9 | `reviewed_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `xp_granted` | `integer` | sim | `0` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `squad_id` | `uuid` | sim |  |  |  |
-| 14 | `recurrence_rule` | `text` | sim |  |  |  |
-| 15 | `parent_recurrence_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.task_assignments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `catalog_id` | `uuid` | não |  |  | Coluna catalog_id da tabela public.task_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.task_catalog(id). |
+| 3 | `assigned_to` | `uuid` | não |  |  | Coluna assigned_to da tabela public.task_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `assigned_by` | `uuid` | não |  |  | Coluna assigned_by da tabela public.task_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 5 | `due_date` | `date` | sim |  |  | Coluna due_date da tabela public.task_assignments. Tipo PostgreSQL: date. Aceita NULL. |
+| 6 | `status` | `task_assignment_status` | não | `'pending'::task_assignment_status` |  | Coluna status da tabela public.task_assignments. Tipo PostgreSQL: task_assignment_status. Não aceita NULL. Valor padrão: 'pending'::task_assignment_status. Valores do enum: 'pending', 'in_progress', 'submitted', 'approved', 'rejected'. |
+| 7 | `submission_note` | `text` | sim |  |  | Coluna submission_note da tabela public.task_assignments. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `reviewed_by` | `uuid` | sim |  |  | Coluna reviewed_by da tabela public.task_assignments. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 9 | `reviewed_at` | `timestamp with time zone` | sim |  |  | Coluna reviewed_at da tabela public.task_assignments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `xp_granted` | `integer` | sim | `0` |  | Coluna xp_granted da tabela public.task_assignments. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.task_assignments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.task_assignments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `squad_id` | `uuid` | sim |  |  | Coluna squad_id da tabela public.task_assignments. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.squads(id). |
+| 14 | `recurrence_rule` | `text` | sim |  |  | Coluna recurrence_rule da tabela public.task_assignments. Tipo PostgreSQL: text. Aceita NULL. |
+| 15 | `parent_recurrence_id` | `uuid` | sim |  |  | Coluna parent_recurrence_id da tabela public.task_assignments. Tipo PostgreSQL: uuid. Aceita NULL. |
 
 
 ## Constraints

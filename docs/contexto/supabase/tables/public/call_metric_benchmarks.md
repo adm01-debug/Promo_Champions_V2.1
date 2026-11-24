@@ -1,5 +1,7 @@
 # public.call_metric_benchmarks
 
+> Tabela public.call_metric_benchmarks. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), metric text NOT NULL, p25 numeric NOT NULL DEFAULT 0, p50 numeric NOT NULL DEFAULT 0, p75 numeric NOT NULL DEFAULT 0, target_min numeric NOT NULL DEFAULT 0, target_max numeric NOT NULL DEFAULT 0, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `metric` | `text` | não |  |  |  |
-| 3 | `p25` | `numeric` | não | `0` |  |  |
-| 4 | `p50` | `numeric` | não | `0` |  |  |
-| 5 | `p75` | `numeric` | não | `0` |  |  |
-| 6 | `target_min` | `numeric` | não | `0` |  |  |
-| 7 | `target_max` | `numeric` | não | `0` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_metric_benchmarks. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `metric` | `text` | não |  |  | Coluna metric da tabela public.call_metric_benchmarks. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `p25` | `numeric` | não | `0` |  | Coluna p25 da tabela public.call_metric_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `p50` | `numeric` | não | `0` |  | Coluna p50 da tabela public.call_metric_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `p75` | `numeric` | não | `0` |  | Coluna p75 da tabela public.call_metric_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `target_min` | `numeric` | não | `0` |  | Coluna target_min da tabela public.call_metric_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `target_max` | `numeric` | não | `0` |  | Coluna target_max da tabela public.call_metric_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.call_metric_benchmarks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

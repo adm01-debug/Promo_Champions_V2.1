@@ -1,5 +1,7 @@
 # public.ranking_notifications
 
+> Tabela public.ranking_notifications. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, rank integer NOT NULL, total_sales numeric NOT NULL DEFAULT 0, gap_to_first numeric NOT NULL DEFAULT 0, gap_to_next numeric NOT NULL DEFAULT 0, next_competitor_name text NULLABLE, period_start date NOT NULL, message text NOT NULL, read_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `rank` | `integer` | não |  |  |  |
-| 4 | `total_sales` | `numeric` | não | `0` |  |  |
-| 5 | `gap_to_first` | `numeric` | não | `0` |  |  |
-| 6 | `gap_to_next` | `numeric` | não | `0` |  |  |
-| 7 | `next_competitor_name` | `text` | sim |  |  |  |
-| 8 | `period_start` | `date` | não |  |  |  |
-| 9 | `message` | `text` | não |  |  |  |
-| 10 | `read_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.ranking_notifications. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.ranking_notifications. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `rank` | `integer` | não |  |  | Coluna rank da tabela public.ranking_notifications. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `total_sales` | `numeric` | não | `0` |  | Coluna total_sales da tabela public.ranking_notifications. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `gap_to_first` | `numeric` | não | `0` |  | Coluna gap_to_first da tabela public.ranking_notifications. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `gap_to_next` | `numeric` | não | `0` |  | Coluna gap_to_next da tabela public.ranking_notifications. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `next_competitor_name` | `text` | sim |  |  | Coluna next_competitor_name da tabela public.ranking_notifications. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.ranking_notifications. Tipo PostgreSQL: date. Não aceita NULL. |
+| 9 | `message` | `text` | não |  |  | Coluna message da tabela public.ranking_notifications. Tipo PostgreSQL: text. Não aceita NULL. |
+| 10 | `read_at` | `timestamp with time zone` | sim |  |  | Coluna read_at da tabela public.ranking_notifications. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.ranking_notifications. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.orders
 
+> Tabela public.orders. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NULLABLE, order_number text NOT NULL, status text NOT NULL DEFAULT 'pending'::text, subtotal numeric(12,2) NOT NULL DEFAULT 0, shipping numeric(12,2) NOT NULL DEFAULT 0, total numeric(12,2) NOT NULL DEFAULT 0, cancellation_reason text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), quote_id uuid NULLABLE, client_id uuid NULLABLE, salesperson_id uuid NULLABLE, notes text NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb. Relacionamentos FK: client_id → public.clients(id); quote_id → public.quotes(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,21 +19,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `order_number` | `text` | não |  |  |  |
-| 4 | `status` | `text` | não | `'pending'::text` |  |  |
-| 5 | `subtotal` | `numeric(12,2)` | não | `0` |  |  |
-| 6 | `shipping` | `numeric(12,2)` | não | `0` |  |  |
-| 7 | `total` | `numeric(12,2)` | não | `0` |  |  |
-| 8 | `cancellation_reason` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `quote_id` | `uuid` | sim |  |  |  |
-| 12 | `client_id` | `uuid` | sim |  |  |  |
-| 13 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 14 | `notes` | `text` | sim |  |  |  |
-| 15 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.orders. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.orders. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `order_number` | `text` | não |  |  | Coluna order_number da tabela public.orders. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.orders. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'preparing'::text, 'shipped'::text, 'delivered'::text, 'cancelled'::text])). |
+| 5 | `subtotal` | `numeric(12,2)` | não | `0` |  | Coluna subtotal da tabela public.orders. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `shipping` | `numeric(12,2)` | não | `0` |  | Coluna shipping da tabela public.orders. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. Valor padrão: 0. |
+| 7 | `total` | `numeric(12,2)` | não | `0` |  | Coluna total da tabela public.orders. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (total IS NULL OR total >= 0::numeric) NOT VALID. |
+| 8 | `cancellation_reason` | `text` | sim |  |  | Coluna cancellation_reason da tabela public.orders. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.orders. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.orders. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `quote_id` | `uuid` | sim |  |  | Coluna quote_id da tabela public.orders. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.quotes(id). |
+| 12 | `client_id` | `uuid` | sim |  |  | Coluna client_id da tabela public.orders. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.clients(id). |
+| 13 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.orders. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 14 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.orders. Tipo PostgreSQL: text. Aceita NULL. |
+| 15 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.orders. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
 
 
 ## Constraints

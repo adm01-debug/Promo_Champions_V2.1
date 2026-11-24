@@ -1,5 +1,7 @@
 # public.pipelines
 
+> Tabela public.pipelines. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, color text NOT NULL DEFAULT 'bg-blue-500'::text, icon text NOT NULL DEFAULT 'kanban'::text, is_active boolean NOT NULL DEFAULT true, display_order integer NOT NULL DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `color` | `text` | não | `'bg-blue-500'::text` |  |  |
-| 5 | `icon` | `text` | não | `'kanban'::text` |  |  |
-| 6 | `is_active` | `boolean` | não | `true` |  |  |
-| 7 | `display_order` | `integer` | não | `0` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.pipelines. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.pipelines. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.pipelines. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `color` | `text` | não | `'bg-blue-500'::text` |  | Coluna color da tabela public.pipelines. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'bg-blue-500'::text. |
+| 5 | `icon` | `text` | não | `'kanban'::text` |  | Coluna icon da tabela public.pipelines. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'kanban'::text. |
+| 6 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.pipelines. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 7 | `display_order` | `integer` | não | `0` |  | Coluna display_order da tabela public.pipelines. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.pipelines. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.pipelines. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

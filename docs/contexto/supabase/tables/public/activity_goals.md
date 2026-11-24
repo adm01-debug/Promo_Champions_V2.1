@@ -1,5 +1,7 @@
 # public.activity_goals
 
+> Tabela public.activity_goals. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, calls_goal integer NOT NULL DEFAULT 30, emails_goal integer NOT NULL DEFAULT 20, meetings_goal integer NOT NULL DEFAULT 3, linkedin_goal integer NOT NULL DEFAULT 10, whatsapp_goal integer NOT NULL DEFAULT 15, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `calls_goal` | `integer` | não | `30` |  |  |
-| 4 | `emails_goal` | `integer` | não | `20` |  |  |
-| 5 | `meetings_goal` | `integer` | não | `3` |  |  |
-| 6 | `linkedin_goal` | `integer` | não | `10` |  |  |
-| 7 | `whatsapp_goal` | `integer` | não | `15` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.activity_goals. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.activity_goals. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `calls_goal` | `integer` | não | `30` |  | Coluna calls_goal da tabela public.activity_goals. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 30. |
+| 4 | `emails_goal` | `integer` | não | `20` |  | Coluna emails_goal da tabela public.activity_goals. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 20. |
+| 5 | `meetings_goal` | `integer` | não | `3` |  | Coluna meetings_goal da tabela public.activity_goals. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 3. |
+| 6 | `linkedin_goal` | `integer` | não | `10` |  | Coluna linkedin_goal da tabela public.activity_goals. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 10. |
+| 7 | `whatsapp_goal` | `integer` | não | `15` |  | Coluna whatsapp_goal da tabela public.activity_goals. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 15. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.activity_goals. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.activity_goals. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

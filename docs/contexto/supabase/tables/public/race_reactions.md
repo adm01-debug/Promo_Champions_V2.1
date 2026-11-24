@@ -1,5 +1,7 @@
 # public.race_reactions
 
+> Tabela public.race_reactions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), season_id uuid NULLABLE, target_car_id uuid NOT NULL, reactor_user_id uuid NOT NULL, emoji text NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `season_id` | `uuid` | sim |  |  |  |
-| 3 | `target_car_id` | `uuid` | não |  |  |  |
-| 4 | `reactor_user_id` | `uuid` | não |  |  |  |
-| 5 | `emoji` | `text` | não |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_reactions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `season_id` | `uuid` | sim |  |  | Coluna season_id da tabela public.race_reactions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `target_car_id` | `uuid` | não |  |  | Coluna target_car_id da tabela public.race_reactions. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `reactor_user_id` | `uuid` | não |  |  | Coluna reactor_user_id da tabela public.race_reactions. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 5 | `emoji` | `text` | não |  |  | Coluna emoji da tabela public.race_reactions. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (char_length(emoji) >= 1 AND char_length(emoji) <= 8). |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_reactions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

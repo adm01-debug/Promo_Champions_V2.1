@@ -1,5 +1,7 @@
 # public.win_calibration_buckets
 
+> Tabela public.win_calibration_buckets. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), stage text NOT NULL, segment text NOT NULL DEFAULT 'all'::text, bucket_min numeric NOT NULL, bucket_max numeric NOT NULL, actual_win_rate numeric NOT NULL DEFAULT 0, sample_size integer NOT NULL DEFAULT 0, computed_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `stage` | `text` | não |  |  |  |
-| 3 | `segment` | `text` | não | `'all'::text` |  |  |
-| 4 | `bucket_min` | `numeric` | não |  |  |  |
-| 5 | `bucket_max` | `numeric` | não |  |  |  |
-| 6 | `actual_win_rate` | `numeric` | não | `0` |  |  |
-| 7 | `sample_size` | `integer` | não | `0` |  |  |
-| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_calibration_buckets. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `stage` | `text` | não |  |  | Coluna stage da tabela public.win_calibration_buckets. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `segment` | `text` | não | `'all'::text` |  | Coluna segment da tabela public.win_calibration_buckets. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'all'::text. |
+| 4 | `bucket_min` | `numeric` | não |  |  | Coluna bucket_min da tabela public.win_calibration_buckets. Tipo PostgreSQL: numeric. Não aceita NULL. |
+| 5 | `bucket_max` | `numeric` | não |  |  | Coluna bucket_max da tabela public.win_calibration_buckets. Tipo PostgreSQL: numeric. Não aceita NULL. |
+| 6 | `actual_win_rate` | `numeric` | não | `0` |  | Coluna actual_win_rate da tabela public.win_calibration_buckets. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `sample_size` | `integer` | não | `0` |  | Coluna sample_size da tabela public.win_calibration_buckets. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.win_calibration_buckets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

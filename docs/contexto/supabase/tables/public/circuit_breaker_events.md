@@ -1,5 +1,7 @@
 # public.circuit_breaker_events
 
+> Histórico de transições e eventos de circuit breakers.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,14 +19,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `circuit_name` | `text` | não |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `previous_state` | `text` | sim |  |  |  |
-| 5 | `new_state` | `text` | sim |  |  |  |
-| 6 | `failure_count` | `integer` | sim | `0` |  |  |
-| 7 | `details` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento. |
+| 2 | `circuit_name` | `text` | não |  |  | Nome do circuit breaker. |
+| 3 | `event_type` | `text` | não |  |  | Tipo do evento registrado. |
+| 4 | `previous_state` | `text` | sim |  |  | Estado anterior do circuit breaker, quando registrado. |
+| 5 | `new_state` | `text` | sim |  |  | Novo estado do circuit breaker, quando registrado. |
+| 6 | `failure_count` | `integer` | sim | `0` |  | Quantidade de falhas associada ao evento, quando informada. |
+| 7 | `details` | `jsonb` | sim | `'{}'::jsonb` |  | Detalhes adicionais do evento em formato JSON. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro do evento. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.data_subject_requests
 
+> Tabela public.data_subject_requests. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), request_type text NOT NULL, subject_id uuid NULLABLE, subject_email text NOT NULL, subject_client_id uuid NULLABLE, status text NOT NULL DEFAULT 'pending'::text, payload jsonb NOT NULL DEFAULT '{}'::jsonb, notes text NULLABLE, requested_by uuid NULLABLE, requested_at timestamp with time zone NOT NULL DEFAULT now(), due_at timestamp with time zone NOT NULL DEFAULT (now() + '15 days'::interval), processed_by uuid NULLABLE, processed_at timestamp with time zone NULLABLE, result jsonb NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: subject_client_id → public.clients(id); subject_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,22 +18,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `request_type` | `text` | não |  |  |  |
-| 3 | `subject_id` | `uuid` | sim |  |  |  |
-| 4 | `subject_email` | `text` | não |  |  |  |
-| 5 | `subject_client_id` | `uuid` | sim |  |  |  |
-| 6 | `status` | `text` | não | `'pending'::text` |  |  |
-| 7 | `payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 8 | `notes` | `text` | sim |  |  |  |
-| 9 | `requested_by` | `uuid` | sim |  |  |  |
-| 10 | `requested_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `due_at` | `timestamp with time zone` | não | `(now() + '15 days'::interval)` |  |  |
-| 12 | `processed_by` | `uuid` | sim |  |  |  |
-| 13 | `processed_at` | `timestamp with time zone` | sim |  |  |  |
-| 14 | `result` | `jsonb` | sim |  |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.data_subject_requests. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `request_type` | `text` | não |  |  | Coluna request_type da tabela public.data_subject_requests. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (request_type = ANY (ARRAY['access'::text, 'rectification'::text, 'erasure'::text, 'portability'::text, 'consent_revocation'::text, 'information'::text])). |
+| 3 | `subject_id` | `uuid` | sim |  |  | Coluna subject_id da tabela public.data_subject_requests. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `subject_email` | `text` | não |  |  | Coluna subject_email da tabela public.data_subject_requests. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `subject_client_id` | `uuid` | sim |  |  | Coluna subject_client_id da tabela public.data_subject_requests. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.clients(id). |
+| 6 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.data_subject_requests. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'rejected'::text])). |
+| 7 | `payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna payload da tabela public.data_subject_requests. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.data_subject_requests. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `requested_by` | `uuid` | sim |  |  | Coluna requested_by da tabela public.data_subject_requests. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 10 | `requested_at` | `timestamp with time zone` | não | `now()` |  | Coluna requested_at da tabela public.data_subject_requests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `due_at` | `timestamp with time zone` | não | `(now() + '15 days'::interval)` |  | Coluna due_at da tabela public.data_subject_requests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: (now() + '15 days'::interval). |
+| 12 | `processed_by` | `uuid` | sim |  |  | Coluna processed_by da tabela public.data_subject_requests. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 13 | `processed_at` | `timestamp with time zone` | sim |  |  | Coluna processed_at da tabela public.data_subject_requests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 14 | `result` | `jsonb` | sim |  |  | Coluna result da tabela public.data_subject_requests. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.data_subject_requests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.data_subject_requests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

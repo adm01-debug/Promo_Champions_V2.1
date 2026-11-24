@@ -1,5 +1,7 @@
 # public.password_reset_requests
 
+> Solicitações de redefinição de senha e seu fluxo de revisão.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_email` | `text` | não |  |  |  |
-| 3 | `user_id` | `uuid` | sim |  |  |  |
-| 4 | `status` | `text` | não | `'pending'::text` |  |  |
-| 5 | `requested_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `reviewed_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `reviewed_by` | `uuid` | sim |  |  |  |
-| 8 | `rejection_reason` | `text` | sim |  |  |  |
-| 9 | `expires_at` | `timestamp with time zone` | não | `(now() + '24:00:00'::interval)` |  |  |
-| 10 | `ip_address` | `text` | sim |  |  |  |
-| 11 | `user_agent` | `text` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da solicitação. |
+| 2 | `user_email` | `text` | não |  |  | E-mail associado à solicitação de redefinição. |
+| 3 | `user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth associado à solicitação, quando identificado. |
+| 4 | `status` | `text` | não | `'pending'::text` |  | Estado da solicitação: pending, approved, rejected, completed ou expired. |
+| 5 | `requested_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a redefinição foi solicitada. |
+| 6 | `reviewed_at` | `timestamp with time zone` | sim |  |  | Data e hora da revisão da solicitação. |
+| 7 | `reviewed_by` | `uuid` | sim |  |  | Usuário que revisou a solicitação, quando identificado. |
+| 8 | `rejection_reason` | `text` | sim |  |  | Motivo informado para rejeitar a solicitação. |
+| 9 | `expires_at` | `timestamp with time zone` | não | `(now() + '24:00:00'::interval)` |  | Data e hora em que a solicitação expira. |
+| 10 | `ip_address` | `text` | sim |  |  | Endereço IP de origem da solicitação, quando disponível. |
+| 11 | `user_agent` | `text` | sim |  |  | User-Agent do cliente que enviou a solicitação, quando disponível. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

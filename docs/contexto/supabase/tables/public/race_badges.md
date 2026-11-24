@@ -1,5 +1,7 @@
 # public.race_badges
 
+> Tabela public.race_badges. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, badge_code text NOT NULL, season_id uuid NULLABLE, earned_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id); season_id → public.race_seasons(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `badge_code` | `text` | não |  |  |  |
-| 4 | `season_id` | `uuid` | sim |  |  |  |
-| 5 | `earned_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_badges. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.race_badges. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `badge_code` | `text` | não |  |  | Coluna badge_code da tabela public.race_badges. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `season_id` | `uuid` | sim |  |  | Coluna season_id da tabela public.race_badges. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.race_seasons(id). |
+| 5 | `earned_at` | `timestamp with time zone` | não | `now()` |  | Coluna earned_at da tabela public.race_badges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

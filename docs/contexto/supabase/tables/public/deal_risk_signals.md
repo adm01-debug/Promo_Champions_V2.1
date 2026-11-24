@@ -1,5 +1,7 @@
 # public.deal_risk_signals
 
+> Tabela public.deal_risk_signals. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, signal_type text NOT NULL, severity text NOT NULL, description text NOT NULL, detected_at timestamp with time zone NOT NULL DEFAULT now(), resolved_at timestamp with time zone NULLABLE, resolved_by uuid NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb. Relacionamentos FK: resolved_by → public.salespeople(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `signal_type` | `text` | não |  |  |  |
-| 4 | `severity` | `text` | não |  |  |  |
-| 5 | `description` | `text` | não |  |  |  |
-| 6 | `detected_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `resolved_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `resolved_by` | `uuid` | sim |  |  |  |
-| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_risk_signals. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_risk_signals. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `signal_type` | `text` | não |  |  | Coluna signal_type da tabela public.deal_risk_signals. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (signal_type = ANY (ARRAY['stagnation'::text, 'no_contact'::text, 'engagement_drop'::text, 'price_resistance'::text, 'competitor_mentioned'::text, 'single_threaded'::text, 'overdue_followup'::text])). |
+| 4 | `severity` | `text` | não |  |  | Coluna severity da tabela public.deal_risk_signals. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])). |
+| 5 | `description` | `text` | não |  |  | Coluna description da tabela public.deal_risk_signals. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `detected_at` | `timestamp with time zone` | não | `now()` |  | Coluna detected_at da tabela public.deal_risk_signals. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `resolved_at` | `timestamp with time zone` | sim |  |  | Coluna resolved_at da tabela public.deal_risk_signals. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 8 | `resolved_by` | `uuid` | sim |  |  | Coluna resolved_by da tabela public.deal_risk_signals. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.deal_risk_signals. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
 
 
 ## Constraints

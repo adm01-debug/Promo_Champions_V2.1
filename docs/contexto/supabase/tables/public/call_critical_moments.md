@@ -1,5 +1,7 @@
 # public.call_critical_moments
 
+> Tabela public.call_critical_moments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, owner_id uuid NOT NULL, salesperson_id uuid NOT NULL, moment_type text NOT NULL, severity text NOT NULL DEFAULT 'medium'::text, timestamp_sec integer NOT NULL DEFAULT 0, quote text NULLABLE, context text NULLABLE, suggested_action text NULLABLE, status text NOT NULL DEFAULT 'new'::text, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | não |  |  |  |
-| 4 | `salesperson_id` | `uuid` | não |  |  |  |
-| 5 | `moment_type` | `text` | não |  |  |  |
-| 6 | `severity` | `text` | não | `'medium'::text` |  |  |
-| 7 | `timestamp_sec` | `integer` | não | `0` |  |  |
-| 8 | `quote` | `text` | sim |  |  |  |
-| 9 | `context` | `text` | sim |  |  |  |
-| 10 | `suggested_action` | `text` | sim |  |  |  |
-| 11 | `status` | `text` | não | `'new'::text` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_critical_moments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_critical_moments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.call_critical_moments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.call_critical_moments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 5 | `moment_type` | `text` | não |  |  | Coluna moment_type da tabela public.call_critical_moments. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (moment_type = ANY (ARRAY['objection'::text, 'buying_signal'::text, 'price_mention'::text, 'discount_request'::text, 'churn_signal'::text, 'competitor'::text, 'commitment'::text, 'next_step'::text])). |
+| 6 | `severity` | `text` | não | `'medium'::text` |  | Coluna severity da tabela public.call_critical_moments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'medium'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])). |
+| 7 | `timestamp_sec` | `integer` | não | `0` |  | Coluna timestamp_sec da tabela public.call_critical_moments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `quote` | `text` | sim |  |  | Coluna quote da tabela public.call_critical_moments. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `context` | `text` | sim |  |  | Coluna context da tabela public.call_critical_moments. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `suggested_action` | `text` | sim |  |  | Coluna suggested_action da tabela public.call_critical_moments. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `status` | `text` | não | `'new'::text` |  | Coluna status da tabela public.call_critical_moments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'new'::text. Validação CHECK: CHECK (status = ANY (ARRAY['new'::text, 'acknowledged'::text, 'actioned'::text, 'dismissed'::text])). |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.call_critical_moments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.call_critical_moments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

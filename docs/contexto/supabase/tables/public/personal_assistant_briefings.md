@@ -1,5 +1,7 @@
 # public.personal_assistant_briefings
 
+> Tabela public.personal_assistant_briefings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, briefing_date date NOT NULL DEFAULT ((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date, content text NOT NULL, model text NULLABLE, token_count integer NULLABLE, context_snapshot jsonb NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `briefing_date` | `date` | não | `((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date` |  |  |
-| 4 | `content` | `text` | não |  |  |  |
-| 5 | `model` | `text` | sim |  |  |  |
-| 6 | `token_count` | `integer` | sim |  |  |  |
-| 7 | `context_snapshot` | `jsonb` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.personal_assistant_briefings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.personal_assistant_briefings. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `briefing_date` | `date` | não | `((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date` |  | Coluna briefing_date da tabela public.personal_assistant_briefings. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: ((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date. |
+| 4 | `content` | `text` | não |  |  | Coluna content da tabela public.personal_assistant_briefings. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `model` | `text` | sim |  |  | Coluna model da tabela public.personal_assistant_briefings. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `token_count` | `integer` | sim |  |  | Coluna token_count da tabela public.personal_assistant_briefings. Tipo PostgreSQL: integer. Aceita NULL. |
+| 7 | `context_snapshot` | `jsonb` | sim |  |  | Coluna context_snapshot da tabela public.personal_assistant_briefings. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.personal_assistant_briefings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.personal_assistant_briefings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

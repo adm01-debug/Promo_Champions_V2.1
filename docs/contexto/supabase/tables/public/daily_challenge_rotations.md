@@ -1,5 +1,7 @@
 # public.daily_challenge_rotations
 
+> Tabela public.daily_challenge_rotations. Estrutura registrada no catálogo do PostgreSQL: challenge_date date NOT NULL, rotated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,8 +18,8 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `challenge_date` | `date` | não |  |  |  |
-| 2 | `rotated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `challenge_date` | `date` | não |  |  | Coluna challenge_date da tabela public.daily_challenge_rotations. Tipo PostgreSQL: date. Participa da chave primária. Não aceita NULL. |
+| 2 | `rotated_at` | `timestamp with time zone` | não | `now()` |  | Coluna rotated_at da tabela public.daily_challenge_rotations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

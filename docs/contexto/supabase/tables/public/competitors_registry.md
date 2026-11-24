@@ -1,5 +1,7 @@
 # public.competitors_registry
 
+> Tabela public.competitors_registry. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NULLABLE, name text NOT NULL, aliases text[] NOT NULL DEFAULT '{}'::text[], default_battle_card_id uuid NULLABLE, is_active boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | sim |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `aliases` | `text[]` | não | `'{}'::text[]` |  |  |
-| 5 | `default_battle_card_id` | `uuid` | sim |  |  |  |
-| 6 | `is_active` | `boolean` | não | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.competitors_registry. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.competitors_registry. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.competitors_registry. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `aliases` | `text[]` | não | `'{}'::text[]` |  | Coluna aliases da tabela public.competitors_registry. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 5 | `default_battle_card_id` | `uuid` | sim |  |  | Coluna default_battle_card_id da tabela public.competitors_registry. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.competitors_registry. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.competitors_registry. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.competitors_registry. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

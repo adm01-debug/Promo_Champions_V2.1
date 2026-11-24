@@ -1,5 +1,7 @@
 # public.daily_streak_achievements
 
+> Conquistas registradas por sequências diárias de atividade ou desempenho.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `streak_type` | `text` | não |  |  |  |
-| 4 | `achieved_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `streak_count` | `integer` | não |  |  |  |
-| 6 | `xp_awarded` | `integer` | não | `0` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da conquista de sequência. |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Vendedor que alcançou a sequência. |
+| 3 | `streak_type` | `text` | não |  |  | Tipo de sequência alcançada. |
+| 4 | `achieved_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a conquista foi alcançada. |
+| 5 | `streak_count` | `integer` | não |  |  | Quantidade de dias consecutivos da sequência. |
+| 6 | `xp_awarded` | `integer` | não | `0` |  | Quantidade de XP concedida pela conquista. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro da conquista. |
 
 
 ## Constraints

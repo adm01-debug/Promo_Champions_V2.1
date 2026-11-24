@@ -1,5 +1,7 @@
 # public.win_loss_insight_comments
 
+> Tabela public.win_loss_insight_comments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), insight_id uuid NOT NULL, author_id uuid NOT NULL, body text NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: insight_id → public.win_loss_insights(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `insight_id` | `uuid` | não |  |  |  |
-| 3 | `author_id` | `uuid` | não |  |  |  |
-| 4 | `body` | `text` | não |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_loss_insight_comments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `insight_id` | `uuid` | não |  |  | Coluna insight_id da tabela public.win_loss_insight_comments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.win_loss_insights(id). |
+| 3 | `author_id` | `uuid` | não |  |  | Coluna author_id da tabela public.win_loss_insight_comments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `body` | `text` | não |  |  | Coluna body da tabela public.win_loss_insight_comments. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.win_loss_insight_comments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.whatsapp_template_versions
 
+> Tabela public.whatsapp_template_versions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), template_id uuid NOT NULL, body text NOT NULL, version_number integer NOT NULL, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `template_id` | `uuid` | não |  |  |  |
-| 3 | `body` | `text` | não |  |  |  |
-| 4 | `version_number` | `integer` | não |  |  |  |
-| 5 | `created_by` | `uuid` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.whatsapp_template_versions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `template_id` | `uuid` | não |  |  | Coluna template_id da tabela public.whatsapp_template_versions. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `body` | `text` | não |  |  | Coluna body da tabela public.whatsapp_template_versions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `version_number` | `integer` | não |  |  | Coluna version_number da tabela public.whatsapp_template_versions. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 5 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.whatsapp_template_versions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.whatsapp_template_versions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

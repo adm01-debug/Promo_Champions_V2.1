@@ -1,5 +1,7 @@
 # public.email_logs
 
+> Histórico de mensagens de e-mail geradas por funções da aplicação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `function_name` | `text` | não |  |  |  |
-| 3 | `recipient_email` | `text` | não |  |  |  |
-| 4 | `subject` | `text` | sim |  |  |  |
-| 5 | `status` | `text` | não | `'sent'::text` |  |  |
-| 6 | `error_message` | `text` | sim |  |  |  |
-| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de e-mail. |
+| 2 | `function_name` | `text` | não |  |  | Função da aplicação que processou o envio. |
+| 3 | `recipient_email` | `text` | não |  |  | Endereço de e-mail do destinatário. |
+| 4 | `subject` | `text` | sim |  |  | Assunto da mensagem, quando disponível. |
+| 5 | `status` | `text` | não | `'sent'::text` |  | Resultado do envio do e-mail. |
+| 6 | `error_message` | `text` | sim |  |  | Mensagem de erro do envio, quando aplicável. |
+| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados adicionais do envio em formato JSON. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de registro do envio. |
 
 
 ## Constraints

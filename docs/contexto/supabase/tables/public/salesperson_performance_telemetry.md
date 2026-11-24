@@ -1,5 +1,7 @@
 # public.salesperson_performance_telemetry
 
+> Tabela public.salesperson_performance_telemetry. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, metric_type text NULLABLE, metric_value integer NULLABLE, captured_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `metric_type` | `text` | sim |  |  |  |
-| 4 | `metric_value` | `integer` | sim |  |  |  |
-| 5 | `captured_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.salesperson_performance_telemetry. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.salesperson_performance_telemetry. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `metric_type` | `text` | sim |  |  | Coluna metric_type da tabela public.salesperson_performance_telemetry. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `metric_value` | `integer` | sim |  |  | Coluna metric_value da tabela public.salesperson_performance_telemetry. Tipo PostgreSQL: integer. Aceita NULL. |
+| 5 | `captured_at` | `timestamp with time zone` | sim | `now()` |  | Coluna captured_at da tabela public.salesperson_performance_telemetry. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

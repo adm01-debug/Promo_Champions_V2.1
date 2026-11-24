@@ -1,5 +1,7 @@
 # public.channel_interactions
 
+> Tabela public.channel_interactions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, channel text NOT NULL DEFAULT 'whatsapp'::text, direction text NOT NULL DEFAULT 'outbound'::text, contact_name text NOT NULL, contact_info text NULLABLE, message_preview text NULLABLE, status text NULLABLE DEFAULT 'sent'::text, template_id uuid NULLABLE, deal_id uuid NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: deal_id → public.sales(id); salesperson_id → public.salespeople(id); template_id → public.message_templates(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `channel` | `text` | não | `'whatsapp'::text` |  |  |
-| 4 | `direction` | `text` | não | `'outbound'::text` |  |  |
-| 5 | `contact_name` | `text` | não |  |  |  |
-| 6 | `contact_info` | `text` | sim |  |  |  |
-| 7 | `message_preview` | `text` | sim |  |  |  |
-| 8 | `status` | `text` | sim | `'sent'::text` |  |  |
-| 9 | `template_id` | `uuid` | sim |  |  |  |
-| 10 | `deal_id` | `uuid` | sim |  |  |  |
-| 11 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.channel_interactions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.channel_interactions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `channel` | `text` | não | `'whatsapp'::text` |  | Coluna channel da tabela public.channel_interactions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'whatsapp'::text. Validação CHECK: CHECK (channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text, 'phone'::text])). |
+| 4 | `direction` | `text` | não | `'outbound'::text` |  | Coluna direction da tabela public.channel_interactions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'outbound'::text. Validação CHECK: CHECK (direction = ANY (ARRAY['inbound'::text, 'outbound'::text])). |
+| 5 | `contact_name` | `text` | não |  |  | Coluna contact_name da tabela public.channel_interactions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `contact_info` | `text` | sim |  |  | Coluna contact_info da tabela public.channel_interactions. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `message_preview` | `text` | sim |  |  | Coluna message_preview da tabela public.channel_interactions. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `status` | `text` | sim | `'sent'::text` |  | Coluna status da tabela public.channel_interactions. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'sent'::text. Validação CHECK: CHECK (status = ANY (ARRAY['sent'::text, 'delivered'::text, 'read'::text, 'replied'::text, 'failed'::text, 'scheduled'::text])). |
+| 9 | `template_id` | `uuid` | sim |  |  | Coluna template_id da tabela public.channel_interactions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.message_templates(id). |
+| 10 | `deal_id` | `uuid` | sim |  |  | Coluna deal_id da tabela public.channel_interactions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 11 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.channel_interactions. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.channel_interactions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

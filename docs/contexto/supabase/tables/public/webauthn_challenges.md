@@ -1,5 +1,7 @@
 # public.webauthn_challenges
 
+> Tabela public.webauthn_challenges. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NULLABLE, user_email text NULLABLE, challenge text NOT NULL, type text NOT NULL, expires_at timestamp with time zone NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `user_email` | `text` | sim |  |  |  |
-| 4 | `challenge` | `text` | não |  |  |  |
-| 5 | `type` | `text` | não |  |  |  |
-| 6 | `expires_at` | `timestamp with time zone` | não |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webauthn_challenges. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.webauthn_challenges. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `user_email` | `text` | sim |  |  | Coluna user_email da tabela public.webauthn_challenges. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `challenge` | `text` | não |  |  | Coluna challenge da tabela public.webauthn_challenges. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `type` | `text` | não |  |  | Coluna type da tabela public.webauthn_challenges. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (type = ANY (ARRAY['registration'::text, 'authentication'::text])). |
+| 6 | `expires_at` | `timestamp with time zone` | não |  |  | Coluna expires_at da tabela public.webauthn_challenges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.webauthn_challenges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

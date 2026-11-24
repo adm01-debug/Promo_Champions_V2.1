@@ -1,5 +1,7 @@
 # public.salesperson_badges
 
+> Tabela public.salesperson_badges. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, badge_id uuid NOT NULL, earned_at timestamp with time zone NOT NULL DEFAULT now(), is_showcase boolean NOT NULL DEFAULT false. Relacionamentos FK: badge_id → public.collectible_badges(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `badge_id` | `uuid` | não |  |  |  |
-| 4 | `earned_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `is_showcase` | `boolean` | não | `false` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.salesperson_badges. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.salesperson_badges. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `badge_id` | `uuid` | não |  |  | Coluna badge_id da tabela public.salesperson_badges. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.collectible_badges(id). |
+| 4 | `earned_at` | `timestamp with time zone` | não | `now()` |  | Coluna earned_at da tabela public.salesperson_badges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `is_showcase` | `boolean` | não | `false` |  | Coluna is_showcase da tabela public.salesperson_badges. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
 
 
 ## Constraints

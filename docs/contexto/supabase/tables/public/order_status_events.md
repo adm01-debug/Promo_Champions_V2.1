@@ -1,5 +1,7 @@
 # public.order_status_events
 
+> Tabela public.order_status_events. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), order_id uuid NOT NULL, status text NOT NULL, description text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: order_id → public.orders(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `order_id` | `uuid` | não |  |  |  |
-| 3 | `status` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.order_status_events. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `order_id` | `uuid` | não |  |  | Coluna order_id da tabela public.order_status_events. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.orders(id). |
+| 3 | `status` | `text` | não |  |  | Coluna status da tabela public.order_status_events. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.order_status_events. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.order_status_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

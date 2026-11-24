@@ -1,5 +1,7 @@
 # public.email_engagement_scores
 
+> Tabela public.email_engagement_scores. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, score integer NOT NULL DEFAULT 0, tier text NOT NULL DEFAULT 'cold'::text, open_rate numeric(5,2) NOT NULL DEFAULT 0, click_rate numeric(5,2) NOT NULL DEFAULT 0, reply_rate numeric(5,2) NOT NULL DEFAULT 0, avg_response_minutes integer NULLABLE, recency_days integer NULLABLE, total_sent integer NOT NULL DEFAULT 0, total_opens integer NOT NULL DEFAULT 0, total_clicks integer NOT NULL DEFAULT 0, total_replies integer NOT NULL DEFAULT 0, last_calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `score` | `integer` | não | `0` |  |  |
-| 4 | `tier` | `text` | não | `'cold'::text` |  |  |
-| 5 | `open_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 6 | `click_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 7 | `reply_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 8 | `avg_response_minutes` | `integer` | sim |  |  |  |
-| 9 | `recency_days` | `integer` | sim |  |  |  |
-| 10 | `total_sent` | `integer` | não | `0` |  |  |
-| 11 | `total_opens` | `integer` | não | `0` |  |  |
-| 12 | `total_clicks` | `integer` | não | `0` |  |  |
-| 13 | `total_replies` | `integer` | não | `0` |  |  |
-| 14 | `last_calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.email_engagement_scores. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.email_engagement_scores. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `score` | `integer` | não | `0` |  | Coluna score da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (score >= 0 AND score <= 100). |
+| 4 | `tier` | `text` | não | `'cold'::text` |  | Coluna tier da tabela public.email_engagement_scores. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'cold'::text. Validação CHECK: CHECK (tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'champion'::text])). |
+| 5 | `open_rate` | `numeric(5,2)` | não | `0` |  | Coluna open_rate da tabela public.email_engagement_scores. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `click_rate` | `numeric(5,2)` | não | `0` |  | Coluna click_rate da tabela public.email_engagement_scores. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 7 | `reply_rate` | `numeric(5,2)` | não | `0` |  | Coluna reply_rate da tabela public.email_engagement_scores. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 8 | `avg_response_minutes` | `integer` | sim |  |  | Coluna avg_response_minutes da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Aceita NULL. |
+| 9 | `recency_days` | `integer` | sim |  |  | Coluna recency_days da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Aceita NULL. |
+| 10 | `total_sent` | `integer` | não | `0` |  | Coluna total_sent da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 11 | `total_opens` | `integer` | não | `0` |  | Coluna total_opens da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 12 | `total_clicks` | `integer` | não | `0` |  | Coluna total_clicks da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 13 | `total_replies` | `integer` | não | `0` |  | Coluna total_replies da tabela public.email_engagement_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 14 | `last_calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_calculated_at da tabela public.email_engagement_scores. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.email_engagement_scores. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

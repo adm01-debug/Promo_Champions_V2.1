@@ -1,5 +1,7 @@
 # public.follow_up_notifications
 
+> Tabela public.follow_up_notifications. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NULLABLE, sale_id uuid NULLABLE, audit_log_id uuid NULLABLE, type text NOT NULL, status text NULLABLE DEFAULT 'unread'::text, message text NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: audit_log_id → public.follow_up_audit_logs(id); sale_id → public.sales(id); user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `audit_log_id` | `uuid` | sim |  |  |  |
-| 5 | `type` | `text` | não |  |  |  |
-| 6 | `status` | `text` | sim | `'unread'::text` |  |  |
-| 7 | `message` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.follow_up_notifications. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.follow_up_notifications. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.follow_up_notifications. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 4 | `audit_log_id` | `uuid` | sim |  |  | Coluna audit_log_id da tabela public.follow_up_notifications. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.follow_up_audit_logs(id). |
+| 5 | `type` | `text` | não |  |  | Coluna type da tabela public.follow_up_notifications. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `status` | `text` | sim | `'unread'::text` |  | Coluna status da tabela public.follow_up_notifications. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'unread'::text. |
+| 7 | `message` | `text` | sim |  |  | Coluna message da tabela public.follow_up_notifications. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.follow_up_notifications. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

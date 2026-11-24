@@ -1,5 +1,7 @@
 # public.engagement_score_history
 
+> Tabela public.engagement_score_history. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), contact_id uuid NOT NULL, contact_type text NOT NULL, score numeric(5,2) NOT NULL, tier text NOT NULL, captured_at date NOT NULL DEFAULT CURRENT_DATE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `contact_id` | `uuid` | não |  |  |  |
-| 3 | `contact_type` | `text` | não |  |  |  |
-| 4 | `score` | `numeric(5,2)` | não |  |  |  |
-| 5 | `tier` | `text` | não |  |  |  |
-| 6 | `captured_at` | `date` | não | `CURRENT_DATE` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.engagement_score_history. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `contact_id` | `uuid` | não |  |  | Coluna contact_id da tabela public.engagement_score_history. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `contact_type` | `text` | não |  |  | Coluna contact_type da tabela public.engagement_score_history. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (contact_type = ANY (ARRAY['lead'::text, 'client'::text])). |
+| 4 | `score` | `numeric(5,2)` | não |  |  | Coluna score da tabela public.engagement_score_history. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. |
+| 5 | `tier` | `text` | não |  |  | Coluna tier da tabela public.engagement_score_history. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `captured_at` | `date` | não | `CURRENT_DATE` |  | Coluna captured_at da tabela public.engagement_score_history. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: CURRENT_DATE. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.engagement_score_history. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

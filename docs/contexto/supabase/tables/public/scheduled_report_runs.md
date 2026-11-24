@@ -1,5 +1,7 @@
 # public.scheduled_report_runs
 
+> Tabela public.scheduled_report_runs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), schedule_id uuid NOT NULL, started_at timestamp with time zone NOT NULL DEFAULT now(), finished_at timestamp with time zone NULLABLE, status text NOT NULL DEFAULT 'running'::text, rows_count integer NULLABLE, file_path text NULLABLE, error_message text NULLABLE. Relacionamentos FK: schedule_id → public.scheduled_reports(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `schedule_id` | `uuid` | não |  |  |  |
-| 3 | `started_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 4 | `finished_at` | `timestamp with time zone` | sim |  |  |  |
-| 5 | `status` | `text` | não | `'running'::text` |  |  |
-| 6 | `rows_count` | `integer` | sim |  |  |  |
-| 7 | `file_path` | `text` | sim |  |  |  |
-| 8 | `error_message` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.scheduled_report_runs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `schedule_id` | `uuid` | não |  |  | Coluna schedule_id da tabela public.scheduled_report_runs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.scheduled_reports(id). |
+| 3 | `started_at` | `timestamp with time zone` | não | `now()` |  | Coluna started_at da tabela public.scheduled_report_runs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 4 | `finished_at` | `timestamp with time zone` | sim |  |  | Coluna finished_at da tabela public.scheduled_report_runs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 5 | `status` | `text` | não | `'running'::text` |  | Coluna status da tabela public.scheduled_report_runs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'running'::text. Validação CHECK: CHECK (status = ANY (ARRAY['running'::text, 'success'::text, 'failed'::text])). |
+| 6 | `rows_count` | `integer` | sim |  |  | Coluna rows_count da tabela public.scheduled_report_runs. Tipo PostgreSQL: integer. Aceita NULL. |
+| 7 | `file_path` | `text` | sim |  |  | Coluna file_path da tabela public.scheduled_report_runs. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.scheduled_report_runs. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.lead_detailed_logs
 
+> Tabela public.lead_detailed_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), client_id uuid NOT NULL, event_type text NOT NULL, action text NOT NULL, details jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NULLABLE DEFAULT now(), created_by uuid NULLABLE. Relacionamentos FK: client_id → public.clients(id); created_by → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | não |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `action` | `text` | não |  |  |  |
-| 5 | `details` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `created_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.lead_detailed_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `client_id` | `uuid` | não |  |  | Coluna client_id da tabela public.lead_detailed_logs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.clients(id). |
+| 3 | `event_type` | `text` | não |  |  | Coluna event_type da tabela public.lead_detailed_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `action` | `text` | não |  |  | Coluna action da tabela public.lead_detailed_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `details` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna details da tabela public.lead_detailed_logs. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.lead_detailed_logs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.lead_detailed_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.xp_adjustments
 
+> Tabela public.xp_adjustments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NOT NULL, amount integer NOT NULL, reason text NOT NULL, source text NOT NULL DEFAULT 'manual'::text, related_assignment_id uuid NULLABLE, adjusted_by uuid NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: related_assignment_id → public.task_assignments(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `amount` | `integer` | não |  |  |  |
-| 4 | `reason` | `text` | não |  |  |  |
-| 5 | `source` | `text` | não | `'manual'::text` |  |  |
-| 6 | `related_assignment_id` | `uuid` | sim |  |  |  |
-| 7 | `adjusted_by` | `uuid` | não |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.xp_adjustments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.xp_adjustments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `amount` | `integer` | não |  |  | Coluna amount da tabela public.xp_adjustments. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `reason` | `text` | não |  |  | Coluna reason da tabela public.xp_adjustments. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `source` | `text` | não | `'manual'::text` |  | Coluna source da tabela public.xp_adjustments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'manual'::text. |
+| 6 | `related_assignment_id` | `uuid` | sim |  |  | Coluna related_assignment_id da tabela public.xp_adjustments. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.task_assignments(id). |
+| 7 | `adjusted_by` | `uuid` | não |  |  | Coluna adjusted_by da tabela public.xp_adjustments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.xp_adjustments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

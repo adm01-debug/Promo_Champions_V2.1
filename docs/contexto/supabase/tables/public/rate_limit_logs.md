@@ -1,5 +1,7 @@
 # public.rate_limit_logs
 
+> Eventos de contagem e bloqueio gerados pelo controle de taxa de requisições.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,15 +19,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `identifier` | `text` | não |  |  |  |
-| 3 | `identifier_type` | `text` | não | `'ip'::text` |  |  |
-| 4 | `action` | `text` | não |  |  |  |
-| 5 | `request_count` | `integer` | sim | `1` |  |  |
-| 6 | `window_start` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `window_end` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `blocked` | `boolean` | sim | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento de limite. |
+| 2 | `identifier` | `text` | não |  |  | Identificador avaliado pelo limite, como endereço IP ou usuário. |
+| 3 | `identifier_type` | `text` | não | `'ip'::text` |  | Tipo do identificador avaliado. |
+| 4 | `action` | `text` | não |  |  | Ação ou endpoint submetido ao limite. |
+| 5 | `request_count` | `integer` | sim | `1` |  | Quantidade de requisições contabilizada na janela. |
+| 6 | `window_start` | `timestamp with time zone` | sim | `now()` |  | Início da janela de contagem. |
+| 7 | `window_end` | `timestamp with time zone` | sim |  |  | Término da janela de contagem. |
+| 8 | `blocked` | `boolean` | sim | `false` |  | Indica se a requisição ou identificador foi bloqueado. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de registro do evento. |
 
 
 ## Constraints

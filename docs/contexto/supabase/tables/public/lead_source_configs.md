@@ -1,5 +1,7 @@
 # public.lead_source_configs
 
+> Configuração de orçamento e custo-alvo por origem de lead.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `source_name` | `text` | não |  |  |  |
-| 3 | `monthly_budget` | `numeric(12,2)` | sim | `0` |  |  |
-| 4 | `target_cpl` | `numeric(12,2)` | sim | `0` |  |  |
-| 5 | `is_active` | `boolean` | sim | `true` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da configuração de origem. |
+| 2 | `source_name` | `text` | não |  |  | Nome único da origem de lead. |
+| 3 | `monthly_budget` | `numeric(12,2)` | sim | `0` |  | Orçamento mensal atribuído à origem, em BRL. |
+| 4 | `target_cpl` | `numeric(12,2)` | sim | `0` |  | Custo-alvo por lead para a origem, em BRL. |
+| 5 | `is_active` | `boolean` | sim | `true` |  | Indica se a configuração da origem está ativa. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação da configuração. |
 
 
 ## Constraints

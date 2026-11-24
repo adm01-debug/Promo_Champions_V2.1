@@ -1,5 +1,7 @@
 # public.sdr_alert_history
 
+> Histórico de alertas enviados sobre desempenho ou atividade de SDRs.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 3 | `triggered_by` | `text` | sim | `'cron'::text` |  |  |
-| 4 | `sdrs_notified` | `integer` | não | `0` |  |  |
-| 5 | `threshold_used` | `integer` | não | `3` |  |  |
-| 6 | `sdr_details` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `admin_emails` | `text[]` | não | `'{}'::text[]` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do alerta. |
+| 2 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do alerta. |
+| 3 | `triggered_by` | `text` | sim | `'cron'::text` |  | Processo ou usuário que acionou o alerta. |
+| 4 | `sdrs_notified` | `integer` | não | `0` |  | Quantidade de SDRs notificados. |
+| 5 | `threshold_used` | `integer` | não | `3` |  | Limiar usado para acionar o alerta. |
+| 6 | `sdr_details` | `jsonb` | não | `'[]'::jsonb` |  | Detalhes dos SDRs associados ao alerta, em formato JSON. |
+| 7 | `admin_emails` | `text[]` | não | `'{}'::text[]` |  | Lista de endereços de e-mail de administradores notificados. |
 
 
 ## Constraints

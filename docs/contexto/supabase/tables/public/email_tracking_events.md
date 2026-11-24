@@ -1,5 +1,7 @@
 # public.email_tracking_events
 
+> Tabela public.email_tracking_events. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, salesperson_id uuid NULLABLE, recipient_email text NOT NULL, subject text NOT NULL, event_type text NOT NULL DEFAULT 'sent'::text, tracked_at timestamp with time zone NOT NULL DEFAULT now(), metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `recipient_email` | `text` | não |  |  |  |
-| 5 | `subject` | `text` | não |  |  |  |
-| 6 | `event_type` | `text` | não | `'sent'::text` |  |  |
-| 7 | `tracked_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.email_tracking_events. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.email_tracking_events. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.email_tracking_events. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `recipient_email` | `text` | não |  |  | Coluna recipient_email da tabela public.email_tracking_events. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `subject` | `text` | não |  |  | Coluna subject da tabela public.email_tracking_events. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `event_type` | `text` | não | `'sent'::text` |  | Coluna event_type da tabela public.email_tracking_events. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'sent'::text. |
+| 7 | `tracked_at` | `timestamp with time zone` | não | `now()` |  | Coluna tracked_at da tabela public.email_tracking_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.email_tracking_events. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.email_tracking_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.report_embed_tokens
 
+> Tabela public.report_embed_tokens. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), report_id uuid NOT NULL, token text NOT NULL, created_by uuid NOT NULL, expires_at timestamp with time zone NULLABLE, allowed_origins text[] NOT NULL DEFAULT '{}'::text[], view_count integer NOT NULL DEFAULT 0, last_viewed_at timestamp with time zone NULLABLE, revoked boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: report_id → public.custom_reports(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `report_id` | `uuid` | não |  |  |  |
-| 3 | `token` | `text` | não |  |  |  |
-| 4 | `created_by` | `uuid` | não |  |  |  |
-| 5 | `expires_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `allowed_origins` | `text[]` | não | `'{}'::text[]` |  |  |
-| 7 | `view_count` | `integer` | não | `0` |  |  |
-| 8 | `last_viewed_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `revoked` | `boolean` | não | `false` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.report_embed_tokens. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `report_id` | `uuid` | não |  |  | Coluna report_id da tabela public.report_embed_tokens. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.custom_reports(id). |
+| 3 | `token` | `text` | não |  |  | Coluna token da tabela public.report_embed_tokens. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `created_by` | `uuid` | não |  |  | Coluna created_by da tabela public.report_embed_tokens. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 5 | `expires_at` | `timestamp with time zone` | sim |  |  | Coluna expires_at da tabela public.report_embed_tokens. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 6 | `allowed_origins` | `text[]` | não | `'{}'::text[]` |  | Coluna allowed_origins da tabela public.report_embed_tokens. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 7 | `view_count` | `integer` | não | `0` |  | Coluna view_count da tabela public.report_embed_tokens. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `last_viewed_at` | `timestamp with time zone` | sim |  |  | Coluna last_viewed_at da tabela public.report_embed_tokens. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 9 | `revoked` | `boolean` | não | `false` |  | Coluna revoked da tabela public.report_embed_tokens. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.report_embed_tokens. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

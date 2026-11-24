@@ -1,5 +1,7 @@
 # public.price_protection_rules
 
+> Tabela public.price_protection_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), product_id uuid NULLABLE, min_margin_pct numeric(5,2) NULLABLE DEFAULT 10.0, target_position text NULLABLE DEFAULT 'match'::text, auto_apply boolean NULLABLE DEFAULT false, is_active boolean NULLABLE DEFAULT true, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: product_id → public.products(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `min_margin_pct` | `numeric(5,2)` | sim | `10.0` |  |  |
-| 4 | `target_position` | `text` | sim | `'match'::text` |  |  |
-| 5 | `auto_apply` | `boolean` | sim | `false` |  |  |
-| 6 | `is_active` | `boolean` | sim | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.price_protection_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `product_id` | `uuid` | sim |  |  | Coluna product_id da tabela public.price_protection_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.products(id). |
+| 3 | `min_margin_pct` | `numeric(5,2)` | sim | `10.0` |  | Coluna min_margin_pct da tabela public.price_protection_rules. Tipo PostgreSQL: numeric(5,2). Aceita NULL. Valor padrão: 10.0. |
+| 4 | `target_position` | `text` | sim | `'match'::text` |  | Coluna target_position da tabela public.price_protection_rules. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'match'::text. |
+| 5 | `auto_apply` | `boolean` | sim | `false` |  | Coluna auto_apply da tabela public.price_protection_rules. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 6 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.price_protection_rules. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.price_protection_rules. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.user_2fa_log
 
+> Tabela public.user_2fa_log. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), user_id uuid NOT NULL, success boolean NOT NULL, ip_address inet NULLABLE, user_agent text NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `success` | `boolean` | não |  |  |  |
-| 4 | `ip_address` | `inet` | sim |  |  |  |
-| 5 | `user_agent` | `text` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.user_2fa_log. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.user_2fa_log. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 3 | `success` | `boolean` | não |  |  | Coluna success da tabela public.user_2fa_log. Tipo PostgreSQL: boolean. Não aceita NULL. |
+| 4 | `ip_address` | `inet` | sim |  |  | Coluna ip_address da tabela public.user_2fa_log. Tipo PostgreSQL: inet. Aceita NULL. |
+| 5 | `user_agent` | `text` | sim |  |  | Coluna user_agent da tabela public.user_2fa_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.user_2fa_log. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -35,7 +35,7 @@
 | 14 | `source_insight_id` | `uuid` | sim |  |  | Insight que originou a tarefa, quando aplicável. |
 | 15 | `client_id` | `uuid` | sim |  |  | Cliente relacionado à tarefa, quando houver. |
 | 16 | `deleted_at` | `timestamp with time zone` | sim |  |  | Soft delete: preenchido marca o registro como excluído sem remoção física. |
-| 17 | `deleted_by` | `uuid` | sim |  |  |  |
+| 17 | `deleted_by` | `uuid` | sim |  |  | Coluna deleted_by da tabela public.tasks. Tipo PostgreSQL: uuid. Aceita NULL. |
 | 18 | `delete_reason` | `text` | sim |  |  | Motivo informado para marcar a tarefa como excluída. |
 
 

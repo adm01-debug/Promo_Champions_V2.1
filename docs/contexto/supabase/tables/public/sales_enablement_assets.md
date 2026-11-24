@@ -1,5 +1,7 @@
 # public.sales_enablement_assets
 
+> Tabela public.sales_enablement_assets. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), title text NOT NULL, description text NULLABLE, category text NOT NULL DEFAULT 'general'::text, asset_type text NOT NULL DEFAULT 'document'::text, file_url text NULLABLE, thumbnail_url text NULLABLE, tags text[] NULLABLE DEFAULT ARRAY[]::text[], funnel_stage text NULLABLE, is_active boolean NOT NULL DEFAULT true, view_count integer NOT NULL DEFAULT 0, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `category` | `text` | não | `'general'::text` |  |  |
-| 5 | `asset_type` | `text` | não | `'document'::text` |  |  |
-| 6 | `file_url` | `text` | sim |  |  |  |
-| 7 | `thumbnail_url` | `text` | sim |  |  |  |
-| 8 | `tags` | `text[]` | sim | `ARRAY[]::text[]` |  |  |
-| 9 | `funnel_stage` | `text` | sim |  |  |  |
-| 10 | `is_active` | `boolean` | não | `true` |  |  |
-| 11 | `view_count` | `integer` | não | `0` |  |  |
-| 12 | `created_by` | `uuid` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sales_enablement_assets. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `title` | `text` | não |  |  | Coluna title da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `category` | `text` | não | `'general'::text` |  | Coluna category da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'general'::text. |
+| 5 | `asset_type` | `text` | não | `'document'::text` |  | Coluna asset_type da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'document'::text. |
+| 6 | `file_url` | `text` | sim |  |  | Coluna file_url da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `thumbnail_url` | `text` | sim |  |  | Coluna thumbnail_url da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `tags` | `text[]` | sim | `ARRAY[]::text[]` |  | Coluna tags da tabela public.sales_enablement_assets. Tipo PostgreSQL: text[]. Aceita NULL. Valor padrão: ARRAY[]::text[]. |
+| 9 | `funnel_stage` | `text` | sim |  |  | Coluna funnel_stage da tabela public.sales_enablement_assets. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.sales_enablement_assets. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 11 | `view_count` | `integer` | não | `0` |  | Coluna view_count da tabela public.sales_enablement_assets. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 12 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.sales_enablement_assets. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sales_enablement_assets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sales_enablement_assets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

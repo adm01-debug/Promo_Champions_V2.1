@@ -1,5 +1,7 @@
 # public.semantic_index
 
+> Tabela public.semantic_index. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), entity_type text NOT NULL, entity_id uuid NOT NULL, salesperson_id uuid NULLABLE, content text NOT NULL, embedding vector(768) NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, updated_at timestamp with time zone NOT NULL DEFAULT now(), source_updated_at timestamp with time zone NULLABLE, content_hash text NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `entity_type` | `text` | não |  |  |  |
-| 3 | `entity_id` | `uuid` | não |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `content` | `text` | não |  |  |  |
-| 6 | `embedding` | `vector(768)` | sim |  |  |  |
-| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `source_updated_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `content_hash` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.semantic_index. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `entity_type` | `text` | não |  |  | Coluna entity_type da tabela public.semantic_index. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (entity_type = ANY (ARRAY['client'::text, 'lead'::text, 'deal'::text, 'activity'::text, 'call_recording'::text, 'note'::text, 'email_message'::text, 'whatsapp_message'::text, 'proposal'::text, 'task'::text, 'playbook'::text])). |
+| 3 | `entity_id` | `uuid` | não |  |  | Coluna entity_id da tabela public.semantic_index. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.semantic_index. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `content` | `text` | não |  |  | Coluna content da tabela public.semantic_index. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `embedding` | `vector(768)` | sim |  |  | Coluna embedding da tabela public.semantic_index. Tipo PostgreSQL: vector(768). Aceita NULL. |
+| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.semantic_index. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.semantic_index. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `source_updated_at` | `timestamp with time zone` | sim |  |  | Coluna source_updated_at da tabela public.semantic_index. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `content_hash` | `text` | sim |  |  | Coluna content_hash da tabela public.semantic_index. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

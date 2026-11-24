@@ -1,5 +1,7 @@
 # public.report_executions
 
+> Tabela public.report_executions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), schedule_id uuid NULLABLE, report_id uuid NOT NULL, executed_at timestamp with time zone NOT NULL DEFAULT now(), status text NOT NULL DEFAULT 'pending'::text, file_url text NULLABLE, recipients_sent text[] NULLABLE DEFAULT '{}'::text[], error_message text NULLABLE, rows_count integer NULLABLE, duration_ms integer NULLABLE. Relacionamentos FK: report_id → public.custom_reports(id); schedule_id → public.report_schedules(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `schedule_id` | `uuid` | sim |  |  |  |
-| 3 | `report_id` | `uuid` | não |  |  |  |
-| 4 | `executed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `status` | `text` | não | `'pending'::text` |  |  |
-| 6 | `file_url` | `text` | sim |  |  |  |
-| 7 | `recipients_sent` | `text[]` | sim | `'{}'::text[]` |  |  |
-| 8 | `error_message` | `text` | sim |  |  |  |
-| 9 | `rows_count` | `integer` | sim |  |  |  |
-| 10 | `duration_ms` | `integer` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.report_executions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `schedule_id` | `uuid` | sim |  |  | Coluna schedule_id da tabela public.report_executions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.report_schedules(id). |
+| 3 | `report_id` | `uuid` | não |  |  | Coluna report_id da tabela public.report_executions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.custom_reports(id). |
+| 4 | `executed_at` | `timestamp with time zone` | não | `now()` |  | Coluna executed_at da tabela public.report_executions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.report_executions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'running'::text, 'success'::text, 'failed'::text])). |
+| 6 | `file_url` | `text` | sim |  |  | Coluna file_url da tabela public.report_executions. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `recipients_sent` | `text[]` | sim | `'{}'::text[]` |  | Coluna recipients_sent da tabela public.report_executions. Tipo PostgreSQL: text[]. Aceita NULL. Valor padrão: '{}'::text[]. |
+| 8 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.report_executions. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `rows_count` | `integer` | sim |  |  | Coluna rows_count da tabela public.report_executions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 10 | `duration_ms` | `integer` | sim |  |  | Coluna duration_ms da tabela public.report_executions. Tipo PostgreSQL: integer. Aceita NULL. |
 
 
 ## Constraints

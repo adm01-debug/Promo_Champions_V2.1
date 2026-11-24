@@ -1,5 +1,7 @@
 # public.permissions
 
+> Catálogo de permissões identificadas por recurso e ação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `resource` | `text` | não |  |  |  |
-| 5 | `action` | `text` | não |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da permissão. |
+| 2 | `name` | `text` | não |  |  | Nome único da permissão. |
+| 3 | `description` | `text` | sim |  |  | Descrição da permissão. |
+| 4 | `resource` | `text` | não |  |  | Recurso ao qual a permissão se aplica. |
+| 5 | `action` | `text` | não |  |  | Ação permitida sobre o recurso. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da permissão. |
 
 
 ## Constraints

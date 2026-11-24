@@ -18,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `boolean` | não | `true` |  |  |
-| 2 | `last_runid` | `bigint` | não | `0` |  |  |
-| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `boolean` | não | `true` |  | Coluna id da tabela public.cron_job_last_run_cursor. Tipo PostgreSQL: boolean. Participa da chave primária. Não aceita NULL. Valor padrão: true. Validação CHECK: CHECK (id). |
+| 2 | `last_runid` | `bigint` | não | `0` |  | Coluna last_runid da tabela public.cron_job_last_run_cursor. Tipo PostgreSQL: bigint. Não aceita NULL. Valor padrão: 0. |
+| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.cron_job_last_run_cursor. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

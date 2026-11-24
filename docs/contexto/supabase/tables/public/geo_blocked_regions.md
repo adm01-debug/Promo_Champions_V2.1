@@ -1,5 +1,7 @@
 # public.geo_blocked_regions
 
+> Tabela public.geo_blocked_regions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), country_code text NOT NULL, country_name text NOT NULL, reason text NULLABLE, blocked_by uuid NULLABLE, blocked_at timestamp with time zone NULLABLE DEFAULT now(), is_active boolean NULLABLE DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: blocked_by → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `country_code` | `text` | não |  |  |  |
-| 3 | `country_name` | `text` | não |  |  |  |
-| 4 | `reason` | `text` | sim |  |  |  |
-| 5 | `blocked_by` | `uuid` | sim |  |  |  |
-| 6 | `blocked_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `is_active` | `boolean` | sim | `true` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.geo_blocked_regions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `country_code` | `text` | não |  |  | Coluna country_code da tabela public.geo_blocked_regions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `country_name` | `text` | não |  |  | Coluna country_name da tabela public.geo_blocked_regions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `reason` | `text` | sim |  |  | Coluna reason da tabela public.geo_blocked_regions. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `blocked_by` | `uuid` | sim |  |  | Coluna blocked_by da tabela public.geo_blocked_regions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 6 | `blocked_at` | `timestamp with time zone` | sim | `now()` |  | Coluna blocked_at da tabela public.geo_blocked_regions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.geo_blocked_regions. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.geo_blocked_regions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.geo_blocked_regions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

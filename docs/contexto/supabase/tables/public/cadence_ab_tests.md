@@ -1,5 +1,7 @@
 # public.cadence_ab_tests
 
+> Tabela public.cadence_ab_tests. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, variant_a_id uuid NOT NULL, variant_b_id uuid NOT NULL, traffic_split integer NOT NULL DEFAULT 50, status text NOT NULL DEFAULT 'draft'::text, hypothesis text NULLABLE, winner_variant text NULLABLE, started_at timestamp with time zone NULLABLE, ended_at timestamp with time zone NULLABLE, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: variant_a_id → public.cadences(id); variant_b_id → public.cadences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `variant_a_id` | `uuid` | não |  |  |  |
-| 5 | `variant_b_id` | `uuid` | não |  |  |  |
-| 6 | `traffic_split` | `integer` | não | `50` |  |  |
-| 7 | `status` | `text` | não | `'draft'::text` |  |  |
-| 8 | `hypothesis` | `text` | sim |  |  |  |
-| 9 | `winner_variant` | `text` | sim |  |  |  |
-| 10 | `started_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `ended_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_by` | `uuid` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cadence_ab_tests. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.cadence_ab_tests. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.cadence_ab_tests. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `variant_a_id` | `uuid` | não |  |  | Coluna variant_a_id da tabela public.cadence_ab_tests. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.cadences(id). Validação CHECK: CHECK (variant_a_id <> variant_b_id). |
+| 5 | `variant_b_id` | `uuid` | não |  |  | Coluna variant_b_id da tabela public.cadence_ab_tests. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.cadences(id). Validação CHECK: CHECK (variant_a_id <> variant_b_id). |
+| 6 | `traffic_split` | `integer` | não | `50` |  | Coluna traffic_split da tabela public.cadence_ab_tests. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. Validação CHECK: CHECK (traffic_split >= 1 AND traffic_split <= 99). |
+| 7 | `status` | `text` | não | `'draft'::text` |  | Coluna status da tabela public.cadence_ab_tests. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'draft'::text. |
+| 8 | `hypothesis` | `text` | sim |  |  | Coluna hypothesis da tabela public.cadence_ab_tests. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `winner_variant` | `text` | sim |  |  | Coluna winner_variant da tabela public.cadence_ab_tests. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `started_at` | `timestamp with time zone` | sim |  |  | Coluna started_at da tabela public.cadence_ab_tests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `ended_at` | `timestamp with time zone` | sim |  |  | Coluna ended_at da tabela public.cadence_ab_tests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.cadence_ab_tests. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.cadence_ab_tests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.cadence_ab_tests. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

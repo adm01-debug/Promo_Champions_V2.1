@@ -1,5 +1,7 @@
 # public.sla_policies
 
+> Tabela public.sla_policies. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), stage text NOT NULL, max_hours integer NOT NULL DEFAULT 72, warning_hours integer NOT NULL DEFAULT 48, is_active boolean NOT NULL DEFAULT true, description text NULLABLE, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `stage` | `text` | não |  |  |  |
-| 3 | `max_hours` | `integer` | não | `72` |  |  |
-| 4 | `warning_hours` | `integer` | não | `48` |  |  |
-| 5 | `is_active` | `boolean` | não | `true` |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `created_by` | `uuid` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sla_policies. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `stage` | `text` | não |  |  | Coluna stage da tabela public.sla_policies. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `max_hours` | `integer` | não | `72` |  | Coluna max_hours da tabela public.sla_policies. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 72. |
+| 4 | `warning_hours` | `integer` | não | `48` |  | Coluna warning_hours da tabela public.sla_policies. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 48. |
+| 5 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.sla_policies. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 6 | `description` | `text` | sim |  |  | Coluna description da tabela public.sla_policies. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.sla_policies. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sla_policies. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sla_policies. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

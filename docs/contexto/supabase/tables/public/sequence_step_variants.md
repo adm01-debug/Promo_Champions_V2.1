@@ -1,5 +1,7 @@
 # public.sequence_step_variants
 
+> Tabela public.sequence_step_variants. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), step_id uuid NOT NULL, label text NOT NULL, subject text NULLABLE, body text NULLABLE, traffic_weight integer NOT NULL DEFAULT 50, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: step_id → public.sequence_steps(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,13 +19,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `step_id` | `uuid` | não |  |  |  |
-| 3 | `label` | `text` | não |  |  |  |
-| 4 | `subject` | `text` | sim |  |  |  |
-| 5 | `body` | `text` | sim |  |  |  |
-| 6 | `traffic_weight` | `integer` | não | `50` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequence_step_variants. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `step_id` | `uuid` | não |  |  | Coluna step_id da tabela public.sequence_step_variants. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequence_steps(id). |
+| 3 | `label` | `text` | não |  |  | Coluna label da tabela public.sequence_step_variants. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (label = ANY (ARRAY['A'::text, 'B'::text])). |
+| 4 | `subject` | `text` | sim |  |  | Coluna subject da tabela public.sequence_step_variants. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `body` | `text` | sim |  |  | Coluna body da tabela public.sequence_step_variants. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `traffic_weight` | `integer` | não | `50` |  | Coluna traffic_weight da tabela public.sequence_step_variants. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. Validação CHECK: CHECK (traffic_weight >= 0 AND traffic_weight <= 100). |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sequence_step_variants. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

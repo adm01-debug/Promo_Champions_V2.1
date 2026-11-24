@@ -1,5 +1,7 @@
 # public.quote_sync_inbound_log
 
+> Tabela public.quote_sync_inbound_log. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), correlation_key text NULLABLE, event text NULLABLE, status text NOT NULL, http_status integer NOT NULL, error_message text NULLABLE, external_quote_id text NULLABLE, quote_id uuid NULLABLE, payload jsonb NOT NULL DEFAULT '{}'::jsonb, source text NOT NULL DEFAULT 'v4'::text, received_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `correlation_key` | `text` | sim |  |  |  |
-| 3 | `event` | `text` | sim |  |  |  |
-| 4 | `status` | `text` | não |  |  |  |
-| 5 | `http_status` | `integer` | não |  |  |  |
-| 6 | `error_message` | `text` | sim |  |  |  |
-| 7 | `external_quote_id` | `text` | sim |  |  |  |
-| 8 | `quote_id` | `uuid` | sim |  |  |  |
-| 9 | `payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 10 | `source` | `text` | não | `'v4'::text` |  |  |
-| 11 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `correlation_key` | `text` | sim |  |  | Coluna correlation_key da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 3 | `event` | `text` | sim |  |  | Coluna event da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `status` | `text` | não |  |  | Coluna status da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (status = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text, 'processed'::text, 'method_not_allowed'::text, 'unauthorized'::text, 'not_found'::text, 'bad_request'::text])). |
+| 5 | `http_status` | `integer` | não |  |  | Coluna http_status da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: integer. Não aceita NULL. Validação CHECK: CHECK (http_status >= 100 AND http_status <= 599). |
+| 6 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `external_quote_id` | `text` | sim |  |  | Coluna external_quote_id da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `quote_id` | `uuid` | sim |  |  | Coluna quote_id da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 9 | `payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna payload da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. Validação CHECK: CHECK (pg_column_size(payload) <= 262144). |
+| 10 | `source` | `text` | não | `'v4'::text` |  | Coluna source da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'v4'::text. Validação CHECK: CHECK (source = ANY (ARRAY['gift_store'::text, 'promogifts'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'n8n'::text, 'v4'::text])). |
+| 11 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.quote_sync_inbound_log. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

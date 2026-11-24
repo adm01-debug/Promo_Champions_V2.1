@@ -1,5 +1,7 @@
 # public.demand_forecasts
 
+> Previsões de demanda e receita por produto e data.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `forecast_date` | `date` | não |  |  |  |
-| 4 | `predicted_quantity` | `integer` | não | `0` |  |  |
-| 5 | `predicted_revenue` | `numeric(12,2)` | não | `0` |  |  |
-| 6 | `confidence_score` | `numeric(5,2)` | sim | `0.80` |  |  |
-| 7 | `factors` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `model_version` | `text` | sim | `'v1'::text` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da previsão. |
+| 2 | `product_id` | `uuid` | sim |  |  | Produto ao qual a previsão se refere, quando definido. |
+| 3 | `forecast_date` | `date` | não |  |  | Data para a qual a demanda foi prevista. |
+| 4 | `predicted_quantity` | `integer` | não | `0` |  | Quantidade prevista de unidades demandadas. |
+| 5 | `predicted_revenue` | `numeric(12,2)` | não | `0` |  | Receita prevista, em BRL. |
+| 6 | `confidence_score` | `numeric(5,2)` | sim | `0.80` |  | Pontuação de confiança da previsão; a escala é definida pelo modelo. |
+| 7 | `factors` | `jsonb` | sim | `'{}'::jsonb` |  | Fatores considerados na previsão, em formato JSON. |
+| 8 | `model_version` | `text` | sim | `'v1'::text` |  | Identificador da versão do modelo usado. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da previsão. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da previsão. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.dialer_queues
 
+> Tabela public.dialer_queues. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, name text NOT NULL, filter jsonb NOT NULL DEFAULT '{}'::jsonb, priority_strategy text NOT NULL DEFAULT 'hybrid'::text, is_active boolean NOT NULL DEFAULT true, last_built_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `filter` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 5 | `priority_strategy` | `text` | não | `'hybrid'::text` |  |  |
-| 6 | `is_active` | `boolean` | não | `true` |  |  |
-| 7 | `last_built_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.dialer_queues. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.dialer_queues. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.dialer_queues. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `filter` | `jsonb` | não | `'{}'::jsonb` |  | Coluna filter da tabela public.dialer_queues. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 5 | `priority_strategy` | `text` | não | `'hybrid'::text` |  | Coluna priority_strategy da tabela public.dialer_queues. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'hybrid'::text. Validação CHECK: CHECK (priority_strategy = ANY (ARRAY['score'::text, 'recency'::text, 'send_time'::text, 'hybrid'::text])). |
+| 6 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.dialer_queues. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 7 | `last_built_at` | `timestamp with time zone` | sim |  |  | Coluna last_built_at da tabela public.dialer_queues. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.dialer_queues. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.dialer_queues. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

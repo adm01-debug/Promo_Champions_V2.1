@@ -1,5 +1,7 @@
 # public.playbook_progress
 
+> Registro de conclusão de itens de playbook em negócios.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `playbook_item_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | não |  |  |  |
-| 4 | `completed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `completed_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de progresso. |
+| 2 | `playbook_item_id` | `uuid` | não |  |  | Item de playbook concluído. |
+| 3 | `sale_id` | `uuid` | não |  |  | Negócio em que o item foi concluído. |
+| 4 | `completed_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de conclusão do item. |
+| 5 | `completed_by` | `uuid` | sim |  |  | Vendedor que marcou o item como concluído, quando identificado. |
 
 
 ## Constraints

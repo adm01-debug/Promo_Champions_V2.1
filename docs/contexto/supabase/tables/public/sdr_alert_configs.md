@@ -1,5 +1,7 @@
 # public.sdr_alert_configs
 
+> Tabela public.sdr_alert_configs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NOT NULL, metric_type text NOT NULL, threshold_value double precision NOT NULL, is_active boolean NULLABLE DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `metric_type` | `text` | não |  |  |  |
-| 4 | `threshold_value` | `double precision` | não |  |  |  |
-| 5 | `is_active` | `boolean` | sim | `true` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sdr_alert_configs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.sdr_alert_configs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 3 | `metric_type` | `text` | não |  |  | Coluna metric_type da tabela public.sdr_alert_configs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `threshold_value` | `double precision` | não |  |  | Coluna threshold_value da tabela public.sdr_alert_configs. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 5 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.sdr_alert_configs. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sdr_alert_configs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sdr_alert_configs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

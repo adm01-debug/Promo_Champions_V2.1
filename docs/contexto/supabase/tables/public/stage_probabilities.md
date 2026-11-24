@@ -1,5 +1,7 @@
 # public.stage_probabilities
 
+> Tabela public.stage_probabilities. Estrutura registrada no catálogo do PostgreSQL: stage text NOT NULL, probability numeric NOT NULL, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,9 +19,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `stage` | `text` | não |  |  |  |
-| 2 | `probability` | `numeric` | não |  |  |  |
-| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `stage` | `text` | não |  |  | Coluna stage da tabela public.stage_probabilities. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `probability` | `numeric` | não |  |  | Coluna probability da tabela public.stage_probabilities. Tipo PostgreSQL: numeric. Não aceita NULL. Validação CHECK: CHECK (probability >= 0::numeric AND probability <= 1::numeric). |
+| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.stage_probabilities. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

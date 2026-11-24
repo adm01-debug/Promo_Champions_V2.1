@@ -1,5 +1,7 @@
 # public.follow_up_templates
 
+> Tabela public.follow_up_templates. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, content text NOT NULL, variables jsonb NULLABLE DEFAULT '[]'::jsonb, version integer NULLABLE DEFAULT 1, is_active boolean NULLABLE DEFAULT true, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(), created_by uuid NULLABLE. Relacionamentos FK: created_by → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `content` | `text` | não |  |  |  |
-| 4 | `variables` | `jsonb` | sim | `'[]'::jsonb` |  |  |
-| 5 | `version` | `integer` | sim | `1` |  |  |
-| 6 | `is_active` | `boolean` | sim | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `created_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.follow_up_templates. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.follow_up_templates. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `content` | `text` | não |  |  | Coluna content da tabela public.follow_up_templates. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `variables` | `jsonb` | sim | `'[]'::jsonb` |  | Coluna variables da tabela public.follow_up_templates. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '[]'::jsonb. |
+| 5 | `version` | `integer` | sim | `1` |  | Coluna version da tabela public.follow_up_templates. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 1. |
+| 6 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.follow_up_templates. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.follow_up_templates. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.follow_up_templates. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 9 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.follow_up_templates. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.cs_tickets
 
+> Tickets de atendimento ao cliente vinculados a clientes e responsáveis.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | sim |  |  |  |
-| 3 | `external_id` | `text` | sim |  |  |  |
-| 4 | `source` | `text` | sim | `'internal'::text` |  |  |
-| 5 | `subject` | `text` | não |  |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `status` | `text` | sim | `'open'::text` |  |  |
-| 8 | `priority` | `text` | sim | `'medium'::text` |  |  |
-| 9 | `assigned_to` | `uuid` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do ticket de CS. |
+| 2 | `client_id` | `uuid` | sim |  |  | Cliente associado ao ticket, quando identificado. |
+| 3 | `external_id` | `text` | sim |  |  | Identificador do ticket no sistema externo, quando disponível. |
+| 4 | `source` | `text` | sim | `'internal'::text` |  | Origem do ticket. |
+| 5 | `subject` | `text` | não |  |  | Assunto do ticket. |
+| 6 | `description` | `text` | sim |  |  | Descrição da solicitação ou problema. |
+| 7 | `status` | `text` | sim | `'open'::text` |  | Estado atual do ticket. |
+| 8 | `priority` | `text` | sim | `'medium'::text` |  | Prioridade atual do ticket. |
+| 9 | `assigned_to` | `uuid` | sim |  |  | Usuário responsável pelo atendimento, quando atribuído. |
+| 10 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do ticket. |
+| 11 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do ticket. |
 
 
 ## Constraints

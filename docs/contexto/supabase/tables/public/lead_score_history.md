@@ -1,5 +1,7 @@
 # public.lead_score_history
 
+> Tabela public.lead_score_history. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, score integer NOT NULL, factors jsonb NOT NULL DEFAULT '{}'::jsonb, recorded_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `score` | `integer` | não |  |  |  |
-| 4 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 5 | `recorded_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.lead_score_history. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.lead_score_history. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `score` | `integer` | não |  |  | Coluna score da tabela public.lead_score_history. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.lead_score_history. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 5 | `recorded_at` | `timestamp with time zone` | não | `now()` |  | Coluna recorded_at da tabela public.lead_score_history. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

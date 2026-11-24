@@ -1,5 +1,7 @@
 # public.cohort_analyses
 
+> Tabela public.cohort_analyses. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, name text NOT NULL, description text NULLABLE, cohort_field text NOT NULL DEFAULT 'created_at'::text, metric_field text NOT NULL DEFAULT 'amount'::text, period_type text NOT NULL DEFAULT 'month'::text, config jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `cohort_field` | `text` | não | `'created_at'::text` |  |  |
-| 6 | `metric_field` | `text` | não | `'amount'::text` |  |  |
-| 7 | `period_type` | `text` | não | `'month'::text` |  |  |
-| 8 | `config` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cohort_analyses. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.cohort_analyses. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.cohort_analyses. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.cohort_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `cohort_field` | `text` | não | `'created_at'::text` |  | Coluna cohort_field da tabela public.cohort_analyses. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'created_at'::text. |
+| 6 | `metric_field` | `text` | não | `'amount'::text` |  | Coluna metric_field da tabela public.cohort_analyses. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'amount'::text. |
+| 7 | `period_type` | `text` | não | `'month'::text` |  | Coluna period_type da tabela public.cohort_analyses. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'month'::text. Validação CHECK: CHECK (period_type = ANY (ARRAY['week'::text, 'month'::text, 'quarter'::text])). |
+| 8 | `config` | `jsonb` | não | `'{}'::jsonb` |  | Coluna config da tabela public.cohort_analyses. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.cohort_analyses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.cohort_analyses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

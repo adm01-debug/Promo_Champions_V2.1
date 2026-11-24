@@ -1,5 +1,7 @@
 # public.lead_churn_risk
 
+> Tabela public.lead_churn_risk. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, risk_level text NULLABLE, risk_score numeric NULLABLE, factors jsonb NULLABLE, detected_at timestamp with time zone NULLABLE DEFAULT now(), status text NULLABLE DEFAULT 'active'::text. Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `risk_level` | `text` | sim |  |  |  |
-| 4 | `risk_score` | `numeric` | sim |  |  |  |
-| 5 | `factors` | `jsonb` | sim |  |  |  |
-| 6 | `detected_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `status` | `text` | sim | `'active'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.lead_churn_risk. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.lead_churn_risk. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `risk_level` | `text` | sim |  |  | Coluna risk_level da tabela public.lead_churn_risk. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (risk_level = ANY (ARRAY['critical'::text, 'high'::text, 'medium'::text, 'low'::text])). |
+| 4 | `risk_score` | `numeric` | sim |  |  | Coluna risk_score da tabela public.lead_churn_risk. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 5 | `factors` | `jsonb` | sim |  |  | Coluna factors da tabela public.lead_churn_risk. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 6 | `detected_at` | `timestamp with time zone` | sim | `now()` |  | Coluna detected_at da tabela public.lead_churn_risk. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `status` | `text` | sim | `'active'::text` |  | Coluna status da tabela public.lead_churn_risk. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'active'::text. Validação CHECK: CHECK (status = ANY (ARRAY['active'::text, 'resolved'::text, 'ignored'::text])). |
 
 
 ## Constraints

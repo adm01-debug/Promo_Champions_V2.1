@@ -1,5 +1,7 @@
 # public.campaign_health_alerts
 
+> Tabela public.campaign_health_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), job_id uuid NOT NULL, owner_id uuid NOT NULL, alert_type text NOT NULL, severity text NOT NULL DEFAULT 'warning'::text, message text NOT NULL, metrics jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), dedupe_bucket timestamp with time zone NULLABLE. Relacionamentos FK: job_id → public.email_bulk_jobs(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `job_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | não |  |  |  |
-| 4 | `alert_type` | `text` | não |  |  |  |
-| 5 | `severity` | `text` | não | `'warning'::text` |  |  |
-| 6 | `message` | `text` | não |  |  |  |
-| 7 | `metrics` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `dedupe_bucket` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.campaign_health_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `job_id` | `uuid` | não |  |  | Coluna job_id da tabela public.campaign_health_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.email_bulk_jobs(id). |
+| 3 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.campaign_health_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `alert_type` | `text` | não |  |  | Coluna alert_type da tabela public.campaign_health_alerts. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (alert_type = ANY (ARRAY['opt_out_rate'::text, 'stalled'::text, 'failure_rate'::text])). |
+| 5 | `severity` | `text` | não | `'warning'::text` |  | Coluna severity da tabela public.campaign_health_alerts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'warning'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])). |
+| 6 | `message` | `text` | não |  |  | Coluna message da tabela public.campaign_health_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 7 | `metrics` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metrics da tabela public.campaign_health_alerts. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.campaign_health_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.campaign_health_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `dedupe_bucket` | `timestamp with time zone` | sim |  |  | Coluna dedupe_bucket da tabela public.campaign_health_alerts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.sequence_step_executions
 
+> Tabela public.sequence_step_executions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), enrollment_id uuid NOT NULL, step_id uuid NOT NULL, executed_at timestamp with time zone NOT NULL DEFAULT now(), status text NOT NULL, channel text NULLABLE, error_message text NULLABLE, engagement jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), variant_id uuid NULLABLE, replied_at timestamp with time zone NULLABLE. Relacionamentos FK: enrollment_id → public.sequence_enrollments(id); step_id → public.sequence_steps(id); variant_id → public.sequence_step_variants(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,17 +19,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `enrollment_id` | `uuid` | não |  |  |  |
-| 3 | `step_id` | `uuid` | não |  |  |  |
-| 4 | `executed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `status` | `text` | não |  |  |  |
-| 6 | `channel` | `text` | sim |  |  |  |
-| 7 | `error_message` | `text` | sim |  |  |  |
-| 8 | `engagement` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `variant_id` | `uuid` | sim |  |  |  |
-| 11 | `replied_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequence_step_executions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `enrollment_id` | `uuid` | não |  |  | Coluna enrollment_id da tabela public.sequence_step_executions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequence_enrollments(id). |
+| 3 | `step_id` | `uuid` | não |  |  | Coluna step_id da tabela public.sequence_step_executions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequence_steps(id). |
+| 4 | `executed_at` | `timestamp with time zone` | não | `now()` |  | Coluna executed_at da tabela public.sequence_step_executions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `status` | `text` | não |  |  | Coluna status da tabela public.sequence_step_executions. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (status = ANY (ARRAY['sent'::text, 'failed'::text, 'skipped'::text, 'queued'::text])). |
+| 6 | `channel` | `text` | sim |  |  | Coluna channel da tabela public.sequence_step_executions. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.sequence_step_executions. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `engagement` | `jsonb` | não | `'{}'::jsonb` |  | Coluna engagement da tabela public.sequence_step_executions. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sequence_step_executions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `variant_id` | `uuid` | sim |  |  | Coluna variant_id da tabela public.sequence_step_executions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sequence_step_variants(id). |
+| 11 | `replied_at` | `timestamp with time zone` | sim |  |  | Coluna replied_at da tabela public.sequence_step_executions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

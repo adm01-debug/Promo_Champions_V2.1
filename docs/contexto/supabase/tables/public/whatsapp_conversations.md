@@ -1,5 +1,7 @@
 # public.whatsapp_conversations
 
+> Tabela public.whatsapp_conversations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, sender_id uuid NULLABLE, external_message_id text NULLABLE, direction text NULLABLE, body text NULLABLE, status text NULLABLE, sent_at timestamp with time zone NULLABLE DEFAULT now(), created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id); sender_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `sender_id` | `uuid` | sim |  |  |  |
-| 4 | `external_message_id` | `text` | sim |  |  |  |
-| 5 | `direction` | `text` | sim |  |  |  |
-| 6 | `body` | `text` | sim |  |  |  |
-| 7 | `status` | `text` | sim |  |  |  |
-| 8 | `sent_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.whatsapp_conversations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.whatsapp_conversations. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `sender_id` | `uuid` | sim |  |  | Coluna sender_id da tabela public.whatsapp_conversations. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 4 | `external_message_id` | `text` | sim |  |  | Coluna external_message_id da tabela public.whatsapp_conversations. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `direction` | `text` | sim |  |  | Coluna direction da tabela public.whatsapp_conversations. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (direction = ANY (ARRAY['inbound'::text, 'outbound'::text])). |
+| 6 | `body` | `text` | sim |  |  | Coluna body da tabela public.whatsapp_conversations. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `status` | `text` | sim |  |  | Coluna status da tabela public.whatsapp_conversations. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `sent_at` | `timestamp with time zone` | sim | `now()` |  | Coluna sent_at da tabela public.whatsapp_conversations. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.whatsapp_conversations. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

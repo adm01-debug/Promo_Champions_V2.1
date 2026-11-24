@@ -1,5 +1,7 @@
 # public.follow_up_settings
 
+> Tabela public.follow_up_settings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), cadence_days integer[] NULLABLE DEFAULT '{3,5,15}'::integer[], whatsapp_template text NULLABLE DEFAULT 'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?'::text, auto_reactivate_class_a boolean NULLABLE DEFAULT false, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(), current_whatsapp_version_id uuid NULLABLE. Relacionamentos FK: current_whatsapp_version_id → public.whatsapp_template_versions(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `cadence_days` | `integer[]` | sim | `'{3,5,15}'::integer[]` |  |  |
-| 3 | `whatsapp_template` | `text` | sim | `'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?'::text` |  |  |
-| 4 | `auto_reactivate_class_a` | `boolean` | sim | `false` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `current_whatsapp_version_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.follow_up_settings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `cadence_days` | `integer[]` | sim | `'{3,5,15}'::integer[]` |  | Coluna cadence_days da tabela public.follow_up_settings. Tipo PostgreSQL: integer[]. Aceita NULL. Valor padrão: '{3,5,15}'::integer[]. |
+| 3 | `whatsapp_template` | `text` | sim | `'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?'::text` |  | Coluna whatsapp_template da tabela public.follow_up_settings. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'Olá {{client_name}}! Sou o seu consultor na PROMO CHAMPIONS. Notei que nossa negociação sobre o {{product_name}} está na etapa de {{status}} e faz uns dias que não nos falamos. Como posso te ajudar a avançar hoje?'::text. |
+| 4 | `auto_reactivate_class_a` | `boolean` | sim | `false` |  | Coluna auto_reactivate_class_a da tabela public.follow_up_settings. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.follow_up_settings. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.follow_up_settings. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `current_whatsapp_version_id` | `uuid` | sim |  |  | Coluna current_whatsapp_version_id da tabela public.follow_up_settings. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.whatsapp_template_versions(id). |
 
 
 ## Constraints

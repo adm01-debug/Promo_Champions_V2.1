@@ -1,5 +1,7 @@
 # public.race_user_daily_checkins
 
+> Tabela public.race_user_daily_checkins. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NOT NULL, season_id uuid NOT NULL, checkin_date date NOT NULL DEFAULT ((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date, streak_days integer NOT NULL DEFAULT 1, reward_granted boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: season_id → public.race_seasons(id); user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `season_id` | `uuid` | não |  |  |  |
-| 4 | `checkin_date` | `date` | não | `((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date` |  |  |
-| 5 | `streak_days` | `integer` | não | `1` |  |  |
-| 6 | `reward_granted` | `boolean` | não | `false` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_user_daily_checkins. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.race_user_daily_checkins. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: auth.users(id). |
+| 3 | `season_id` | `uuid` | não |  |  | Coluna season_id da tabela public.race_user_daily_checkins. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_seasons(id). |
+| 4 | `checkin_date` | `date` | não | `((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date` |  | Coluna checkin_date da tabela public.race_user_daily_checkins. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: ((now() AT TIME ZONE 'America/Sao_Paulo'::text))::date. |
+| 5 | `streak_days` | `integer` | não | `1` |  | Coluna streak_days da tabela public.race_user_daily_checkins. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 6 | `reward_granted` | `boolean` | não | `false` |  | Coluna reward_granted da tabela public.race_user_daily_checkins. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_user_daily_checkins. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

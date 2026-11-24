@@ -1,5 +1,7 @@
 # public.outbound_messages
 
+> Tabela public.outbound_messages. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, enrollment_id uuid NULLABLE, step_id uuid NULLABLE, channel text NOT NULL, provider text NOT NULL, to_number text NOT NULL, body text NULLABLE, template_id text NULLABLE, provider_message_id text NULLABLE, status text NOT NULL DEFAULT 'queued'::text, error text NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, sent_at timestamp with time zone NULLABLE, delivered_at timestamp with time zone NULLABLE, read_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: enrollment_id → public.sequence_enrollments(id); step_id → public.sequence_steps(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,24 +18,24 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `enrollment_id` | `uuid` | sim |  |  |  |
-| 4 | `step_id` | `uuid` | sim |  |  |  |
-| 5 | `channel` | `text` | não |  |  |  |
-| 6 | `provider` | `text` | não |  |  |  |
-| 7 | `to_number` | `text` | não |  |  |  |
-| 8 | `body` | `text` | sim |  |  |  |
-| 9 | `template_id` | `text` | sim |  |  |  |
-| 10 | `provider_message_id` | `text` | sim |  |  |  |
-| 11 | `status` | `text` | não | `'queued'::text` |  |  |
-| 12 | `error` | `text` | sim |  |  |  |
-| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 15 | `delivered_at` | `timestamp with time zone` | sim |  |  |  |
-| 16 | `read_at` | `timestamp with time zone` | sim |  |  |  |
-| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.outbound_messages. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.outbound_messages. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `enrollment_id` | `uuid` | sim |  |  | Coluna enrollment_id da tabela public.outbound_messages. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sequence_enrollments(id). |
+| 4 | `step_id` | `uuid` | sim |  |  | Coluna step_id da tabela public.outbound_messages. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sequence_steps(id). |
+| 5 | `channel` | `text` | não |  |  | Coluna channel da tabela public.outbound_messages. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])). |
+| 6 | `provider` | `text` | não |  |  | Coluna provider da tabela public.outbound_messages. Tipo PostgreSQL: text. Não aceita NULL. |
+| 7 | `to_number` | `text` | não |  |  | Coluna to_number da tabela public.outbound_messages. Tipo PostgreSQL: text. Não aceita NULL. |
+| 8 | `body` | `text` | sim |  |  | Coluna body da tabela public.outbound_messages. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `template_id` | `text` | sim |  |  | Coluna template_id da tabela public.outbound_messages. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `provider_message_id` | `text` | sim |  |  | Coluna provider_message_id da tabela public.outbound_messages. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `status` | `text` | não | `'queued'::text` |  | Coluna status da tabela public.outbound_messages. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'queued'::text. Validação CHECK: CHECK (status = ANY (ARRAY['queued'::text, 'sent'::text, 'delivered'::text, 'read'::text, 'failed'::text])). |
+| 12 | `error` | `text` | sim |  |  | Coluna error da tabela public.outbound_messages. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.outbound_messages. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 14 | `sent_at` | `timestamp with time zone` | sim |  |  | Coluna sent_at da tabela public.outbound_messages. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 15 | `delivered_at` | `timestamp with time zone` | sim |  |  | Coluna delivered_at da tabela public.outbound_messages. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 16 | `read_at` | `timestamp with time zone` | sim |  |  | Coluna read_at da tabela public.outbound_messages. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.outbound_messages. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.outbound_messages. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.buying_committee
 
+> Tabela public.buying_committee. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, contact_name text NOT NULL, role text NOT NULL, sentiment text NULLABLE DEFAULT 'neutral'::text, influence_level integer NULLABLE DEFAULT 3, notes text NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `contact_name` | `text` | não |  |  |  |
-| 4 | `role` | `text` | não |  |  |  |
-| 5 | `sentiment` | `text` | sim | `'neutral'::text` |  |  |
-| 6 | `influence_level` | `integer` | sim | `3` |  |  |
-| 7 | `notes` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.buying_committee. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.buying_committee. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `contact_name` | `text` | não |  |  | Coluna contact_name da tabela public.buying_committee. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `role` | `text` | não |  |  | Coluna role da tabela public.buying_committee. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `sentiment` | `text` | sim | `'neutral'::text` |  | Coluna sentiment da tabela public.buying_committee. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'neutral'::text. |
+| 6 | `influence_level` | `integer` | sim | `3` |  | Coluna influence_level da tabela public.buying_committee. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 3. |
+| 7 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.buying_committee. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.buying_committee. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.buying_committee. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

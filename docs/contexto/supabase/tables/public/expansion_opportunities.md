@@ -1,5 +1,7 @@
 # public.expansion_opportunities
 
+> Tabela public.expansion_opportunities. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), account_id uuid NOT NULL, playbook_id uuid NULLABLE, type expansion_type NOT NULL DEFAULT 'upsell'::expansion_type, estimated_value numeric(14,2) NOT NULL DEFAULT 0, status expansion_opp_status NOT NULL DEFAULT 'identified'::expansion_opp_status, confidence_score integer NOT NULL DEFAULT 50, notes text NULLABLE, owner_salesperson_id uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: account_id → public.accounts(id); owner_salesperson_id → public.salespeople(id); playbook_id → public.expansion_playbooks(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `playbook_id` | `uuid` | sim |  |  |  |
-| 4 | `type` | `expansion_type` | não | `'upsell'::expansion_type` |  |  |
-| 5 | `estimated_value` | `numeric(14,2)` | não | `0` |  |  |
-| 6 | `status` | `expansion_opp_status` | não | `'identified'::expansion_opp_status` |  |  |
-| 7 | `confidence_score` | `integer` | não | `50` |  |  |
-| 8 | `notes` | `text` | sim |  |  |  |
-| 9 | `owner_salesperson_id` | `uuid` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.expansion_opportunities. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `account_id` | `uuid` | não |  |  | Coluna account_id da tabela public.expansion_opportunities. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.accounts(id). |
+| 3 | `playbook_id` | `uuid` | sim |  |  | Coluna playbook_id da tabela public.expansion_opportunities. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.expansion_playbooks(id). |
+| 4 | `type` | `expansion_type` | não | `'upsell'::expansion_type` |  | Coluna type da tabela public.expansion_opportunities. Tipo PostgreSQL: expansion_type. Não aceita NULL. Valor padrão: 'upsell'::expansion_type. Valores do enum: 'upsell', 'cross_sell', 'expansion'. |
+| 5 | `estimated_value` | `numeric(14,2)` | não | `0` |  | Coluna estimated_value da tabela public.expansion_opportunities. Tipo PostgreSQL: numeric(14,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `status` | `expansion_opp_status` | não | `'identified'::expansion_opp_status` |  | Coluna status da tabela public.expansion_opportunities. Tipo PostgreSQL: expansion_opp_status. Não aceita NULL. Valor padrão: 'identified'::expansion_opp_status. Valores do enum: 'identified', 'qualified', 'proposed', 'won', 'lost'. |
+| 7 | `confidence_score` | `integer` | não | `50` |  | Coluna confidence_score da tabela public.expansion_opportunities. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. |
+| 8 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.expansion_opportunities. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `owner_salesperson_id` | `uuid` | sim |  |  | Coluna owner_salesperson_id da tabela public.expansion_opportunities. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.expansion_opportunities. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.expansion_opportunities. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

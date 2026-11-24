@@ -1,5 +1,7 @@
 # public.salesperson_coaching_aggregates
 
+> Tabela public.salesperson_coaching_aggregates. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, period_start date NOT NULL, period_end date NOT NULL, calls_analyzed integer NOT NULL DEFAULT 0, avg_overall numeric NOT NULL DEFAULT 0, avg_talk numeric NOT NULL DEFAULT 0, avg_questions numeric NOT NULL DEFAULT 0, avg_objections numeric NOT NULL DEFAULT 0, avg_sentiment numeric NOT NULL DEFAULT 0, trend_direction text NOT NULL DEFAULT 'flat'::text, trend_delta numeric NOT NULL DEFAULT 0, top_recurring_gap text NULLABLE, last_calculated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `period_start` | `date` | não |  |  |  |
-| 4 | `period_end` | `date` | não |  |  |  |
-| 5 | `calls_analyzed` | `integer` | não | `0` |  |  |
-| 6 | `avg_overall` | `numeric` | não | `0` |  |  |
-| 7 | `avg_talk` | `numeric` | não | `0` |  |  |
-| 8 | `avg_questions` | `numeric` | não | `0` |  |  |
-| 9 | `avg_objections` | `numeric` | não | `0` |  |  |
-| 10 | `avg_sentiment` | `numeric` | não | `0` |  |  |
-| 11 | `trend_direction` | `text` | não | `'flat'::text` |  |  |
-| 12 | `trend_delta` | `numeric` | não | `0` |  |  |
-| 13 | `top_recurring_gap` | `text` | sim |  |  |  |
-| 14 | `last_calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `calls_analyzed` | `integer` | não | `0` |  | Coluna calls_analyzed da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `avg_overall` | `numeric` | não | `0` |  | Coluna avg_overall da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `avg_talk` | `numeric` | não | `0` |  | Coluna avg_talk da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `avg_questions` | `numeric` | não | `0` |  | Coluna avg_questions da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `avg_objections` | `numeric` | não | `0` |  | Coluna avg_objections da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `avg_sentiment` | `numeric` | não | `0` |  | Coluna avg_sentiment da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `trend_direction` | `text` | não | `'flat'::text` |  | Coluna trend_direction da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'flat'::text. Validação CHECK: CHECK (trend_direction = ANY (ARRAY['up'::text, 'flat'::text, 'down'::text])). |
+| 12 | `trend_delta` | `numeric` | não | `0` |  | Coluna trend_delta da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 13 | `top_recurring_gap` | `text` | sim |  |  | Coluna top_recurring_gap da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `last_calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_calculated_at da tabela public.salesperson_coaching_aggregates. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

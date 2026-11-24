@@ -1,5 +1,7 @@
 # public.cron_failure_alerts
 
+> Tabela public.cron_failure_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), jobid bigint NOT NULL, jobname text NULLABLE, start_time timestamp with time zone NOT NULL, status text NOT NULL, return_message text NULLABLE, alerted_at timestamp with time zone NOT NULL DEFAULT now(), notified_admin_count integer NOT NULL DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `jobid` | `bigint` | não |  |  |  |
-| 3 | `jobname` | `text` | sim |  |  |  |
-| 4 | `start_time` | `timestamp with time zone` | não |  |  |  |
-| 5 | `status` | `text` | não |  |  |  |
-| 6 | `return_message` | `text` | sim |  |  |  |
-| 7 | `alerted_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `notified_admin_count` | `integer` | não | `0` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cron_failure_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `jobid` | `bigint` | não |  |  | Coluna jobid da tabela public.cron_failure_alerts. Tipo PostgreSQL: bigint. Não aceita NULL. |
+| 3 | `jobname` | `text` | sim |  |  | Coluna jobname da tabela public.cron_failure_alerts. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `start_time` | `timestamp with time zone` | não |  |  | Coluna start_time da tabela public.cron_failure_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 5 | `status` | `text` | não |  |  | Coluna status da tabela public.cron_failure_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `return_message` | `text` | sim |  |  | Coluna return_message da tabela public.cron_failure_alerts. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `alerted_at` | `timestamp with time zone` | não | `now()` |  | Coluna alerted_at da tabela public.cron_failure_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `notified_admin_count` | `integer` | não | `0` |  | Coluna notified_admin_count da tabela public.cron_failure_alerts. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.cron_failure_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

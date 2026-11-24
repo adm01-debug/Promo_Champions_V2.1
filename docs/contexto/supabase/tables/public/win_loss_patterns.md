@@ -1,5 +1,7 @@
 # public.win_loss_patterns
 
+> Tabela public.win_loss_patterns. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), pattern_type text NOT NULL, label text NOT NULL, outcome text NULLABLE, frequency integer NOT NULL DEFAULT 0, win_rate numeric NOT NULL DEFAULT 0, avg_cycle_days numeric NOT NULL DEFAULT 0, avg_amount numeric NOT NULL DEFAULT 0, confidence numeric NOT NULL DEFAULT 0, computed_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `pattern_type` | `text` | não |  |  |  |
-| 3 | `label` | `text` | não |  |  |  |
-| 4 | `outcome` | `text` | sim |  |  |  |
-| 5 | `frequency` | `integer` | não | `0` |  |  |
-| 6 | `win_rate` | `numeric` | não | `0` |  |  |
-| 7 | `avg_cycle_days` | `numeric` | não | `0` |  |  |
-| 8 | `avg_amount` | `numeric` | não | `0` |  |  |
-| 9 | `confidence` | `numeric` | não | `0` |  |  |
-| 10 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_loss_patterns. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `pattern_type` | `text` | não |  |  | Coluna pattern_type da tabela public.win_loss_patterns. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (pattern_type = ANY (ARRAY['win_factor'::text, 'loss_factor'::text, 'stuck_stage'::text, 'competitor'::text, 'icp_match'::text])). |
+| 3 | `label` | `text` | não |  |  | Coluna label da tabela public.win_loss_patterns. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `outcome` | `text` | sim |  |  | Coluna outcome da tabela public.win_loss_patterns. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `frequency` | `integer` | não | `0` |  | Coluna frequency da tabela public.win_loss_patterns. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `win_rate` | `numeric` | não | `0` |  | Coluna win_rate da tabela public.win_loss_patterns. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `avg_cycle_days` | `numeric` | não | `0` |  | Coluna avg_cycle_days da tabela public.win_loss_patterns. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `avg_amount` | `numeric` | não | `0` |  | Coluna avg_amount da tabela public.win_loss_patterns. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `confidence` | `numeric` | não | `0` |  | Coluna confidence da tabela public.win_loss_patterns. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.win_loss_patterns. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

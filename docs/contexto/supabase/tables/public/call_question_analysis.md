@@ -1,5 +1,7 @@
 # public.call_question_analysis
 
+> Tabela public.call_question_analysis. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, total_questions integer NOT NULL DEFAULT 0, open_questions integer NOT NULL DEFAULT 0, closed_questions integer NOT NULL DEFAULT 0, discovery_questions integer NOT NULL DEFAULT 0, impact_questions integer NOT NULL DEFAULT 0, leading_questions integer NOT NULL DEFAULT 0, avg_depth numeric NOT NULL DEFAULT 0, question_density numeric NOT NULL DEFAULT 0, quality_score numeric NOT NULL DEFAULT 0, health text NOT NULL DEFAULT 'fair'::text, factors jsonb NOT NULL DEFAULT '{}'::jsonb, calculated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `total_questions` | `integer` | não | `0` |  |  |
-| 4 | `open_questions` | `integer` | não | `0` |  |  |
-| 5 | `closed_questions` | `integer` | não | `0` |  |  |
-| 6 | `discovery_questions` | `integer` | não | `0` |  |  |
-| 7 | `impact_questions` | `integer` | não | `0` |  |  |
-| 8 | `leading_questions` | `integer` | não | `0` |  |  |
-| 9 | `avg_depth` | `numeric` | não | `0` |  |  |
-| 10 | `question_density` | `numeric` | não | `0` |  |  |
-| 11 | `quality_score` | `numeric` | não | `0` |  |  |
-| 12 | `health` | `text` | não | `'fair'::text` |  |  |
-| 13 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_question_analysis. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_question_analysis. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `total_questions` | `integer` | não | `0` |  | Coluna total_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 4 | `open_questions` | `integer` | não | `0` |  | Coluna open_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `closed_questions` | `integer` | não | `0` |  | Coluna closed_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `discovery_questions` | `integer` | não | `0` |  | Coluna discovery_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `impact_questions` | `integer` | não | `0` |  | Coluna impact_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `leading_questions` | `integer` | não | `0` |  | Coluna leading_questions da tabela public.call_question_analysis. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `avg_depth` | `numeric` | não | `0` |  | Coluna avg_depth da tabela public.call_question_analysis. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `question_density` | `numeric` | não | `0` |  | Coluna question_density da tabela public.call_question_analysis. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `quality_score` | `numeric` | não | `0` |  | Coluna quality_score da tabela public.call_question_analysis. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 12 | `health` | `text` | não | `'fair'::text` |  | Coluna health da tabela public.call_question_analysis. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'fair'::text. Validação CHECK: CHECK (health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])). |
+| 13 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.call_question_analysis. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 14 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.call_question_analysis. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

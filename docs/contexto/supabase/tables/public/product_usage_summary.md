@@ -1,5 +1,7 @@
 # public.product_usage_summary
 
+> Resumo agregado da atividade e adoção do produto por conta.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `account_id` | `uuid` | não |  |  |  |
-| 2 | `dau` | `integer` | não | `0` |  |  |
-| 3 | `wau` | `integer` | não | `0` |  |  |
-| 4 | `mau` | `integer` | não | `0` |  |  |
-| 5 | `last_login_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `top_features` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `adoption_score` | `integer` | não | `0` |  |  |
-| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `account_id` | `uuid` | não |  |  | Conta empresarial a que o resumo se refere. |
+| 2 | `dau` | `integer` | não | `0` |  | Quantidade de usuários ativos diários segundo o cálculo do resumo. |
+| 3 | `wau` | `integer` | não | `0` |  | Quantidade de usuários ativos semanais segundo o cálculo do resumo. |
+| 4 | `mau` | `integer` | não | `0` |  | Quantidade de usuários ativos mensais segundo o cálculo do resumo. |
+| 5 | `last_login_at` | `timestamp with time zone` | sim |  |  | Data e hora do login mais recente observado. |
+| 6 | `top_features` | `jsonb` | não | `'[]'::jsonb` |  | Funcionalidades mais utilizadas, armazenadas em JSON. |
+| 7 | `adoption_score` | `integer` | não | `0` |  | Pontuação agregada de adoção do produto. |
+| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o resumo foi calculado. |
 
 
 ## Constraints

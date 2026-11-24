@@ -1,5 +1,7 @@
 # public.squads
 
+> Tabela public.squads. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, color text NOT NULL DEFAULT '#6366f1'::text, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `color` | `text` | não | `'#6366f1'::text` |  |  |
-| 5 | `created_by` | `uuid` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.squads. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.squads. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.squads. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `color` | `text` | não | `'#6366f1'::text` |  | Coluna color da tabela public.squads. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: '#6366f1'::text. |
+| 5 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.squads. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.squads. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.squads. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

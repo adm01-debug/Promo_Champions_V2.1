@@ -1,5 +1,7 @@
 # public.winloss_webhook_replay_invocations
 
+> Tabela public.winloss_webhook_replay_invocations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), request_id text NOT NULL, actor_user_id uuid NOT NULL, actor_email text NULLABLE, source text NOT NULL, item_count integer NOT NULL DEFAULT 0, succeeded_count integer NOT NULL DEFAULT 0, failed_count integer NOT NULL DEFAULT 0, skipped_count integer NOT NULL DEFAULT 0, duration_ms integer NULLABLE, ids uuid[] NOT NULL DEFAULT '{}'::uuid[], created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `request_id` | `text` | não |  |  |  |
-| 3 | `actor_user_id` | `uuid` | não |  |  |  |
-| 4 | `actor_email` | `text` | sim |  |  |  |
-| 5 | `source` | `text` | não |  |  |  |
-| 6 | `item_count` | `integer` | não | `0` |  |  |
-| 7 | `succeeded_count` | `integer` | não | `0` |  |  |
-| 8 | `failed_count` | `integer` | não | `0` |  |  |
-| 9 | `skipped_count` | `integer` | não | `0` |  |  |
-| 10 | `duration_ms` | `integer` | sim |  |  |  |
-| 11 | `ids` | `uuid[]` | não | `'{}'::uuid[]` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `request_id` | `text` | não |  |  | Coluna request_id da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `actor_user_id` | `uuid` | não |  |  | Coluna actor_user_id da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `actor_email` | `text` | sim |  |  | Coluna actor_email da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `source` | `text` | não |  |  | Coluna source da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (source = ANY (ARRAY['dlq'::text, 'delivery'::text])). |
+| 6 | `item_count` | `integer` | não | `0` |  | Coluna item_count da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `succeeded_count` | `integer` | não | `0` |  | Coluna succeeded_count da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `failed_count` | `integer` | não | `0` |  | Coluna failed_count da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `skipped_count` | `integer` | não | `0` |  | Coluna skipped_count da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `duration_ms` | `integer` | sim |  |  | Coluna duration_ms da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: integer. Aceita NULL. |
+| 11 | `ids` | `uuid[]` | não | `'{}'::uuid[]` |  | Coluna ids da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: uuid[]. Não aceita NULL. Valor padrão: '{}'::uuid[]. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.winloss_webhook_replay_invocations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

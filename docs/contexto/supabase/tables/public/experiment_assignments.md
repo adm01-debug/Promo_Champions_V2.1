@@ -1,5 +1,7 @@
 # public.experiment_assignments
 
+> Tabela public.experiment_assignments. Estrutura registrada no catálogo do PostgreSQL: user_id uuid NOT NULL, experiment_id uuid NOT NULL, variant_id uuid NOT NULL, assigned_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: experiment_id → public.experiments(id); user_id → auth.users(id); variant_id → public.experiment_variants(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `user_id` | `uuid` | não |  |  |  |
-| 2 | `experiment_id` | `uuid` | não |  |  |  |
-| 3 | `variant_id` | `uuid` | não |  |  |  |
-| 4 | `assigned_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.experiment_assignments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Referência FK: auth.users(id). |
+| 2 | `experiment_id` | `uuid` | não |  |  | Coluna experiment_id da tabela public.experiment_assignments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Referência FK: public.experiments(id). |
+| 3 | `variant_id` | `uuid` | não |  |  | Coluna variant_id da tabela public.experiment_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.experiment_variants(id). |
+| 4 | `assigned_at` | `timestamp with time zone` | sim | `now()` |  | Coluna assigned_at da tabela public.experiment_assignments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

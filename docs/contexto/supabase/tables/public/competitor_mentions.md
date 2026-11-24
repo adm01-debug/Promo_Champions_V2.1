@@ -1,5 +1,7 @@
 # public.competitor_mentions
 
+> Tabela public.competitor_mentions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, competitor_id uuid NULLABLE, competitor_name text NOT NULL, timestamp_sec integer NULLABLE, context_snippet text NULLABLE, battle_card_id uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: competitor_id → public.competitors_registry(id); recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `competitor_id` | `uuid` | sim |  |  |  |
-| 4 | `competitor_name` | `text` | não |  |  |  |
-| 5 | `timestamp_sec` | `integer` | sim |  |  |  |
-| 6 | `context_snippet` | `text` | sim |  |  |  |
-| 7 | `battle_card_id` | `uuid` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.competitor_mentions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.competitor_mentions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `competitor_id` | `uuid` | sim |  |  | Coluna competitor_id da tabela public.competitor_mentions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.competitors_registry(id). |
+| 4 | `competitor_name` | `text` | não |  |  | Coluna competitor_name da tabela public.competitor_mentions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `timestamp_sec` | `integer` | sim |  |  | Coluna timestamp_sec da tabela public.competitor_mentions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `context_snippet` | `text` | sim |  |  | Coluna context_snippet da tabela public.competitor_mentions. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `battle_card_id` | `uuid` | sim |  |  | Coluna battle_card_id da tabela public.competitor_mentions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.competitor_mentions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

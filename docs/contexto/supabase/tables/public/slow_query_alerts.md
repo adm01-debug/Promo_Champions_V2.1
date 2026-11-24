@@ -18,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `query_hash` | `text` | não |  |  |  |
-| 3 | `query_preview` | `text` | não |  |  |  |
-| 4 | `mean_exec_ms` | `double precision` | não |  |  |  |
-| 5 | `max_exec_ms` | `double precision` | não |  |  |  |
-| 6 | `calls` | `bigint` | não |  |  |  |
-| 7 | `total_exec_ms` | `double precision` | não |  |  |  |
-| 8 | `threshold_mean_ms` | `double precision` | não |  |  |  |
-| 9 | `threshold_min_calls` | `bigint` | não |  |  |  |
-| 10 | `first_detected_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `last_detected_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `detection_count` | `integer` | não | `1` |  |  |
-| 13 | `acknowledged_at` | `timestamp with time zone` | sim |  |  |  |
-| 14 | `acknowledged_by` | `uuid` | sim |  |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.slow_query_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `query_hash` | `text` | não |  |  | Coluna query_hash da tabela public.slow_query_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `query_preview` | `text` | não |  |  | Coluna query_preview da tabela public.slow_query_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `mean_exec_ms` | `double precision` | não |  |  | Coluna mean_exec_ms da tabela public.slow_query_alerts. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 5 | `max_exec_ms` | `double precision` | não |  |  | Coluna max_exec_ms da tabela public.slow_query_alerts. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 6 | `calls` | `bigint` | não |  |  | Coluna calls da tabela public.slow_query_alerts. Tipo PostgreSQL: bigint. Não aceita NULL. |
+| 7 | `total_exec_ms` | `double precision` | não |  |  | Coluna total_exec_ms da tabela public.slow_query_alerts. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 8 | `threshold_mean_ms` | `double precision` | não |  |  | Coluna threshold_mean_ms da tabela public.slow_query_alerts. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 9 | `threshold_min_calls` | `bigint` | não |  |  | Coluna threshold_min_calls da tabela public.slow_query_alerts. Tipo PostgreSQL: bigint. Não aceita NULL. |
+| 10 | `first_detected_at` | `timestamp with time zone` | não | `now()` |  | Coluna first_detected_at da tabela public.slow_query_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `last_detected_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_detected_at da tabela public.slow_query_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `detection_count` | `integer` | não | `1` |  | Coluna detection_count da tabela public.slow_query_alerts. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 13 | `acknowledged_at` | `timestamp with time zone` | sim |  |  | Coluna acknowledged_at da tabela public.slow_query_alerts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 14 | `acknowledged_by` | `uuid` | sim |  |  | Coluna acknowledged_by da tabela public.slow_query_alerts. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.slow_query_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.win_loss_analyses
 
+> Tabela public.win_loss_analyses. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, outcome text NOT NULL, primary_reason text NULLABLE, secondary_reasons jsonb NOT NULL DEFAULT '[]'::jsonb, competitor text NULLABLE, lost_stage text NULLABLE, cycle_days numeric NULLABLE, amount numeric NULLABLE, segment text NULLABLE, analyzed_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `outcome` | `text` | não |  |  |  |
-| 4 | `primary_reason` | `text` | sim |  |  |  |
-| 5 | `secondary_reasons` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 6 | `competitor` | `text` | sim |  |  |  |
-| 7 | `lost_stage` | `text` | sim |  |  |  |
-| 8 | `cycle_days` | `numeric` | sim |  |  |  |
-| 9 | `amount` | `numeric` | sim |  |  |  |
-| 10 | `segment` | `text` | sim |  |  |  |
-| 11 | `analyzed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_loss_analyses. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.win_loss_analyses. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `outcome` | `text` | não |  |  | Coluna outcome da tabela public.win_loss_analyses. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (outcome = ANY (ARRAY['won'::text, 'lost'::text])). |
+| 4 | `primary_reason` | `text` | sim |  |  | Coluna primary_reason da tabela public.win_loss_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `secondary_reasons` | `jsonb` | não | `'[]'::jsonb` |  | Coluna secondary_reasons da tabela public.win_loss_analyses. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 6 | `competitor` | `text` | sim |  |  | Coluna competitor da tabela public.win_loss_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `lost_stage` | `text` | sim |  |  | Coluna lost_stage da tabela public.win_loss_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `cycle_days` | `numeric` | sim |  |  | Coluna cycle_days da tabela public.win_loss_analyses. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 9 | `amount` | `numeric` | sim |  |  | Coluna amount da tabela public.win_loss_analyses. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 10 | `segment` | `text` | sim |  |  | Coluna segment da tabela public.win_loss_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `analyzed_at` | `timestamp with time zone` | não | `now()` |  | Coluna analyzed_at da tabela public.win_loss_analyses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.win_loss_analyses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

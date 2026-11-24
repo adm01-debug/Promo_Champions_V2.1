@@ -1,5 +1,7 @@
 # public.contact_send_time_profile
 
+> Tabela public.contact_send_time_profile. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), contact_id uuid NOT NULL, contact_type text NOT NULL, hour_of_day smallint NOT NULL, day_of_week smallint NOT NULL, opens integer NOT NULL DEFAULT 0, clicks integer NOT NULL DEFAULT 0, replies integer NOT NULL DEFAULT 0, score numeric NULLABLE DEFAULT ((((opens)::numeric * 1.0) + ((clicks)::numeric * 2.0)) + ((replies)::numeric * 5.0)), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,16 +19,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `contact_id` | `uuid` | não |  |  |  |
-| 3 | `contact_type` | `text` | não |  |  |  |
-| 4 | `hour_of_day` | `smallint` | não |  |  |  |
-| 5 | `day_of_week` | `smallint` | não |  |  |  |
-| 6 | `opens` | `integer` | não | `0` |  |  |
-| 7 | `clicks` | `integer` | não | `0` |  |  |
-| 8 | `replies` | `integer` | não | `0` |  |  |
-| 9 | `score` | `numeric` | sim | `((((opens)::numeric * 1.0) + ((clicks)::numeric * 2.0)) + ((replies)::numeric * 5.0))` | s |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.contact_send_time_profile. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `contact_id` | `uuid` | não |  |  | Coluna contact_id da tabela public.contact_send_time_profile. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `contact_type` | `text` | não |  |  | Coluna contact_type da tabela public.contact_send_time_profile. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (contact_type = ANY (ARRAY['lead'::text, 'client'::text])). |
+| 4 | `hour_of_day` | `smallint` | não |  |  | Coluna hour_of_day da tabela public.contact_send_time_profile. Tipo PostgreSQL: smallint. Não aceita NULL. Validação CHECK: CHECK (hour_of_day >= 0 AND hour_of_day <= 23). |
+| 5 | `day_of_week` | `smallint` | não |  |  | Coluna day_of_week da tabela public.contact_send_time_profile. Tipo PostgreSQL: smallint. Não aceita NULL. Validação CHECK: CHECK (day_of_week >= 0 AND day_of_week <= 6). |
+| 6 | `opens` | `integer` | não | `0` |  | Coluna opens da tabela public.contact_send_time_profile. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `clicks` | `integer` | não | `0` |  | Coluna clicks da tabela public.contact_send_time_profile. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `replies` | `integer` | não | `0` |  | Coluna replies da tabela public.contact_send_time_profile. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `score` | `numeric` | sim | `((((opens)::numeric * 1.0) + ((clicks)::numeric * 2.0)) + ((replies)::numeric * 5.0))` | s | Coluna score da tabela public.contact_send_time_profile. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: ((((opens)::numeric * 1.0) + ((clicks)::numeric * 2.0)) + ((replies)::numeric * 5.0)). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.contact_send_time_profile. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.cadence_advanced_stats
 
+> Tabela public.cadence_advanced_stats. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), cadence_id uuid NULLABLE, click_rate numeric NULLABLE DEFAULT 0, bookings_count integer NULLABLE DEFAULT 0, recorded_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: cadence_id → public.cadences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `cadence_id` | `uuid` | sim |  |  |  |
-| 3 | `click_rate` | `numeric` | sim | `0` |  |  |
-| 4 | `bookings_count` | `integer` | sim | `0` |  |  |
-| 5 | `recorded_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cadence_advanced_stats. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `cadence_id` | `uuid` | sim |  |  | Coluna cadence_id da tabela public.cadence_advanced_stats. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.cadences(id). |
+| 3 | `click_rate` | `numeric` | sim | `0` |  | Coluna click_rate da tabela public.cadence_advanced_stats. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: 0. |
+| 4 | `bookings_count` | `integer` | sim | `0` |  | Coluna bookings_count da tabela public.cadence_advanced_stats. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 5 | `recorded_at` | `timestamp with time zone` | sim | `now()` |  | Coluna recorded_at da tabela public.cadence_advanced_stats. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

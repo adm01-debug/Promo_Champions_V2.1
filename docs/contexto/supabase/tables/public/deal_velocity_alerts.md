@@ -1,5 +1,7 @@
 # public.deal_velocity_alerts
 
+> Tabela public.deal_velocity_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, current_stage text NOT NULL, hours_in_stage numeric NOT NULL DEFAULT 0, baseline_p75 numeric NOT NULL DEFAULT 0, baseline_p90 numeric NOT NULL DEFAULT 0, severity text NOT NULL DEFAULT 'watch'::text, recommendation text NULLABLE, detected_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `current_stage` | `text` | não |  |  |  |
-| 4 | `hours_in_stage` | `numeric` | não | `0` |  |  |
-| 5 | `baseline_p75` | `numeric` | não | `0` |  |  |
-| 6 | `baseline_p90` | `numeric` | não | `0` |  |  |
-| 7 | `severity` | `text` | não | `'watch'::text` |  |  |
-| 8 | `recommendation` | `text` | sim |  |  |  |
-| 9 | `detected_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_velocity_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_velocity_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `current_stage` | `text` | não |  |  | Coluna current_stage da tabela public.deal_velocity_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `hours_in_stage` | `numeric` | não | `0` |  | Coluna hours_in_stage da tabela public.deal_velocity_alerts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `baseline_p75` | `numeric` | não | `0` |  | Coluna baseline_p75 da tabela public.deal_velocity_alerts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `baseline_p90` | `numeric` | não | `0` |  | Coluna baseline_p90 da tabela public.deal_velocity_alerts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `severity` | `text` | não | `'watch'::text` |  | Coluna severity da tabela public.deal_velocity_alerts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'watch'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['watch'::text, 'stuck'::text, 'critical'::text])). |
+| 8 | `recommendation` | `text` | sim |  |  | Coluna recommendation da tabela public.deal_velocity_alerts. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `detected_at` | `timestamp with time zone` | não | `now()` |  | Coluna detected_at da tabela public.deal_velocity_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

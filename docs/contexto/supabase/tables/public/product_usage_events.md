@@ -1,5 +1,7 @@
 # public.product_usage_events
 
+> Eventos de uso de funcionalidades registrados para contas empresariais.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `user_email` | `text` | sim |  |  |  |
-| 4 | `feature_key` | `text` | não |  |  |  |
-| 5 | `event_type` | `text` | não | `'feature_use'::text` |  |  |
-| 6 | `occurred_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do evento de uso. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial associada ao evento. |
+| 3 | `user_email` | `text` | sim |  |  | E-mail do usuário que realizou a ação, quando disponível. |
+| 4 | `feature_key` | `text` | não |  |  | Chave da funcionalidade utilizada. |
+| 5 | `event_type` | `text` | não | `'feature_use'::text` |  | Tipo de evento de uso. |
+| 6 | `occurred_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que o evento ocorreu. |
+| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Metadados adicionais do evento em formato JSON. |
 
 
 ## Constraints

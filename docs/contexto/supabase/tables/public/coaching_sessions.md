@@ -1,5 +1,7 @@
 # public.coaching_sessions
 
+> Tabela public.coaching_sessions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, coach_id uuid NOT NULL, scheduled_at timestamp with time zone NOT NULL, duration_min integer NOT NULL DEFAULT 30, status text NOT NULL DEFAULT 'scheduled'::text, focus_skills text[] NOT NULL DEFAULT '{}'::text[], agenda jsonb NOT NULL DEFAULT '{}'::jsonb, notes text NULLABLE, action_items jsonb NOT NULL DEFAULT '[]'::jsonb, outcome_rating integer NULLABLE, completed_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,20 +19,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `coach_id` | `uuid` | não |  |  |  |
-| 4 | `scheduled_at` | `timestamp with time zone` | não |  |  |  |
-| 5 | `duration_min` | `integer` | não | `30` |  |  |
-| 6 | `status` | `text` | não | `'scheduled'::text` |  |  |
-| 7 | `focus_skills` | `text[]` | não | `'{}'::text[]` |  |  |
-| 8 | `agenda` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 9 | `notes` | `text` | sim |  |  |  |
-| 10 | `action_items` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 11 | `outcome_rating` | `integer` | sim |  |  |  |
-| 12 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.coaching_sessions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.coaching_sessions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `coach_id` | `uuid` | não |  |  | Coluna coach_id da tabela public.coaching_sessions. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `scheduled_at` | `timestamp with time zone` | não |  |  | Coluna scheduled_at da tabela public.coaching_sessions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 5 | `duration_min` | `integer` | não | `30` |  | Coluna duration_min da tabela public.coaching_sessions. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 30. Validação CHECK: CHECK (duration_min > 0 AND duration_min <= 240). |
+| 6 | `status` | `text` | não | `'scheduled'::text` |  | Coluna status da tabela public.coaching_sessions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'scheduled'::text. Validação CHECK: CHECK (status = ANY (ARRAY['scheduled'::text, 'completed'::text, 'canceled'::text])). |
+| 7 | `focus_skills` | `text[]` | não | `'{}'::text[]` |  | Coluna focus_skills da tabela public.coaching_sessions. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 8 | `agenda` | `jsonb` | não | `'{}'::jsonb` |  | Coluna agenda da tabela public.coaching_sessions. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 9 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.coaching_sessions. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `action_items` | `jsonb` | não | `'[]'::jsonb` |  | Coluna action_items da tabela public.coaching_sessions. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 11 | `outcome_rating` | `integer` | sim |  |  | Coluna outcome_rating da tabela public.coaching_sessions. Tipo PostgreSQL: integer. Aceita NULL. Validação CHECK: CHECK (outcome_rating >= 1 AND outcome_rating <= 5). |
+| 12 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.coaching_sessions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.coaching_sessions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.coaching_sessions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

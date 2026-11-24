@@ -1,5 +1,7 @@
 # public.ai_agent_actions
 
+> Tabela public.ai_agent_actions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), run_id uuid NOT NULL, step_index integer NOT NULL, tool_name text NOT NULL, tool_input jsonb NOT NULL DEFAULT '{}'::jsonb, tool_output jsonb NULLABLE, status text NOT NULL DEFAULT 'success'::text, executed_by text NOT NULL DEFAULT 'ai'::text, executed_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: run_id → public.ai_agent_runs(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `run_id` | `uuid` | não |  |  |  |
-| 3 | `step_index` | `integer` | não |  |  |  |
-| 4 | `tool_name` | `text` | não |  |  |  |
-| 5 | `tool_input` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `tool_output` | `jsonb` | sim |  |  |  |
-| 7 | `status` | `text` | não | `'success'::text` |  |  |
-| 8 | `executed_by` | `text` | não | `'ai'::text` |  |  |
-| 9 | `executed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.ai_agent_actions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `run_id` | `uuid` | não |  |  | Coluna run_id da tabela public.ai_agent_actions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.ai_agent_runs(id). |
+| 3 | `step_index` | `integer` | não |  |  | Coluna step_index da tabela public.ai_agent_actions. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `tool_name` | `text` | não |  |  | Coluna tool_name da tabela public.ai_agent_actions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `tool_input` | `jsonb` | não | `'{}'::jsonb` |  | Coluna tool_input da tabela public.ai_agent_actions. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 6 | `tool_output` | `jsonb` | sim |  |  | Coluna tool_output da tabela public.ai_agent_actions. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 7 | `status` | `text` | não | `'success'::text` |  | Coluna status da tabela public.ai_agent_actions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'success'::text. Validação CHECK: CHECK (status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text, 'executing'::text])). |
+| 8 | `executed_by` | `text` | não | `'ai'::text` |  | Coluna executed_by da tabela public.ai_agent_actions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'ai'::text. Validação CHECK: CHECK (executed_by = ANY (ARRAY['ai'::text, 'user'::text, 'system'::text])). |
+| 9 | `executed_at` | `timestamp with time zone` | não | `now()` |  | Coluna executed_at da tabela public.ai_agent_actions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

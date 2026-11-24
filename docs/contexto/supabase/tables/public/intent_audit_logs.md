@@ -1,5 +1,7 @@
 # public.intent_audit_logs
 
+> Tabela public.intent_audit_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), lead_id uuid NULLABLE, event_type text NOT NULL, details jsonb NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), rule_applied jsonb NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `lead_id` | `uuid` | sim |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `details` | `jsonb` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.intent_audit_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `lead_id` | `uuid` | sim |  |  | Coluna lead_id da tabela public.intent_audit_logs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `event_type` | `text` | não |  |  | Coluna event_type da tabela public.intent_audit_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `details` | `jsonb` | sim |  |  | Coluna details da tabela public.intent_audit_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.intent_audit_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 | 6 | `rule_applied` | `jsonb` | sim |  |  | JSON containing the rule that triggered this log entry |
 
 

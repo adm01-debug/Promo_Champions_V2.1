@@ -1,5 +1,7 @@
 # public.known_devices
 
+> Dispositivos reconhecidos para uma conta, com histórico de identificação e confiança.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `device_fingerprint` | `text` | não |  |  |  |
-| 4 | `device_name` | `text` | sim |  |  |  |
-| 5 | `browser` | `text` | sim |  |  |  |
-| 6 | `os` | `text` | sim |  |  |  |
-| 7 | `ip_address` | `text` | sim |  |  |  |
-| 8 | `location` | `text` | sim |  |  |  |
-| 9 | `first_seen_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 10 | `last_seen_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 11 | `is_trusted` | `boolean` | sim | `false` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do dispositivo registrado. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth associado ao dispositivo. |
+| 3 | `device_fingerprint` | `text` | não |  |  | Identificador derivado usado para reconhecer o dispositivo. |
+| 4 | `device_name` | `text` | sim |  |  | Nome atribuído ao dispositivo, quando disponível. |
+| 5 | `browser` | `text` | sim |  |  | Navegador detectado para o dispositivo. |
+| 6 | `os` | `text` | sim |  |  | Sistema operacional detectado para o dispositivo. |
+| 7 | `ip_address` | `text` | sim |  |  | Endereço IP observado para o dispositivo, quando disponível. |
+| 8 | `location` | `text` | sim |  |  | Localização estimada do dispositivo, quando disponível. |
+| 9 | `first_seen_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora em que o dispositivo foi observado pela primeira vez. |
+| 10 | `last_seen_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora em que o dispositivo foi observado mais recentemente. |
+| 11 | `is_trusted` | `boolean` | sim | `false` |  | Indica se o dispositivo está marcado como confiável. |
+| 12 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do registro. |
 
 
 ## Constraints

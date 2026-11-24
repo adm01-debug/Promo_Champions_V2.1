@@ -1,5 +1,7 @@
 # public.tournament_matches
 
+> Tabela public.tournament_matches. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), tournament_id uuid NOT NULL, round_number integer NOT NULL, match_order integer NOT NULL DEFAULT 0, player1_id uuid NULLABLE, player2_id uuid NULLABLE, player1_score numeric NOT NULL DEFAULT 0, player2_score numeric NOT NULL DEFAULT 0, winner_id uuid NULLABLE, status text NOT NULL DEFAULT 'pending'::text, started_at timestamp with time zone NULLABLE, completed_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: player1_id → public.salespeople(id); player2_id → public.salespeople(id); tournament_id → public.tournaments(id); winner_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `tournament_id` | `uuid` | não |  |  |  |
-| 3 | `round_number` | `integer` | não |  |  |  |
-| 4 | `match_order` | `integer` | não | `0` |  |  |
-| 5 | `player1_id` | `uuid` | sim |  |  |  |
-| 6 | `player2_id` | `uuid` | sim |  |  |  |
-| 7 | `player1_score` | `numeric` | não | `0` |  |  |
-| 8 | `player2_score` | `numeric` | não | `0` |  |  |
-| 9 | `winner_id` | `uuid` | sim |  |  |  |
-| 10 | `status` | `text` | não | `'pending'::text` |  |  |
-| 11 | `started_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.tournament_matches. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `tournament_id` | `uuid` | não |  |  | Coluna tournament_id da tabela public.tournament_matches. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.tournaments(id). |
+| 3 | `round_number` | `integer` | não |  |  | Coluna round_number da tabela public.tournament_matches. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `match_order` | `integer` | não | `0` |  | Coluna match_order da tabela public.tournament_matches. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `player1_id` | `uuid` | sim |  |  | Coluna player1_id da tabela public.tournament_matches. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 6 | `player2_id` | `uuid` | sim |  |  | Coluna player2_id da tabela public.tournament_matches. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 7 | `player1_score` | `numeric` | não | `0` |  | Coluna player1_score da tabela public.tournament_matches. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `player2_score` | `numeric` | não | `0` |  | Coluna player2_score da tabela public.tournament_matches. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `winner_id` | `uuid` | sim |  |  | Coluna winner_id da tabela public.tournament_matches. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 10 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.tournament_matches. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'active'::text, 'completed'::text])). |
+| 11 | `started_at` | `timestamp with time zone` | sim |  |  | Coluna started_at da tabela public.tournament_matches. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.tournament_matches. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.tournament_matches. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

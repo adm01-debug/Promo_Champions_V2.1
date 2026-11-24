@@ -1,5 +1,7 @@
 # public.commercial_approval_requests
 
+> Tabela public.commercial_approval_requests. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), requester_id uuid NULLABLE, type text NOT NULL, entity_id uuid NULLABLE, competence_month date NOT NULL, new_values jsonb NOT NULL, old_values jsonb NULLABLE, status text NOT NULL DEFAULT 'pending'::text, approver_id uuid NULLABLE, justification text NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(), effective_at timestamp with time zone NULLABLE, approved_at timestamp with time zone NULLABLE. Relacionamentos FK: approver_id → auth.users(id); requester_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `requester_id` | `uuid` | sim |  |  |  |
-| 3 | `type` | `text` | não |  |  |  |
-| 4 | `entity_id` | `uuid` | sim |  |  |  |
-| 5 | `competence_month` | `date` | não |  |  |  |
-| 6 | `new_values` | `jsonb` | não |  |  |  |
-| 7 | `old_values` | `jsonb` | sim |  |  |  |
-| 8 | `status` | `text` | não | `'pending'::text` |  |  |
-| 9 | `approver_id` | `uuid` | sim |  |  |  |
-| 10 | `justification` | `text` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.commercial_approval_requests. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `requester_id` | `uuid` | sim |  |  | Coluna requester_id da tabela public.commercial_approval_requests. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `type` | `text` | não |  |  | Coluna type da tabela public.commercial_approval_requests. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (type = ANY (ARRAY['goal'::text, 'scoring_rule'::text, 'commission'::text])). |
+| 4 | `entity_id` | `uuid` | sim |  |  | Coluna entity_id da tabela public.commercial_approval_requests. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `competence_month` | `date` | não |  |  | Coluna competence_month da tabela public.commercial_approval_requests. Tipo PostgreSQL: date. Não aceita NULL. |
+| 6 | `new_values` | `jsonb` | não |  |  | Coluna new_values da tabela public.commercial_approval_requests. Tipo PostgreSQL: jsonb. Não aceita NULL. |
+| 7 | `old_values` | `jsonb` | sim |  |  | Coluna old_values da tabela public.commercial_approval_requests. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 8 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.commercial_approval_requests. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])). |
+| 9 | `approver_id` | `uuid` | sim |  |  | Coluna approver_id da tabela public.commercial_approval_requests. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 10 | `justification` | `text` | sim |  |  | Coluna justification da tabela public.commercial_approval_requests. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.commercial_approval_requests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.commercial_approval_requests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 | 13 | `effective_at` | `timestamp with time zone` | sim |  |  | When the approved change should actually take effect in the system. |
-| 14 | `approved_at` | `timestamp with time zone` | sim |  |  |  |
+| 14 | `approved_at` | `timestamp with time zone` | sim |  |  | Coluna approved_at da tabela public.commercial_approval_requests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

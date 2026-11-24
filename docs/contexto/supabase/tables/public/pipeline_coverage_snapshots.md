@@ -1,5 +1,7 @@
 # public.pipeline_coverage_snapshots
 
+> Tabela public.pipeline_coverage_snapshots. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), period_start date NOT NULL, period_end date NOT NULL, owner_id uuid NULLABLE, segment text NULLABLE, stage text NULLABLE, quota_amount numeric NOT NULL DEFAULT 0, pipeline_amount numeric NOT NULL DEFAULT 0, weighted_pipeline numeric NOT NULL DEFAULT 0, coverage_ratio numeric NOT NULL DEFAULT 0, target_ratio numeric NOT NULL DEFAULT 3.0, health text NOT NULL DEFAULT 'critical'::text, gap_to_target numeric NOT NULL DEFAULT 0, deals_count integer NOT NULL DEFAULT 0, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,22 +19,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `period_start` | `date` | não |  |  |  |
-| 3 | `period_end` | `date` | não |  |  |  |
-| 4 | `owner_id` | `uuid` | sim |  |  |  |
-| 5 | `segment` | `text` | sim |  |  |  |
-| 6 | `stage` | `text` | sim |  |  |  |
-| 7 | `quota_amount` | `numeric` | não | `0` |  |  |
-| 8 | `pipeline_amount` | `numeric` | não | `0` |  |  |
-| 9 | `weighted_pipeline` | `numeric` | não | `0` |  |  |
-| 10 | `coverage_ratio` | `numeric` | não | `0` |  |  |
-| 11 | `target_ratio` | `numeric` | não | `3.0` |  |  |
-| 12 | `health` | `text` | não | `'critical'::text` |  |  |
-| 13 | `gap_to_target` | `numeric` | não | `0` |  |  |
-| 14 | `deals_count` | `integer` | não | `0` |  |  |
-| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: date. Não aceita NULL. |
+| 3 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `segment` | `text` | sim |  |  | Coluna segment da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `stage` | `text` | sim |  |  | Coluna stage da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `quota_amount` | `numeric` | não | `0` |  | Coluna quota_amount da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `pipeline_amount` | `numeric` | não | `0` |  | Coluna pipeline_amount da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `weighted_pipeline` | `numeric` | não | `0` |  | Coluna weighted_pipeline da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `coverage_ratio` | `numeric` | não | `0` |  | Coluna coverage_ratio da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `target_ratio` | `numeric` | não | `3.0` |  | Coluna target_ratio da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 3.0. |
+| 12 | `health` | `text` | não | `'critical'::text` |  | Coluna health da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'critical'::text. Validação CHECK: CHECK (health = ANY (ARRAY['critical'::text, 'weak'::text, 'healthy'::text, 'strong'::text])). |
+| 13 | `gap_to_target` | `numeric` | não | `0` |  | Coluna gap_to_target da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 14 | `deals_count` | `integer` | não | `0` |  | Coluna deals_count da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.pipeline_coverage_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

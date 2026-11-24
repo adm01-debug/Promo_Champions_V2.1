@@ -1,5 +1,7 @@
 # public.winloss_webhook_dispatch_metrics
 
+> Tabela public.winloss_webhook_dispatch_metrics. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), metric text NOT NULL, event text NOT NULL, request_id text NULLABLE, active_subscriptions_count integer NOT NULL DEFAULT 0, matching_subscriptions_count integer NOT NULL DEFAULT 0, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `metric` | `text` | não |  |  |  |
-| 3 | `event` | `text` | não |  |  |  |
-| 4 | `request_id` | `text` | sim |  |  |  |
-| 5 | `active_subscriptions_count` | `integer` | não | `0` |  |  |
-| 6 | `matching_subscriptions_count` | `integer` | não | `0` |  |  |
-| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `metric` | `text` | não |  |  | Coluna metric da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `event` | `text` | não |  |  | Coluna event da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `active_subscriptions_count` | `integer` | não | `0` |  | Coluna active_subscriptions_count da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `matching_subscriptions_count` | `integer` | não | `0` |  | Coluna matching_subscriptions_count da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.winloss_webhook_dispatch_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

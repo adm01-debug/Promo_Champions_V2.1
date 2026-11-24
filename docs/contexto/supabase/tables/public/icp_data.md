@@ -1,5 +1,7 @@
 # public.icp_data
 
+> Dados de perfil de cliente ideal (ICP) associados a clientes.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | não |  |  |  |
-| 3 | `ramo_atividade` | `text` | sim |  |  |  |
-| 4 | `grupo_nicho` | `text` | sim |  |  |  |
-| 5 | `capital_social` | `numeric(15,2)` | sim |  |  |  |
-| 6 | `num_colaboradores` | `integer` | sim |  |  |  |
-| 7 | `is_icp_match` | `boolean` | sim | `false` |  |  |
-| 8 | `bitrix_id` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `icp_score` | `integer` | sim | `0` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro ICP. |
+| 2 | `client_id` | `uuid` | não |  |  | Cliente ao qual os dados ICP pertencem. |
+| 3 | `ramo_atividade` | `text` | sim |  |  | Ramo de atividade do cliente, quando informado. |
+| 4 | `grupo_nicho` | `text` | sim |  |  | Grupo ou nicho de mercado do cliente, quando informado. |
+| 5 | `capital_social` | `numeric(15,2)` | sim |  |  | Capital social declarado pelo cliente, em BRL. |
+| 6 | `num_colaboradores` | `integer` | sim |  |  | Número de colaboradores declarado ou estimado. |
+| 7 | `is_icp_match` | `boolean` | sim | `false` |  | Indica se o cliente corresponde aos critérios de perfil de cliente ideal. |
+| 8 | `bitrix_id` | `text` | sim |  |  | Identificador do cliente no Bitrix24, quando disponível. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro ICP. |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro ICP. |
+| 11 | `icp_score` | `integer` | sim | `0` |  | Pontuação de aderência do cliente ao perfil ICP; a escala é definida pela aplicação. |
 
 
 ## Constraints

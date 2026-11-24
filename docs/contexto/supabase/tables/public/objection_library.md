@@ -1,5 +1,7 @@
 # public.objection_library
 
+> Tabela public.objection_library. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), objection_type text NOT NULL, pattern_text text NOT NULL, frequency_count integer NOT NULL DEFAULT 1, best_response_text text NULLABLE, best_response_recording_id uuid NULLABLE, last_seen_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: best_response_recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `objection_type` | `text` | não |  |  |  |
-| 3 | `pattern_text` | `text` | não |  |  |  |
-| 4 | `frequency_count` | `integer` | não | `1` |  |  |
-| 5 | `best_response_text` | `text` | sim |  |  |  |
-| 6 | `best_response_recording_id` | `uuid` | sim |  |  |  |
-| 7 | `last_seen_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.objection_library. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `objection_type` | `text` | não |  |  | Coluna objection_type da tabela public.objection_library. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `pattern_text` | `text` | não |  |  | Coluna pattern_text da tabela public.objection_library. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `frequency_count` | `integer` | não | `1` |  | Coluna frequency_count da tabela public.objection_library. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 5 | `best_response_text` | `text` | sim |  |  | Coluna best_response_text da tabela public.objection_library. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `best_response_recording_id` | `uuid` | sim |  |  | Coluna best_response_recording_id da tabela public.objection_library. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.call_recordings(id). |
+| 7 | `last_seen_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_seen_at da tabela public.objection_library. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.objection_library. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

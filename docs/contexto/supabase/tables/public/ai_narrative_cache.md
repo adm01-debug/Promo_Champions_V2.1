@@ -1,5 +1,7 @@
 # public.ai_narrative_cache
 
+> Tabela public.ai_narrative_cache. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), cache_key text NOT NULL, narrative_type text NOT NULL, payload_hash text NOT NULL, narrative text NOT NULL, model text NULLABLE, tokens_input integer NULLABLE, tokens_output integer NULLABLE, hit_count integer NOT NULL DEFAULT 0, expires_at timestamp with time zone NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `cache_key` | `text` | não |  |  |  |
-| 3 | `narrative_type` | `text` | não |  |  |  |
-| 4 | `payload_hash` | `text` | não |  |  |  |
-| 5 | `narrative` | `text` | não |  |  |  |
-| 6 | `model` | `text` | sim |  |  |  |
-| 7 | `tokens_input` | `integer` | sim |  |  |  |
-| 8 | `tokens_output` | `integer` | sim |  |  |  |
-| 9 | `hit_count` | `integer` | não | `0` |  |  |
-| 10 | `expires_at` | `timestamp with time zone` | não |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.ai_narrative_cache. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `cache_key` | `text` | não |  |  | Coluna cache_key da tabela public.ai_narrative_cache. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `narrative_type` | `text` | não |  |  | Coluna narrative_type da tabela public.ai_narrative_cache. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `payload_hash` | `text` | não |  |  | Coluna payload_hash da tabela public.ai_narrative_cache. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `narrative` | `text` | não |  |  | Coluna narrative da tabela public.ai_narrative_cache. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `model` | `text` | sim |  |  | Coluna model da tabela public.ai_narrative_cache. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `tokens_input` | `integer` | sim |  |  | Coluna tokens_input da tabela public.ai_narrative_cache. Tipo PostgreSQL: integer. Aceita NULL. |
+| 8 | `tokens_output` | `integer` | sim |  |  | Coluna tokens_output da tabela public.ai_narrative_cache. Tipo PostgreSQL: integer. Aceita NULL. |
+| 9 | `hit_count` | `integer` | não | `0` |  | Coluna hit_count da tabela public.ai_narrative_cache. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `expires_at` | `timestamp with time zone` | não |  |  | Coluna expires_at da tabela public.ai_narrative_cache. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.ai_narrative_cache. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.ai_narrative_cache. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

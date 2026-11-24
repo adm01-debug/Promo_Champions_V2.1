@@ -1,5 +1,7 @@
 # public.sequence_steps
 
+> Tabela public.sequence_steps. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sequence_id uuid NOT NULL, step_order integer NOT NULL, channel text NOT NULL, delay_days integer NOT NULL DEFAULT 0, delay_hours integer NOT NULL DEFAULT 0, template_id uuid NULLABLE, subject text NULLABLE, body text NULLABLE, conditions jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), whatsapp_template_id text NULLABLE. Relacionamentos FK: sequence_id → public.sequences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sequence_id` | `uuid` | não |  |  |  |
-| 3 | `step_order` | `integer` | não |  |  |  |
-| 4 | `channel` | `text` | não |  |  |  |
-| 5 | `delay_days` | `integer` | não | `0` |  |  |
-| 6 | `delay_hours` | `integer` | não | `0` |  |  |
-| 7 | `template_id` | `uuid` | sim |  |  |  |
-| 8 | `subject` | `text` | sim |  |  |  |
-| 9 | `body` | `text` | sim |  |  |  |
-| 10 | `conditions` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `whatsapp_template_id` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequence_steps. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sequence_id` | `uuid` | não |  |  | Coluna sequence_id da tabela public.sequence_steps. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequences(id). |
+| 3 | `step_order` | `integer` | não |  |  | Coluna step_order da tabela public.sequence_steps. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 4 | `channel` | `text` | não |  |  | Coluna channel da tabela public.sequence_steps. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'call'::text, 'linkedin'::text, 'task'::text])). |
+| 5 | `delay_days` | `integer` | não | `0` |  | Coluna delay_days da tabela public.sequence_steps. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `delay_hours` | `integer` | não | `0` |  | Coluna delay_hours da tabela public.sequence_steps. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `template_id` | `uuid` | sim |  |  | Coluna template_id da tabela public.sequence_steps. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 8 | `subject` | `text` | sim |  |  | Coluna subject da tabela public.sequence_steps. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `body` | `text` | sim |  |  | Coluna body da tabela public.sequence_steps. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `conditions` | `jsonb` | não | `'{}'::jsonb` |  | Coluna conditions da tabela public.sequence_steps. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sequence_steps. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `whatsapp_template_id` | `text` | sim |  |  | Coluna whatsapp_template_id da tabela public.sequence_steps. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

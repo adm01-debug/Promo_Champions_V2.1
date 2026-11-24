@@ -1,5 +1,7 @@
 # public.sequences
 
+> Tabela public.sequences. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, name text NOT NULL, description text NULLABLE, channel_mix text[] NOT NULL DEFAULT ARRAY[]::text[], enabled boolean NOT NULL DEFAULT true, exit_on_reply boolean NOT NULL DEFAULT true, exit_on_meeting boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), send_time_optimization boolean NOT NULL DEFAULT true, auto_pause_on_reply boolean NOT NULL DEFAULT true, auto_pause_on_bounce boolean NOT NULL DEFAULT true.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `channel_mix` | `text[]` | não | `ARRAY[]::text[]` |  |  |
-| 6 | `enabled` | `boolean` | não | `true` |  |  |
-| 7 | `exit_on_reply` | `boolean` | não | `true` |  |  |
-| 8 | `exit_on_meeting` | `boolean` | não | `true` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `send_time_optimization` | `boolean` | não | `true` |  |  |
-| 12 | `auto_pause_on_reply` | `boolean` | não | `true` |  |  |
-| 13 | `auto_pause_on_bounce` | `boolean` | não | `true` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequences. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.sequences. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.sequences. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.sequences. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `channel_mix` | `text[]` | não | `ARRAY[]::text[]` |  | Coluna channel_mix da tabela public.sequences. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: ARRAY[]::text[]. |
+| 6 | `enabled` | `boolean` | não | `true` |  | Coluna enabled da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 7 | `exit_on_reply` | `boolean` | não | `true` |  | Coluna exit_on_reply da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 8 | `exit_on_meeting` | `boolean` | não | `true` |  | Coluna exit_on_meeting da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sequences. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sequences. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `send_time_optimization` | `boolean` | não | `true` |  | Coluna send_time_optimization da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 12 | `auto_pause_on_reply` | `boolean` | não | `true` |  | Coluna auto_pause_on_reply da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 13 | `auto_pause_on_bounce` | `boolean` | não | `true` |  | Coluna auto_pause_on_bounce da tabela public.sequences. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
 
 
 ## Constraints

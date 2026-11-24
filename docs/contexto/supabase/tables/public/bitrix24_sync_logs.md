@@ -1,5 +1,7 @@
 # public.bitrix24_sync_logs
 
+> Histórico de execuções de sincronização com o Bitrix24.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sync_type` | `text` | não | `'sync-all'::text` |  |  |
-| 3 | `status` | `text` | não | `'success'::text` |  |  |
-| 4 | `companies_from_bitrix` | `integer` | sim | `0` |  |  |
-| 5 | `companies_to_bitrix` | `integer` | sim | `0` |  |  |
-| 6 | `deals_from_bitrix` | `integer` | sim | `0` |  |  |
-| 7 | `deals_to_bitrix` | `integer` | sim | `0` |  |  |
-| 8 | `error_message` | `text` | sim |  |  |  |
-| 9 | `duration_ms` | `integer` | sim |  |  |  |
-| 10 | `triggered_by` | `text` | sim | `'manual'::text` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da execução de sincronização. |
+| 2 | `sync_type` | `text` | não | `'sync-all'::text` |  | Tipo de sincronização executada. |
+| 3 | `status` | `text` | não | `'success'::text` |  | Resultado ou estado da sincronização. |
+| 4 | `companies_from_bitrix` | `integer` | sim | `0` |  | Quantidade de empresas recebidas do Bitrix24. |
+| 5 | `companies_to_bitrix` | `integer` | sim | `0` |  | Quantidade de empresas enviadas ao Bitrix24. |
+| 6 | `deals_from_bitrix` | `integer` | sim | `0` |  | Quantidade de negócios recebidos do Bitrix24. |
+| 7 | `deals_to_bitrix` | `integer` | sim | `0` |  | Quantidade de negócios enviados ao Bitrix24. |
+| 8 | `error_message` | `text` | sim |  |  | Mensagem de erro da sincronização, quando aplicável. |
+| 9 | `duration_ms` | `integer` | sim |  |  | Duração da sincronização em milissegundos. |
+| 10 | `triggered_by` | `text` | sim | `'manual'::text` |  | Origem que iniciou a sincronização, quando informada. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro de sincronização. |
 
 
 ## Constraints

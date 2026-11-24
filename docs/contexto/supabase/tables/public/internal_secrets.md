@@ -1,5 +1,7 @@
 # public._internal_secrets
 
+> Tabela public._internal_secrets. Estrutura registrada no catálogo do PostgreSQL: key text NOT NULL, value text NOT NULL, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `key` | `text` | não |  |  |  |
-| 2 | `value` | `text` | não |  |  |  |
-| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `key` | `text` | não |  |  | Coluna key da tabela public._internal_secrets. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `value` | `text` | não |  |  | Coluna value da tabela public._internal_secrets. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public._internal_secrets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

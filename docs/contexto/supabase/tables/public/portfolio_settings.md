@@ -1,5 +1,7 @@
 # public.portfolio_settings
 
+> Tabela public.portfolio_settings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), setting_key text NOT NULL, setting_value text NOT NULL, description text NULLABLE, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `setting_key` | `text` | não |  |  |  |
-| 3 | `setting_value` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.portfolio_settings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `setting_key` | `text` | não |  |  | Coluna setting_key da tabela public.portfolio_settings. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `setting_value` | `text` | não |  |  | Coluna setting_value da tabela public.portfolio_settings. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.portfolio_settings. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.portfolio_settings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

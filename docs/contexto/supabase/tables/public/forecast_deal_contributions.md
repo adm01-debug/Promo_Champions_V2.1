@@ -1,5 +1,7 @@
 # public.forecast_deal_contributions
 
+> Tabela public.forecast_deal_contributions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), forecast_id uuid NOT NULL, sale_id uuid NOT NULL, category text NOT NULL, weighted_amount numeric NOT NULL DEFAULT 0, probability numeric NOT NULL DEFAULT 0, reasoning text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: forecast_id → public.revenue_forecasts(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `forecast_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | não |  |  |  |
-| 4 | `category` | `text` | não |  |  |  |
-| 5 | `weighted_amount` | `numeric` | não | `0` |  |  |
-| 6 | `probability` | `numeric` | não | `0` |  |  |
-| 7 | `reasoning` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.forecast_deal_contributions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `forecast_id` | `uuid` | não |  |  | Coluna forecast_id da tabela public.forecast_deal_contributions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.revenue_forecasts(id). |
+| 3 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.forecast_deal_contributions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 4 | `category` | `text` | não |  |  | Coluna category da tabela public.forecast_deal_contributions. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (category = ANY (ARRAY['commit'::text, 'best'::text, 'upside'::text, 'omitted'::text])). |
+| 5 | `weighted_amount` | `numeric` | não | `0` |  | Coluna weighted_amount da tabela public.forecast_deal_contributions. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `probability` | `numeric` | não | `0` |  | Coluna probability da tabela public.forecast_deal_contributions. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (probability >= 0::numeric AND probability <= 1::numeric). |
+| 7 | `reasoning` | `text` | sim |  |  | Coluna reasoning da tabela public.forecast_deal_contributions. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.forecast_deal_contributions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

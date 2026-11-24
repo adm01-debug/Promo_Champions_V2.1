@@ -1,5 +1,7 @@
 # public.mql_qualifications
 
+> Informações de qualificação de leads como marketing-qualified leads (MQL).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `qualified_by` | `uuid` | sim |  |  |  |
-| 4 | `budget_range` | `text` | sim |  |  |  |
-| 5 | `authority_level` | `text` | sim |  |  |  |
-| 6 | `need_urgency` | `text` | sim |  |  |  |
-| 7 | `timeline` | `text` | sim |  |  |  |
-| 8 | `pain_points` | `text[]` | sim |  |  |  |
-| 9 | `competitors` | `text[]` | sim |  |  |  |
-| 10 | `decision_process` | `text` | sim |  |  |  |
-| 11 | `qualification_status` | `text` | sim | `'pending'::text` |  |  |
-| 12 | `unqualified_reason` | `text` | sim |  |  |  |
-| 13 | `nurture_reason` | `text` | sim |  |  |  |
-| 14 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do registro de qualificação. |
+| 2 | `sale_id` | `uuid` | sim |  |  | Negócio associado à qualificação, quando houver. |
+| 3 | `qualified_by` | `uuid` | sim |  |  | Vendedor que registrou a qualificação, quando identificado. |
+| 4 | `budget_range` | `text` | sim |  |  | Faixa de orçamento informada durante a qualificação. |
+| 5 | `authority_level` | `text` | sim |  |  | Nível de autoridade do contato no processo de decisão. |
+| 6 | `need_urgency` | `text` | sim |  |  | Urgência da necessidade identificada. |
+| 7 | `timeline` | `text` | sim |  |  | Prazo ou cronograma informado para a decisão ou compra. |
+| 8 | `pain_points` | `text[]` | sim |  |  | Lista de problemas ou necessidades informados pelo lead. |
+| 9 | `competitors` | `text[]` | sim |  |  | Lista de concorrentes considerados pelo lead. |
+| 10 | `decision_process` | `text` | sim |  |  | Descrição do processo de decisão informado. |
+| 11 | `qualification_status` | `text` | sim | `'pending'::text` |  | Estado da qualificação do lead. |
+| 12 | `unqualified_reason` | `text` | sim |  |  | Motivo pelo qual o lead foi considerado não qualificado. |
+| 13 | `nurture_reason` | `text` | sim |  |  | Motivo para manter o lead em nutrição. |
+| 14 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do registro. |
+| 15 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.race_overlay_telemetry
 
+> Tabela public.race_overlay_telemetry. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NOT NULL, overlay_name text NOT NULL, viewed_count integer NOT NULL DEFAULT 1, last_viewed_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `overlay_name` | `text` | não |  |  |  |
-| 4 | `viewed_count` | `integer` | não | `1` |  |  |
-| 5 | `last_viewed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_overlay_telemetry. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.race_overlay_telemetry. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `overlay_name` | `text` | não |  |  | Coluna overlay_name da tabela public.race_overlay_telemetry. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `viewed_count` | `integer` | não | `1` |  | Coluna viewed_count da tabela public.race_overlay_telemetry. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 5 | `last_viewed_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_viewed_at da tabela public.race_overlay_telemetry. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_overlay_telemetry. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

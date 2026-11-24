@@ -1,5 +1,7 @@
 # public.sdr_performance_settings
 
+> Tabela public.sdr_performance_settings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NULLABLE, rejection_rate_threshold numeric NULLABLE DEFAULT 30, outcome_mix_alert_enabled boolean NULLABLE DEFAULT true, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `rejection_rate_threshold` | `numeric` | sim | `30` |  |  |
-| 4 | `outcome_mix_alert_enabled` | `boolean` | sim | `true` |  |  |
-| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sdr_performance_settings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.sdr_performance_settings. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `rejection_rate_threshold` | `numeric` | sim | `30` |  | Coluna rejection_rate_threshold da tabela public.sdr_performance_settings. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: 30. |
+| 4 | `outcome_mix_alert_enabled` | `boolean` | sim | `true` |  | Coluna outcome_mix_alert_enabled da tabela public.sdr_performance_settings. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 5 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.sdr_performance_settings. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 6 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.sdr_performance_settings. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

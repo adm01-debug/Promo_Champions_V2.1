@@ -1,5 +1,7 @@
 # public.product_usage
 
+> Tabela public.product_usage. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), client_id uuid NOT NULL, feature_name text NOT NULL, usage_count integer NULLABLE DEFAULT 0, last_used_at timestamp with time zone NULLABLE DEFAULT now(), period_start date NULLABLE, period_end date NULLABLE. Relacionamentos FK: client_id → public.clients(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | não |  |  |  |
-| 3 | `feature_name` | `text` | não |  |  |  |
-| 4 | `usage_count` | `integer` | sim | `0` |  |  |
-| 5 | `last_used_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `period_start` | `date` | sim |  |  |  |
-| 7 | `period_end` | `date` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.product_usage. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `client_id` | `uuid` | não |  |  | Coluna client_id da tabela public.product_usage. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.clients(id). |
+| 3 | `feature_name` | `text` | não |  |  | Coluna feature_name da tabela public.product_usage. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `usage_count` | `integer` | sim | `0` |  | Coluna usage_count da tabela public.product_usage. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 5 | `last_used_at` | `timestamp with time zone` | sim | `now()` |  | Coluna last_used_at da tabela public.product_usage. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 6 | `period_start` | `date` | sim |  |  | Coluna period_start da tabela public.product_usage. Tipo PostgreSQL: date. Aceita NULL. |
+| 7 | `period_end` | `date` | sim |  |  | Coluna period_end da tabela public.product_usage. Tipo PostgreSQL: date. Aceita NULL. |
 
 
 ## Constraints

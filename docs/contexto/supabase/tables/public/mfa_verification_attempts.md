@@ -1,5 +1,7 @@
 # public.mfa_verification_attempts
 
+> Tentativas de verificação multifator registradas para usuários.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `method` | `text` | não |  |  |  |
-| 4 | `success` | `boolean` | sim | `false` |  |  |
-| 5 | `ip_address` | `text` | sim |  |  |  |
-| 6 | `user_agent` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da tentativa de verificação. |
+| 2 | `user_id` | `uuid` | sim |  |  | Usuário do Supabase Auth associado à tentativa, quando identificado. |
+| 3 | `method` | `text` | não |  |  | Método usado: totp, sms ou backup_code. |
+| 4 | `success` | `boolean` | sim | `false` |  | Indica se a verificação multifator foi bem-sucedida. |
+| 5 | `ip_address` | `text` | sim |  |  | Endereço IP de origem da tentativa, quando disponível. |
+| 6 | `user_agent` | `text` | sim |  |  | User-Agent do cliente, quando disponível. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da tentativa. |
 
 
 ## Constraints

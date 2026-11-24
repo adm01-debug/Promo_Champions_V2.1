@@ -18,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `pattern` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `created_by` | `uuid` | sim |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webhook_allowed_domains. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `pattern` | `text` | não |  |  | Coluna pattern da tabela public.webhook_allowed_domains. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (pattern = lower(pattern) AND pattern !~ '\s'::text AND pattern <> ''::text AND (pattern ~ '^[a-z0-9.-]+$'::text OR pattern ~ '^\*\.[a-z0-9.-]+$'::text)). |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.webhook_allowed_domains. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.webhook_allowed_domains. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.webhook_allowed_domains. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.webhook_allowed_domains. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

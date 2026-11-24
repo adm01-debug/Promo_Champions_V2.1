@@ -1,5 +1,7 @@
 # public.forecast_accuracy
 
+> Tabela public.forecast_accuracy. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), snapshot_id uuid NOT NULL, actual_amount numeric NOT NULL DEFAULT 0, actual_deals integer NOT NULL DEFAULT 0, variance_amount numeric NULLABLE DEFAULT (actual_amount - (0)::numeric), variance_pct numeric NOT NULL DEFAULT 0, mape numeric NOT NULL DEFAULT 0, bias text NOT NULL DEFAULT 'accurate'::text, computed_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: snapshot_id → public.forecast_snapshots(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `snapshot_id` | `uuid` | não |  |  |  |
-| 3 | `actual_amount` | `numeric` | não | `0` |  |  |
-| 4 | `actual_deals` | `integer` | não | `0` |  |  |
-| 5 | `variance_amount` | `numeric` | sim | `(actual_amount - (0)::numeric)` | s |  |
-| 6 | `variance_pct` | `numeric` | não | `0` |  |  |
-| 7 | `mape` | `numeric` | não | `0` |  |  |
-| 8 | `bias` | `text` | não | `'accurate'::text` |  |  |
-| 9 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.forecast_accuracy. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `snapshot_id` | `uuid` | não |  |  | Coluna snapshot_id da tabela public.forecast_accuracy. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.forecast_snapshots(id). |
+| 3 | `actual_amount` | `numeric` | não | `0` |  | Coluna actual_amount da tabela public.forecast_accuracy. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `actual_deals` | `integer` | não | `0` |  | Coluna actual_deals da tabela public.forecast_accuracy. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `variance_amount` | `numeric` | sim | `(actual_amount - (0)::numeric)` | s | Coluna variance_amount da tabela public.forecast_accuracy. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: (actual_amount - (0)::numeric). |
+| 6 | `variance_pct` | `numeric` | não | `0` |  | Coluna variance_pct da tabela public.forecast_accuracy. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `mape` | `numeric` | não | `0` |  | Coluna mape da tabela public.forecast_accuracy. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `bias` | `text` | não | `'accurate'::text` |  | Coluna bias da tabela public.forecast_accuracy. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'accurate'::text. Validação CHECK: CHECK (bias = ANY (ARRAY['optimistic'::text, 'pessimistic'::text, 'accurate'::text])). |
+| 9 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.forecast_accuracy. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.executive_briefings
 
+> Tabela public.executive_briefings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), briefing_date date NOT NULL DEFAULT CURRENT_DATE, pulse_score integer NOT NULL DEFAULT 0, headline text NOT NULL, narrative text NOT NULL DEFAULT ''::text, key_wins jsonb NOT NULL DEFAULT '[]'::jsonb, key_risks jsonb NOT NULL DEFAULT '[]'::jsonb, recommended_actions jsonb NOT NULL DEFAULT '[]'::jsonb, generated_by text NOT NULL DEFAULT 'manual'::text, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,17 +19,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `briefing_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 3 | `pulse_score` | `integer` | não | `0` |  |  |
-| 4 | `headline` | `text` | não |  |  |  |
-| 5 | `narrative` | `text` | não | `''::text` |  |  |
-| 6 | `key_wins` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `key_risks` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `recommended_actions` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 9 | `generated_by` | `text` | não | `'manual'::text` |  |  |
-| 10 | `created_by` | `uuid` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.executive_briefings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `briefing_date` | `date` | não | `CURRENT_DATE` |  | Coluna briefing_date da tabela public.executive_briefings. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: CURRENT_DATE. |
+| 3 | `pulse_score` | `integer` | não | `0` |  | Coluna pulse_score da tabela public.executive_briefings. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 4 | `headline` | `text` | não |  |  | Coluna headline da tabela public.executive_briefings. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `narrative` | `text` | não | `''::text` |  | Coluna narrative da tabela public.executive_briefings. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: ''::text. |
+| 6 | `key_wins` | `jsonb` | não | `'[]'::jsonb` |  | Coluna key_wins da tabela public.executive_briefings. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 7 | `key_risks` | `jsonb` | não | `'[]'::jsonb` |  | Coluna key_risks da tabela public.executive_briefings. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 8 | `recommended_actions` | `jsonb` | não | `'[]'::jsonb` |  | Coluna recommended_actions da tabela public.executive_briefings. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 9 | `generated_by` | `text` | não | `'manual'::text` |  | Coluna generated_by da tabela public.executive_briefings. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'manual'::text. Validação CHECK: CHECK (generated_by = ANY (ARRAY['auto'::text, 'manual'::text])). |
+| 10 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.executive_briefings. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.executive_briefings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

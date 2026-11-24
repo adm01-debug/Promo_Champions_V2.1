@@ -1,5 +1,7 @@
 # public.ab_tests
 
+> Tabela public.ab_tests. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), created_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,8 +18,8 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.ab_tests. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.ab_tests. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

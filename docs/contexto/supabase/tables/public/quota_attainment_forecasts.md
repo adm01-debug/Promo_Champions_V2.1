@@ -1,5 +1,7 @@
 # public.quota_attainment_forecasts
 
+> Tabela public.quota_attainment_forecasts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, period_start date NOT NULL, period_end date NOT NULL, quota numeric NOT NULL DEFAULT 0, closed numeric NOT NULL DEFAULT 0, weighted_open numeric NOT NULL DEFAULT 0, pace_per_day numeric NOT NULL DEFAULT 0, days_remaining integer NOT NULL DEFAULT 0, p10 numeric NOT NULL DEFAULT 0, p50 numeric NOT NULL DEFAULT 0, p90 numeric NOT NULL DEFAULT 0, attainment_probability numeric NOT NULL DEFAULT 0, risk_level text NOT NULL DEFAULT 'on_track'::text, simulations integer NOT NULL DEFAULT 1000, computed_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,22 +18,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `period_start` | `date` | não |  |  |  |
-| 4 | `period_end` | `date` | não |  |  |  |
-| 5 | `quota` | `numeric` | não | `0` |  |  |
-| 6 | `closed` | `numeric` | não | `0` |  |  |
-| 7 | `weighted_open` | `numeric` | não | `0` |  |  |
-| 8 | `pace_per_day` | `numeric` | não | `0` |  |  |
-| 9 | `days_remaining` | `integer` | não | `0` |  |  |
-| 10 | `p10` | `numeric` | não | `0` |  |  |
-| 11 | `p50` | `numeric` | não | `0` |  |  |
-| 12 | `p90` | `numeric` | não | `0` |  |  |
-| 13 | `attainment_probability` | `numeric` | não | `0` |  |  |
-| 14 | `risk_level` | `text` | não | `'on_track'::text` |  |  |
-| 15 | `simulations` | `integer` | não | `1000` |  |  |
-| 16 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `quota` | `numeric` | não | `0` |  | Coluna quota da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `closed` | `numeric` | não | `0` |  | Coluna closed da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `weighted_open` | `numeric` | não | `0` |  | Coluna weighted_open da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `pace_per_day` | `numeric` | não | `0` |  | Coluna pace_per_day da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `days_remaining` | `integer` | não | `0` |  | Coluna days_remaining da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `p10` | `numeric` | não | `0` |  | Coluna p10 da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `p50` | `numeric` | não | `0` |  | Coluna p50 da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 12 | `p90` | `numeric` | não | `0` |  | Coluna p90 da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 13 | `attainment_probability` | `numeric` | não | `0` |  | Coluna attainment_probability da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 14 | `risk_level` | `text` | não | `'on_track'::text` |  | Coluna risk_level da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'on_track'::text. Validação CHECK: CHECK (risk_level = ANY (ARRAY['safe'::text, 'on_track'::text, 'at_risk'::text, 'critical'::text])). |
+| 15 | `simulations` | `integer` | não | `1000` |  | Coluna simulations da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1000. |
+| 16 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.quota_attainment_forecasts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

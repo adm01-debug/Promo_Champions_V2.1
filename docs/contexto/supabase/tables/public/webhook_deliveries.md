@@ -1,5 +1,7 @@
 # public.webhook_deliveries
 
+> Tabela public.webhook_deliveries. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), webhook_id uuid NOT NULL, event_type text NOT NULL, payload jsonb NOT NULL, response_status integer NULLABLE, response_body text NULLABLE, error_message text NULLABLE, attempts integer NOT NULL DEFAULT 1, success boolean NOT NULL DEFAULT false, duration_ms integer NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: webhook_id → public.webhooks(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `webhook_id` | `uuid` | não |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `payload` | `jsonb` | não |  |  |  |
-| 5 | `response_status` | `integer` | sim |  |  |  |
-| 6 | `response_body` | `text` | sim |  |  |  |
-| 7 | `error_message` | `text` | sim |  |  |  |
-| 8 | `attempts` | `integer` | não | `1` |  |  |
-| 9 | `success` | `boolean` | não | `false` |  |  |
-| 10 | `duration_ms` | `integer` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webhook_deliveries. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `webhook_id` | `uuid` | não |  |  | Coluna webhook_id da tabela public.webhook_deliveries. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.webhooks(id). |
+| 3 | `event_type` | `text` | não |  |  | Coluna event_type da tabela public.webhook_deliveries. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `payload` | `jsonb` | não |  |  | Coluna payload da tabela public.webhook_deliveries. Tipo PostgreSQL: jsonb. Não aceita NULL. |
+| 5 | `response_status` | `integer` | sim |  |  | Coluna response_status da tabela public.webhook_deliveries. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `response_body` | `text` | sim |  |  | Coluna response_body da tabela public.webhook_deliveries. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.webhook_deliveries. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `attempts` | `integer` | não | `1` |  | Coluna attempts da tabela public.webhook_deliveries. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 9 | `success` | `boolean` | não | `false` |  | Coluna success da tabela public.webhook_deliveries. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 10 | `duration_ms` | `integer` | sim |  |  | Coluna duration_ms da tabela public.webhook_deliveries. Tipo PostgreSQL: integer. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.webhook_deliveries. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

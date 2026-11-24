@@ -1,5 +1,7 @@
 # public.qbr_reports
 
+> Tabela public.qbr_reports. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), period_label text NOT NULL, period_start date NOT NULL, period_end date NOT NULL, salesperson_id uuid NULLABLE, metrics jsonb NOT NULL DEFAULT '{}'::jsonb, ai_narrative text NULLABLE, recommendations jsonb NOT NULL DEFAULT '[]'::jsonb, generated_by uuid NULLABLE, generated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `period_label` | `text` | não |  |  |  |
-| 3 | `period_start` | `date` | não |  |  |  |
-| 4 | `period_end` | `date` | não |  |  |  |
-| 5 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 6 | `metrics` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `ai_narrative` | `text` | sim |  |  |  |
-| 8 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 9 | `generated_by` | `uuid` | sim |  |  |  |
-| 10 | `generated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.qbr_reports. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `period_label` | `text` | não |  |  | Coluna period_label da tabela public.qbr_reports. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.qbr_reports. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.qbr_reports. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.qbr_reports. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 6 | `metrics` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metrics da tabela public.qbr_reports. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `ai_narrative` | `text` | sim |  |  | Coluna ai_narrative da tabela public.qbr_reports. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  | Coluna recommendations da tabela public.qbr_reports. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 9 | `generated_by` | `uuid` | sim |  |  | Coluna generated_by da tabela public.qbr_reports. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 10 | `generated_at` | `timestamp with time zone` | não | `now()` |  | Coluna generated_at da tabela public.qbr_reports. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.call_conversation_metrics
 
+> Tabela public.call_conversation_metrics. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, seller_talk_ratio numeric NOT NULL DEFAULT 0, client_talk_ratio numeric NOT NULL DEFAULT 0, silence_ratio numeric NOT NULL DEFAULT 0, longest_monologue_seconds integer NOT NULL DEFAULT 0, interruptions_count integer NOT NULL DEFAULT 0, seller_words_per_minute integer NOT NULL DEFAULT 0, client_words_per_minute integer NOT NULL DEFAULT 0, pace_score numeric NOT NULL DEFAULT 0, engagement_score numeric NOT NULL DEFAULT 0, health text NOT NULL DEFAULT 'fair'::text, factors jsonb NOT NULL DEFAULT '{}'::jsonb, calculated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `seller_talk_ratio` | `numeric` | não | `0` |  |  |
-| 4 | `client_talk_ratio` | `numeric` | não | `0` |  |  |
-| 5 | `silence_ratio` | `numeric` | não | `0` |  |  |
-| 6 | `longest_monologue_seconds` | `integer` | não | `0` |  |  |
-| 7 | `interruptions_count` | `integer` | não | `0` |  |  |
-| 8 | `seller_words_per_minute` | `integer` | não | `0` |  |  |
-| 9 | `client_words_per_minute` | `integer` | não | `0` |  |  |
-| 10 | `pace_score` | `numeric` | não | `0` |  |  |
-| 11 | `engagement_score` | `numeric` | não | `0` |  |  |
-| 12 | `health` | `text` | não | `'fair'::text` |  |  |
-| 13 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_conversation_metrics. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_conversation_metrics. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `seller_talk_ratio` | `numeric` | não | `0` |  | Coluna seller_talk_ratio da tabela public.call_conversation_metrics. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `client_talk_ratio` | `numeric` | não | `0` |  | Coluna client_talk_ratio da tabela public.call_conversation_metrics. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `silence_ratio` | `numeric` | não | `0` |  | Coluna silence_ratio da tabela public.call_conversation_metrics. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `longest_monologue_seconds` | `integer` | não | `0` |  | Coluna longest_monologue_seconds da tabela public.call_conversation_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `interruptions_count` | `integer` | não | `0` |  | Coluna interruptions_count da tabela public.call_conversation_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `seller_words_per_minute` | `integer` | não | `0` |  | Coluna seller_words_per_minute da tabela public.call_conversation_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `client_words_per_minute` | `integer` | não | `0` |  | Coluna client_words_per_minute da tabela public.call_conversation_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `pace_score` | `numeric` | não | `0` |  | Coluna pace_score da tabela public.call_conversation_metrics. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `engagement_score` | `numeric` | não | `0` |  | Coluna engagement_score da tabela public.call_conversation_metrics. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 12 | `health` | `text` | não | `'fair'::text` |  | Coluna health da tabela public.call_conversation_metrics. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'fair'::text. Validação CHECK: CHECK (health = ANY (ARRAY['poor'::text, 'fair'::text, 'good'::text, 'excellent'::text])). |
+| 13 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.call_conversation_metrics. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 14 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.call_conversation_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

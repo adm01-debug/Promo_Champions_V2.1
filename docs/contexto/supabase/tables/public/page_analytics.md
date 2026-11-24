@@ -1,5 +1,7 @@
 # public.page_analytics
 
+> Tabela public.page_analytics. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NULLABLE, route text NOT NULL, page_title text NULLABLE, duration_seconds integer NULLABLE DEFAULT 0, interactions integer NULLABLE DEFAULT 0, session_id text NULLABLE, device_type text NULLABLE DEFAULT 'desktop'::text, referrer_route text NULLABLE, entered_at timestamp with time zone NOT NULL DEFAULT now(), exited_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 3 | `route` | `text` | não |  |  |  |
-| 4 | `page_title` | `text` | sim |  |  |  |
-| 5 | `duration_seconds` | `integer` | sim | `0` |  |  |
-| 6 | `interactions` | `integer` | sim | `0` |  |  |
-| 7 | `session_id` | `text` | sim |  |  |  |
-| 8 | `device_type` | `text` | sim | `'desktop'::text` |  |  |
-| 9 | `referrer_route` | `text` | sim |  |  |  |
-| 10 | `entered_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `exited_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.page_analytics. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.page_analytics. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `route` | `text` | não |  |  | Coluna route da tabela public.page_analytics. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `page_title` | `text` | sim |  |  | Coluna page_title da tabela public.page_analytics. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `duration_seconds` | `integer` | sim | `0` |  | Coluna duration_seconds da tabela public.page_analytics. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 6 | `interactions` | `integer` | sim | `0` |  | Coluna interactions da tabela public.page_analytics. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 7 | `session_id` | `text` | sim |  |  | Coluna session_id da tabela public.page_analytics. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `device_type` | `text` | sim | `'desktop'::text` |  | Coluna device_type da tabela public.page_analytics. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'desktop'::text. |
+| 9 | `referrer_route` | `text` | sim |  |  | Coluna referrer_route da tabela public.page_analytics. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `entered_at` | `timestamp with time zone` | não | `now()` |  | Coluna entered_at da tabela public.page_analytics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `exited_at` | `timestamp with time zone` | sim |  |  | Coluna exited_at da tabela public.page_analytics. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.page_analytics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

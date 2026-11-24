@@ -1,5 +1,7 @@
 # public.committee_coverage_history
 
+> Tabela public.committee_coverage_history. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, coverage_score numeric NOT NULL DEFAULT 0, tier text NOT NULL DEFAULT 'weak'::text, stakeholder_count integer NOT NULL DEFAULT 0, gaps jsonb NOT NULL DEFAULT '[]'::jsonb, snapshot_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `coverage_score` | `numeric` | não | `0` |  |  |
-| 4 | `tier` | `text` | não | `'weak'::text` |  |  |
-| 5 | `stakeholder_count` | `integer` | não | `0` |  |  |
-| 6 | `gaps` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `snapshot_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.committee_coverage_history. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.committee_coverage_history. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `coverage_score` | `numeric` | não | `0` |  | Coluna coverage_score da tabela public.committee_coverage_history. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `tier` | `text` | não | `'weak'::text` |  | Coluna tier da tabela public.committee_coverage_history. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'weak'::text. |
+| 5 | `stakeholder_count` | `integer` | não | `0` |  | Coluna stakeholder_count da tabela public.committee_coverage_history. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `gaps` | `jsonb` | não | `'[]'::jsonb` |  | Coluna gaps da tabela public.committee_coverage_history. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 7 | `snapshot_at` | `timestamp with time zone` | não | `now()` |  | Coluna snapshot_at da tabela public.committee_coverage_history. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

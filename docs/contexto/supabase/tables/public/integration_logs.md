@@ -1,5 +1,7 @@
 # public.integration_logs
 
+> Tabela public.integration_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), "timestamp" timestamp with time zone NULLABLE DEFAULT now(), integration_type text NOT NULL, event_type text NOT NULL, status text NOT NULL, details jsonb NULLABLE, recipient text NULLABLE, error_message text NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `timestamp` | `timestamp with time zone` | sim | `now()` |  |  |
-| 3 | `integration_type` | `text` | não |  |  |  |
-| 4 | `event_type` | `text` | não |  |  |  |
-| 5 | `status` | `text` | não |  |  |  |
-| 6 | `details` | `jsonb` | sim |  |  |  |
-| 7 | `recipient` | `text` | sim |  |  |  |
-| 8 | `error_message` | `text` | sim |  |  |  |
-| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.integration_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `timestamp` | `timestamp with time zone` | sim | `now()` |  | Coluna "timestamp" da tabela public.integration_logs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 3 | `integration_type` | `text` | não |  |  | Coluna integration_type da tabela public.integration_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `event_type` | `text` | não |  |  | Coluna event_type da tabela public.integration_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `status` | `text` | não |  |  | Coluna status da tabela public.integration_logs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `details` | `jsonb` | sim |  |  | Coluna details da tabela public.integration_logs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 7 | `recipient` | `text` | sim |  |  | Coluna recipient da tabela public.integration_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.integration_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.integration_logs. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
 
 
 ## Constraints

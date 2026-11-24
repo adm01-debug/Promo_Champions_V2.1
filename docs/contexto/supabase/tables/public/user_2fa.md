@@ -1,5 +1,7 @@
 # public.user_2fa
 
+> Tabela public.user_2fa. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NULLABLE, secret text NOT NULL, enabled boolean NULLABLE DEFAULT false, backup_codes jsonb NULLABLE DEFAULT '[]'::jsonb, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `secret` | `text` | não |  |  |  |
-| 4 | `enabled` | `boolean` | sim | `false` |  |  |
-| 5 | `backup_codes` | `jsonb` | sim | `'[]'::jsonb` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.user_2fa. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.user_2fa. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `secret` | `text` | não |  |  | Coluna secret da tabela public.user_2fa. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `enabled` | `boolean` | sim | `false` |  | Coluna enabled da tabela public.user_2fa. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 5 | `backup_codes` | `jsonb` | sim | `'[]'::jsonb` |  | Coluna backup_codes da tabela public.user_2fa. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '[]'::jsonb. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.user_2fa. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 7 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.user_2fa. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

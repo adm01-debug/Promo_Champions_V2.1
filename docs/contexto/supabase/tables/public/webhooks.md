@@ -1,5 +1,7 @@
 # public.webhooks
 
+> Configuração de webhooks de saída, eventos assinados e estado operacional.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `url` | `text` | não |  |  |  |
-| 4 | `secret` | `text` | não |  |  |  |
-| 5 | `events` | `text[]` | não | `'{}'::text[]` |  |  |
-| 6 | `enabled` | `boolean` | sim | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `headers` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 10 | `is_active` | `boolean` | não | `true` |  |  |
-| 11 | `failure_count` | `integer` | não | `0` |  |  |
-| 12 | `last_triggered_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `last_success_at` | `timestamp with time zone` | sim |  |  |  |
-| 14 | `last_failure_at` | `timestamp with time zone` | sim |  |  |  |
-| 15 | `created_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do webhook. |
+| 2 | `name` | `text` | não |  |  | Nome legível do webhook. |
+| 3 | `url` | `text` | não |  |  | URL de destino que receberá as requisições do webhook. |
+| 4 | `secret` | `text` | não |  |  | Segredo usado para autenticar ou assinar entregas; credencial sensível que não deve ser exposta. |
+| 5 | `events` | `text[]` | não | `'{}'::text[]` |  | Lista de tipos de evento inscritos pelo webhook. |
+| 6 | `enabled` | `boolean` | sim | `true` |  | Indica se o webhook está habilitado. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do webhook. |
+| 8 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do webhook. |
+| 9 | `headers` | `jsonb` | sim | `'{}'::jsonb` |  | Cabeçalhos HTTP adicionais enviados com a requisição, armazenados em JSON. |
+| 10 | `is_active` | `boolean` | não | `true` |  | Indica se o webhook está ativo para entrega. |
+| 11 | `failure_count` | `integer` | não | `0` |  | Quantidade de falhas de entrega registradas. |
+| 12 | `last_triggered_at` | `timestamp with time zone` | sim |  |  | Data e hora da tentativa de entrega mais recente. |
+| 13 | `last_success_at` | `timestamp with time zone` | sim |  |  | Data e hora da entrega bem-sucedida mais recente. |
+| 14 | `last_failure_at` | `timestamp with time zone` | sim |  |  | Data e hora da falha de entrega mais recente. |
+| 15 | `created_by` | `uuid` | sim |  |  | Usuário que criou o webhook, quando identificado. |
 
 
 ## Constraints

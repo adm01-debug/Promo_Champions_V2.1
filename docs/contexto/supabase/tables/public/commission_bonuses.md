@@ -1,5 +1,7 @@
 # public.commission_bonuses
 
+> Tabela public.commission_bonuses. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, bonus_type text NOT NULL, trigger_condition jsonb NOT NULL DEFAULT '{}'::jsonb, bonus_amount numeric(14,2) NOT NULL DEFAULT 0, bonus_kind text NOT NULL DEFAULT 'fixed'::text, salesperson_id uuid NULLABLE, priority integer NOT NULL DEFAULT 0, is_active boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `bonus_type` | `text` | não |  |  |  |
-| 5 | `trigger_condition` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `bonus_amount` | `numeric(14,2)` | não | `0` |  |  |
-| 7 | `bonus_kind` | `text` | não | `'fixed'::text` |  |  |
-| 8 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 9 | `priority` | `integer` | não | `0` |  |  |
-| 10 | `is_active` | `boolean` | não | `true` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.commission_bonuses. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.commission_bonuses. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.commission_bonuses. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `bonus_type` | `text` | não |  |  | Coluna bonus_type da tabela public.commission_bonuses. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (bonus_type = ANY (ARRAY['first_sale'::text, 'milestone'::text, 'ranking'::text, 'streak'::text, 'other'::text])). |
+| 5 | `trigger_condition` | `jsonb` | não | `'{}'::jsonb` |  | Coluna trigger_condition da tabela public.commission_bonuses. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 6 | `bonus_amount` | `numeric(14,2)` | não | `0` |  | Coluna bonus_amount da tabela public.commission_bonuses. Tipo PostgreSQL: numeric(14,2). Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (bonus_amount >= 0::numeric). |
+| 7 | `bonus_kind` | `text` | não | `'fixed'::text` |  | Coluna bonus_kind da tabela public.commission_bonuses. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'fixed'::text. Validação CHECK: CHECK (bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])). |
+| 8 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.commission_bonuses. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 9 | `priority` | `integer` | não | `0` |  | Coluna priority da tabela public.commission_bonuses. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.commission_bonuses. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.commission_bonuses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.commission_bonuses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.enriched_company_intelligence
 
+> Tabela public.enriched_company_intelligence. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), company_name text NOT NULL, domain text NULLABLE, headcount_range text NULLABLE, estimated_annual_revenue text NULLABLE, funding_stage text NULLABLE, total_funding text NULLABLE, tech_stack text[] NULLABLE, industry text NULLABLE, hq_location text NULLABLE, linkedin_url text NULLABLE, last_enriched_at timestamp with time zone NULLABLE DEFAULT now(), created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `company_name` | `text` | não |  |  |  |
-| 3 | `domain` | `text` | sim |  |  |  |
-| 4 | `headcount_range` | `text` | sim |  |  |  |
-| 5 | `estimated_annual_revenue` | `text` | sim |  |  |  |
-| 6 | `funding_stage` | `text` | sim |  |  |  |
-| 7 | `total_funding` | `text` | sim |  |  |  |
-| 8 | `tech_stack` | `text[]` | sim |  |  |  |
-| 9 | `industry` | `text` | sim |  |  |  |
-| 10 | `hq_location` | `text` | sim |  |  |  |
-| 11 | `linkedin_url` | `text` | sim |  |  |  |
-| 12 | `last_enriched_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 13 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.enriched_company_intelligence. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `company_name` | `text` | não |  |  | Coluna company_name da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `domain` | `text` | sim |  |  | Coluna domain da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `headcount_range` | `text` | sim |  |  | Coluna headcount_range da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `estimated_annual_revenue` | `text` | sim |  |  | Coluna estimated_annual_revenue da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `funding_stage` | `text` | sim |  |  | Coluna funding_stage da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `total_funding` | `text` | sim |  |  | Coluna total_funding da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `tech_stack` | `text[]` | sim |  |  | Coluna tech_stack da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text[]. Aceita NULL. |
+| 9 | `industry` | `text` | sim |  |  | Coluna industry da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `hq_location` | `text` | sim |  |  | Coluna hq_location da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `linkedin_url` | `text` | sim |  |  | Coluna linkedin_url da tabela public.enriched_company_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `last_enriched_at` | `timestamp with time zone` | sim | `now()` |  | Coluna last_enriched_at da tabela public.enriched_company_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 13 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.enriched_company_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.enriched_company_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.client_renewals
 
+> Acompanhamento de renovação de contratos de clientes.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `client_id` | `uuid` | não |  |  |  |
-| 3 | `contract_end_date` | `date` | não |  |  |  |
-| 4 | `renewal_value` | `numeric(15,2)` | sim |  |  |  |
-| 5 | `status` | `text` | sim | `'pending'::text` |  |  |
-| 6 | `probability` | `integer` | sim | `70` |  |  |
-| 7 | `risk_level` | `text` | sim | `'low'::text` |  |  |
-| 8 | `notes` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da oportunidade de renovação. |
+| 2 | `client_id` | `uuid` | não |  |  | Cliente cujo contrato está em renovação. |
+| 3 | `contract_end_date` | `date` | não |  |  | Data de término do contrato atual. |
+| 4 | `renewal_value` | `numeric(15,2)` | sim |  |  | Valor estimado da renovação, em BRL. |
+| 5 | `status` | `text` | sim | `'pending'::text` |  | Estado da renovação conforme utilizado pela aplicação. |
+| 6 | `probability` | `integer` | sim | `70` |  | Probabilidade de renovação, conforme escala utilizada pela aplicação. |
+| 7 | `risk_level` | `text` | sim | `'low'::text` |  | Nível de risco associado à renovação. |
+| 8 | `notes` | `text` | sim |  |  | Observações sobre a renovação. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do registro. |
+| 10 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do registro. |
 
 
 ## Constraints

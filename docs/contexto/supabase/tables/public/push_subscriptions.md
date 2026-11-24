@@ -1,5 +1,7 @@
 # public.push_subscriptions
 
+> Inscrições de usuários para recebimento de notificações push.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `endpoint` | `text` | não |  |  |  |
-| 4 | `p256dh` | `text` | não |  |  |  |
-| 5 | `auth` | `text` | não |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da inscrição push. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth proprietário da inscrição. |
+| 3 | `endpoint` | `text` | não |  |  | Endpoint do serviço push usado para entregar notificações. |
+| 4 | `p256dh` | `text` | não |  |  | Chave pública do cliente usada na criptografia de notificações push. |
+| 5 | `auth` | `text` | não |  |  | Segredo de autenticação do cliente para notificações push; dado sensível. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da inscrição. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da inscrição. |
 
 
 ## Constraints

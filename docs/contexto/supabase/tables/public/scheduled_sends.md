@@ -1,5 +1,7 @@
 # public.scheduled_sends
 
+> Tabela public.scheduled_sends. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, sale_id uuid NOT NULL, channel text NOT NULL, payload jsonb NOT NULL DEFAULT '{}'::jsonb, scheduled_for timestamp with time zone NOT NULL, status text NOT NULL DEFAULT 'pending'::text, optimization_source text NOT NULL DEFAULT 'manual'::text, sent_at timestamp with time zone NULLABLE, error text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), attempts integer NOT NULL DEFAULT 0, next_retry_at timestamp with time zone NULLABLE. Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | não |  |  |  |
-| 4 | `channel` | `text` | não |  |  |  |
-| 5 | `payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `scheduled_for` | `timestamp with time zone` | não |  |  |  |
-| 7 | `status` | `text` | não | `'pending'::text` |  |  |
-| 8 | `optimization_source` | `text` | não | `'manual'::text` |  |  |
-| 9 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `error` | `text` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `attempts` | `integer` | não | `0` |  |  |
-| 13 | `next_retry_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.scheduled_sends. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.scheduled_sends. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.scheduled_sends. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 4 | `channel` | `text` | não |  |  | Coluna channel da tabela public.scheduled_sends. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (channel = ANY (ARRAY['email'::text, 'whatsapp'::text, 'linkedin'::text, 'sms'::text])). |
+| 5 | `payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna payload da tabela public.scheduled_sends. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 6 | `scheduled_for` | `timestamp with time zone` | não |  |  | Coluna scheduled_for da tabela public.scheduled_sends. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 7 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.scheduled_sends. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'processing'::text, 'sent'::text, 'failed'::text, 'cancelled'::text])). |
+| 8 | `optimization_source` | `text` | não | `'manual'::text` |  | Coluna optimization_source da tabela public.scheduled_sends. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'manual'::text. Validação CHECK: CHECK (optimization_source = ANY (ARRAY['profile'::text, 'global'::text, 'manual'::text])). |
+| 9 | `sent_at` | `timestamp with time zone` | sim |  |  | Coluna sent_at da tabela public.scheduled_sends. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `error` | `text` | sim |  |  | Coluna error da tabela public.scheduled_sends. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.scheduled_sends. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `attempts` | `integer` | não | `0` |  | Coluna attempts da tabela public.scheduled_sends. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 13 | `next_retry_at` | `timestamp with time zone` | sim |  |  | Coluna next_retry_at da tabela public.scheduled_sends. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

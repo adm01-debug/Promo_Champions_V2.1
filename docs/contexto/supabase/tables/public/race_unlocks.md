@@ -1,5 +1,7 @@
 # public.race_unlocks
 
+> Tabela public.race_unlocks. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), user_id uuid NOT NULL, unlock_key text NOT NULL, unlocked_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `unlock_key` | `text` | não |  |  |  |
-| 4 | `unlocked_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_unlocks. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.race_unlocks. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `unlock_key` | `text` | não |  |  | Coluna unlock_key da tabela public.race_unlocks. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `unlocked_at` | `timestamp with time zone` | não | `now()` |  | Coluna unlocked_at da tabela public.race_unlocks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.combo_tracking
 
+> Tabela public.combo_tracking. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, combo_date date NOT NULL DEFAULT CURRENT_DATE, actions_count integer NOT NULL DEFAULT 0, current_multiplier numeric(3,1) NOT NULL DEFAULT 1.0, current_tier integer NOT NULL DEFAULT 0, max_tier_today integer NOT NULL DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `combo_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 4 | `actions_count` | `integer` | não | `0` |  |  |
-| 5 | `current_multiplier` | `numeric(3,1)` | não | `1.0` |  |  |
-| 6 | `current_tier` | `integer` | não | `0` |  |  |
-| 7 | `max_tier_today` | `integer` | não | `0` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.combo_tracking. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.combo_tracking. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `combo_date` | `date` | não | `CURRENT_DATE` |  | Coluna combo_date da tabela public.combo_tracking. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: CURRENT_DATE. |
+| 4 | `actions_count` | `integer` | não | `0` |  | Coluna actions_count da tabela public.combo_tracking. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `current_multiplier` | `numeric(3,1)` | não | `1.0` |  | Coluna current_multiplier da tabela public.combo_tracking. Tipo PostgreSQL: numeric(3,1). Não aceita NULL. Valor padrão: 1.0. |
+| 6 | `current_tier` | `integer` | não | `0` |  | Coluna current_tier da tabela public.combo_tracking. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `max_tier_today` | `integer` | não | `0` |  | Coluna max_tier_today da tabela public.combo_tracking. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.combo_tracking. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.combo_tracking. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

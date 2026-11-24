@@ -1,5 +1,7 @@
 # public.experiment_variants
 
+> Tabela public.experiment_variants. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), experiment_id uuid NOT NULL, name text NOT NULL, weight integer NOT NULL DEFAULT 50, config jsonb NULLABLE. Relacionamentos FK: experiment_id → public.experiments(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `experiment_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `weight` | `integer` | não | `50` |  |  |
-| 5 | `config` | `jsonb` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.experiment_variants. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `experiment_id` | `uuid` | não |  |  | Coluna experiment_id da tabela public.experiment_variants. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.experiments(id). |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.experiment_variants. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `weight` | `integer` | não | `50` |  | Coluna weight da tabela public.experiment_variants. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. |
+| 5 | `config` | `jsonb` | sim |  |  | Coluna config da tabela public.experiment_variants. Tipo PostgreSQL: jsonb. Aceita NULL. |
 
 
 ## Constraints

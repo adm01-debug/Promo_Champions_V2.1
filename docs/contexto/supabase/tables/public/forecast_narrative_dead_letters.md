@@ -1,5 +1,7 @@
 # public.forecast_narrative_dead_letters
 
+> Tabela public.forecast_narrative_dead_letters. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), forecast_id uuid NULLABLE, user_id uuid NULLABLE, reason text NOT NULL, http_status integer NULLABLE, error_detail text NULLABLE, request_id text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `forecast_id` | `uuid` | sim |  |  |  |
-| 3 | `user_id` | `uuid` | sim |  |  |  |
-| 4 | `reason` | `text` | não |  |  |  |
-| 5 | `http_status` | `integer` | sim |  |  |  |
-| 6 | `error_detail` | `text` | sim |  |  |  |
-| 7 | `request_id` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `forecast_id` | `uuid` | sim |  |  | Coluna forecast_id da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `reason` | `text` | não |  |  | Coluna reason da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `http_status` | `integer` | sim |  |  | Coluna http_status da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `error_detail` | `text` | sim |  |  | Coluna error_detail da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.forecast_narrative_dead_letters. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

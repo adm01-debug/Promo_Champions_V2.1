@@ -1,5 +1,7 @@
 # public.score_change_logs
 
+> Tabela public.score_change_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, changed_by text NOT NULL DEFAULT 'api'::text, operation text NOT NULL, field_name text NOT NULL DEFAULT 'total'::text, old_value numeric NOT NULL DEFAULT 0, new_value numeric NOT NULL DEFAULT 0, change_value numeric NOT NULL DEFAULT 0, api_token_id uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: api_token_id → public.api_tokens(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `changed_by` | `text` | não | `'api'::text` |  |  |
-| 4 | `operation` | `text` | não |  |  |  |
-| 5 | `field_name` | `text` | não | `'total'::text` |  |  |
-| 6 | `old_value` | `numeric` | não | `0` |  |  |
-| 7 | `new_value` | `numeric` | não | `0` |  |  |
-| 8 | `change_value` | `numeric` | não | `0` |  |  |
-| 9 | `api_token_id` | `uuid` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.score_change_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.score_change_logs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `changed_by` | `text` | não | `'api'::text` |  | Coluna changed_by da tabela public.score_change_logs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'api'::text. |
+| 4 | `operation` | `text` | não |  |  | Coluna operation da tabela public.score_change_logs. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (operation = ANY (ARRAY['ADD'::text, 'REM'::text, 'SET'::text])). |
+| 5 | `field_name` | `text` | não | `'total'::text` |  | Coluna field_name da tabela public.score_change_logs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'total'::text. |
+| 6 | `old_value` | `numeric` | não | `0` |  | Coluna old_value da tabela public.score_change_logs. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `new_value` | `numeric` | não | `0` |  | Coluna new_value da tabela public.score_change_logs. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `change_value` | `numeric` | não | `0` |  | Coluna change_value da tabela public.score_change_logs. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `api_token_id` | `uuid` | sim |  |  | Coluna api_token_id da tabela public.score_change_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.api_tokens(id). |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.score_change_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

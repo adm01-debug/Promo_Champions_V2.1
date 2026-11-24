@@ -1,5 +1,7 @@
 # public.race_powerups
 
+> Tabela public.race_powerups. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), season_id uuid NOT NULL, salesperson_id uuid NOT NULL, powerup_type text NOT NULL, collected_at timestamp with time zone NOT NULL DEFAULT now(), used_at timestamp with time zone NULLABLE, effect_data jsonb NOT NULL DEFAULT '{}'::jsonb. Relacionamentos FK: salesperson_id → public.salespeople(id); season_id → public.race_seasons(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `season_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `powerup_type` | `text` | não |  |  |  |
-| 5 | `collected_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `used_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `effect_data` | `jsonb` | não | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_powerups. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `season_id` | `uuid` | não |  |  | Coluna season_id da tabela public.race_powerups. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_seasons(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.race_powerups. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `powerup_type` | `text` | não |  |  | Coluna powerup_type da tabela public.race_powerups. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (powerup_type = ANY (ARRAY['turbo'::text, 'shield'::text, 'lightning'::text, 'xp_boost'::text, 'mega_boost'::text])). |
+| 5 | `collected_at` | `timestamp with time zone` | não | `now()` |  | Coluna collected_at da tabela public.race_powerups. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `used_at` | `timestamp with time zone` | sim |  |  | Coluna used_at da tabela public.race_powerups. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 7 | `effect_data` | `jsonb` | não | `'{}'::jsonb` |  | Coluna effect_data da tabela public.race_powerups. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
 
 
 ## Constraints

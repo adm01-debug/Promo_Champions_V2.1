@@ -1,5 +1,7 @@
 # public.tournaments
 
+> Tabela public.tournaments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, status text NOT NULL DEFAULT 'upcoming'::text, bracket_type text NOT NULL DEFAULT 'single_elimination'::text, metric_type text NOT NULL DEFAULT 'revenue'::text, round_duration_days integer NOT NULL DEFAULT 7, current_round integer NOT NULL DEFAULT 0, total_rounds integer NOT NULL DEFAULT 3, xp_reward integer NOT NULL DEFAULT 500, starts_at timestamp with time zone NOT NULL, ends_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), created_by uuid NULLABLE. Relacionamentos FK: created_by → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `status` | `text` | não | `'upcoming'::text` |  |  |
-| 5 | `bracket_type` | `text` | não | `'single_elimination'::text` |  |  |
-| 6 | `metric_type` | `text` | não | `'revenue'::text` |  |  |
-| 7 | `round_duration_days` | `integer` | não | `7` |  |  |
-| 8 | `current_round` | `integer` | não | `0` |  |  |
-| 9 | `total_rounds` | `integer` | não | `3` |  |  |
-| 10 | `xp_reward` | `integer` | não | `500` |  |  |
-| 11 | `starts_at` | `timestamp with time zone` | não |  |  |  |
-| 12 | `ends_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `created_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.tournaments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.tournaments. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.tournaments. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `status` | `text` | não | `'upcoming'::text` |  | Coluna status da tabela public.tournaments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'upcoming'::text. Validação CHECK: CHECK (status = ANY (ARRAY['upcoming'::text, 'active'::text, 'completed'::text])). |
+| 5 | `bracket_type` | `text` | não | `'single_elimination'::text` |  | Coluna bracket_type da tabela public.tournaments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'single_elimination'::text. Validação CHECK: CHECK (bracket_type = ANY (ARRAY['single_elimination'::text, 'double_elimination'::text])). |
+| 6 | `metric_type` | `text` | não | `'revenue'::text` |  | Coluna metric_type da tabela public.tournaments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'revenue'::text. Validação CHECK: CHECK (metric_type = ANY (ARRAY['revenue'::text, 'deals'::text, 'activities'::text, 'conversion'::text])). |
+| 7 | `round_duration_days` | `integer` | não | `7` |  | Coluna round_duration_days da tabela public.tournaments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 7. |
+| 8 | `current_round` | `integer` | não | `0` |  | Coluna current_round da tabela public.tournaments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `total_rounds` | `integer` | não | `3` |  | Coluna total_rounds da tabela public.tournaments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 3. |
+| 10 | `xp_reward` | `integer` | não | `500` |  | Coluna xp_reward da tabela public.tournaments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 500. |
+| 11 | `starts_at` | `timestamp with time zone` | não |  |  | Coluna starts_at da tabela public.tournaments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 12 | `ends_at` | `timestamp with time zone` | sim |  |  | Coluna ends_at da tabela public.tournaments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.tournaments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.tournaments. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
 
 
 ## Constraints

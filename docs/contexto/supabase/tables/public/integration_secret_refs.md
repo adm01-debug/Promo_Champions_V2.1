@@ -1,5 +1,7 @@
 # public.integration_secret_refs
 
+> Tabela public.integration_secret_refs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), credential_id uuid NOT NULL, owner_id uuid NOT NULL, key text NOT NULL, secret_ref text NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: credential_id → public.channel_credentials(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `credential_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | não |  |  |  |
-| 4 | `key` | `text` | não |  |  |  |
-| 5 | `secret_ref` | `text` | não |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.integration_secret_refs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `credential_id` | `uuid` | não |  |  | Coluna credential_id da tabela public.integration_secret_refs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.channel_credentials(id). |
+| 3 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.integration_secret_refs. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `key` | `text` | não |  |  | Coluna key da tabela public.integration_secret_refs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `secret_ref` | `text` | não |  |  | Coluna secret_ref da tabela public.integration_secret_refs. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (secret_ref ~ '^(internal\|env):[A-Za-z_][A-Za-z0-9_.-]*$'::text). |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.integration_secret_refs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.integration_secret_refs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.collectible_badges
 
+> Tabela public.collectible_badges. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, icon text NOT NULL DEFAULT '🏅'::text, category text NOT NULL DEFAULT 'general'::text, rarity text NOT NULL DEFAULT 'common'::text, unlock_condition text NOT NULL, unlock_threshold integer NOT NULL DEFAULT 1, xp_reward integer NOT NULL DEFAULT 50, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `icon` | `text` | não | `'🏅'::text` |  |  |
-| 5 | `category` | `text` | não | `'general'::text` |  |  |
-| 6 | `rarity` | `text` | não | `'common'::text` |  |  |
-| 7 | `unlock_condition` | `text` | não |  |  |  |
-| 8 | `unlock_threshold` | `integer` | não | `1` |  |  |
-| 9 | `xp_reward` | `integer` | não | `50` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.collectible_badges. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.collectible_badges. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.collectible_badges. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `icon` | `text` | não | `'🏅'::text` |  | Coluna icon da tabela public.collectible_badges. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: '🏅'::text. |
+| 5 | `category` | `text` | não | `'general'::text` |  | Coluna category da tabela public.collectible_badges. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'general'::text. |
+| 6 | `rarity` | `text` | não | `'common'::text` |  | Coluna rarity da tabela public.collectible_badges. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'common'::text. |
+| 7 | `unlock_condition` | `text` | não |  |  | Coluna unlock_condition da tabela public.collectible_badges. Tipo PostgreSQL: text. Não aceita NULL. |
+| 8 | `unlock_threshold` | `integer` | não | `1` |  | Coluna unlock_threshold da tabela public.collectible_badges. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 9 | `xp_reward` | `integer` | não | `50` |  | Coluna xp_reward da tabela public.collectible_badges. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.collectible_badges. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

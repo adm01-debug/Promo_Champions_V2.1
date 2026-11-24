@@ -1,5 +1,7 @@
 # public.mood_entries
 
+> Tabela public.mood_entries. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, entry_date date NOT NULL DEFAULT CURRENT_DATE, mood_value integer NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `entry_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 4 | `mood_value` | `integer` | não |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.mood_entries. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.mood_entries. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `entry_date` | `date` | não | `CURRENT_DATE` |  | Coluna entry_date da tabela public.mood_entries. Tipo PostgreSQL: date. Não aceita NULL. Valor padrão: CURRENT_DATE. |
+| 4 | `mood_value` | `integer` | não |  |  | Coluna mood_value da tabela public.mood_entries. Tipo PostgreSQL: integer. Não aceita NULL. |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.mood_entries. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

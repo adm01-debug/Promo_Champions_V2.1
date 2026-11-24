@@ -1,5 +1,7 @@
 # public.win_loss_insights
 
+> Tabela public.win_loss_insights. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), insight_type text NOT NULL, title text NOT NULL, description text NOT NULL, severity text NOT NULL DEFAULT 'info'::text, evidence jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), applied_at timestamp with time zone NULLABLE, applied_by uuid NULLABLE, assigned_to uuid NULLABLE, assigned_at timestamp with time zone NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `insight_type` | `text` | não |  |  |  |
-| 3 | `title` | `text` | não |  |  |  |
-| 4 | `description` | `text` | não |  |  |  |
-| 5 | `severity` | `text` | não | `'info'::text` |  |  |
-| 6 | `evidence` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `applied_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `applied_by` | `uuid` | sim |  |  |  |
-| 10 | `assigned_to` | `uuid` | sim |  |  |  |
-| 11 | `assigned_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_loss_insights. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `insight_type` | `text` | não |  |  | Coluna insight_type da tabela public.win_loss_insights. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `title` | `text` | não |  |  | Coluna title da tabela public.win_loss_insights. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | não |  |  | Coluna description da tabela public.win_loss_insights. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `severity` | `text` | não | `'info'::text` |  | Coluna severity da tabela public.win_loss_insights. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'info'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['info'::text, 'opportunity'::text, 'risk'::text])). |
+| 6 | `evidence` | `jsonb` | não | `'{}'::jsonb` |  | Coluna evidence da tabela public.win_loss_insights. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.win_loss_insights. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `applied_at` | `timestamp with time zone` | sim |  |  | Coluna applied_at da tabela public.win_loss_insights. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 9 | `applied_by` | `uuid` | sim |  |  | Coluna applied_by da tabela public.win_loss_insights. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 10 | `assigned_to` | `uuid` | sim |  |  | Coluna assigned_to da tabela public.win_loss_insights. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 11 | `assigned_at` | `timestamp with time zone` | sim |  |  | Coluna assigned_at da tabela public.win_loss_insights. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

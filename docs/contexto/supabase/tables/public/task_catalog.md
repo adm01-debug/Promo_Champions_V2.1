@@ -1,5 +1,7 @@
 # public.task_catalog
 
+> Tabela public.task_catalog. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), title text NOT NULL, description text NULLABLE, category text NOT NULL DEFAULT 'general'::text, difficulty task_difficulty NOT NULL DEFAULT 'medium'::task_difficulty, xp_reward integer NOT NULL DEFAULT 50, active boolean NOT NULL DEFAULT true, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `title` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `category` | `text` | não | `'general'::text` |  |  |
-| 5 | `difficulty` | `task_difficulty` | não | `'medium'::task_difficulty` |  |  |
-| 6 | `xp_reward` | `integer` | não | `50` |  |  |
-| 7 | `active` | `boolean` | não | `true` |  |  |
-| 8 | `created_by` | `uuid` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.task_catalog. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `title` | `text` | não |  |  | Coluna title da tabela public.task_catalog. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.task_catalog. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `category` | `text` | não | `'general'::text` |  | Coluna category da tabela public.task_catalog. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'general'::text. |
+| 5 | `difficulty` | `task_difficulty` | não | `'medium'::task_difficulty` |  | Coluna difficulty da tabela public.task_catalog. Tipo PostgreSQL: task_difficulty. Não aceita NULL. Valor padrão: 'medium'::task_difficulty. Valores do enum: 'easy', 'medium', 'hard', 'epic'. |
+| 6 | `xp_reward` | `integer` | não | `50` |  | Coluna xp_reward da tabela public.task_catalog. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 50. Validação CHECK: CHECK (xp_reward >= 0). |
+| 7 | `active` | `boolean` | não | `true` |  | Coluna active da tabela public.task_catalog. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 8 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.task_catalog. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.task_catalog. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.task_catalog. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

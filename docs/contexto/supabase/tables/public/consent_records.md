@@ -1,5 +1,7 @@
 # public.consent_records
 
+> Tabela public.consent_records. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), subject_id uuid NULLABLE, subject_email text NULLABLE, subject_client_id uuid NULLABLE, purpose text NOT NULL, legal_basis text NOT NULL DEFAULT 'consent'::text, source text NULLABLE, granted_at timestamp with time zone NOT NULL DEFAULT now(), revoked_at timestamp with time zone NULLABLE, granted_by uuid NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: subject_client_id → public.clients(id); subject_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `subject_id` | `uuid` | sim |  |  |  |
-| 3 | `subject_email` | `text` | sim |  |  |  |
-| 4 | `subject_client_id` | `uuid` | sim |  |  |  |
-| 5 | `purpose` | `text` | não |  |  |  |
-| 6 | `legal_basis` | `text` | não | `'consent'::text` |  |  |
-| 7 | `source` | `text` | sim |  |  |  |
-| 8 | `granted_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `revoked_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `granted_by` | `uuid` | sim |  |  |  |
-| 11 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.consent_records. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `subject_id` | `uuid` | sim |  |  | Coluna subject_id da tabela public.consent_records. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). Validação CHECK: CHECK (subject_id IS NOT NULL OR subject_email IS NOT NULL OR subject_client_id IS NOT NULL). |
+| 3 | `subject_email` | `text` | sim |  |  | Coluna subject_email da tabela public.consent_records. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (subject_id IS NOT NULL OR subject_email IS NOT NULL OR subject_client_id IS NOT NULL). |
+| 4 | `subject_client_id` | `uuid` | sim |  |  | Coluna subject_client_id da tabela public.consent_records. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.clients(id). Validação CHECK: CHECK (subject_id IS NOT NULL OR subject_email IS NOT NULL OR subject_client_id IS NOT NULL). |
+| 5 | `purpose` | `text` | não |  |  | Coluna purpose da tabela public.consent_records. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `legal_basis` | `text` | não | `'consent'::text` |  | Coluna legal_basis da tabela public.consent_records. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'consent'::text. Validação CHECK: CHECK (legal_basis = ANY (ARRAY['consent'::text, 'legitimate_interest'::text, 'contract'::text, 'legal_obligation'::text])). |
+| 7 | `source` | `text` | sim |  |  | Coluna source da tabela public.consent_records. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `granted_at` | `timestamp with time zone` | não | `now()` |  | Coluna granted_at da tabela public.consent_records. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `revoked_at` | `timestamp with time zone` | sim |  |  | Coluna revoked_at da tabela public.consent_records. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `granted_by` | `uuid` | sim |  |  | Coluna granted_by da tabela public.consent_records. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 11 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.consent_records. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.consent_records. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.consent_records. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

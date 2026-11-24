@@ -1,5 +1,7 @@
 # public.lead_assignments
 
+> Registro de atribuições de negócios a vendedores e da regra aplicada.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `rule_id` | `uuid` | sim |  |  |  |
-| 5 | `strategy_used` | `text` | não |  |  |  |
-| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da atribuição. |
+| 2 | `sale_id` | `uuid` | não |  |  | Negócio atribuído. |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Vendedor que recebeu o negócio. |
+| 4 | `rule_id` | `uuid` | sim |  |  | Regra de roteamento aplicada, quando houver. |
+| 5 | `strategy_used` | `text` | não |  |  | Estratégia usada para realizar a atribuição. |
+| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  | Data e hora em que a atribuição foi realizada. |
+| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Metadados adicionais da atribuição em formato JSON. |
 
 
 ## Constraints

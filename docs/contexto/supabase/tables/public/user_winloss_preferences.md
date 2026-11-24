@@ -1,5 +1,7 @@
 # public.user_winloss_preferences
 
+> Tabela public.user_winloss_preferences. Estrutura registrada no catálogo do PostgreSQL: user_id uuid NOT NULL, layout jsonb NOT NULL DEFAULT '[]'::jsonb, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `user_id` | `uuid` | não |  |  |  |
-| 2 | `layout` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.user_winloss_preferences. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. |
+| 2 | `layout` | `jsonb` | não | `'[]'::jsonb` |  | Coluna layout da tabela public.user_winloss_preferences. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.user_winloss_preferences. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

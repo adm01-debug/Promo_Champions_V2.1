@@ -18,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `jobid` | `integer` | não |  |  |  |
-| 2 | `last_start` | `timestamp with time zone` | não |  |  |  |
-| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `jobid` | `integer` | não |  |  | Coluna jobid da tabela public.cron_job_last_run. Tipo PostgreSQL: integer. Participa da chave primária. Não aceita NULL. |
+| 2 | `last_start` | `timestamp with time zone` | não |  |  | Coluna last_start da tabela public.cron_job_last_run. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 3 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.cron_job_last_run. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

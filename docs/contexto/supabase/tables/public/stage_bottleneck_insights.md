@@ -1,5 +1,7 @@
 # public.stage_bottleneck_insights
 
+> Tabela public.stage_bottleneck_insights. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), stage text NOT NULL, owner_id uuid NULLABLE, severity text NOT NULL DEFAULT 'low'::text, conversion_rate numeric(5,2) NOT NULL DEFAULT 0, top_loss_reasons jsonb NOT NULL DEFAULT '[]'::jsonb, recommendations jsonb NOT NULL DEFAULT '[]'::jsonb, ai_summary text NULLABLE, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `stage` | `text` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | sim |  |  |  |
-| 4 | `severity` | `text` | não | `'low'::text` |  |  |
-| 5 | `conversion_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 6 | `top_loss_reasons` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `ai_summary` | `text` | sim |  |  |  |
-| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `stage` | `text` | não |  |  | Coluna stage da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `severity` | `text` | não | `'low'::text` |  | Coluna severity da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'low'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])). |
+| 5 | `conversion_rate` | `numeric(5,2)` | não | `0` |  | Coluna conversion_rate da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `top_loss_reasons` | `jsonb` | não | `'[]'::jsonb` |  | Coluna top_loss_reasons da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 7 | `recommendations` | `jsonb` | não | `'[]'::jsonb` |  | Coluna recommendations da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 8 | `ai_summary` | `text` | sim |  |  | Coluna ai_summary da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.stage_bottleneck_insights. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

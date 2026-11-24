@@ -1,5 +1,7 @@
 # public.forecast_confidence_scores
 
+> Tabela public.forecast_confidence_scores. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NULLABLE, source text NOT NULL, period_count integer NOT NULL DEFAULT 0, avg_mape numeric NOT NULL DEFAULT 0, bias_trend text NOT NULL DEFAULT 'accurate'::text, confidence_score numeric NOT NULL DEFAULT 0, computed_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | sim |  |  |  |
-| 3 | `source` | `text` | não |  |  |  |
-| 4 | `period_count` | `integer` | não | `0` |  |  |
-| 5 | `avg_mape` | `numeric` | não | `0` |  |  |
-| 6 | `bias_trend` | `text` | não | `'accurate'::text` |  |  |
-| 7 | `confidence_score` | `numeric` | não | `0` |  |  |
-| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.forecast_confidence_scores. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.forecast_confidence_scores. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 3 | `source` | `text` | não |  |  | Coluna source da tabela public.forecast_confidence_scores. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `period_count` | `integer` | não | `0` |  | Coluna period_count da tabela public.forecast_confidence_scores. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `avg_mape` | `numeric` | não | `0` |  | Coluna avg_mape da tabela public.forecast_confidence_scores. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `bias_trend` | `text` | não | `'accurate'::text` |  | Coluna bias_trend da tabela public.forecast_confidence_scores. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'accurate'::text. |
+| 7 | `confidence_score` | `numeric` | não | `0` |  | Coluna confidence_score da tabela public.forecast_confidence_scores. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.forecast_confidence_scores. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

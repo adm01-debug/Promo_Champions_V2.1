@@ -1,5 +1,7 @@
 # public.coaching_skill_benchmarks
 
+> Tabela public.coaching_skill_benchmarks. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), metric_key text NOT NULL, team_avg numeric NOT NULL DEFAULT 0, top_quartile numeric NOT NULL DEFAULT 0, sample_size integer NOT NULL DEFAULT 0, computed_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `metric_key` | `text` | não |  |  |  |
-| 3 | `team_avg` | `numeric` | não | `0` |  |  |
-| 4 | `top_quartile` | `numeric` | não | `0` |  |  |
-| 5 | `sample_size` | `integer` | não | `0` |  |  |
-| 6 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `metric_key` | `text` | não |  |  | Coluna metric_key da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (metric_key = ANY (ARRAY['conversion_rate'::text, 'stage_duration'::text, 'win_rate'::text, 'avg_ticket'::text, 'activities_per_day'::text])). |
+| 3 | `team_avg` | `numeric` | não | `0` |  | Coluna team_avg da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 4 | `top_quartile` | `numeric` | não | `0` |  | Coluna top_quartile da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 5 | `sample_size` | `integer` | não | `0` |  | Coluna sample_size da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.coaching_skill_benchmarks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

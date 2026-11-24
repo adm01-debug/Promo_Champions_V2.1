@@ -1,5 +1,7 @@
 # public.winloss_webhook_alerts
 
+> Tabela public.winloss_webhook_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), subscription_id uuid NOT NULL, kind text NOT NULL, details jsonb NOT NULL DEFAULT '{}'::jsonb, fired_at timestamp with time zone NOT NULL DEFAULT now(), request_id uuid NULLABLE, suppressed boolean NOT NULL DEFAULT false, suppress_reason text NULLABLE. Relacionamentos FK: subscription_id → public.winloss_webhook_subscriptions(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `subscription_id` | `uuid` | não |  |  |  |
-| 3 | `kind` | `text` | não |  |  |  |
-| 4 | `details` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 5 | `fired_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `request_id` | `uuid` | sim |  |  |  |
-| 7 | `suppressed` | `boolean` | não | `false` |  |  |
-| 8 | `suppress_reason` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `subscription_id` | `uuid` | não |  |  | Coluna subscription_id da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.winloss_webhook_subscriptions(id). |
+| 3 | `kind` | `text` | não |  |  | Coluna kind da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (kind = ANY (ARRAY['consecutive_failures'::text, 'high_retry_rate'::text, 'attempts_exhausted'::text])). |
+| 4 | `details` | `jsonb` | não | `'{}'::jsonb` |  | Coluna details da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 5 | `fired_at` | `timestamp with time zone` | não | `now()` |  | Coluna fired_at da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `request_id` | `uuid` | sim |  |  | Coluna request_id da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 7 | `suppressed` | `boolean` | não | `false` |  | Coluna suppressed da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 8 | `suppress_reason` | `text` | sim |  |  | Coluna suppress_reason da tabela public.winloss_webhook_alerts. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

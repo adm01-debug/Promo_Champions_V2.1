@@ -18,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `webhook_id` | `uuid` | não |  |  |  |
-| 3 | `event_type` | `text` | não |  |  |  |
-| 4 | `payload` | `jsonb` | não |  |  |  |
-| 5 | `status` | `text` | não | `'pending'::text` |  |  |
-| 6 | `attempts` | `integer` | sim | `0` |  |  |
-| 7 | `last_attempt_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `next_retry_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Identificador único do evento pendente ou processado. |
+| 2 | `webhook_id` | `uuid` | não |  |  | Webhook destinatário do evento. |
+| 3 | `event_type` | `text` | não |  |  | Tipo do evento que deve ser entregue. |
+| 4 | `payload` | `jsonb` | não |  |  | Dados do evento a serem enviados ao webhook, em formato JSON. |
+| 5 | `status` | `text` | não | `'pending'::text` |  | Estado do evento: pending, success ou failed. |
+| 6 | `attempts` | `integer` | sim | `0` |  | Quantidade de tentativas de entrega realizadas. |
+| 7 | `last_attempt_at` | `timestamp with time zone` | sim |  |  | Data e hora da tentativa mais recente. |
+| 8 | `next_retry_at` | `timestamp with time zone` | sim |  |  | Data e hora previstas para a próxima tentativa. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do evento. |
 
 
 ## Constraints

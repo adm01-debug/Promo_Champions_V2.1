@@ -1,5 +1,7 @@
 # public.experiments
 
+> Tabela public.experiments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), name text NOT NULL, description text NULLABLE, is_active boolean NULLABLE DEFAULT true, start_date timestamp with time zone NULLABLE DEFAULT now(), end_date timestamp with time zone NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `is_active` | `boolean` | sim | `true` |  |  |
-| 5 | `start_date` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `end_date` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.experiments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.experiments. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.experiments. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.experiments. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 5 | `start_date` | `timestamp with time zone` | sim | `now()` |  | Coluna start_date da tabela public.experiments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 6 | `end_date` | `timestamp with time zone` | sim |  |  | Coluna end_date da tabela public.experiments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 7 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.experiments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

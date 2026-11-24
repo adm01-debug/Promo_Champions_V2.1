@@ -1,5 +1,7 @@
 # public.email_bulk_jobs
 
+> Tabela public.email_bulk_jobs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, prompt text NOT NULL, tone text NOT NULL DEFAULT 'consultivo'::text, language text NOT NULL DEFAULT 'pt-BR'::text, target_count integer NOT NULL DEFAULT 0, status text NOT NULL DEFAULT 'draft'::text, error_message text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), completed_at timestamp with time zone NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `prompt` | `text` | não |  |  |  |
-| 4 | `tone` | `text` | não | `'consultivo'::text` |  |  |
-| 5 | `language` | `text` | não | `'pt-BR'::text` |  |  |
-| 6 | `target_count` | `integer` | não | `0` |  |  |
-| 7 | `status` | `text` | não | `'draft'::text` |  |  |
-| 8 | `error_message` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.email_bulk_jobs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.email_bulk_jobs. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `prompt` | `text` | não |  |  | Coluna prompt da tabela public.email_bulk_jobs. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `tone` | `text` | não | `'consultivo'::text` |  | Coluna tone da tabela public.email_bulk_jobs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'consultivo'::text. |
+| 5 | `language` | `text` | não | `'pt-BR'::text` |  | Coluna language da tabela public.email_bulk_jobs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pt-BR'::text. |
+| 6 | `target_count` | `integer` | não | `0` |  | Coluna target_count da tabela public.email_bulk_jobs. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `status` | `text` | não | `'draft'::text` |  | Coluna status da tabela public.email_bulk_jobs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'draft'::text. |
+| 8 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.email_bulk_jobs. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.email_bulk_jobs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.email_bulk_jobs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.email_bulk_jobs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

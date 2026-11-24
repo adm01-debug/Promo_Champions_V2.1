@@ -1,5 +1,7 @@
 # public.active_power_ups
 
+> Tabela public.active_power_ups. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, power_up_type text NOT NULL, multiplier numeric NOT NULL DEFAULT 2.0, activated_at timestamp with time zone NOT NULL DEFAULT now(), expires_at timestamp with time zone NOT NULL, source text NULLABLE DEFAULT 'streak'::text, is_active boolean NOT NULL DEFAULT true. Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `power_up_type` | `text` | não |  |  |  |
-| 4 | `multiplier` | `numeric` | não | `2.0` |  |  |
-| 5 | `activated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `expires_at` | `timestamp with time zone` | não |  |  |  |
-| 7 | `source` | `text` | sim | `'streak'::text` |  |  |
-| 8 | `is_active` | `boolean` | não | `true` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.active_power_ups. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.active_power_ups. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `power_up_type` | `text` | não |  |  | Coluna power_up_type da tabela public.active_power_ups. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `multiplier` | `numeric` | não | `2.0` |  | Coluna multiplier da tabela public.active_power_ups. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 2.0. |
+| 5 | `activated_at` | `timestamp with time zone` | não | `now()` |  | Coluna activated_at da tabela public.active_power_ups. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `expires_at` | `timestamp with time zone` | não |  |  | Coluna expires_at da tabela public.active_power_ups. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 7 | `source` | `text` | sim | `'streak'::text` |  | Coluna source da tabela public.active_power_ups. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'streak'::text. |
+| 8 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.active_power_ups. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
 
 
 ## Constraints

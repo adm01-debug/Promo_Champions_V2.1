@@ -1,5 +1,7 @@
 # public.role_permissions
 
+> Relação entre papéis de usuário e permissões concedidas.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `role` | `app_role` | não |  |  |  |
-| 3 | `permission_id` | `uuid` | não |  |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da associação. |
+| 2 | `role` | `app_role` | não |  |  | Papel ao qual a permissão é associada. |
+| 3 | `permission_id` | `uuid` | não |  |  | Permissão associada ao papel. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da associação. |
 
 
 ## Constraints

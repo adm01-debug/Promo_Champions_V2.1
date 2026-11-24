@@ -1,5 +1,7 @@
 # public.race_rivalries_persistent
 
+> Tabela public.race_rivalries_persistent. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), season_id uuid NOT NULL, car_id uuid NOT NULL, rival_car_id uuid NOT NULL, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: car_id → public.race_cars(id); rival_car_id → public.race_cars(id); season_id → public.race_seasons(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `season_id` | `uuid` | não |  |  |  |
-| 3 | `car_id` | `uuid` | não |  |  |  |
-| 4 | `rival_car_id` | `uuid` | não |  |  |  |
-| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_rivalries_persistent. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `season_id` | `uuid` | não |  |  | Coluna season_id da tabela public.race_rivalries_persistent. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_seasons(id). |
+| 3 | `car_id` | `uuid` | não |  |  | Coluna car_id da tabela public.race_rivalries_persistent. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_cars(id). Validação CHECK: CHECK (car_id <> rival_car_id). |
+| 4 | `rival_car_id` | `uuid` | não |  |  | Coluna rival_car_id da tabela public.race_rivalries_persistent. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_cars(id). Validação CHECK: CHECK (car_id <> rival_car_id). |
+| 5 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_rivalries_persistent. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.race_rivalries_persistent. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

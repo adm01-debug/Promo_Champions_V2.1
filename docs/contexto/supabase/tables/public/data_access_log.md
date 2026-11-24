@@ -1,5 +1,7 @@
 # public.data_access_log
 
+> Tabela public.data_access_log. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT uuid_generate_v4(), user_id uuid NULLABLE, table_name text NOT NULL, record_id uuid NULLABLE, action text NOT NULL, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: user_id → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  |  |
-| 2 | `user_id` | `uuid` | sim |  |  |  |
-| 3 | `table_name` | `text` | não |  |  |  |
-| 4 | `record_id` | `uuid` | sim |  |  |  |
-| 5 | `action` | `text` | não |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `uuid_generate_v4()` |  | Coluna id da tabela public.data_access_log. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: uuid_generate_v4(). |
+| 2 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.data_access_log. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 3 | `table_name` | `text` | não |  |  | Coluna table_name da tabela public.data_access_log. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `record_id` | `uuid` | sim |  |  | Coluna record_id da tabela public.data_access_log. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `action` | `text` | não |  |  | Coluna action da tabela public.data_access_log. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (action = ANY (ARRAY['SELECT'::text, 'INSERT'::text, 'UPDATE'::text, 'DELETE'::text])). |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.data_access_log. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

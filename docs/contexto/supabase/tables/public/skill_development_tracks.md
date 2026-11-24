@@ -1,5 +1,7 @@
 # public.skill_development_tracks
 
+> Tabela public.skill_development_tracks. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, skill text NOT NULL, priority integer NOT NULL DEFAULT 1, current_level text NOT NULL DEFAULT 'beginner'::text, target_level text NOT NULL DEFAULT 'intermediate'::text, milestones jsonb NOT NULL DEFAULT '[]'::jsonb, estimated_weeks integer NOT NULL DEFAULT 4, ai_plan text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `skill` | `text` | não |  |  |  |
-| 4 | `priority` | `integer` | não | `1` |  |  |
-| 5 | `current_level` | `text` | não | `'beginner'::text` |  |  |
-| 6 | `target_level` | `text` | não | `'intermediate'::text` |  |  |
-| 7 | `milestones` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `estimated_weeks` | `integer` | não | `4` |  |  |
-| 9 | `ai_plan` | `text` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.skill_development_tracks. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.skill_development_tracks. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `skill` | `text` | não |  |  | Coluna skill da tabela public.skill_development_tracks. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])). |
+| 4 | `priority` | `integer` | não | `1` |  | Coluna priority da tabela public.skill_development_tracks. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 5 | `current_level` | `text` | não | `'beginner'::text` |  | Coluna current_level da tabela public.skill_development_tracks. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'beginner'::text. |
+| 6 | `target_level` | `text` | não | `'intermediate'::text` |  | Coluna target_level da tabela public.skill_development_tracks. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'intermediate'::text. |
+| 7 | `milestones` | `jsonb` | não | `'[]'::jsonb` |  | Coluna milestones da tabela public.skill_development_tracks. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 8 | `estimated_weeks` | `integer` | não | `4` |  | Coluna estimated_weeks da tabela public.skill_development_tracks. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 4. |
+| 9 | `ai_plan` | `text` | sim |  |  | Coluna ai_plan da tabela public.skill_development_tracks. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.skill_development_tracks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.skill_development_tracks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

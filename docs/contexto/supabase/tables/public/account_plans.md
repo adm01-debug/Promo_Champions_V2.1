@@ -1,5 +1,7 @@
 # public.account_plans
 
+> Plano estratégico anual de relacionamento e crescimento para uma conta empresarial.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,22 +18,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `account_id` | `uuid` | não |  |  |  |
-| 3 | `fiscal_year` | `text` | sim |  |  |  |
-| 4 | `revenue_target` | `numeric(15,2)` | sim |  |  |  |
-| 5 | `executive_summary` | `text` | sim |  |  |  |
-| 6 | `key_objectives` | `text[]` | sim |  |  |  |
-| 7 | `main_challenges` | `text[]` | sim |  |  |  |
-| 8 | `swot_strengths` | `text[]` | sim |  |  |  |
-| 9 | `swot_weaknesses` | `text[]` | sim |  |  |  |
-| 10 | `swot_opportunities` | `text[]` | sim |  |  |  |
-| 11 | `swot_threats` | `text[]` | sim |  |  |  |
-| 12 | `account_strategy` | `text` | sim |  |  |  |
-| 13 | `action_plan` | `jsonb` | sim |  |  |  |
-| 14 | `created_by` | `uuid` | sim |  |  |  |
-| 15 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 16 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do plano de conta. |
+| 2 | `account_id` | `uuid` | não |  |  | Conta empresarial à qual o plano pertence. |
+| 3 | `fiscal_year` | `text` | sim |  |  | Ano fiscal de referência do plano. |
+| 4 | `revenue_target` | `numeric(15,2)` | sim |  |  | Meta de receita da conta para o período, em BRL. |
+| 5 | `executive_summary` | `text` | sim |  |  | Resumo executivo do plano. |
+| 6 | `key_objectives` | `text[]` | sim |  |  | Lista de objetivos principais para a conta. |
+| 7 | `main_challenges` | `text[]` | sim |  |  | Lista dos principais desafios identificados para a conta. |
+| 8 | `swot_strengths` | `text[]` | sim |  |  | Pontos fortes da conta ou do relacionamento. |
+| 9 | `swot_weaknesses` | `text[]` | sim |  |  | Pontos fracos identificados na análise da conta. |
+| 10 | `swot_opportunities` | `text[]` | sim |  |  | Oportunidades identificadas na análise da conta. |
+| 11 | `swot_threats` | `text[]` | sim |  |  | Ameaças identificadas na análise da conta. |
+| 12 | `account_strategy` | `text` | sim |  |  | Estratégia de relacionamento e crescimento para a conta. |
+| 13 | `action_plan` | `jsonb` | sim |  |  | Plano de ação estruturado em JSON. |
+| 14 | `created_by` | `uuid` | sim |  |  | Usuário que criou o plano, quando identificado. |
+| 15 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do plano. |
+| 16 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora da última atualização do plano. |
 
 
 ## Constraints

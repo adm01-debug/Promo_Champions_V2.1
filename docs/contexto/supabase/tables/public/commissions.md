@@ -1,5 +1,7 @@
 # public.commissions
 
+> Tabela public.commissions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, salesperson_id uuid NOT NULL, rule_id uuid NULLABLE, base_amount numeric(12,2) NOT NULL, percentage numeric(5,2) NOT NULL, commission_amount numeric(12,2) NOT NULL, status text NOT NULL DEFAULT 'pending'::text, approved_at timestamp with time zone NULLABLE, approved_by uuid NULLABLE, paid_at timestamp with time zone NULLABLE, paid_by uuid NULLABLE, payment_notes text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), sdr_commission_amount numeric NULLABLE DEFAULT 0, is_first_sale boolean NULLABLE DEFAULT false. Relacionamentos FK: rule_id → public.commission_rules(id); sale_id → public.sales(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,23 +18,23 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `rule_id` | `uuid` | sim |  |  |  |
-| 5 | `base_amount` | `numeric(12,2)` | não |  |  |  |
-| 6 | `percentage` | `numeric(5,2)` | não |  |  |  |
-| 7 | `commission_amount` | `numeric(12,2)` | não |  |  |  |
-| 8 | `status` | `text` | não | `'pending'::text` |  |  |
-| 9 | `approved_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `approved_by` | `uuid` | sim |  |  |  |
-| 11 | `paid_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `paid_by` | `uuid` | sim |  |  |  |
-| 13 | `payment_notes` | `text` | sim |  |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `sdr_commission_amount` | `numeric` | sim | `0` |  |  |
-| 17 | `is_first_sale` | `boolean` | sim | `false` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.commissions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.commissions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.commissions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `rule_id` | `uuid` | sim |  |  | Coluna rule_id da tabela public.commissions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.commission_rules(id). |
+| 5 | `base_amount` | `numeric(12,2)` | não |  |  | Coluna base_amount da tabela public.commissions. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. |
+| 6 | `percentage` | `numeric(5,2)` | não |  |  | Coluna percentage da tabela public.commissions. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. |
+| 7 | `commission_amount` | `numeric(12,2)` | não |  |  | Coluna commission_amount da tabela public.commissions. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. |
+| 8 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.commissions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'approved'::text, 'paid'::text, 'cancelled'::text])). |
+| 9 | `approved_at` | `timestamp with time zone` | sim |  |  | Coluna approved_at da tabela public.commissions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `approved_by` | `uuid` | sim |  |  | Coluna approved_by da tabela public.commissions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 11 | `paid_at` | `timestamp with time zone` | sim |  |  | Coluna paid_at da tabela public.commissions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `paid_by` | `uuid` | sim |  |  | Coluna paid_by da tabela public.commissions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 13 | `payment_notes` | `text` | sim |  |  | Coluna payment_notes da tabela public.commissions. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.commissions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.commissions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `sdr_commission_amount` | `numeric` | sim | `0` |  | Coluna sdr_commission_amount da tabela public.commissions. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: 0. |
+| 17 | `is_first_sale` | `boolean` | sim | `false` |  | Coluna is_first_sale da tabela public.commissions. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
 
 
 ## Constraints

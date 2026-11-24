@@ -1,5 +1,7 @@
 # public.competitors_pricing
 
+> Tabela public.competitors_pricing. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), product_id uuid NULLABLE, competitor_id uuid NULLABLE, price numeric(12,2) NOT NULL, source_url text NULLABLE, is_promotion boolean NULLABLE DEFAULT false, recorded_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: competitor_id → public.competitors_registry(id); product_id → public.products(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `product_id` | `uuid` | sim |  |  |  |
-| 3 | `competitor_id` | `uuid` | sim |  |  |  |
-| 4 | `price` | `numeric(12,2)` | não |  |  |  |
-| 5 | `source_url` | `text` | sim |  |  |  |
-| 6 | `is_promotion` | `boolean` | sim | `false` |  |  |
-| 7 | `recorded_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.competitors_pricing. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `product_id` | `uuid` | sim |  |  | Coluna product_id da tabela public.competitors_pricing. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.products(id). |
+| 3 | `competitor_id` | `uuid` | sim |  |  | Coluna competitor_id da tabela public.competitors_pricing. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.competitors_registry(id). |
+| 4 | `price` | `numeric(12,2)` | não |  |  | Coluna price da tabela public.competitors_pricing. Tipo PostgreSQL: numeric(12,2). Não aceita NULL. |
+| 5 | `source_url` | `text` | sim |  |  | Coluna source_url da tabela public.competitors_pricing. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `is_promotion` | `boolean` | sim | `false` |  | Coluna is_promotion da tabela public.competitors_pricing. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 7 | `recorded_at` | `timestamp with time zone` | sim | `now()` |  | Coluna recorded_at da tabela public.competitors_pricing. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

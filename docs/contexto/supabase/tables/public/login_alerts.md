@@ -1,5 +1,7 @@
 # public.login_alerts
 
+> Alertas de login associados a dispositivos, endereços IP ou localizações incomuns.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `device_fingerprint` | `text` | não |  |  |  |
-| 4 | `ip_address` | `text` | sim |  |  |  |
-| 5 | `browser` | `text` | sim |  |  |  |
-| 6 | `os` | `text` | sim |  |  |  |
-| 7 | `location` | `text` | sim |  |  |  |
-| 8 | `alert_type` | `text` | sim | `'new_device'::text` |  |  |
-| 9 | `email_sent` | `boolean` | sim | `false` |  |  |
-| 10 | `email_sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `acknowledged` | `boolean` | sim | `false` |  |  |
-| 12 | `acknowledged_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do alerta de login. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth associado ao alerta. |
+| 3 | `device_fingerprint` | `text` | não |  |  | Identificador do dispositivo relacionado ao alerta. |
+| 4 | `ip_address` | `text` | sim |  |  | Endereço IP associado ao alerta, quando disponível. |
+| 5 | `browser` | `text` | sim |  |  | Navegador detectado, quando disponível. |
+| 6 | `os` | `text` | sim |  |  | Sistema operacional detectado, quando disponível. |
+| 7 | `location` | `text` | sim |  |  | Localização estimada associada ao alerta, quando disponível. |
+| 8 | `alert_type` | `text` | sim | `'new_device'::text` |  | Tipo de alerta: new_device, new_ip, new_location ou suspicious. |
+| 9 | `email_sent` | `boolean` | sim | `false` |  | Indica se um e-mail de alerta foi enviado. |
+| 10 | `email_sent_at` | `timestamp with time zone` | sim |  |  | Data e hora do envio do e-mail de alerta. |
+| 11 | `acknowledged` | `boolean` | sim | `false` |  | Indica se o usuário reconheceu o alerta. |
+| 12 | `acknowledged_at` | `timestamp with time zone` | sim |  |  | Data e hora em que o alerta foi reconhecido. |
+| 13 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação do alerta. |
 
 
 ## Constraints

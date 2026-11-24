@@ -1,5 +1,7 @@
 # public.webhook_inbound_log
 
+> Tabela public.webhook_inbound_log. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), received_at timestamp with time zone NOT NULL DEFAULT now(), source text NOT NULL DEFAULT 'promogifts'::text, event text NULLABLE, correlation_key text NULLABLE, outcome text NOT NULL, http_status integer NOT NULL, request_id text NULLABLE, error_message text NULLABLE, payload_size integer NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 3 | `source` | `text` | não | `'promogifts'::text` |  |  |
-| 4 | `event` | `text` | sim |  |  |  |
-| 5 | `correlation_key` | `text` | sim |  |  |  |
-| 6 | `outcome` | `text` | não |  |  |  |
-| 7 | `http_status` | `integer` | não |  |  |  |
-| 8 | `request_id` | `text` | sim |  |  |  |
-| 9 | `error_message` | `text` | sim |  |  |  |
-| 10 | `payload_size` | `integer` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webhook_inbound_log. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.webhook_inbound_log. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 3 | `source` | `text` | não | `'promogifts'::text` |  | Coluna source da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'promogifts'::text. |
+| 4 | `event` | `text` | sim |  |  | Coluna event da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `correlation_key` | `text` | sim |  |  | Coluna correlation_key da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `outcome` | `text` | não |  |  | Coluna outcome da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (outcome = ANY (ARRAY['accepted'::text, 'duplicate'::text, 'rejected'::text, 'error'::text, 'ignored'::text])). |
+| 7 | `http_status` | `integer` | não |  |  | Coluna http_status da tabela public.webhook_inbound_log. Tipo PostgreSQL: integer. Não aceita NULL. Validação CHECK: CHECK (http_status >= 100 AND http_status <= 599). |
+| 8 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.webhook_inbound_log. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `payload_size` | `integer` | sim |  |  | Coluna payload_size da tabela public.webhook_inbound_log. Tipo PostgreSQL: integer. Aceita NULL. Validação CHECK: CHECK (payload_size IS NULL OR payload_size >= 0). |
 
 
 ## Constraints

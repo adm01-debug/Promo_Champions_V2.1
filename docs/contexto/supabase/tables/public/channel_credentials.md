@@ -1,5 +1,7 @@
 # public.channel_credentials
 
+> Tabela public.channel_credentials. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, channel text NOT NULL, provider text NOT NULL, label text NULLABLE, credentials jsonb NOT NULL DEFAULT '{}'::jsonb, from_number text NULLABLE, enabled boolean NOT NULL DEFAULT true, verified_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `channel` | `text` | não |  |  |  |
-| 4 | `provider` | `text` | não |  |  |  |
-| 5 | `label` | `text` | sim |  |  |  |
-| 6 | `credentials` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 7 | `from_number` | `text` | sim |  |  |  |
-| 8 | `enabled` | `boolean` | não | `true` |  |  |
-| 9 | `verified_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.channel_credentials. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.channel_credentials. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `channel` | `text` | não |  |  | Coluna channel da tabela public.channel_credentials. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (channel = ANY (ARRAY['whatsapp'::text, 'sms'::text])). |
+| 4 | `provider` | `text` | não |  |  | Coluna provider da tabela public.channel_credentials. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text, 'evolution'::text])). |
+| 5 | `label` | `text` | sim |  |  | Coluna label da tabela public.channel_credentials. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `credentials` | `jsonb` | não | `'{}'::jsonb` |  | Coluna credentials da tabela public.channel_credentials. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 7 | `from_number` | `text` | sim |  |  | Coluna from_number da tabela public.channel_credentials. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `enabled` | `boolean` | não | `true` |  | Coluna enabled da tabela public.channel_credentials. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 9 | `verified_at` | `timestamp with time zone` | sim |  |  | Coluna verified_at da tabela public.channel_credentials. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.channel_credentials. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.channel_credentials. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

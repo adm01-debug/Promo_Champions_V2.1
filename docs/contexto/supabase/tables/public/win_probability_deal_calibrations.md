@@ -1,5 +1,7 @@
 # public.win_probability_deal_calibrations
 
+> Tabela public.win_probability_deal_calibrations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, stage text NOT NULL, segment text NOT NULL DEFAULT 'all'::text, owner_id uuid NULLABLE, declared_probability numeric NOT NULL DEFAULT 0, historical_win_rate numeric NOT NULL DEFAULT 0, calibrated_probability numeric NOT NULL DEFAULT 0, calibration_delta numeric NULLABLE DEFAULT (calibrated_probability - declared_probability), confidence text NOT NULL DEFAULT 'low'::text, flag text NOT NULL DEFAULT 'aligned'::text, sample_size integer NOT NULL DEFAULT 0, computed_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `stage` | `text` | não |  |  |  |
-| 4 | `segment` | `text` | não | `'all'::text` |  |  |
-| 5 | `owner_id` | `uuid` | sim |  |  |  |
-| 6 | `declared_probability` | `numeric` | não | `0` |  |  |
-| 7 | `historical_win_rate` | `numeric` | não | `0` |  |  |
-| 8 | `calibrated_probability` | `numeric` | não | `0` |  |  |
-| 9 | `calibration_delta` | `numeric` | sim | `(calibrated_probability - declared_probability)` | s |  |
-| 10 | `confidence` | `text` | não | `'low'::text` |  |  |
-| 11 | `flag` | `text` | não | `'aligned'::text` |  |  |
-| 12 | `sample_size` | `integer` | não | `0` |  |  |
-| 13 | `computed_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `stage` | `text` | não |  |  | Coluna stage da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `segment` | `text` | não | `'all'::text` |  | Coluna segment da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'all'::text. |
+| 5 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `declared_probability` | `numeric` | não | `0` |  | Coluna declared_probability da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `historical_win_rate` | `numeric` | não | `0` |  | Coluna historical_win_rate da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `calibrated_probability` | `numeric` | não | `0` |  | Coluna calibrated_probability da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `calibration_delta` | `numeric` | sim | `(calibrated_probability - declared_probability)` | s | Coluna calibration_delta da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: (calibrated_probability - declared_probability). |
+| 10 | `confidence` | `text` | não | `'low'::text` |  | Coluna confidence da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'low'::text. Validação CHECK: CHECK (confidence = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])). |
+| 11 | `flag` | `text` | não | `'aligned'::text` |  | Coluna flag da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'aligned'::text. Validação CHECK: CHECK (flag = ANY (ARRAY['overconfident'::text, 'underconfident'::text, 'aligned'::text])). |
+| 12 | `sample_size` | `integer` | não | `0` |  | Coluna sample_size da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 13 | `computed_at` | `timestamp with time zone` | não | `now()` |  | Coluna computed_at da tabela public.win_probability_deal_calibrations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

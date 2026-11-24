@@ -1,5 +1,7 @@
 # public.prize_wheel_spins
 
+> Tabela public.prize_wheel_spins. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, prize_type text NOT NULL, prize_value integer NOT NULL DEFAULT 0, prize_label text NOT NULL, trigger_type text NOT NULL DEFAULT 'mission'::text, spun_at timestamp with time zone NOT NULL DEFAULT now(), request_id uuid NULLABLE. Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `prize_type` | `text` | não |  |  |  |
-| 4 | `prize_value` | `integer` | não | `0` |  |  |
-| 5 | `prize_label` | `text` | não |  |  |  |
-| 6 | `trigger_type` | `text` | não | `'mission'::text` |  |  |
-| 7 | `spun_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `request_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.prize_wheel_spins. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.prize_wheel_spins. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `prize_type` | `text` | não |  |  | Coluna prize_type da tabela public.prize_wheel_spins. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `prize_value` | `integer` | não | `0` |  | Coluna prize_value da tabela public.prize_wheel_spins. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `prize_label` | `text` | não |  |  | Coluna prize_label da tabela public.prize_wheel_spins. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `trigger_type` | `text` | não | `'mission'::text` |  | Coluna trigger_type da tabela public.prize_wheel_spins. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'mission'::text. |
+| 7 | `spun_at` | `timestamp with time zone` | não | `now()` |  | Coluna spun_at da tabela public.prize_wheel_spins. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `request_id` | `uuid` | sim |  |  | Coluna request_id da tabela public.prize_wheel_spins. Tipo PostgreSQL: uuid. Aceita NULL. |
 
 
 ## Constraints

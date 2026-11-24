@@ -1,5 +1,7 @@
 # public.skill_assessments
 
+> Tabela public.skill_assessments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, skill text NOT NULL, current_level text NOT NULL DEFAULT 'beginner'::text, score numeric NOT NULL DEFAULT 0, trend text NOT NULL DEFAULT 'stable'::text, gap_count_30d integer NOT NULL DEFAULT 0, gap_count_90d integer NOT NULL DEFAULT 0, last_assessed_at timestamp with time zone NOT NULL DEFAULT now(), factors jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `skill` | `text` | não |  |  |  |
-| 4 | `current_level` | `text` | não | `'beginner'::text` |  |  |
-| 5 | `score` | `numeric` | não | `0` |  |  |
-| 6 | `trend` | `text` | não | `'stable'::text` |  |  |
-| 7 | `gap_count_30d` | `integer` | não | `0` |  |  |
-| 8 | `gap_count_90d` | `integer` | não | `0` |  |  |
-| 9 | `last_assessed_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.skill_assessments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.skill_assessments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `skill` | `text` | não |  |  | Coluna skill da tabela public.skill_assessments. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (skill = ANY (ARRAY['discovery'::text, 'qualification'::text, 'objection_handling'::text, 'closing'::text, 'prospecting'::text, 'negotiation'::text])). |
+| 4 | `current_level` | `text` | não | `'beginner'::text` |  | Coluna current_level da tabela public.skill_assessments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'beginner'::text. Validação CHECK: CHECK (current_level = ANY (ARRAY['beginner'::text, 'intermediate'::text, 'advanced'::text, 'expert'::text])). |
+| 5 | `score` | `numeric` | não | `0` |  | Coluna score da tabela public.skill_assessments. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (score >= 0::numeric AND score <= 100::numeric). |
+| 6 | `trend` | `text` | não | `'stable'::text` |  | Coluna trend da tabela public.skill_assessments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'stable'::text. Validação CHECK: CHECK (trend = ANY (ARRAY['improving'::text, 'stable'::text, 'declining'::text])). |
+| 7 | `gap_count_30d` | `integer` | não | `0` |  | Coluna gap_count_30d da tabela public.skill_assessments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `gap_count_90d` | `integer` | não | `0` |  | Coluna gap_count_90d da tabela public.skill_assessments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `last_assessed_at` | `timestamp with time zone` | não | `now()` |  | Coluna last_assessed_at da tabela public.skill_assessments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.skill_assessments. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.skill_assessments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.skill_assessments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

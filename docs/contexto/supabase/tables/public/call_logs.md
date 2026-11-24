@@ -1,5 +1,7 @@
 # public.call_logs
 
+> Tabela public.call_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, sale_id uuid NULLABLE, queue_item_id uuid NULLABLE, disposition text NOT NULL, outcome text NULLABLE, duration_seconds integer NULLABLE DEFAULT 0, notes text NULLABLE, next_action_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), call_sid text NULLABLE. Relacionamentos FK: queue_item_id → public.dialer_queue_items(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `queue_item_id` | `uuid` | sim |  |  |  |
-| 5 | `disposition` | `text` | não |  |  |  |
-| 6 | `outcome` | `text` | sim |  |  |  |
-| 7 | `duration_seconds` | `integer` | sim | `0` |  |  |
-| 8 | `notes` | `text` | sim |  |  |  |
-| 9 | `next_action_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `call_sid` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.call_logs. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.call_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 4 | `queue_item_id` | `uuid` | sim |  |  | Coluna queue_item_id da tabela public.call_logs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.dialer_queue_items(id). |
+| 5 | `disposition` | `text` | não |  |  | Coluna disposition da tabela public.call_logs. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (disposition = ANY (ARRAY['connected'::text, 'voicemail'::text, 'no_answer'::text, 'busy'::text, 'wrong_number'::text, 'do_not_call'::text])). |
+| 6 | `outcome` | `text` | sim |  |  | Coluna outcome da tabela public.call_logs. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (outcome = ANY (ARRAY['meeting_set'::text, 'interested'::text, 'not_interested'::text, 'callback'::text, 'nurture'::text])). |
+| 7 | `duration_seconds` | `integer` | sim | `0` |  | Coluna duration_seconds da tabela public.call_logs. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 8 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.call_logs. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `next_action_at` | `timestamp with time zone` | sim |  |  | Coluna next_action_at da tabela public.call_logs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.call_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `call_sid` | `text` | sim |  |  | Coluna call_sid da tabela public.call_logs. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

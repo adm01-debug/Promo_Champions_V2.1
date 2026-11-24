@@ -1,5 +1,7 @@
 # public.designs_inbound
 
+> Tabela public.designs_inbound. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), design_id uuid NOT NULL, name text NOT NULL, product_name text NULLABLE, product_sku text NULLABLE, thumbnail_url text NULLABLE, seller_email text NULLABLE, last_event text NULLABLE, last_correlation_key text NULLABLE, source text NOT NULL DEFAULT 'promo_design'::text, source_updated_at timestamp with time zone NULLABLE, raw_payload jsonb NOT NULL DEFAULT '{}'::jsonb, received_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `design_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `product_name` | `text` | sim |  |  |  |
-| 5 | `product_sku` | `text` | sim |  |  |  |
-| 6 | `thumbnail_url` | `text` | sim |  |  |  |
-| 7 | `seller_email` | `text` | sim |  |  |  |
-| 8 | `last_event` | `text` | sim |  |  |  |
-| 9 | `last_correlation_key` | `text` | sim |  |  |  |
-| 10 | `source` | `text` | não | `'promo_design'::text` |  |  |
-| 11 | `source_updated_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `raw_payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 13 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.designs_inbound. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `design_id` | `uuid` | não |  |  | Coluna design_id da tabela public.designs_inbound. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.designs_inbound. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `product_name` | `text` | sim |  |  | Coluna product_name da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `product_sku` | `text` | sim |  |  | Coluna product_sku da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `thumbnail_url` | `text` | sim |  |  | Coluna thumbnail_url da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `seller_email` | `text` | sim |  |  | Coluna seller_email da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `last_event` | `text` | sim |  |  | Coluna last_event da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `last_correlation_key` | `text` | sim |  |  | Coluna last_correlation_key da tabela public.designs_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `source` | `text` | não | `'promo_design'::text` |  | Coluna source da tabela public.designs_inbound. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'promo_design'::text. |
+| 11 | `source_updated_at` | `timestamp with time zone` | sim |  |  | Coluna source_updated_at da tabela public.designs_inbound. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `raw_payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna raw_payload da tabela public.designs_inbound. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 13 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.designs_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.designs_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.designs_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

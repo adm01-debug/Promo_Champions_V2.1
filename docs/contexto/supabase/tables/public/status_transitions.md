@@ -18,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `entity` | `text` | não |  |  |  |
-| 2 | `status_origem` | `text` | não |  |  |  |
-| 3 | `status_destino` | `text` | não |  |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `entity` | `text` | não |  |  | Coluna entity da tabela public.status_transitions. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `status_origem` | `text` | não |  |  | Coluna status_origem da tabela public.status_transitions. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 3 | `status_destino` | `text` | não |  |  | Coluna status_destino da tabela public.status_transitions. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.status_transitions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

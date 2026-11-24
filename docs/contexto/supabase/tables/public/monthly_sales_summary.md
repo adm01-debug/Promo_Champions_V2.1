@@ -1,5 +1,7 @@
 # public.monthly_sales_summary
 
+> Tabela public.monthly_sales_summary. Estrutura registrada no catálogo do PostgreSQL: month text NOT NULL, revenue numeric NULLABLE DEFAULT 0, deals integer NULLABLE DEFAULT 0, won_deals integer NULLABLE DEFAULT 0, updated_at timestamp with time zone NULLABLE DEFAULT now(), lost_deals integer NOT NULL DEFAULT 0.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `month` | `text` | não |  |  |  |
-| 2 | `revenue` | `numeric` | sim | `0` |  |  |
-| 3 | `deals` | `integer` | sim | `0` |  |  |
-| 4 | `won_deals` | `integer` | sim | `0` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 6 | `lost_deals` | `integer` | não | `0` |  |  |
+| 1 | `month` | `text` | não |  |  | Coluna month da tabela public.monthly_sales_summary. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `revenue` | `numeric` | sim | `0` |  | Coluna revenue da tabela public.monthly_sales_summary. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: 0. |
+| 3 | `deals` | `integer` | sim | `0` |  | Coluna deals da tabela public.monthly_sales_summary. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 4 | `won_deals` | `integer` | sim | `0` |  | Coluna won_deals da tabela public.monthly_sales_summary. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 5 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.monthly_sales_summary. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 6 | `lost_deals` | `integer` | não | `0` |  | Coluna lost_deals da tabela public.monthly_sales_summary. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
 
 
 ## Constraints

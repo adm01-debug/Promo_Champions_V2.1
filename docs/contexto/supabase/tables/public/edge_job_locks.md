@@ -1,5 +1,7 @@
 # public.edge_job_locks
 
+> Tabela public.edge_job_locks. Estrutura registrada no catálogo do PostgreSQL: job_name text NOT NULL, locked_at timestamp with time zone NOT NULL DEFAULT now(), request_id text NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `job_name` | `text` | não |  |  |  |
-| 2 | `locked_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 3 | `request_id` | `text` | sim |  |  |  |
+| 1 | `job_name` | `text` | não |  |  | Coluna job_name da tabela public.edge_job_locks. Tipo PostgreSQL: text. Participa da chave primária. Não aceita NULL. |
+| 2 | `locked_at` | `timestamp with time zone` | não | `now()` |  | Coluna locked_at da tabela public.edge_job_locks. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 3 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.edge_job_locks. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

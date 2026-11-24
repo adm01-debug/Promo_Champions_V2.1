@@ -1,5 +1,7 @@
 # public.weekly_matchups
 
+> Tabela public.weekly_matchups. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_a_id uuid NOT NULL, salesperson_b_id uuid NOT NULL, week_start date NOT NULL, score_a numeric NOT NULL DEFAULT 0, score_b numeric NOT NULL DEFAULT 0, winner_id uuid NULLABLE, status text NOT NULL DEFAULT 'active'::text, xp_reward integer NOT NULL DEFAULT 100, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_a_id → public.salespeople(id); salesperson_b_id → public.salespeople(id); winner_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_a_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_b_id` | `uuid` | não |  |  |  |
-| 4 | `week_start` | `date` | não |  |  |  |
-| 5 | `score_a` | `numeric` | não | `0` |  |  |
-| 6 | `score_b` | `numeric` | não | `0` |  |  |
-| 7 | `winner_id` | `uuid` | sim |  |  |  |
-| 8 | `status` | `text` | não | `'active'::text` |  |  |
-| 9 | `xp_reward` | `integer` | não | `100` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.weekly_matchups. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_a_id` | `uuid` | não |  |  | Coluna salesperson_a_id da tabela public.weekly_matchups. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `salesperson_b_id` | `uuid` | não |  |  | Coluna salesperson_b_id da tabela public.weekly_matchups. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `week_start` | `date` | não |  |  | Coluna week_start da tabela public.weekly_matchups. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `score_a` | `numeric` | não | `0` |  | Coluna score_a da tabela public.weekly_matchups. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 6 | `score_b` | `numeric` | não | `0` |  | Coluna score_b da tabela public.weekly_matchups. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `winner_id` | `uuid` | sim |  |  | Coluna winner_id da tabela public.weekly_matchups. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 8 | `status` | `text` | não | `'active'::text` |  | Coluna status da tabela public.weekly_matchups. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'active'::text. |
+| 9 | `xp_reward` | `integer` | não | `100` |  | Coluna xp_reward da tabela public.weekly_matchups. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 100. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.weekly_matchups. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

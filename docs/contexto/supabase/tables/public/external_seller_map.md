@@ -1,5 +1,7 @@
 # public.external_seller_map
 
+> Tabela public.external_seller_map. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), external_id text NOT NULL, external_source text NOT NULL DEFAULT 'gift_store'::text, salesperson_id uuid NOT NULL, external_name text NULLABLE, external_email text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `external_id` | `text` | não |  |  |  |
-| 3 | `external_source` | `text` | não | `'gift_store'::text` |  |  |
-| 4 | `salesperson_id` | `uuid` | não |  |  |  |
-| 5 | `external_name` | `text` | sim |  |  |  |
-| 6 | `external_email` | `text` | sim |  |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.external_seller_map. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `external_id` | `text` | não |  |  | Coluna external_id da tabela public.external_seller_map. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (char_length(external_id) >= 1 AND char_length(external_id) <= 128). |
+| 3 | `external_source` | `text` | não | `'gift_store'::text` |  | Coluna external_source da tabela public.external_seller_map. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'gift_store'::text. Validação CHECK: CHECK (external_source = ANY (ARRAY['bitrix24'::text, 'gift_store'::text, 'promogifts'::text, 'n8n'::text, 'manual'::text, 'api'::text])). |
+| 4 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.external_seller_map. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 5 | `external_name` | `text` | sim |  |  | Coluna external_name da tabela public.external_seller_map. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `external_email` | `text` | sim |  |  | Coluna external_email da tabela public.external_seller_map. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (external_email IS NULL OR external_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text). |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.external_seller_map. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.external_seller_map. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

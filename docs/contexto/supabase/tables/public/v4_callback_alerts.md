@@ -1,5 +1,7 @@
 # public.v4_callback_alerts
 
+> Tabela public.v4_callback_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), kind text NOT NULL, details jsonb NOT NULL DEFAULT '{}'::jsonb, fired_at timestamp with time zone NOT NULL DEFAULT now(), acknowledged_at timestamp with time zone NULLABLE, acknowledged_by uuid NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `kind` | `text` | não |  |  |  |
-| 3 | `details` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 4 | `fired_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `acknowledged_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `acknowledged_by` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.v4_callback_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `kind` | `text` | não |  |  | Coluna kind da tabela public.v4_callback_alerts. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (kind = ANY (ARRAY['high_failure_rate'::text, 'exhausted_spike'::text, 'pending_backlog'::text])). |
+| 3 | `details` | `jsonb` | não | `'{}'::jsonb` |  | Coluna details da tabela public.v4_callback_alerts. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 4 | `fired_at` | `timestamp with time zone` | não | `now()` |  | Coluna fired_at da tabela public.v4_callback_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 5 | `acknowledged_at` | `timestamp with time zone` | sim |  |  | Coluna acknowledged_at da tabela public.v4_callback_alerts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 6 | `acknowledged_by` | `uuid` | sim |  |  | Coluna acknowledged_by da tabela public.v4_callback_alerts. Tipo PostgreSQL: uuid. Aceita NULL. |
 
 
 ## Constraints

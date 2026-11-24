@@ -1,5 +1,7 @@
 # public.objections_library
 
+> Biblioteca de objeções comerciais, respostas sugeridas e indicadores de uso.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,16 +18,16 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `objection` | `text` | não |  |  |  |
-| 3 | `response` | `text` | não |  |  |  |
-| 4 | `category` | `text` | não | `'general'::text` |  |  |
-| 5 | `effectiveness_score` | `integer` | sim | `0` |  |  |
-| 6 | `usage_count` | `integer` | sim | `0` |  |  |
-| 7 | `created_by` | `uuid` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `tags` | `text[]` | sim | `'{}'::text[]` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da objeção. |
+| 2 | `objection` | `text` | não |  |  | Descrição da objeção comercial. |
+| 3 | `response` | `text` | não |  |  | Resposta sugerida para lidar com a objeção. |
+| 4 | `category` | `text` | não | `'general'::text` |  | Categoria da objeção. |
+| 5 | `effectiveness_score` | `integer` | sim | `0` |  | Pontuação de eficácia da resposta; a escala é definida pela aplicação. |
+| 6 | `usage_count` | `integer` | sim | `0` |  | Quantidade de vezes que a objeção ou resposta foi utilizada. |
+| 7 | `created_by` | `uuid` | sim |  |  | Vendedor que cadastrou a objeção, quando identificado. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização do registro. |
+| 10 | `tags` | `text[]` | sim | `'{}'::text[]` |  | Lista de marcadores associados à objeção. |
 
 
 ## Constraints

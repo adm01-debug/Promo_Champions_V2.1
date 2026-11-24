@@ -1,5 +1,7 @@
 # public.pipeline_stages
 
+> Tabela public.pipeline_stages. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), pipeline_id uuid NOT NULL, name text NOT NULL, label text NOT NULL, color text NOT NULL DEFAULT 'bg-blue-500'::text, stage_order integer NOT NULL DEFAULT 0, probability integer NOT NULL DEFAULT 0, is_final boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: pipeline_id → public.pipelines(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `pipeline_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `label` | `text` | não |  |  |  |
-| 5 | `color` | `text` | não | `'bg-blue-500'::text` |  |  |
-| 6 | `stage_order` | `integer` | não | `0` |  |  |
-| 7 | `probability` | `integer` | não | `0` |  |  |
-| 8 | `is_final` | `boolean` | não | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.pipeline_stages. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `pipeline_id` | `uuid` | não |  |  | Coluna pipeline_id da tabela public.pipeline_stages. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.pipelines(id). |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.pipeline_stages. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `label` | `text` | não |  |  | Coluna label da tabela public.pipeline_stages. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `color` | `text` | não | `'bg-blue-500'::text` |  | Coluna color da tabela public.pipeline_stages. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'bg-blue-500'::text. |
+| 6 | `stage_order` | `integer` | não | `0` |  | Coluna stage_order da tabela public.pipeline_stages. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (stage_order IS NULL OR stage_order >= 0). |
+| 7 | `probability` | `integer` | não | `0` |  | Coluna probability da tabela public.pipeline_stages. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `is_final` | `boolean` | não | `false` |  | Coluna is_final da tabela public.pipeline_stages. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.pipeline_stages. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

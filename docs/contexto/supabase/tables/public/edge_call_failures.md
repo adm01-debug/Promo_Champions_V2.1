@@ -1,5 +1,7 @@
 # public.edge_call_failures
 
+> Tabela public.edge_call_failures. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), function_name text NOT NULL, target_function text NULLABLE, context jsonb NOT NULL DEFAULT '{}'::jsonb, error_message text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `function_name` | `text` | não |  |  |  |
-| 3 | `target_function` | `text` | sim |  |  |  |
-| 4 | `context` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 5 | `error_message` | `text` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.edge_call_failures. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `function_name` | `text` | não |  |  | Coluna function_name da tabela public.edge_call_failures. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `target_function` | `text` | sim |  |  | Coluna target_function da tabela public.edge_call_failures. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `context` | `jsonb` | não | `'{}'::jsonb` |  | Coluna context da tabela public.edge_call_failures. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 5 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.edge_call_failures. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.edge_call_failures. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

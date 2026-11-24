@@ -1,5 +1,7 @@
 # public.deal_stakeholders
 
+> Tabela public.deal_stakeholders. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, owner_id uuid NOT NULL, name text NOT NULL, role_title text NULLABLE, dmu_role text NOT NULL DEFAULT 'unknown'::text, influence_level text NOT NULL DEFAULT 'medium'::text, engagement_score integer NOT NULL DEFAULT 0, sentiment text NOT NULL DEFAULT 'neutral'::text, email text NULLABLE, phone text NULLABLE, linkedin_url text NULLABLE, notes text NULLABLE, signals jsonb NOT NULL DEFAULT '[]'::jsonb, last_interaction_at timestamp with time zone NULLABLE, source text NOT NULL DEFAULT 'manual'::text, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), evidence_quote text NULLABLE, confidence numeric NULLABLE. Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,26 +18,26 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | não |  |  |  |
-| 4 | `name` | `text` | não |  |  |  |
-| 5 | `role_title` | `text` | sim |  |  |  |
-| 6 | `dmu_role` | `text` | não | `'unknown'::text` |  |  |
-| 7 | `influence_level` | `text` | não | `'medium'::text` |  |  |
-| 8 | `engagement_score` | `integer` | não | `0` |  |  |
-| 9 | `sentiment` | `text` | não | `'neutral'::text` |  |  |
-| 10 | `email` | `text` | sim |  |  |  |
-| 11 | `phone` | `text` | sim |  |  |  |
-| 12 | `linkedin_url` | `text` | sim |  |  |  |
-| 13 | `notes` | `text` | sim |  |  |  |
-| 14 | `signals` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 15 | `last_interaction_at` | `timestamp with time zone` | sim |  |  |  |
-| 16 | `source` | `text` | não | `'manual'::text` |  |  |
-| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 19 | `evidence_quote` | `text` | sim |  |  |  |
-| 20 | `confidence` | `numeric` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_stakeholders. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_stakeholders. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.deal_stakeholders. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `name` | `text` | não |  |  | Coluna name da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `role_title` | `text` | sim |  |  | Coluna role_title da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `dmu_role` | `text` | não | `'unknown'::text` |  | Coluna dmu_role da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'unknown'::text. Validação CHECK: CHECK (dmu_role = ANY (ARRAY['decision_maker'::text, 'economic_buyer'::text, 'champion'::text, 'influencer'::text, 'user'::text, 'blocker'::text, 'unknown'::text])). |
+| 7 | `influence_level` | `text` | não | `'medium'::text` |  | Coluna influence_level da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'medium'::text. Validação CHECK: CHECK (influence_level = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])). |
+| 8 | `engagement_score` | `integer` | não | `0` |  | Coluna engagement_score da tabela public.deal_stakeholders. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (engagement_score >= 0 AND engagement_score <= 100). |
+| 9 | `sentiment` | `text` | não | `'neutral'::text` |  | Coluna sentiment da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'neutral'::text. Validação CHECK: CHECK (sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text])). |
+| 10 | `email` | `text` | sim |  |  | Coluna email da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `phone` | `text` | sim |  |  | Coluna phone da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `linkedin_url` | `text` | sim |  |  | Coluna linkedin_url da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `signals` | `jsonb` | não | `'[]'::jsonb` |  | Coluna signals da tabela public.deal_stakeholders. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 15 | `last_interaction_at` | `timestamp with time zone` | sim |  |  | Coluna last_interaction_at da tabela public.deal_stakeholders. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 16 | `source` | `text` | não | `'manual'::text` |  | Coluna source da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'manual'::text. Validação CHECK: CHECK (source = ANY (ARRAY['manual'::text, 'ai_extracted'::text, 'email'::text, 'call'::text])). |
+| 17 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.deal_stakeholders. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 18 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.deal_stakeholders. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 19 | `evidence_quote` | `text` | sim |  |  | Coluna evidence_quote da tabela public.deal_stakeholders. Tipo PostgreSQL: text. Aceita NULL. |
+| 20 | `confidence` | `numeric` | sim |  |  | Coluna confidence da tabela public.deal_stakeholders. Tipo PostgreSQL: numeric. Aceita NULL. |
 
 
 ## Constraints

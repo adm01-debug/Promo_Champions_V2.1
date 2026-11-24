@@ -1,5 +1,7 @@
 # public.quotes_inbound
 
+> Tabela public.quotes_inbound. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), quote_id uuid NOT NULL, quote_number text NULLABLE, status text NULLABLE, client_id text NULLABLE, client_name text NULLABLE, total numeric(14,2) NULLABLE, seller_email text NULLABLE, source text NOT NULL DEFAULT 'promogifts'::text, source_updated_at timestamp with time zone NULLABLE, last_event text NULLABLE, last_correlation_key text NULLABLE, raw_payload jsonb NOT NULL DEFAULT '{}'::jsonb, received_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), event_at timestamp with time zone NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,23 +18,23 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `quote_id` | `uuid` | não |  |  |  |
-| 3 | `quote_number` | `text` | sim |  |  |  |
-| 4 | `status` | `text` | sim |  |  |  |
-| 5 | `client_id` | `text` | sim |  |  |  |
-| 6 | `client_name` | `text` | sim |  |  |  |
-| 7 | `total` | `numeric(14,2)` | sim |  |  |  |
-| 8 | `seller_email` | `text` | sim |  |  |  |
-| 9 | `source` | `text` | não | `'promogifts'::text` |  |  |
-| 10 | `source_updated_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `last_event` | `text` | sim |  |  |  |
-| 12 | `last_correlation_key` | `text` | sim |  |  |  |
-| 13 | `raw_payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 17 | `event_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quotes_inbound. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `quote_id` | `uuid` | não |  |  | Coluna quote_id da tabela public.quotes_inbound. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `quote_number` | `text` | sim |  |  | Coluna quote_number da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (quote_number IS NULL OR char_length(quote_number) <= 128). |
+| 4 | `status` | `text` | sim |  |  | Coluna status da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (status IS NULL OR (status = ANY (ARRAY['draft'::text, 'pending'::text, 'sent'::text, 'approved'::text, 'rejected'::text, 'expired'::text, 'converted'::text, 'cancelled'::text, 'won'::text, 'lost'::text, 'open'::text, 'created'::text, 'updated'::text]))). |
+| 5 | `client_id` | `text` | sim |  |  | Coluna client_id da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `client_name` | `text` | sim |  |  | Coluna client_name da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (client_name IS NULL OR char_length(client_name) <= 512). |
+| 7 | `total` | `numeric(14,2)` | sim |  |  | Coluna total da tabela public.quotes_inbound. Tipo PostgreSQL: numeric(14,2). Aceita NULL. |
+| 8 | `seller_email` | `text` | sim |  |  | Coluna seller_email da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (seller_email IS NULL OR seller_email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'::text). |
+| 9 | `source` | `text` | não | `'promogifts'::text` |  | Coluna source da tabela public.quotes_inbound. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'promogifts'::text. Validação CHECK: CHECK (source = ANY (ARRAY['gift_store'::text, 'bitrix24'::text, 'manual'::text, 'api'::text, 'webhook'::text, 'promogifts'::text])). |
+| 10 | `source_updated_at` | `timestamp with time zone` | sim |  |  | Coluna source_updated_at da tabela public.quotes_inbound. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `last_event` | `text` | sim |  |  | Coluna last_event da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `last_correlation_key` | `text` | sim |  |  | Coluna last_correlation_key da tabela public.quotes_inbound. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `raw_payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna raw_payload da tabela public.quotes_inbound. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. Validação CHECK: CHECK (pg_column_size(raw_payload) <= 262144). |
+| 14 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.quotes_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.quotes_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.quotes_inbound. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 17 | `event_at` | `timestamp with time zone` | sim |  |  | Coluna event_at da tabela public.quotes_inbound. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

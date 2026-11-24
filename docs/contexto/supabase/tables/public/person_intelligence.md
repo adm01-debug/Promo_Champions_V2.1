@@ -1,5 +1,7 @@
 # public.person_intelligence
 
+> Tabela public.person_intelligence. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), email text NOT NULL, full_name text NULLABLE, current_title text NULLABLE, previous_titles jsonb NULLABLE, linkedin_url text NULLABLE, job_change_detected_at timestamp with time zone NULLABLE, promotion_detected_at timestamp with time zone NULLABLE, last_verified_at timestamp with time zone NULLABLE DEFAULT now(), created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `email` | `text` | não |  |  |  |
-| 3 | `full_name` | `text` | sim |  |  |  |
-| 4 | `current_title` | `text` | sim |  |  |  |
-| 5 | `previous_titles` | `jsonb` | sim |  |  |  |
-| 6 | `linkedin_url` | `text` | sim |  |  |  |
-| 7 | `job_change_detected_at` | `timestamp with time zone` | sim |  |  |  |
-| 8 | `promotion_detected_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `last_verified_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.person_intelligence. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `email` | `text` | não |  |  | Coluna email da tabela public.person_intelligence. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `full_name` | `text` | sim |  |  | Coluna full_name da tabela public.person_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `current_title` | `text` | sim |  |  | Coluna current_title da tabela public.person_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `previous_titles` | `jsonb` | sim |  |  | Coluna previous_titles da tabela public.person_intelligence. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 6 | `linkedin_url` | `text` | sim |  |  | Coluna linkedin_url da tabela public.person_intelligence. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `job_change_detected_at` | `timestamp with time zone` | sim |  |  | Coluna job_change_detected_at da tabela public.person_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 8 | `promotion_detected_at` | `timestamp with time zone` | sim |  |  | Coluna promotion_detected_at da tabela public.person_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 9 | `last_verified_at` | `timestamp with time zone` | sim | `now()` |  | Coluna last_verified_at da tabela public.person_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 10 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.person_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.person_intelligence. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

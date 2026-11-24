@@ -1,5 +1,7 @@
 # public.email_bulk_drafts
 
+> Tabela public.email_bulk_drafts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), job_id uuid NOT NULL, sale_id uuid NULLABLE, client_id uuid NULLABLE, recipient_email text NULLABLE, recipient_name text NULLABLE, subject text NOT NULL DEFAULT ''::text, body text NOT NULL DEFAULT ''::text, personalization_notes text NULLABLE, approved boolean NOT NULL DEFAULT false, sent_at timestamp with time zone NULLABLE, error text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), retry_count integer NOT NULL DEFAULT 0, next_retry_at timestamp with time zone NULLABLE, last_error_at timestamp with time zone NULLABLE, last_error_message text NULLABLE, recovered_at timestamp with time zone NULLABLE. Relacionamentos FK: job_id → public.email_bulk_jobs(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,25 +18,25 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `job_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `client_id` | `uuid` | sim |  |  |  |
-| 5 | `recipient_email` | `text` | sim |  |  |  |
-| 6 | `recipient_name` | `text` | sim |  |  |  |
-| 7 | `subject` | `text` | não | `''::text` |  |  |
-| 8 | `body` | `text` | não | `''::text` |  |  |
-| 9 | `personalization_notes` | `text` | sim |  |  |  |
-| 10 | `approved` | `boolean` | não | `false` |  |  |
-| 11 | `sent_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `error` | `text` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `retry_count` | `integer` | não | `0` |  |  |
-| 16 | `next_retry_at` | `timestamp with time zone` | sim |  |  |  |
-| 17 | `last_error_at` | `timestamp with time zone` | sim |  |  |  |
-| 18 | `last_error_message` | `text` | sim |  |  |  |
-| 19 | `recovered_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.email_bulk_drafts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `job_id` | `uuid` | não |  |  | Coluna job_id da tabela public.email_bulk_drafts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.email_bulk_jobs(id). |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.email_bulk_drafts. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `client_id` | `uuid` | sim |  |  | Coluna client_id da tabela public.email_bulk_drafts. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `recipient_email` | `text` | sim |  |  | Coluna recipient_email da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `recipient_name` | `text` | sim |  |  | Coluna recipient_name da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `subject` | `text` | não | `''::text` |  | Coluna subject da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: ''::text. |
+| 8 | `body` | `text` | não | `''::text` |  | Coluna body da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: ''::text. |
+| 9 | `personalization_notes` | `text` | sim |  |  | Coluna personalization_notes da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `approved` | `boolean` | não | `false` |  | Coluna approved da tabela public.email_bulk_drafts. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 11 | `sent_at` | `timestamp with time zone` | sim |  |  | Coluna sent_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `error` | `text` | sim |  |  | Coluna error da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `retry_count` | `integer` | não | `0` |  | Coluna retry_count da tabela public.email_bulk_drafts. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 16 | `next_retry_at` | `timestamp with time zone` | sim |  |  | Coluna next_retry_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 17 | `last_error_at` | `timestamp with time zone` | sim |  |  | Coluna last_error_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 18 | `last_error_message` | `text` | sim |  |  | Coluna last_error_message da tabela public.email_bulk_drafts. Tipo PostgreSQL: text. Aceita NULL. |
+| 19 | `recovered_at` | `timestamp with time zone` | sim |  |  | Coluna recovered_at da tabela public.email_bulk_drafts. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

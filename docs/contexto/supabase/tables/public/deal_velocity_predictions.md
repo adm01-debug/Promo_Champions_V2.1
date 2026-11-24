@@ -1,5 +1,7 @@
 # public.deal_velocity_predictions
 
+> Tabela public.deal_velocity_predictions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, owner_id uuid NULLABLE, predicted_close_date date NULLABLE, predicted_days_remaining integer NULLABLE, confidence_score integer NOT NULL DEFAULT 0, confidence_tier text NOT NULL DEFAULT 'low'::text, velocity_status text NOT NULL DEFAULT 'on_track'::text, current_stage text NULLABLE, days_in_stage integer NULLABLE, expected_days_in_stage numeric NULLABLE, stage_velocity_ratio numeric NULLABLE, factors jsonb NOT NULL DEFAULT '{"brakes": [], "drivers": []}'::jsonb, model_version text NOT NULL DEFAULT 'v1'::text, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,23 +18,23 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | sim |  |  |  |
-| 4 | `predicted_close_date` | `date` | sim |  |  |  |
-| 5 | `predicted_days_remaining` | `integer` | sim |  |  |  |
-| 6 | `confidence_score` | `integer` | não | `0` |  |  |
-| 7 | `confidence_tier` | `text` | não | `'low'::text` |  |  |
-| 8 | `velocity_status` | `text` | não | `'on_track'::text` |  |  |
-| 9 | `current_stage` | `text` | sim |  |  |  |
-| 10 | `days_in_stage` | `integer` | sim |  |  |  |
-| 11 | `expected_days_in_stage` | `numeric` | sim |  |  |  |
-| 12 | `stage_velocity_ratio` | `numeric` | sim |  |  |  |
-| 13 | `factors` | `jsonb` | não | `'{"brakes": [], "drivers": []}'::jsonb` |  |  |
-| 14 | `model_version` | `text` | não | `'v1'::text` |  |  |
-| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 17 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_velocity_predictions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_velocity_predictions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.deal_velocity_predictions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `predicted_close_date` | `date` | sim |  |  | Coluna predicted_close_date da tabela public.deal_velocity_predictions. Tipo PostgreSQL: date. Aceita NULL. |
+| 5 | `predicted_days_remaining` | `integer` | sim |  |  | Coluna predicted_days_remaining da tabela public.deal_velocity_predictions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `confidence_score` | `integer` | não | `0` |  | Coluna confidence_score da tabela public.deal_velocity_predictions. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (confidence_score >= 0 AND confidence_score <= 100). |
+| 7 | `confidence_tier` | `text` | não | `'low'::text` |  | Coluna confidence_tier da tabela public.deal_velocity_predictions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'low'::text. Validação CHECK: CHECK (confidence_tier = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text])). |
+| 8 | `velocity_status` | `text` | não | `'on_track'::text` |  | Coluna velocity_status da tabela public.deal_velocity_predictions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'on_track'::text. Validação CHECK: CHECK (velocity_status = ANY (ARRAY['ahead'::text, 'on_track'::text, 'slow'::text, 'stalled'::text])). |
+| 9 | `current_stage` | `text` | sim |  |  | Coluna current_stage da tabela public.deal_velocity_predictions. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `days_in_stage` | `integer` | sim |  |  | Coluna days_in_stage da tabela public.deal_velocity_predictions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 11 | `expected_days_in_stage` | `numeric` | sim |  |  | Coluna expected_days_in_stage da tabela public.deal_velocity_predictions. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 12 | `stage_velocity_ratio` | `numeric` | sim |  |  | Coluna stage_velocity_ratio da tabela public.deal_velocity_predictions. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 13 | `factors` | `jsonb` | não | `'{"brakes": [], "drivers": []}'::jsonb` |  | Coluna factors da tabela public.deal_velocity_predictions. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{"brakes": [], "drivers": []}'::jsonb. |
+| 14 | `model_version` | `text` | não | `'v1'::text` |  | Coluna model_version da tabela public.deal_velocity_predictions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'v1'::text. |
+| 15 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.deal_velocity_predictions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.deal_velocity_predictions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 17 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.deal_velocity_predictions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

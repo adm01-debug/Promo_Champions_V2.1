@@ -1,5 +1,7 @@
 # public.stage_conversion_metrics
 
+> Tabela public.stage_conversion_metrics. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), from_stage text NOT NULL, to_stage text NOT NULL, owner_id uuid NULLABLE, entered_count integer NOT NULL DEFAULT 0, converted_count integer NOT NULL DEFAULT 0, lost_count integer NOT NULL DEFAULT 0, conversion_rate numeric(5,2) NOT NULL DEFAULT 0, avg_transition_days numeric(8,2) NOT NULL DEFAULT 0, period_start date NOT NULL, period_end date NOT NULL, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `from_stage` | `text` | não |  |  |  |
-| 3 | `to_stage` | `text` | não |  |  |  |
-| 4 | `owner_id` | `uuid` | sim |  |  |  |
-| 5 | `entered_count` | `integer` | não | `0` |  |  |
-| 6 | `converted_count` | `integer` | não | `0` |  |  |
-| 7 | `lost_count` | `integer` | não | `0` |  |  |
-| 8 | `conversion_rate` | `numeric(5,2)` | não | `0` |  |  |
-| 9 | `avg_transition_days` | `numeric(8,2)` | não | `0` |  |  |
-| 10 | `period_start` | `date` | não |  |  |  |
-| 11 | `period_end` | `date` | não |  |  |  |
-| 12 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.stage_conversion_metrics. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `from_stage` | `text` | não |  |  | Coluna from_stage da tabela public.stage_conversion_metrics. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `to_stage` | `text` | não |  |  | Coluna to_stage da tabela public.stage_conversion_metrics. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.stage_conversion_metrics. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `entered_count` | `integer` | não | `0` |  | Coluna entered_count da tabela public.stage_conversion_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `converted_count` | `integer` | não | `0` |  | Coluna converted_count da tabela public.stage_conversion_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `lost_count` | `integer` | não | `0` |  | Coluna lost_count da tabela public.stage_conversion_metrics. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `conversion_rate` | `numeric(5,2)` | não | `0` |  | Coluna conversion_rate da tabela public.stage_conversion_metrics. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 9 | `avg_transition_days` | `numeric(8,2)` | não | `0` |  | Coluna avg_transition_days da tabela public.stage_conversion_metrics. Tipo PostgreSQL: numeric(8,2). Não aceita NULL. Valor padrão: 0. |
+| 10 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.stage_conversion_metrics. Tipo PostgreSQL: date. Não aceita NULL. |
+| 11 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.stage_conversion_metrics. Tipo PostgreSQL: date. Não aceita NULL. |
+| 12 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.stage_conversion_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.stage_conversion_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.stage_conversion_metrics. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

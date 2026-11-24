@@ -1,5 +1,7 @@
 # public.squad_members
 
+> Tabela public.squad_members. Estrutura registrada no catálogo do PostgreSQL: squad_id uuid NOT NULL, user_id uuid NOT NULL, added_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: squad_id → public.squads(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,9 +18,9 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `squad_id` | `uuid` | não |  |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `added_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `squad_id` | `uuid` | não |  |  | Coluna squad_id da tabela public.squad_members. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Referência FK: public.squads(id). |
+| 2 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.squad_members. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. |
+| 3 | `added_at` | `timestamp with time zone` | não | `now()` |  | Coluna added_at da tabela public.squad_members. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.supplier_risk_assessments
 
+> Avaliações de risco de fornecedores por data e dimensão de risco.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `supplier_id` | `uuid` | sim |  |  |  |
-| 3 | `assessment_date` | `date` | não | `CURRENT_DATE` |  |  |
-| 4 | `financial_risk` | `numeric(3,2)` | sim | `0.5` |  |  |
-| 5 | `delivery_risk` | `numeric(3,2)` | sim | `0.5` |  |  |
-| 6 | `quality_risk` | `numeric(3,2)` | sim | `0.5` |  |  |
-| 7 | `overall_risk` | `numeric(3,2)` | sim | `0.5` |  |  |
-| 8 | `risk_level` | `text` | sim | `'medium'::text` |  |  |
-| 9 | `factors` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 10 | `recommendations` | `text` | sim |  |  |  |
-| 11 | `assessed_by` | `uuid` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da avaliação. |
+| 2 | `supplier_id` | `uuid` | sim |  |  | Fornecedor avaliado, quando identificado. |
+| 3 | `assessment_date` | `date` | não | `CURRENT_DATE` |  | Data da avaliação de risco. |
+| 4 | `financial_risk` | `numeric(3,2)` | sim | `0.5` |  | Pontuação ou indicador de risco financeiro; escala definida pela aplicação. |
+| 5 | `delivery_risk` | `numeric(3,2)` | sim | `0.5` |  | Pontuação ou indicador de risco de entrega; escala definida pela aplicação. |
+| 6 | `quality_risk` | `numeric(3,2)` | sim | `0.5` |  | Pontuação ou indicador de risco de qualidade; escala definida pela aplicação. |
+| 7 | `overall_risk` | `numeric(3,2)` | sim | `0.5` |  | Indicador agregado de risco do fornecedor; escala definida pela aplicação. |
+| 8 | `risk_level` | `text` | sim | `'medium'::text` |  | Nível de risco: low, medium, high ou critical. |
+| 9 | `factors` | `jsonb` | sim | `'{}'::jsonb` |  | Fatores considerados na avaliação, em formato JSON. |
+| 10 | `recommendations` | `text` | sim |  |  | Recomendações resultantes da avaliação. |
+| 11 | `assessed_by` | `uuid` | sim |  |  | Usuário que realizou a avaliação, quando identificado. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do registro. |
 
 
 ## Constraints

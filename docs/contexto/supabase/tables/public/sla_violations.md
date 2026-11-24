@@ -1,5 +1,7 @@
 # public.sla_violations
 
+> Tabela public.sla_violations. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, policy_id uuid NULLABLE, stage text NOT NULL, hours_in_stage numeric(10,2) NOT NULL DEFAULT 0, status text NOT NULL DEFAULT 'warning'::text, detected_at timestamp with time zone NOT NULL DEFAULT now(), resolved_at timestamp with time zone NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: policy_id → public.sla_policies(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `policy_id` | `uuid` | sim |  |  |  |
-| 4 | `stage` | `text` | não |  |  |  |
-| 5 | `hours_in_stage` | `numeric(10,2)` | não | `0` |  |  |
-| 6 | `status` | `text` | não | `'warning'::text` |  |  |
-| 7 | `detected_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `resolved_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sla_violations. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.sla_violations. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `policy_id` | `uuid` | sim |  |  | Coluna policy_id da tabela public.sla_violations. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sla_policies(id). |
+| 4 | `stage` | `text` | não |  |  | Coluna stage da tabela public.sla_violations. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `hours_in_stage` | `numeric(10,2)` | não | `0` |  | Coluna hours_in_stage da tabela public.sla_violations. Tipo PostgreSQL: numeric(10,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `status` | `text` | não | `'warning'::text` |  | Coluna status da tabela public.sla_violations. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'warning'::text. |
+| 7 | `detected_at` | `timestamp with time zone` | não | `now()` |  | Coluna detected_at da tabela public.sla_violations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `resolved_at` | `timestamp with time zone` | sim |  |  | Coluna resolved_at da tabela public.sla_violations. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 9 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.sla_violations. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sla_violations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sla_violations. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

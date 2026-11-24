@@ -1,5 +1,7 @@
 # public.ai_agent_runs
 
+> Tabela public.ai_agent_runs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, agent_type text NOT NULL, goal text NULLABLE, target_entity_type text NULLABLE, target_entity_id uuid NULLABLE, status text NOT NULL DEFAULT 'pending'::text, steps jsonb NOT NULL DEFAULT '[]'::jsonb, result jsonb NULLABLE, requires_approval boolean NOT NULL DEFAULT true, approved_by uuid NULLABLE, error_message text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), completed_at timestamp with time zone NULLABLE.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `agent_type` | `text` | não |  |  |  |
-| 4 | `goal` | `text` | sim |  |  |  |
-| 5 | `target_entity_type` | `text` | sim |  |  |  |
-| 6 | `target_entity_id` | `uuid` | sim |  |  |  |
-| 7 | `status` | `text` | não | `'pending'::text` |  |  |
-| 8 | `steps` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 9 | `result` | `jsonb` | sim |  |  |  |
-| 10 | `requires_approval` | `boolean` | não | `true` |  |  |
-| 11 | `approved_by` | `uuid` | sim |  |  |  |
-| 12 | `error_message` | `text` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.ai_agent_runs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.ai_agent_runs. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `agent_type` | `text` | não |  |  | Coluna agent_type da tabela public.ai_agent_runs. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (agent_type = ANY (ARRAY['qualify_lead'::text, 'build_proposal'::text, 'schedule_followup'::text, 'enrich_client'::text, 'recover_cold_lead'::text])). |
+| 4 | `goal` | `text` | sim |  |  | Coluna goal da tabela public.ai_agent_runs. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `target_entity_type` | `text` | sim |  |  | Coluna target_entity_type da tabela public.ai_agent_runs. Tipo PostgreSQL: text. Aceita NULL. Validação CHECK: CHECK (target_entity_type = ANY (ARRAY['lead'::text, 'client'::text, 'deal'::text, 'activity'::text])). |
+| 6 | `target_entity_id` | `uuid` | sim |  |  | Coluna target_entity_id da tabela public.ai_agent_runs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 7 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.ai_agent_runs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'running'::text, 'awaiting_approval'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])). |
+| 8 | `steps` | `jsonb` | não | `'[]'::jsonb` |  | Coluna steps da tabela public.ai_agent_runs. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 9 | `result` | `jsonb` | sim |  |  | Coluna result da tabela public.ai_agent_runs. Tipo PostgreSQL: jsonb. Aceita NULL. |
+| 10 | `requires_approval` | `boolean` | não | `true` |  | Coluna requires_approval da tabela public.ai_agent_runs. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 11 | `approved_by` | `uuid` | sim |  |  | Coluna approved_by da tabela public.ai_agent_runs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 12 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.ai_agent_runs. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.ai_agent_runs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.ai_agent_runs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.ai_agent_runs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
 
 
 ## Constraints

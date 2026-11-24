@@ -1,5 +1,7 @@
 # public.message_templates
 
+> Tabela public.message_templates. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, name text NOT NULL, channel text NOT NULL DEFAULT 'whatsapp'::text, subject text NULLABLE, body text NOT NULL, variables text[] NULLABLE DEFAULT '{}'::text[], category text NULLABLE DEFAULT 'geral'::text, is_active boolean NULLABLE DEFAULT true, usage_count integer NULLABLE DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), pipeline_stage text NULLABLE. Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `channel` | `text` | não | `'whatsapp'::text` |  |  |
-| 5 | `subject` | `text` | sim |  |  |  |
-| 6 | `body` | `text` | não |  |  |  |
-| 7 | `variables` | `text[]` | sim | `'{}'::text[]` |  |  |
-| 8 | `category` | `text` | sim | `'geral'::text` |  |  |
-| 9 | `is_active` | `boolean` | sim | `true` |  |  |
-| 10 | `usage_count` | `integer` | sim | `0` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `pipeline_stage` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.message_templates. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.message_templates. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.message_templates. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `channel` | `text` | não | `'whatsapp'::text` |  | Coluna channel da tabela public.message_templates. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'whatsapp'::text. Validação CHECK: CHECK (channel = ANY (ARRAY['whatsapp'::text, 'email'::text, 'linkedin'::text, 'sms'::text])). |
+| 5 | `subject` | `text` | sim |  |  | Coluna subject da tabela public.message_templates. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `body` | `text` | não |  |  | Coluna body da tabela public.message_templates. Tipo PostgreSQL: text. Não aceita NULL. |
+| 7 | `variables` | `text[]` | sim | `'{}'::text[]` |  | Coluna variables da tabela public.message_templates. Tipo PostgreSQL: text[]. Aceita NULL. Valor padrão: '{}'::text[]. |
+| 8 | `category` | `text` | sim | `'geral'::text` |  | Coluna category da tabela public.message_templates. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'geral'::text. |
+| 9 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.message_templates. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 10 | `usage_count` | `integer` | sim | `0` |  | Coluna usage_count da tabela public.message_templates. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.message_templates. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.message_templates. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `pipeline_stage` | `text` | sim |  |  | Coluna pipeline_stage da tabela public.message_templates. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

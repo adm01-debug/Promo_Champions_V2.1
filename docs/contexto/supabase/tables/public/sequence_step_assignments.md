@@ -1,5 +1,7 @@
 # public.sequence_step_assignments
 
+> Tabela public.sequence_step_assignments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), enrollment_id uuid NOT NULL, step_id uuid NOT NULL, variant_id uuid NULLABLE, variant_label text NULLABLE, assigned_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: enrollment_id → public.sequence_enrollments(id); step_id → public.sequence_steps(id); variant_id → public.sequence_step_variants(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `enrollment_id` | `uuid` | não |  |  |  |
-| 3 | `step_id` | `uuid` | não |  |  |  |
-| 4 | `variant_id` | `uuid` | sim |  |  |  |
-| 5 | `variant_label` | `text` | sim |  |  |  |
-| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequence_step_assignments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `enrollment_id` | `uuid` | não |  |  | Coluna enrollment_id da tabela public.sequence_step_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequence_enrollments(id). |
+| 3 | `step_id` | `uuid` | não |  |  | Coluna step_id da tabela public.sequence_step_assignments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequence_steps(id). |
+| 4 | `variant_id` | `uuid` | sim |  |  | Coluna variant_id da tabela public.sequence_step_assignments. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sequence_step_variants(id). |
+| 5 | `variant_label` | `text` | sim |  |  | Coluna variant_label da tabela public.sequence_step_assignments. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `assigned_at` | `timestamp with time zone` | não | `now()` |  | Coluna assigned_at da tabela public.sequence_step_assignments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

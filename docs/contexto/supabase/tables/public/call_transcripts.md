@@ -1,5 +1,7 @@
 # public.call_transcripts
 
+> Tabela public.call_transcripts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, full_text text NOT NULL, segments jsonb NOT NULL DEFAULT '[]'::jsonb, language text NULLABLE DEFAULT 'pt-BR'::text, word_count integer NULLABLE DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(), ai_live_insights jsonb NULLABLE DEFAULT '[]'::jsonb. Relacionamentos FK: recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `full_text` | `text` | não |  |  |  |
-| 4 | `segments` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 5 | `language` | `text` | sim | `'pt-BR'::text` |  |  |
-| 6 | `word_count` | `integer` | sim | `0` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `ai_live_insights` | `jsonb` | sim | `'[]'::jsonb` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_transcripts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_transcripts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `full_text` | `text` | não |  |  | Coluna full_text da tabela public.call_transcripts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `segments` | `jsonb` | não | `'[]'::jsonb` |  | Coluna segments da tabela public.call_transcripts. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 5 | `language` | `text` | sim | `'pt-BR'::text` |  | Coluna language da tabela public.call_transcripts. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'pt-BR'::text. |
+| 6 | `word_count` | `integer` | sim | `0` |  | Coluna word_count da tabela public.call_transcripts. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.call_transcripts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `ai_live_insights` | `jsonb` | sim | `'[]'::jsonb` |  | Coluna ai_live_insights da tabela public.call_transcripts. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '[]'::jsonb. |
 
 
 ## Constraints

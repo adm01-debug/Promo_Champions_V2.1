@@ -1,5 +1,7 @@
 # public.conversation_analyses
 
+> Tabela public.conversation_analyses. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, client_id uuid NULLABLE, source text NOT NULL, transcript text NOT NULL, summary text NULLABLE, sentiment text NOT NULL DEFAULT 'neutral'::text, objections jsonb NOT NULL DEFAULT '[]'::jsonb, next_steps jsonb NOT NULL DEFAULT '[]'::jsonb, buying_signals text[] NOT NULL DEFAULT '{}'::text[], risk_signals text[] NOT NULL DEFAULT '{}'::text[], decision_makers text[] NOT NULL DEFAULT '{}'::text[], ai_model text NULLABLE, analyzed_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,21 +19,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `client_id` | `uuid` | sim |  |  |  |
-| 4 | `source` | `text` | não |  |  |  |
-| 5 | `transcript` | `text` | não |  |  |  |
-| 6 | `summary` | `text` | sim |  |  |  |
-| 7 | `sentiment` | `text` | não | `'neutral'::text` |  |  |
-| 8 | `objections` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 9 | `next_steps` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 10 | `buying_signals` | `text[]` | não | `'{}'::text[]` |  |  |
-| 11 | `risk_signals` | `text[]` | não | `'{}'::text[]` |  |  |
-| 12 | `decision_makers` | `text[]` | não | `'{}'::text[]` |  |  |
-| 13 | `ai_model` | `text` | sim |  |  |  |
-| 14 | `analyzed_by` | `uuid` | sim |  |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.conversation_analyses. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.conversation_analyses. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `client_id` | `uuid` | sim |  |  | Coluna client_id da tabela public.conversation_analyses. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `source` | `text` | não |  |  | Coluna source da tabela public.conversation_analyses. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (source = ANY (ARRAY['call'::text, 'email'::text, 'meeting'::text, 'whatsapp'::text])). |
+| 5 | `transcript` | `text` | não |  |  | Coluna transcript da tabela public.conversation_analyses. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `summary` | `text` | sim |  |  | Coluna summary da tabela public.conversation_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `sentiment` | `text` | não | `'neutral'::text` |  | Coluna sentiment da tabela public.conversation_analyses. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'neutral'::text. Validação CHECK: CHECK (sentiment = ANY (ARRAY['positive'::text, 'neutral'::text, 'negative'::text, 'mixed'::text])). |
+| 8 | `objections` | `jsonb` | não | `'[]'::jsonb` |  | Coluna objections da tabela public.conversation_analyses. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 9 | `next_steps` | `jsonb` | não | `'[]'::jsonb` |  | Coluna next_steps da tabela public.conversation_analyses. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 10 | `buying_signals` | `text[]` | não | `'{}'::text[]` |  | Coluna buying_signals da tabela public.conversation_analyses. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 11 | `risk_signals` | `text[]` | não | `'{}'::text[]` |  | Coluna risk_signals da tabela public.conversation_analyses. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 12 | `decision_makers` | `text[]` | não | `'{}'::text[]` |  | Coluna decision_makers da tabela public.conversation_analyses. Tipo PostgreSQL: text[]. Não aceita NULL. Valor padrão: '{}'::text[]. |
+| 13 | `ai_model` | `text` | sim |  |  | Coluna ai_model da tabela public.conversation_analyses. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `analyzed_by` | `uuid` | sim |  |  | Coluna analyzed_by da tabela public.conversation_analyses. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.conversation_analyses. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

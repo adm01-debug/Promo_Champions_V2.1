@@ -1,5 +1,11 @@
 # public.deal_stage_transitions
 
+> Tabela public.deal_stage_transitions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, from_stage text NULLABLE, to_stage text NOT NULL, entered_at timestamp with time zone NOT NULL DEFAULT now(), exited_at timestamp with time zone NULLABLE, duration_hours numeric NULLABLE DEFAULT 
+CASE
+    WHEN (exited_at IS NOT NULL) THEN (EXTRACT(epoch FROM (exited_at - entered_at)) / 3600.0)
+    ELSE NULL::numeric
+END, transitioned_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +22,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `from_stage` | `text` | sim |  |  |  |
-| 4 | `to_stage` | `text` | não |  |  |  |
-| 5 | `entered_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 6 | `exited_at` | `timestamp with time zone` | sim |  |  |  |
-| 7 | `duration_hours` | `numeric` | sim | ` CASE     WHEN (exited_at IS NOT NULL) THEN (EXTRACT(epoch FROM (exited_at - entered_at)) / 3600.0)     ELSE NULL::numeric END` | s |  |
-| 8 | `transitioned_by` | `uuid` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_stage_transitions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_stage_transitions. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `from_stage` | `text` | sim |  |  | Coluna from_stage da tabela public.deal_stage_transitions. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `to_stage` | `text` | não |  |  | Coluna to_stage da tabela public.deal_stage_transitions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `entered_at` | `timestamp with time zone` | não | `now()` |  | Coluna entered_at da tabela public.deal_stage_transitions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 6 | `exited_at` | `timestamp with time zone` | sim |  |  | Coluna exited_at da tabela public.deal_stage_transitions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 7 | `duration_hours` | `numeric` | sim | ` CASE     WHEN (exited_at IS NOT NULL) THEN (EXTRACT(epoch FROM (exited_at - entered_at)) / 3600.0)     ELSE NULL::numeric END` | s | Coluna duration_hours da tabela public.deal_stage_transitions. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão:  CASE     WHEN (exited_at IS NOT NULL) THEN (EXTRACT(epoch FROM (exited_at - entered_at)) / 3600.0)     ELSE NULL::numeric END. |
+| 8 | `transitioned_by` | `uuid` | sim |  |  | Coluna transitioned_by da tabela public.deal_stage_transitions. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.deal_stage_transitions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

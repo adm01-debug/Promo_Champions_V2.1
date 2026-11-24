@@ -1,5 +1,7 @@
 # public.stage_inactivity_rules
 
+> Tabela public.stage_inactivity_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), stage text NOT NULL, label text NOT NULL, mild_days integer NOT NULL, moderate_days integer NOT NULL, critical_days integer NOT NULL, enabled boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `stage` | `text` | não |  |  |  |
-| 3 | `label` | `text` | não |  |  |  |
-| 4 | `mild_days` | `integer` | não |  |  |  |
-| 5 | `moderate_days` | `integer` | não |  |  |  |
-| 6 | `critical_days` | `integer` | não |  |  |  |
-| 7 | `enabled` | `boolean` | não | `true` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.stage_inactivity_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `stage` | `text` | não |  |  | Coluna stage da tabela public.stage_inactivity_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `label` | `text` | não |  |  | Coluna label da tabela public.stage_inactivity_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `mild_days` | `integer` | não |  |  | Coluna mild_days da tabela public.stage_inactivity_rules. Tipo PostgreSQL: integer. Não aceita NULL. Validação CHECK: CHECK (moderate_days > mild_days); CHECK (mild_days > 0). |
+| 5 | `moderate_days` | `integer` | não |  |  | Coluna moderate_days da tabela public.stage_inactivity_rules. Tipo PostgreSQL: integer. Não aceita NULL. Validação CHECK: CHECK (moderate_days > mild_days); CHECK (critical_days > moderate_days). |
+| 6 | `critical_days` | `integer` | não |  |  | Coluna critical_days da tabela public.stage_inactivity_rules. Tipo PostgreSQL: integer. Não aceita NULL. Validação CHECK: CHECK (critical_days > moderate_days). |
+| 7 | `enabled` | `boolean` | não | `true` |  | Coluna enabled da tabela public.stage_inactivity_rules. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.stage_inactivity_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.stage_inactivity_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

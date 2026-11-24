@@ -1,5 +1,7 @@
 # public.db_rollback_snapshots
 
+> Tabela public.db_rollback_snapshots. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), captured_at timestamp with time zone NOT NULL DEFAULT now(), xact_commit bigint NOT NULL, xact_rollback bigint NOT NULL, deadlocks bigint NOT NULL DEFAULT 0, temp_files bigint NOT NULL DEFAULT 0, temp_bytes bigint NOT NULL DEFAULT 0.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `captured_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 3 | `xact_commit` | `bigint` | não |  |  |  |
-| 4 | `xact_rollback` | `bigint` | não |  |  |  |
-| 5 | `deadlocks` | `bigint` | não | `0` |  |  |
-| 6 | `temp_files` | `bigint` | não | `0` |  |  |
-| 7 | `temp_bytes` | `bigint` | não | `0` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.db_rollback_snapshots. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `captured_at` | `timestamp with time zone` | não | `now()` |  | Coluna captured_at da tabela public.db_rollback_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 3 | `xact_commit` | `bigint` | não |  |  | Coluna xact_commit da tabela public.db_rollback_snapshots. Tipo PostgreSQL: bigint. Não aceita NULL. |
+| 4 | `xact_rollback` | `bigint` | não |  |  | Coluna xact_rollback da tabela public.db_rollback_snapshots. Tipo PostgreSQL: bigint. Não aceita NULL. |
+| 5 | `deadlocks` | `bigint` | não | `0` |  | Coluna deadlocks da tabela public.db_rollback_snapshots. Tipo PostgreSQL: bigint. Não aceita NULL. Valor padrão: 0. |
+| 6 | `temp_files` | `bigint` | não | `0` |  | Coluna temp_files da tabela public.db_rollback_snapshots. Tipo PostgreSQL: bigint. Não aceita NULL. Valor padrão: 0. |
+| 7 | `temp_bytes` | `bigint` | não | `0` |  | Coluna temp_bytes da tabela public.db_rollback_snapshots. Tipo PostgreSQL: bigint. Não aceita NULL. Valor padrão: 0. |
 
 
 ## Constraints

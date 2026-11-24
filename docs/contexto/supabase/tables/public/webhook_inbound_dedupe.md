@@ -1,5 +1,7 @@
 # public.webhook_inbound_dedupe
 
+> Tabela public.webhook_inbound_dedupe. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), correlation_key text NOT NULL, event text NOT NULL, source text NOT NULL DEFAULT 'v4'::text, payload jsonb NOT NULL DEFAULT '{}'::jsonb, received_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), first_seen_at timestamp with time zone NOT NULL DEFAULT now(), hit_count integer NOT NULL DEFAULT 1.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `correlation_key` | `text` | não |  |  |  |
-| 3 | `event` | `text` | não |  |  |  |
-| 4 | `source` | `text` | não | `'v4'::text` |  |  |
-| 5 | `payload` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `received_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `first_seen_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `hit_count` | `integer` | não | `1` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `correlation_key` | `text` | não |  |  | Coluna correlation_key da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `event` | `text` | não |  |  | Coluna event da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `source` | `text` | não | `'v4'::text` |  | Coluna source da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'v4'::text. |
+| 5 | `payload` | `jsonb` | não | `'{}'::jsonb` |  | Coluna payload da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. Validação CHECK: CHECK (pg_column_size(payload) <= 262144). |
+| 6 | `received_at` | `timestamp with time zone` | não | `now()` |  | Coluna received_at da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `first_seen_at` | `timestamp with time zone` | não | `now()` |  | Coluna first_seen_at da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `hit_count` | `integer` | não | `1` |  | Coluna hit_count da tabela public.webhook_inbound_dedupe. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. Validação CHECK: CHECK (hit_count >= 0). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.migration_log
 
+> Registro de migrações de banco de dados e seu estado de execução.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `integer` | não | `nextval('migration_log_id_seq'::regclass)` |  |  |
-| 2 | `migration_name` | `text` | não |  |  |  |
-| 3 | `executed_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 4 | `status` | `text` | não |  |  |  |
-| 5 | `notes` | `text` | sim |  |  |  |
+| 1 | `id` | `integer` | não | `nextval('migration_log_id_seq'::regclass)` |  | Identificador sequencial da migração registrada. |
+| 2 | `migration_name` | `text` | não |  |  | Nome ou identificador da migração. |
+| 3 | `executed_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de execução, quando disponível. |
+| 4 | `status` | `text` | não |  |  | Estado da execução da migração. |
+| 5 | `notes` | `text` | sim |  |  | Observações adicionais sobre a migração. |
 
 
 ## Constraints

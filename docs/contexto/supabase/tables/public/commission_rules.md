@@ -1,5 +1,7 @@
 # public.commission_rules
 
+> Tabela public.commission_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, description text NULLABLE, salesperson_id uuid NULLABLE, category text NULLABLE, percentage numeric(5,2) NOT NULL DEFAULT 5.00, min_amount numeric(12,2) NULLABLE DEFAULT 0, max_amount numeric(12,2) NULLABLE, priority integer NOT NULL DEFAULT 0, is_active boolean NOT NULL DEFAULT true, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `description` | `text` | sim |  |  |  |
-| 4 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 5 | `category` | `text` | sim |  |  |  |
-| 6 | `percentage` | `numeric(5,2)` | não | `5.00` |  |  |
-| 7 | `min_amount` | `numeric(12,2)` | sim | `0` |  |  |
-| 8 | `max_amount` | `numeric(12,2)` | sim |  |  |  |
-| 9 | `priority` | `integer` | não | `0` |  |  |
-| 10 | `is_active` | `boolean` | não | `true` |  |  |
-| 11 | `created_by` | `uuid` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.commission_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.commission_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `description` | `text` | sim |  |  | Coluna description da tabela public.commission_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 4 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.commission_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 5 | `category` | `text` | sim |  |  | Coluna category da tabela public.commission_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `percentage` | `numeric(5,2)` | não | `5.00` |  | Coluna percentage da tabela public.commission_rules. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 5.00. Validação CHECK: CHECK (percentage >= 0::numeric AND percentage <= 100::numeric). |
+| 7 | `min_amount` | `numeric(12,2)` | sim | `0` |  | Coluna min_amount da tabela public.commission_rules. Tipo PostgreSQL: numeric(12,2). Aceita NULL. Valor padrão: 0. |
+| 8 | `max_amount` | `numeric(12,2)` | sim |  |  | Coluna max_amount da tabela public.commission_rules. Tipo PostgreSQL: numeric(12,2). Aceita NULL. |
+| 9 | `priority` | `integer` | não | `0` |  | Coluna priority da tabela public.commission_rules. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 10 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.commission_rules. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 11 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.commission_rules. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.commission_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.commission_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

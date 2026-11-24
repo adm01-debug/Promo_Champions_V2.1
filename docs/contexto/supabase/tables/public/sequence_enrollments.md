@@ -1,5 +1,7 @@
 # public.sequence_enrollments
 
+> Tabela public.sequence_enrollments. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sequence_id uuid NOT NULL, contact_id uuid NOT NULL, contact_type text NOT NULL, enrolled_by uuid NULLABLE, status text NOT NULL DEFAULT 'active'::text, current_step integer NOT NULL DEFAULT 0, next_action_at timestamp with time zone NULLABLE, started_at timestamp with time zone NOT NULL DEFAULT now(), last_executed_at timestamp with time zone NULLABLE, completed_at timestamp with time zone NULLABLE, exit_reason text NULLABLE, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), optimized_for_at timestamp with time zone NULLABLE, auto_paused_at timestamp with time zone NULLABLE, auto_pause_reason text NULLABLE. Relacionamentos FK: sequence_id → public.sequences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,24 +18,24 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sequence_id` | `uuid` | não |  |  |  |
-| 3 | `contact_id` | `uuid` | não |  |  |  |
-| 4 | `contact_type` | `text` | não |  |  |  |
-| 5 | `enrolled_by` | `uuid` | sim |  |  |  |
-| 6 | `status` | `text` | não | `'active'::text` |  |  |
-| 7 | `current_step` | `integer` | não | `0` |  |  |
-| 8 | `next_action_at` | `timestamp with time zone` | sim |  |  |  |
-| 9 | `started_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `last_executed_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `exit_reason` | `text` | sim |  |  |  |
-| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 16 | `optimized_for_at` | `timestamp with time zone` | sim |  |  |  |
-| 17 | `auto_paused_at` | `timestamp with time zone` | sim |  |  |  |
-| 18 | `auto_pause_reason` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sequence_enrollments. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sequence_id` | `uuid` | não |  |  | Coluna sequence_id da tabela public.sequence_enrollments. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sequences(id). |
+| 3 | `contact_id` | `uuid` | não |  |  | Coluna contact_id da tabela public.sequence_enrollments. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `contact_type` | `text` | não |  |  | Coluna contact_type da tabela public.sequence_enrollments. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (contact_type = ANY (ARRAY['lead'::text, 'client'::text, 'contact'::text])). |
+| 5 | `enrolled_by` | `uuid` | sim |  |  | Coluna enrolled_by da tabela public.sequence_enrollments. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 6 | `status` | `text` | não | `'active'::text` |  | Coluna status da tabela public.sequence_enrollments. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'active'::text. Validação CHECK: CHECK (status = ANY (ARRAY['active'::text, 'paused'::text, 'completed'::text, 'exited'::text, 'failed'::text])). |
+| 7 | `current_step` | `integer` | não | `0` |  | Coluna current_step da tabela public.sequence_enrollments. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `next_action_at` | `timestamp with time zone` | sim |  |  | Coluna next_action_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 9 | `started_at` | `timestamp with time zone` | não | `now()` |  | Coluna started_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `last_executed_at` | `timestamp with time zone` | sim |  |  | Coluna last_executed_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `exit_reason` | `text` | sim |  |  | Coluna exit_reason da tabela public.sequence_enrollments. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.sequence_enrollments. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 14 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 16 | `optimized_for_at` | `timestamp with time zone` | sim |  |  | Coluna optimized_for_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 17 | `auto_paused_at` | `timestamp with time zone` | sim |  |  | Coluna auto_paused_at da tabela public.sequence_enrollments. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 18 | `auto_pause_reason` | `text` | sim |  |  | Coluna auto_pause_reason da tabela public.sequence_enrollments. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

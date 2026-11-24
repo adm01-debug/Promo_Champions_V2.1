@@ -1,5 +1,7 @@
 # public.commission_bonus_awards
 
+> Tabela public.commission_bonus_awards. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), bonus_id uuid NOT NULL, salesperson_id uuid NOT NULL, period_month date NOT NULL, computed_amount numeric(14,2) NOT NULL DEFAULT 0, bonus_kind text NOT NULL, status text NOT NULL DEFAULT 'pending'::text, awarded_at timestamp with time zone NOT NULL DEFAULT now(), paid_at timestamp with time zone NULLABLE, admin_notes text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: bonus_id → public.commission_bonuses(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `bonus_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `period_month` | `date` | não |  |  |  |
-| 5 | `computed_amount` | `numeric(14,2)` | não | `0` |  |  |
-| 6 | `bonus_kind` | `text` | não |  |  |  |
-| 7 | `status` | `text` | não | `'pending'::text` |  |  |
-| 8 | `awarded_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `paid_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `admin_notes` | `text` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.commission_bonus_awards. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `bonus_id` | `uuid` | não |  |  | Coluna bonus_id da tabela public.commission_bonus_awards. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.commission_bonuses(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.commission_bonus_awards. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `period_month` | `date` | não |  |  | Coluna period_month da tabela public.commission_bonus_awards. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `computed_amount` | `numeric(14,2)` | não | `0` |  | Coluna computed_amount da tabela public.commission_bonus_awards. Tipo PostgreSQL: numeric(14,2). Não aceita NULL. Valor padrão: 0. |
+| 6 | `bonus_kind` | `text` | não |  |  | Coluna bonus_kind da tabela public.commission_bonus_awards. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (bonus_kind = ANY (ARRAY['fixed'::text, 'percentage'::text])). |
+| 7 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.commission_bonus_awards. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text])). |
+| 8 | `awarded_at` | `timestamp with time zone` | não | `now()` |  | Coluna awarded_at da tabela public.commission_bonus_awards. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `paid_at` | `timestamp with time zone` | sim |  |  | Coluna paid_at da tabela public.commission_bonus_awards. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `admin_notes` | `text` | sim |  |  | Coluna admin_notes da tabela public.commission_bonus_awards. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.commission_bonus_awards. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.commission_bonus_awards. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

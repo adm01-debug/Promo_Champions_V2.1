@@ -1,5 +1,7 @@
 # public.approval_workflows
 
+> Tabela public.approval_workflows. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, workflow_type text NOT NULL DEFAULT 'discount'::text, description text NULLABLE, threshold_amount numeric(12,2) NULLABLE, threshold_percentage numeric(5,2) NULLABLE, required_approvers integer NOT NULL DEFAULT 1, auto_approve_below numeric(12,2) NULLABLE, is_active boolean NOT NULL DEFAULT true, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), min_mrr_threshold numeric(15,2) NULLABLE, auto_approve_below_discount numeric(5,2) NULLABLE. Relacionamentos FK: created_by → auth.users(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `workflow_type` | `text` | não | `'discount'::text` |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `threshold_amount` | `numeric(12,2)` | sim |  |  |  |
-| 6 | `threshold_percentage` | `numeric(5,2)` | sim |  |  |  |
-| 7 | `required_approvers` | `integer` | não | `1` |  |  |
-| 8 | `auto_approve_below` | `numeric(12,2)` | sim |  |  |  |
-| 9 | `is_active` | `boolean` | não | `true` |  |  |
-| 10 | `created_by` | `uuid` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `min_mrr_threshold` | `numeric(15,2)` | sim |  |  |  |
-| 14 | `auto_approve_below_discount` | `numeric(5,2)` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.approval_workflows. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.approval_workflows. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `workflow_type` | `text` | não | `'discount'::text` |  | Coluna workflow_type da tabela public.approval_workflows. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'discount'::text. Validação CHECK: CHECK (workflow_type = ANY (ARRAY['discount'::text, 'proposal'::text, 'exception'::text, 'refund'::text])). |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.approval_workflows. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `threshold_amount` | `numeric(12,2)` | sim |  |  | Coluna threshold_amount da tabela public.approval_workflows. Tipo PostgreSQL: numeric(12,2). Aceita NULL. |
+| 6 | `threshold_percentage` | `numeric(5,2)` | sim |  |  | Coluna threshold_percentage da tabela public.approval_workflows. Tipo PostgreSQL: numeric(5,2). Aceita NULL. |
+| 7 | `required_approvers` | `integer` | não | `1` |  | Coluna required_approvers da tabela public.approval_workflows. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 1. |
+| 8 | `auto_approve_below` | `numeric(12,2)` | sim |  |  | Coluna auto_approve_below da tabela public.approval_workflows. Tipo PostgreSQL: numeric(12,2). Aceita NULL. |
+| 9 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.approval_workflows. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 10 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.approval_workflows. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: auth.users(id). |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.approval_workflows. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.approval_workflows. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `min_mrr_threshold` | `numeric(15,2)` | sim |  |  | Coluna min_mrr_threshold da tabela public.approval_workflows. Tipo PostgreSQL: numeric(15,2). Aceita NULL. |
+| 14 | `auto_approve_below_discount` | `numeric(5,2)` | sim |  |  | Coluna auto_approve_below_discount da tabela public.approval_workflows. Tipo PostgreSQL: numeric(5,2). Aceita NULL. |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.performance_bets
 
+> Tabela public.performance_bets. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, bet_type text NOT NULL, target_value numeric NOT NULL, xp_wagered integer NOT NULL DEFAULT 100, xp_multiplier numeric NOT NULL DEFAULT 2.0, current_value numeric NOT NULL DEFAULT 0, status text NOT NULL DEFAULT 'active'::text, description text NULLABLE, starts_at timestamp with time zone NOT NULL DEFAULT now(), ends_at timestamp with time zone NOT NULL, resolved_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `bet_type` | `text` | não |  |  |  |
-| 4 | `target_value` | `numeric` | não |  |  |  |
-| 5 | `xp_wagered` | `integer` | não | `100` |  |  |
-| 6 | `xp_multiplier` | `numeric` | não | `2.0` |  |  |
-| 7 | `current_value` | `numeric` | não | `0` |  |  |
-| 8 | `status` | `text` | não | `'active'::text` |  |  |
-| 9 | `description` | `text` | sim |  |  |  |
-| 10 | `starts_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `ends_at` | `timestamp with time zone` | não |  |  |  |
-| 12 | `resolved_at` | `timestamp with time zone` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.performance_bets. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.performance_bets. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `bet_type` | `text` | não |  |  | Coluna bet_type da tabela public.performance_bets. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (bet_type = ANY (ARRAY['deals'::text, 'revenue'::text, 'calls'::text, 'meetings'::text, 'activities'::text])). |
+| 4 | `target_value` | `numeric` | não |  |  | Coluna target_value da tabela public.performance_bets. Tipo PostgreSQL: numeric. Não aceita NULL. |
+| 5 | `xp_wagered` | `integer` | não | `100` |  | Coluna xp_wagered da tabela public.performance_bets. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 100. |
+| 6 | `xp_multiplier` | `numeric` | não | `2.0` |  | Coluna xp_multiplier da tabela public.performance_bets. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 2.0. |
+| 7 | `current_value` | `numeric` | não | `0` |  | Coluna current_value da tabela public.performance_bets. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `status` | `text` | não | `'active'::text` |  | Coluna status da tabela public.performance_bets. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'active'::text. Validação CHECK: CHECK (status = ANY (ARRAY['active'::text, 'won'::text, 'lost'::text, 'cancelled'::text])). |
+| 9 | `description` | `text` | sim |  |  | Coluna description da tabela public.performance_bets. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `starts_at` | `timestamp with time zone` | não | `now()` |  | Coluna starts_at da tabela public.performance_bets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `ends_at` | `timestamp with time zone` | não |  |  | Coluna ends_at da tabela public.performance_bets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 12 | `resolved_at` | `timestamp with time zone` | sim |  |  | Coluna resolved_at da tabela public.performance_bets. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.performance_bets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.performance_bets. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

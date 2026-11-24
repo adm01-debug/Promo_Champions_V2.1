@@ -1,5 +1,7 @@
 # public.salesperson_custom_field_values
 
+> Tabela public.salesperson_custom_field_values. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, field_id uuid NOT NULL, numeric_value numeric NULLABLE DEFAULT 0, text_value text NULLABLE, boolean_value boolean NULLABLE DEFAULT false, updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: field_id → public.team_custom_fields(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `field_id` | `uuid` | não |  |  |  |
-| 4 | `numeric_value` | `numeric` | sim | `0` |  |  |
-| 5 | `text_value` | `text` | sim |  |  |  |
-| 6 | `boolean_value` | `boolean` | sim | `false` |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `field_id` | `uuid` | não |  |  | Coluna field_id da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.team_custom_fields(id). |
+| 4 | `numeric_value` | `numeric` | sim | `0` |  | Coluna numeric_value da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: numeric. Aceita NULL. Valor padrão: 0. |
+| 5 | `text_value` | `text` | sim |  |  | Coluna text_value da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `boolean_value` | `boolean` | sim | `false` |  | Coluna boolean_value da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.salesperson_custom_field_values. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

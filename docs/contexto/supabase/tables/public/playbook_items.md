@@ -1,5 +1,7 @@
 # public.playbook_items
 
+> Itens ordenados que compõem um playbook, incluindo conteúdo e recursos de apoio.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `playbook_id` | `uuid` | não |  |  |  |
-| 3 | `content` | `text` | não |  |  |  |
-| 4 | `item_order` | `integer` | não | `0` |  |  |
-| 5 | `is_required` | `boolean` | não | `false` |  |  |
-| 6 | `item_type` | `text` | não | `'checklist'::text` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `asset_id` | `uuid` | sim |  |  |  |
-| 9 | `target_outcome` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único do item. |
+| 2 | `playbook_id` | `uuid` | não |  |  | Playbook ao qual o item pertence. |
+| 3 | `content` | `text` | não |  |  | Instrução ou conteúdo do item do playbook. |
+| 4 | `item_order` | `integer` | não | `0` |  | Posição do item na ordem de execução. |
+| 5 | `is_required` | `boolean` | não | `false` |  | Indica se a conclusão do item é obrigatória. |
+| 6 | `item_type` | `text` | não | `'checklist'::text` |  | Tipo do item conforme utilizado pela aplicação. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação do item. |
+| 8 | `asset_id` | `uuid` | sim |  |  | Ativo de capacitação associado ao item, quando houver. |
+| 9 | `target_outcome` | `text` | sim |  |  | Resultado esperado após a execução do item, quando definido. |
 
 
 ## Constraints

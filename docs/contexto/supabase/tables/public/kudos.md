@@ -1,5 +1,7 @@
 # public.kudos
 
+> Tabela public.kudos. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), from_salesperson_id uuid NOT NULL, to_salesperson_id uuid NOT NULL, message text NOT NULL, kudos_type text NOT NULL DEFAULT 'recognition'::text, is_pinned boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: from_salesperson_id → public.salespeople(id); to_salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `from_salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `to_salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `message` | `text` | não |  |  |  |
-| 5 | `kudos_type` | `text` | não | `'recognition'::text` |  |  |
-| 6 | `is_pinned` | `boolean` | não | `false` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.kudos. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `from_salesperson_id` | `uuid` | não |  |  | Coluna from_salesperson_id da tabela public.kudos. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `to_salesperson_id` | `uuid` | não |  |  | Coluna to_salesperson_id da tabela public.kudos. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `message` | `text` | não |  |  | Coluna message da tabela public.kudos. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `kudos_type` | `text` | não | `'recognition'::text` |  | Coluna kudos_type da tabela public.kudos. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'recognition'::text. |
+| 6 | `is_pinned` | `boolean` | não | `false` |  | Coluna is_pinned da tabela public.kudos. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.kudos. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

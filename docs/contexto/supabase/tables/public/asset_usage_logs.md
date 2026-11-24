@@ -1,5 +1,7 @@
 # public.asset_usage_logs
 
+> Tabela public.asset_usage_logs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), asset_id uuid NOT NULL, salesperson_id uuid NULLABLE, user_id uuid NOT NULL, action text NOT NULL DEFAULT 'view'::text, deal_id uuid NULLABLE, metadata jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: asset_id → public.sales_enablement_assets(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `asset_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | sim |  |  |  |
-| 4 | `user_id` | `uuid` | não |  |  |  |
-| 5 | `action` | `text` | não | `'view'::text` |  |  |
-| 6 | `deal_id` | `uuid` | sim |  |  |  |
-| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.asset_usage_logs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `asset_id` | `uuid` | não |  |  | Coluna asset_id da tabela public.asset_usage_logs. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales_enablement_assets(id). |
+| 3 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.asset_usage_logs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `user_id` | `uuid` | não |  |  | Coluna user_id da tabela public.asset_usage_logs. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 5 | `action` | `text` | não | `'view'::text` |  | Coluna action da tabela public.asset_usage_logs. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'view'::text. |
+| 6 | `deal_id` | `uuid` | sim |  |  | Coluna deal_id da tabela public.asset_usage_logs. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 7 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.asset_usage_logs. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.asset_usage_logs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

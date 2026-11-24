@@ -1,5 +1,7 @@
 # public.sale_notifications_audit
 
+> Tabela public.sale_notifications_audit. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, seller_id uuid NULLABLE, seller_name text NULLABLE, sale_amount numeric NULLABLE, seller_rank_at_time integer NULLABLE, recipient_id uuid NULLABLE, recipient_rank_at_time integer NULLABLE, notification_type text NULLABLE DEFAULT 'in-app'::text, status text NULLABLE DEFAULT 'sent'::text, created_at timestamp with time zone NULLABLE DEFAULT now(), message_sent text NULLABLE, channel text NULLABLE, error_log text NULLABLE. Relacionamentos FK: recipient_id → public.salespeople(id); sale_id → public.sales(id); seller_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `seller_id` | `uuid` | sim |  |  |  |
-| 4 | `seller_name` | `text` | sim |  |  |  |
-| 5 | `sale_amount` | `numeric` | sim |  |  |  |
-| 6 | `seller_rank_at_time` | `integer` | sim |  |  |  |
-| 7 | `recipient_id` | `uuid` | sim |  |  |  |
-| 8 | `recipient_rank_at_time` | `integer` | sim |  |  |  |
-| 9 | `notification_type` | `text` | sim | `'in-app'::text` |  |  |
-| 10 | `status` | `text` | sim | `'sent'::text` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 12 | `message_sent` | `text` | sim |  |  |  |
-| 13 | `channel` | `text` | sim |  |  |  |
-| 14 | `error_log` | `text` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.sale_notifications_audit. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.sale_notifications_audit. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `seller_id` | `uuid` | sim |  |  | Coluna seller_id da tabela public.sale_notifications_audit. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `seller_name` | `text` | sim |  |  | Coluna seller_name da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `sale_amount` | `numeric` | sim |  |  | Coluna sale_amount da tabela public.sale_notifications_audit. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 6 | `seller_rank_at_time` | `integer` | sim |  |  | Coluna seller_rank_at_time da tabela public.sale_notifications_audit. Tipo PostgreSQL: integer. Aceita NULL. |
+| 7 | `recipient_id` | `uuid` | sim |  |  | Coluna recipient_id da tabela public.sale_notifications_audit. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 8 | `recipient_rank_at_time` | `integer` | sim |  |  | Coluna recipient_rank_at_time da tabela public.sale_notifications_audit. Tipo PostgreSQL: integer. Aceita NULL. |
+| 9 | `notification_type` | `text` | sim | `'in-app'::text` |  | Coluna notification_type da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'in-app'::text. |
+| 10 | `status` | `text` | sim | `'sent'::text` |  | Coluna status da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'sent'::text. |
+| 11 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.sale_notifications_audit. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 12 | `message_sent` | `text` | sim |  |  | Coluna message_sent da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `channel` | `text` | sim |  |  | Coluna channel da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 14 | `error_log` | `text` | sim |  |  | Coluna error_log da tabela public.sale_notifications_audit. Tipo PostgreSQL: text. Aceita NULL. |
 
 
 ## Constraints

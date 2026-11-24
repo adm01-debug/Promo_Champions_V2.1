@@ -1,5 +1,7 @@
 # public.deal_committee_coverage
 
+> Tabela public.deal_committee_coverage. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NOT NULL, owner_id uuid NOT NULL, coverage_score integer NOT NULL DEFAULT 0, tier text NOT NULL DEFAULT 'weak'::text, gaps jsonb NOT NULL DEFAULT '[]'::jsonb, risks jsonb NOT NULL DEFAULT '[]'::jsonb, stakeholder_count integer NOT NULL DEFAULT 0, calculated_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | não |  |  |  |
-| 3 | `owner_id` | `uuid` | não |  |  |  |
-| 4 | `coverage_score` | `integer` | não | `0` |  |  |
-| 5 | `tier` | `text` | não | `'weak'::text` |  |  |
-| 6 | `gaps` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 7 | `risks` | `jsonb` | não | `'[]'::jsonb` |  |  |
-| 8 | `stakeholder_count` | `integer` | não | `0` |  |  |
-| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.deal_committee_coverage. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | não |  |  | Coluna sale_id da tabela public.deal_committee_coverage. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.sales(id). |
+| 3 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.deal_committee_coverage. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `coverage_score` | `integer` | não | `0` |  | Coluna coverage_score da tabela public.deal_committee_coverage. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. Validação CHECK: CHECK (coverage_score >= 0 AND coverage_score <= 100). |
+| 5 | `tier` | `text` | não | `'weak'::text` |  | Coluna tier da tabela public.deal_committee_coverage. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'weak'::text. Validação CHECK: CHECK (tier = ANY (ARRAY['weak'::text, 'partial'::text, 'strong'::text, 'complete'::text])). |
+| 6 | `gaps` | `jsonb` | não | `'[]'::jsonb` |  | Coluna gaps da tabela public.deal_committee_coverage. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 7 | `risks` | `jsonb` | não | `'[]'::jsonb` |  | Coluna risks da tabela public.deal_committee_coverage. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '[]'::jsonb. |
+| 8 | `stakeholder_count` | `integer` | não | `0` |  | Coluna stakeholder_count da tabela public.deal_committee_coverage. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `calculated_at` | `timestamp with time zone` | não | `now()` |  | Coluna calculated_at da tabela public.deal_committee_coverage. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.deal_committee_coverage. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.deal_committee_coverage. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.race_team_members
 
+> Tabela public.race_team_members. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), team_id uuid NOT NULL, car_id uuid NOT NULL, joined_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: car_id → public.race_cars(id); team_id → public.race_teams(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,10 +18,10 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `team_id` | `uuid` | não |  |  |  |
-| 3 | `car_id` | `uuid` | não |  |  |  |
-| 4 | `joined_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_team_members. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `team_id` | `uuid` | não |  |  | Coluna team_id da tabela public.race_team_members. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_teams(id). |
+| 3 | `car_id` | `uuid` | não |  |  | Coluna car_id da tabela public.race_team_members. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_cars(id). |
+| 4 | `joined_at` | `timestamp with time zone` | não | `now()` |  | Coluna joined_at da tabela public.race_team_members. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

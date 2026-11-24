@@ -1,5 +1,7 @@
 # public.race_seasons
 
+> Tabela public.race_seasons. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), name text NOT NULL, start_date date NOT NULL, end_date date NOT NULL, track_type text NOT NULL DEFAULT 'oval'::text, goal_amount numeric NOT NULL DEFAULT 0, status text NOT NULL DEFAULT 'upcoming'::text, winner_id uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(), role_type text NOT NULL DEFAULT 'closer'::text. Relacionamentos FK: winner_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,17 +19,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `name` | `text` | não |  |  |  |
-| 3 | `start_date` | `date` | não |  |  |  |
-| 4 | `end_date` | `date` | não |  |  |  |
-| 5 | `track_type` | `text` | não | `'oval'::text` |  |  |
-| 6 | `goal_amount` | `numeric` | não | `0` |  |  |
-| 7 | `status` | `text` | não | `'upcoming'::text` |  |  |
-| 8 | `winner_id` | `uuid` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `role_type` | `text` | não | `'closer'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_seasons. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `name` | `text` | não |  |  | Coluna name da tabela public.race_seasons. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `start_date` | `date` | não |  |  | Coluna start_date da tabela public.race_seasons. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `end_date` | `date` | não |  |  | Coluna end_date da tabela public.race_seasons. Tipo PostgreSQL: date. Não aceita NULL. |
+| 5 | `track_type` | `text` | não | `'oval'::text` |  | Coluna track_type da tabela public.race_seasons. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'oval'::text. Validação CHECK: CHECK (track_type = ANY (ARRAY['oval'::text, 'circuit'::text, 'street'::text])). |
+| 6 | `goal_amount` | `numeric` | não | `0` |  | Coluna goal_amount da tabela public.race_seasons. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `status` | `text` | não | `'upcoming'::text` |  | Coluna status da tabela public.race_seasons. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'upcoming'::text. Validação CHECK: CHECK (status = ANY (ARRAY['upcoming'::text, 'active'::text, 'finished'::text])). |
+| 8 | `winner_id` | `uuid` | sim |  |  | Coluna winner_id da tabela public.race_seasons. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_seasons. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.race_seasons. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `role_type` | `text` | não | `'closer'::text` |  | Coluna role_type da tabela public.race_seasons. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'closer'::text. Validação CHECK: CHECK (role_type = ANY (ARRAY['closer'::text, 'sdr'::text])). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.critical_moment_notifications
 
+> Tabela public.critical_moment_notifications. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), moment_id uuid NOT NULL, recipient_user_id uuid NOT NULL, delivered boolean NOT NULL DEFAULT true, read_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: moment_id → public.call_critical_moments(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `moment_id` | `uuid` | não |  |  |  |
-| 3 | `recipient_user_id` | `uuid` | não |  |  |  |
-| 4 | `delivered` | `boolean` | não | `true` |  |  |
-| 5 | `read_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.critical_moment_notifications. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `moment_id` | `uuid` | não |  |  | Coluna moment_id da tabela public.critical_moment_notifications. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_critical_moments(id). |
+| 3 | `recipient_user_id` | `uuid` | não |  |  | Coluna recipient_user_id da tabela public.critical_moment_notifications. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `delivered` | `boolean` | não | `true` |  | Coluna delivered da tabela public.critical_moment_notifications. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 5 | `read_at` | `timestamp with time zone` | sim |  |  | Coluna read_at da tabela public.critical_moment_notifications. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.critical_moment_notifications. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

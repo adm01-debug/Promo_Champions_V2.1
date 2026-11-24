@@ -1,5 +1,7 @@
 # public.cadence_enrollment_rules
 
+> Tabela public.cadence_enrollment_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), cadence_id uuid NOT NULL, name text NOT NULL, description text NULLABLE, is_active boolean NOT NULL DEFAULT true, priority integer NOT NULL DEFAULT 100, trigger_stage text NULLABLE, trigger_category text NULLABLE, trigger_source text NULLABLE, min_amount numeric(12,2) NULLABLE, max_amount numeric(12,2) NULLABLE, created_by uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: cadence_id → public.cadences(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `cadence_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `is_active` | `boolean` | não | `true` |  |  |
-| 6 | `priority` | `integer` | não | `100` |  |  |
-| 7 | `trigger_stage` | `text` | sim |  |  |  |
-| 8 | `trigger_category` | `text` | sim |  |  |  |
-| 9 | `trigger_source` | `text` | sim |  |  |  |
-| 10 | `min_amount` | `numeric(12,2)` | sim |  |  |  |
-| 11 | `max_amount` | `numeric(12,2)` | sim |  |  |  |
-| 12 | `created_by` | `uuid` | sim |  |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `cadence_id` | `uuid` | não |  |  | Coluna cadence_id da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.cadences(id). |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 6 | `priority` | `integer` | não | `100` |  | Coluna priority da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 100. |
+| 7 | `trigger_stage` | `text` | sim |  |  | Coluna trigger_stage da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `trigger_category` | `text` | sim |  |  | Coluna trigger_category da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `trigger_source` | `text` | sim |  |  | Coluna trigger_source da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `min_amount` | `numeric(12,2)` | sim |  |  | Coluna min_amount da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: numeric(12,2). Aceita NULL. |
+| 11 | `max_amount` | `numeric(12,2)` | sim |  |  | Coluna max_amount da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: numeric(12,2). Aceita NULL. |
+| 12 | `created_by` | `uuid` | sim |  |  | Coluna created_by da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.cadence_enrollment_rules. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

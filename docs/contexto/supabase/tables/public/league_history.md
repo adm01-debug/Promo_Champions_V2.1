@@ -1,5 +1,7 @@
 # public.league_history
 
+> Tabela public.league_history. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, league_id uuid NULLABLE, rank_achieved integer NULLABLE, xp_earned integer NULLABLE, season_date date NULLABLE DEFAULT CURRENT_DATE, promoted boolean NULLABLE DEFAULT false, demoted boolean NULLABLE DEFAULT false, created_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: league_id → public.leagues(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `league_id` | `uuid` | sim |  |  |  |
-| 4 | `rank_achieved` | `integer` | sim |  |  |  |
-| 5 | `xp_earned` | `integer` | sim |  |  |  |
-| 6 | `season_date` | `date` | sim | `CURRENT_DATE` |  |  |
-| 7 | `promoted` | `boolean` | sim | `false` |  |  |
-| 8 | `demoted` | `boolean` | sim | `false` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.league_history. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.league_history. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `league_id` | `uuid` | sim |  |  | Coluna league_id da tabela public.league_history. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.leagues(id). |
+| 4 | `rank_achieved` | `integer` | sim |  |  | Coluna rank_achieved da tabela public.league_history. Tipo PostgreSQL: integer. Aceita NULL. |
+| 5 | `xp_earned` | `integer` | sim |  |  | Coluna xp_earned da tabela public.league_history. Tipo PostgreSQL: integer. Aceita NULL. |
+| 6 | `season_date` | `date` | sim | `CURRENT_DATE` |  | Coluna season_date da tabela public.league_history. Tipo PostgreSQL: date. Aceita NULL. Valor padrão: CURRENT_DATE. |
+| 7 | `promoted` | `boolean` | sim | `false` |  | Coluna promoted da tabela public.league_history. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 8 | `demoted` | `boolean` | sim | `false` |  | Coluna demoted da tabela public.league_history. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: false. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.league_history. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

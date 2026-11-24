@@ -1,5 +1,7 @@
 # public.supply_outbox
 
+> Tabela public.supply_outbox. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), order_id uuid NOT NULL, order_item_id uuid NOT NULL, event text NOT NULL DEFAULT 'pedido.criado'::text, payload jsonb NOT NULL, status text NOT NULL DEFAULT 'pending'::text, attempts integer NOT NULL DEFAULT 0, last_error text NULLABLE, next_attempt_at timestamp with time zone NOT NULL DEFAULT now(), delivered_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: order_id → public.orders(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `order_id` | `uuid` | não |  |  |  |
-| 3 | `order_item_id` | `uuid` | não |  |  |  |
-| 4 | `event` | `text` | não | `'pedido.criado'::text` |  |  |
-| 5 | `payload` | `jsonb` | não |  |  |  |
-| 6 | `status` | `text` | não | `'pending'::text` |  |  |
-| 7 | `attempts` | `integer` | não | `0` |  |  |
-| 8 | `last_error` | `text` | sim |  |  |  |
-| 9 | `next_attempt_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 10 | `delivered_at` | `timestamp with time zone` | sim |  |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.supply_outbox. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `order_id` | `uuid` | não |  |  | Coluna order_id da tabela public.supply_outbox. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.orders(id). |
+| 3 | `order_item_id` | `uuid` | não |  |  | Coluna order_item_id da tabela public.supply_outbox. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 4 | `event` | `text` | não | `'pedido.criado'::text` |  | Coluna event da tabela public.supply_outbox. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pedido.criado'::text. |
+| 5 | `payload` | `jsonb` | não |  |  | Coluna payload da tabela public.supply_outbox. Tipo PostgreSQL: jsonb. Não aceita NULL. |
+| 6 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.supply_outbox. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'processing'::text, 'delivered'::text, 'dead'::text])). |
+| 7 | `attempts` | `integer` | não | `0` |  | Coluna attempts da tabela public.supply_outbox. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `last_error` | `text` | sim |  |  | Coluna last_error da tabela public.supply_outbox. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `next_attempt_at` | `timestamp with time zone` | não | `now()` |  | Coluna next_attempt_at da tabela public.supply_outbox. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 10 | `delivered_at` | `timestamp with time zone` | sim |  |  | Coluna delivered_at da tabela public.supply_outbox. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.supply_outbox. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.supply_outbox. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

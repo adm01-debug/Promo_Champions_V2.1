@@ -1,5 +1,7 @@
 # public.race_events
 
+> Tabela public.race_events. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), season_id uuid NOT NULL, salesperson_id uuid NOT NULL, event_type text NOT NULL, metadata jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id); season_id → public.race_seasons(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,12 +19,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `season_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `event_type` | `text` | não |  |  |  |
-| 5 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_events. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `season_id` | `uuid` | não |  |  | Coluna season_id da tabela public.race_events. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_seasons(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.race_events. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `event_type` | `text` | não |  |  | Coluna event_type da tabela public.race_events. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (event_type = ANY (ARRAY['boost'::text, 'overtake'::text, 'checkpoint'::text, 'powerup'::text, 'victory'::text, 'pitstop'::text, 'powerup_unlocked'::text, 'monthly_champion'::text])). |
+| 5 | `metadata` | `jsonb` | não | `'{}'::jsonb` |  | Coluna metadata da tabela public.race_events. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

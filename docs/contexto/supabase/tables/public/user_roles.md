@@ -1,5 +1,7 @@
 # public.user_roles
 
+> Papéis atribuídos a usuários para controle de autorização na aplicação.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `role` | `app_role` | não | `'salesperson'::app_role` |  |  |
-| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da atribuição de papel. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth que recebeu o papel. |
+| 3 | `role` | `app_role` | não | `'salesperson'::app_role` |  | Papel atribuído: admin, manager ou salesperson. |
+| 4 | `created_at` | `timestamp with time zone` | não | `now()` |  | Data e hora de criação da atribuição. |
+| 5 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Data e hora da última atualização da atribuição. |
 
 
 ## Constraints

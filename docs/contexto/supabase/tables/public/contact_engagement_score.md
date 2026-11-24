@@ -1,5 +1,7 @@
 # public.contact_engagement_score
 
+> Tabela public.contact_engagement_score. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), contact_id uuid NOT NULL, contact_type text NOT NULL, score numeric(5,2) NOT NULL DEFAULT 0, tier text NOT NULL DEFAULT 'cold'::text, total_opens integer NOT NULL DEFAULT 0, total_clicks integer NOT NULL DEFAULT 0, total_replies integer NOT NULL DEFAULT 0, last_signal_at timestamp with time zone NULLABLE, decay_applied_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,17 +19,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `contact_id` | `uuid` | não |  |  |  |
-| 3 | `contact_type` | `text` | não |  |  |  |
-| 4 | `score` | `numeric(5,2)` | não | `0` |  |  |
-| 5 | `tier` | `text` | não | `'cold'::text` |  |  |
-| 6 | `total_opens` | `integer` | não | `0` |  |  |
-| 7 | `total_clicks` | `integer` | não | `0` |  |  |
-| 8 | `total_replies` | `integer` | não | `0` |  |  |
-| 9 | `last_signal_at` | `timestamp with time zone` | sim |  |  |  |
-| 10 | `decay_applied_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.contact_engagement_score. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `contact_id` | `uuid` | não |  |  | Coluna contact_id da tabela public.contact_engagement_score. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `contact_type` | `text` | não |  |  | Coluna contact_type da tabela public.contact_engagement_score. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (contact_type = ANY (ARRAY['lead'::text, 'client'::text])). |
+| 4 | `score` | `numeric(5,2)` | não | `0` |  | Coluna score da tabela public.contact_engagement_score. Tipo PostgreSQL: numeric(5,2). Não aceita NULL. Valor padrão: 0. |
+| 5 | `tier` | `text` | não | `'cold'::text` |  | Coluna tier da tabela public.contact_engagement_score. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'cold'::text. Validação CHECK: CHECK (tier = ANY (ARRAY['cold'::text, 'warm'::text, 'hot'::text, 'on_fire'::text])). |
+| 6 | `total_opens` | `integer` | não | `0` |  | Coluna total_opens da tabela public.contact_engagement_score. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `total_clicks` | `integer` | não | `0` |  | Coluna total_clicks da tabela public.contact_engagement_score. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `total_replies` | `integer` | não | `0` |  | Coluna total_replies da tabela public.contact_engagement_score. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 9 | `last_signal_at` | `timestamp with time zone` | sim |  |  | Coluna last_signal_at da tabela public.contact_engagement_score. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 10 | `decay_applied_at` | `timestamp with time zone` | não | `now()` |  | Coluna decay_applied_at da tabela public.contact_engagement_score. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 11 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.contact_engagement_score. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

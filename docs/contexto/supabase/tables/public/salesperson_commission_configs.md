@@ -1,5 +1,7 @@
 # public.salesperson_commission_configs
 
+> Tabela public.salesperson_commission_configs. Estrutura registrada no catálogo do PostgreSQL: salesperson_id uuid NOT NULL, month date NOT NULL, rate numeric NOT NULL, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(). Relacionamentos FK: salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,11 +18,11 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `salesperson_id` | `uuid` | não |  |  |  |
-| 2 | `month` | `date` | não |  |  |  |
-| 3 | `rate` | `numeric` | não |  |  |  |
-| 4 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 5 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.salesperson_commission_configs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 2 | `month` | `date` | não |  |  | Coluna month da tabela public.salesperson_commission_configs. Tipo PostgreSQL: date. Participa da chave primária. Não aceita NULL. |
+| 3 | `rate` | `numeric` | não |  |  | Coluna rate da tabela public.salesperson_commission_configs. Tipo PostgreSQL: numeric. Não aceita NULL. |
+| 4 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.salesperson_commission_configs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 5 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.salesperson_commission_configs. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

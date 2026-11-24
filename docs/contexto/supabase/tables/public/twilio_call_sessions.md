@@ -1,5 +1,7 @@
 # public.twilio_call_sessions
 
+> Tabela public.twilio_call_sessions. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), owner_id uuid NOT NULL, sale_id uuid NULLABLE, queue_item_id uuid NULLABLE, call_sid text NULLABLE, from_number text NULLABLE, to_number text NOT NULL, status text NOT NULL DEFAULT 'initiated'::text, duration_seconds integer NULLABLE, recording_url text NULLABLE, recording_sid text NULLABLE, price numeric NULLABLE, started_at timestamp with time zone NULLABLE, ended_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: queue_item_id → public.dialer_queue_items(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,21 +18,21 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `owner_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `queue_item_id` | `uuid` | sim |  |  |  |
-| 5 | `call_sid` | `text` | sim |  |  |  |
-| 6 | `from_number` | `text` | sim |  |  |  |
-| 7 | `to_number` | `text` | não |  |  |  |
-| 8 | `status` | `text` | não | `'initiated'::text` |  |  |
-| 9 | `duration_seconds` | `integer` | sim |  |  |  |
-| 10 | `recording_url` | `text` | sim |  |  |  |
-| 11 | `recording_sid` | `text` | sim |  |  |  |
-| 12 | `price` | `numeric` | sim |  |  |  |
-| 13 | `started_at` | `timestamp with time zone` | sim |  |  |  |
-| 14 | `ended_at` | `timestamp with time zone` | sim |  |  |  |
-| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.twilio_call_sessions. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `owner_id` | `uuid` | não |  |  | Coluna owner_id da tabela public.twilio_call_sessions. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.twilio_call_sessions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 4 | `queue_item_id` | `uuid` | sim |  |  | Coluna queue_item_id da tabela public.twilio_call_sessions. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.dialer_queue_items(id). |
+| 5 | `call_sid` | `text` | sim |  |  | Coluna call_sid da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `from_number` | `text` | sim |  |  | Coluna from_number da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `to_number` | `text` | não |  |  | Coluna to_number da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Não aceita NULL. |
+| 8 | `status` | `text` | não | `'initiated'::text` |  | Coluna status da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'initiated'::text. |
+| 9 | `duration_seconds` | `integer` | sim |  |  | Coluna duration_seconds da tabela public.twilio_call_sessions. Tipo PostgreSQL: integer. Aceita NULL. |
+| 10 | `recording_url` | `text` | sim |  |  | Coluna recording_url da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Aceita NULL. |
+| 11 | `recording_sid` | `text` | sim |  |  | Coluna recording_sid da tabela public.twilio_call_sessions. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `price` | `numeric` | sim |  |  | Coluna price da tabela public.twilio_call_sessions. Tipo PostgreSQL: numeric. Aceita NULL. |
+| 13 | `started_at` | `timestamp with time zone` | sim |  |  | Coluna started_at da tabela public.twilio_call_sessions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 14 | `ended_at` | `timestamp with time zone` | sim |  |  | Coluna ended_at da tabela public.twilio_call_sessions. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 15 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.twilio_call_sessions. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

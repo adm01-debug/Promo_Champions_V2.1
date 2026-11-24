@@ -1,5 +1,7 @@
 # public.cadence_outcome_rules
 
+> Tabela public.cadence_outcome_rules. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), outcome text NOT NULL, to_stage text NOT NULL, next_action text NULLABLE, retry_delay_hours integer NULLABLE DEFAULT 0, max_retries integer NULLABLE DEFAULT 1, fallback_action text NULLABLE, created_at timestamp with time zone NULLABLE DEFAULT now(), updated_at timestamp with time zone NULLABLE DEFAULT now(), push_template_id uuid NULLABLE, email_template_id uuid NULLABLE, timezone text NULLABLE DEFAULT 'America/Sao_Paulo'::text. Relacionamentos FK: email_template_id → public.cadence_alert_templates(id); push_template_id → public.cadence_alert_templates(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,18 +18,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `outcome` | `text` | não |  |  |  |
-| 3 | `to_stage` | `text` | não |  |  |  |
-| 4 | `next_action` | `text` | sim |  |  |  |
-| 5 | `retry_delay_hours` | `integer` | sim | `0` |  |  |
-| 6 | `max_retries` | `integer` | sim | `1` |  |  |
-| 7 | `fallback_action` | `text` | sim |  |  |  |
-| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 9 | `updated_at` | `timestamp with time zone` | sim | `now()` |  |  |
-| 10 | `push_template_id` | `uuid` | sim |  |  |  |
-| 11 | `email_template_id` | `uuid` | sim |  |  |  |
-| 12 | `timezone` | `text` | sim | `'America/Sao_Paulo'::text` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.cadence_outcome_rules. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `outcome` | `text` | não |  |  | Coluna outcome da tabela public.cadence_outcome_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `to_stage` | `text` | não |  |  | Coluna to_stage da tabela public.cadence_outcome_rules. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `next_action` | `text` | sim |  |  | Coluna next_action da tabela public.cadence_outcome_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `retry_delay_hours` | `integer` | sim | `0` |  | Coluna retry_delay_hours da tabela public.cadence_outcome_rules. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 0. |
+| 6 | `max_retries` | `integer` | sim | `1` |  | Coluna max_retries da tabela public.cadence_outcome_rules. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 1. |
+| 7 | `fallback_action` | `text` | sim |  |  | Coluna fallback_action da tabela public.cadence_outcome_rules. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.cadence_outcome_rules. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 9 | `updated_at` | `timestamp with time zone` | sim | `now()` |  | Coluna updated_at da tabela public.cadence_outcome_rules. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
+| 10 | `push_template_id` | `uuid` | sim |  |  | Coluna push_template_id da tabela public.cadence_outcome_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.cadence_alert_templates(id). |
+| 11 | `email_template_id` | `uuid` | sim |  |  | Coluna email_template_id da tabela public.cadence_outcome_rules. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.cadence_alert_templates(id). |
+| 12 | `timezone` | `text` | sim | `'America/Sao_Paulo'::text` |  | Coluna timezone da tabela public.cadence_outcome_rules. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: 'America/Sao_Paulo'::text. |
 
 
 ## Constraints

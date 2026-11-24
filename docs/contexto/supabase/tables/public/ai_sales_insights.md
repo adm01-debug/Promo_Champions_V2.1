@@ -1,5 +1,7 @@
 # public.ai_sales_insights
 
+> Tabela public.ai_sales_insights. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), sale_id uuid NULLABLE, insight_type text NOT NULL, insight_content jsonb NOT NULL, confidence_score double precision NULLABLE DEFAULT 0, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `sale_id` | `uuid` | sim |  |  |  |
-| 3 | `insight_type` | `text` | não |  |  |  |
-| 4 | `insight_content` | `jsonb` | não |  |  |  |
-| 5 | `confidence_score` | `double precision` | sim | `0` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.ai_sales_insights. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.ai_sales_insights. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 3 | `insight_type` | `text` | não |  |  | Coluna insight_type da tabela public.ai_sales_insights. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `insight_content` | `jsonb` | não |  |  | Coluna insight_content da tabela public.ai_sales_insights. Tipo PostgreSQL: jsonb. Não aceita NULL. |
+| 5 | `confidence_score` | `double precision` | sim | `0` |  | Coluna confidence_score da tabela public.ai_sales_insights. Tipo PostgreSQL: double precision. Aceita NULL. Valor padrão: 0. |
+| 6 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.ai_sales_insights. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

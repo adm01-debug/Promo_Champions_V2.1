@@ -1,5 +1,7 @@
 # public.quote_conversion_audit
 
+> Tabela public.quote_conversion_audit. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), quote_id uuid NOT NULL, sale_id uuid NULLABLE, order_id uuid NULLABLE, order_number text NULLABLE, previous_status text NULLABLE, new_status text NULLABLE, reused_order boolean NOT NULL DEFAULT false, idempotent boolean NOT NULL DEFAULT false, success boolean NOT NULL, error_code text NULLABLE, error_message text NULLABLE, latency_ms integer NULLABLE, request_id text NULLABLE, actor_user_id uuid NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,22 +19,22 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `quote_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `order_id` | `uuid` | sim |  |  |  |
-| 5 | `order_number` | `text` | sim |  |  |  |
-| 6 | `previous_status` | `text` | sim |  |  |  |
-| 7 | `new_status` | `text` | sim |  |  |  |
-| 8 | `reused_order` | `boolean` | não | `false` |  |  |
-| 9 | `idempotent` | `boolean` | não | `false` |  |  |
-| 10 | `success` | `boolean` | não |  |  |  |
-| 11 | `error_code` | `text` | sim |  |  |  |
-| 12 | `error_message` | `text` | sim |  |  |  |
-| 13 | `latency_ms` | `integer` | sim |  |  |  |
-| 14 | `request_id` | `text` | sim |  |  |  |
-| 15 | `actor_user_id` | `uuid` | sim |  |  |  |
-| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quote_conversion_audit. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `quote_id` | `uuid` | não |  |  | Coluna quote_id da tabela public.quote_conversion_audit. Tipo PostgreSQL: uuid. Não aceita NULL. |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.quote_conversion_audit. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 4 | `order_id` | `uuid` | sim |  |  | Coluna order_id da tabela public.quote_conversion_audit. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `order_number` | `text` | sim |  |  | Coluna order_number da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `previous_status` | `text` | sim |  |  | Coluna previous_status da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `new_status` | `text` | sim |  |  | Coluna new_status da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 8 | `reused_order` | `boolean` | não | `false` |  | Coluna reused_order da tabela public.quote_conversion_audit. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 9 | `idempotent` | `boolean` | não | `false` |  | Coluna idempotent da tabela public.quote_conversion_audit. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 10 | `success` | `boolean` | não |  |  | Coluna success da tabela public.quote_conversion_audit. Tipo PostgreSQL: boolean. Não aceita NULL. |
+| 11 | `error_code` | `text` | sim |  |  | Coluna error_code da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `error_message` | `text` | sim |  |  | Coluna error_message da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 13 | `latency_ms` | `integer` | sim |  |  | Coluna latency_ms da tabela public.quote_conversion_audit. Tipo PostgreSQL: integer. Aceita NULL. |
+| 14 | `request_id` | `text` | sim |  |  | Coluna request_id da tabela public.quote_conversion_audit. Tipo PostgreSQL: text. Aceita NULL. |
+| 15 | `actor_user_id` | `uuid` | sim |  |  | Coluna actor_user_id da tabela public.quote_conversion_audit. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 16 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.quote_conversion_audit. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

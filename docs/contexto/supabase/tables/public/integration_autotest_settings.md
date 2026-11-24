@@ -1,5 +1,7 @@
 # public.integration_autotest_settings
 
+> Tabela public.integration_autotest_settings. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), singleton boolean NOT NULL DEFAULT true, interval_minutes integer NOT NULL DEFAULT 60, failure_window_minutes integer NOT NULL DEFAULT 15, enabled boolean NOT NULL DEFAULT true, updated_by uuid NULLABLE, updated_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,13 +18,13 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `singleton` | `boolean` | não | `true` |  |  |
-| 3 | `interval_minutes` | `integer` | não | `60` |  |  |
-| 4 | `failure_window_minutes` | `integer` | não | `15` |  |  |
-| 5 | `enabled` | `boolean` | não | `true` |  |  |
-| 6 | `updated_by` | `uuid` | sim |  |  |  |
-| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.integration_autotest_settings. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `singleton` | `boolean` | não | `true` |  | Coluna singleton da tabela public.integration_autotest_settings. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 3 | `interval_minutes` | `integer` | não | `60` |  | Coluna interval_minutes da tabela public.integration_autotest_settings. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 60. Validação CHECK: CHECK (interval_minutes >= 5 AND interval_minutes <= 1440). |
+| 4 | `failure_window_minutes` | `integer` | não | `15` |  | Coluna failure_window_minutes da tabela public.integration_autotest_settings. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 15. Validação CHECK: CHECK (failure_window_minutes >= 1 AND failure_window_minutes <= 240). |
+| 5 | `enabled` | `boolean` | não | `true` |  | Coluna enabled da tabela public.integration_autotest_settings. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 6 | `updated_by` | `uuid` | sim |  |  | Coluna updated_by da tabela public.integration_autotest_settings. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 7 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.integration_autotest_settings. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

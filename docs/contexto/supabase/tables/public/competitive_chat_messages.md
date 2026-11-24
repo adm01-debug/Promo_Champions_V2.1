@@ -1,5 +1,7 @@
 # public.competitive_chat_messages
 
+> Tabela public.competitive_chat_messages. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, message text NOT NULL, message_type text NOT NULL DEFAULT 'chat'::text, target_salesperson_id uuid NULLABLE, matchup_id uuid NULLABLE, reactions jsonb NULLABLE DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(), squad_id uuid NULLABLE. Relacionamentos FK: matchup_id → public.weekly_matchups(id); salesperson_id → public.salespeople(id); target_salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `message` | `text` | não |  |  |  |
-| 4 | `message_type` | `text` | não | `'chat'::text` |  |  |
-| 5 | `target_salesperson_id` | `uuid` | sim |  |  |  |
-| 6 | `matchup_id` | `uuid` | sim |  |  |  |
-| 7 | `reactions` | `jsonb` | sim | `'{}'::jsonb` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 9 | `squad_id` | `uuid` | sim |  |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.competitive_chat_messages. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.competitive_chat_messages. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `message` | `text` | não |  |  | Coluna message da tabela public.competitive_chat_messages. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `message_type` | `text` | não | `'chat'::text` |  | Coluna message_type da tabela public.competitive_chat_messages. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'chat'::text. |
+| 5 | `target_salesperson_id` | `uuid` | sim |  |  | Coluna target_salesperson_id da tabela public.competitive_chat_messages. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
+| 6 | `matchup_id` | `uuid` | sim |  |  | Coluna matchup_id da tabela public.competitive_chat_messages. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.weekly_matchups(id). |
+| 7 | `reactions` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna reactions da tabela public.competitive_chat_messages. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.competitive_chat_messages. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 9 | `squad_id` | `uuid` | sim |  |  | Coluna squad_id da tabela public.competitive_chat_messages. Tipo PostgreSQL: uuid. Aceita NULL. |
 
 
 ## Constraints

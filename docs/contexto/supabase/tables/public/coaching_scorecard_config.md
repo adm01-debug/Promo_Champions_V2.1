@@ -1,5 +1,7 @@
 # public.coaching_scorecard_config
 
+> Tabela public.coaching_scorecard_config. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), dimension_name text NOT NULL, weight integer NULLABLE DEFAULT 1, description text NULLABLE, is_active boolean NULLABLE DEFAULT true, created_at timestamp with time zone NULLABLE DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,12 +18,12 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `dimension_name` | `text` | não |  |  |  |
-| 3 | `weight` | `integer` | sim | `1` |  |  |
-| 4 | `description` | `text` | sim |  |  |  |
-| 5 | `is_active` | `boolean` | sim | `true` |  |  |
-| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.coaching_scorecard_config. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `dimension_name` | `text` | não |  |  | Coluna dimension_name da tabela public.coaching_scorecard_config. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `weight` | `integer` | sim | `1` |  | Coluna weight da tabela public.coaching_scorecard_config. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 1. |
+| 4 | `description` | `text` | sim |  |  | Coluna description da tabela public.coaching_scorecard_config. Tipo PostgreSQL: text. Aceita NULL. |
+| 5 | `is_active` | `boolean` | sim | `true` |  | Coluna is_active da tabela public.coaching_scorecard_config. Tipo PostgreSQL: boolean. Aceita NULL. Valor padrão: true. |
+| 6 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Coluna created_at da tabela public.coaching_scorecard_config. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

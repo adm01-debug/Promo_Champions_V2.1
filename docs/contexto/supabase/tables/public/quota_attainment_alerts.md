@@ -1,5 +1,7 @@
 # public.quota_attainment_alerts
 
+> Tabela public.quota_attainment_alerts. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), prediction_id uuid NOT NULL, salesperson_id uuid NOT NULL, severity text NOT NULL DEFAULT 'info'::text, message text NOT NULL, recommended_action text NULLABLE, acknowledged boolean NOT NULL DEFAULT false, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: prediction_id → public.quota_attainment_predictions(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `prediction_id` | `uuid` | não |  |  |  |
-| 3 | `salesperson_id` | `uuid` | não |  |  |  |
-| 4 | `severity` | `text` | não | `'info'::text` |  |  |
-| 5 | `message` | `text` | não |  |  |  |
-| 6 | `recommended_action` | `text` | sim |  |  |  |
-| 7 | `acknowledged` | `boolean` | não | `false` |  |  |
-| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.quota_attainment_alerts. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `prediction_id` | `uuid` | não |  |  | Coluna prediction_id da tabela public.quota_attainment_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.quota_attainment_predictions(id). |
+| 3 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.quota_attainment_alerts. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 4 | `severity` | `text` | não | `'info'::text` |  | Coluna severity da tabela public.quota_attainment_alerts. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'info'::text. Validação CHECK: CHECK (severity = ANY (ARRAY['info'::text, 'warning'::text, 'critical'::text])). |
+| 5 | `message` | `text` | não |  |  | Coluna message da tabela public.quota_attainment_alerts. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `recommended_action` | `text` | sim |  |  | Coluna recommended_action da tabela public.quota_attainment_alerts. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `acknowledged` | `boolean` | não | `false` |  | Coluna acknowledged da tabela public.quota_attainment_alerts. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: false. |
+| 8 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.quota_attainment_alerts. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

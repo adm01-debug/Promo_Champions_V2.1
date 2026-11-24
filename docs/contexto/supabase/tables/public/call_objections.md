@@ -1,5 +1,7 @@
 # public.call_objections
 
+> Tabela public.call_objections. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NOT NULL, client_turn_index integer NOT NULL DEFAULT 0, objection_text text NOT NULL, objection_type text NOT NULL DEFAULT 'other'::text, seller_response_text text NULLABLE, response_quality text NOT NULL DEFAULT 'ignored'::text, resolution_status text NOT NULL DEFAULT 'unresolved'::text, start_estimate numeric NOT NULL DEFAULT 0, factors jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,17 +18,17 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | não |  |  |  |
-| 3 | `client_turn_index` | `integer` | não | `0` |  |  |
-| 4 | `objection_text` | `text` | não |  |  |  |
-| 5 | `objection_type` | `text` | não | `'other'::text` |  |  |
-| 6 | `seller_response_text` | `text` | sim |  |  |  |
-| 7 | `response_quality` | `text` | não | `'ignored'::text` |  |  |
-| 8 | `resolution_status` | `text` | não | `'unresolved'::text` |  |  |
-| 9 | `start_estimate` | `numeric` | não | `0` |  |  |
-| 10 | `factors` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.call_objections. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | não |  |  | Coluna recording_id da tabela public.call_objections. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `client_turn_index` | `integer` | não | `0` |  | Coluna client_turn_index da tabela public.call_objections. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 4 | `objection_text` | `text` | não |  |  | Coluna objection_text da tabela public.call_objections. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `objection_type` | `text` | não | `'other'::text` |  | Coluna objection_type da tabela public.call_objections. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'other'::text. |
+| 6 | `seller_response_text` | `text` | sim |  |  | Coluna seller_response_text da tabela public.call_objections. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `response_quality` | `text` | não | `'ignored'::text` |  | Coluna response_quality da tabela public.call_objections. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'ignored'::text. |
+| 8 | `resolution_status` | `text` | não | `'unresolved'::text` |  | Coluna resolution_status da tabela public.call_objections. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'unresolved'::text. |
+| 9 | `start_estimate` | `numeric` | não | `0` |  | Coluna start_estimate da tabela public.call_objections. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `factors` | `jsonb` | não | `'{}'::jsonb` |  | Coluna factors da tabela public.call_objections. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 11 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.call_objections. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

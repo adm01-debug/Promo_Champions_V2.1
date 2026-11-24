@@ -1,5 +1,7 @@
 # public.web_vitals_samples
 
+> Tabela public.web_vitals_samples. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), route text NOT NULL, metric text NOT NULL, value double precision NOT NULL, rating text NOT NULL, navigation_type text NULLABLE, user_id uuid NULLABLE, session_id text NULLABLE, user_agent text NULLABLE, viewport_width integer NULLABLE, connection_type text NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -17,18 +19,18 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `route` | `text` | não |  |  |  |
-| 3 | `metric` | `text` | não |  |  |  |
-| 4 | `value` | `double precision` | não |  |  |  |
-| 5 | `rating` | `text` | não |  |  |  |
-| 6 | `navigation_type` | `text` | sim |  |  |  |
-| 7 | `user_id` | `uuid` | sim |  |  |  |
-| 8 | `session_id` | `text` | sim |  |  |  |
-| 9 | `user_agent` | `text` | sim |  |  |  |
-| 10 | `viewport_width` | `integer` | sim |  |  |  |
-| 11 | `connection_type` | `text` | sim |  |  |  |
-| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.web_vitals_samples. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `route` | `text` | não |  |  | Coluna route da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Não aceita NULL. |
+| 3 | `metric` | `text` | não |  |  | Coluna metric da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (metric = ANY (ARRAY['LCP'::text, 'INP'::text, 'CLS'::text, 'FCP'::text, 'TTFB'::text])). |
+| 4 | `value` | `double precision` | não |  |  | Coluna value da tabela public.web_vitals_samples. Tipo PostgreSQL: double precision. Não aceita NULL. |
+| 5 | `rating` | `text` | não |  |  | Coluna rating da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Não aceita NULL. Validação CHECK: CHECK (rating = ANY (ARRAY['good'::text, 'needs-improvement'::text, 'poor'::text])). |
+| 6 | `navigation_type` | `text` | sim |  |  | Coluna navigation_type da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `user_id` | `uuid` | sim |  |  | Coluna user_id da tabela public.web_vitals_samples. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 8 | `session_id` | `text` | sim |  |  | Coluna session_id da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Aceita NULL. |
+| 9 | `user_agent` | `text` | sim |  |  | Coluna user_agent da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Aceita NULL. |
+| 10 | `viewport_width` | `integer` | sim |  |  | Coluna viewport_width da tabela public.web_vitals_samples. Tipo PostgreSQL: integer. Aceita NULL. |
+| 11 | `connection_type` | `text` | sim |  |  | Coluna connection_type da tabela public.web_vitals_samples. Tipo PostgreSQL: text. Aceita NULL. |
+| 12 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.web_vitals_samples. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

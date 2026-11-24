@@ -1,5 +1,7 @@
 # public.race_teams
 
+> Tabela public.race_teams. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), season_id uuid NOT NULL, name text NOT NULL, color_primary text NOT NULL DEFAULT '#dc2626'::text, color_secondary text NOT NULL DEFAULT '#fbbf24'::text, emoji text NULLABLE DEFAULT '🏎️'::text, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: season_id → public.race_seasons(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `season_id` | `uuid` | não |  |  |  |
-| 3 | `name` | `text` | não |  |  |  |
-| 4 | `color_primary` | `text` | não | `'#dc2626'::text` |  |  |
-| 5 | `color_secondary` | `text` | não | `'#fbbf24'::text` |  |  |
-| 6 | `emoji` | `text` | sim | `'🏎️'::text` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.race_teams. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `season_id` | `uuid` | não |  |  | Coluna season_id da tabela public.race_teams. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.race_seasons(id). |
+| 3 | `name` | `text` | não |  |  | Coluna name da tabela public.race_teams. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `color_primary` | `text` | não | `'#dc2626'::text` |  | Coluna color_primary da tabela public.race_teams. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: '#dc2626'::text. |
+| 5 | `color_secondary` | `text` | não | `'#fbbf24'::text` |  | Coluna color_secondary da tabela public.race_teams. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: '#fbbf24'::text. |
+| 6 | `emoji` | `text` | sim | `'🏎️'::text` |  | Coluna emoji da tabela public.race_teams. Tipo PostgreSQL: text. Aceita NULL. Valor padrão: '🏎️'::text. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.race_teams. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.race_teams. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

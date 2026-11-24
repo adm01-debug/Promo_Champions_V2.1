@@ -1,5 +1,7 @@
 # public.agenda_events
 
+> Tabela public.agenda_events. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), salesperson_id uuid NOT NULL, sale_id uuid NULLABLE, client_id uuid NULLABLE, title text NOT NULL, description text NULLABLE, event_type text NOT NULL DEFAULT 'reminder'::text, status text NOT NULL DEFAULT 'pending'::text, priority text NOT NULL DEFAULT 'medium'::text, scheduled_at timestamp with time zone NOT NULL, completed_at timestamp with time zone NULLABLE, reminder_minutes_before integer NULLABLE DEFAULT 15, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: client_id → public.clients(id); sale_id → public.sales(id); salesperson_id → public.salespeople(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,20 +18,20 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `salesperson_id` | `uuid` | não |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `client_id` | `uuid` | sim |  |  |  |
-| 5 | `title` | `text` | não |  |  |  |
-| 6 | `description` | `text` | sim |  |  |  |
-| 7 | `event_type` | `text` | não | `'reminder'::text` |  |  |
-| 8 | `status` | `text` | não | `'pending'::text` |  |  |
-| 9 | `priority` | `text` | não | `'medium'::text` |  |  |
-| 10 | `scheduled_at` | `timestamp with time zone` | não |  |  |  |
-| 11 | `completed_at` | `timestamp with time zone` | sim |  |  |  |
-| 12 | `reminder_minutes_before` | `integer` | sim | `15` |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.agenda_events. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `salesperson_id` | `uuid` | não |  |  | Coluna salesperson_id da tabela public.agenda_events. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.salespeople(id). |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.agenda_events. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 4 | `client_id` | `uuid` | sim |  |  | Coluna client_id da tabela public.agenda_events. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.clients(id). |
+| 5 | `title` | `text` | não |  |  | Coluna title da tabela public.agenda_events. Tipo PostgreSQL: text. Não aceita NULL. |
+| 6 | `description` | `text` | sim |  |  | Coluna description da tabela public.agenda_events. Tipo PostgreSQL: text. Aceita NULL. |
+| 7 | `event_type` | `text` | não | `'reminder'::text` |  | Coluna event_type da tabela public.agenda_events. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'reminder'::text. Validação CHECK: CHECK (event_type = ANY (ARRAY['reminder'::text, 'follow_up'::text, 'meeting'::text, 'call'::text, 'task'::text])). |
+| 8 | `status` | `text` | não | `'pending'::text` |  | Coluna status da tabela public.agenda_events. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'pending'::text. Validação CHECK: CHECK (status = ANY (ARRAY['pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])). |
+| 9 | `priority` | `text` | não | `'medium'::text` |  | Coluna priority da tabela public.agenda_events. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'medium'::text. Validação CHECK: CHECK (priority = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'urgent'::text])). |
+| 10 | `scheduled_at` | `timestamp with time zone` | não |  |  | Coluna scheduled_at da tabela public.agenda_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. |
+| 11 | `completed_at` | `timestamp with time zone` | sim |  |  | Coluna completed_at da tabela public.agenda_events. Tipo PostgreSQL: timestamp with time zone. Aceita NULL. |
+| 12 | `reminder_minutes_before` | `integer` | sim | `15` |  | Coluna reminder_minutes_before da tabela public.agenda_events. Tipo PostgreSQL: integer. Aceita NULL. Valor padrão: 15. |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.agenda_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 14 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.agenda_events. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

@@ -1,5 +1,7 @@
 # public.forecast_snapshots
 
+> Tabela public.forecast_snapshots. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), period_start date NOT NULL, period_end date NOT NULL, owner_id uuid NULLABLE, segment text NULLABLE, forecast_amount numeric NOT NULL DEFAULT 0, forecast_deals integer NOT NULL DEFAULT 0, weighted_amount numeric NOT NULL DEFAULT 0, commit_amount numeric NOT NULL DEFAULT 0, best_case_amount numeric NOT NULL DEFAULT 0, source text NOT NULL DEFAULT 'weighted'::text, snapshot_at timestamp with time zone NOT NULL DEFAULT now(), created_at timestamp with time zone NOT NULL DEFAULT now().
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,19 +18,19 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `period_start` | `date` | não |  |  |  |
-| 3 | `period_end` | `date` | não |  |  |  |
-| 4 | `owner_id` | `uuid` | sim |  |  |  |
-| 5 | `segment` | `text` | sim |  |  |  |
-| 6 | `forecast_amount` | `numeric` | não | `0` |  |  |
-| 7 | `forecast_deals` | `integer` | não | `0` |  |  |
-| 8 | `weighted_amount` | `numeric` | não | `0` |  |  |
-| 9 | `commit_amount` | `numeric` | não | `0` |  |  |
-| 10 | `best_case_amount` | `numeric` | não | `0` |  |  |
-| 11 | `source` | `text` | não | `'weighted'::text` |  |  |
-| 12 | `snapshot_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.forecast_snapshots. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `period_start` | `date` | não |  |  | Coluna period_start da tabela public.forecast_snapshots. Tipo PostgreSQL: date. Não aceita NULL. |
+| 3 | `period_end` | `date` | não |  |  | Coluna period_end da tabela public.forecast_snapshots. Tipo PostgreSQL: date. Não aceita NULL. |
+| 4 | `owner_id` | `uuid` | sim |  |  | Coluna owner_id da tabela public.forecast_snapshots. Tipo PostgreSQL: uuid. Aceita NULL. |
+| 5 | `segment` | `text` | sim |  |  | Coluna segment da tabela public.forecast_snapshots. Tipo PostgreSQL: text. Aceita NULL. |
+| 6 | `forecast_amount` | `numeric` | não | `0` |  | Coluna forecast_amount da tabela public.forecast_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 7 | `forecast_deals` | `integer` | não | `0` |  | Coluna forecast_deals da tabela public.forecast_snapshots. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 8 | `weighted_amount` | `numeric` | não | `0` |  | Coluna weighted_amount da tabela public.forecast_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 9 | `commit_amount` | `numeric` | não | `0` |  | Coluna commit_amount da tabela public.forecast_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 10 | `best_case_amount` | `numeric` | não | `0` |  | Coluna best_case_amount da tabela public.forecast_snapshots. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 11 | `source` | `text` | não | `'weighted'::text` |  | Coluna source da tabela public.forecast_snapshots. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'weighted'::text. Validação CHECK: CHECK (source = ANY (ARRAY['manual'::text, 'weighted'::text, 'ai'::text])). |
+| 12 | `snapshot_at` | `timestamp with time zone` | não | `now()` |  | Coluna snapshot_at da tabela public.forecast_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 13 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.forecast_snapshots. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

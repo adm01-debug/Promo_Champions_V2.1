@@ -1,5 +1,7 @@
 # public.reauthentication_requests
 
+> Solicitações temporárias de reautenticação para ações sensíveis.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `user_id` | `uuid` | não |  |  |  |
-| 3 | `action_type` | `text` | não |  |  |  |
-| 4 | `verified` | `boolean` | sim | `false` |  |  |
-| 5 | `verified_at` | `timestamp with time zone` | sim |  |  |  |
-| 6 | `expires_at` | `timestamp with time zone` | não |  |  |  |
-| 7 | `ip_address` | `text` | sim |  |  |  |
-| 8 | `user_agent` | `text` | sim |  |  |  |
-| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Identificador único da solicitação de reautenticação. |
+| 2 | `user_id` | `uuid` | não |  |  | Usuário do Supabase Auth que precisa reautenticar. |
+| 3 | `action_type` | `text` | não |  |  | Ação protegida: password_change, email_change, mfa_config, admin_action ou delete_account. |
+| 4 | `verified` | `boolean` | sim | `false` |  | Indica se a reautenticação foi concluída com sucesso. |
+| 5 | `verified_at` | `timestamp with time zone` | sim |  |  | Data e hora da verificação bem-sucedida. |
+| 6 | `expires_at` | `timestamp with time zone` | não |  |  | Data e hora de expiração da solicitação. |
+| 7 | `ip_address` | `text` | sim |  |  | Endereço IP associado à solicitação, quando disponível. |
+| 8 | `user_agent` | `text` | sim |  |  | User-Agent associado à solicitação, quando disponível. |
+| 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  | Data e hora de criação da solicitação. |
 
 
 ## Constraints

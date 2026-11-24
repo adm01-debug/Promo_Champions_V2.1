@@ -1,5 +1,7 @@
 # public.committee_extraction_runs
 
+> Tabela public.committee_extraction_runs. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), recording_id uuid NULLABLE, sale_id uuid NULLABLE, extracted_count integer NOT NULL DEFAULT 0, created_count integer NOT NULL DEFAULT 0, updated_count integer NOT NULL DEFAULT 0, confidence numeric NOT NULL DEFAULT 0, raw_output jsonb NOT NULL DEFAULT '{}'::jsonb, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: recording_id → public.call_recordings(id); sale_id → public.sales(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,15 +18,15 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `recording_id` | `uuid` | sim |  |  |  |
-| 3 | `sale_id` | `uuid` | sim |  |  |  |
-| 4 | `extracted_count` | `integer` | não | `0` |  |  |
-| 5 | `created_count` | `integer` | não | `0` |  |  |
-| 6 | `updated_count` | `integer` | não | `0` |  |  |
-| 7 | `confidence` | `numeric` | não | `0` |  |  |
-| 8 | `raw_output` | `jsonb` | não | `'{}'::jsonb` |  |  |
-| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.committee_extraction_runs. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `recording_id` | `uuid` | sim |  |  | Coluna recording_id da tabela public.committee_extraction_runs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.call_recordings(id). |
+| 3 | `sale_id` | `uuid` | sim |  |  | Coluna sale_id da tabela public.committee_extraction_runs. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.sales(id). |
+| 4 | `extracted_count` | `integer` | não | `0` |  | Coluna extracted_count da tabela public.committee_extraction_runs. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 5 | `created_count` | `integer` | não | `0` |  | Coluna created_count da tabela public.committee_extraction_runs. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 6 | `updated_count` | `integer` | não | `0` |  | Coluna updated_count da tabela public.committee_extraction_runs. Tipo PostgreSQL: integer. Não aceita NULL. Valor padrão: 0. |
+| 7 | `confidence` | `numeric` | não | `0` |  | Coluna confidence da tabela public.committee_extraction_runs. Tipo PostgreSQL: numeric. Não aceita NULL. Valor padrão: 0. |
+| 8 | `raw_output` | `jsonb` | não | `'{}'::jsonb` |  | Coluna raw_output da tabela public.committee_extraction_runs. Tipo PostgreSQL: jsonb. Não aceita NULL. Valor padrão: '{}'::jsonb. |
+| 9 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.committee_extraction_runs. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints

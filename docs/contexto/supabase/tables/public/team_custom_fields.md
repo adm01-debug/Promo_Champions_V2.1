@@ -1,5 +1,7 @@
 # public.team_custom_fields
 
+> Tabela public.team_custom_fields. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), team_id uuid NOT NULL, field_key text NOT NULL, field_label text NOT NULL, field_type text NOT NULL DEFAULT 'number'::text, is_active boolean NOT NULL DEFAULT true, created_at timestamp with time zone NOT NULL DEFAULT now(), updated_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: team_id → public.teams(id).
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
@@ -16,14 +18,14 @@
 
 | # | coluna | tipo | nullable | default | identity/generated | comentário |
 |---|---|---|---|---|---|---|
-| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
-| 2 | `team_id` | `uuid` | não |  |  |  |
-| 3 | `field_key` | `text` | não |  |  |  |
-| 4 | `field_label` | `text` | não |  |  |  |
-| 5 | `field_type` | `text` | não | `'number'::text` |  |  |
-| 6 | `is_active` | `boolean` | não | `true` |  |  |
-| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  | Coluna id da tabela public.team_custom_fields. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid(). |
+| 2 | `team_id` | `uuid` | não |  |  | Coluna team_id da tabela public.team_custom_fields. Tipo PostgreSQL: uuid. Não aceita NULL. Referência FK: public.teams(id). |
+| 3 | `field_key` | `text` | não |  |  | Coluna field_key da tabela public.team_custom_fields. Tipo PostgreSQL: text. Não aceita NULL. |
+| 4 | `field_label` | `text` | não |  |  | Coluna field_label da tabela public.team_custom_fields. Tipo PostgreSQL: text. Não aceita NULL. |
+| 5 | `field_type` | `text` | não | `'number'::text` |  | Coluna field_type da tabela public.team_custom_fields. Tipo PostgreSQL: text. Não aceita NULL. Valor padrão: 'number'::text. Validação CHECK: CHECK (field_type = ANY (ARRAY['number'::text, 'text'::text, 'boolean'::text])). |
+| 6 | `is_active` | `boolean` | não | `true` |  | Coluna is_active da tabela public.team_custom_fields. Tipo PostgreSQL: boolean. Não aceita NULL. Valor padrão: true. |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  | Coluna created_at da tabela public.team_custom_fields. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  | Coluna updated_at da tabela public.team_custom_fields. Tipo PostgreSQL: timestamp with time zone. Não aceita NULL. Valor padrão: now(). |
 
 
 ## Constraints
