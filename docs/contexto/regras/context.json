@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "930e42e3ed4d2252001c4c473ccf907137d41877",
+  "sha": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 13:49 UTC",
-  "files_total": 3697,
-  "code_files": 3343,
-  "code_lines": 484503
+  "generated_at": "2026-11-24 14:30 UTC",
+  "files_total": 3698,
+  "code_files": 3344,
+  "code_lines": 484540
  },
  "version": "1.3.2",
- "facts_hash": "c78c038b7e0e6ca9",
+ "facts_hash": "ce4f9dc9c49824e7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -421,7 +421,7 @@
   "languages": {
    ".tsx": 1403,
    ".ts": 1135,
-   ".sql": 723,
+   ".sql": 724,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -52609,10 +52609,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -68128,6 +68128,7 @@
    "supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql",
    "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+   "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -73920,6 +73921,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
    },
    {
     "kind": "grant",
@@ -108967,8 +108984,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 713,
-   "lines": 59836,
+   "files": 714,
+   "lines": 59873,
    "tables": [
     "user_permissions_cache"
    ],
@@ -187618,10 +187635,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261125000000_timeout_pgnet_funcoes_com_dns_lento.sql",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -199975,6 +199992,7 @@
    "supabase/migrations/20261125100000_cron_job_run_details_sem_seq_scan.sql",
    "supabase/migrations/20261125150000_designs_inbound.sql",
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+   "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -205671,6 +205689,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
    },
    {
     "kind": "grant",
@@ -298542,6 +298576,11 @@
    ],
    "uses_service_role": true
   },
+  "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql": {
+   "path": "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+   "lines": 37,
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -300617,10 +300656,19 @@
   }
  },
  "git": {
-  "sha": "930e42e3ed4d2252001c4c473ccf907137d41877",
+  "sha": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "a4084fb",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: timeout de 60s para o cron supply-dispatch (#736)",
+    "files": [
+     "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
+    ]
+   },
    {
     "sha": "930e42e",
     "date": "2026-11-24",
@@ -300983,17 +301031,6 @@
      "src/pages/admin/AdminComercial.test.tsx",
      "src/pages/admin/AdminComercial.tsx"
     ]
-   },
-   {
-    "sha": "5c0431f",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: telas de conformidade (LGPD e supressao de e-mails) entram no menu e no Acesso Rapido (QA-111) (#710)",
-    "files": [
-     "src/components/admin/AdminQuickLinks.test.tsx",
-     "src/components/admin/AdminQuickLinks.tsx",
-     "src/components/layout/sidebar/sidebarMenuData.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -301024,6 +301061,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
+    1
    ],
    [
     ".github/workflows/auto-apply-migrations.yml",
@@ -301071,10 +301112,6 @@
    ],
    [
     "src/hooks/gamification/useWeeklyRanking.test.ts",
-    1
-   ],
-   [
-    "src/hooks/gamification/useWeeklyRanking.ts",
     1
    ]
   ]

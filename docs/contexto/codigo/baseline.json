@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "930e42e3ed4d2252001c4c473ccf907137d41877",
+  "commit": "a4084fb5b2e15144e907f17897ec46f2bba83ee6",
   "branch": "main",
-  "data_commit": "2026-11-24T10:48:23-03:00",
+  "data_commit": "2026-11-24T11:29:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a4084fb",
+    "data": "2026-11-24",
+    "assunto": "fix: timeout de 60s para o cron supply-dispatch (#736)"
+   },
    {
     "sha": "930e42e",
     "data": "2026-11-24",
@@ -126,11 +131,6 @@
     "sha": "312d10e",
     "data": "2026-11-24",
     "assunto": "fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)"
-   },
-   {
-    "sha": "83bacfb",
-    "data": "2026-11-24",
-    "assunto": "feat: dialogo \"Configurar IA\" passa a salvar os limiares de verdade (QA-107) (#715)"
    }
   ],
   "arquivos_mudados_7d": 382,
@@ -193,17 +193,17 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 36
+    "mudancas": 35
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 35
+    "mudancas": 34
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3682,
+  "arquivos_total": 3683,
   "arquivos_codigo": 2620,
   "linhas_codigo": 449194,
   "rotas": 170,
@@ -326,7 +326,7 @@
   "hooks": 483,
   "edge_functions": 173,
   "tabelas": 421,
-  "migrations": 713,
+  "migrations": 714,
   "cron_jobs": 40,
   "testes": 280,
   "workflows": 30,
