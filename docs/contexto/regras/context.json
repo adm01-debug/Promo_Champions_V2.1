@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "83bacfbc1acae0dd996eeb246bd9c84c11bdbf19",
+  "sha": "9db002899cb6a4bfa43563c4cb05af5956585e68",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 04:46 UTC",
-  "files_total": 3672,
-  "code_files": 3323,
-  "code_lines": 482212
+  "generated_at": "2026-11-24 04:48 UTC",
+  "files_total": 3673,
+  "code_files": 3324,
+  "code_lines": 482282
  },
  "version": "1.3.2",
- "facts_hash": "ecb51ca6357e3083",
+ "facts_hash": "aa52c79b1fe927a9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -398,7 +398,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1390,
+   ".tsx": 1391,
    ".ts": 1129,
    ".sql": 722,
    ".mjs": 72,
@@ -94882,6 +94882,17 @@
    },
    {
     "path": "",
+    "file": "src/pages/RaceSpectator.test.tsx",
+    "component": "RaceSpectator.test",
+    "tables_transitive": [
+     "race_spectator_view"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 9
+   },
+   {
+    "path": "",
     "file": "src/pages/RelatorioAtividades.tsx",
     "component": "RelatorioAtividades",
     "tables_transitive": [
@@ -95730,6 +95741,15 @@
     "deps_count": 34
    },
    {
+    "path": "/corrida/espectador/:seasonId, /race-arena/spectator/:seasonId",
+    "file": "src/pages/RaceSpectator.tsx",
+    "component": "RaceSpectator",
+    "tables_transitive": [],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 8
+   },
+   {
     "path": "/dashboard, /dashboard/:section",
     "file": "src/pages/Index.tsx",
     "component": "Index",
@@ -96431,15 +96451,6 @@
     "invokes_transitive": [],
     "rpc_transitive": [],
     "deps_count": 33
-   },
-   {
-    "path": "/race-arena/spectator/:seasonId",
-    "file": "src/pages/RaceSpectator.tsx",
-    "component": "RaceSpectator",
-    "tables_transitive": [],
-    "invokes_transitive": [],
-    "rpc_transitive": [],
-    "deps_count": 8
    },
    {
     "path": "/race-arena/tv",
@@ -101996,6 +102007,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/corrida/espectador/:seasonId",
+    "component": "RaceSpectator",
+    "guard": "",
+    "roles": [],
+    "file": "src/pages/RaceSpectator.test.tsx"
+   },
+   {
     "path": "/customer-success",
     "component": "Manager",
     "guard": "",
@@ -107244,7 +107262,7 @@
   {
    "module": "src/hooks",
    "files": 550,
-   "lines": 65062,
+   "lines": 65079,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107877,8 +107895,8 @@
   },
   {
    "module": "src/pages",
-   "files": 183,
-   "lines": 45020,
+   "files": 184,
+   "lines": 45073,
    "tables": [
     "achievements",
     "activities",
@@ -161037,6 +161055,10 @@
    },
    {
     "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "inclui o usuário logado na chave de cache"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
     "name": "retorna o vendedor logado e a liga de menor tier"
    },
    {
@@ -163022,6 +163044,14 @@
    {
     "file": "src/pages/PowerDialer.test.tsx",
     "name": "admin vê Editar/Excluir em todas as filas"
+   },
+   {
+    "file": "src/pages/RaceSpectator.test.tsx",
+    "name": "RaceSpectator — canais de tempo real liberados (etapa 138)"
+   },
+   {
+    "file": "src/pages/RaceSpectator.test.tsx",
+    "name": "remove o canal ao desmontar a tela"
    },
    {
     "file": "src/pages/WinLossAnalysisPage.test.tsx",
@@ -262817,13 +262847,14 @@
   },
   "src/hooks/gamification/useLeagues.test.tsx": {
    "path": "src/hooks/gamification/useLeagues.test.tsx",
-   "lines": 180,
+   "lines": 194,
    "is_test": true,
    "tests": [
     "useLeagues",
     "falha (isError) quando league_members não pode ser lido, em vez de lista vazia",
     "marca league_id e pontos de quem tem inscrição",
     "useLeagueEnrollment",
+    "inclui o usuário logado na chave de cache",
     "retorna o vendedor logado e a liga de menor tier",
     "starterLeagueId null quando não há liga cadastrada",
     "useJoinLeague",
@@ -262833,7 +262864,7 @@
   },
   "src/hooks/gamification/useLeagues.ts": {
    "path": "src/hooks/gamification/useLeagues.ts",
-   "lines": 210,
+   "lines": 213,
    "exports": [
     "type LeagueTier",
     "const LEAGUE_CONFIG",
@@ -273255,6 +273286,23 @@
    ],
    "temporal": [
     "setTimeout(() => { setBoostingIds(prev => { const n = new Set(prev); n.delete(newest.salesperson_id); return n; }); }, 1500);"
+   ]
+  },
+  "src/pages/RaceSpectator.test.tsx": {
+   "path": "src/pages/RaceSpectator.test.tsx",
+   "lines": 53,
+   "is_test": true,
+   "routes": [
+    {
+     "path": "/corrida/espectador/:seasonId",
+     "component": "RaceSpectator",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "tests": [
+    "RaceSpectator — canais de tempo real liberados (etapa 138)",
+    "remove o canal ao desmontar a tela"
    ]
   },
   "src/pages/RaceSpectator.tsx": {
@@ -299489,10 +299537,29 @@
   }
  },
  "git": {
-  "sha": "83bacfbc1acae0dd996eeb246bd9c84c11bdbf19",
+  "sha": "9db002899cb6a4bfa43563c4cb05af5956585e68",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9db0028",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)",
+    "files": [
+     "src/pages/RaceSpectator.test.tsx"
+    ]
+   },
+   {
+    "sha": "312d10e",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)",
+    "files": [
+     "src/hooks/gamification/useLeagues.test.tsx",
+     "src/hooks/gamification/useLeagues.ts"
+    ]
+   },
    {
     "sha": "83bacfb",
     "date": "2026-11-24",
@@ -299808,33 +299875,12 @@
     "files": [
      "src/integrations/supabase/types.ts"
     ]
-   },
-   {
-    "sha": "2809674",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "infra: remove sourcemaps do pacote publicado em qualquer caso (QA-255) (#685)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "vite.config.ts"
-    ]
-   },
-   {
-    "sha": "e84935e",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: precedencia explicita de papeis no useUserRoles (QA-251) (#684)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/hooks/useUserRoles.test.ts",
-     "src/hooks/useUserRoles.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    14
+    12
    ],
    [
     "src/components/purchase-intelligence/DuplicateBlockAudit.test.tsx",
@@ -299855,6 +299901,18 @@
    [
     "AGENTS.md",
     2
+   ],
+   [
+    "src/pages/RaceSpectator.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/gamification/useLeagues.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/gamification/useLeagues.ts",
+    1
    ],
    [
     "src/components/purchase-intelligence/IntelligenceSettings.test.tsx",
@@ -299898,18 +299956,6 @@
    ],
    [
     "src/components/pricing/PricingHealthBanner.tsx",
-    1
-   ],
-   [
-    "src/components/pricing/PricingIntelligenceHub.tsx",
-    1
-   ],
-   [
-    "src/pages/admin/AdminComercial.test.tsx",
-    1
-   ],
-   [
-    "src/pages/admin/AdminComercial.tsx",
     1
    ]
   ]

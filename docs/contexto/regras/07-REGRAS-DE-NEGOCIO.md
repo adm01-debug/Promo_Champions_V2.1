@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `83bacfbc1a` · branch `main` · 2026-11-24 04:46 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9db002899c` · branch `main` · 2026-11-24 04:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4277,7 +4277,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1772 testes em 228 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1775 testes em 229 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4336,12 +4336,12 @@ _nenhum item encontrado_
 | `src/services/comboService.test.ts` | 11 | comboService.getComboTier · retorna o maior tier cujo minActions foi atingido · não há gap entre tiers: todo count mapeia para algum tier · comboService.getComboTierIndex … |
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
+| `src/hooks/gamification/useLeagues.test.tsx` | 10 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/analytics/ABCActionableAutomations.test.ts` | 9 | buildAbcAutomations · não gera nada sem clientes · não gera nada com receita zero, mesmo havendo clientes · classe A acima do limiar de concentração vira risco … |
 | `src/components/sequences/sendTimeHelpers.test.ts` | 9 | formatWindow · formata dia da semana e hora com dois digitos · usa interrogacao para dia fora da faixa · normalizeScore … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/hooks/useLoginRateLimiter.test.tsx` | 9 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/bi/useABCAnalysis.test.tsx` | 9 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
-| `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/analytics/ABCMatrixShift.test.ts` | 8 | buildAbcMatrixShifts · não gera nada quando falta uma das janelas · ignora cliente que não mudou de classe · ignora cliente ausente de uma das janelas (sem comparação possível) … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
 | `src/components/purchase-intelligence/IntelligenceSettings.test.tsx` | 8 | IntelligenceSettings — diálogo que persiste parâmetros (etapa 107) · exibe os percentuais atuais em vez de texto fixo · salva o novo limiar de churn ao mover o slider · salva a frequência escolhida no seletor … |
@@ -4485,6 +4485,7 @@ _nenhum item encontrado_
 | `src/pages/DealVelocityPage.test.tsx` | 2 | DealVelocityPage · mostra o comparativo real e não exibe o botão Exportar sem ação |
 | `src/pages/EvolutionCurvesPage.test.tsx` | 2 | EvolutionCurvesPage · mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação |
 | `src/pages/MetasAtividades.test.tsx` | 2 | MetasAtividades · mostra indicadores calculados das metas reais, sem valores fixos |
+| `src/pages/RaceSpectator.test.tsx` | 2 | RaceSpectator — canais de tempo real liberados (etapa 138) · remove o canal ao desmontar a tela |
 | `src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts` | 2 | has_function_privilege confirma bloqueio de anon/authenticated/public e permite service_role · anon executando fn_cleanup_webhook_dedupe recebe permission denied |
 | `supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts` | 2 | fn_admin_list_dead_letter_ingest_jobs — anon (403) · fn_admin_replay_dead_letter_ingest_job — anon (403) |
 | `tests/e2e/auth-logout.spec.ts` | 2 | Auth — logout desktop · signOut limpa sessão e redireciona para /auth |

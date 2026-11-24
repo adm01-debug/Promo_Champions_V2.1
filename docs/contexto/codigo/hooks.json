@@ -4503,7 +4503,7 @@
     "useLeagueEnrollment",
     "useLeagues"
    ],
-   "linhas": 210,
+   "linhas": 213,
    "dominio": "hooks/gamification",
    "tabelas": [
     "league_members",
