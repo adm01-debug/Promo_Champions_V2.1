@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -55,6 +56,10 @@ const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 
 const WebhooksPage = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>();
+  const [webhookToDelete, setWebhookToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [form, setForm] = useState({
     name: '',
     url: '',
@@ -373,10 +378,9 @@ const WebhooksPage = () => {
                             size="sm"
                             variant="ghost"
                             className="h-7 gap-1 text-destructive"
-                            onClick={() => {
-                              if (window.confirm('Remover webhook?'))
-                                deleteWh.mutate(wh.id);
-                            }}
+                            onClick={() =>
+                              setWebhookToDelete({ id: wh.id, name: wh.name })
+                            }
                           >
                             <Trash2 className="h-3 w-3" /> Remover
                           </Button>
@@ -447,6 +451,24 @@ const WebhooksPage = () => {
           </Tabs>
         </motion.div>
       </PageTransition>
+
+      <DeleteConfirmDialog
+        open={!!webhookToDelete}
+        onOpenChange={open => !open && setWebhookToDelete(null)}
+        onConfirm={() => {
+          if (!webhookToDelete) return;
+          deleteWh.mutate(webhookToDelete.id, {
+            onSuccess: () => setWebhookToDelete(null),
+          });
+        }}
+        title="Remover este webhook?"
+        description={
+          webhookToDelete
+            ? `"${webhookToDelete.name}" para de receber eventos. As entregas já feitas continuam no histórico.`
+            : ''
+        }
+        isDeleting={deleteWh.isPending}
+      />
     </>
   );
 };

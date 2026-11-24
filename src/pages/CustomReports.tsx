@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -20,6 +21,10 @@ export default function CustomReports() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [creating, setCreating] = useState(false);
+  const [reportToDelete, setReportToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const list = useCustomReports();
   const single = useCustomReport(id);
   const del = useDeleteCustomReport();
@@ -159,9 +164,7 @@ export default function CustomReports() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 text-destructive"
-                      onClick={() => {
-                        if (confirm(`Remover "${r.name}"?`)) del.mutate(r.id);
-                      }}
+                      onClick={() => setReportToDelete({ id: r.id, name: r.name })}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -182,6 +185,22 @@ export default function CustomReports() {
             </Card>
           )}
         </div>
+
+        <DeleteConfirmDialog
+          open={!!reportToDelete}
+          onOpenChange={open => !open && setReportToDelete(null)}
+          onConfirm={() => {
+            if (!reportToDelete) return;
+            del.mutate(reportToDelete.id, { onSuccess: () => setReportToDelete(null) });
+          }}
+          title="Excluir este relatório?"
+          description={
+            reportToDelete
+              ? `"${reportToDelete.name}" sai da lista e deixa de poder ser aberto. Não há cópia.`
+              : ''
+          }
+          isDeleting={del.isPending}
+        />
       </PageTransition>
     </>
   );
