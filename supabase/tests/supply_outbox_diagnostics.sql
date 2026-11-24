@@ -145,3 +145,11 @@ FROM unnest(ARRAY[
   'access-denied-alerts',
   'check-lead-sla'
 ]) AS fn;
+
+\echo '## 12. ledger das migrations de timeout de 2026-11-27'
+SELECT version,
+       name,
+       left(regexp_replace(coalesce(statements::text, ''), '\s+', ' ', 'g'), 90) AS comandos
+FROM supabase_migrations.schema_migrations
+WHERE version LIKE '20261127%'
+ORDER BY version;
