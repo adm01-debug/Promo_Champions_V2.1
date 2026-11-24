@@ -1086,7 +1086,8 @@
    ],
    "permissoes": [
     "contents: write",
-    "pull-requests: write"
+    "pull-requests: write",
+    "actions: write"
    ],
    "scripts_usados": [],
    "npm_scripts": [],

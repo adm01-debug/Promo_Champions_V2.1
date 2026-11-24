@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4f3aabbdf16bf3cc048ed253d23f1481730d9657",
+  "commit": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
   "branch": "main",
-  "data_commit": "2026-11-24T12:15:23-03:00",
+  "data_commit": "2026-11-24T18:19:05-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "2498492",
+    "data": "2026-11-24",
+    "assunto": "ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)"
+   },
    {
     "sha": "4f3aabb",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "a656216",
     "data": "2026-11-24",
     "assunto": "test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)"
-   },
-   {
-    "sha": "1cf9183",
-    "data": "2026-11-24",
-    "assunto": "docs: varredura completa por erro de leitura engolido (QA-127) (#721)"
    }
   ],
-  "arquivos_mudados_7d": 387,
+  "arquivos_mudados_7d": 355,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/components/pipeline",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "pasta": "package.json",
@@ -294,18 +294,18 @@
     "mudancas": 4
    },
    {
-    "arquivo": "src/hooks/useInactiveDeals.ts",
+    "arquivo": "supabase/functions/detect-at-risk-deals/index.ts",
     "mudancas": 4
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 262
+    "commits": 263
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 20
+    "commits": 19
    },
    {
     "autor": "dependabot[bot]",

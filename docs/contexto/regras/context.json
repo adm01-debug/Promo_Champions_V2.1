@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4f3aabbdf16bf3cc048ed253d23f1481730d9657",
+  "sha": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 15:16 UTC",
+  "generated_at": "2026-11-24 21:21 UTC",
   "files_total": 3702,
   "code_files": 3347,
   "code_lines": 484826
@@ -300731,10 +300731,19 @@
   }
  },
  "git": {
-  "sha": "4f3aabbdf16bf3cc048ed253d23f1481730d9657",
+  "sha": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "2498492",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)",
+    "files": [
+     ".github/workflows/release-please.yml"
+    ]
+   },
    {
     "sha": "4f3aabb",
     "date": "2026-11-24",
@@ -301087,16 +301096,6 @@
     "files": [
      "src/pages/RaceSpectator.test.tsx"
     ]
-   },
-   {
-    "sha": "312d10e",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: inscricao em liga vai para o cache com o identificador do usuario (QA-139) (#716)",
-    "files": [
-     "src/hooks/gamification/useLeagues.test.tsx",
-     "src/hooks/gamification/useLeagues.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -301131,6 +301130,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    ".github/workflows/release-please.yml",
+    1
    ],
    [
     "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
@@ -301174,10 +301177,6 @@
    ],
    [
     "supabase/functions/supply-dispatch/contract.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/supply-dispatch/contract.ts",
     1
    ]
   ]
