@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "15514fdc04dccd1760bf08f532d8fed591155b9a",
+  "commit": "f63bfae06c0374d0e708179a429474ff0b63981d",
   "branch": "main",
-  "data_commit": "2026-11-25T15:43:35-03:00",
+  "data_commit": "2026-11-25T16:19:56-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f63bfae",
+    "data": "2026-11-25",
+    "assunto": "chore(main): release 1.10.0 (#739)"
+   },
    {
     "sha": "15514fd",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "be7b39b",
     "data": "2026-11-24",
     "assunto": "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)"
-   },
-   {
-    "sha": "2e954fd",
-    "data": "2026-11-24",
-    "assunto": "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)"
    }
   ],
   "arquivos_mudados_7d": 349,
@@ -192,18 +192,18 @@
     "mudancas": 35
    },
    {
-    "pasta": "package.json",
+    "pasta": "package-lock.json",
     "mudancas": 32
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 32
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 31
+    "arquivo": "package.json",
+    "mudancas": 32
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 263
+    "commits": 262
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 19
+    "commits": 20
    },
    {
     "autor": "dependabot[bot]",

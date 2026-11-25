@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.10.0 (#739)",
    "chore: resgata a sonda de estado da fila Champions -> Supply (#747)",
    "chore: sonda read-only do estado da outbox no db-probe (#746)",
    "ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)",
-   "chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)",
-   "feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)"
+   "chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
