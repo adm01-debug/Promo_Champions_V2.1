@@ -62,3 +62,13 @@ jobs:
           -v "$PWD/probe.sql:/probe.sql:ro"
           postgres:17.6
           sh -c 'psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql'
+
+      # Sonda de ESTADO (nao so de existencia): o trigger enfileira e o cron
+      # drena, mas o dispatcher depende de _internal_secrets. Sem ler o banco o
+      # diagnostico vira palpite. Read-only; os dois arquivos so fazem SELECT.
+      - name: Ler estado da fila Champions -> Supply (read-only)
+        run: >
+          docker run --rm -v "$PWD/supabase/tests:/sql:ro" -e SUPABASE_DB_URL
+          postgres:17.6
+          sh -c 'psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1
+          -f /sql/supply_outbox_diagnostics.sql -f /sql/supply_outbox_estado.sql'
