@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-25 10:15 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_28`
+
 ## 2026-11-24 17:13 UTC
 
 - **colunas** alterado (3204): `public._internal_secrets.key`, `public._internal_secrets.updated_at`, `public._internal_secrets.value`, `public.ab_tests.created_at`, `public.ab_tests.id`, `public.account_plans.account_id`, `public.account_plans.account_strategy`, `public.account_plans.action_plan`, `public.account_plans.created_at`, `public.account_plans.created_by`, `public.account_plans.executive_summary`, `public.account_plans.fiscal_year`, `public.account_plans.id`, `public.account_plans.key_objectives`, `public.account_plans.main_challenges`, `public.account_plans.revenue_target`, `public.account_plans.swot_opportunities`, `public.account_plans.swot_strengths`, `public.account_plans.swot_threats`, `public.account_plans.swot_weaknesses`, `public.account_plans.updated_at`, `public.active_power_ups.activated_at`, `public.active_power_ups.expires_at`, `public.active_power_ups.id`, `public.active_power_ups.is_active`, `public.active_power_ups.multiplier`, `public.active_power_ups.power_up_type`, `public.active_power_ups.salesperson_id`, `public.active_power_ups.source`, `public.activity_audit_logs.action`, `public.activity_audit_logs.activity_id`, `public.activity_audit_logs.changed_by`, `public.activity_audit_logs.created_at`, `public.activity_audit_logs.id`, `public.activity_audit_logs.new_data`, `public.activity_audit_logs.old_data`, `public.activity_goals.calls_goal`, `public.activity_goals.created_at`, `public.activity_goals.emails_goal`, `public.activity_goals.id` … (+3164)
