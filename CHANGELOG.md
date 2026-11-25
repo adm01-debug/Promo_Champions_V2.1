@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.9.0...promo-champions-v2-v1.10.0) (2026-11-25)
+
+
+### Funcionalidades
+
+* enfileira no Supply os pedidos pendentes que ficaram fora do gatilho ([#743](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/743)) ([d7d7f73](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d7d7f739bc65a3ceee5d77676709a8365fe059e0))
+
+
+### Correções
+
+* restaura timeouts de DNS lento derrubados pela 20261127000000 ([#742](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/742)) ([4565034](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/456503415639eadafe23010d05805c26c1061119))
+* timeout de 60s para o cron supply-dispatch ([#736](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/736)) ([a4084fb](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a4084fb5b2e15144e907f17897ec46f2bba83ee6))
+
 ## [1.9.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.8.0...promo-champions-v2-v1.9.0) (2026-11-24)
 
 
