@@ -47,3 +47,61 @@ WHERE EXISTS (
 GROUP BY o.status
 ORDER BY pedidos DESC;
 
+
+-- E. Os itens sem outbox sao demanda real (pedido recente, com valor) ou
+--    sobra antiga de importacao? Decide se vale backfill.
+\echo '## E. itens sem outbox por mes do pedido'
+SELECT to_char(date_trunc('month', o.created_at), 'YYYY-MM') AS mes,
+       count(*)                                            AS itens,
+       count(DISTINCT o.id)                                AS pedidos,
+       sum(COALESCE(i.quantity, 1) * COALESCE(i.unit_price, 0)) AS valor
+  FROM public.order_items i
+  JOIN public.orders o ON o.id = i.order_id
+ WHERE NOT EXISTS (SELECT 1 FROM public.supply_outbox b WHERE b.order_item_id = i.id)
+ GROUP BY 1
+ ORDER BY 1;
+
+\echo '## F. amostra dos itens sem outbox (15)'
+SELECT o.order_number,
+       o.status,
+       to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS criado,
+       left(i.product_name, 40)                      AS produto,
+       i.quantity,
+       i.unit_price,
+       left(COALESCE(o.metadata ->> 'client_name', '-'), 28) AS cliente
+  FROM public.order_items i
+  JOIN public.orders o ON o.id = i.order_id
+ WHERE NOT EXISTS (SELECT 1 FROM public.supply_outbox b WHERE b.order_item_id = i.id)
+ ORDER BY o.created_at
+ LIMIT 15;
+
+\echo '## G. base viva: pedidos por status e mes (ultimos 6 meses)'
+SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS mes, status, count(*)
+  FROM public.orders
+ WHERE created_at >= now() - interval '6 months'
+ GROUP BY 1, 2
+ ORDER BY 1 DESC, 2;
+
+\echo '## H. pedidos pending hoje (o backfill da 20261127100000 cobriu todos?)'
+SELECT count(*) AS pedidos_pending,
+       count(*) FILTER (WHERE EXISTS (
+         SELECT 1 FROM public.order_items i WHERE i.order_id = o.id
+       )) AS com_item,
+       count(*) FILTER (WHERE EXISTS (
+         SELECT 1 FROM public.order_items i
+          WHERE i.order_id = o.id
+            AND NOT EXISTS (SELECT 1 FROM public.supply_outbox b WHERE b.order_item_id = i.id)
+       )) AS ainda_sem_outbox
+  FROM public.orders o
+ WHERE o.status = 'pending';
+
+\echo '## I. pedidos pending por idade'
+SELECT CASE WHEN created_at >= now() - interval '1 day' THEN '0-1d'
+            WHEN created_at >= now() - interval '7 days' THEN '1-7d'
+            WHEN created_at >= now() - interval '30 days' THEN '7-30d'
+            ELSE '>30d' END AS idade,
+       status, count(*)
+  FROM public.orders
+ WHERE status IN ('pending','confirmed')
+ GROUP BY 1, 2
+ ORDER BY 1, 2;
