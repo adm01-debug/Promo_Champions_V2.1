@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
+  "sha": "15514fdc04dccd1760bf08f532d8fed591155b9a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-25 18:17 UTC",
-  "files_total": 3702,
-  "code_files": 3347,
-  "code_lines": 484826
+  "generated_at": "2026-11-25 18:44 UTC",
+  "files_total": 3703,
+  "code_files": 3348,
+  "code_lines": 484934
  },
  "version": "1.3.2",
- "facts_hash": "6eda7c2526255767",
+ "facts_hash": "c4a7bf6fb66e7061",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -428,7 +428,7 @@
   "languages": {
    ".tsx": 1403,
    ".ts": 1135,
-   ".sql": 727,
+   ".sql": 728,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -68148,6 +68148,7 @@
    "supabase/tests/rls_test_suite.sql",
    "supabase/tests/role_helpers_matrix_assertions.sql",
    "supabase/tests/supply_outbox_diagnostics.sql",
+   "supabase/tests/supply_outbox_estado.sql",
    "src/integrations/supabase/types.ts"
   ],
   "rls": {
@@ -109110,8 +109111,8 @@
   },
   {
    "module": "supabase/tests",
-   "files": 8,
-   "lines": 985,
+   "files": 9,
+   "lines": 1093,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -109125,7 +109126,8 @@
     "supabase/tests/retry_dispatcher_assertions.sql",
     "supabase/tests/rls_test_suite.sql",
     "supabase/tests/role_helpers_matrix_assertions.sql",
-    "supabase/tests/supply_outbox_diagnostics.sql"
+    "supabase/tests/supply_outbox_diagnostics.sql",
+    "supabase/tests/supply_outbox_estado.sql"
    ]
   },
   {
@@ -298703,6 +298705,17 @@
     "WHEN created_at > now() - interval '5 minutes' THEN '0-5min'"
    ]
   },
+  "supabase/tests/supply_outbox_estado.sql": {
+   "path": "supabase/tests/supply_outbox_estado.sql",
+   "lines": 108,
+   "is_test": true,
+   "temporal": [
+    "SELECT CASE WHEN created_at >= now() - interval '1 day' THEN '0-1d'",
+    "WHEN created_at >= now() - interval '30 days' THEN '7-30d'",
+    "WHEN created_at >= now() - interval '7 days' THEN '1-7d'",
+    "WHERE created_at >= now() - interval '6 months'"
+   ]
+  },
   "tests/a11y/axe-sweep.spec.ts": {
    "path": "tests/a11y/axe-sweep.spec.ts",
    "lines": 151,
@@ -300731,10 +300744,20 @@
   }
  },
  "git": {
-  "sha": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
+  "sha": "15514fdc04dccd1760bf08f532d8fed591155b9a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "15514fd",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "chore: resgata a sonda de estado da fila Champions -> Supply (#747)",
+    "files": [
+     ".github/workflows/db-probe.yml",
+     "supabase/tests/supply_outbox_estado.sql"
+    ]
+   },
    {
     "sha": "e8630cc",
     "date": "2026-11-25",
@@ -301087,21 +301110,12 @@
      "src/test/consoleGuard.ts",
      "src/test/setup.ts"
     ]
-   },
-   {
-    "sha": "adedb79",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs: marca no progresso as etapas 101-139 ja entregues (QA-101 a QA-139) (#718)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/qa/05-PROGRESSO.md",
-    7
+    6
    ],
    [
     "package-lock.json",
@@ -301114,6 +301128,10 @@
    [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
     3
+   ],
+   [
+    ".github/workflows/db-probe.yml",
+    2
    ],
    [
     "supabase/tests/supply_outbox_diagnostics.sql",
@@ -301132,7 +301150,7 @@
     2
    ],
    [
-    ".github/workflows/db-probe.yml",
+    "supabase/tests/supply_outbox_estado.sql",
     1
    ],
    [
@@ -301173,10 +301191,6 @@
    ],
    [
     "AGENTS.md",
-    1
-   ],
-   [
-    "supabase/config.toml",
     1
    ]
   ]

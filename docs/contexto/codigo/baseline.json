@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
+  "commit": "15514fdc04dccd1760bf08f532d8fed591155b9a",
   "branch": "main",
-  "data_commit": "2026-11-25T15:14:50-03:00",
+  "data_commit": "2026-11-25T15:43:35-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "15514fd",
+    "data": "2026-11-25",
+    "assunto": "chore: resgata a sonda de estado da fila Champions -> Supply (#747)"
+   },
    {
     "sha": "e8630cc",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "2e954fd",
     "data": "2026-11-24",
     "assunto": "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)"
-   },
-   {
-    "sha": "462499f",
-    "data": "2026-11-24",
-    "assunto": "chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)"
    }
   ],
-  "arquivos_mudados_7d": 348,
+  "arquivos_mudados_7d": 349,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/components/pipeline",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "pasta": "package.json",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3687,
+  "arquivos_total": 3688,
   "arquivos_codigo": 2620,
   "linhas_codigo": 449194,
   "rotas": 170,
@@ -328,7 +328,7 @@
   "tabelas": 421,
   "migrations": 716,
   "cron_jobs": 40,
-  "testes": 281,
+  "testes": 282,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
