@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
+  "sha": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-24 21:21 UTC",
+  "generated_at": "2026-11-25 18:17 UTC",
   "files_total": 3702,
   "code_files": 3347,
   "code_lines": 484826
@@ -300731,10 +300731,19 @@
   }
  },
  "git": {
-  "sha": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
+  "sha": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e8630cc",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "chore: sonda read-only do estado da outbox no db-probe (#746)",
+    "files": [
+     ".github/workflows/db-probe.yml"
+    ]
+   },
    {
     "sha": "2498492",
     "date": "2026-11-24",
@@ -301087,15 +301096,6 @@
     "files": [
      "docs/qa/05-PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "9db0028",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "test: prova que o modo espectador libera o canal de tempo real (QA-138) (#717)",
-    "files": [
-     "src/pages/RaceSpectator.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301130,6 +301130,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    ".github/workflows/db-probe.yml",
+    1
    ],
    [
     ".github/workflows/release-please.yml",
@@ -301173,10 +301177,6 @@
    ],
    [
     "supabase/config.toml",
-    1
-   ],
-   [
-    "supabase/functions/supply-dispatch/contract.test.ts",
     1
    ]
   ]

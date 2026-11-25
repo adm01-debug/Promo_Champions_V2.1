@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "249849260294cba53f21f5d66b1cc6c1b7b99c0e",
+  "commit": "e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb",
   "branch": "main",
-  "data_commit": "2026-11-24T18:19:05-03:00",
+  "data_commit": "2026-11-25T15:14:50-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e8630cc",
+    "data": "2026-11-25",
+    "assunto": "chore: sonda read-only do estado da outbox no db-probe (#746)"
+   },
    {
     "sha": "2498492",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "462499f",
     "data": "2026-11-24",
     "assunto": "chore: justifica supressoes de dependencias nos ganchos que gravam (QA-209) (#723)"
-   },
-   {
-    "sha": "a656216",
-    "data": "2026-11-24",
-    "assunto": "test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)"
    }
   ],
-  "arquivos_mudados_7d": 355,
+  "arquivos_mudados_7d": 348,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",

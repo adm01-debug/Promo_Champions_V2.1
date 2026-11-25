@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `249849260294cba53f21f5d66b1cc6c1b7b99c0e` (2026-11-24T18:19:05-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e8630cc5dcdc87a61ddad71d6e9834aaeebe21fb` (2026-11-25T15:14:50-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -588,7 +588,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24465 nós · 74923 arestas · 1188 comunidades · grafo do commit `24984926`
+- 24465 nós · 74923 arestas · 1188 comunidades · grafo do commit `e8630cc5`
 - comunidades maiores: Card (637), schema.sql (571), react (527), Skeleton (388), client.ts (317), Input (271), Badge (268), public (243), public.sales (233), formatBRL (228), getCorsHeaders (226), public.register_race_daily_checkin (226)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -772,6 +772,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.9.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.8.0...promo-champions-v2-v1.9.0) (2026-11-24)
 
 ## Últimos commits
+- 2026-11-25 `e8630cc` chore: sonda read-only do estado da outbox no db-probe (#746)
 - 2026-11-24 `2498492` ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)
 - 2026-11-24 `4f3aabb` chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)
 - 2026-11-24 `d7d7f73` feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)
@@ -786,7 +787,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `b241da2` ci: provisiona o segredo do webhook Promo Supply (#732)
 - 2026-11-24 `5d5329c` chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)
 - 2026-11-24 `b1e8ab3` chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)
-- 2026-11-24 `9a949f0` chore(main): release 1.8.0 (#661)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
