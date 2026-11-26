@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 717,
+ "migrations": 718,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -238,6 +238,7 @@
   "admin_top_queries",
   "aggregate_sales_stats",
   "anonymize_data_subject",
+  "aplicar_decisao_credito",
   "append_agent_step",
   "approve_agent_run",
   "archive_old_activities",
@@ -296,6 +297,7 @@
   "check_rate_limit",
   "check_sla_violations",
   "check_webhook_rate_limit",
+  "claim_credit_outbox",
   "claim_daily_challenge_reward",
   "claim_pending_cadence_tasks",
   "claim_streak_achievements",
@@ -339,6 +341,7 @@
   "extensions",
   "finalize_race_season",
   "find_matching_cadence_rule",
+  "finish_credit_outbox",
   "finish_supply_outbox",
   "fn_admin_cleanup_stale_logs",
   "fn_admin_conversion_trail",
@@ -550,6 +553,8 @@
   "sync_territory_ownership",
   "sync_total_xp",
   "sync_weekly_xp",
+  "tg_credit_enqueue_from_order",
+  "tg_order_marca_primeira_venda",
   "tg_supply_enqueue_from_order_item",
   "toggle_workflow_active",
   "touch_winloss_alert_settings",
@@ -1394,6 +1399,13 @@
    "funcao": "tg_supply_enqueue_from_order_item"
   },
   {
+   "nome": "trg_credit_enqueue_from_order",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "orders",
+   "funcao": "tg_credit_enqueue_from_order"
+  },
+  {
    "nome": "trg_log_order_creation",
    "quando": "after",
    "evento": "insert",
@@ -1406,6 +1418,13 @@
    "evento": "update of status",
    "tabela": "orders",
    "funcao": "log_order_status_change"
+  },
+  {
+   "nome": "trg_order_marca_primeira_venda",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "orders",
+   "funcao": "tg_order_marca_primeira_venda"
   },
   {
    "nome": "trg_outbound_messages_updated_at",
@@ -2310,6 +2329,11 @@
    "migration": "20260707114840_4586855c-9d65-4288-9eee-e06b1b311446.sql"
   },
   {
+   "nome": "credit-dispatch-1min",
+   "agenda": "* * * * *",
+   "migration": "20261128130000_analise_credito_primeira_venda.sql"
+  },
+  {
    "nome": "cron-failure-alerter-10min",
    "agenda": "*/10 * * * *",
    "migration": "20260831170000_secure_operational_edge_crons.sql"
@@ -2549,6 +2573,7 @@
     "check-lead-sla",
     "check-quote-expiration",
     "check-v4-callback-alerts",
+    "credit-dispatch",
     "cron-failure-alerter",
     "deal-risk-digest",
     "detect-client-churn-alerts",
@@ -11604,6 +11629,13 @@
      "default": null,
      "ref": null
     },
+    "cnpj": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "company": {
      "tipo": "text",
      "nn": false,
@@ -11843,6 +11875,11 @@
     {
      "nome": "idx_clients_active",
      "colunas": "updated_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_clients_cnpj",
+     "colunas": "cnpj",
      "unico": false
     },
     {
@@ -14795,6 +14832,112 @@
    "triggers": [],
    "sem_rls": false,
    "nao_usada": false
+  },
+  "credit_outbox": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "delivered_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "event": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'credito.solicitado'",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "next_attempt_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "order_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "orders"
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'pending'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "credit_outbox_admin_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_credit_outbox_due",
+     "colunas": "next_attempt_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "order_id->orders"
+   ],
+   "criada_em": "20261128130000_analise_credito_primeira_venda.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
   },
   "critical_moment_notifications": {
    "colunas": {
@@ -27532,6 +27675,41 @@
      "default": "now()",
      "ref": null
     },
+    "credit_decided_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "credit_limit_approved": {
+     "tipo": "numeric(12,2)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "credit_max_installments": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "credit_notes": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "credit_status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'nao_aplicavel'",
+     "ref": null
+    },
     "id": {
      "tipo": "uuid",
      "nn": true,
@@ -27651,6 +27829,11 @@
      "unico": false
     },
     {
+     "nome": "idx_orders_credit_status",
+     "colunas": "credit_status",
+     "unico": false
+    },
+    {
      "nome": "idx_orders_salesperson_id",
      "colunas": "salesperson_id",
      "unico": false
@@ -27682,8 +27865,10 @@
     "customer-success-360"
    ],
    "triggers": [
+    "trg_credit_enqueue_from_order",
     "trg_log_order_creation",
-    "trg_log_order_status_change"
+    "trg_log_order_status_change",
+    "trg_order_marca_primeira_venda"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -46804,6 +46989,7 @@
    "usada_no_front": 0,
    "usada_em_edges": [
     "multichannel-status-webhook",
+    "receive-credit-decision",
     "receive-design-sync",
     "receive-quote-sync",
     "receive-quote-webhook",
@@ -50092,6 +50278,11 @@
    "usada_em": 1
   },
   {
+   "nome": "aplicar_decisao_credito",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "append_agent_step",
    "definida": true,
    "usada_em": 1
@@ -50158,6 +50349,11 @@
   },
   {
    "nome": "check_webhook_rate_limit",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "claim_credit_outbox",
    "definida": true,
    "usada_em": 1
   },
@@ -50268,6 +50464,11 @@
   },
   {
    "nome": "find_matching_cadence_rule",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "finish_credit_outbox",
    "definida": true,
    "usada_em": 1
   },

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "736d7cc3569a17a757ab3b3f8688f754eccd74d1",
+  "sha": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 20:37 UTC",
-  "files_total": 3713,
-  "code_files": 3358,
-  "code_lines": 486838
+  "generated_at": "2026-11-26 21:11 UTC",
+  "files_total": 3718,
+  "code_files": 3363,
+  "code_lines": 487807
  },
  "version": "1.3.2",
- "facts_hash": "d7ff1f4cc480cc4a",
+ "facts_hash": "43b3d03abdd9f3c7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -427,8 +427,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1410,
-   ".ts": 1137,
-   ".sql": 729,
+   ".ts": 1141,
+   ".sql": 730,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -448,6 +448,8 @@
     "deal-risk-digest",
     "email-bulk-retry",
     "supply-dispatch",
+    "credit-dispatch",
+    "receive-credit-decision",
     "log-web-vitals",
     "receive-quote-sync",
     "receive-design-sync",
@@ -32333,6 +32335,94 @@
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
     "comment": "",
     "origin": "migration"
+   },
+   "credit_outbox": {
+    "columns": [
+     {
+      "name": "id",
+      "type": "uuid PRIMARY KEY DEFAULT gen_random_uuid()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "order_id",
+      "type": "uuid NOT NULL REFERENCES public.orders(id) ON DELETE CASCADE",
+      "fk": "orders.id ON DELETE CASCADE",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "event",
+      "type": "text NOT NULL DEFAULT 'credito.solicitado'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "payload",
+      "type": "jsonb NOT NULL",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "status",
+      "type": "text NOT NULL DEFAULT 'pending'",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "attempts",
+      "type": "integer NOT NULL DEFAULT 0",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "last_error",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "next_attempt_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "delivered_at",
+      "type": "timestamptz",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "created_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+     }
+    ],
+    "constraints": [
+     "CONSTRAINT credit_outbox_status_check CHECK (status = ANY (ARRAY['pending', 'processing', 'delivered', 'dead']::text[]))",
+     "CONSTRAINT credit_outbox_order_event_key UNIQUE (order_id, event)"
+    ],
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "comment": "",
+    "origin": "migration"
    }
   },
   "policies": [
@@ -33235,6 +33325,16 @@
     "using": "",
     "check": "(user_id IS NULL) OR (user_id = auth.uid())",
     "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "credit_outbox_admin_read",
+    "table": "credit_outbox",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -43508,6 +43608,24 @@
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
+    "name": "trg_order_marca_primeira_venda",
+    "when": "BEFORE INSERT",
+    "table": "orders",
+    "function": "tg_order_marca_primeira_venda",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "name": "trg_credit_enqueue_from_order",
+    "when": "AFTER INSERT",
+    "table": "orders",
+    "function": "tg_credit_enqueue_from_order",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -52656,10 +52774,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 WHEN 'credit-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -52698,10 +52816,10 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity, 1), 1), 'empresa', v_cliente, 'observacoes', 'Pedido ' || v_order.order …",
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; IF v_order.credit_status = 'aguardando_credito' THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity …",
     "raises": [],
     "tables": [
      "orders",
@@ -52739,6 +52857,87 @@
     "raises": [],
     "tables": [
      "supply_outbox"
+    ]
+   },
+   "tg_order_marca_primeira_venda": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN NEW.credit_status := 'nao_aplicavel'; NEW.credit_limit_approved := NULL; NEW.credit_max_installments := NULL; NEW.credit_notes := NULL; NEW.credit_decided_at := NULL; IF NEW.client_id IS NULL OR NOT EXISTS ( SELECT 1 FROM public.orders o WHERE o.client_id = NEW.client_id AND o.status <> 'cancelled' AND o.credit_status IN ('nao_aplicavel', 'aprovado') ) THEN NEW.credit_status := 'aguardando_credito'; END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "orders"
+    ]
+   },
+   "tg_credit_enqueue_from_order": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_client public.clients%ROWTYPE; v_email text; BEGIN IF NEW.credit_status <> 'aguardando_credito' THEN RETURN NEW; END IF; IF NEW.client_id IS NOT NULL THEN SELECT * INTO v_client FROM public.clients WHERE id = NEW.client_id; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = NEW.salesperson_id; INSERT INTO public.credit_outbox (order_id, event, payload) VALUES ( NEW.id, 'credito.solicitado', jsonb_build_object( 'pedido_id', NEW.id, 'pedido_numero', NEW.order_number, 'valor_total', NEW.total, 'cliente', jsonb_build_object( 'id', v_client.id, 'nome', v_client.name, 'empresa', COALESCE(v_client.company, NEW.metadata ->> 'client_name'), 'email', COALESCE(v_client …",
+    "raises": [],
+    "tables": [
+     "clients",
+     "credit_outbox",
+     "salespeople",
+     "v_client",
+     "v_email"
+    ]
+   },
+   "claim_credit_outbox": {
+    "args": "p_limit integer DEFAULT 25",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_rows jsonb; BEGIN WITH due AS ( SELECT o.id FROM public.credit_outbox o WHERE (o.status = 'pending' AND o.next_attempt_at <= now()) OR (o.status = 'processing' AND o.updated_at < now() - interval '5 minutes') ORDER BY o.next_attempt_at LIMIT GREATEST(COALESCE(p_limit, 25), 1) FOR UPDATE SKIP LOCKED ), claimed AS ( UPDATE public.credit_outbox o SET status = 'processing', attempts = o.attempts + 1, updated_at = now() FROM due WHERE o.id = due.id RETURNING o.id, o.event, o.payload, o.attempts ) SELECT COALESCE( jsonb_agg(jsonb_build_object( 'id', c.id, 'event', c.event, 'payload', c.payload, 'attempts', c.attempts )), '[]'::jsonb ) INTO v_rows FROM claimed c; RETURN v_rows; END;",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "claimed",
+     "credit_outbox",
+     "due",
+     "v_rows"
+    ]
+   },
+   "finish_credit_outbox": {
+    "args": "p_ids uuid[], p_ok boolean, p_error text DEFAULT NULL",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_count integer; BEGIN IF p_ids IS NULL OR array_length(p_ids, 1) IS NULL THEN RETURN 0; END IF; UPDATE public.credit_outbox o SET status = CASE WHEN p_ok THEN 'delivered' WHEN o.attempts >= 5 THEN 'dead' ELSE 'pending' END, delivered_at = CASE WHEN p_ok THEN now() ELSE o.delivered_at END, last_error = CASE WHEN p_ok THEN NULL ELSE left(COALESCE(p_error, 'unknown'), 1000) END, next_attempt_at = CASE WHEN p_ok OR o.attempts >= 5 THEN o.next_attempt_at ELSE now() + (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute') END, updated_at = now() WHERE o.id = ANY (p_ids); GET DIAGNOSTICS v_count = ROW_COUNT; RETURN v_count; END;",
+    "raises": [],
+    "tables": [
+     "credit_outbox"
+    ]
+   },
+   "aplicar_decisao_credito": {
+    "args": "p_order_id uuid, p_decisao text, p_limite numeric DEFAULT NULL, p_parcelas integer DEFAULT NULL, p_parecer text DEFAULT NULL",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; v_itens integer := 0; BEGIN IF p_decisao NOT IN ('aprovado', 'reprovado') THEN RAISE EXCEPTION 'decisao_invalida'; END IF; SELECT * INTO v_order FROM public.orders WHERE id = p_order_id FOR UPDATE; IF v_order.id IS NULL THEN RETURN jsonb_build_object('status', 'pedido_nao_encontrado'); END IF; IF v_order.credit_status <> 'aguardando_credito' THEN RETURN jsonb_build_object('status', 'ja_decidido', 'credit_status', v_order.credit_status); END IF; UPDATE public.orders SET credit_status = p_decisao, credit_limit_approved = p_limite, credit_max_installments = p_parcelas, credit_notes = left(p_parecer, 2000), credit_decided_at = …",
+    "raises": [
+     "decisao_invalida"
+    ],
+    "tables": [
+     "order_items",
+     "order_status_events",
+     "orders",
+     "salespeople",
+     "supply_outbox",
+     "v_email",
+     "v_order"
     ]
    },
    "check_rls": {
@@ -59881,6 +60080,30 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "name": "idx_clients_cnpj",
+    "table": "clients",
+    "columns": "cnpj",
+    "unique": false,
+    "where": "WHERE cnpj IS NOT NULL",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "name": "idx_orders_credit_status",
+    "table": "orders",
+    "columns": "credit_status",
+    "unique": false,
+    "where": "WHERE credit_status = 'aguardando_credito'",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "name": "idx_credit_outbox_due",
+    "table": "credit_outbox",
+    "columns": "next_attempt_at",
+    "unique": false,
+    "where": "WHERE status = 'pending'",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "name": "account_plans_account_id_key",
@@ -67301,6 +67524,12 @@
     "schedule": "* * * * *",
     "body": "SELECT public.trigger_internal_edge_job(",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "job": "credit-dispatch-1min",
+    "schedule": "* * * * *",
+    "body": "SELECT public.trigger_internal_edge_job(",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    }
   ],
   "views": {
@@ -68179,6 +68408,7 @@
    "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
    "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
    "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
+   "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -68605,6 +68835,7 @@
    "cron_job_last_run_cursor": "enabled",
    "designs_inbound": "enabled",
    "supply_outbox": "enabled",
+   "credit_outbox": "enabled",
    "ab_tests": "enabled",
    "experiment_assignments": "enabled",
    "experiment_variants": "enabled",
@@ -74005,6 +74236,102 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "credit_outbox",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "credit_outbox",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_credit_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_credit_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_credit_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_credit_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "aplicar_decisao_credito",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "aplicar_decisao_credito",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "kind": "grant",
@@ -93083,6 +93410,11 @@
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
    },
    {
+    "function": "aplicar_decisao_credito",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
     "function": "compute_cohort_retention",
     "msg": "Cohort não encontrado ou sem permissão",
     "src": "supabase/schema.sql"
@@ -98241,6 +98573,30 @@
     "idempotency": false
    },
    {
+    "name": "credit-dispatch",
+    "file": "supabase/functions/credit-dispatch/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
+    "tables": [
+     "_internal_secrets"
+    ],
+    "env": [
+     "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET",
+     "PROMO_FINANCE_CREDITO_WEBHOOK_URL",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "Dispatcher Champions -> Finance (analise de credito da 1a venda). O pedido da primeira venda de um cliente nasce `aguardando_credito` e vira uma linha em `credit_outbox`; este job entrega essas linhas ao `credito-solicitacao` do Promo Finance com HMAC SHA-256 (mesmo envelope e assinatura do supply-d …",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": false
+   },
+   {
     "name": "cron-failure-alerter",
     "file": "supabase/functions/cron-failure-alerter/index.ts",
     "methods": [
@@ -100168,6 +100524,29 @@
     "side_effects": [],
     "webhook_events": [],
     "idempotency": false
+   },
+   {
+    "name": "receive-credit-decision",
+    "file": "supabase/functions/receive-credit-decision/index.ts",
+    "methods": [
+     "OPTIONS"
+    ],
+    "auth": "PÚBLICA (verify_jwt=false em config.toml)",
+    "tables": [
+     "webhook_inbound_dedupe"
+    ],
+    "env": [
+     "FINANCE_CREDITO_WEBHOOK_SECRET",
+     "SUPABASE_SERVICE_ROLE_KEY",
+     "SUPABASE_URL"
+    ],
+    "external": [],
+    "invokes": [],
+    "doc": "receive-credit-decision Recebe a decisao da analise de credito da 1a venda emitida pelo Promo Finance (credito.decidido) e aplica no pedido via aplicar_decisao_credito: aprovado -> orders.credit_status='aprovado' + itens enfileirados no Supply reprovado -> orders.credit_status='reprovado' (vendedor …",
+    "errors": [],
+    "side_effects": [],
+    "webhook_events": [],
+    "idempotency": true
    },
    {
     "name": "receive-design-sync",
@@ -107362,7 +107741,7 @@
   {
    "module": "src/components",
    "files": 1243,
-   "lines": 195468,
+   "lines": 195498,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107693,7 +108072,7 @@
   {
    "module": "src/hooks",
    "files": 558,
-   "lines": 66135,
+   "lines": 66141,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108336,7 +108715,7 @@
   {
    "module": "src/pages",
    "files": 187,
-   "lines": 45778,
+   "lines": 45788,
    "tables": [
     "achievements",
     "activities",
@@ -108748,8 +109127,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 333,
-   "lines": 68175,
+   "files": 337,
+   "lines": 68623,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -109099,8 +109478,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 717,
-   "lines": 60077,
+   "files": 718,
+   "lines": 60552,
    "tables": [
     "user_permissions_cache"
    ],
@@ -109342,6 +109721,7 @@
      "supabase/functions/check-lead-sla/index.ts",
      "supabase/functions/check-quote-expiration/index.ts",
      "supabase/functions/check-v4-callback-alerts/index.ts",
+     "supabase/functions/credit-dispatch/index.ts",
      "supabase/functions/cron-failure-alerter/index.ts",
      "supabase/functions/deal-risk-digest/index.ts",
      "supabase/functions/detect-client-churn-alerts/index.ts",
@@ -113461,6 +113841,7 @@
    "webhook_inbound_dedupe": {
     "delete": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-credit-decision/index.ts",
      "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts",
@@ -113468,12 +113849,14 @@
     ],
     "insert": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-credit-decision/index.ts",
      "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts"
     ],
     "select": [
      "supabase/functions/multichannel-status-webhook/index.ts",
+     "supabase/functions/receive-credit-decision/index.ts",
      "supabase/functions/receive-design-sync/index.ts",
      "supabase/functions/receive-quote-sync/index.ts",
      "supabase/functions/receive-quote-webhook/index.ts"
@@ -115881,6 +116264,9 @@
    "EXTERNAL_SUPABASE_URL": [
     "supabase/functions/external-db-bridge/index.ts"
    ],
+   "FINANCE_CREDITO_WEBHOOK_SECRET": [
+    "supabase/functions/receive-credit-decision/index.ts"
+   ],
    "FIXTURE_GRAPH_EXIT": [
     "scripts/automation.unit.mjs"
    ],
@@ -116048,6 +116434,12 @@
    ],
    "PROMO_CHAMPIONS_MCP_URL": [
     "scripts/db/simulate-migrations-via-mcp.ts"
+   ],
+   "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET": [
+    "supabase/functions/credit-dispatch/index.ts"
+   ],
+   "PROMO_FINANCE_CREDITO_WEBHOOK_URL": [
+    "supabase/functions/credit-dispatch/index.ts"
    ],
    "PROMO_SUPPLY_WEBHOOK_SECRET": [
     "supabase/functions/supply-dispatch/index.ts"
@@ -116219,6 +116611,7 @@
     "supabase/functions/check-quote-expiration/index.ts",
     "supabase/functions/check-v4-callback-alerts/index.ts",
     "supabase/functions/conversational-intelligence/index.ts",
+    "supabase/functions/credit-dispatch/index.ts",
     "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
     "supabase/functions/cron-failure-alerter/index.test.ts",
     "supabase/functions/cron-failure-alerter/index.ts",
@@ -116254,6 +116647,7 @@
     "supabase/functions/process-race-event/index.ts",
     "supabase/functions/process-scheduled-sends/index.ts",
     "supabase/functions/ranking-api/index.ts",
+    "supabase/functions/receive-credit-decision/index.ts",
     "supabase/functions/receive-design-sync/index.ts",
     "supabase/functions/receive-quote-sync/index.ts",
     "supabase/functions/receive-quote-webhook/index.ts",
@@ -116327,6 +116721,7 @@
     "supabase/functions/coaching-session-prep/index.ts",
     "supabase/functions/compute-forecast-accuracy/index.ts",
     "supabase/functions/conversational-intelligence/index.ts",
+    "supabase/functions/credit-dispatch/index.ts",
     "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
     "supabase/functions/cron-failure-alerter/index.ts",
     "supabase/functions/customer-success-360/index.ts",
@@ -116366,6 +116761,7 @@
     "supabase/functions/purchase-intelligence-forecast/index.ts",
     "supabase/functions/qbr-generator/index.ts",
     "supabase/functions/ranking-api/index.ts",
+    "supabase/functions/receive-credit-decision/index.ts",
     "supabase/functions/receive-design-sync/index.ts",
     "supabase/functions/receive-quote-sync/index.ts",
     "supabase/functions/receive-quote-webhook/index.ts",
@@ -116590,6 +116986,9 @@
    "anonymize_data_subject": [
     "src/hooks/admin/useDataSubjectRequests.ts"
    ],
+   "aplicar_decisao_credito": [
+    "supabase/functions/receive-credit-decision/index.ts"
+   ],
    "append_agent_step": [
     "supabase/functions/ai-agent-orchestrator/index.ts"
    ],
@@ -116632,6 +117031,9 @@
    ],
    "check_webhook_rate_limit": [
     "supabase/functions/winloss-webhook-dispatcher/index.ts"
+   ],
+   "claim_credit_outbox": [
+    "supabase/functions/credit-dispatch/index.ts"
    ],
    "claim_daily_challenge_reward": [
     "src/hooks/gamification/useDailyChallenges.ts",
@@ -116705,6 +117107,9 @@
    ],
    "find_matching_cadence_rule": [
     "supabase/functions/auto-enroll-cadence/index.ts"
+   ],
+   "finish_credit_outbox": [
+    "supabase/functions/credit-dispatch/index.ts"
    ],
    "finish_supply_outbox": [
     "supabase/functions/supply-dispatch/index.ts"
@@ -117698,7 +118103,8 @@
     "call_tracking"
    ],
    "orders": [
-    "supply_outbox"
+    "supply_outbox",
+    "credit_outbox"
    ]
   },
   "tables_only_in_code": [
@@ -117747,6 +118153,7 @@
    "cohort_analyses",
    "consent_records",
    "contact_send_time_profile",
+   "credit_outbox",
    "cron_failure_alerts",
    "cron_job_last_run",
    "cron_job_last_run_cursor",
@@ -118187,6 +118594,14 @@
     "name": "notificationRowSchema",
     "kind": "object",
     "body": "{ user_id: z.string().uuid(), type: z.string().min(1).max(64), title: z.string().min(1).max(200), category: notificationCategorySchema.optional(), priority: notificationPrioritySchema.optional(), message: z.string().max(2000).nullish(), icon: z.string().max(64).nullish(), action_url: z.string().max(500).nullish(), action_label: z.string().max(100).nullish(), metadata: z.record(z.unknown()).nullish(), expires_at: z.string().nullish(), }",
+    "refines": [],
+    "chain": []
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/contract.ts",
+    "name": "CreditDecisionPayloadSchema",
+    "kind": "object",
+    "body": "{ pedido_id: z.string().uuid({ message: \"pedido_id deve ser um UUID\" }), analise_id: z.string().min(1, { message: \"analise_id e obrigatorio\" }), decisao: z.enum([\"aprovado\", \"reprovado\"], { errorMap: () => ({ message: \"decisao deve ser 'aprovado' ou 'reprovado'\" }), }), limite_aprovado: z.number().nonnegative().optional().nullable(), parcelas_max: z.number().int().positive().max(60).optional().nullable(), parecer: z.string().max(2000).optional().nullable(), decidido_em: z.string().optional().nullable(), }",
     "refines": [],
     "chain": []
    },
@@ -118672,6 +119087,11 @@
     "file": "src/components/orders/orderHelpers.ts",
     "name": "OrderStatus",
     "values": "pending | confirmed | preparing | shipped | delivered | cancelled"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "name": "CreditStatus",
+    "values": "nao_aplicavel | aguardando_credito | aprovado | reprovado"
    },
    {
     "file": "src/components/race/RaceControlPanel.tsx",
@@ -123420,6 +123840,14 @@
    {
     "file": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
     "msg": " THEN 60000\n    WHEN "
+   },
+   {
+    "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "msg": " THEN 60000\n    WHEN "
+   },
+   {
+    "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "msg": ",\n      "
    },
    {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
@@ -140470,6 +140898,61 @@
     "table": "supply_outbox",
     "column": "(tabela)",
     "rule": "CONSTRAINT supply_outbox_item_event_key UNIQUE (order_item_id, event)"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "id",
+    "rule": "PK; default gen_random_uuid()"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "order_id",
+    "rule": "obrigatório; FK → orders.id ON DELETE CASCADE"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "event",
+    "rule": "default 'credito.solicitado'"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "payload",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "status",
+    "rule": "default 'pending'"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "attempts",
+    "rule": "default 0"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "next_attempt_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "updated_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT credit_outbox_status_check CHECK (status = ANY (ARRAY['pending', 'processing', 'delivered', 'dead']::text[]))"
+   },
+   {
+    "table": "credit_outbox",
+    "column": "(tabela)",
+    "rule": "CONSTRAINT credit_outbox_order_event_key UNIQUE (order_id, event)"
    }
   ],
   "params": [
@@ -141289,6 +141772,11 @@
     "value": "5"
    },
    {
+    "file": "supabase/functions/credit-dispatch/index.ts",
+    "name": "BATCH_SIZE",
+    "value": "25"
+   },
+   {
     "file": "supabase/functions/cron-failure-alerter/index.ts",
     "name": "BITRIX24_FAILURE_THRESHOLD",
     "value": "3"
@@ -141452,6 +141940,16 @@
     "file": "supabase/functions/race-commentary/index.ts",
     "name": "COMMENTARY_CACHE_TTL_MS",
     "value": "60"
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/contract.ts",
+    "name": "CREDIT_DECISION_EVENT",
+    "value": "\"credito.decidido\""
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/index.ts",
+    "name": "MAX_WEBHOOK_BODY_BYTES",
+    "value": "64"
    },
    {
     "file": "supabase/functions/receive-design-sync/index.ts",
@@ -144095,6 +144593,42 @@
     "file": "src/components/orders/orderHelpers.ts",
     "field": "status",
     "value": "cancelled",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "aguardando_credito",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "reprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "aguardando_credito",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/orders/orderHelpers.ts",
+    "field": "status",
+    "value": "reprovado",
     "kind": "compara"
    },
    {
@@ -149090,6 +149624,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/OrderDetailPage.tsx",
+    "field": "credit_status",
+    "value": "nao_aplicavel",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/Portfolio.tsx",
     "field": "role",
     "value": "closer",
@@ -153143,6 +153683,18 @@
     "file": "supabase/functions/ranking-api/index.ts",
     "field": "type",
     "value": "ADD",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/index.ts",
+    "field": "status",
+    "value": "duplicate_ignored",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/index.ts",
+    "field": "status",
+    "value": "pedido_nao_encontrado",
     "kind": "compara"
    },
    {
@@ -157742,6 +158294,14 @@
    {
     "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
     "line": "AND o.updated_at < now() - interval '5 minutes'"
+   },
+   {
+    "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "line": "+ (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute')"
+   },
+   {
+    "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "line": "OR (o.status = 'processing' AND o.updated_at < now() - interval '5 minutes')"
    }
   ],
   "percents": [
@@ -164880,6 +165440,18 @@
     "name": "exhausted é calculado quando attempts+1 >= MAX_ATTEMPTS"
    },
    {
+    "file": "supabase/functions/receive-credit-decision/contract.test.ts",
+    "name": "assinatura HMAC confere com vetor conhecido"
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/contract.test.ts",
+    "name": "payload aprovado com limite e parcelas passa"
+   },
+   {
+    "file": "supabase/functions/receive-credit-decision/contract.test.ts",
+    "name": "decisao fora de aprovado/reprovado e pedido sem UUID sao rejeitados"
+   },
+   {
     "file": "supabase/functions/receive-design-sync/mapping.test.ts",
     "name": "isUuid aceita uuid v4 minusculo"
    },
@@ -167676,6 +168248,10 @@
     "call": "notify"
    },
    {
+    "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "call": "notify"
+   },
+   {
     "file": "tests/migrations/canonical_hardening_contract_test.ts",
     "call": "notify"
    }
@@ -168580,6 +169156,16 @@
     "using": "",
     "check": "(user_id IS NULL) OR (user_id = auth.uid())",
     "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "credit_outbox_admin_read",
+    "table": "credit_outbox",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -178853,6 +179439,24 @@
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
    },
    {
+    "name": "trg_order_marca_primeira_venda",
+    "when": "BEFORE INSERT",
+    "table": "orders",
+    "function": "tg_order_marca_primeira_venda",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "name": "trg_credit_enqueue_from_order",
+    "when": "AFTER INSERT",
+    "table": "orders",
+    "function": "tg_credit_enqueue_from_order",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
     "name": "set_updated_at",
     "when": "BEFORE UPDATE",
     "table": "account_contacts",
@@ -188001,10 +188605,10 @@
     "args": "p_function_name text",
     "returns": "integer",
     "lang": "sql",
-    "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
     "security_definer": false,
     "search_path": true,
-    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 ELSE 5000 END;",
+    "body": "SELECT CASE p_function_name WHEN 'semantic-reindex-batch' THEN 120000 WHEN 'process-call-recording-ingest' THEN 60000 WHEN 'cron-failure-alerter' THEN 60000 WHEN 'wal-health-alert' THEN 60000 WHEN 'send-alert-notifications' THEN 60000 WHEN 'access-denied-alerts' THEN 60000 WHEN 'supply-dispatch' THEN 60000 WHEN 'credit-dispatch' THEN 60000 ELSE 5000 END;",
     "raises": [],
     "tables": []
    },
@@ -188043,10 +188647,10 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity, 1), 1), 'empresa', v_cliente, 'observacoes', 'Pedido ' || v_order.order …",
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; BEGIN SELECT * INTO v_order FROM public.orders WHERE id = NEW.order_id; IF v_order.id IS NULL THEN RETURN NEW; END IF; IF v_order.credit_status = 'aguardando_credito' THEN RETURN NEW; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = v_order.salesperson_id; v_cliente := NULLIF(btrim(COALESCE(v_order.metadata ->> 'client_name', '')), ''); INSERT INTO public.supply_outbox (order_id, order_item_id, event, payload) VALUES ( v_order.id, NEW.id, 'pedido.criado', jsonb_build_object( 'os_id', NEW.id, 'os_number', v_order.order_number, 'produto', NEW.product_name, 'quantidade', GREATEST(COALESCE(NEW.quantity …",
     "raises": [],
     "tables": [
      "orders",
@@ -188084,6 +188688,87 @@
     "raises": [],
     "tables": [
      "supply_outbox"
+    ]
+   },
+   "tg_order_marca_primeira_venda": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN NEW.credit_status := 'nao_aplicavel'; NEW.credit_limit_approved := NULL; NEW.credit_max_installments := NULL; NEW.credit_notes := NULL; NEW.credit_decided_at := NULL; IF NEW.client_id IS NULL OR NOT EXISTS ( SELECT 1 FROM public.orders o WHERE o.client_id = NEW.client_id AND o.status <> 'cancelled' AND o.credit_status IN ('nao_aplicavel', 'aprovado') ) THEN NEW.credit_status := 'aguardando_credito'; END IF; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "orders"
+    ]
+   },
+   "tg_credit_enqueue_from_order": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_client public.clients%ROWTYPE; v_email text; BEGIN IF NEW.credit_status <> 'aguardando_credito' THEN RETURN NEW; END IF; IF NEW.client_id IS NOT NULL THEN SELECT * INTO v_client FROM public.clients WHERE id = NEW.client_id; END IF; SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = NEW.salesperson_id; INSERT INTO public.credit_outbox (order_id, event, payload) VALUES ( NEW.id, 'credito.solicitado', jsonb_build_object( 'pedido_id', NEW.id, 'pedido_numero', NEW.order_number, 'valor_total', NEW.total, 'cliente', jsonb_build_object( 'id', v_client.id, 'nome', v_client.name, 'empresa', COALESCE(v_client.company, NEW.metadata ->> 'client_name'), 'email', COALESCE(v_client …",
+    "raises": [],
+    "tables": [
+     "clients",
+     "credit_outbox",
+     "salespeople",
+     "v_client",
+     "v_email"
+    ]
+   },
+   "claim_credit_outbox": {
+    "args": "p_limit integer DEFAULT 25",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_rows jsonb; BEGIN WITH due AS ( SELECT o.id FROM public.credit_outbox o WHERE (o.status = 'pending' AND o.next_attempt_at <= now()) OR (o.status = 'processing' AND o.updated_at < now() - interval '5 minutes') ORDER BY o.next_attempt_at LIMIT GREATEST(COALESCE(p_limit, 25), 1) FOR UPDATE SKIP LOCKED ), claimed AS ( UPDATE public.credit_outbox o SET status = 'processing', attempts = o.attempts + 1, updated_at = now() FROM due WHERE o.id = due.id RETURNING o.id, o.event, o.payload, o.attempts ) SELECT COALESCE( jsonb_agg(jsonb_build_object( 'id', c.id, 'event', c.event, 'payload', c.payload, 'attempts', c.attempts )), '[]'::jsonb ) INTO v_rows FROM claimed c; RETURN v_rows; END;",
+    "raises": [],
+    "tables": [
+     "SKIP",
+     "claimed",
+     "credit_outbox",
+     "due",
+     "v_rows"
+    ]
+   },
+   "finish_credit_outbox": {
+    "args": "p_ids uuid[], p_ok boolean, p_error text DEFAULT NULL",
+    "returns": "integer",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_count integer; BEGIN IF p_ids IS NULL OR array_length(p_ids, 1) IS NULL THEN RETURN 0; END IF; UPDATE public.credit_outbox o SET status = CASE WHEN p_ok THEN 'delivered' WHEN o.attempts >= 5 THEN 'dead' ELSE 'pending' END, delivered_at = CASE WHEN p_ok THEN now() ELSE o.delivered_at END, last_error = CASE WHEN p_ok THEN NULL ELSE left(COALESCE(p_error, 'unknown'), 1000) END, next_attempt_at = CASE WHEN p_ok OR o.attempts >= 5 THEN o.next_attempt_at ELSE now() + (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute') END, updated_at = now() WHERE o.id = ANY (p_ids); GET DIAGNOSTICS v_count = ROW_COUNT; RETURN v_count; END;",
+    "raises": [],
+    "tables": [
+     "credit_outbox"
+    ]
+   },
+   "aplicar_decisao_credito": {
+    "args": "p_order_id uuid, p_decisao text, p_limite numeric DEFAULT NULL, p_parcelas integer DEFAULT NULL, p_parecer text DEFAULT NULL",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_order public.orders%ROWTYPE; v_email text; v_cliente text; v_itens integer := 0; BEGIN IF p_decisao NOT IN ('aprovado', 'reprovado') THEN RAISE EXCEPTION 'decisao_invalida'; END IF; SELECT * INTO v_order FROM public.orders WHERE id = p_order_id FOR UPDATE; IF v_order.id IS NULL THEN RETURN jsonb_build_object('status', 'pedido_nao_encontrado'); END IF; IF v_order.credit_status <> 'aguardando_credito' THEN RETURN jsonb_build_object('status', 'ja_decidido', 'credit_status', v_order.credit_status); END IF; UPDATE public.orders SET credit_status = p_decisao, credit_limit_approved = p_limite, credit_max_installments = p_parcelas, credit_notes = left(p_parecer, 2000), credit_decided_at = …",
+    "raises": [
+     "decisao_invalida"
+    ],
+    "tables": [
+     "order_items",
+     "order_status_events",
+     "orders",
+     "salespeople",
+     "supply_outbox",
+     "v_email",
+     "v_order"
     ]
    },
    "check_rls": {
@@ -188228,6 +188913,11 @@
     "function": "post_internal_edge_job",
     "msg": "internal_edge_job_base_url_must_be_https",
     "src": "supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql"
+   },
+   {
+    "function": "aplicar_decisao_credito",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "function": "compute_cohort_retention",
@@ -191864,6 +192554,19 @@
      ],
      "default": "pending",
      "type": "text NOT NULL DEFAULT 'pending'"
+    },
+    {
+     "table": "credit_outbox",
+     "column": "status",
+     "enum": "",
+     "allowed": [
+      "dead",
+      "delivered",
+      "pending",
+      "processing"
+     ],
+     "default": "pending",
+     "type": "text NOT NULL DEFAULT 'pending'"
     }
    ],
    "usage": {
@@ -193342,6 +194045,15 @@
      "shipped": [
       "compara:src/components/orders/orderHelpers.ts"
      ],
+     "aguardando_credito": [
+      "compara:src/components/orders/orderHelpers.ts"
+     ],
+     "aprovado": [
+      "compara:src/components/orders/orderHelpers.ts"
+     ],
+     "reprovado": [
+      "compara:src/components/orders/orderHelpers.ts"
+     ],
      "prospecting": [
       "compara:src/components/pipeline/DealSummaryCard.tsx"
      ],
@@ -193619,9 +194331,13 @@
       "filtra:supabase/functions/process-scheduled-sends/index.ts"
      ],
      "duplicate_ignored": [
+      "escreve:supabase/functions/receive-credit-decision/index.ts",
       "escreve:supabase/functions/receive-design-sync/index.ts",
       "escreve:supabase/functions/receive-quote-sync/index.ts",
       "escreve:supabase/functions/receive-quote-webhook/index.ts"
+     ],
+     "pedido_nao_encontrado": [
+      "compara:supabase/functions/receive-credit-decision/index.ts"
      ],
      "processed": [
       "escreve:supabase/functions/receive-design-sync/index.ts",
@@ -194168,6 +194884,11 @@
     "funnel_stage": {
      "new": [
       "escreve:src/hooks/cadences/useCadenceQueries.ts"
+     ]
+    },
+    "credit_status": {
+     "nao_aplicavel": [
+      "compara:src/pages/OrderDetailPage.tsx"
      ]
     },
     "tipo": {
@@ -195733,6 +196454,15 @@
     "DELETE": [
      "PUBLIC: (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (analyzed_by = auth.uid()))"
     ]
+   },
+   "credit_outbox": {
+    "rls": "enabled",
+    "SELECT": [
+     "authenticated: public.is_admin_or_manager(auth.uid())"
+    ],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
    },
    "critical_moment_notifications": {
     "rls": "enabled",
@@ -200098,6 +200828,7 @@
    "supabase/functions/check-v4-callback-alerts/index.ts",
    "supabase/functions/coaching-intelligence/index.ts",
    "supabase/functions/conversational-intelligence/index.ts",
+   "supabase/functions/credit-dispatch/index.ts",
    "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
    "supabase/functions/cron-failure-alerter/index.test.ts",
    "supabase/functions/cron-failure-alerter/index.ts",
@@ -200145,6 +200876,7 @@
    "supabase/functions/process-race-event/index.ts",
    "supabase/functions/process-scheduled-sends/index.ts",
    "supabase/functions/ranking-api/index.ts",
+   "supabase/functions/receive-credit-decision/index.ts",
    "supabase/functions/receive-design-sync/index.ts",
    "supabase/functions/receive-quote-sync/index.ts",
    "supabase/functions/receive-quote-webhook/index.ts",
@@ -200364,6 +201096,7 @@
    "supabase/migrations/20261126090000_champions_supply_outbox.sql",
    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
    "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
+   "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/retry_dispatcher_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -200629,6 +201362,8 @@
    "sync_territory_ownership",
    "sync_total_xp",
    "sync_weekly_xp",
+   "tg_credit_enqueue_from_order",
+   "tg_order_marca_primeira_venda",
    "tg_supply_enqueue_from_order_item",
    "toggle_workflow_active",
    "track_deal_health_change",
@@ -200685,6 +201420,8 @@
    "deal-risk-digest",
    "email-bulk-retry",
    "supply-dispatch",
+   "credit-dispatch",
+   "receive-credit-decision",
    "log-web-vitals",
    "receive-quote-sync",
    "receive-design-sync",
@@ -206092,6 +206829,102 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "credit_outbox",
+    "objkind": "table",
+    "roles": "anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "credit_outbox",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "claim_credit_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "claim_credit_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "finish_credit_outbox",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "finish_credit_outbox",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "aplicar_decisao_credito",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "aplicar_decisao_credito",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "trigger_internal_edge_job",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "internal_edge_job_timeout_ms",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
    },
    {
     "kind": "grant",
@@ -226847,6 +227680,10 @@
    "supply_outbox": [
     "created_at",
     "updated_at"
+   ],
+   "credit_outbox": [
+    "created_at",
+    "updated_at"
    ]
   },
   "pii": [
@@ -227727,9 +228564,17 @@
     "kind": "status",
     "msg": "valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
+     "escreve:supabase/functions/receive-credit-decision/index.ts",
      "escreve:supabase/functions/receive-design-sync/index.ts",
      "escreve:supabase/functions/receive-quote-sync/index.ts",
      "escreve:supabase/functions/receive-quote-webhook/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `pedido_nao_encontrado` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:supabase/functions/receive-credit-decision/index.ts"
     ]
    },
    {
@@ -228861,7 +229706,7 @@
    "`status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "405/414 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
+   "406/415 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …",
    "Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel."
   ]
  },
@@ -242058,7 +242903,7 @@
   },
   "src/components/orders/orderHelpers.ts": {
    "path": "src/components/orders/orderHelpers.ts",
-   "lines": 72,
+   "lines": 102,
    "exports": [
     "type OrderStatus",
     "const STATUS_STEPS",
@@ -242066,6 +242911,9 @@
     "function statusLabel",
     "function statusTone",
     "function statusIndex",
+    "type CreditStatus",
+    "function creditStatusLabel",
+    "function creditStatusTone",
     "const formatBRL",
     "const formatDateTime"
    ],
@@ -242073,6 +242921,10 @@
     {
      "name": "OrderStatus",
      "values": "pending | confirmed | preparing | shipped | delivered | cancelled"
+    },
+    {
+     "name": "CreditStatus",
+     "values": "nao_aplicavel | aguardando_credito | aprovado | reprovado"
     }
    ],
    "status_values": [
@@ -242109,6 +242961,36 @@
     {
      "field": "status",
      "value": "cancelled",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aguardando_credito",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "reprovado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aguardando_credito",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "reprovado",
      "kind": "compara"
     }
    ]
@@ -264909,7 +265791,7 @@
   },
   "src/hooks/orders/useOrder.ts": {
    "path": "src/hooks/orders/useOrder.ts",
-   "lines": 84,
+   "lines": 90,
    "exports": [
     "interface OrderRow",
     "interface OrderItemRow",
@@ -274677,9 +275559,16 @@
   },
   "src/pages/OrderDetailPage.tsx": {
    "path": "src/pages/OrderDetailPage.tsx",
-   "lines": 120,
+   "lines": 130,
    "exports": [
     "function OrderDetailPage"
+   ],
+   "status_values": [
+    {
+     "field": "credit_status",
+     "value": "nao_aplicavel",
+     "kind": "compara"
+    }
    ]
   },
   "src/pages/Pipeline.tsx": {
@@ -283126,6 +284015,40 @@
     "5000"
    ]
   },
+  "supabase/functions/credit-dispatch/index.ts": {
+   "path": "supabase/functions/credit-dispatch/index.ts",
+   "lines": 173,
+   "tables": [
+    {
+     "table": "_internal_secrets",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "_internal_secrets": [
+     "key",
+     "value"
+    ]
+   },
+   "rpc": [
+    "claim_credit_outbox",
+    "finish_credit_outbox"
+   ],
+   "env": [
+    "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET",
+    "PROMO_FINANCE_CREDITO_WEBHOOK_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "BATCH_SIZE",
+     "value": "25"
+    }
+   ],
+   "doc": "Dispatcher Champions -> Finance (analise de credito da 1a venda). O pedido da primeira venda de um cliente nasce `aguardando_credito` e vira uma linha em `credit_outbox`; este job entrega essas linhas ao `credito-solicitacao` do Promo Finance com HMAC SHA-256 (mesmo envelope e assinatura do supply-d …",
+   "uses_service_role": true
+  },
   "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts": {
    "path": "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
    "lines": 60,
@@ -290237,6 +291160,91 @@
     "200",
     "500"
    ],
+   "uses_service_role": true
+  },
+  "supabase/functions/receive-credit-decision/contract.test.ts": {
+   "path": "supabase/functions/receive-credit-decision/contract.test.ts",
+   "lines": 40,
+   "is_test": true,
+   "tests": [
+    "assinatura HMAC confere com vetor conhecido",
+    "payload aprovado com limite e parcelas passa",
+    "decisao fora de aprovado/reprovado e pedido sem UUID sao rejeitados"
+   ]
+  },
+  "supabase/functions/receive-credit-decision/contract.ts": {
+   "path": "supabase/functions/receive-credit-decision/contract.ts",
+   "lines": 63,
+   "exports": [
+    "const CREDIT_DECISION_EVENT",
+    "const CreditDecisionPayloadSchema",
+    "type CreditDecisionPayload",
+    "function hmacSha256Hex",
+    "function timingSafeEqual",
+    "function signatureMatches"
+   ],
+   "zod": [
+    {
+     "name": "CreditDecisionPayloadSchema",
+     "kind": "object",
+     "body": "{ pedido_id: z.string().uuid({ message: \"pedido_id deve ser um UUID\" }), analise_id: z.string().min(1, { message: \"analise_id e obrigatorio\" }), decisao: z.enum([\"aprovado\", \"reprovado\"], { errorMap: () => ({ message: \"decisao deve ser 'aprovado' ou 'reprovado'\" }), }), limite_aprovado: z.number().nonnegative().optional().nullable(), parcelas_max: z.number().int().positive().max(60).optional().nullable(), parecer: z.string().max(2000).optional().nullable(), decidido_em: z.string().optional().nullable(), }",
+     "refines": [],
+     "chain": []
+    }
+   ],
+   "params": [
+    {
+     "name": "CREDIT_DECISION_EVENT",
+     "value": "\"credito.decidido\""
+    }
+   ],
+   "doc": "Contrato da decisao de credito devolvida pelo Promo Finance. Envelope (mesmo formato dos demais webhooks inbound do CRM): headers: x-webhook-signature: sha256=<hex>, x-webhook-event, x-correlation-key body: { event: 'credito.decidido', correlation_key, payload } secret: FINANCE_CREDITO_WEBHOOK_SECRE …"
+  },
+  "supabase/functions/receive-credit-decision/index.ts": {
+   "path": "supabase/functions/receive-credit-decision/index.ts",
+   "lines": 172,
+   "tables": [
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "insert,select"
+    },
+    {
+     "table": "webhook_inbound_dedupe",
+     "op": "delete"
+    }
+   ],
+   "table_cols": {
+    "webhook_inbound_dedupe": [
+     "id"
+    ]
+   },
+   "rpc": [
+    "aplicar_decisao_credito"
+   ],
+   "env": [
+    "FINANCE_CREDITO_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "MAX_WEBHOOK_BODY_BYTES",
+     "value": "64"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "duplicate_ignored",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pedido_nao_encontrado",
+     "kind": "compara"
+    }
+   ],
+   "doc": "receive-credit-decision Recebe a decisao da analise de credito da 1a venda emitida pelo Promo Finance (credito.decidido) e aplica no pedido via aplicar_decisao_credito: aprovado -> orders.credit_status='aprovado' + itens enfileirados no Supply reprovado -> orders.credit_status='reprovado' (vendedor …",
    "uses_service_role": true
   },
   "supabase/functions/receive-design-sync/contract_test.ts": {
@@ -299218,6 +300226,22 @@
     "chat_messages: DELETE apenas para o dono da conversa"
    ]
   },
+  "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql": {
+   "path": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+   "lines": 475,
+   "errors": [
+    " THEN 60000\n    WHEN ",
+    ",\n      "
+   ],
+   "temporal": [
+    "+ (least(power(2, greatest(o.attempts, 1))::int, 64) * interval '1 minute')",
+    "OR (o.status = 'processing' AND o.updated_at < now() - interval '5 minutes')"
+   ],
+   "side_effects": [
+    "notify"
+   ],
+   "uses_service_role": true
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -301319,10 +302343,27 @@
   }
  },
  "git": {
-  "sha": "736d7cc3569a17a757ab3b3f8688f754eccd74d1",
+  "sha": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "a751303",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance (#761)",
+    "files": [
+     "src/components/orders/orderHelpers.ts",
+     "src/hooks/orders/useOrder.ts",
+     "src/pages/OrderDetailPage.tsx",
+     "supabase/config.toml",
+     "supabase/functions/credit-dispatch/index.ts",
+     "supabase/functions/receive-credit-decision/contract.test.ts",
+     "supabase/functions/receive-credit-decision/contract.ts",
+     "supabase/functions/receive-credit-decision/index.ts",
+     "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql"
+    ]
+   },
    {
     "sha": "736d7cc",
     "date": "2026-11-26",
@@ -301630,36 +302671,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "9a949f0",
-    "date": "2026-11-24",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.8.0 (#661)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    6
-   ],
-   [
-    ".release-please-manifest.json",
-    4
-   ],
-   [
-    "CHANGELOG.md",
-    4
+    5
    ],
    [
     "src/components/dashboard/IntegrationStatusPanel.tsx",
@@ -301668,6 +302689,18 @@
    [
     "src/components/layout/sidebar/sidebarMenuData.ts",
     3
+   ],
+   [
+    ".release-please-manifest.json",
+    3
+   ],
+   [
+    "CHANGELOG.md",
+    3
+   ],
+   [
+    "supabase/config.toml",
+    2
    ],
    [
     "src/components/dashboard/IntegrationStatusPanel.test.tsx",
@@ -301694,35 +302727,31 @@
     2
    ],
    [
-    "supabase/tests/quote-to-sale-stress.sql",
+    "src/components/orders/orderHelpers.ts",
     1
    ],
    [
-    "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+    "src/hooks/orders/useOrder.ts",
     1
    ],
    [
-    "docs/qa/03-ACHADOS.md",
+    "src/pages/OrderDetailPage.tsx",
     1
    ],
    [
-    "src/hooks/sales/useSalesAssistant.test.tsx",
+    "supabase/functions/credit-dispatch/index.ts",
     1
    ],
    [
-    "src/hooks/sales/useSalesAssistant.ts",
+    "supabase/functions/receive-credit-decision/contract.test.ts",
     1
    ],
    [
-    "src/pages/FollowUpAudit.tsx",
+    "supabase/functions/receive-credit-decision/contract.ts",
     1
    ],
    [
-    "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
-    1
-   ],
-   [
-    "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    "supabase/functions/receive-credit-decision/index.ts",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `736d7cc356` · branch `main` · 2026-11-26 20:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a7513039cc` · branch `main` · 2026-11-26 21:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -107,6 +107,7 @@
 | `contact_engagement_score` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `contact_send_time_profile` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `conversation_analyses` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `credit_outbox` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `critical_moment_notifications` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `cron_failure_alerts` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `cron_job_last_run` | Espelho do max(start_time) por cron job. Evita o seq scan em cron.job_run_details (sem indice em jobid, 269k+ linhas) dentro de detect_stalled_cron_jobs(). | 3 colunas | migration |
@@ -306,8 +307,7 @@
 | `sale_notifications_audit` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `sales` | _(sem COMMENT ON TABLE — significado não documentado)_ | 49 colunas | migration |
 | `sales_battles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `sales_enablement_assets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| … +327 linhas — lista completa em `context.json` | | | |
+| … +329 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -386,7 +386,8 @@
 | status | valor `very_slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/external-db-bridge/index.ts` |
 | status | valor `Fechado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/pricing-intelligence/index.ts` |
 | status | valor `fulfilled` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/process-call-recording-ingest/index.ts`<br>`compara:supabase/functions/send-push-notification/index.ts` |
-| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-design-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts` |
+| status | valor `duplicate_ignored` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-credit-decision/index.ts`<br>`escreve:supabase/functions/receive-design-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-webhook/index.ts` |
+| status | valor `pedido_nao_encontrado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/receive-credit-decision/index.ts` |
 | status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-design-sync/index.ts`<br>`escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `server_misconfigured` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
 | status | valor `invalid_signature` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/receive-quote-sync/index.ts` |
@@ -681,7 +682,7 @@
 - `status_transitions.status_destino` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `stage_probabilities.stage` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `plan_rollback_ddl.etapa` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 405/414 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
+- 406/415 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `entity_versions`, `sales`, `daily_metrics`, `category_metrics`, `salespeople`, `sales_goals`, `deal_outcomes`, `deal_stage_history`, `objections_library`, `notification_preferences`, `tasks`, `playbooks` …
 - Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes

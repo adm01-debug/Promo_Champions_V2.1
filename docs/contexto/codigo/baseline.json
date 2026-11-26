@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "736d7cc3569a17a757ab3b3f8688f754eccd74d1",
+  "commit": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
   "branch": "main",
-  "data_commit": "2026-11-26T17:31:29-03:00",
+  "data_commit": "2026-11-26T18:06:48-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "a751303",
+    "data": "2026-11-26",
+    "assunto": "feat: análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance (#761)"
+   },
    {
     "sha": "736d7cc",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "ed11613",
     "data": "2026-11-24",
     "assunto": "ci: dispara apply-migration no merge de migration (#734)"
-   },
-   {
-    "sha": "652e105",
-    "data": "2026-11-24",
-    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)"
    }
   ],
-  "arquivos_mudados_7d": 368,
+  "arquivos_mudados_7d": 376,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3698,
-  "arquivos_codigo": 2629,
-  "linhas_codigo": 450967,
+  "arquivos_total": 3703,
+  "arquivos_codigo": 2633,
+  "linhas_codigo": 451461,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -324,11 +324,11 @@
   "modulos": 176,
   "componentes": 1291,
   "hooks": 484,
-  "edge_functions": 173,
-  "tabelas": 421,
-  "migrations": 717,
-  "cron_jobs": 40,
-  "testes": 289,
+  "edge_functions": 175,
+  "tabelas": 422,
+  "migrations": 718,
+  "cron_jobs": 41,
+  "testes": 290,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1243,
-   "linhas": 195469
+   "linhas": 195499
   },
   "src/config": {
    "arquivos": 4,
@@ -608,7 +608,7 @@
   },
   "src/hooks": {
    "arquivos": 558,
-   "linhas": 66135
+   "linhas": 66141
   },
   "src/integrations": {
    "arquivos": 5,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 187,
-   "linhas": 45778
+   "linhas": 45788
   },
   "src/routes": {
    "arquivos": 5,
@@ -647,8 +647,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 333,
-   "linhas": 68175
+   "arquivos": 337,
+   "linhas": 68623
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -893,6 +893,7 @@
    "winloss-webhook-timeline"
   ],
   "edges_chamadas_sem_pasta": [
+   "credito-solicitacao",
    "receive-os-sync"
   ],
   "tabelas_sem_rls": [

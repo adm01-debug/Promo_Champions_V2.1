@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2349,
- "arestas": 9703,
+ "nos": 2352,
+ "arestas": 9717,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -38,11 +38,11 @@
   },
   {
    "arquivo": "supabase/functions/_shared/request-id.ts",
-   "importado_por": 175
+   "importado_por": 177
   },
   {
    "arquivo": "supabase/functions/_shared/cors.ts",
-   "importado_por": 174
+   "importado_por": 176
   },
   {
    "arquivo": "src/components/ui/label.tsx",
@@ -94,7 +94,7 @@
   },
   {
    "arquivo": "supabase/functions/_shared/fetch-with-timeout.ts",
-   "importado_por": 72
+   "importado_por": 73
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
@@ -102,7 +102,7 @@
   },
   {
    "arquivo": "supabase/functions/_shared/rate-limit.ts",
-   "importado_por": 63
+   "importado_por": 64
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",
@@ -161,8 +161,8 @@
    "importado_por": 28
   },
   {
-   "arquivo": "src/components/ui/alert-dialog.tsx",
-   "importado_por": 27
+   "arquivo": "supabase/functions/_shared/validation.ts",
+   "importado_por": 28
   }
  ],
  "ciclos": {

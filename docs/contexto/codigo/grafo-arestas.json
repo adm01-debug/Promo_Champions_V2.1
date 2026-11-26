@@ -12658,6 +12658,15 @@
    "supabase/functions/_shared/request-id.ts",
    "supabase/functions/_shared/sale-statuses.ts"
   ],
+  "supabase/functions/credit-dispatch/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/cron-request-auth.ts",
+   "supabase/functions/_shared/fetch-with-timeout.ts",
+   "supabase/functions/_shared/http-envelope.ts",
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/validation.ts",
+   "supabase/functions/supply-dispatch/contract.ts"
+  ],
   "supabase/functions/cron-failure-alerter/index.ts": [
    "supabase/functions/_shared/alert-escalation.ts",
    "supabase/functions/_shared/cors.ts",
@@ -13296,6 +13305,15 @@
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/rate-limit.ts",
    "supabase/functions/_shared/request-id.ts"
+  ],
+  "supabase/functions/receive-credit-decision/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/http-envelope.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/request-body.ts",
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/_shared/webhook-validator.ts",
+   "supabase/functions/receive-credit-decision/contract.ts"
   ],
   "supabase/functions/receive-design-sync/contract_test.ts": [
    "supabase/functions/receive-design-sync/mapping.ts"

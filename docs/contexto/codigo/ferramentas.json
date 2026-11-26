@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2548)",
-   "SQL (729)",
+   "TypeScript (2552)",
+   "SQL (730)",
    "Markdown (225)",
    "JavaScript (78)",
    "JSON (33)",
@@ -1585,6 +1585,7 @@
    "EXTERNAL_BRIDGE_ALLOWED_RPCS",
    "EXTERNAL_SUPABASE_ANON_KEY",
    "EXTERNAL_SUPABASE_URL",
+   "FINANCE_CREDITO_WEBHOOK_SECRET",
    "FORMAT",
    "FRESHDESK_API_KEY",
    "FRESHDESK_DOMAIN",
@@ -1596,6 +1597,8 @@
    "OPENROUTER_BASE_URL",
    "OPENROUTER_EMBEDDINGS_BASE_URL",
    "PROMOGIFTS_WEBHOOK_SECRET",
+   "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET",
+   "PROMO_FINANCE_CREDITO_WEBHOOK_URL",
    "PROMO_SUPPLY_WEBHOOK_SECRET",
    "PROMO_SUPPLY_WEBHOOK_URL",
    "QUOTE_CONVERSION_WEBHOOK_URL",
@@ -1815,6 +1818,10 @@
     "arquivos": 1
    },
    {
+    "host": "bwwbeyolnnzppeuhgkcd.supabase.co",
+    "arquivos": 1
+   },
+   {
     "host": "carto.com",
     "arquivos": 1
    },
@@ -1940,11 +1947,14 @@
    "EVOLUTION_API_KEY",
    "EVOLUTION_API_URL",
    "EVOLUTION_INSTANCE",
+   "FINANCE_CREDITO_WEBHOOK_SECRET",
    "FRESHDESK_API_KEY",
    "INTERCOM_ACCESS_TOKEN",
    "METRICS_INGEST_TOKEN",
    "OPENROUTER_API_KEY",
    "PROMOGIFTS_WEBHOOK_SECRET",
+   "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET",
+   "PROMO_FINANCE_CREDITO_WEBHOOK_URL",
    "PROMO_SUPPLY_WEBHOOK_SECRET",
    "PROMO_SUPPLY_WEBHOOK_URL",
    "QUOTE_CONVERSION_WEBHOOK_URL",
@@ -1969,6 +1979,7 @@
    "bitrix24-oauth",
    "campaign-health-alert",
    "check-v4-callback-alerts",
+   "credit-dispatch",
    "cron-failure-alerter",
    "deal-risk-digest",
    "detect-client-churn-alerts",
@@ -1982,6 +1993,7 @@
    "multichannel-status-webhook",
    "notify-v4-quote-status",
    "process-call-recording-ingest",
+   "receive-credit-decision",
    "receive-design-sync",
    "receive-quote-sync",
    "receive-quote-webhook",

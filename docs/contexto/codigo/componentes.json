@@ -19674,7 +19674,7 @@
     "OrderDetailPage"
    ],
    "export_default": "OrderDetailPage",
-   "linhas": 120,
+   "linhas": 130,
    "dominio": "pages",
    "hooks_locais": [
     "useOrder"

@@ -2,11 +2,12 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "pasta": "supabase/functions",
- "total": 173,
+ "total": 175,
  "verify_jwt_false": [
   "bitrix24-oauth",
   "campaign-health-alert",
   "check-v4-callback-alerts",
+  "credit-dispatch",
   "cron-failure-alerter",
   "deal-risk-digest",
   "detect-client-churn-alerts",
@@ -20,6 +21,7 @@
   "multichannel-status-webhook",
   "notify-v4-quote-status",
   "process-call-recording-ingest",
+  "receive-credit-decision",
   "receive-design-sync",
   "receive-quote-sync",
   "receive-quote-webhook",
@@ -1680,6 +1682,48 @@
    "chamada_por_sql_ou_cron": false,
    "orfa": false,
    "testes": 1
+  },
+  {
+   "nome": "credit-dispatch",
+   "entrada": "supabase/functions/credit-dispatch/index.ts",
+   "arquivos": 1,
+   "linhas": 173,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "_internal_secrets"
+   ],
+   "rpcs": [
+    "claim_credit_outbox",
+    "finish_credit_outbox"
+   ],
+   "env": [
+    "PROMO_FINANCE_CREDITO_WEBHOOK_SECRET",
+    "PROMO_FINANCE_CREDITO_WEBHOOK_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [
+    "credito-solicitacao"
+   ],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "cron-request-auth.ts",
+    "fetch-with-timeout.ts",
+    "http-envelope.ts",
+    "request-id.ts",
+    "validation.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
   },
   {
    "nome": "cron-failure-alerter",
@@ -4578,6 +4622,44 @@
    "testes": 0
   },
   {
+   "nome": "receive-credit-decision",
+   "entrada": "supabase/functions/receive-credit-decision/index.ts",
+   "arquivos": 2,
+   "linhas": 235,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "webhook_inbound_dedupe"
+   ],
+   "rpcs": [
+    "aplicar_decisao_credito"
+   ],
+   "env": [
+    "FINANCE_CREDITO_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cors.ts",
+    "http-envelope.ts",
+    "rate-limit.ts",
+    "request-body.ts",
+    "request-id.ts",
+    "webhook-validator.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
    "nome": "receive-design-sync",
    "entrada": "supabase/functions/receive-design-sync/index.ts",
    "arquivos": 3,
@@ -6851,6 +6933,7 @@
   }
  ],
  "chamadas_sem_pasta": [
+  "credito-solicitacao",
   "receive-os-sync"
  ]
 }

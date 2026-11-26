@@ -5,9 +5,9 @@
   "vitest",
   "playwright"
  ],
- "total": 289,
+ "total": 290,
  "por_tipo": {
-  "contrato": 7,
+  "contrato": 8,
   "e2e": 54,
   "pytest": 2,
   "unit": 217
@@ -15,7 +15,7 @@
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 201
+   "arquivos": 202
   },
   {
    "padrao": "tests/",
@@ -2003,6 +2003,15 @@
    "casos": 6
   },
   {
+   "arquivo": "supabase/functions/receive-credit-decision/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 40,
+   "testa": [
+    "supabase/functions/receive-credit-decision/contract.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "supabase/functions/receive-design-sync/mapping.test.ts",
    "tipo": "unit",
    "linhas": 106,
@@ -2680,6 +2689,7 @@
   "supabase/functions/detect-winloss-at-risk/scoring.ts": 1,
   "supabase/functions/execute-workflow/actions.ts": 1,
   "supabase/functions/qbr-scheduler/agenda-event.ts": 1,
+  "supabase/functions/receive-credit-decision/contract.ts": 1,
   "supabase/functions/receive-design-sync/mapping.ts": 1,
   "supabase/functions/supply-dispatch/contract.ts": 1
  },
@@ -3286,6 +3296,7 @@
    "collect-race-powerup",
    "compute-forecast-accuracy",
    "conversational-intelligence",
+   "credit-dispatch",
    "csat-ces-trigger",
    "customer-success-360",
    "customer-success-hub",

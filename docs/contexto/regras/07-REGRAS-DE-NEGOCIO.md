@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `736d7cc356` · branch `main` · 2026-11-26 20:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a7513039cc` · branch `main` · 2026-11-26 21:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -101,6 +101,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `follow_up_audit_logs` | Admins and managers can update audit logs | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | `chat_messages` | Users can delete own chat_messages | DELETE | authenticated | permissive | `conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_current_salesperson_id() )` |  |
 | `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
+| `credit_outbox` | credit_outbox_admin_read | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
 | `_internal_secrets` | Deny all access to _internal_secrets | ALL | authenticated, anon | permissive | `false` | `false` |
 | `ab_tests` | Admins and managers can manage ab_tests | ALL | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `access_denied_logs` | Admins can view access logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))` |  |
@@ -310,8 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `commercial_approval_requests` | Criar solicitações | INSERT | authenticated | permissive |  | `(auth.uid() = requester_id)` |
 | `commercial_approval_requests` | Only admins and managers can update approval requests | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `commercial_approval_requests` | Users can create approval requests | INSERT | authenticated | permissive |  | `(auth.uid() = requester_id)` |
-| `commercial_approval_requests` | Users can view their own approval requests | SELECT | authenticated | permissive | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |  |
-| … +807 linhas — lista completa em `context.json` | | | | | | |
+| … +808 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chat_conversations` | `updated_at` | default now() |
 | `chat_messages` | `id` | default gen_random_uuid() |
 | `chat_messages` | `conversation_id` | obrigatório |
-| … +2672 linhas — lista completa em `context.json` | | |
+| … +2683 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -634,6 +634,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | update_cadence_tasks_updated_at | BEFORE UPDATE | `cadence_tasks` | `update_updated_at_column` |  |
 | trg_designs_inbound_updated_at | BEFORE UPDATE | `designs_inbound` | `set_designs_inbound_updated_at` |  |
 | trg_supply_enqueue_from_order_item | AFTER INSERT | `order_items` | `tg_supply_enqueue_from_order_item` |  |
+| trg_order_marca_primeira_venda | BEFORE INSERT | `orders` | `tg_order_marca_primeira_venda` |  |
+| trg_credit_enqueue_from_order | AFTER INSERT | `orders` | `tg_credit_enqueue_from_order` |  |
 | set_updated_at | BEFORE UPDATE | `account_contacts` | `handle_updated_at` |  |
 | trg_account_contacts_updated_at | BEFORE UPDATE | `account_contacts` | `update_updated_at_column` |  |
 | set_updated_at | BEFORE UPDATE | `account_plans` | `handle_updated_at` |  |
@@ -921,9 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | set_updated_at | BEFORE UPDATE | `sales_territories` | `handle_updated_at` |  |
 | set_updated_at | BEFORE UPDATE | `salespeople` | `handle_updated_at` |  |
 | update_salespeople_updated_at | BEFORE UPDATE | `salespeople` | `update_updated_at_column` |  |
-| set_updated_at | BEFORE UPDATE | `salesperson_commission_configs` | `handle_updated_at` |  |
-| set_updated_at | BEFORE UPDATE | `salesperson_custom_field_values` | `handle_updated_at` |  |
-| … +89 linhas — lista completa em `context.json` | | | | |
+| … +91 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -931,6 +931,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |---|---|---|
 | `post_internal_edge_job` | internal_edge_job_secrets_missing | `supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql` |
 | `post_internal_edge_job` | internal_edge_job_base_url_must_be_https | `supabase/migrations/20261124160000_timeout_por_funcao_no_dispatcher.sql` |
+| `aplicar_decisao_credito` | decisao_invalida | `supabase/migrations/20261128130000_analise_credito_primeira_venda.sql` |
 | `compute_cohort_retention` | Cohort não encontrado ou sem permissão | `supabase/schema.sql` |
 | `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/schema.sql` |
 | `add_league_weekly_xp` | Not authorized | `supabase/schema.sql` |
@@ -1265,6 +1266,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `stage_probabilities` | `stage` | **livre (sem enum/CHECK)** |  |
 | `plan_rollback_ddl` | `etapa` | **livre (sem enum/CHECK)** |  |
 | `supply_outbox` | `status` | `dead`, `delivered`, `pending`, `processing` | `pending` |
+| `credit_outbox` | `status` | `dead`, `delivered`, `pending`, `processing` | `pending` |
 
 ### E.2 Mapas de transição declarados no código
 
@@ -1484,10 +1486,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `acknowledged` | compara, escreve | `src/pages/MomentosCriticos.tsx` |
 | `status` | `actioned` | compara, escreve | `src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx` |
 | `status` | `active` | compara, escreve, filtra | `src/components/analytics/ClientHealthPanel.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/clients/ClientKanban.tsx`<br>`src/components/competitive/BattleArena.tsx`<br>… +37 |
+| `status` | `aguardando_credito` | compara | `src/components/orders/orderHelpers.ts` |
 | `status` | `ahead` | compara | `src/components/race/GhostStatusBadge.tsx` |
 | `status` | `all` | compara, escreve | `src/components/sdr/RecentProspects.tsx`<br>`src/components/sdr/SDRAdvancedFilters.tsx`<br>`src/hooks/admin/useDataSubjectRequests.ts`<br>`src/hooks/sequences/useSendTimeOptimization.ts`<br>`src/hooks/useCriticalMoments.ts`<br>… +3 |
 | `status` | `analyzing` | escreve | `supabase/functions/analyze-call/index.ts` |
 | `status` | `approved` | compara, escreve, filtra | `src/components/quotes/QuoteCard.tsx`<br>`src/components/security/PasswordResetApproval.tsx`<br>`src/hooks/cadences/useQuoteCadenceComparison.ts`<br>`src/hooks/cadences/useQuoteCadenceConversion.ts`<br>`src/hooks/cadences/useQuoteCadences.ts`<br>… +7 |
+| `status` | `aprovado` | compara | `src/components/orders/orderHelpers.ts` |
 | `status` | `archived` | compara, escreve | `src/components/win-loss/ReplayStatusByIdPanel.tsx`<br>`src/hooks/win-loss/useWebhookDeadLetters.ts` |
 | `status` | `at_risk` | compara | `src/pages/AccountBasedSelling.tsx`<br>`supabase/functions/customer-success-360/index.ts` |
 | `status` | `ativo` | escreve | `src/hooks/useProducts.ts` |
@@ -1513,7 +1517,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx` |
 | `status` | `done` | escreve | `src/hooks/dialer/usePowerDialer.ts` |
 | `status` | `draft` | compara, escreve | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/quotes/QuoteCard.tsx`<br>`src/components/quotes/QuoteDetailDialog.tsx`<br>`src/hooks/cadences/useABTests.ts`<br>`src/hooks/useDigitalSignatures.ts`<br>… +2 |
-| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
+| `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-credit-decision/index.ts`<br>`supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
 | `status` | `erro` | compara | `src/components/admin/AdminSystemStatus.tsx` |
 | `status` | `error` | compara, escreve | `src/components/admin/BackendAutomationMonitor.tsx`<br>`src/components/admin/QuoteSyncLogsPanel.tsx`<br>`src/components/dashboard/DevKpiDebugPanel.tsx`<br>`src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/hooks/useQueryPerformance.ts`<br>… +5 |
 | `status` | `etapa_inexistente` | escreve | `supabase/functions/_shared/deal-probability-calc_test.ts` |
@@ -1566,6 +1570,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `paid` | compara, escreve | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/hooks/useCommissionBonusAwards.ts`<br>`src/hooks/useCommissions.ts`<br>`src/pages/AdminAuditoriaPremiacoes.tsx`<br>`src/pages/Comissoes.tsx`<br>… +2 |
 | `status` | `passed` | compara, escreve | `supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
+| `status` | `pedido_nao_encontrado` | compara | `supabase/functions/receive-credit-decision/index.ts` |
 | `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
 | `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +57 |
 | `status` | `pending_approval` | compara, filtra | `supabase/functions/ai-agent-orchestrator/index.ts` |
@@ -1574,10 +1579,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `preparing` | compara | `src/components/orders/orderHelpers.ts` |
 | `status` | `processed` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `processing` | escreve, filtra | `supabase/functions/process-scheduled-sends/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
-| `status` | `proposal` | compara, escreve, filtra | `src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/sdr/SDRConversionRanking.tsx`<br>`src/hooks/useCloserMetrics.ts`<br>`src/hooks/useNextBestAction.ts`<br>`src/lib/winloss/atRiskFixtures.ts`<br>… +4 |
-| `status` | `proposed` | compara | `supabase/functions/customer-success-360/index.ts` |
-| `status` | `prospecting` | compara | `src/components/pipeline/DealSummaryCard.tsx` |
-| … +125 linhas — lista completa em `context.json` | | | |
+| … +130 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1646,6 +1648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | LeadConnectionStatus | connected \| connecting \| error | `src/components/lead-scoring/scoring-ui.tsx` |
 | SUGGESTED_QUESTIONS | 'Quanto vendi em março?', 'Minha taxa de conversão essa semana', 'Top 5 clientes do trimestre', 'Quantas atividades fiz nos últimos 7 dias', 'Receita por categoria este mês', 'Pipeline aberto agora', | `src/components/nlq/nlqHelpers.ts` |
 | OrderStatus | pending \| confirmed \| preparing \| shipped \| delivered \| cancelled | `src/components/orders/orderHelpers.ts` |
+| CreditStatus | nao_aplicavel \| aguardando_credito \| aprovado \| reprovado | `src/components/orders/orderHelpers.ts` |
 | RaceFlag | green \| yellow \| red \| checkered | `src/components/race/RaceControlPanel.tsx` |
 | LiveryPattern | solid \| stripes \| flames \| checkers \| dots \| pride-rainbow \| pride-rainbow-diagonal \| pride-trans \| pride-bi | `src/components/race/raceColors.ts` |
 | ScheduleFrequency | daily \| weekly \| monthly | `src/components/reporting/scheduledReportHelpers.ts` |
@@ -1927,6 +1930,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **notificationRowSchema** (`supabase/functions/_shared/notification-categories.ts`, z.object):
   ```ts
   { user_id: z.string().uuid(), type: z.string().min(1).max(64), title: z.string().min(1).max(200), category: notificationCategorySchema.optional(), priority: notificationPrioritySchema.optional(), message: z.string().max(2000).nullish(), icon: z.string().max(64).nullish(), action_url: z.string().max(500).nullish(), action_label: z.string().max(100).nullish(), metadata: z.record(z.unknown()).nullish(), expires_at: z.string().nullish(), }
+  ```
+- **CreditDecisionPayloadSchema** (`supabase/functions/receive-credit-decision/contract.ts`, z.object):
+  ```ts
+  { pedido_id: z.string().uuid({ message: "pedido_id deve ser um UUID" }), analise_id: z.string().min(1, { message: "analise_id e obrigatorio" }), decisao: z.enum(["aprovado", "reprovado"], { errorMap: () => ({ message: "decisao deve ser 'aprovado' ou 'reprovado'" }), }), limite_aprovado: z.number().nonnegative().optional().nullable(), parcelas_max: z.number().int().positive().max(60).optional().nullable(), parecer: z.string().max(2000).optional().nullable(), decidido_em: z.string().optional().nullable(), }
   ```
 - **DesignPayloadSchema** (`supabase/functions/receive-design-sync/mapping.ts`, z.object):
   ```ts
@@ -3170,6 +3177,7 @@ _nenhum item encontrado_
 | `PENDING_CLAIM_STALE_MS` | `60` | `supabase/functions/bitrix24-sync/index.ts` |
 | `BITRIX_LIST_MAX_PAGES` | `40` | `supabase/functions/bitrix24-sync/index.ts` |
 | `MAX_ATTEMPTS` | `5` | `supabase/functions/check-v4-callback-alerts/index.ts` |
+| `BATCH_SIZE` | `25` | `supabase/functions/credit-dispatch/index.ts` |
 | `BITRIX24_FAILURE_THRESHOLD` | `3` | `supabase/functions/cron-failure-alerter/index.ts` |
 | `DIGEST_TYPE` | `'deal_risk_digest'` | `supabase/functions/deal-risk-digest/index.ts` |
 | `HEALTH_THRESHOLD` | `50` | `supabase/functions/deal-risk-digest/index.ts` |
@@ -3203,6 +3211,8 @@ _nenhum item encontrado_
 | `QBR_EVENT_TYPE` | `"meeting"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
 | `QBR_EVENT_STATUS` | `"pending"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
 | `COMMENTARY_CACHE_TTL_MS` | `60` | `supabase/functions/race-commentary/index.ts` |
+| `CREDIT_DECISION_EVENT` | `"credito.decidido"` | `supabase/functions/receive-credit-decision/contract.ts` |
+| `MAX_WEBHOOK_BODY_BYTES` | `64` | `supabase/functions/receive-credit-decision/index.ts` |
 | `MAX_WEBHOOK_BODY_BYTES` | `240` | `supabase/functions/receive-design-sync/index.ts` |
 | `MAX_EVENT_LENGTH` | `120` | `supabase/functions/receive-design-sync/index.ts` |
 | `MAX_WEBHOOK_BODY_BYTES` | `240` | `supabase/functions/receive-quote-sync/index.ts` |
@@ -3567,7 +3577,7 @@ _nenhum item encontrado_
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +157 linhas — lista completa em `context.json` | |
+| … +159 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4179,7 +4189,7 @@ _nenhum item encontrado_
 | useAuth must be used within an AuthProvider | `src/contexts/AuthContext.tsx` |
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
-| … +702 linhas — lista completa em `context.json` | |
+| … +704 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4285,7 +4295,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1863 testes em 251 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1866 testes em 252 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4493,6 +4503,7 @@ _nenhum item encontrado_
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
 | `src/test/activities-soft-delete-functions.test.ts` | 3 | funções SQL ignoram activities apagadas (soft delete) · %s: toda leitura de activities filtra deleted_at IS NULL · a correção não desfaz o status canônico nem o alias anti-ambiguidade |
 | `src/test/security/battle-participants-insert-policy.test.ts` | 3 | battle_participants — INSERT para admin/gestor · existe policy de INSERT viva liberando is_admin_or_manager(auth.uid()) · vendedor continua limitado à auto-inscrição |
+| `supabase/functions/receive-credit-decision/contract.test.ts` | 3 | assinatura HMAC confere com vetor conhecido · payload aprovado com limite e parcelas passa · decisao fora de aprovado/reprovado e pedido sem UUID sao rejeitados |
 | `supabase/functions/supply-dispatch/contract.test.ts` | 3 | assinatura HMAC confere com vetor conhecido · envelope preserva payload e usa id da fila como correlation_key · apenas 2xx conta como entregue |
 | `tests/e2e/quote-to-sale-error-payload-ui.spec.ts` | 3 | Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN) · TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada · FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada |
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
@@ -4806,6 +4817,7 @@ _nenhum item encontrado_
 | `notify` | `supabase/migrations/20261124130000_reconcilia_retry_edge_jobs.sql` |
 | `notify` | `supabase/migrations/20261125110000_espalha_schedules_cron_evita_startup_timeout.sql` |
 | `notify` | `supabase/migrations/20261126090000_champions_supply_outbox.sql` |
+| `notify` | `supabase/migrations/20261128130000_analise_credito_primeira_venda.sql` |
 | `notify` | `tests/migrations/canonical_hardening_contract_test.ts` |
 
 ## N. Regras citadas em comentários do código
