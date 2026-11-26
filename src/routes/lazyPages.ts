@@ -74,6 +74,9 @@ export const ConversationalIntelligence = lazyWithPrefetch(
 export const ConversationalIntelligenceRecordings = lazyWithPrefetch(
   () => import('@/pages/ConversationalIntelligence')
 );
+export const MomentosCriticos = lazyWithPrefetch(
+  () => import('@/pages/MomentosCriticos')
+);
 export const RevenueIntelligence = lazyWithPrefetch(
   () => import('@/pages/RevenueIntelligence')
 );
