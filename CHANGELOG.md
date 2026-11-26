@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
+
+
+### Correções
+
+* doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status ([#749](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/749)) ([b564fa6](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b564fa6a44e77bd32a09eefe8062f2fb21cee322))
+
 ## [1.10.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.9.0...promo-champions-v2-v1.10.0) (2026-11-25)
 
 
