@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bae0352ac6` · branch `main` · 2026-11-26 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c720950952` · branch `main` · 2026-11-26 16:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -488,8 +488,6 @@
 | tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `user_permissions_cache` usada no código não existe nas migrations/types do repo | `supabase/migrations/20251228000002_advanced_permissions.sql` |
 | tabela | tabela `users` usada no código não existe nas migrations/types do repo | `scripts/graphify/static-contracts.test.mjs` |
-| rls | `chat_messages`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
-| rls | `follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
 | dinheiro | `slow_query_alerts.total_exec_ms` guarda dinheiro em `double precision NOT NULL` (ponto flutuante) — arredondamento imprevisível; padrão é numeric |  |
 | edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
 | edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |

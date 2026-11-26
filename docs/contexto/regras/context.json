@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bae0352ac66f134078cb944790e2c68d2c15071f",
+  "sha": "c72095095217bc55427854b9c5666b556c8d3113",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 15:47 UTC",
-  "files_total": 3711,
-  "code_files": 3356,
-  "code_lines": 486539
+  "generated_at": "2026-11-26 16:08 UTC",
+  "files_total": 3713,
+  "code_files": 3358,
+  "code_lines": 486790
  },
  "version": "1.3.2",
- "facts_hash": "a330551f786cc263",
+ "facts_hash": "cbff711d8c6d0020",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -426,9 +426,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1409,
+   ".tsx": 1410,
    ".ts": 1137,
-   ".sql": 728,
+   ".sql": 729,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -33167,16 +33167,6 @@
     "src": "supabase/migrations/20260903000001_enable_rls_leads.sql"
    },
    {
-    "name": "authenticated can insert error logs",
-    "table": "error_logs",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "(user_id IS NULL) OR (user_id = auth.uid())",
-    "src": "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql"
-   },
-   {
     "name": "Admins e managers podem ler designs_inbound",
     "table": "designs_inbound",
     "cmd": "SELECT",
@@ -33195,6 +33185,56 @@
     "using": "public.is_admin_or_manager(auth.uid())",
     "check": "",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "name": "Admins/managers can manage alert templates",
+    "table": "cadence_alert_templates",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Admins/managers can manage outcome rules",
+    "table": "cadence_outcome_rules",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Admins and managers can update audit logs",
+    "table": "follow_up_audit_logs",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Users can delete own chat_messages",
+    "table": "chat_messages",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "authenticated can insert error logs",
+    "table": "error_logs",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(user_id IS NULL) OR (user_id = auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -68138,6 +68178,7 @@
    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
    "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
    "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
+   "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
    "supabase/schema.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
@@ -107651,8 +107692,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 557,
-   "lines": 66003,
+   "files": 558,
+   "lines": 66132,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108295,7 +108336,7 @@
   {
    "module": "src/pages",
    "files": 187,
-   "lines": 45775,
+   "lines": 45778,
    "tables": [
     "achievements",
     "activities",
@@ -109058,8 +109099,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 716,
-   "lines": 59958,
+   "files": 717,
+   "lines": 60077,
    "tables": [
     "user_permissions_cache"
    ],
@@ -121798,6 +121839,14 @@
    },
    {
     "file": "src/hooks/sales/useSalesAssistant.ts",
+    "msg": "Nao foi possivel excluir a conversa: ${conversationError.message}"
+   },
+   {
+    "file": "src/hooks/sales/useSalesAssistant.ts",
+    "msg": "Nao foi possivel excluir as mensagens da conversa: ${messagesError.message}"
+   },
+   {
+    "file": "src/hooks/sales/useSalesAssistant.ts",
     "msg": "Não foi possível criar ou encontrar uma conversa."
    },
    {
@@ -122063,6 +122112,10 @@
    {
     "file": "src/pages/FeatureFlagsAdmin.tsx",
     "msg": "Key obrigatória"
+   },
+   {
+    "file": "src/pages/FollowUpAudit.tsx",
+    "msg": "Follow-up aberto, mas o registro falhou: ${error.message}"
    },
    {
     "file": "src/pages/FollowUpInteligente.tsx",
@@ -125535,6 +125588,10 @@
    {
     "file": "supabase/migrations/20261117190000_fix_403_policies_lendo_auth_users.sql",
     "text": ") FROM public.audit_log          -> 42501 permission denied for table users"
+   },
+   {
+    "file": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
+    "text": "chat_messages: DELETE apenas para o dono da conversa"
    },
    {
     "file": "tests/migrations/authz_hardening_contract_test.ts",
@@ -162215,6 +162272,18 @@
     "name": "não consulta nem salva sem perfil de vendedor"
    },
    {
+    "file": "src/hooks/sales/useSalesAssistant.test.tsx",
+    "name": "useSalesAssistant.deleteConversation"
+   },
+   {
+    "file": "src/hooks/sales/useSalesAssistant.test.tsx",
+    "name": "RLS bloqueia as mensagens: avisa o usuario e preserva a conversa"
+   },
+   {
+    "file": "src/hooks/sales/useSalesAssistant.test.tsx",
+    "name": "sucesso: apaga mensagens e depois a conversa, sem aviso de erro"
+   },
+   {
     "file": "src/hooks/sales/useSalesBattles.test.tsx",
     "name": "useSalesBattles — editar e cancelar"
    },
@@ -168431,16 +168500,6 @@
     "src": "supabase/migrations/20260903000001_enable_rls_leads.sql"
    },
    {
-    "name": "authenticated can insert error logs",
-    "table": "error_logs",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "(user_id IS NULL) OR (user_id = auth.uid())",
-    "src": "supabase/migrations/20261117170000_fix_403_error_logs_insert_authenticated.sql"
-   },
-   {
     "name": "Admins e managers podem ler designs_inbound",
     "table": "designs_inbound",
     "cmd": "SELECT",
@@ -168459,6 +168518,56 @@
     "using": "public.is_admin_or_manager(auth.uid())",
     "check": "",
     "src": "supabase/migrations/20261126090000_champions_supply_outbox.sql"
+   },
+   {
+    "name": "Admins/managers can manage alert templates",
+    "table": "cadence_alert_templates",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Admins/managers can manage outcome rules",
+    "table": "cadence_outcome_rules",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Admins and managers can update audit logs",
+    "table": "follow_up_audit_logs",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "is_admin_or_manager(auth.uid())",
+    "check": "is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "Users can delete own chat_messages",
+    "table": "chat_messages",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+   },
+   {
+    "name": "authenticated can insert error logs",
+    "table": "error_logs",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(user_id IS NULL) OR (user_id = auth.uid())",
+    "src": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
    },
    {
     "name": "Deny all access to _internal_secrets",
@@ -194720,16 +194829,20 @@
     "rls": "enabled",
     "SELECT": [
      "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())",
      "authenticated: true"
     ],
     "INSERT": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ],
     "UPDATE": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ],
     "DELETE": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ]
    },
    "cadence_enrollment_rules": {
@@ -194768,16 +194881,20 @@
     "rls": "enabled",
     "SELECT": [
      "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())",
      "authenticated: true"
     ],
     "INSERT": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ],
     "UPDATE": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ],
     "DELETE": [
-     "public: true"
+     "public: true",
+     "authenticated: is_admin_or_manager(auth.uid())"
     ]
    },
    "cadence_steps": {
@@ -195140,7 +195257,9 @@
      "authenticated: (conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_cur"
     ],
     "UPDATE": [],
-    "DELETE": []
+    "DELETE": [
+     "authenticated: conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_curre"
+    ]
    },
    "churn_alert_settings": {
     "rls": "enabled",
@@ -196469,7 +196588,9 @@
     "INSERT": [
      "PUBLIC: (auth.uid() IS NOT NULL)"
     ],
-    "UPDATE": [],
+    "UPDATE": [
+     "authenticated: is_admin_or_manager(auth.uid())"
+    ],
     "DELETE": []
    },
    "follow_up_notifications": {
@@ -199900,22 +200021,7 @@
     "DELETE": []
    }
   },
-  "risky": [
-   {
-    "table": "chat_messages",
-    "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/hooks/sales/useSalesAssistant.ts"
-    ]
-   },
-   {
-    "table": "follow_up_audit_logs",
-    "issue": "front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/pages/FollowUpAudit.tsx"
-    ]
-   }
-  ],
+  "risky": [],
   "service_role_files": [
    "scripts/ai-context/cenarios.mjs",
    "scripts/ai-context/gerar.unit.mjs",
@@ -228291,20 +228397,6 @@
     "msg": "tabela `users` usada no código não existe nas migrations/types do repo",
     "where": [
      "scripts/graphify/static-contracts.test.mjs"
-    ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`chat_messages`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/hooks/sales/useSalesAssistant.ts"
-    ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/pages/FollowUpAudit.tsx"
     ]
    },
    {
@@ -267536,9 +267628,19 @@
     "useContactFrequencyRules"
    ]
   },
+  "src/hooks/sales/useSalesAssistant.test.tsx": {
+   "path": "src/hooks/sales/useSalesAssistant.test.tsx",
+   "lines": 107,
+   "is_test": true,
+   "tests": [
+    "useSalesAssistant.deleteConversation",
+    "RLS bloqueia as mensagens: avisa o usuario e preserva a conversa",
+    "sucesso: apaga mensagens e depois a conversa, sem aviso de erro"
+   ]
+  },
   "src/hooks/sales/useSalesAssistant.ts": {
    "path": "src/hooks/sales/useSalesAssistant.ts",
-   "lines": 399,
+   "lines": 421,
    "exports": [
     "interface ChatMessage",
     "interface Conversation",
@@ -267598,6 +267700,8 @@
     ]
    },
    "errors": [
+    "Nao foi possivel excluir a conversa: ${conversationError.message}",
+    "Nao foi possivel excluir as mensagens da conversa: ${messagesError.message}",
     "Não foi possível criar ou encontrar uma conversa."
    ],
    "status_values": [
@@ -273854,7 +273958,7 @@
   },
   "src/pages/FollowUpAudit.tsx": {
    "path": "src/pages/FollowUpAudit.tsx",
-   "lines": 370,
+   "lines": 373,
    "exports": [
     "default FollowUpAudit"
    ],
@@ -273873,6 +273977,9 @@
      "id"
     ]
    },
+   "errors": [
+    "Follow-up aberto, mas o registro falhou: ${error.message}"
+   ],
    "status_values": [
     {
      "field": "status",
@@ -299087,6 +299194,13 @@
    "path": "supabase/migrations/20261127100000_backfill_supply_outbox_pedidos_pendentes.sql",
    "lines": 37
   },
+  "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql": {
+   "path": "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
+   "lines": 119,
+   "rule_comments": [
+    "chat_messages: DELETE apenas para o dono da conversa"
+   ]
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -301188,10 +301302,24 @@
   }
  },
  "git": {
-  "sha": "bae0352ac66f134078cb944790e2c68d2c15071f",
+  "sha": "c72095095217bc55427854b9c5666b556c8d3113",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "c720950",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) (#756)",
+    "files": [
+     "docs/qa/03-ACHADOS.md",
+     "docs/qa/05-PROGRESSO.md",
+     "src/hooks/sales/useSalesAssistant.test.tsx",
+     "src/hooks/sales/useSalesAssistant.ts",
+     "src/pages/FollowUpAudit.tsx",
+     "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql"
+    ]
+   },
    {
     "sha": "bae0352",
     "date": "2026-11-26",
@@ -301512,23 +301640,6 @@
      "src/pages/Agenda.tsx",
      "src/pages/Cadencias.tsx"
     ]
-   },
-   {
-    "sha": "7b75ef8",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)",
-    "files": [
-     "docs/qa/07-ACOES-DESTRUTIVAS.md",
-     "src/components/admin/connections/ConnectionsOverviewTable.test.tsx",
-     "src/components/admin/connections/ConnectionsOverviewTable.tsx",
-     "src/components/admin/connections/WebhooksTab.test.tsx",
-     "src/components/admin/connections/WebhooksTab.tsx",
-     "src/pages/CommissionRules.tsx",
-     "src/pages/CustomReports.tsx",
-     "src/pages/ScheduledReports.tsx",
-     "src/pages/WebhooksPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301551,6 +301662,10 @@
    [
     "src/components/layout/sidebar/sidebarMenuData.ts",
     3
+   ],
+   [
+    "docs/qa/05-PROGRESSO.md",
+    2
    ],
    [
     "src/components/dashboard/IntegrationStatusPanel.tsx",
@@ -301577,15 +301692,27 @@
     2
    ],
    [
-    "docs/qa/07-ACOES-DESTRUTIVAS.md",
-    2
-   ],
-   [
-    "src/components/dashboard/IntegrationStatusPanel.test.tsx",
+    "docs/qa/03-ACHADOS.md",
     1
    ],
    [
-    "docs/qa/05-PROGRESSO.md",
+    "src/hooks/sales/useSalesAssistant.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/sales/useSalesAssistant.ts",
+    1
+   ],
+   [
+    "src/pages/FollowUpAudit.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261128120000_restaura_escrita_bloqueada_por_rls.sql",
+    1
+   ],
+   [
+    "src/components/dashboard/IntegrationStatusPanel.test.tsx",
     1
    ],
    [
@@ -301594,22 +301721,6 @@
    ],
    [
     "src/hooks/useLeadScoring.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/useLeadScoring.ts",
-    1
-   ],
-   [
-    "src/components/sales/cadence/RuleAuditLogs.tsx",
-    1
-   ],
-   [
-    "src/hooks/orders/usePurchaseHistory.ts",
-    1
-   ],
-   [
-    "src/hooks/win-loss/useSentimentTrend.test.tsx",
     1
    ]
   ]

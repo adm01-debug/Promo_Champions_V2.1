@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 716,
+ "migrations": 717,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -7200,6 +7200,12 @@
    "rls": true,
    "policies": [
     {
+     "nome": "Admins/managers can manage alert templates",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Authenticated read for alert templates",
      "comando": "select",
      "para": "authenticated",
@@ -7566,6 +7572,12 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "Admins/managers can manage outcome rules",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Authenticated read for outcome rules",
      "comando": "select",
@@ -10822,6 +10834,12 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "Users can delete own chat_messages",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Users can insert own chat_messages",
      "comando": "insert",
@@ -21391,6 +21409,12 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "Admins and managers can update audit logs",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "Authenticated users can insert audit logs",
      "comando": "insert",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bae0352ac66f134078cb944790e2c68d2c15071f",
+  "commit": "c72095095217bc55427854b9c5666b556c8d3113",
   "branch": "main",
-  "data_commit": "2026-11-26T12:45:08-03:00",
+  "data_commit": "2026-11-26T13:05:56-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "c720950",
+    "data": "2026-11-26",
+    "assunto": "fix: restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) (#756)"
+   },
    {
     "sha": "bae0352",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "5d5329c",
     "data": "2026-11-24",
     "assunto": "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)"
-   },
-   {
-    "sha": "b1e8ab3",
-    "data": "2026-11-24",
-    "assunto": "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)"
    }
   ],
-  "arquivos_mudados_7d": 363,
+  "arquivos_mudados_7d": 366,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "arquivo": "deno.lock",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3696,
-  "arquivos_codigo": 2628,
-  "linhas_codigo": 450799,
+  "arquivos_total": 3698,
+  "arquivos_codigo": 2629,
+  "linhas_codigo": 450931,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -326,9 +326,9 @@
   "hooks": 484,
   "edge_functions": 173,
   "tabelas": 421,
-  "migrations": 716,
+  "migrations": 717,
   "cron_jobs": 40,
-  "testes": 288,
+  "testes": 289,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 557,
-   "linhas": 66003
+   "arquivos": 558,
+   "linhas": 66132
   },
   "src/integrations": {
    "arquivos": 5,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 187,
-   "linhas": 45775
+   "linhas": 45778
   },
   "src/routes": {
    "arquivos": 5,

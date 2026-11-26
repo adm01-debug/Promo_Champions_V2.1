@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 288,
+ "total": 289,
  "por_tipo": {
   "contrato": 7,
   "e2e": 54,
   "pytest": 2,
-  "unit": 216
+  "unit": 217
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 200
+   "arquivos": 201
   },
   {
    "padrao": "tests/",
@@ -1083,6 +1083,15 @@
     "src/hooks/sales/useContactFrequencyRules.ts"
    ],
    "casos": 9
+  },
+  {
+   "arquivo": "src/hooks/sales/useSalesAssistant.test.tsx",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/hooks/sales/useSalesAssistant.ts"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/hooks/sales/useSalesBattles.test.tsx",
@@ -2570,6 +2579,7 @@
   "src/hooks/reports/useMarkupMinSamplePreference.ts": 1,
   "src/hooks/reports/useSalesReport.ts": 1,
   "src/hooks/sales/useContactFrequencyRules.ts": 2,
+  "src/hooks/sales/useSalesAssistant.ts": 1,
   "src/hooks/sales/useSalesBattles.ts": 1,
   "src/hooks/sales/useSalesChartData.ts": 1,
   "src/hooks/sales/useSalesEnablement.ts": 2,
@@ -3040,7 +3050,6 @@
    "src/hooks/revenue/useRevenueHistory.ts",
    "src/hooks/revenue/useRevenueIntelligenceHub.ts",
    "src/hooks/revenue/useWinProbabilityCalibration.ts",
-   "src/hooks/sales/useSalesAssistant.ts",
    "src/hooks/sales/useSalesData.ts",
    "src/hooks/sales/useSalesInsights.ts",
    "src/hooks/sales/useSalespeople.ts",

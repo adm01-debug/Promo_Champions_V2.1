@@ -6636,7 +6636,7 @@
    "hooks_exportados": [
     "useSalesAssistant"
    ],
-   "linhas": 399,
+   "linhas": 421,
    "dominio": "hooks/sales",
    "tabelas": [
     "chat_conversations",
@@ -6658,7 +6658,7 @@
     "src/components/assistant/MessageBubble.tsx",
     "src/components/assistant/SalesAssistantChat.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/sales/useSalesBattles.ts",

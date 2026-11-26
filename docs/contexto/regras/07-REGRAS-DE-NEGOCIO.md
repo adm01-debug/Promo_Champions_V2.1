@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bae0352ac6` · branch `main` · 2026-11-26 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c720950952` · branch `main` · 2026-11-26 16:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -94,9 +94,13 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `storage.objects` | owner can read own report snapshots | SELECT | authenticated | permissive | `bucket_id = 'report-snapshots' AND ( public.is_admin_or_manager(auth.uid()) OR (storage.foldername(name))[1] = auth.uid()::text )` |  |
 | `storage.objects` | report_owners_can_write_exports | INSERT | authenticated | permissive |  | `bucket_id = 'report-exports' AND auth.uid()::text = (storage.foldername(name))[1]` |
 | `leads` | leads_authenticated_all | ALL | authenticated | permissive | `true` | `true` |
-| `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
 | `designs_inbound` | Admins e managers podem ler designs_inbound | SELECT | authenticated | permissive | `public.has_role(auth.uid(), 'admin'::app_role) OR public.has_role(auth.uid(), 'manager'::app_role) OR seller_email = auth.jwt() ->> 'email'` |  |
 | `supply_outbox` | supply_outbox_admin_read | SELECT | authenticated | permissive | `public.is_admin_or_manager(auth.uid())` |  |
+| `cadence_alert_templates` | Admins/managers can manage alert templates | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `cadence_outcome_rules` | Admins/managers can manage outcome rules | ALL | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `follow_up_audit_logs` | Admins and managers can update audit logs | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| `chat_messages` | Users can delete own chat_messages | DELETE | authenticated | permissive | `conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_current_salesperson_id() )` |  |
+| `error_logs` | authenticated can insert error logs | INSERT | authenticated | permissive |  | `(user_id IS NULL) OR (user_id = auth.uid())` |
 | `_internal_secrets` | Deny all access to _internal_secrets | ALL | authenticated, anon | permissive | `false` | `false` |
 | `ab_tests` | Admins and managers can manage ab_tests | ALL | PUBLIC | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `access_denied_logs` | Admins can view access logs | SELECT | PUBLIC | permissive | `(EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))` |  |
@@ -307,11 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `commercial_approval_requests` | Only admins and managers can update approval requests | UPDATE | authenticated | permissive | `is_admin_or_manager(auth.uid())` |  |
 | `commercial_approval_requests` | Users can create approval requests | INSERT | authenticated | permissive |  | `(auth.uid() = requester_id)` |
 | `commercial_approval_requests` | Users can view their own approval requests | SELECT | authenticated | permissive | `((auth.uid() = requester_id) OR is_admin_or_manager(auth.uid()))` |  |
-| `commercial_approval_requests` | Ver solicitações | SELECT | authenticated | permissive | `true` |  |
-| `commission_bonus_awards` | Admins delete awards | DELETE | authenticated | permissive | `has_role(auth.uid(), 'admin'::app_role)` |  |
-| `commission_bonus_awards` | Admins insert awards | INSERT | authenticated | permissive |  | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
-| `commission_bonus_awards` | Admins update awards | UPDATE | authenticated | permissive | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` | `(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
-| … +803 linhas — lista completa em `context.json` | | | | | | |
+| … +807 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -4179,7 +4179,7 @@ _nenhum item encontrado_
 | useAuth must be used within an AuthProvider | `src/contexts/AuthContext.tsx` |
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
-| … +699 linhas — lista completa em `context.json` | |
+| … +702 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1859 testes em 250 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1862 testes em 251 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4483,6 +4483,7 @@ _nenhum item encontrado_
 | `src/hooks/gamification/useWeeklyRanking.test.ts` | 3 | useWeeklyRanking (QA-069) · consulta sales com deleted_at nulo · mantem o recorte de status ganho e de janela da semana |
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
+| `src/hooks/sales/useSalesAssistant.test.tsx` | 3 | useSalesAssistant.deleteConversation · RLS bloqueia as mensagens: avisa o usuario e preserva a conversa · sucesso: apaga mensagens e depois a conversa, sem aviso de erro |
 | `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
 | `src/hooks/win-loss/useSentimentTrend.test.tsx` | 3 | useSentimentTrend · le o sentimento de call_insights e nunca da call_recordings.sentiment_score · agrega por trimestre usando a data da gravacao e resolve o desfecho pela venda |
 | `src/lib/recordingMime.test.ts` | 3 | resolveRecordingMimeType · normaliza %s (%s) para %s · preserva MIME desconhecido para o Storage rejeitá-lo |
@@ -5111,4 +5112,4 @@ _nenhum item encontrado_
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
 | negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
-| … +141 linhas — lista completa em `context.json` | |
+| … +142 linhas — lista completa em `context.json` | |

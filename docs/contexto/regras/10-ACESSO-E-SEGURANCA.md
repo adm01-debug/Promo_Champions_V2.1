@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bae0352ac6` · branch `main` · 2026-11-26 15:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c720950952` · branch `main` · 2026-11-26 16:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -55,10 +55,10 @@
 | `cadence_ab_assignments` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `cadence_ab_tests` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `cadence_advanced_stats` | enabled | PUBLIC: (auth.role() = 'authenticated'::text) | — | — | — |
-| `cadence_alert_templates` | enabled | public: true<br>authenticated: true | public: true | public: true | public: true |
+| `cadence_alert_templates` | enabled | public: true<br>authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | public: true<br>authenticated: is_admin_or_manager(auth.uid()) | public: true<br>authenticated: is_admin_or_manager(auth.uid()) | public: true<br>authenticated: is_admin_or_manager(auth.uid()) |
 | `cadence_enrollment_rules` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `cadence_funnel_rules` | enabled | authenticated: true<br>authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
-| `cadence_outcome_rules` | enabled | public: true<br>authenticated: true | public: true | public: true | public: true |
+| `cadence_outcome_rules` | enabled | public: true<br>authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | public: true<br>authenticated: is_admin_or_manager(auth.uid()) | public: true<br>authenticated: is_admin_or_manager(auth.uid()) | public: true<br>authenticated: is_admin_or_manager(auth.uid()) |
 | `cadence_steps` | enabled | authenticated: true | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
 | `cadence_tasks` | enabled | authenticated: ((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_c | authenticated: ((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_c | authenticated: ((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_c | authenticated: ((prospect_cadence_id IN ( SELECT prospect_cadences.id FROM prospect_cadences WHERE (prospect_cadences.salesperson_id = get_c |
 | `cadences` | enabled | authenticated: true | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) | PUBLIC: is_admin_or_manager(auth.uid()) |
@@ -84,7 +84,7 @@
 | `channel_credentials` | enabled | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) | authenticated: (owner_id = auth.uid()) | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) | authenticated: ((owner_id = auth.uid()) OR is_admin_or_manager(auth.uid())) |
 | `channel_interactions` | enabled | PUBLIC: (salesperson_id = get_current_salesperson_id()) | PUBLIC: (salesperson_id = get_current_salesperson_id()) | PUBLIC: (salesperson_id = get_current_salesperson_id()) | PUBLIC: (salesperson_id = get_current_salesperson_id()) |
 | `chat_conversations` | enabled | authenticated: (salesperson_id = get_current_salesperson_id()) | authenticated: (salesperson_id = get_current_salesperson_id()) | authenticated: (salesperson_id = get_current_salesperson_id()) | authenticated: (salesperson_id = get_current_salesperson_id()) |
-| `chat_messages` | enabled | authenticated: (conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_cur | authenticated: (conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_cur | — | — |
+| `chat_messages` | enabled | authenticated: (conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_cur | authenticated: (conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE (chat_conversations.salesperson_id = get_cur | — | authenticated: conversation_id IN ( SELECT chat_conversations.id FROM chat_conversations WHERE chat_conversations.salesperson_id = get_curre |
 | `churn_alert_settings` | enabled | authenticated: has_role(auth.uid(), 'admin'::app_role)<br>authenticated: true | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) |
 | `circuit_breaker_events` | enabled | PUBLIC: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | — | PUBLIC: has_role(auth.uid(), 'admin'::app_role) |
 | `client_churn_alerts_state` | enabled | authenticated: has_role(auth.uid(), 'admin'::app_role)<br>authenticated: (salesperson_id = auth.uid()) | — | — | — |
@@ -179,7 +179,7 @@
 | `feature_flags` | enabled | authenticated: true<br>authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) | authenticated: has_role(auth.uid(), 'admin'::app_role) |
 | `feed_comments` | enabled | PUBLIC: (auth.uid() IS NOT NULL) | authenticated: (salesperson_id = get_current_salesperson_id()) | authenticated: (salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)) | authenticated: (salesperson_id = ( SELECT get_current_salesperson_id() AS get_current_salesperson_id)) |
 | `feed_reactions` | enabled | PUBLIC: (auth.uid() IS NOT NULL) | authenticated: (salesperson_id = get_current_salesperson_id()) | — | authenticated: (salesperson_id = get_current_salesperson_id()) |
-| `follow_up_audit_logs` | enabled | PUBLIC: (auth.uid() IS NOT NULL) | PUBLIC: (auth.uid() IS NOT NULL) | — | — |
+| `follow_up_audit_logs` | enabled | PUBLIC: (auth.uid() IS NOT NULL) | PUBLIC: (auth.uid() IS NOT NULL) | authenticated: is_admin_or_manager(auth.uid()) | — |
 | `follow_up_notifications` | enabled | PUBLIC: (user_id = auth.uid()) | PUBLIC: (user_id = auth.uid()) | PUBLIC: (user_id = auth.uid()) | PUBLIC: (user_id = auth.uid()) |
 | `follow_up_settings` | enabled | authenticated: true | — | PUBLIC: (EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = ANY (ARRAY['admin'::app_role, 'ma | — |
 | `follow_up_templates` | enabled | PUBLIC: (EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role))))<br>authenticated: (is_active = true) | PUBLIC: (EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role)))) | PUBLIC: (EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role)))) | PUBLIC: (EXISTS ( SELECT 1 FROM user_roles WHERE ((user_roles.user_id = auth.uid()) AND (user_roles.role = 'admin'::app_role)))) |
@@ -885,10 +885,7 @@ Middleware matcher (Next.js): nenhum
 
 ## Riscos de acesso detectados
 
-| Tabela | Problema | Arquivos |
-|---|---|---|
-| `chat_messages` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
-| `follow_up_audit_logs` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
+_nenhum item encontrado_
 
 ## Multi-tenancy
 
