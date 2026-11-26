@@ -4861,7 +4861,7 @@
    "hooks_exportados": [
     "usePurchaseHistory"
    ],
-   "linhas": 83,
+   "linhas": 61,
    "dominio": "hooks/orders",
    "tabelas": [
     "orders"
@@ -11818,10 +11818,10 @@
    "hooks_exportados": [
     "useSentimentTrend"
    ],
-   "linhas": 103,
+   "linhas": 95,
    "dominio": "hooks/win-loss",
    "tabelas": [
-    "call_recordings",
+    "call_insights",
     "sales"
    ],
    "rpcs": [],
@@ -11834,7 +11834,7 @@
    "usado_por_arquivos": [
     "src/components/win-loss/SentimentTrendChart.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/win-loss/useUpsellSuggestions.ts",

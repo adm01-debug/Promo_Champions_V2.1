@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c69ce04334` · branch `main` · 2026-11-26 12:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2fad00f44` · branch `main` · 2026-11-26 14:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -457,13 +457,11 @@
 | coluna | coluna `total_score` usada no código não existe no schema de `lead_scores` |  |
 | coluna | coluna `salesperson_id` usada no código não existe no schema de `sequence_enrollments` |  |
 | coluna | coluna `description` usada no código não existe no schema de `teams` |  |
-| coluna | coluna `sentiment_score` usada no código não existe no schema de `call_recordings` |  |
 | coluna | coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs` |  |
 | coluna | coluna `sale_id` usada no código não existe no schema de `coaching_actions` |  |
-| coluna | coluna `sentiment_score` usada no código não existe no schema de `call_sentiment_timeline` |  |
+| tabela | tabela `...` usada no código não existe nas migrations/types do repo | `src/integrations/supabase/contracts.test.ts` |
 | tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `alem_do_limite` usada no código não existe nas migrations/types do repo | `scripts/ci/inventario-rotas.unit.mjs` |
-| tabela | tabela `auth_users_view` usada no código não existe nas migrations/types do repo | `src/components/settings/FollowUpTerritoryRules.tsx` |
 | tabela | tabela `contacts` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `contatos` usada no código não existe nas migrations/types do repo | `scripts/ci/inventario-banco.unit.mjs` |
 | tabela | tabela `dashboard_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c69ce04334` · branch `main` · 2026-11-26 12:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2fad00f44` · branch `main` · 2026-11-26 14:50 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1842 testes em 246 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1852 testes em 248 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4364,6 +4364,7 @@ _nenhum item encontrado_
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
 | `src/hooks/race/useCalmMode.test.tsx` | 7 | useCalmMode · lê a preferência salva na montagem · assume desligado quando não há preferência ou o valor é inválido · alterna, grava e sincroniza as outras instâncias pela mesma fonte … |
 | `src/hooks/win-loss/useWinLossAggregations.test.ts` | 7 | aggregateBySalesperson (usa lib winRate) · calcula winRate = wins/(wins+losses) por vendedor · vendedor sem deals decididos não aparece (sale_id sem mapa é ignorado) · 0 wins e 0 losses → winRate 0 … |
+| `src/integrations/supabase/contracts.test.ts` | 7 | contratos do front com o banco · encontra o catalogo gerado do banco · nao consulta tabela/view ausente do types.ts · nao chama RPC ausente do types.ts … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
 | `src/components/admin/AdminQuickLinks.test.tsx` | 6 | AdminQuickLinks — telas de alerta de webhook (etapa 110) · leva às configurações de alerta de webhook · leva ao histórico de alertas de webhook · AdminQuickLinks — telas de conformidade (etapa 111) … |
@@ -4482,6 +4483,7 @@ _nenhum item encontrado_
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
 | `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
+| `src/hooks/win-loss/useSentimentTrend.test.tsx` | 3 | useSentimentTrend · le o sentimento de call_insights e nunca da call_recordings.sentiment_score · agrega por trimestre usando a data da gravacao e resolve o desfecho pela venda |
 | `src/lib/recordingMime.test.ts` | 3 | resolveRecordingMimeType · normaliza %s (%s) para %s · preserva MIME desconhecido para o Storage rejeitá-lo |
 | `src/lib/usageAnalytics.test.ts` | 3 | usage analytics · agrega visualizações a partir de eventos reais · mantém somente a última atividade observada por usuário |
 | `src/pages/AdminSupressaoEmails.test.tsx` | 3 | AdminSupressaoEmails \u2014 remover da supressao · pede confirmacao antes de liberar o e-mail para disparo · cancelar mantem o e-mail suprimido |

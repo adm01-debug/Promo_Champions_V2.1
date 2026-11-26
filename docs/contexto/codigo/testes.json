@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 284,
+ "total": 286,
  "por_tipo": {
-  "contrato": 6,
+  "contrato": 7,
   "e2e": 54,
   "pytest": 2,
-  "unit": 213
+  "unit": 214
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 196
+   "arquivos": 198
   },
   {
    "padrao": "tests/",
@@ -1320,6 +1320,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/hooks/win-loss/useSentimentTrend.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/hooks/win-loss/useSentimentTrend.ts"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/hooks/win-loss/useWinLossAggregations.test.ts",
    "tipo": "unit",
    "linhas": 77,
@@ -1328,6 +1337,13 @@
     "src/hooks/win-loss/useWinLossData.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/integrations/supabase/contracts.test.ts",
+   "tipo": "contrato",
+   "linhas": 324,
+   "testa": [],
+   "casos": 10
   },
   {
    "arquivo": "src/lib/auth/passwordErrorMessages.test.ts",
@@ -2567,6 +2583,7 @@
   "src/hooks/useSyncedSetting.ts": 1,
   "src/hooks/useUserRoles.ts": 1,
   "src/hooks/useVictoryFeed.ts": 1,
+  "src/hooks/win-loss/useSentimentTrend.ts": 1,
   "src/hooks/win-loss/useWinLossAggregations.ts": 1,
   "src/hooks/win-loss/useWinLossData.ts": 1,
   "src/integrations/supabase/client.ts": 3,
@@ -3171,7 +3188,6 @@
    "src/hooks/win-loss/useRunWinLossAnalysis.ts",
    "src/hooks/win-loss/useScriptABTest.ts",
    "src/hooks/win-loss/useSeasonComparison.ts",
-   "src/hooks/win-loss/useSentimentTrend.ts",
    "src/hooks/win-loss/useUpsellSuggestions.ts",
    "src/hooks/win-loss/useUserDashboardLayout.ts",
    "src/hooks/win-loss/useWebhookAlertHistory.ts",

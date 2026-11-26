@@ -4396,7 +4396,6 @@
     "access_denied_logs",
     "activities",
     "api_tokens",
-    "auth_users_view",
     "circuit_breaker_events",
     "error_logs",
     "feature_flags",
@@ -5030,7 +5029,7 @@
    ],
    "tabelas": [
     "activities",
-    "call_recordings",
+    "call_insights",
     "committee_coverage_history",
     "deal_chat_history",
     "deal_committee_coverage",
@@ -5104,7 +5103,7 @@
     "technical",
     "toolbar"
    ],
-   "arquivos_puxados": 196
+   "arquivos_puxados": 197
   },
   {
    "protegida": false,
@@ -11221,7 +11220,7 @@
    ],
    "tabelas": [
     "activities",
-    "call_recordings",
+    "call_insights",
     "deal_chat_history",
     "deal_outcomes",
     "deal_stage_history",
@@ -11275,7 +11274,7 @@
     "table",
     "toolbar"
    ],
-   "arquivos_puxados": 171
+   "arquivos_puxados": 172
   },
   {
    "protegida": false,

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c69ce04334314763108ed04953211ac8ef5c9107",
+  "commit": "d2fad00f44d3e757ea14b43c5cfb71546199ce76",
   "branch": "main",
-  "data_commit": "2026-11-26T09:41:01-03:00",
+  "data_commit": "2026-11-26T11:46:00-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d2fad00",
+    "data": "2026-11-26",
+    "assunto": "fix: conserta contratos do front que consultavam relacoes inexistentes (#755)"
+   },
    {
     "sha": "c69ce04",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "6938bcc",
     "data": "2026-11-24",
     "assunto": "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)"
-   },
-   {
-    "sha": "a35b9ea",
-    "data": "2026-11-24",
-    "assunto": "fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)"
    }
   ],
-  "arquivos_mudados_7d": 354,
+  "arquivos_mudados_7d": 360,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "src/hooks/win-loss",
-    "mudancas": 57
+    "mudancas": 59
    },
    {
     "pasta": "src/components/deal-intelligence",
@@ -176,12 +176,12 @@
     "mudancas": 49
    },
    {
-    "pasta": "src/components/competitive",
-    "mudancas": 48
-   },
-   {
     "pasta": "src/components/ui",
     "mudancas": 47
+   },
+   {
+    "pasta": "src/components/competitive",
+    "mudancas": 45
    },
    {
     "pasta": "src/components/revenue-intelligence",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3692,
-  "arquivos_codigo": 2624,
-  "linhas_codigo": 450139,
+  "arquivos_total": 3694,
+  "arquivos_codigo": 2626,
+  "linhas_codigo": 450620,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 421,
   "migrations": 716,
   "cron_jobs": 40,
-  "testes": 284,
+  "testes": 286,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1242,
-   "linhas": 195280
+   "linhas": 195361
   },
   "src/config": {
    "arquivos": 4,
@@ -607,12 +607,12 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 555,
-   "linhas": 65823
+   "arquivos": 556,
+   "linhas": 65899
   },
   "src/integrations": {
-   "arquivos": 4,
-   "linhas": 25841
+   "arquivos": 5,
+   "linhas": 26165
   },
   "src/lib": {
    "arquivos": 81,
@@ -904,7 +904,6 @@
    "security_events"
   ],
   "tabelas_usadas_sem_definicao": [
-   "auth_users_view",
    "table",
    "team_members"
   ],

@@ -6338,6 +6338,9 @@
    "src/components/ui/input.tsx",
    "src/components/ui/scroll-area.tsx",
    "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/lib/supabase/chunkedIn.ts",
+   "src/lib/supabase/parseRows.ts",
    "src/lib/supabase/realtime.ts"
   ],
   "src/components/salespeople/CustomFieldsDisplay.tsx": [
@@ -9668,6 +9671,7 @@
    "src/constants/index.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/supabase/chunkedIn.ts",
+   "src/lib/supabase/parseRows.ts",
    "src/lib/winRate.ts"
   ],
   "src/hooks/win-loss/useUpsellSuggestions.ts": [

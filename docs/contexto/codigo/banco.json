@@ -8579,7 +8579,7 @@
     "recording_id->call_recordings"
    ],
    "criada_em": "20260416195445_1055a333-92bf-4deb-93aa-d42127aa91fa.sql",
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [
     "analyze-call",
     "conversational-intelligence",
@@ -9798,7 +9798,7 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20260416195445_1055a333-92bf-4deb-93aa-d42127aa91fa.sql",
-   "usada_no_front": 3,
+   "usada_no_front": 2,
    "usada_em_edges": [
     "aggregate-coaching-scorecard",
     "analyze-call",
@@ -31235,7 +31235,7 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20251213122333_bd6a3540-97c2-4bbf-98a8-1e4fc57436ee.sql",
-   "usada_no_front": 8,
+   "usada_no_front": 9,
    "usada_em_edges": [
     "auto-enroll-cadence"
    ],
@@ -37513,7 +37513,7 @@
     "squad_id->squads"
    ],
    "criada_em": "20251212201120_b81a2517-fcbe-47dd-abb5-ef80c7baf4ab.sql",
-   "usada_no_front": 69,
+   "usada_no_front": 70,
    "usada_em_edges": [
     "access-denied-alerts",
     "activity-goal-alerts",
@@ -50033,7 +50033,6 @@
   }
  },
  "tabelas_usadas_no_codigo_sem_definicao": [
-  "auth_users_view",
   "table",
   "team_members"
  ],

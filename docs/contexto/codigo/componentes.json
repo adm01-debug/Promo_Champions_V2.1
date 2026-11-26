@@ -13639,11 +13639,12 @@
     "RuleAuditLogs"
    ],
    "export_default": null,
-   "linhas": 201,
+   "linhas": 251,
    "dominio": "components/sales",
    "hooks_locais": [],
    "tabelas": [
-    "intent_audit_logs"
+    "intent_audit_logs",
+    "prospect_cadences"
    ],
    "edges": [],
    "usado_por": 2,
@@ -14914,15 +14915,15 @@
     "FollowUpTerritoryRules"
    ],
    "export_default": null,
-   "linhas": 270,
+   "linhas": 301,
    "dominio": "components/settings",
    "hooks_locais": [
     "useUserRoles"
    ],
    "tabelas": [
-    "auth_users_view",
     "follow_up_templates",
-    "follow_up_territory_rules"
+    "follow_up_territory_rules",
+    "salespeople"
    ],
    "edges": [],
    "usado_por": 1,

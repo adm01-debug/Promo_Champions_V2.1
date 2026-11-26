@@ -4750,7 +4750,6 @@
     "api_tokens",
     "app_config",
     "audit_logs",
-    "auth_users_view",
     "automation_runs",
     "automation_workflows",
     "available_spins",
@@ -5725,7 +5724,6 @@
     "api_tokens",
     "app_config",
     "audit_logs",
-    "auth_users_view",
     "automation_runs",
     "automation_workflows",
     "available_spins",
@@ -7404,7 +7402,7 @@
    "modulo": "components/sales",
    "arquivos": 16,
    "testes": 6,
-   "linhas": 4137,
+   "linhas": 4187,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7535,7 +7533,8 @@
      "cadence_funnel_rules",
      "cadence_outcome_rules",
      "clients",
-     "intent_audit_logs"
+     "intent_audit_logs",
+     "prospect_cadences"
     ],
     "rpcs": [
      "process_lead_intent_event"
@@ -8063,7 +8062,7 @@
    "modulo": "components/settings",
    "arquivos": 25,
    "testes": 1,
-   "linhas": 5425,
+   "linhas": 5456,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8109,7 +8108,6 @@
     "access_denied_logs",
     "activities",
     "api_tokens",
-    "auth_users_view",
     "error_logs",
     "feature_flags",
     "follow_up_audit_view",
@@ -8162,12 +8160,12 @@
     ],
     "tabelas": [
      "access_denied_logs",
-     "auth_users_view",
      "follow_up_settings",
      "follow_up_templates",
      "follow_up_territory_rules",
      "permissions",
      "role_permissions",
+     "salespeople",
      "security_alert_history",
      "security_alert_settings",
      "team_custom_fields",
@@ -8190,7 +8188,6 @@
     "lib"
    ],
    "pacotes_externos": [
-    "@supabase/supabase-js",
     "@tanstack/react-query",
     "canvas-confetti",
     "date-fns",
@@ -8954,7 +8951,6 @@
     "api_tokens",
     "app_config",
     "audit_logs",
-    "auth_users_view",
     "automation_runs",
     "automation_workflows",
     "available_spins",
@@ -9747,7 +9743,7 @@
    ],
    "tabelas": [
     "activities",
-    "call_recordings",
+    "call_insights",
     "deal_chat_history",
     "deal_outcomes",
     "deal_stage_history",
@@ -13627,7 +13623,7 @@
    "modulo": "hooks/orders",
    "arquivos": 3,
    "testes": 1,
-   "linhas": 282,
+   "linhas": 260,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -15113,8 +15109,8 @@
   {
    "modulo": "hooks/win-loss",
    "arquivos": 54,
-   "testes": 1,
-   "linhas": 5027,
+   "testes": 2,
+   "linhas": 5019,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -15223,7 +15219,7 @@
     "winloss-webhook-replay"
    ],
    "tabelas": [
-    "call_recordings",
+    "call_insights",
     "sales",
     "salespeople_public",
     "saved_filters",
@@ -15259,7 +15255,7 @@
      "winloss-webhook-replay"
     ],
     "tabelas": [
-     "call_recordings",
+     "call_insights",
      "sales",
      "salespeople_public",
      "saved_filters",
@@ -15343,7 +15339,7 @@
   {
    "modulo": "integrations/supabase",
    "arquivos": 3,
-   "testes": 0,
+   "testes": 1,
    "linhas": 25802,
    "itens_menu": [],
    "telas": [],
@@ -17335,7 +17331,6 @@
     "approval_workflows",
     "asset_usage_logs",
     "audit_logs",
-    "auth_users_view",
     "auto_task_queue_settings",
     "automation_runs",
     "automation_workflows",
@@ -19216,7 +19211,6 @@
     "approval_workflows",
     "asset_usage_logs",
     "audit_logs",
-    "auth_users_view",
     "auto_task_queue_settings",
     "automation_runs",
     "automation_workflows",
