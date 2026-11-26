@@ -25,6 +25,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 interface IntegrationStatus {
   id: string;
@@ -47,6 +48,12 @@ interface LogEntry {
 }
 
 export const IntegrationStatusPanel = () => {
+  // `email_logs` so tem leitura para admin/gestor (policy "Admins and managers
+  // can view email_logs"). Para o resto do time a consulta volta vazia SEM erro,
+  // entao o painel mostrava "nenhum log recente" e dava a impressao de que o
+  // envio de email estava parado. Sem permissao de leitura, nao ha o que exibir.
+  const { isAdminOrManager, isLoadingCurrentRole } = useUserRoles();
+
   const [loading, setLoading] = useState(false);
   const [integrations, setIntegrations] = useState<IntegrationStatus[]>([
     {
@@ -127,8 +134,9 @@ export const IntegrationStatusPanel = () => {
   };
 
   useEffect(() => {
+    if (!isAdminOrManager) return;
     fetchLogs();
-  }, []);
+  }, [isAdminOrManager]);
 
   const testIntegration = async (type: 'email' | 'push') => {
     // Push nao tem tabela de log de envio: ler "erros" ali seria inventar o
@@ -156,6 +164,10 @@ export const IntegrationStatusPanel = () => {
       }
     );
   };
+
+  // Enquanto o papel nao resolve, e para quem nao pode ler os logs, nao renderiza
+  // nada: um painel vazio seria lido como "integracao sem nenhum evento".
+  if (isLoadingCurrentRole || !isAdminOrManager) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

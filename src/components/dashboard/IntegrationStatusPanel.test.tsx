@@ -3,9 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { allowConsoleError } from '@/test/consoleGuard';
 
 const from = vi.fn();
+const roleState = { isAdminOrManager: true, isLoadingCurrentRole: false };
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...args: unknown[]) => from(...args) },
+}));
+
+vi.mock('@/hooks/useUserRoles', () => ({
+  useUserRoles: () => roleState,
 }));
 
 vi.mock('sonner', () => ({
@@ -43,6 +48,22 @@ describe('IntegrationStatusPanel', () => {
   beforeEach(() => {
     from.mockReset();
     vi.mocked(toast.error).mockClear();
+    roleState.isAdminOrManager = true;
+    roleState.isLoadingCurrentRole = false;
+  });
+
+  it('nao consulta o banco nem renderiza para quem nao le os logs de email', async () => {
+    roleState.isAdminOrManager = false;
+    from.mockReturnValue(chain({ data: [], error: null }));
+
+    const { container } = renderPanel();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(from).not.toHaveBeenCalled();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('le os logs reais de email em vez da tabela sem produtor', async () => {
