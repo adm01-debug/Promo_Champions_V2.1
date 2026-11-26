@@ -12,6 +12,8 @@ import { OrderSummaryCard } from '@/components/orders/OrderSummaryCard';
 import {
   statusLabel,
   statusTone,
+  creditStatusLabel,
+  creditStatusTone,
   formatDateTime,
 } from '@/components/orders/orderHelpers';
 
@@ -66,9 +68,16 @@ export default function OrderDetailPage() {
                 Criado em {formatDateTime(data.order.created_at)}
               </p>
             </div>
-            <Badge variant={statusTone(data.order.status)} size="lg">
-              {statusLabel(data.order.status)}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              {data.order.credit_status && data.order.credit_status !== 'nao_aplicavel' && (
+                <Badge variant={creditStatusTone(data.order.credit_status)} size="lg">
+                  {creditStatusLabel(data.order.credit_status)}
+                </Badge>
+              )}
+              <Badge variant={statusTone(data.order.status)} size="lg">
+                {statusLabel(data.order.status)}
+              </Badge>
+            </div>
           </header>
 
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
