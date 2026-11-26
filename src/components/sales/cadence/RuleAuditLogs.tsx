@@ -9,6 +9,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { parseRows } from '@/lib/supabase/parseRows';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -48,16 +49,21 @@ async function withClientNames(rows: IntentAuditLogRow[]): Promise<AuditLogEntry
   const clientNameById = new Map<string, string>();
 
   if (leadIds.length > 0) {
-    const { data: prospects } = await supabase
-      .from('prospect_cadences')
-      .select('id, sales(client_name), quotes(client_name)')
-      .in('id', leadIds);
-
-    for (const prospect of parseRows<{
+    const prospects = await chunkedIn<{
       id: string;
       sales?: { client_name: string | null } | null;
       quotes?: { client_name: string | null } | null;
-    }>(prospects)) {
+    }>(
+      leadIds,
+      chunk =>
+        supabase
+          .from('prospect_cadences')
+          .select('id, sales(client_name), quotes(client_name)')
+          .in('id', chunk as string[]),
+      { label: 'audit-logs.clientes' }
+    );
+
+    for (const prospect of prospects) {
       const clientName = prospect.sales?.client_name ?? prospect.quotes?.client_name;
       if (clientName) clientNameById.set(prospect.id, clientName);
     }
