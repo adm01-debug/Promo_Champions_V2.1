@@ -92,7 +92,7 @@ Complementos `VERIFICADO`:
 | 10 | **Slack (alertas operacionais)** | `SLACK_WEBHOOK_URL` em `wal-health-alert/`, `edge-retry-threshold-alert/`, `notify-quote-conversion/`; `SLACK_DIGEST_WEBHOOK_URL` em `deal-risk-digest/` | — | 🟨 | 4 alertas dependem de webhook Slack não comprovadamente configurado. Se o webhook não existir, **os alertas falham em silêncio** — padrão clássico de falha invisível. |
 | 11 | **Web Push (VAPID)** | `push-subscribe/index.ts:32` lê `VAPID_PUBLIC_KEY`; `send-push-notification/index.ts` com checagem de escopo por `user_id` (`:111-116`) | `push_subscriptions` = **0** | 🟨 | Nenhum dispositivo inscrito. Boa notícia: a proteção anti-*push-phishing* está implementada (`:53-54`). |
 | 12 | **V4 / PromoGifts — sincronização de orçamentos (entrada)** | `receive-quote-sync/index.ts:99` (`QUOTE_SYNC_WEBHOOK_SECRET`) e `:230` (`PROMOGIFTS_WEBHOOK_SECRET`); `receive-quote-webhook/index.ts:93` (`QUOTE_SYNC_API_KEY`) | `quote_sync_inbound_log` = **1** | 🟨 | **Única integração com qualquer sinal de tráfego real** (1 registro). Publicamente exposta: `verify_jwt = false` em `supabase/config.toml` — mitigada por segredo compartilhado validado no código (`:99-104`), o que é aceitável. |
-| 13 | **V4 — callback de status (saída)** | `notify-v4-quote-status/index.ts:7-10`, com `throw` no *top-level* se `V4_CALLBACK_URL`/`V4_CALLBACK_API_KEY` faltarem | — | 🟨 | ⚠️ **Risco:** o `throw` está fora do handler (`:9-10`). Sem os segredos, a função **falha ao inicializar**, não apenas ao ser chamada. |
+| 13 | **V4 — callback de status (saída)** | `notify-v4-quote-status/index.ts:8-9` lê `V4_CALLBACK_URL`/`V4_CALLBACK_API_KEY` com default vazio (`?? ""`); sem eles cai na guarda `:99-109` | `v4_callback_dead_letters` = 0 não resolvidos (sonda 26/11 09:56Z) | 🟨 | **Não quebra:** devolve `200` com `note: "callback disabled (missing config)"` e loga `warn v4_callback_disabled`. O cron de 5 min fica verde e nada é entregue — o estado só vira alerta se `v4_callback_alert_settings` tiver backlog ligado. |
 | 14 | **Ponte para banco externo** | `external-db-bridge/index.ts:149-150` lê `EXTERNAL_SUPABASE_URL` e `EXTERNAL_SUPABASE_ANON_KEY` | — | 🟦 | Ponte genérica para um segundo Supabase; sem consumidor comprovado. |
 | 15 | **Webhooks de saída (genéricos)** | `dispatch-webhook/`; tabelas `webhooks`, `webhook_events`, `webhook_deliveries` | todas = **0** | 🟦 | Infraestrutura montada, nenhuma assinatura cadastrada. |
 | 16 | **Webhooks Win/Loss (observabilidade dedicada)** | 6 Edge Functions (`winloss-webhook-dispatcher`, `-health-monitor`, `-replay`, `-replay-batch`, `-timeline`) + 7 tabelas + doc próprio em `.lovable/memory/features/winloss-webhook-observability.md` | **7 de 7 tabelas = 0** | 🟦 | Subsistema completo — *dispatcher*, *dead-letter*, *replay*, métricas, alertas — **com zero assinantes e zero entregas**. É o exemplo mais caro de infraestrutura dormente do repositório. |
@@ -121,9 +121,9 @@ pelo `LOVABLE_API_KEY`. Qualquer documento que afirme integração direta com Op
    segredo não estiver configurado, ninguém é avisado — inclusive `wal-health-alert`, que
    monitora a saúde do WAL do banco. Alerta que não alerta é pior que alerta ausente, porque
    gera falsa sensação de cobertura.
-2. **`notify-v4-quote-status` quebra na inicialização** sem segredos (`index.ts:9-10`, `throw`
-   no escopo de módulo). Falha diferente — e mais difícil de diagnosticar — de um erro de
-   execução.
+2. **`notify-v4-quote-status` fica mudo** sem segredos: a guarda `index.ts:99-109` devolve
+   `200` com `callback disabled (missing config)`. O cron fica verde e a fila não é drenada —
+   falha mais difícil de perceber que um erro de execução.
 3. **Superfície de integração muito acima do uso.** 16 integrações codificadas, 1 com sinal de
    tráfego. Cada uma é código a manter, atualizar e proteger sem retorno.
 
