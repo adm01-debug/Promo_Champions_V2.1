@@ -11009,6 +11009,19 @@
         "generated": null,
         "identity": null,
         "is_enum": false,
+        "name": "cnpj",
+        "nullable": true,
+        "position": 23,
+        "schema": "public",
+        "table": "clients",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
         "name": "id",
         "nullable": true,
         "position": 1,
@@ -15148,6 +15161,149 @@
         "position": 10,
         "schema": "public",
         "table": "conversation_insights_summary",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "order_id",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "'credito.solicitado'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "event",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "payload",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": "'pending'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "status",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "attempts",
+        "nullable": false,
+        "position": 6,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_error",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "next_attempt_at",
+        "nullable": false,
+        "position": 8,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "delivered_at",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_at",
+        "nullable": false,
+        "position": 10,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 11,
+        "schema": "public",
+        "table": "credit_outbox",
         "type": "timestamp with time zone"
       },
       {
@@ -29696,6 +29852,71 @@
         "schema": "public",
         "table": "orders",
         "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": "'nao_aplicavel'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "credit_status",
+        "nullable": false,
+        "position": 16,
+        "schema": "public",
+        "table": "orders",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "credit_limit_approved",
+        "nullable": true,
+        "position": 17,
+        "schema": "public",
+        "table": "orders",
+        "type": "numeric(12,2)"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "credit_max_installments",
+        "nullable": true,
+        "position": 18,
+        "schema": "public",
+        "table": "orders",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "credit_notes",
+        "nullable": true,
+        "position": 19,
+        "schema": "public",
+        "table": "orders",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "credit_decided_at",
+        "nullable": true,
+        "position": 20,
+        "schema": "public",
+        "table": "orders",
+        "type": "timestamp with time zone"
       },
       {
         "comment": "Coluna id da tabela public.outbound_messages. Tipo PostgreSQL: uuid. Participa da chave primária. Não aceita NULL. Valor padrão: gen_random_uuid().",
@@ -64611,6 +64832,77 @@
       },
       {
         "columns": [
+          "order_id",
+          "event"
+        ],
+        "deferrable": false,
+        "definition": "UNIQUE (order_id, event)",
+        "name": "credit_outbox_order_event_key",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "UNIQUE",
+        "validated": true
+      },
+      {
+        "columns": [
+          "order_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE",
+        "name": "credit_outbox_order_id_fkey",
+        "on_delete": "CASCADE",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "orders",
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "credit_outbox_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "status"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (status = ANY (ARRAY['pending'::text, 'processing'::text, 'delivered'::text, 'dead'::text]))",
+        "name": "credit_outbox_status_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "credit_outbox",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
           "moment_id"
         ],
         "deferrable": false,
@@ -70289,6 +70581,23 @@
         "schema": "public",
         "table": "orders",
         "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "credit_status"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (credit_status = ANY (ARRAY['nao_aplicavel'::text, 'aguardando_credito'::text, 'aprovado'::text, 'reprovado'::text]))",
+        "name": "orders_credit_status_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "orders",
+        "type": "CHECK",
         "validated": true
       },
       {
@@ -81335,6 +81644,15 @@
           "jobname": "supply-dispatch-1min",
           "schedule": "* * * * *",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "SELECT public.trigger_internal_edge_job('credit-dispatch');",
+          "database": "postgres",
+          "jobid": 126,
+          "jobname": "credit-dispatch-1min",
+          "schedule": "* * * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -83733,6 +84051,41 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_order_id uuid, p_decisao text, p_limite numeric, p_parcelas integer, p_parecer text",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/receive-credit-decision/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "783ac23acf631b0f",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "aplicar_decisao_credito",
+        "owner": "postgres",
+        "returns": "jsonb",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "_run_id uuid, _tool_name text, _tool_input jsonb, _tool_output jsonb, _status text, _executed_by text",
         "callers": {
           "code": [
@@ -85386,6 +85739,41 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_limit integer",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/credit-dispatch/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "6e64b74b04756081",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "claim_credit_outbox",
+        "owner": "postgres",
+        "returns": "jsonb",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "p_challenge_id uuid",
         "callers": {
           "code": [
@@ -86784,6 +87172,41 @@
         "security_definer": true,
         "strict": false,
         "volatility": "stable"
+      },
+      {
+        "args": "p_ids uuid[], p_ok boolean, p_error text",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/credit-dispatch/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "3ef09d7b1cde08aa",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "finish_credit_outbox",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
       },
       {
         "args": "p_ids uuid[], p_ok boolean, p_error text",
@@ -90922,7 +91345,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "b80572af0932a35e",
+        "definition_sha": "02a5953a5e090c1c",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -94949,6 +95372,80 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.orders.trg_credit_enqueue_from_order"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "f7a105e2d2e2463f",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "tg_credit_enqueue_from_order",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.orders.trg_order_marca_primeira_venda"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "80cc50acf78d827b",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "tg_order_marca_primeira_venda",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
               "hits": 1
             }
@@ -94966,7 +95463,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "11cbc8afc00f4d17",
+        "definition_sha": "a274524bcd107345",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,
@@ -95652,7 +96149,8 @@
             "87:access-denied-alerts-hourly",
             "88:scheduled-reports-runner-hourly",
             "95:semantic-reindex-daily",
-            "125:supply-dispatch-1min"
+            "125:supply-dispatch-1min",
+            "126:credit-dispatch-1min"
           ],
           "db": [
             "public.admin_edge_cron_status"
@@ -95665,7 +96163,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "c43a38b260e904e4",
+        "definition_sha": "174eefca9920cf59",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -99264,6 +99762,18 @@
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "conversation_insights_summary"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "credit_outbox"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "credit_outbox"
         },
         {
           "grantee": "anon",
@@ -108914,6 +109424,20 @@
         "table": "clients"
       },
       {
+        "columns": [
+          "cnpj"
+        ],
+        "definition": "CREATE INDEX idx_clients_cnpj ON public.clients USING btree (cnpj) WHERE (cnpj IS NOT NULL)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_clients_cnpj",
+        "predicate": "(cnpj IS NOT NULL)",
+        "schema": "public",
+        "table": "clients"
+      },
+      {
         "columns": [],
         "definition": "CREATE INDEX idx_clients_company ON public.clients USING gin (to_tsvector('portuguese'::regconfig, company))",
         "is_primary": false,
@@ -110245,6 +110769,49 @@
         "predicate": null,
         "schema": "public",
         "table": "conversation_analyses"
+      },
+      {
+        "columns": [
+          "order_id",
+          "event"
+        ],
+        "definition": "CREATE UNIQUE INDEX credit_outbox_order_event_key ON public.credit_outbox USING btree (order_id, event)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "credit_outbox_order_event_key",
+        "predicate": null,
+        "schema": "public",
+        "table": "credit_outbox"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX credit_outbox_pkey ON public.credit_outbox USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "credit_outbox_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "credit_outbox"
+      },
+      {
+        "columns": [
+          "next_attempt_at"
+        ],
+        "definition": "CREATE INDEX idx_credit_outbox_due ON public.credit_outbox USING btree (next_attempt_at) WHERE (status = 'pending'::text)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_credit_outbox_due",
+        "predicate": "(status = 'pending'::text)",
+        "schema": "public",
+        "table": "credit_outbox"
       },
       {
         "columns": [
@@ -115487,6 +116054,20 @@
         "method": "btree",
         "name": "idx_orders_client_id",
         "predicate": null,
+        "schema": "public",
+        "table": "orders"
+      },
+      {
+        "columns": [
+          "credit_status"
+        ],
+        "definition": "CREATE INDEX idx_orders_credit_status ON public.orders USING btree (credit_status) WHERE (credit_status = 'aguardando_credito'::text)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_orders_credit_status",
+        "predicate": "(credit_status = 'aguardando_credito'::text)",
         "schema": "public",
         "table": "orders"
       },
@@ -126770,6 +127351,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.credit_outbox.credit_outbox_admin_read",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.critical_moment_notifications.Authenticated users can insert critical moment notifications",
         "severity": "BAIXA"
       },
@@ -134515,6 +135102,11 @@
         "name": "20261128120000_restaura_escrita_bloqueada_por_rls",
         "statements": null,
         "version": "20261128120000"
+      },
+      {
+        "name": "20261128130000_analise_credito_primeira_venda",
+        "statements": null,
+        "version": "20261128130000"
       }
     ],
     "policies": [
@@ -137493,6 +138085,18 @@
         "schema": "public",
         "table": "conversation_analyses",
         "using": "(has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role) OR (analyzed_by = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM (sales s\n     JOIN salespeople sp ON ((sp.id = s.salesperson_id)))\n  WHERE ((s.id = conversation_analyses.sale_id) AND (sp.auth_user_id = auth.uid())))))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "credit_outbox_admin_read",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "credit_outbox",
+        "using": "is_admin_or_manager(auth.uid())",
         "with_check": null
       },
       {
@@ -149086,6 +149690,21 @@
         "schema": "public"
       },
       {
+        "comment": null,
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "credit_outbox",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": "Tabela public.critical_moment_notifications. Estrutura registrada no catálogo do PostgreSQL: id uuid NOT NULL DEFAULT gen_random_uuid(), moment_id uuid NOT NULL, recipient_user_id uuid NOT NULL, delivered boolean NOT NULL DEFAULT true, read_at timestamp with time zone NULLABLE, created_at timestamp with time zone NOT NULL DEFAULT now(). Relacionamentos FK: moment_id → public.call_critical_moments(id).",
         "from_extension": false,
         "is_partition": false,
@@ -155906,6 +156525,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_credit_enqueue_from_order AFTER INSERT ON orders FOR EACH ROW EXECUTE FUNCTION tg_credit_enqueue_from_order()",
+        "events": "INSERT",
+        "function": "public.tg_credit_enqueue_from_order",
+        "level": "ROW",
+        "name": "trg_credit_enqueue_from_order",
+        "schema": "public",
+        "status": "enabled",
+        "table": "orders",
+        "timing": "AFTER"
+      },
+      {
         "definition": "CREATE TRIGGER trg_log_order_creation AFTER INSERT ON orders FOR EACH ROW EXECUTE FUNCTION private.log_order_creation()",
         "events": "INSERT",
         "function": "private.log_order_creation",
@@ -155922,6 +156552,17 @@
         "function": "private.log_order_status_change",
         "level": "ROW",
         "name": "trg_log_order_status_change",
+        "schema": "public",
+        "status": "enabled",
+        "table": "orders",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_order_marca_primeira_venda BEFORE INSERT ON orders FOR EACH ROW EXECUTE FUNCTION tg_order_marca_primeira_venda()",
+        "events": "INSERT",
+        "function": "public.tg_order_marca_primeira_venda",
+        "level": "ROW",
+        "name": "trg_order_marca_primeira_venda",
         "schema": "public",
         "status": "enabled",
         "table": "orders",

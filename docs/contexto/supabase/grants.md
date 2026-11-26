@@ -325,6 +325,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.conversation_insights_summary | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.conversation_insights_summary | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.conversation_insights_summary | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.credit_outbox | authenticated | SELECT |
+| public.credit_outbox | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.critical_moment_notifications | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.critical_moment_notifications | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.critical_moment_notifications | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

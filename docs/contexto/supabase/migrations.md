@@ -719,3 +719,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261127001000 | [20261127001000_restaura_timeouts_dns_lento](migrations/20261127001000_20261127001000_restaura_timeouts_dns_lento.sql) | 0 |
 | 20261127100000 | [20261127100000_backfill_supply_outbox_pedidos_pendentes](migrations/20261127100000_20261127100000_backfill_supply_outbox_pedidos_pendentes.sql) | 0 |
 | 20261128120000 | [20261128120000_restaura_escrita_bloqueada_por_rls](migrations/20261128120000_20261128120000_restaura_escrita_bloqueada_por_rls.sql) | 0 |
+| 20261128130000 | [20261128130000_analise_credito_primeira_venda](migrations/20261128130000_20261128130000_analise_credito_primeira_venda.sql) | 0 |

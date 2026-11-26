@@ -260,6 +260,7 @@ Uso e tamanho em `stats.md`.
 | public.client_renewals | idx_client_renewals_client_id | btree | client_id | não | sim |  |
 | public.clients | clients_pkey | btree | id | sim | sim |  |
 | public.clients | idx_clients_active | btree | id | não | sim | `(deleted_at IS NULL)` |
+| public.clients | idx_clients_cnpj | btree | cnpj | não | sim | `(cnpj IS NOT NULL)` |
 | public.clients | idx_clients_company | gin |  | não | sim |  |
 | public.clients | idx_clients_created | btree | created_at | não | sim |  |
 | public.clients | idx_clients_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` |
@@ -354,6 +355,9 @@ Uso e tamanho em `stats.md`.
 | public.conversation_analyses | idx_conv_analyses_sentiment | btree | sentiment | não | sim |  |
 | public.conversation_analyses | idx_conversation_analyses_analyzed_by | btree | analyzed_by | não | sim |  |
 | public.conversation_analyses | idx_conversation_analyses_created_at | btree | created_at | não | sim |  |
+| public.credit_outbox | credit_outbox_order_event_key | btree | order_id, event | sim | sim |  |
+| public.credit_outbox | credit_outbox_pkey | btree | id | sim | sim |  |
+| public.credit_outbox | idx_credit_outbox_due | btree | next_attempt_at | não | sim | `(status = 'pending'::text)` |
 | public.critical_moment_notifications | critical_moment_notifications_pkey | btree | id | sim | sim |  |
 | public.critical_moment_notifications | idx_cmn_recipient | btree | recipient_user_id, read_at, created_at | não | sim |  |
 | public.critical_moment_notifications | idx_critical_moment_notifications_moment_id | btree | moment_id | não | sim |  |
@@ -724,6 +728,7 @@ Uso e tamanho em `stats.md`.
 | public.order_status_events | idx_order_status_events_order | btree | order_id, created_at | não | sim |  |
 | public.order_status_events | order_status_events_pkey | btree | id | sim | sim |  |
 | public.orders | idx_orders_client_id | btree | client_id | não | sim |  |
+| public.orders | idx_orders_credit_status | btree | credit_status | não | sim | `(credit_status = 'aguardando_credito'::text)` |
 | public.orders | idx_orders_salesperson_id | btree | salesperson_id | não | sim |  |
 | public.orders | idx_orders_status_created | btree | status, created_at | não | sim |  |
 | public.orders | idx_orders_user | btree | user_id | não | sim |  |

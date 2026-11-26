@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
+  "sha": "11fd96464f8662b77e13c381caf7aeca5cd49b24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 21:11 UTC",
+  "generated_at": "2026-11-26 22:18 UTC",
   "files_total": 3718,
   "code_files": 3363,
   "code_lines": 487807
  },
  "version": "1.3.2",
- "facts_hash": "43b3d03abdd9f3c7",
+ "facts_hash": "cb40e0db48a63c33",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -2801,6 +2801,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/schema.sql"
+     },
+     {
+      "name": "cnpj",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [],
@@ -24554,6 +24561,41 @@
       "fk": "",
       "generated": "",
       "src": "supabase/schema.sql"
+     },
+     {
+      "name": "credit_decided_at",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "credit_limit_approved",
+      "type": "number | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "credit_max_installments",
+      "type": "number | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "credit_notes",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
+     },
+     {
+      "name": "credit_status",
+      "type": "string not null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      }
     ],
     "constraints": [],
@@ -137505,6 +137547,11 @@
     "rule": "default '{}'::jsonb"
    },
    {
+    "table": "orders",
+    "column": "credit_status",
+    "rule": "obrigatório"
+   },
+   {
     "table": "order_items",
     "column": "id",
     "rule": "default gen_random_uuid()"
@@ -192250,6 +192297,14 @@
      "type": "text DEFAULT 'pending'::text NOT NULL"
     },
     {
+     "table": "orders",
+     "column": "credit_status",
+     "enum": "",
+     "allowed": [],
+     "default": "",
+     "type": "string not null"
+    },
+    {
      "table": "order_status_events",
      "column": "status",
      "enum": "",
@@ -227704,6 +227759,10 @@
     "phone"
    ],
    [
+    "clients",
+    "cnpj"
+   ],
+   [
     "access_denied_logs",
     "ip_address"
    ],
@@ -229671,6 +229730,7 @@
    "`winloss_webhook_dead_letters.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`winloss_webhook_dead_letters.last_replay_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`orders.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
+   "`orders.credit_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`order_status_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`winloss_webhook_replay_audit.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`integration_autotest_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
@@ -302343,10 +302403,19 @@
   }
  },
  "git": {
-  "sha": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
+  "sha": "11fd96464f8662b77e13c381caf7aeca5cd49b24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "11fd964",
+    "date": "2026-11-26",
+    "author": "github-actions[bot]",
+    "subject": "chore(types): sincroniza types.ts com o banco oficial [auto] (#765)",
+    "files": [
+     "src/integrations/supabase/types.ts"
+    ]
+   },
    {
     "sha": "a751303",
     "date": "2026-11-26",
@@ -302660,27 +302729,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "b1e8ab3",
-    "date": "2026-11-24",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
    ],
    [
     "src/components/dashboard/IntegrationStatusPanel.tsx",
@@ -302697,6 +302755,10 @@
    [
     "CHANGELOG.md",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
    ],
    [
     "supabase/config.toml",
@@ -302720,10 +302782,6 @@
    ],
    [
     "supabase/tests/supply_outbox_diagnostics.sql",
-    2
-   ],
-   [
-    "deno.lock",
     2
    ],
    [

@@ -118,6 +118,7 @@
 | public.consent_records | subject_client_id | public.clients | id | SET NULL | NO ACTION |
 | public.consent_records | subject_id | auth.users | id | SET NULL | NO ACTION |
 | public.conversation_analyses | sale_id | public.sales | id | CASCADE | NO ACTION |
+| public.credit_outbox | order_id | public.orders | id | CASCADE | NO ACTION |
 | public.critical_moment_notifications | moment_id | public.call_critical_moments | id | CASCADE | NO ACTION |
 | public.cs_tickets | assigned_to | auth.users | id | SET NULL | NO ACTION |
 | public.cs_tickets | client_id | public.clients | id | CASCADE | NO ACTION |

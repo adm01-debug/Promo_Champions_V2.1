@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a7513039cc` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `11fd96464f` · branch `main` · 2026-11-26 22:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -1270,6 +1270,7 @@ _nenhum item encontrado_
 | `notification_preferences` | `email` |
 | `clients` | `email` |
 | `clients` | `phone` |
+| `clients` | `cnpj` |
 | `access_denied_logs` | `ip_address` |
 | `suppliers` | `email` |
 | `suppliers` | `phone` |

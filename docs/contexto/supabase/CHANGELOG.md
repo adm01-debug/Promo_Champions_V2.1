@@ -2,6 +2,21 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 22:16 UTC
+
+- **colunas** adicionado (17): `public.clients.cnpj`, `public.credit_outbox.attempts`, `public.credit_outbox.created_at`, `public.credit_outbox.delivered_at`, `public.credit_outbox.event`, `public.credit_outbox.id`, `public.credit_outbox.last_error`, `public.credit_outbox.next_attempt_at`, `public.credit_outbox.order_id`, `public.credit_outbox.payload`, `public.credit_outbox.status`, `public.credit_outbox.updated_at`, `public.orders.credit_decided_at`, `public.orders.credit_limit_approved`, `public.orders.credit_max_installments`, `public.orders.credit_notes`, `public.orders.credit_status`
+- **constraints** adicionado (5): `public.credit_outbox.credit_outbox_order_event_key`, `public.credit_outbox.credit_outbox_order_id_fkey`, `public.credit_outbox.credit_outbox_pkey`, `public.credit_outbox.credit_outbox_status_check`, `public.orders.orders_credit_status_check`
+- **cron jobs** adicionado (1): `126:credit-dispatch-1min`
+- **functions** adicionado (5): `public.aplicar_decisao_credito(p_order_id uuid, p_decisao text, p_limite numeric, p_parcelas integer, p_parecer text)`, `public.claim_credit_outbox(p_limit integer)`, `public.finish_credit_outbox(p_ids uuid[], p_ok boolean, p_error text)`, `public.tg_credit_enqueue_from_order()`, `public.tg_order_marca_primeira_venda()`
+- **functions** alterado (3): `public.internal_edge_job_timeout_ms(p_function_name text)`, `public.tg_supply_enqueue_from_order_item()`, `public.trigger_internal_edge_job(p_function_name text)`
+- **grants** adicionado (2): `public.credit_outbox:authenticated`, `public.credit_outbox:service_role`
+- **indexes** adicionado (5): `public.credit_outbox_order_event_key`, `public.credit_outbox_pkey`, `public.idx_clients_cnpj`, `public.idx_credit_outbox_due`, `public.idx_orders_credit_status`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.credit_outbox.credit_outbox_admin_read`
+- **migrations** adicionado (1): `20261128130000_20261128130000_analise_credito_primeira_venda`
+- **policies (RLS)** adicionado (1): `public.credit_outbox.credit_outbox_admin_read`
+- **tabelas** adicionado (1): `public.credit_outbox`
+- **triggers** adicionado (2): `public.orders.trg_credit_enqueue_from_order`, `public.orders.trg_order_marca_primeira_venda`
+
 ## 2026-11-26 21:17 UTC
 
 - **functions** alterado (4): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`, `public.post_internal_edge_job(p_function_name text, p_attempt integer, p_max_attempts integer)`, `public.trigger_internal_edge_job(p_function_name text)`

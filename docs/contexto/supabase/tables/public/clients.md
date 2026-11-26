@@ -41,6 +41,7 @@
 | 20 | `is_activated` | `boolean` | sim | `false` |  | Indica se o cliente foi marcado como ativado. |
 | 21 | `activated_at` | `timestamp with time zone` | sim |  |  | Data e hora da ativação do cliente. |
 | 22 | `ramo_atividade` | `text` | sim |  |  | Ramo de atividade informado para o cliente. |
+| 23 | `cnpj` | `text` | sim |  |  |  |
 
 
 ## Constraints
@@ -81,6 +82,7 @@
 |---|---|---|---|---|---|---|
 | clients_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX clients_pkey ON public.clients USING btree (id)` |
 | idx_clients_active | btree | id | não | sim | `(deleted_at IS NULL)` | `CREATE INDEX idx_clients_active ON public.clients USING btree (id) WHERE (deleted_at IS NULL)` |
+| idx_clients_cnpj | btree | cnpj | não | sim | `(cnpj IS NOT NULL)` | `CREATE INDEX idx_clients_cnpj ON public.clients USING btree (cnpj) WHERE (cnpj IS NOT NULL)` |
 | idx_clients_company | gin |  | não | sim |  | `CREATE INDEX idx_clients_company ON public.clients USING gin (to_tsvector('portuguese'::regconfig, company))` |
 | idx_clients_created | btree | created_at | não | sim |  | `CREATE INDEX idx_clients_created ON public.clients USING btree (created_at DESC)` |
 | idx_clients_deleted | btree | deleted_at | não | sim | `(deleted_at IS NOT NULL)` | `CREATE INDEX idx_clients_deleted ON public.clients USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)` |

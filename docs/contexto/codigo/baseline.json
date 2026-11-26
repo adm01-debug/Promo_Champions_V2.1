@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a7513039cc1abaac13d3f2c8146b1e09af1694fb",
+  "commit": "11fd96464f8662b77e13c381caf7aeca5cd49b24",
   "branch": "main",
-  "data_commit": "2026-11-26T18:06:48-03:00",
+  "data_commit": "2026-11-26T21:52:53Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "11fd964",
+    "data": "2026-11-26",
+    "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#765)"
+   },
    {
     "sha": "a751303",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "930e42e",
     "data": "2026-11-24",
     "assunto": "chore(main): release 1.9.0 (#733)"
-   },
-   {
-    "sha": "ed11613",
-    "data": "2026-11-24",
-    "assunto": "ci: dispara apply-migration no merge de migration (#734)"
    }
   ],
   "arquivos_mudados_7d": 376,
@@ -219,7 +219,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 261
+    "commits": 260
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 21
+    "commits": 22
    },
    {
     "autor": "dependabot[bot]",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3703,
   "arquivos_codigo": 2633,
-  "linhas_codigo": 451461,
+  "linhas_codigo": 451544,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -612,7 +612,7 @@
   },
   "src/integrations": {
    "arquivos": 5,
-   "linhas": 26165
+   "linhas": 26248
   },
   "src/lib": {
    "arquivos": 81,
@@ -678,7 +678,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25772
+   "linhas": 25855
   },
   {
    "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",

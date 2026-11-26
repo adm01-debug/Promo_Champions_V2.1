@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a7513039cc` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `11fd96464f` · branch `main` · 2026-11-26 22:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `chat_conversations` | `updated_at` | default now() |
 | `chat_messages` | `id` | default gen_random_uuid() |
 | `chat_messages` | `conversation_id` | obrigatório |
-| … +2683 linhas — lista completa em `context.json` | | |
+| … +2684 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -1229,6 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `winloss_webhook_dead_letters` | `status` | **livre (sem enum/CHECK)** | `pending` |
 | `winloss_webhook_dead_letters` | `last_replay_status` | **livre (sem enum/CHECK)** |  |
 | `orders` | `status` | **livre (sem enum/CHECK)** | `pending` |
+| `orders` | `credit_status` | **livre (sem enum/CHECK)** |  |
 | `order_status_events` | `status` | **livre (sem enum/CHECK)** |  |
 | `winloss_webhook_replay_audit` | `http_status` | **livre (sem enum/CHECK)** | `0` |
 | `integration_health_checks` | `status` | `success`, `failure`, `degraded`, `pending` |  |

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a7513039cc` · branch `main` · 2026-11-26 21:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `11fd96464f` · branch `main` · 2026-11-26 22:18 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -82,7 +82,7 @@
 | `client_interactions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `client_portfolio` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `client_renewals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `clients` | _(sem COMMENT ON TABLE — significado não documentado)_ | 22 colunas | migration |
+| `clients` | _(sem COMMENT ON TABLE — significado não documentado)_ | 23 colunas | migration |
 | `coaching_actions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `coaching_opportunities` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `coaching_scorecard_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
@@ -230,7 +230,7 @@
 | `onboarding_steps` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `order_items` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `order_status_events` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
-| `orders` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `orders` | _(sem COMMENT ON TABLE — significado não documentado)_ | 20 colunas | migration |
 | `outbound_messages` | _(sem COMMENT ON TABLE — significado não documentado)_ | 18 colunas | migration |
 | `page_analytics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `password_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
@@ -647,6 +647,7 @@
 - `winloss_webhook_dead_letters.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_dead_letters.last_replay_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `orders.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- `orders.credit_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `order_status_events.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `winloss_webhook_replay_audit.http_status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `integration_autotest_jobs.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.

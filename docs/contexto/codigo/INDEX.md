@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a7513039cc1abaac13d3f2c8146b1e09af1694fb` (2026-11-26T18:06:48-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `11fd96464f8662b77e13c381caf7aeca5cd49b24` (2026-11-26T21:52:53Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3703 |
 | arquivos_codigo | 2633 |
-| linhas_codigo | 451461 |
+| linhas_codigo | 451544 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -592,7 +592,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24579 nós · 75260 arestas · 1187 comunidades · grafo do commit `a7513039`
+- 24579 nós · 75260 arestas · 1187 comunidades · grafo do commit `11fd9646`
 - comunidades maiores: schema.sql (574), Badge (445), CardContent (358), vitest (333), getCorsHeaders (329), PageTransition (322), client.ts (320), SelectContent (280), Button (275), TableRow (260), ApprovalWorkflowsPage.tsx (249), formatBRL (245)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -603,7 +603,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - docs/qa/05-PROGRESSO.md (32)
 - deno.lock (16)
 - CHANGELOG.md (15)
-- src/integrations/supabase/types.ts (13)
+- src/integrations/supabase/types.ts (14)
 - .github/workflows/deploy.yml (7)
 - docs/pendencias/backlog-verificado.md (6)
 - src/components/layout/sidebar/sidebarMenuData.ts (6)
@@ -776,6 +776,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-26 `11fd964` chore(types): sincroniza types.ts com o banco oficial [auto] (#765)
 - 2026-11-26 `a751303` feat: análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance (#761)
 - 2026-11-26 `736d7cc` fix: tolera concorrencia no invariante de sequencia do stress de conversao (#762)
 - 2026-11-26 `9504215` fix: estabiliza guard-rail de soft-delete de activities no CI (#760)
@@ -790,7 +791,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `86f0654` chore(main): release 1.10.1 (#750)
 - 2026-11-26 `b564fa6` fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)
 - 2026-11-25 `f63bfae` chore(main): release 1.10.0 (#739)
-- 2026-11-25 `15514fd` chore: resgata a sonda de estado da fila Champions -> Supply (#747)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

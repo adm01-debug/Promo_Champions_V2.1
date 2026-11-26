@@ -34,6 +34,11 @@
 | 13 | `salesperson_id` | `uuid` | sim |  |  | Coluna salesperson_id da tabela public.orders. Tipo PostgreSQL: uuid. Aceita NULL. Referência FK: public.salespeople(id). |
 | 14 | `notes` | `text` | sim |  |  | Coluna notes da tabela public.orders. Tipo PostgreSQL: text. Aceita NULL. |
 | 15 | `metadata` | `jsonb` | sim | `'{}'::jsonb` |  | Coluna metadata da tabela public.orders. Tipo PostgreSQL: jsonb. Aceita NULL. Valor padrão: '{}'::jsonb. |
+| 16 | `credit_status` | `text` | não | `'nao_aplicavel'::text` |  |  |
+| 17 | `credit_limit_approved` | `numeric(12,2)` | sim |  |  |  |
+| 18 | `credit_max_installments` | `integer` | sim |  |  |  |
+| 19 | `credit_notes` | `text` | sim |  |  |  |
+| 20 | `credit_decided_at` | `timestamp with time zone` | sim |  |  |  |
 
 
 ## Constraints
@@ -41,6 +46,7 @@
 | nome | tipo | definição | on delete | on update | validada |
 |---|---|---|---|---|---|
 | orders_client_id_fkey | FOREIGN KEY | `FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
+| orders_credit_status_check | CHECK | `CHECK (credit_status = ANY (ARRAY['nao_aplicavel'::text, 'aguardando_credito'::text, 'aprovado'::text, 'reprovado'::text]))` |  |  | sim |
 | orders_order_number_key | UNIQUE | `UNIQUE (order_number)` |  |  | sim |
 | orders_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | orders_quote_id_fkey | FOREIGN KEY | `FOREIGN KEY (quote_id) REFERENCES quotes(id) ON DELETE SET NULL` | SET NULL | NO ACTION | sim |
@@ -53,6 +59,7 @@
 
 | tabela | constraint | colunas | on delete |
 |---|---|---|---|
+| public.credit_outbox | credit_outbox_order_id_fkey | order_id | CASCADE |
 | public.order_items | order_items_order_id_fkey | order_id | CASCADE |
 | public.order_status_events | order_status_events_order_id_fkey | order_id | CASCADE |
 | public.supply_outbox | supply_outbox_order_id_fkey | order_id | CASCADE |
@@ -63,6 +70,7 @@
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
 | idx_orders_client_id | btree | client_id | não | sim |  | `CREATE INDEX idx_orders_client_id ON public.orders USING btree (client_id)` |
+| idx_orders_credit_status | btree | credit_status | não | sim | `(credit_status = 'aguardando_credito'::text)` | `CREATE INDEX idx_orders_credit_status ON public.orders USING btree (credit_status) WHERE (credit_status = 'aguardando_credito'::text)` |
 | idx_orders_salesperson_id | btree | salesperson_id | não | sim |  | `CREATE INDEX idx_orders_salesperson_id ON public.orders USING btree (salesperson_id)` |
 | idx_orders_status_created | btree | status, created_at | não | sim |  | `CREATE INDEX idx_orders_status_created ON public.orders USING btree (status, created_at DESC)` |
 | idx_orders_user | btree | user_id | não | sim |  | `CREATE INDEX idx_orders_user ON public.orders USING btree (user_id)` |
@@ -120,8 +128,10 @@
 |---|---|---|---|---|---|
 | audit_business_changes | AFTER | DELETE OR UPDATE | ROW | enabled | public.audit_log_row_change |
 | set_updated_at | BEFORE | UPDATE | ROW | enabled | public.handle_updated_at |
+| trg_credit_enqueue_from_order | AFTER | INSERT | ROW | enabled | public.tg_credit_enqueue_from_order |
 | trg_log_order_creation | AFTER | INSERT | ROW | enabled | private.log_order_creation |
 | trg_log_order_status_change | BEFORE | UPDATE | ROW | enabled | private.log_order_status_change |
+| trg_order_marca_primeira_venda | BEFORE | INSERT | ROW | enabled | public.tg_order_marca_primeira_venda |
 
 
 ## Grants

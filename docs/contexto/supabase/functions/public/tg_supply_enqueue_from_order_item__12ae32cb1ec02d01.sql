@@ -14,6 +14,10 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  IF v_order.credit_status = 'aguardando_credito' THEN
+    RETURN NEW;
+  END IF;
+
   SELECT s.email INTO v_email
     FROM public.salespeople s
    WHERE s.id = v_order.salesperson_id;
