@@ -16,6 +16,11 @@ import {
   canAccessPath,
   requiredRoleFor,
 } from './routeAccess';
+import {
+  getMainItems,
+  getGroupedItems,
+  type ViewMode,
+} from '@/components/layout/sidebar/sidebarMenuData';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../..');
@@ -105,6 +110,23 @@ describe('canAccessPath', () => {
     expect(requiredRoleFor('/analytics/abc')).toBe('manager');
     expect(requiredRoleFor('/relatorios/funil/2026')).toBe('manager');
   });
+});
+
+describe('menu lateral — páginas antes órfãs continuam alcançáveis', () => {
+  const modes: ViewMode[] = ['sdr', 'closer', 'gestao'];
+  const menuUrls = modes
+    .flatMap(mode => [
+      ...getMainItems(mode),
+      ...getGroupedItems(mode).flatMap(group => group.items),
+    ])
+    .map(item => item.url);
+
+  it.each(['/perfil-gamer', '/desafios-diarios', '/bi-vendedor', '/abm'])(
+    '%s tem entrada no menu (rota registrada não pode ficar sem caminho na UI)',
+    url => {
+      expect(menuUrls).toContain(url);
+    }
+  );
 });
 
 describe('menu lateral — nenhum item oferecido a quem não pode abrir', () => {

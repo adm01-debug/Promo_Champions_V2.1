@@ -10,17 +10,18 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Trophy, Users, Zap, Target, Crown, Medal, Award } from 'lucide-react';
 import { useChallengesWithProgress } from '@/hooks/gamification/useWeeklyChallenges';
+import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 
 export default function DesafiosSemanais() {
   const { data: gamificationData, isLoading: loadingGamification } =
     useGamificationData();
   const { isAdmin, isManager } = useUserRoles();
+  const { salesperson } = useAuth();
   const canCreateChallenges = isAdmin || isManager;
 
-  // Get first salesperson for demo - in real app would use current user
-  const currentSalesperson = gamificationData?.[0];
-  const { challenges } = useChallengesWithProgress(currentSalesperson?.salesperson_id);
+  const currentSalespersonId = salesperson?.id;
+  const { challenges } = useChallengesWithProgress(currentSalespersonId);
 
   // Calculate leaderboard based on challenge completions
   const leaderboard = (gamificationData || [])
@@ -165,7 +166,7 @@ export default function DesafiosSemanais() {
                 <Skeleton className="h-96 w-full" />
               ) : (
                 <WeeklyChallengesCard
-                  salespersonId={currentSalesperson?.salesperson_id}
+                  salespersonId={currentSalespersonId}
                   canManage={canCreateChallenges}
                 />
               )}

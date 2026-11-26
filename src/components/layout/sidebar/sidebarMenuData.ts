@@ -58,6 +58,8 @@ import {
   Brain,
   BookOpen,
   Star,
+  Gamepad2,
+  CalendarCheck,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -118,6 +120,7 @@ const sdrGroupedItems: MenuGroup[] = [
       { title: 'Send Time IA', url: '/engagement/send-time', icon: CalendarClock },
       { title: 'Email Scoring', url: '/engagement/email-scoring', icon: Flame },
       { title: 'ABM (Contas)', url: '/engagement/abm', icon: Building2 },
+      { title: 'Contas ABM (gestão)', url: '/abm', icon: Building2 },
       { title: 'Power Dialer', url: '/engagement/dialer', icon: Phone },
       { title: 'Automações', url: '/automacoes', icon: Zap },
       { title: 'Sales Enablement', url: '/sales-enablement', icon: BookOpen },
@@ -142,6 +145,8 @@ const sdrGroupedItems: MenuGroup[] = [
       { title: 'Ranking Global', url: '/ranking', icon: Trophy },
       { title: 'Circuito de Duelos', url: '/arena', icon: Swords },
       { title: 'Coleção de Badges', url: '/gamificacao/badges', icon: Trophy },
+      { title: 'Perfil Gamer', url: '/perfil-gamer', icon: Gamepad2 },
+      { title: 'Histórico de Desafios', url: '/desafios-diarios', icon: CalendarCheck },
     ],
   },
   {
@@ -156,6 +161,7 @@ const sdrGroupedItems: MenuGroup[] = [
       },
       { title: 'Momentos Críticos', url: '/momentos-criticos', icon: ShieldAlert },
       { title: 'BI SDR (Neural)', url: '/bi-sdr', icon: Sparkles },
+      { title: 'Meu BI', url: '/bi-vendedor', icon: BarChart3 },
       { title: 'Lead Scoring', url: '/lead-scoring', icon: Target },
       { title: 'Meu Dashboard', url: '/dashboard-custom', icon: LayoutGrid },
       { title: 'Desafios', url: '/desafios', icon: Sparkles },
@@ -192,6 +198,7 @@ const closerGroupedItems: MenuGroup[] = [
       { title: 'Power Dialer', url: '/engagement/dialer', icon: Phone },
       { title: 'Email Scoring', url: '/engagement/email-scoring', icon: Flame },
       { title: 'ABM (Contas)', url: '/engagement/abm', icon: Building2 },
+      { title: 'Contas ABM (gestão)', url: '/abm', icon: Building2 },
     ],
   },
   {
@@ -203,6 +210,8 @@ const closerGroupedItems: MenuGroup[] = [
       { title: 'Ranking Global', url: '/ranking', icon: Trophy },
       { title: 'Circuito de Duelos', url: '/arena', icon: Swords },
       { title: 'Coleção de Badges', url: '/gamificacao/badges', icon: Trophy },
+      { title: 'Perfil Gamer', url: '/perfil-gamer', icon: Gamepad2 },
+      { title: 'Histórico de Desafios', url: '/desafios-diarios', icon: CalendarCheck },
     ],
   },
   {
@@ -228,6 +237,7 @@ const closerGroupedItems: MenuGroup[] = [
       },
       { title: 'Momentos Críticos', url: '/momentos-criticos', icon: ShieldAlert },
       { title: 'BI Closer (Neural)', url: '/bi-closer', icon: Sparkles },
+      { title: 'Meu BI', url: '/bi-vendedor', icon: BarChart3 },
       { title: 'Lead Scoring', url: '/lead-scoring', icon: Target },
       { title: 'Meu Dashboard', url: '/dashboard-custom', icon: LayoutGrid },
       { title: 'Desafios', url: '/desafios', icon: Sparkles },
@@ -318,6 +328,8 @@ const gestaoGroupedItems: MenuGroup[] = [
       { title: 'Equipe (Activity)', url: '/team-activity', icon: Rss },
       { title: 'Circuito Competitivo', url: '/arena', icon: Swords },
       { title: 'Temporadas', url: '/competitive-seasons', icon: Flame },
+      { title: 'Perfil Gamer', url: '/perfil-gamer', icon: Gamepad2 },
+      { title: 'Histórico de Desafios', url: '/desafios-diarios', icon: CalendarCheck },
       { title: 'Multichannel', url: '/multichannel', icon: MessageSquare },
     ],
   },
