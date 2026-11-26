@@ -50,12 +50,16 @@ export const MOMENT_TYPE_LABELS: Record<string, string> = {
   next_step: 'Próximo passo',
 };
 
-export const SEVERITY_META: Record<string, { label: string; tone: string }> = {
+type SeverityMeta = { label: string; tone: string };
+
+const MEDIUM_SEVERITY: SeverityMeta = {
+  label: 'Média',
+  tone: 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
+};
+
+export const SEVERITY_META: Record<string, SeverityMeta> = {
   low: { label: 'Baixa', tone: 'bg-muted text-muted-foreground border-transparent' },
-  medium: {
-    label: 'Média',
-    tone: 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
-  },
+  medium: MEDIUM_SEVERITY,
   high: {
     label: 'Alta',
     tone: 'bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30',
@@ -96,8 +100,8 @@ export function momentTypeLabel(type: string): string {
   return MOMENT_TYPE_LABELS[type] ?? type;
 }
 
-export function severityMeta(severity: string) {
-  return SEVERITY_META[severity] ?? SEVERITY_META.medium;
+export function severityMeta(severity: string): SeverityMeta {
+  return SEVERITY_META[severity] ?? MEDIUM_SEVERITY;
 }
 
 export function momentStatusLabel(status: string): string {

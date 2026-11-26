@@ -118,7 +118,7 @@ describe('useCriticalMoments', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data?.moments).toHaveLength(1);
-    expect(result.current.data?.moments[0].id).toBe('moment-2');
+    expect(result.current.data?.moments[0]?.id).toBe('moment-2');
     expect(result.current.data?.unreadCount).toBe(0);
   });
 
