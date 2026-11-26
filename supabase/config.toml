@@ -6,6 +6,13 @@ verify_jwt = false
 [functions.detect-client-churn-alerts]
 verify_jwt = false
 
+[functions.generate-coaching-actions]
+# Chamado pelo trigger de call_recording via net.http_post sem header Authorization
+# (20261117070000_reconcilia_objetos_orfaos_producao.sql:195-204). Com o default
+# verify_jwt = true o gateway rejeita a chamada antes do codigo. A funcao valida
+# X-Cron-Secret contra public._internal_secrets antes de qualquer trabalho.
+verify_jwt = false
+
 [functions.generate-urgent-client-tasks]
 verify_jwt = false
 
