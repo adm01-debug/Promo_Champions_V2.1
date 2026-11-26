@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
@@ -318,8 +319,29 @@ export const useSalesAssistant = (
 
   const deleteConversation = useCallback(
     async (conversationId: string) => {
-      await supabase.from('chat_messages').delete().eq('conversation_id', conversationId);
-      await supabase.from('chat_conversations').delete().eq('id', conversationId);
+      const { error: messagesError } = await supabase
+        .from('chat_messages')
+        .delete()
+        .eq('conversation_id', conversationId);
+
+      if (messagesError) {
+        toast.error(
+          `Nao foi possivel excluir as mensagens da conversa: ${messagesError.message}`
+        );
+        return;
+      }
+
+      const { error: conversationError } = await supabase
+        .from('chat_conversations')
+        .delete()
+        .eq('id', conversationId);
+
+      if (conversationError) {
+        toast.error(`Nao foi possivel excluir a conversa: ${conversationError.message}`);
+        refetchConversations();
+        return;
+      }
+
       if (conversationId === currentConversationId) {
         clearMessages();
       }

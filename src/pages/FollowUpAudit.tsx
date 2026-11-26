@@ -139,7 +139,10 @@ const FollowUpAudit = () => {
         })
         .eq('id', log.id);
 
-      if (!error) {
+      if (error) {
+        // O WhatsApp ja abriu: o usuario precisa saber que so o registro falhou.
+        toast.error(`Follow-up aberto, mas o registro falhou: ${error.message}`);
+      } else {
         toast.success('Status atualizado e retentativa registrada.');
       }
     }
