@@ -57,6 +57,7 @@ DECLARE
   v_orc_count  INT;
   v_ped_count  INT;
   v_dup_count  INT;
+  v_externo    INT;
   v_quote_id   UUID;
   v_uid        UUID := (current_setting('request.jwt.claims', true)::jsonb ->> 'sub')::uuid;
   v_sp         UUID := current_setting('app.stress_sp_id', true)::uuid;
@@ -107,16 +108,27 @@ BEGIN
     GROUP BY order_number HAVING COUNT(*) > 1
   ) t;
 
-  RAISE NOTICE 'seq_after=% (delta=%)', v_seq_after, v_seq_after - v_seq_before;
+  -- As 50 conversoes 'won' deste teste estao dentro da transacao (rollback no fim),
+  -- mas a sequencia orders_conversion_seq e global: qualquer conversao COMMITADA
+  -- por outro processo na janela (usuario real, cron, outro run) consome nextval
+  -- junto. v_orc_count ve as 50 proprias + as externas commitadas, entao a
+  -- diferenca acima de 50 e o consumo legitimo de terceiros.
+  v_externo := GREATEST(v_orc_count - 50, 0);
+
+  RAISE NOTICE 'seq_after=% (delta=%, externo=%)',
+    v_seq_after, v_seq_after - v_seq_before, v_externo;
   RAISE NOTICE 'orc_new=% ped_new=% duplicates=%',
     v_orc_count, v_ped_count, v_dup_count;
 
   IF v_dup_count > 0 THEN
     RAISE EXCEPTION 'INVARIANT VIOLATED: % order_number duplicados', v_dup_count;
   END IF;
-  IF (v_seq_after - v_seq_before) <> 50 THEN
-    RAISE EXCEPTION 'INVARIANT VIOLATED: seq avançou % (esperado 50)',
-      v_seq_after - v_seq_before;
+  -- Menos que 50: alguma conversao propria nao consumiu a sequencia (regressao).
+  -- Mais que 50 + externo: nextval gasto sem conversao commitada correspondente.
+  IF (v_seq_after - v_seq_before) < 50
+     OR (v_seq_after - v_seq_before) > 50 + v_externo THEN
+    RAISE EXCEPTION 'INVARIANT VIOLATED: seq avançou % (esperado entre 50 e %, com % conversao(oes) externa(s))',
+      v_seq_after - v_seq_before, 50 + v_externo, v_externo;
   END IF;
 END $$;
 
