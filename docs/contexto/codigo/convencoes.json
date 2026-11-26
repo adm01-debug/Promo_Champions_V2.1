@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: tolera concorrencia no invariante de sequencia do stress de conversao (#762)",
    "fix: estabiliza guard-rail de soft-delete de activities no CI (#760)",
    "fix: painel de integracao so aparece para quem pode ler os logs (#759)",
    "fix: restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) (#756)",
-   "fix: painel de integracao le os logs reais de email (#758)",
-   "fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)"
+   "fix: painel de integracao le os logs reais de email (#758)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

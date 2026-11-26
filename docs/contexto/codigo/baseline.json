@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "95042153465a41f06a9320a6beff7434f3d0c53f",
+  "commit": "736d7cc3569a17a757ab3b3f8688f754eccd74d1",
   "branch": "main",
-  "data_commit": "2026-11-26T16:42:27-03:00",
+  "data_commit": "2026-11-26T17:31:29-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "736d7cc",
+    "data": "2026-11-26",
+    "assunto": "fix: tolera concorrencia no invariante de sequencia do stress de conversao (#762)"
+   },
    {
     "sha": "9504215",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "652e105",
     "data": "2026-11-24",
     "assunto": "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)"
-   },
-   {
-    "sha": "669c8a0",
-    "data": "2026-11-24",
-    "assunto": "feat: aciona o Supply quando o orçamento vira pedido (#731)"
    }
   ],
-  "arquivos_mudados_7d": 367,
+  "arquivos_mudados_7d": 368,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
