@@ -8055,6 +8055,9 @@
   "src/hooks/admin/useConnectionMetrics.ts": [
    "src/integrations/supabase/client.ts"
   ],
+  "src/hooks/admin/useCreditAnalysis.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
   "src/hooks/admin/useDataSubjectRequests.ts": [
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/types.ts"
@@ -11883,6 +11886,17 @@
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/tabs.tsx"
   ],
+  "src/pages/admin/AdminCreditAnalysisPage.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/orders/orderHelpers.ts",
+   "src/components/transitions/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/admin/useCreditAnalysis.ts"
+  ],
   "src/pages/admin/AdminDesignInboundPage.tsx": [
    "src/components/auth/ProtectedRoute.tsx",
    "src/components/transitions/PageTransition.tsx",
@@ -12176,6 +12190,7 @@
    "src/pages/WorkflowsPage.tsx",
    "src/pages/admin/AdminComercial.tsx",
    "src/pages/admin/AdminConexoesPage.tsx",
+   "src/pages/admin/AdminCreditAnalysisPage.tsx",
    "src/pages/admin/AdminDesignInboundPage.tsx",
    "src/pages/admin/AdminPlatformSLOPage.tsx",
    "src/pages/admin/AdminQuoteConversionsPage.tsx",

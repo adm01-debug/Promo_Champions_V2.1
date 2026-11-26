@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 171,
+  "urls": 172,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 147,
-  "lazy": 234
+  "lazy": 235
  },
  "urls": [
   {
@@ -634,6 +634,65 @@
    "flags": [],
    "papeis": [],
    "arquivos_puxados": 15
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "Admin"
+   ],
+   "pai": null,
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
+   "caminho": "/admin/analise-credito",
+   "componente": "AdminCreditAnalysisPage",
+   "arquivo": "src/pages/admin/AdminCreditAnalysisPage.tsx",
+   "definida_em": "src/routes/AppRoutes.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useCreditAnalysis",
+    "useEffect",
+    "useLocation",
+    "useMemo",
+    "useMutation",
+    "useNavigationType",
+    "usePageTransitionConfig",
+    "useQuery",
+    "useQueryClient",
+    "useReducedMotion",
+    "useRef",
+    "useState",
+    "useUserRoles"
+   ],
+   "hooks_locais": [
+    "useAuth",
+    "useCreditAnalysis",
+    "useReducedMotion",
+    "useUserRoles"
+   ],
+   "tabelas": [
+    "access_denied_logs",
+    "credit_outbox",
+    "orders",
+    "salespeople",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
+   "arquivos_puxados": 22
   },
   {
    "protegida": true,
@@ -13016,6 +13075,7 @@
   "AdminComercial": "src/pages/admin/AdminComercial.tsx",
   "AdminComissoes": "src/pages/AdminComissoes.tsx",
   "AdminConexoesPage": "src/pages/admin/AdminConexoesPage.tsx",
+  "AdminCreditAnalysisPage": "src/pages/admin/AdminCreditAnalysisPage.tsx",
   "AdminDashboard": "src/pages/AdminDashboard.tsx",
   "AdminDesignInboundPage": "src/pages/admin/AdminDesignInboundPage.tsx",
   "AdminFilaTarefasAutomaticas": "src/pages/AdminFilaTarefasAutomaticas.tsx",

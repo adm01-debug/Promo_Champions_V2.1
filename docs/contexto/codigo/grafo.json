@@ -1,24 +1,24 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2352,
- "arestas": 9717,
+ "nos": 2354,
+ "arestas": 9728,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 716
+   "importado_por": 717
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 556
+   "importado_por": 557
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 554
+   "importado_por": 555
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 544
+   "importado_por": 545
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/transitions/PageTransition.tsx",
-   "importado_por": 124
+   "importado_por": 125
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -110,7 +110,7 @@
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 55
+   "importado_por": 56
   },
   {
    "arquivo": "src/lib/supabase/realtime.ts",
@@ -342,14 +342,14 @@
    "importado_por": 11
   },
   {
+   "modulo": "pages/admin",
+   "depende_de": 17,
+   "importado_por": 1
+  },
+  {
    "modulo": "components/gamification",
    "depende_de": 8,
    "importado_por": 9
-  },
-  {
-   "modulo": "pages/admin",
-   "depende_de": 16,
-   "importado_por": 1
   }
  ],
  "arestas_em": "docs/contexto/codigo/grafo-arestas.json"

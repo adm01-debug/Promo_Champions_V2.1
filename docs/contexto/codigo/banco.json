@@ -14933,11 +14933,11 @@
     "order_id->orders"
    ],
    "criada_em": "20261128130000_analise_credito_primeira_venda.sql",
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "critical_moment_notifications": {
    "colunas": {
@@ -27860,7 +27860,7 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20260422151947_37e13489-51d3-4414-8a2d-9f0b34c481b0.sql",
-   "usada_no_front": 3,
+   "usada_no_front": 4,
    "usada_em_edges": [
     "customer-success-360"
    ],

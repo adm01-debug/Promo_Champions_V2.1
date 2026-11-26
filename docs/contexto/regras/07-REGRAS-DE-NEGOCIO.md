@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d44d5664a1` · branch `main` · 2026-11-26 22:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d1aa531f96` · branch `main` · 2026-11-26 23:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1512,9 +1512,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `correlation_key_required` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `critical` | compara | `src/components/sdr/PredictiveSuccessMap.tsx`<br>`src/pages/AccountBasedSelling.tsx` |
 | `status` | `data_required` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
+| `status` | `dead` | compara | `src/hooks/admin/useCreditAnalysis.ts`<br>`src/pages/admin/AdminCreditAnalysisPage.tsx` |
 | `status` | `dead_letter` | filtra | `src/components/admin/connections/DeadLetterIngestPanel.tsx` |
 | `status` | `dedupe_failed` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
-| `status` | `delivered` | compara | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/multichannel/multichannelHelpers.ts`<br>`src/components/orders/orderHelpers.ts`<br>`src/hooks/dashboard/useBIDossierExport.ts`<br>`src/pages/AcompanhamentoPedidos.tsx` |
+| `status` | `delivered` | compara | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/multichannel/multichannelHelpers.ts`<br>`src/components/orders/orderHelpers.ts`<br>`src/hooks/admin/useCreditAnalysis.ts`<br>`src/hooks/dashboard/useBIDossierExport.ts`<br>… +2 |
 | `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx` |
 | `status` | `done` | escreve | `src/hooks/dialer/usePowerDialer.ts` |
 | `status` | `draft` | compara, escreve | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/quotes/QuoteCard.tsx`<br>`src/components/quotes/QuoteDetailDialog.tsx`<br>`src/hooks/cadences/useABTests.ts`<br>`src/hooks/useDigitalSignatures.ts`<br>… +2 |
@@ -1579,8 +1580,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `practiced` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
 | `status` | `preparing` | compara | `src/components/orders/orderHelpers.ts` |
 | `status` | `processed` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts` |
-| `status` | `processing` | escreve, filtra | `supabase/functions/process-scheduled-sends/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
-| … +130 linhas — lista completa em `context.json` | | | |
+| … +132 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1706,6 +1706,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | BuyingRole | decision_maker \| champion \| influencer \| blocker \| user \| technical | `src/hooks/abm/useAccounts.ts` |
 | ActivityType | call \| email \| meeting \| linkedin \| whatsapp \| note \| other | `src/hooks/activities/useActivities.ts` |
 | ActivityOutcome | connected \| no_answer \| scheduled \| voicemail \| busy \| callback \| not_interested \| qualified \| bad_timing \| wrong_person \| unsubscribed | `src/hooks/activities/useActivities.ts` |
+| CreditOutboxStatus | pending \| processing \| delivered \| dead | `src/hooks/admin/useCreditAnalysis.ts` |
 | V4DeadLetterStatus | pending \| exhausted \| resolved | `src/hooks/admin/useV4Callbacks.ts` |
 | AssistantMode | briefing \| chat \| proactive_nudge | `src/hooks/assistant/usePersonalAssistantHelpers.ts` |
 | TriggerType | deal_created \| stage_changed \| activity_logged \| scheduled \| manual \| no_activity_days \| proposal_opened \| price_clicked | `src/hooks/automation/useAutomationWorkflows.ts` |
@@ -4296,7 +4297,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1866 testes em 252 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1872 testes em 253 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4390,6 +4391,7 @@ _nenhum item encontrado_
 | `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
 | `src/lib/supabase/chunkedIn.test.ts` | 6 | chunkedIn · short-circuits on empty array · splits into chunks of chunkSize and concatenates data · preserves order in sequential mode … |
 | `src/pages/Index.test.tsx` | 6 | Dashboard Integration Tests · recalculates KPIs when period is changed · shows skeleton states while loading · handles data fetch failure and recovery … |
+| `src/pages/admin/AdminCreditAnalysisPage.test.tsx` | 6 | AdminCreditAnalysisPage — fila de crédito da 1ª venda (#761) · lista pedido aguardando crédito com cliente, CNPJ e valor · sinaliza como  · conta solicitações entregues e falhas no cabeçalho … |
 | `src/test/consoleGuard.test.ts` | 6 | consoleGuard · formata erro, string e objeto numa linha · trunca mensagens longas · aponta o que não foi declarado e silencia o que foi … |
 | `supabase/functions/_shared/retry.test.ts` | 6 | withRetry — sucesso na primeira tentativa não retorna RetryError · withRetry — success_after_retry após 5xx transient · withRetry — retry_exhausted lança RetryError com attempts=maxAttempts · withRetry — non_retryable (4xx) não faz retry … |
 | `supabase/functions/check-v4-callback-alerts/index.test.ts` | 6 | no alerts when under thresholds · skips failure rate when below min_events · fires high_failure_rate · fires exhausted_spike … |
@@ -4912,6 +4914,7 @@ _nenhum item encontrado_
 | Falha de listagem não pode parecer "nenhuma passkey" — expõe erro. | `src/hooks/useWebAuthn.ts` |
 | verifyOtp falhando não pode ser tratado como login bem-sucedido. | `src/hooks/useWebAuthn.ts` |
 | * Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */ | `src/hooks/admin/useApprovalWorkflows.ts` |
+| * Fila da análise de crédito da primeira venda (regra da #761). | `src/hooks/admin/useCreditAnalysis.ts` |
 | - Limite defensivo de 30 registros para não pesar o Hub. | `src/hooks/assistant/useBriefingHistory.ts` |
 | - staleTime alto pois histórico muda no máximo 1x por dia. | `src/hooks/assistant/useBriefingHistory.ts` |
 | Check if MFA upgrade is required (AAL1 → AAL2) | `src/hooks/auth/useAuthForm.ts` |
@@ -5124,5 +5127,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/generate-executive-briefing/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos | `supabase/functions/generate-loss-coaching/index.ts` |
 | Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
-| • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
-| … +144 linhas — lista completa em `context.json` | |
+| … +145 linhas — lista completa em `context.json` | |

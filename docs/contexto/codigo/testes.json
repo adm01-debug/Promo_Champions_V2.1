@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 290,
+ "total": 291,
  "por_tipo": {
   "contrato": 8,
   "e2e": 54,
   "pytest": 2,
-  "unit": 217
+  "unit": 218
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 202
+   "arquivos": 203
   },
   {
    "padrao": "tests/",
@@ -1638,6 +1638,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/pages/admin/AdminCreditAnalysisPage.tsx"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/pages/AdminComissoes.test.tsx",
    "tipo": "unit",
    "linhas": 124,
@@ -2670,6 +2679,7 @@
   "src/pages/RaceSpectator.tsx": 1,
   "src/pages/WinLossAnalysisPage.tsx": 1,
   "src/pages/admin/AdminComercial.tsx": 1,
+  "src/pages/admin/AdminCreditAnalysisPage.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
   "src/routes/routeAccess.ts": 1,
   "src/services/callFeedbackService.ts": 1,
@@ -2867,6 +2877,7 @@
    "src/hooks/admin/useAdminStats.ts",
    "src/hooks/admin/useAuditLogs.ts",
    "src/hooks/admin/useConnectionMetrics.ts",
+   "src/hooks/admin/useCreditAnalysis.ts",
    "src/hooks/admin/useDataSubjectRequests.ts",
    "src/hooks/admin/useIntegrationConnections.ts",
    "src/hooks/admin/usePlatformSLO.ts",

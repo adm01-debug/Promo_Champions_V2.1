@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2552)",
+   "TypeScript (2555)",
    "SQL (730)",
    "Markdown (225)",
    "JavaScript (78)",
@@ -2043,12 +2043,12 @@
     "ocorrencias": 23
    },
    {
-    "papel": "sdr",
+    "papel": "admin",
     "ocorrencias": 22
    },
    {
-    "papel": "admin",
-    "ocorrencias": 21
+    "papel": "sdr",
+    "ocorrencias": 22
    },
    {
     "papel": "alert",
@@ -2285,7 +2285,7 @@
    "src/components/auth/ProtectedRoute.tsx",
    "src/components/navigation/NavigationGuard.tsx"
   ],
-  "rotas_protegidas": 36,
+  "rotas_protegidas": 37,
   "rotas_publicas": [
    "/*",
    "/abm",

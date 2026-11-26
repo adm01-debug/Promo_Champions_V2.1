@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1291,
+ "total": 1292,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -504,7 +504,7 @@
     "AdminQuickLinks"
    ],
    "export_default": null,
-   "linhas": 176,
+   "linhas": 182,
    "dominio": "components/admin",
    "hooks_locais": [
     "useDeadLettersCounts"
@@ -2577,7 +2577,7 @@
     "access_denied_logs"
    ],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -15650,7 +15650,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 124,
+   "usado_por": 125,
    "orfao": false
   },
   {
@@ -15735,7 +15735,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 556,
+   "usado_por": 557,
    "orfao": false
   },
   {
@@ -15769,7 +15769,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 544,
+   "usado_por": 545,
    "orfao": false
   },
   {
@@ -15801,7 +15801,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 716,
+   "usado_por": 717,
    "orfao": false
   },
   {
@@ -16131,7 +16131,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -16235,7 +16235,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 55,
+   "usado_por": 56,
    "orfao": false
   },
   {
@@ -17799,6 +17799,22 @@
    "linhas": 140,
    "dominio": "pages/admin",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/admin/AdminCreditAnalysisPage.tsx",
+   "exports": [
+    "AdminCreditAnalysisPage"
+   ],
+   "export_default": "AdminCreditAnalysisPage",
+   "linhas": 339,
+   "dominio": "pages/admin",
+   "hooks_locais": [
+    "useCreditAnalysis"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -20637,7 +20653,7 @@
     "AppRoutes"
    ],
    "export_default": null,
-   "linhas": 1158,
+   "linhas": 1167,
    "dominio": "routes",
    "hooks_locais": [],
    "tabelas": [],

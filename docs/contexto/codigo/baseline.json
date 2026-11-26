@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d44d5664a12beaef7a570985a198a7b244d84b25",
+  "commit": "d1aa531f96ab33123f0acbd7325a535c0f3bb161",
   "branch": "main",
-  "data_commit": "2026-11-26T19:27:11-03:00",
+  "data_commit": "2026-11-26T20:43:41-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d1aa531",
+    "data": "2026-11-26",
+    "assunto": "feat: tela admin da fila de análise de crédito da 1ª venda (#766)"
+   },
    {
     "sha": "d44d566",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "d52445e",
     "data": "2026-11-24",
     "assunto": "chore: sonda read-only da fila do supply_outbox na suite remota (#737)"
-   },
-   {
-    "sha": "a4084fb",
-    "data": "2026-11-24",
-    "assunto": "fix: timeout de 60s para o cron supply-dispatch (#736)"
    }
   ],
-  "arquivos_mudados_7d": 377,
+  "arquivos_mudados_7d": 380,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/admin",
-    "mudancas": 72
+    "mudancas": 73
    },
    {
     "pasta": "src/components/analytics",
@@ -238,11 +238,23 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/components/admin/AdminQuickLinks.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "mudancas": 5
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/routes/lazyPages.ts",
     "mudancas": 5
    },
    {
@@ -259,10 +271,6 @@
    },
    {
     "arquivo": "docs/prod-readiness.md",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/components/admin/AdminQuickLinks.tsx",
     "mudancas": 4
    },
    {
@@ -288,14 +296,6 @@
    {
     "arquivo": "src/hooks/useEligibleBonuses.ts",
     "mudancas": 4
-   },
-   {
-    "arquivo": "src/routes/AppRoutes.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/routes/lazyPages.ts",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3704,
-  "arquivos_codigo": 2633,
-  "linhas_codigo": 451544,
-  "rotas": 171,
+  "arquivos_total": 3707,
+  "arquivos_codigo": 2636,
+  "linhas_codigo": 452160,
+  "rotas": 172,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 147,
   "modulos": 176,
-  "componentes": 1291,
-  "hooks": 484,
+  "componentes": 1292,
+  "hooks": 485,
   "edge_functions": 175,
   "tabelas": 422,
   "migrations": 718,
   "cron_jobs": 41,
-  "testes": 290,
+  "testes": 291,
   "workflows": 32,
   "scripts": 78,
   "docs_md": 225
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1243,
-   "linhas": 195499
+   "linhas": 195505
   },
   "src/config": {
    "arquivos": 4,
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 558,
-   "linhas": 66141
+   "arquivos": 559,
+   "linhas": 66268
   },
   "src/integrations": {
    "arquivos": 5,
@@ -623,12 +623,12 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 187,
-   "linhas": 45788
+   "arquivos": 189,
+   "linhas": 46258
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1927
+   "linhas": 1940
   },
   "src/services": {
    "arquivos": 9,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1158
+   "linhas": 1167
   },
   {
    "arquivo": "scripts/graphify-local.mjs",

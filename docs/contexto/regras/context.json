@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d44d5664a12beaef7a570985a198a7b244d84b25",
+  "sha": "d1aa531f96ab33123f0acbd7325a535c0f3bb161",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 22:29 UTC",
-  "files_total": 3719,
-  "code_files": 3363,
-  "code_lines": 487807
+  "generated_at": "2026-11-26 23:47 UTC",
+  "files_total": 3722,
+  "code_files": 3366,
+  "code_lines": 488423
  },
  "version": "1.3.2",
- "facts_hash": "697920950d672c03",
+ "facts_hash": "8e6442ebe1961251",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -433,8 +433,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1410,
-   ".ts": 1141,
+   ".tsx": 1412,
+   ".ts": 1142,
    ".sql": 730,
    ".mjs": 72,
    ".js": 6,
@@ -102331,6 +102331,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/admin/analise-credito",
+    "component": "Admin",
+    "guard": "",
+    "roles": [],
+    "file": "src/routes/AppRoutes.tsx"
+   },
+   {
     "path": "/admin/comercial",
     "component": "Manager",
     "guard": "",
@@ -104050,6 +104057,10 @@
    {
     "name": "useRollbackRateSeries",
     "file": "src/hooks/admin/useConnectionMetrics.ts"
+   },
+   {
+    "name": "useCreditAnalysis",
+    "file": "src/hooks/admin/useCreditAnalysis.ts"
    },
    {
     "name": "useDataSubjectRequests",
@@ -107412,6 +107423,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/pages/admin/AdminCreditAnalysisPage.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/pages/admin/AdminDesignInboundPage.tsx"
    },
    {
@@ -107790,7 +107805,7 @@
   {
    "module": "src/components",
    "files": 1243,
-   "lines": 195498,
+   "lines": 195504,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108120,8 +108135,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 558,
-   "lines": 66141,
+   "files": 559,
+   "lines": 66268,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108192,6 +108207,7 @@
     "contact_best_send_window",
     "contact_engagement_score",
     "conversation_analyses",
+    "credit_outbox",
     "critical_moment_notifications",
     "custom_reports",
     "daily_challenge_progress",
@@ -108763,8 +108779,8 @@
   },
   {
    "module": "src/pages",
-   "files": 187,
-   "lines": 45788,
+   "files": 189,
+   "lines": 46258,
    "tables": [
     "achievements",
     "activities",
@@ -108961,7 +108977,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1927,
+   "lines": 1940,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -110898,6 +110914,11 @@
      "supabase/functions/analyze-conversation/index.ts"
     ]
    },
+   "credit_outbox": {
+    "select": [
+     "src/hooks/admin/useCreditAnalysis.ts"
+    ]
+   },
    "critical_moment_notifications": {
     "select": [
      "src/hooks/useCriticalMoments.ts"
@@ -111951,6 +111972,7 @@
    "orders": {
     "select": [
      "scripts/verify-quote-to-sale-invariants.ts",
+     "src/hooks/admin/useCreditAnalysis.ts",
      "src/hooks/orders/useOrder.ts",
      "src/hooks/orders/useOrderTracking.ts",
      "src/hooks/orders/usePurchaseHistory.ts",
@@ -114685,6 +114707,9 @@
     "created_at",
     "sentiment"
    ],
+   "credit_outbox": [
+    "order_id"
+   ],
    "critical_moment_notifications": [
     "moment_id",
     "read_at"
@@ -115147,6 +115172,7 @@
     "cancellation_reason",
     "client_id",
     "created_at",
+    "credit_status",
     "id",
     "order_number",
     "quote_id",
@@ -118202,7 +118228,6 @@
    "cohort_analyses",
    "consent_records",
    "contact_send_time_profile",
-   "credit_outbox",
    "cron_failure_alerts",
    "cron_job_last_run",
    "cron_job_last_run_cursor",
@@ -119421,6 +119446,11 @@
     "file": "src/hooks/activities/useActivities.ts",
     "name": "ActivityOutcome",
     "values": "connected | no_answer | scheduled | voicemail | busy | callback | not_interested | qualified | bad_timing | wrong_person | unsubscribed"
+   },
+   {
+    "file": "src/hooks/admin/useCreditAnalysis.ts",
+    "name": "CreditOutboxStatus",
+    "values": "pending | processing | delivered | dead"
    },
    {
     "file": "src/hooks/admin/useV4Callbacks.ts",
@@ -124657,6 +124687,10 @@
    {
     "file": "src/hooks/admin/useApprovalWorkflows.ts",
     "text": "* Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */"
+   },
+   {
+    "file": "src/hooks/admin/useCreditAnalysis.ts",
+    "text": "* Fila da análise de crédito da primeira venda (regra da #761)."
    },
    {
     "file": "src/hooks/assistant/useBriefingHistory.ts",
@@ -147314,6 +147348,24 @@
     "kind": "filtra"
    },
    {
+    "file": "src/hooks/admin/useCreditAnalysis.ts",
+    "field": "status",
+    "value": "dead",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/admin/useCreditAnalysis.ts",
+    "field": "status",
+    "value": "delivered",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/admin/useCreditAnalysis.ts",
+    "field": "credit_status",
+    "value": "aguardando_credito",
+    "kind": "filtra"
+   },
+   {
     "file": "src/hooks/admin/useDataSubjectRequests.ts",
     "field": "status",
     "value": "all",
@@ -150029,6 +150081,18 @@
     "file": "src/pages/admin/AdminComercial.tsx",
     "field": "status",
     "value": "approved",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.tsx",
+    "field": "status",
+    "value": "delivered",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.tsx",
+    "field": "status",
+    "value": "dead",
     "kind": "compara"
    },
    {
@@ -164640,6 +164704,30 @@
    {
     "file": "src/pages/admin/AdminComercial.test.tsx",
     "name": "avisa quando o filtro não encontra nenhum registro"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "AdminCreditAnalysisPage — fila de crédito da 1ª venda (#761)"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "lista pedido aguardando crédito com cliente, CNPJ e valor"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "sinaliza como "
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "conta solicitações entregues e falhas no cabeçalho"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "mostra o último erro de envio no detalhe do pedido"
+   },
+   {
+    "file": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "name": "mostra estado vazio quando não há pedido aguardando crédito"
    },
    {
     "file": "src/routes/routeAccess.test.ts",
@@ -194036,8 +194124,10 @@
       "compara:src/components/customer-success/CustomerSuccess360Hub.tsx",
       "compara:src/components/multichannel/multichannelHelpers.ts",
       "compara:src/components/orders/orderHelpers.ts",
+      "compara:src/hooks/admin/useCreditAnalysis.ts",
       "compara:src/hooks/dashboard/useBIDossierExport.ts",
-      "compara:src/pages/AcompanhamentoPedidos.tsx"
+      "compara:src/pages/AcompanhamentoPedidos.tsx",
+      "compara:src/pages/admin/AdminCreditAnalysisPage.tsx"
      ],
      "good": [
       "compara:src/components/customer-success/CustomerSuccessHub.tsx",
@@ -194263,6 +194353,10 @@
      "resolved": [
       "compara:src/hooks/admin/useV4Callbacks.ts",
       "escreve:src/hooks/useSLATracking.ts"
+     ],
+     "dead": [
+      "compara:src/hooks/admin/useCreditAnalysis.ts",
+      "compara:src/pages/admin/AdminCreditAnalysisPage.tsx"
      ],
      "exhausted": [
       "compara:src/hooks/admin/useV4Callbacks.ts",
@@ -194943,14 +195037,17 @@
       "compara:src/hooks/admin/useAdminStats.ts"
      ]
     },
+    "credit_status": {
+     "aguardando_credito": [
+      "filtra:src/hooks/admin/useCreditAnalysis.ts"
+     ],
+     "nao_aplicavel": [
+      "compara:src/pages/OrderDetailPage.tsx"
+     ]
+    },
     "funnel_stage": {
      "new": [
       "escreve:src/hooks/cadences/useCadenceQueries.ts"
-     ]
-    },
-    "credit_status": {
-     "nao_aplicavel": [
-      "compara:src/pages/OrderDetailPage.tsx"
      ]
     },
     "tipo": {
@@ -226116,6 +226213,10 @@
    },
    {
     "guard": "ProtectedRoute",
+    "file": "src/pages/admin/AdminCreditAnalysisPage.tsx"
+   },
+   {
+    "guard": "ProtectedRoute",
     "file": "src/pages/admin/AdminDesignInboundPage.tsx"
    },
    {
@@ -233274,7 +233375,7 @@
   },
   "src/components/admin/AdminQuickLinks.tsx": {
    "path": "src/components/admin/AdminQuickLinks.tsx",
-   "lines": 176,
+   "lines": 182,
    "exports": [
     "function AdminQuickLinks"
    ]
@@ -258558,6 +258659,69 @@
     "useRollbackRateSeries"
    ]
   },
+  "src/hooks/admin/useCreditAnalysis.ts": {
+   "path": "src/hooks/admin/useCreditAnalysis.ts",
+   "lines": 127,
+   "exports": [
+    "type CreditOutboxStatus",
+    "interface PendingCreditOrder",
+    "interface CreditAnalysisTotals",
+    "interface CreditAnalysis",
+    "function fetchCreditAnalysis",
+    "function useCreditAnalysis"
+   ],
+   "tables": [
+    {
+     "table": "orders",
+     "op": "select"
+    },
+    {
+     "table": "credit_outbox",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "orders": [
+     "created_at",
+     "credit_status",
+     "id",
+     "order_number",
+     "total"
+    ],
+    "credit_outbox": [
+     "order_id"
+    ]
+   },
+   "enums": [
+    {
+     "name": "CreditOutboxStatus",
+     "values": "pending | processing | delivered | dead"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "dead",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "delivered",
+     "kind": "compara"
+    },
+    {
+     "field": "credit_status",
+     "value": "aguardando_credito",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "* Fila da análise de crédito da primeira venda (regra da #761)."
+   ],
+   "hooks": [
+    "useCreditAnalysis"
+   ]
+  },
   "src/hooks/admin/useDataSubjectRequests.ts": {
    "path": "src/hooks/admin/useDataSubjectRequests.ts",
    "lines": 154,
@@ -276742,6 +276906,41 @@
     "ProtectedRoute"
    ]
   },
+  "src/pages/admin/AdminCreditAnalysisPage.test.tsx": {
+   "path": "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+   "lines": 131,
+   "is_test": true,
+   "tests": [
+    "AdminCreditAnalysisPage — fila de crédito da 1ª venda (#761)",
+    "lista pedido aguardando crédito com cliente, CNPJ e valor",
+    "sinaliza como ",
+    "conta solicitações entregues e falhas no cabeçalho",
+    "mostra o último erro de envio no detalhe do pedido",
+    "mostra estado vazio quando não há pedido aguardando crédito"
+   ]
+  },
+  "src/pages/admin/AdminCreditAnalysisPage.tsx": {
+   "path": "src/pages/admin/AdminCreditAnalysisPage.tsx",
+   "lines": 339,
+   "exports": [
+    "function AdminCreditAnalysisPage"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "delivered",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "dead",
+     "kind": "compara"
+    }
+   ],
+   "guards": [
+    "ProtectedRoute"
+   ]
+  },
   "src/pages/admin/AdminDesignInboundPage.tsx": {
    "path": "src/pages/admin/AdminDesignInboundPage.tsx",
    "lines": 128,
@@ -276901,7 +277100,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1158,
+   "lines": 1167,
    "exports": [
     "function AppRoutes"
    ],
@@ -277849,6 +278048,12 @@
      "roles": []
     },
     {
+     "path": "/admin/analise-credito",
+     "component": "Admin",
+     "guard": "",
+     "roles": []
+    },
+    {
      "path": "/admin/quote-sync-inbound",
      "component": "Admin",
      "guard": "",
@@ -278000,7 +278205,7 @@
   },
   "src/routes/lazyPages.ts": {
    "path": "src/routes/lazyPages.ts",
-   "lines": 362,
+   "lines": 365,
    "exports": [
     "const Index",
     "const Auth",
@@ -278102,7 +278307,7 @@
   },
   "src/routes/routeAccess.ts": {
    "path": "src/routes/routeAccess.ts",
-   "lines": 165,
+   "lines": 166,
    "exports": [
     "const adminOnlyRoutes",
     "const managerOnlyRoutes",
@@ -302410,10 +302615,25 @@
   }
  },
  "git": {
-  "sha": "d44d5664a12beaef7a570985a198a7b244d84b25",
+  "sha": "d1aa531f96ab33123f0acbd7325a535c0f3bb161",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d1aa531",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela admin da fila de análise de crédito da 1ª venda (#766)",
+    "files": [
+     "src/components/admin/AdminQuickLinks.tsx",
+     "src/hooks/admin/useCreditAnalysis.ts",
+     "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+     "src/pages/admin/AdminCreditAnalysisPage.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/lazyPages.ts",
+     "src/routes/routeAccess.ts"
+    ]
+   },
    {
     "sha": "d44d566",
     "date": "2026-11-26",
@@ -302725,15 +302945,6 @@
      "supabase/functions/supply-dispatch/index.ts",
      "supabase/migrations/20261126090000_champions_supply_outbox.sql"
     ]
-   },
-   {
-    "sha": "b241da2",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "ci: provisiona o segredo do webhook Promo Supply (#732)",
-    "files": [
-     ".github/workflows/provisionar-secret-supply-webhook.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -302760,6 +302971,14 @@
    [
     "package.json",
     3
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
+    2
+   ],
+   [
+    "src/routes/lazyPages.ts",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -302790,31 +303009,23 @@
     2
    ],
    [
-    ".github/workflows/provisionar-secret-finance-credito.yml",
+    "src/components/admin/AdminQuickLinks.tsx",
     1
    ],
    [
-    "src/components/orders/orderHelpers.ts",
+    "src/hooks/admin/useCreditAnalysis.ts",
     1
    ],
    [
-    "src/hooks/orders/useOrder.ts",
+    "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
     1
    ],
    [
-    "src/pages/OrderDetailPage.tsx",
+    "src/pages/admin/AdminCreditAnalysisPage.tsx",
     1
    ],
    [
-    "supabase/functions/credit-dispatch/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/receive-credit-decision/contract.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/receive-credit-decision/contract.ts",
+    "src/routes/routeAccess.ts",
     1
    ]
   ]
