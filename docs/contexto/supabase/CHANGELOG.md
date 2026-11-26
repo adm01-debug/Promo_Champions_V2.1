@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 21:17 UTC
+
+- **functions** alterado (4): `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`, `public.post_internal_edge_job(p_function_name text, p_attempt integer, p_max_attempts integer)`, `public.trigger_internal_edge_job(p_function_name text)`
+
 ## 2026-11-26 16:21 UTC
 
 - **functions** alterado (3): `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`

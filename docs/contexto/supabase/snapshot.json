@@ -91062,7 +91062,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 190,
+          "code_total_files": 191,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -91250,7 +91250,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 190,
+          "code_total_files": 191,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -92672,9 +92672,13 @@
             {
               "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "public.retry_pending_internal_edge_jobs",
@@ -95617,9 +95621,13 @@
             {
               "file": "supabase/migrations/20261126090000_champions_supply_outbox.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261128130000_analise_credito_primeira_venda.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 12,
+          "code_total_files": 13,
           "cron": [
             "36:notify-v4-quote-status-every-5min",
             "37:check-v4-callback-alerts-every-5min",
