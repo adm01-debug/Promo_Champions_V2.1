@@ -4269,6 +4269,7 @@ export type Database = {
       clients: {
         Row: {
           activated_at: string | null
+          cnpj: string | null
           company: string | null
           created_at: string
           delete_reason: string | null
@@ -4293,6 +4294,7 @@ export type Database = {
         }
         Insert: {
           activated_at?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           delete_reason?: string | null
@@ -4317,6 +4319,7 @@ export type Database = {
         }
         Update: {
           activated_at?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           delete_reason?: string | null
@@ -5774,6 +5777,56 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales_with_markup"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_outbox: {
+        Row: {
+          attempts: number
+          created_at: string
+          delivered_at: string | null
+          event: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          order_id: string
+          payload: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          event?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          order_id: string
+          payload: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          delivered_at?: string | null
+          event?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          order_id?: string
+          payload?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_outbox_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -11610,6 +11663,11 @@ export type Database = {
           cancellation_reason: string | null
           client_id: string | null
           created_at: string
+          credit_decided_at: string | null
+          credit_limit_approved: number | null
+          credit_max_installments: number | null
+          credit_notes: string | null
+          credit_status: string
           id: string
           metadata: Json | null
           notes: string | null
@@ -11627,6 +11685,11 @@ export type Database = {
           cancellation_reason?: string | null
           client_id?: string | null
           created_at?: string
+          credit_decided_at?: string | null
+          credit_limit_approved?: number | null
+          credit_max_installments?: number | null
+          credit_notes?: string | null
+          credit_status?: string
           id?: string
           metadata?: Json | null
           notes?: string | null
@@ -11644,6 +11707,11 @@ export type Database = {
           cancellation_reason?: string | null
           client_id?: string | null
           created_at?: string
+          credit_decided_at?: string | null
+          credit_limit_approved?: number | null
+          credit_max_installments?: number | null
+          credit_notes?: string | null
+          credit_status?: string
           id?: string
           metadata?: Json | null
           notes?: string | null
@@ -23923,6 +23991,16 @@ export type Database = {
         }
         Returns: Json
       }
+      aplicar_decisao_credito: {
+        Args: {
+          p_decisao: string
+          p_limite?: number
+          p_order_id: string
+          p_parcelas?: number
+          p_parecer?: string
+        }
+        Returns: Json
+      }
       append_agent_step: {
         Args: {
           _executed_by?: string
@@ -24089,6 +24167,7 @@ export type Database = {
         Args: { _subscription_id: string }
         Returns: boolean
       }
+      claim_credit_outbox: { Args: { p_limit?: number }; Returns: Json }
       claim_daily_challenge_reward: {
         Args: { p_challenge_id: string }
         Returns: Json
@@ -24241,6 +24320,10 @@ export type Database = {
           rule_id: string
           rule_name: string
         }[]
+      }
+      finish_credit_outbox: {
+        Args: { p_error?: string; p_ids: string[]; p_ok: boolean }
+        Returns: number
       }
       finish_supply_outbox: {
         Args: { p_error?: string; p_ids: string[]; p_ok: boolean }
