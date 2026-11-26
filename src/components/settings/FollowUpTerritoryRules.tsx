@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Card,
@@ -24,14 +23,10 @@ import { toast } from 'sonner';
 import { Loader2, Plus, Trash2, MapPin, User, Save, ListChecks } from 'lucide-react';
 import { useUserRoles } from '@/hooks/useUserRoles';
 
-// These tables/views are not present in the generated Supabase types yet.
-// Use an untyped client view so we can query them without leaking `any` into the code.
-// eslint-disable-next-line no-restricted-syntax
-const db = supabase as unknown as SupabaseClient;
-
 interface TerritoryRule {
   id: string;
   territory: string | null;
+  salesperson_id?: string | null;
   salesperson?: { display_name: string | null } | null;
   whatsapp_template?: { name: string | null } | null;
 }
@@ -59,20 +54,38 @@ export function FollowUpTerritoryRules() {
   const { data: rules, isLoading: isLoadingRules } = useQuery({
     queryKey: ['follow-up-territory-rules'],
     queryFn: async () => {
-      const { data, error } = await db.from('follow_up_territory_rules').select(`
+      const { data, error } = await supabase.from('follow_up_territory_rules').select(`
           *,
-          whatsapp_template:follow_up_templates(name),
-          salesperson:auth_users_view(display_name)
+          whatsapp_template:follow_up_templates(name)
         `);
       if (error) throw error;
-      return data as TerritoryRule[];
+      const rows = (data ?? []) as TerritoryRule[];
+      const salespersonIds = [
+        ...new Set(
+          rows.map(rule => rule.salesperson_id).filter((id): id is string => !!id)
+        ),
+      ];
+      if (salespersonIds.length === 0) return rows;
+      const { data: salespeople } = await supabase
+        .from('salespeople')
+        .select('auth_user_id, name')
+        .in('auth_user_id', salespersonIds);
+      const nameByAuthUserId = new Map(
+        (salespeople ?? []).map(person => [person.auth_user_id, person.name])
+      );
+      return rows.map(rule => ({
+        ...rule,
+        salesperson: rule.salesperson_id
+          ? { display_name: nameByAuthUserId.get(rule.salesperson_id) ?? null }
+          : null,
+      }));
     },
   });
 
   const { data: templates } = useQuery({
     queryKey: ['follow-up-templates'],
     queryFn: async () => {
-      const { data, error } = await db
+      const { data, error } = await supabase
         .from('follow_up_templates')
         .select('id, name')
         .eq('is_active', true);
@@ -84,18 +97,31 @@ export function FollowUpTerritoryRules() {
   const { data: salespersons } = useQuery({
     queryKey: ['salespersons-list'],
     queryFn: async () => {
-      const { data, error } = await db.from('auth_users_view').select('id, display_name');
+      const { data, error } = await supabase
+        .from('salespeople')
+        .select('auth_user_id, name')
+        .eq('is_active', true)
+        .order('name');
       if (error) throw error;
-      return data as SalespersonOption[];
+      const options: SalespersonOption[] = [];
+      for (const person of data ?? []) {
+        if (person.auth_user_id) {
+          options.push({ id: person.auth_user_id, display_name: person.name });
+        }
+      }
+      return options;
     },
   });
 
   const addRule = useMutation({
     mutationFn: async () => {
       if (!isAdmin) throw new Error('Acesso negado.');
-      const { error } = await db.from('follow_up_territory_rules').insert({
+      const { error } = await supabase.from('follow_up_territory_rules').insert({
         territory: selectedTerritory || null,
-        salesperson_id: selectedSalesperson || null,
+        salesperson_id:
+          selectedSalesperson && selectedSalesperson !== 'none'
+            ? selectedSalesperson
+            : null,
         whatsapp_template_id: selectedTemplate || null,
       });
       if (error) throw error;
@@ -113,7 +139,10 @@ export function FollowUpTerritoryRules() {
   const deleteRule = useMutation({
     mutationFn: async (id: string) => {
       if (!isAdmin) throw new Error('Acesso negado.');
-      const { error } = await db.from('follow_up_territory_rules').delete().eq('id', id);
+      const { error } = await supabase
+        .from('follow_up_territory_rules')
+        .delete()
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -182,7 +211,9 @@ export function FollowUpTerritoryRules() {
                 className="w-full gap-2"
                 onClick={() => addRule.mutate()}
                 disabled={
-                  addRule.isPending || (!selectedTerritory && !selectedSalesperson)
+                  addRule.isPending ||
+                  (!selectedTerritory &&
+                    (!selectedSalesperson || selectedSalesperson === 'none'))
                 }
               >
                 <Plus className="h-4 w-4" /> Adicionar Regra
