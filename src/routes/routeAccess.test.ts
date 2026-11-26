@@ -19,6 +19,7 @@ import {
 import {
   getMainItems,
   getGroupedItems,
+  adminOnlyItems,
   type ViewMode,
 } from '@/components/layout/sidebar/sidebarMenuData';
 
@@ -114,19 +115,33 @@ describe('canAccessPath', () => {
 
 describe('menu lateral — páginas antes órfãs continuam alcançáveis', () => {
   const modes: ViewMode[] = ['sdr', 'closer', 'gestao'];
-  const menuUrls = modes
-    .flatMap(mode => [
-      ...getMainItems(mode),
-      ...getGroupedItems(mode).flatMap(group => group.items),
-    ])
-    .map(item => item.url);
+  const menuUrls = [
+    ...adminOnlyItems.map(item => item.url),
+    ...modes
+      .flatMap(mode => [
+        ...getMainItems(mode),
+        ...getGroupedItems(mode).flatMap(group => group.items),
+      ])
+      .map(item => item.url),
+  ];
 
-  it.each(['/perfil-gamer', '/desafios-diarios', '/bi-vendedor', '/abm'])(
-    '%s tem entrada no menu (rota registrada não pode ficar sem caminho na UI)',
-    url => {
-      expect(menuUrls).toContain(url);
-    }
-  );
+  it.each([
+    '/perfil-gamer',
+    '/desafios-diarios',
+    '/bi-vendedor',
+    '/abm',
+    '/ferramentas/bi',
+    '/relatorio-atividades',
+    '/comparador-precos',
+    '/analytics/emails',
+    '/admin/tarefas',
+    '/admin/quote-sync-inbound',
+    '/admin/alertas-churn',
+    '/admin/regras-inatividade',
+    '/admin/fila-tarefas-automaticas',
+  ])('%s tem entrada no menu (rota registrada não pode ficar sem caminho na UI)', url => {
+    expect(menuUrls).toContain(url);
+  });
 });
 
 describe('menu lateral — nenhum item oferecido a quem não pode abrir', () => {
