@@ -69,11 +69,12 @@ export default function OrderDetailPage() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {data.order.credit_status && data.order.credit_status !== 'nao_aplicavel' && (
-                <Badge variant={creditStatusTone(data.order.credit_status)} size="lg">
-                  {creditStatusLabel(data.order.credit_status)}
-                </Badge>
-              )}
+              {data.order.credit_status &&
+                data.order.credit_status !== 'nao_aplicavel' && (
+                  <Badge variant={creditStatusTone(data.order.credit_status)} size="lg">
+                    {creditStatusLabel(data.order.credit_status)}
+                  </Badge>
+                )}
               <Badge variant={statusTone(data.order.status)} size="lg">
                 {statusLabel(data.order.status)}
               </Badge>

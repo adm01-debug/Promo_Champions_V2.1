@@ -61,7 +61,8 @@ export function statusIndex(status: OrderStatus): number {
 }
 
 // Análise de crédito da 1ª venda (orders.credit_status), separada do status operacional.
-export type CreditStatus = 'nao_aplicavel' | 'aguardando_credito' | 'aprovado' | 'reprovado';
+export type CreditStatus =
+  'nao_aplicavel' | 'aguardando_credito' | 'aprovado' | 'reprovado';
 
 export function creditStatusLabel(status: CreditStatus): string {
   switch (status) {
