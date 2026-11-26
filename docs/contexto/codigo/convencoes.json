@@ -3,15 +3,15 @@
  "format_version": 2,
  "onde_ficam": {
   "telas": [
-   "src/pages (166)"
+   "src/pages (167)"
   ],
   "componentes": [
    "src/components (1110)",
-   "src/pages (173)",
+   "src/pages (174)",
    "src/contexts (5)"
   ],
   "hooks": [
-   "src/hooks (471)",
+   "src/hooks (472)",
    "src/contexts (6)",
    "src/components (4)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (194)",
+   "co-localizado (*.test) (195)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1290)"
+  ".tsx (1291)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: tela de Momentos Críticos para os alertas de chamada (#751)",
    "chore(main): release 1.10.1 (#750)",
    "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)",
    "chore(main): release 1.10.0 (#739)",
-   "chore: resgata a sonda de estado da fila Champions -> Supply (#747)",
-   "chore: sonda read-only do estado da outbox no db-probe (#746)"
+   "chore: resgata a sonda de estado da fila Champions -> Supply (#747)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
+  "commit": "fd3079d658744f8370f7bb8c697cbefea4a987c0",
   "branch": "main",
-  "data_commit": "2026-11-26T07:13:52-03:00",
+  "data_commit": "2026-11-26T08:30:39-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "fd3079d",
+    "data": "2026-11-26",
+    "assunto": "feat: tela de Momentos Críticos para os alertas de chamada (#751)"
+   },
    {
     "sha": "86f0654",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "7b75ef8",
     "data": "2026-11-24",
     "assunto": "fix: troca confirm nativo por dialogo acessivel nas 6 exclusoes (QA-258) (#728)"
-   },
-   {
-    "sha": "bf7fc73",
-    "data": "2026-11-24",
-    "assunto": "fix: confirma exclusao de flag, conversa, token e supressao (QA-177) (#727)"
    }
   ],
-  "arquivos_mudados_7d": 349,
+  "arquivos_mudados_7d": 352,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -266,15 +266,11 @@
     "mudancas": 4
    },
    {
+    "arquivo": "src/components/layout/sidebar/sidebarMenuData.ts",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/components/pipeline/DealCard.test.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 4
    },
    {
@@ -294,7 +290,11 @@
     "mudancas": 4
    },
    {
-    "arquivo": "supabase/functions/detect-at-risk-deals/index.ts",
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/routes/lazyPages.ts",
     "mudancas": 4
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3688,
-  "arquivos_codigo": 2620,
-  "linhas_codigo": 449194,
-  "rotas": 170,
+  "arquivos_total": 3691,
+  "arquivos_codigo": 2623,
+  "linhas_codigo": 449978,
+  "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 133,
+  "itens_menu": 134,
   "modulos": 176,
-  "componentes": 1290,
-  "hooks": 483,
+  "componentes": 1291,
+  "hooks": 484,
   "edge_functions": 173,
   "tabelas": 421,
   "migrations": 716,
   "cron_jobs": 40,
-  "testes": 282,
+  "testes": 283,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1242,
-   "linhas": 195251
+   "linhas": 195255
   },
   "src/config": {
    "arquivos": 4,
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 553,
-   "linhas": 65423
+   "arquivos": 555,
+   "linhas": 65823
   },
   "src/integrations": {
    "arquivos": 4,
@@ -623,12 +623,12 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 185,
-   "linhas": 45301
+   "arquivos": 186,
+   "linhas": 45676
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1885
+   "linhas": 1890
   },
   "src/services": {
    "arquivos": 9,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1156
+   "linhas": 1158
   },
   {
    "arquivo": "scripts/graphify-local.mjs",

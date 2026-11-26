@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 170,
+  "urls": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 133,
-  "lazy": 233
+  "itens_menu": 134,
+  "lazy": 234
  },
  "urls": [
   {
@@ -7335,6 +7335,45 @@
    "indice": false,
    "lazy": true,
    "tipo": "tela",
+   "caminho": "/momentos-criticos",
+   "componente": "MomentosCriticos",
+   "arquivo": "src/pages/MomentosCriticos.tsx",
+   "definida_em": "src/routes/AppRoutes.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useCallback",
+    "useCriticalMomentActions",
+    "useCriticalMoments",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useState"
+   ],
+   "hooks_locais": [
+    "useCriticalMomentActions",
+    "useCriticalMoments"
+   ],
+   "tabelas": [
+    "call_critical_moments",
+    "call_recordings",
+    "critical_moment_notifications",
+    "salespeople"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": null,
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
    "caminho": "/multichannel",
    "componente": "Multichannel",
    "arquivo": "src/pages/Multichannel.tsx",
@@ -12323,6 +12362,15 @@
    "resolve_para": "src/pages/MinhasPremiacoes.tsx"
   },
   {
+   "rotulo": "Momentos Críticos",
+   "destino": "/momentos-criticos",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/MomentosCriticos.tsx"
+  },
+  {
    "rotulo": "Multichannel",
    "destino": "/multichannel",
    "grupo": null,
@@ -12966,6 +13014,7 @@
   "MeuAssistente": "src/pages/MeuAssistente.tsx",
   "MinhasPremiacoes": "src/pages/MinhasPremiacoes.tsx",
   "MobileNavigation": "src/components/mobile/MobileNavigation.tsx",
+  "MomentosCriticos": "src/pages/MomentosCriticos.tsx",
   "Multichannel": "src/pages/Multichannel.tsx",
   "NPSDashboard": "src/pages/NPSDashboard.tsx",
   "NotFound": "src/pages/NotFound.tsx",

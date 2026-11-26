@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1290,
+ "total": 1291,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -15735,7 +15735,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 555,
+   "usado_por": 556,
    "orfao": false
   },
   {
@@ -15769,7 +15769,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 543,
+   "usado_por": 544,
    "orfao": false
   },
   {
@@ -15801,7 +15801,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 715,
+   "usado_por": 716,
    "orfao": false
   },
   {
@@ -15957,7 +15957,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 137,
+   "usado_por": 138,
    "orfao": false
   },
   {
@@ -16097,7 +16097,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 130,
+   "usado_por": 131,
    "orfao": false
   },
   {
@@ -16188,7 +16188,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 320,
+   "usado_por": 321,
    "orfao": false
   },
   {
@@ -16216,7 +16216,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 64,
+   "usado_por": 65,
    "orfao": false
   },
   {
@@ -16252,7 +16252,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 84,
+   "usado_por": 85,
    "orfao": false
   },
   {
@@ -19530,6 +19530,23 @@
    "orfao": false
   },
   {
+   "arquivo": "src/pages/MomentosCriticos.tsx",
+   "exports": [
+    "MomentosCriticos"
+   ],
+   "export_default": "MomentosCriticos",
+   "linhas": 375,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useCriticalMomentActions",
+    "useCriticalMoments"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/pages/Multichannel.tsx",
    "exports": [
     "Multichannel"
@@ -20619,7 +20636,7 @@
     "AppRoutes"
    ],
    "export_default": null,
-   "linhas": 1156,
+   "linhas": 1158,
    "dominio": "routes",
    "hooks_locais": [],
    "tabelas": [],

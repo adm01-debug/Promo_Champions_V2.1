@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 282,
+ "total": 283,
  "por_tipo": {
   "contrato": 6,
   "e2e": 54,
   "pytest": 2,
-  "unit": 211
+  "unit": 212
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 194
+   "arquivos": 195
   },
   {
    "padrao": "tests/",
@@ -1137,6 +1137,15 @@
     "src/hooks/useClientsNeedingContact.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/useCriticalMoments.test.tsx",
+   "tipo": "unit",
+   "linhas": 141,
+   "testa": [
+    "src/hooks/useCriticalMoments.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/hooks/useDealProbability.test.tsx",
@@ -2525,6 +2534,7 @@
   "src/hooks/useClientsNeedingContact.ts": 1,
   "src/hooks/useCommissionBonuses.ts": 1,
   "src/hooks/useCommissions.ts": 1,
+  "src/hooks/useCriticalMoments.ts": 1,
   "src/hooks/useDealProbability.ts": 1,
   "src/hooks/useDigitalSignatures.ts": 1,
   "src/hooks/useEligibleBonuses.ts": 1,
@@ -2701,6 +2711,7 @@
    "src/pages/Metas.tsx",
    "src/pages/MeuAssistente.tsx",
    "src/pages/MinhasPremiacoes.tsx",
+   "src/pages/MomentosCriticos.tsx",
    "src/pages/Multichannel.tsx",
    "src/pages/NPSDashboard.tsx",
    "src/pages/Notificacoes.tsx",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `86f0654cf7` · branch `main` · 2026-11-26 10:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd3079d658` · branch `main` · 2026-11-26 11:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1481,10 +1481,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `abaixo` | compara | `src/pages/admin/AdminPlatformSLOPage.tsx` |
 | `status` | `abandoned` | compara | `src/pages/RelatoriosExecutivos.tsx` |
 | `status` | `accepted` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
-| `status` | `actioned` | compara, escreve | `src/components/conversational/CriticalMomentsList.tsx` |
+| `status` | `acknowledged` | compara, escreve | `src/pages/MomentosCriticos.tsx` |
+| `status` | `actioned` | compara, escreve | `src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx` |
 | `status` | `active` | compara, escreve, filtra | `src/components/analytics/ClientHealthPanel.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/clients/ClientKanban.tsx`<br>`src/components/competitive/BattleArena.tsx`<br>… +37 |
 | `status` | `ahead` | compara | `src/components/race/GhostStatusBadge.tsx` |
-| `status` | `all` | compara, escreve | `src/components/sdr/RecentProspects.tsx`<br>`src/components/sdr/SDRAdvancedFilters.tsx`<br>`src/hooks/admin/useDataSubjectRequests.ts`<br>`src/hooks/sequences/useSendTimeOptimization.ts`<br>`src/hooks/useMyBonusAwards.ts`<br>… +2 |
+| `status` | `all` | compara, escreve | `src/components/sdr/RecentProspects.tsx`<br>`src/components/sdr/SDRAdvancedFilters.tsx`<br>`src/hooks/admin/useDataSubjectRequests.ts`<br>`src/hooks/sequences/useSendTimeOptimization.ts`<br>`src/hooks/useCriticalMoments.ts`<br>… +3 |
 | `status` | `analyzing` | escreve | `supabase/functions/analyze-call/index.ts` |
 | `status` | `approved` | compara, escreve, filtra | `src/components/quotes/QuoteCard.tsx`<br>`src/components/security/PasswordResetApproval.tsx`<br>`src/hooks/cadences/useQuoteCadenceComparison.ts`<br>`src/hooks/cadences/useQuoteCadenceConversion.ts`<br>`src/hooks/cadences/useQuoteCadences.ts`<br>… +7 |
 | `status` | `archived` | compara, escreve | `src/components/win-loss/ReplayStatusByIdPanel.tsx`<br>`src/hooks/win-loss/useWebhookDeadLetters.ts` |
@@ -1509,7 +1510,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `dead_letter` | filtra | `src/components/admin/connections/DeadLetterIngestPanel.tsx` |
 | `status` | `dedupe_failed` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `delivered` | compara | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/multichannel/multichannelHelpers.ts`<br>`src/components/orders/orderHelpers.ts`<br>`src/hooks/dashboard/useBIDossierExport.ts`<br>`src/pages/AcompanhamentoPedidos.tsx` |
-| `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx` |
+| `status` | `dismissed` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx` |
 | `status` | `done` | escreve | `src/hooks/dialer/usePowerDialer.ts` |
 | `status` | `draft` | compara, escreve | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/quotes/QuoteCard.tsx`<br>`src/components/quotes/QuoteDetailDialog.tsx`<br>`src/hooks/cadences/useABTests.ts`<br>`src/hooks/useDigitalSignatures.ts`<br>… +2 |
 | `status` | `duplicate_ignored` | escreve | `supabase/functions/receive-design-sync/index.ts`<br>`supabase/functions/receive-quote-sync/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
@@ -1553,7 +1554,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `method_not_allowed` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `missing_signature` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `negotiation` | compara, escreve | `src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/sdr/SDRConversionRanking.tsx`<br>`src/hooks/useCloserMetrics.ts`<br>`src/lib/winloss/atRiskFixtures.ts`<br>`src/pages/VendedorDashboard.tsx`<br>… +8 |
-| `status` | `new` | compara, escreve, filtra | `src/components/conversational/CriticalMomentsList.tsx`<br>`supabase/functions/calculate-deal-health/index.ts`<br>`supabase/functions/detect-critical-moments/index.ts` |
+| `status` | `new` | compara, escreve, filtra | `src/components/conversational/CriticalMomentsList.tsx`<br>`src/pages/MomentosCriticos.tsx`<br>`supabase/functions/calculate-deal-health/index.ts`<br>`supabase/functions/detect-critical-moments/index.ts` |
 | `status` | `no-answer` | compara | `supabase/functions/twilio-call-status/index.ts` |
 | `status` | `no-data` | compara, escreve | `src/components/race/GhostCar.tsx`<br>`src/components/race/GhostStatusBadge.tsx`<br>`src/hooks/race/useGhostCar.ts` |
 | `status` | `offline` | compara | `src/components/arena/ArenaStatusBadge.tsx` |
@@ -1576,8 +1577,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `proposal` | compara, escreve, filtra | `src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/sdr/SDRConversionRanking.tsx`<br>`src/hooks/useCloserMetrics.ts`<br>`src/hooks/useNextBestAction.ts`<br>`src/lib/winloss/atRiskFixtures.ts`<br>… +4 |
 | `status` | `proposed` | compara | `supabase/functions/customer-success-360/index.ts` |
 | `status` | `prospecting` | compara | `src/components/pipeline/DealSummaryCard.tsx` |
-| `status` | `qualified` | compara, escreve, filtra | `src/components/closer/CloserHandoffs.tsx`<br>`src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sdr/MQLQualificationForm.tsx`<br>`src/components/sdr/RecentProspects.tsx`<br>… +5 |
-| … +124 linhas — lista completa em `context.json` | | | |
+| … +125 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1670,6 +1670,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | BonusType | first_sale \| milestone \| ranking \| streak \| other | `src/hooks/useCommissionBonuses.ts` |
 | BonusKind | fixed \| percentage | `src/hooks/useCommissionBonuses.ts` |
 | CommissionStatus | pending \| approved \| paid \| cancelled | `src/hooks/useCommissions.ts` |
+| MomentSeverity | low \| medium \| high \| critical | `src/hooks/useCriticalMoments.ts` |
+| MomentStatus | new \| acknowledged \| actioned \| dismissed | `src/hooks/useCriticalMoments.ts` |
 | AccentColor | purple \| blue \| green \| orange \| pink \| cyan \| amber \| rose | `src/hooks/useCustomTheme.ts` |
 | ThemeMode | light \| dark \| system | `src/hooks/useCustomTheme.ts` |
 | QuestionType | general \| analysis \| objections \| closing \| strategy | `src/hooks/useDealChatHistory.ts` |
@@ -2265,6 +2267,10 @@ _nenhum item encontrado_
   const totalDeals = sales.length; const closedDeals = sales.filter(s => isWonSaleStatus(s.status)).length; const totalValue = sales.reduce((sum, s) => sum + Number(s.amount || 0), 0); const closedValue = sales .filter(s => isWonSaleStatus(s.status)) .reduce((sum, s) => sum + Number(s.amount || 0), 0); const conversionRate = totalDeals > 0 ? (closedDeals / totalDeals) * 100 : 0; const avgDealSize = closedDeals > 0 ? closedValue / closedDeals : 0; const inNegotiation = sales.filter(s => s.status == …
   ```
 - **calcChange(curr: number, prev: number)** — `src/hooks/useCloserMetrics.ts`
+  ```
+  
+  ```
+- **invalidate()** — `src/hooks/useCriticalMoments.ts`
   ```
   
   ```
@@ -3616,6 +3622,8 @@ _nenhum item encontrado_
 | 200 | `src/hooks/useCompetencyData.ts` |
 | 500 | `src/hooks/useCompetencyData.ts` |
 | 50 | `src/hooks/useCompetitiveChat.ts` |
+| 200 | `src/hooks/useCriticalMoments.ts` |
+| 500 | `src/hooks/useCriticalMoments.ts` |
 | 20 | `src/hooks/useDealChatHistory.ts` |
 | 100 | `src/hooks/useDemandForecast.ts` |
 | 1 | `src/hooks/useDigitalSignatures.ts` |
@@ -3865,9 +3873,7 @@ _nenhum item encontrado_
 | 500 | `supabase/functions/report-embed-public/index.ts` |
 | 500 | `supabase/functions/revenue-forecast-ai/index.ts` |
 | 200 | `supabase/functions/revenue-intelligence/index.ts` |
-| 5000 | `supabase/functions/revenue-intelligence/index.ts` |
-| 10000 | `supabase/functions/revops-hub/index.ts` |
-| … +39 linhas — lista completa em `context.json` | |
+| … +41 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
@@ -4279,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1833 testes em 244 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1838 testes em 245 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4392,6 +4398,7 @@ _nenhum item encontrado_
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/config/dominio-publico.test.ts` | 5 | domínio público do app · %s não referencia domínio legado da Lovable · APP_URL padrão é o domínio de produção · canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção … |
 | `src/contexts/DashboardThemeContext.test.tsx` | 5 | DashboardThemeContext · usa cyber como padrão quando não há preferência salva · respeita a preferência salva ao montar · alterna, aplica a classe e grava a preferência para a próxima sessão … |
+| `src/hooks/useCriticalMoments.test.tsx` | 5 | useCriticalMoments · entrega o momento com gravação, vendedor e estado de leitura resolvidos · aplica o filtro de status na consulta em vez de filtrar no cliente · propaga erro de permissão em vez de devolver lista vazia … |
 | `src/hooks/useDealProbability.test.tsx` | 5 | useDealProbability — origem do número (etapa 117) · marca a análise vinda do servidor como  · marca a heurística local como  · marca como  … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
@@ -4853,6 +4860,7 @@ _nenhum item encontrado_
 | banco — apenas 'won'/'lost'). Centraliza as comparações de resultado. | `src/constants/index.ts` |
 | - Executa apenas quando o dashboard exibido pertence ao usuário autenticado | `src/hooks/useAutoAwardBonuses.ts` |
 | Request notification permission on mount | `src/hooks/useCelebration.ts` |
+| gestão, `critical_moment_notifications` libera apenas o destinatário. Por isso | `src/hooks/useCriticalMoments.ts` |
 | RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão | `src/hooks/useDigitalSignatures.ts` |
 | RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão | `src/hooks/useDigitalSignatures.ts` |
 | - `clearDraft()` deve ser chamado após submit bem-sucedido. | `src/hooks/useFormDraft.ts` |
@@ -5098,5 +5106,4 @@ _nenhum item encontrado_
 | Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
-| negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
-| … +141 linhas — lista completa em `context.json` | |
+| … +142 linhas — lista completa em `context.json` | |

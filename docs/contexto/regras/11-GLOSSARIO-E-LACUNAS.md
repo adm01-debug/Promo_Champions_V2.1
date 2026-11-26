@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `86f0654cf7` · branch `main` · 2026-11-26 10:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd3079d658` · branch `main` · 2026-11-26 11:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `sales` | _(sem COMMENT ON TABLE — significado não documentado)_ | 49 colunas | migration |
 | `sales_battles` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `sales_enablement_assets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| … +325 linhas — lista completa em `context.json` | | | |
+| … +327 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -457,8 +457,8 @@
 | coluna | coluna `total_score` usada no código não existe no schema de `lead_scores` |  |
 | coluna | coluna `salesperson_id` usada no código não existe no schema de `sequence_enrollments` |  |
 | coluna | coluna `description` usada no código não existe no schema de `teams` |  |
-| coluna | coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs` |  |
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_recordings` |  |
+| coluna | coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs` |  |
 | coluna | coluna `sale_id` usada no código não existe no schema de `coaching_actions` |  |
 | coluna | coluna `sentiment_score` usada no código não existe no schema de `call_sentiment_timeline` |  |
 | tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |

@@ -9165,6 +9165,10 @@
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/env.ts"
   ],
+  "src/hooks/useCriticalMoments.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/supabase/chunkedIn.ts"
+  ],
   "src/hooks/useCustomerSuccess.ts": [
    "src/integrations/supabase/client.ts"
   ],
@@ -11042,6 +11046,17 @@
    "src/lib/csv.ts",
    "src/lib/money.ts"
   ],
+  "src/pages/MomentosCriticos.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useCriticalMoments.ts"
+  ],
   "src/pages/Multichannel.tsx": [
    "src/components/multichannel/ChannelCredentialsManager.tsx",
    "src/components/multichannel/MultichannelDashboard.tsx",
@@ -12091,6 +12106,7 @@
    "src/pages/MetasAtividades.tsx",
    "src/pages/MeuAssistente.tsx",
    "src/pages/MinhasPremiacoes.tsx",
+   "src/pages/MomentosCriticos.tsx",
    "src/pages/Multichannel.tsx",
    "src/pages/NPSDashboard.tsx",
    "src/pages/NotFound.tsx",

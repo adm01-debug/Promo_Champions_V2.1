@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
+  "sha": "fd3079d658744f8370f7bb8c697cbefea4a987c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 10:15 UTC",
-  "files_total": 3703,
-  "code_files": 3348,
-  "code_lines": 484934
+  "generated_at": "2026-11-26 11:36 UTC",
+  "files_total": 3706,
+  "code_files": 3351,
+  "code_lines": 485718
  },
  "version": "1.3.2",
- "facts_hash": "c4a7bf6fb66e7061",
+ "facts_hash": "964a068944220985",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -426,8 +426,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1403,
-   ".ts": 1135,
+   ".tsx": 1405,
+   ".ts": 1136,
    ".sql": 728,
    ".mjs": 72,
    ".js": 6,
@@ -96596,6 +96596,21 @@
     "deps_count": 15
    },
    {
+    "path": "/momentos-criticos",
+    "file": "src/pages/MomentosCriticos.tsx",
+    "component": "MomentosCriticos",
+    "tables_transitive": [
+     "call_critical_moments",
+     "call_recordings",
+     "critical_moment_notifications",
+     "sales",
+     "salespeople"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 14
+   },
+   {
     "path": "/multichannel",
     "file": "src/pages/Multichannel.tsx",
     "component": "Multichannel",
@@ -102754,6 +102769,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/momentos-criticos",
+    "component": "MomentosCriticos",
+    "guard": "",
+    "roles": [],
+    "file": "src/routes/AppRoutes.tsx"
+   },
+   {
     "path": "/multichannel",
     "component": "Multichannel",
     "guard": "",
@@ -105767,6 +105789,14 @@
     "file": "src/hooks/useCountUp.ts"
    },
    {
+    "name": "useCriticalMoments",
+    "file": "src/hooks/useCriticalMoments.ts"
+   },
+   {
+    "name": "useCriticalMomentActions",
+    "file": "src/hooks/useCriticalMoments.ts"
+   },
+   {
     "name": "useCustomTheme",
     "file": "src/hooks/useCustomTheme.ts"
    },
@@ -107281,7 +107311,7 @@
   {
    "module": "src/components",
    "files": 1242,
-   "lines": 195250,
+   "lines": 195254,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107613,8 +107643,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 553,
-   "lines": 65423,
+   "files": 555,
+   "lines": 65823,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107685,6 +107715,7 @@
     "contact_best_send_window",
     "contact_engagement_score",
     "conversation_analyses",
+    "critical_moment_notifications",
     "custom_reports",
     "daily_challenge_progress",
     "daily_challenges",
@@ -107913,6 +107944,7 @@
     "useCompetitiveSeasons.ts: useCompetitiveSeasons",
     "useConversationalIntelligence.ts: useConversationalIntelligence",
     "useCountUp.ts: useCountUp",
+    "useCriticalMoments.ts: MomentSeverity, MomentStatus, CriticalMomentRow, CriticalMoment, CriticalMomentsResult, CriticalMomentsFilters",
     "useCustomTheme.ts: AccentColor, ThemeMode, useCustomTheme",
     "useCustomerSuccess.ts: AccountHealth, useCustomerSuccess",
     "useDealChatHistory.ts: QuestionType, QUESTION_TYPES, useDealChatHistory",
@@ -107922,8 +107954,7 @@
     "useDebouncedValue.ts: useDebouncedValue",
     "useDemandForecast.ts: useDemandForecast",
     "useDigitalSignatures.ts: DigitalSignature, DIGITAL_SIGNATURE_INTEGRATION_MESSAGE, useDigitalSignatures",
-    "useElevenLabsVoice.ts: VOICE_OPTIONS, VoiceId, useElevenLabsVoice",
-    "useEligibleBonuses.ts: EligibleBonus, EligibleBonusesResult, evaluateBonus, useEligibleBonuses"
+    "useElevenLabsVoice.ts: VOICE_OPTIONS, VoiceId, useElevenLabsVoice"
    ],
    "docs": [
     "quoteErrorMessages.ts: Mensagens e códigos de erro do fluxo quote → sale. Extraído de `useQuotes.ts` para que os specs E2E (que rodam sob Node/Playwright, sem `import.meta.env`) possam importar as mensagens sem puxar toda a chain do cliente Supabase, que quebra fora do ambiente Vite.",
@@ -108000,6 +108031,8 @@
     "src/hooks/useCompetitiveSeasons.ts",
     "src/hooks/useConversationalIntelligence.ts",
     "src/hooks/useCountUp.ts",
+    "src/hooks/useCriticalMoments.test.tsx",
+    "src/hooks/useCriticalMoments.ts",
     "src/hooks/useCustomTheme.ts",
     "src/hooks/useCustomerSuccess.ts",
     "src/hooks/useDealChatHistory.ts",
@@ -108043,9 +108076,7 @@
     "src/hooks/useLoginRateLimiter.test.tsx",
     "src/hooks/useLoginRateLimiter.ts",
     "src/hooks/useMFA.ts",
-    "src/hooks/useMediaQuery.ts",
-    "src/hooks/useMicroGoals.ts",
-    "src/hooks/useMobileNavigation.ts"
+    "src/hooks/useMediaQuery.ts"
    ]
   },
   {
@@ -108247,8 +108278,8 @@
   },
   {
    "module": "src/pages",
-   "files": 185,
-   "lines": 45301,
+   "files": 186,
+   "lines": 45676,
    "tables": [
     "achievements",
     "activities",
@@ -108445,7 +108476,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1885,
+   "lines": 1890,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -109840,11 +109871,13 @@
    "call_critical_moments": {
     "select": [
      "src/hooks/conversational/useCriticalMoments.ts",
+     "src/hooks/useCriticalMoments.ts",
      "supabase/functions/aggregate-coaching-scorecard/index.ts",
      "supabase/functions/calculate-deal-health/index.ts"
     ],
     "update": [
-     "src/hooks/conversational/useCriticalMoments.ts"
+     "src/hooks/conversational/useCriticalMoments.ts",
+     "src/hooks/useCriticalMoments.ts"
     ],
     "delete": [
      "supabase/functions/detect-critical-moments/index.ts"
@@ -109924,6 +109957,7 @@
    "call_recordings": {
     "select": [
      "src/hooks/conversational/useCallRecordings.ts",
+     "src/hooks/useCriticalMoments.ts",
      "src/hooks/win-loss/useSentimentTrend.ts",
      "supabase/functions/aggregate-coaching-scorecard/index.ts",
      "supabase/functions/analyze-call/index.ts",
@@ -110376,6 +110410,14 @@
     ],
     "insert": [
      "supabase/functions/analyze-conversation/index.ts"
+    ]
+   },
+   "critical_moment_notifications": {
+    "select": [
+     "src/hooks/useCriticalMoments.ts"
+    ],
+    "update": [
+     "src/hooks/useCriticalMoments.ts"
     ]
    },
    "cs_tickets": {
@@ -112487,6 +112529,7 @@
      "src/hooks/useAutoAwardBonuses.ts",
      "src/hooks/useCloserMetrics.ts",
      "src/hooks/useCommissions.ts",
+     "src/hooks/useCriticalMoments.ts",
      "src/hooks/useDigitalSignatures.ts",
      "src/hooks/useEvolutionCurves.ts",
      "src/hooks/useLeadAssignment.ts",
@@ -114166,6 +114209,10 @@
     "analyzed_by",
     "created_at",
     "sentiment"
+   ],
+   "critical_moment_notifications": [
+    "moment_id",
+    "read_at"
    ],
    "csat_ces_surveys": [
     "account_id",
@@ -117652,7 +117699,6 @@
    "cohort_analyses",
    "consent_records",
    "contact_send_time_profile",
-   "critical_moment_notifications",
    "cron_failure_alerts",
    "cron_job_last_run",
    "cron_job_last_run_cursor",
@@ -117806,12 +117852,12 @@
     "column": "description"
    },
    {
-    "table": "bitrix24_sync_logs",
-    "column": "started_at"
-   },
-   {
     "table": "call_recordings",
     "column": "sentiment_score"
+   },
+   {
+    "table": "bitrix24_sync_logs",
+    "column": "started_at"
    },
    {
     "table": "coaching_actions",
@@ -118705,6 +118751,16 @@
     "file": "src/hooks/useCommissions.ts",
     "name": "CommissionStatus",
     "values": "pending | approved | paid | cancelled"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "name": "MomentSeverity",
+    "values": "low | medium | high | critical"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "name": "MomentStatus",
+    "values": "new | acknowledged | actioned | dismissed"
    },
    {
     "file": "src/hooks/useCustomTheme.ts",
@@ -123935,6 +123991,10 @@
    {
     "file": "src/hooks/useCelebration.ts",
     "text": "Request notification permission on mount"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "text": "gestão, `critical_moment_notifications` libera apenas o destinatário. Por isso"
    },
    {
     "file": "src/hooks/useDigitalSignatures.ts",
@@ -145941,6 +146001,12 @@
     "kind": "filtra"
    },
    {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "field": "status",
+    "value": "all",
+    "kind": "compara"
+   },
+   {
     "file": "src/hooks/useCustomerSuccess.ts",
     "field": "status",
     "value": "good",
@@ -148824,6 +148890,48 @@
     "file": "src/pages/MinhasPremiacoes.tsx",
     "field": "status",
     "value": "all",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "acknowledged",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "actioned",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "dismissed",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "new",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "acknowledged",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "actioned",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/MomentosCriticos.tsx",
+    "field": "status",
+    "value": "dismissed",
     "kind": "compara"
    },
    {
@@ -155111,6 +155219,12 @@
     "body": ""
    },
    {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "name": "invalidate",
+    "params": "",
+    "body": ""
+   },
+   {
     "file": "src/hooks/useDealProbability.ts",
     "name": "calculateStageScore",
     "params": "status: string, stageProbabilities: Record<string, number>",
@@ -160453,6 +160567,26 @@
    {
     "file": "src/hooks/useClientsNeedingContact.test.tsx",
     "name": "particiona a busca de contatos para carteiras grandes"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.test.tsx",
+    "name": "useCriticalMoments"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.test.tsx",
+    "name": "entrega o momento com gravação, vendedor e estado de leitura resolvidos"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.test.tsx",
+    "name": "aplica o filtro de status na consulta em vez de filtrar no cliente"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.test.tsx",
+    "name": "propaga erro de permissão em vez de devolver lista vazia"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.test.tsx",
+    "name": "formata o instante do áudio e cai em "
    },
    {
     "file": "src/hooks/useDealProbability.test.tsx",
@@ -189145,6 +189279,14 @@
     "limit": "50"
    },
    {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "limit": "200"
+   },
+   {
+    "file": "src/hooks/useCriticalMoments.ts",
+    "limit": "500"
+   },
+   {
     "file": "src/hooks/useDealChatHistory.ts",
     "limit": "20"
    },
@@ -192860,15 +193002,20 @@
      ],
      "dismissed": [
       "compara:src/components/conversational/CriticalMomentsList.tsx",
+      "compara:src/pages/MomentosCriticos.tsx",
       "escreve:src/components/conversational/CoachingActionsList.tsx",
-      "escreve:src/components/conversational/CriticalMomentsList.tsx"
+      "escreve:src/components/conversational/CriticalMomentsList.tsx",
+      "escreve:src/pages/MomentosCriticos.tsx"
      ],
      "actioned": [
       "compara:src/components/conversational/CriticalMomentsList.tsx",
-      "escreve:src/components/conversational/CriticalMomentsList.tsx"
+      "compara:src/pages/MomentosCriticos.tsx",
+      "escreve:src/components/conversational/CriticalMomentsList.tsx",
+      "escreve:src/pages/MomentosCriticos.tsx"
      ],
      "new": [
       "compara:src/components/conversational/CriticalMomentsList.tsx",
+      "compara:src/pages/MomentosCriticos.tsx",
       "escreve:supabase/functions/detect-critical-moments/index.ts",
       "filtra:supabase/functions/calculate-deal-health/index.ts",
       "filtra:supabase/functions/detect-critical-moments/index.ts"
@@ -193104,6 +193251,7 @@
       "compara:src/components/sdr/RecentProspects.tsx",
       "compara:src/hooks/admin/useDataSubjectRequests.ts",
       "compara:src/hooks/sequences/useSendTimeOptimization.ts",
+      "compara:src/hooks/useCriticalMoments.ts",
       "compara:src/hooks/useMyBonusAwards.ts",
       "compara:src/hooks/useSDRMetrics.ts",
       "compara:src/pages/MinhasPremiacoes.tsx",
@@ -193189,6 +193337,10 @@
      ],
      "attempted": [
       "escreve:src/pages/FollowUpInteligente.tsx"
+     ],
+     "acknowledged": [
+      "compara:src/pages/MomentosCriticos.tsx",
+      "escreve:src/pages/MomentosCriticos.tsx"
      ],
      "abandoned": [
       "compara:src/pages/RelatoriosExecutivos.tsx"
@@ -227860,12 +228012,12 @@
    },
    {
     "kind": "coluna",
-    "msg": "coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs`",
+    "msg": "coluna `sentiment_score` usada no código não existe no schema de `call_recordings`",
     "where": []
    },
    {
     "kind": "coluna",
-    "msg": "coluna `sentiment_score` usada no código não existe no schema de `call_recordings`",
+    "msg": "coluna `started_at` usada no código não existe no schema de `bitrix24_sync_logs`",
     "where": []
    },
    {
@@ -241011,7 +241163,7 @@
   },
   "src/components/layout/sidebar/sidebarMenuData.ts": {
    "path": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "lines": 410,
+   "lines": 414,
    "exports": [
     "interface MenuItem",
     "interface MenuGroup",
@@ -251087,6 +251239,120 @@
    ],
    "hooks": [
     "useCountUp"
+   ]
+  },
+  "src/hooks/useCriticalMoments.test.tsx": {
+   "path": "src/hooks/useCriticalMoments.test.tsx",
+   "lines": 141,
+   "is_test": true,
+   "tests": [
+    "useCriticalMoments",
+    "entrega o momento com gravação, vendedor e estado de leitura resolvidos",
+    "aplica o filtro de status na consulta em vez de filtrar no cliente",
+    "propaga erro de permissão em vez de devolver lista vazia",
+    "formata o instante do áudio e cai em "
+   ]
+  },
+  "src/hooks/useCriticalMoments.ts": {
+   "path": "src/hooks/useCriticalMoments.ts",
+   "lines": 259,
+   "exports": [
+    "type MomentSeverity",
+    "type MomentStatus",
+    "interface CriticalMomentRow",
+    "interface CriticalMoment",
+    "interface CriticalMomentsResult",
+    "interface CriticalMomentsFilters",
+    "const MOMENT_TYPE_LABELS",
+    "const SEVERITY_META",
+    "const MOMENT_STATUS_LABELS",
+    "const MOMENT_STATUS_FILTERS",
+    "const SEVERITY_FILTERS",
+    "function momentTypeLabel",
+    "function severityMeta",
+    "function momentStatusLabel",
+    "function formatMomentTimestamp",
+    "function useCriticalMoments",
+    "function useCriticalMomentActions"
+   ],
+   "tables": [
+    {
+     "table": "call_critical_moments",
+     "op": "select"
+    },
+    {
+     "table": "call_recordings",
+     "op": "select"
+    },
+    {
+     "table": "salespeople",
+     "op": "select"
+    },
+    {
+     "table": "critical_moment_notifications",
+     "op": "select"
+    },
+    {
+     "table": "call_critical_moments",
+     "op": "update"
+    },
+    {
+     "table": "critical_moment_notifications",
+     "op": "update"
+    }
+   ],
+   "table_cols": {
+    "call_recordings": [
+     "id",
+     "recorded_at",
+     "title"
+    ],
+    "salespeople": [
+     "id",
+     "name"
+    ],
+    "critical_moment_notifications": [
+     "moment_id",
+     "read_at"
+    ],
+    "call_critical_moments": [
+     "id"
+    ]
+   },
+   "enums": [
+    {
+     "name": "MomentSeverity",
+     "values": "low | medium | high | critical"
+    },
+    {
+     "name": "MomentStatus",
+     "values": "new | acknowledged | actioned | dismissed"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "all",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "gestão, `critical_moment_notifications` libera apenas o destinatário. Por isso"
+   ],
+   "hooks": [
+    "useCriticalMoments",
+    "useCriticalMomentActions"
+   ],
+   "calc_fns": [
+    {
+     "name": "invalidate",
+     "params": "",
+     "body": ""
+    }
+   ],
+   "pagination": [
+    "200",
+    "500"
    ]
   },
   "src/hooks/useCustomTheme.ts": {
@@ -273947,6 +274213,50 @@
     }
    ]
   },
+  "src/pages/MomentosCriticos.tsx": {
+   "path": "src/pages/MomentosCriticos.tsx",
+   "lines": 375,
+   "exports": [
+    "function MomentosCriticos"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "acknowledged",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "actioned",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "dismissed",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "new",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "acknowledged",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "actioned",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "dismissed",
+     "kind": "compara"
+    }
+   ]
+  },
   "src/pages/Multichannel.tsx": {
    "path": "src/pages/Multichannel.tsx",
    "lines": 26,
@@ -275385,7 +275695,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1156,
+   "lines": 1158,
    "exports": [
     "function AppRoutes"
    ],
@@ -275651,6 +275961,12 @@
     {
      "path": "/conversational-intelligence/gravacoes",
      "component": "ConversationalIntelligenceRecordings",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/momentos-criticos",
+     "component": "MomentosCriticos",
      "guard": "",
      "roles": []
     },
@@ -276478,7 +276794,7 @@
   },
   "src/routes/lazyPages.ts": {
    "path": "src/routes/lazyPages.ts",
-   "lines": 359,
+   "lines": 362,
    "exports": [
     "const Index",
     "const Auth",
@@ -276518,6 +276834,7 @@
     "const Automacoes",
     "const ConversationalIntelligence",
     "const ConversationalIntelligenceRecordings",
+    "const MomentosCriticos",
     "const RevenueIntelligence",
     "const RevenueForecast",
     "const RevenueForecastV2",
@@ -276538,8 +276855,7 @@
     "const AdminPremiacoes",
     "const AdminAuditoriaPremiacoes",
     "const AdminFilaTarefasAutomaticas",
-    "const AdminRegrasInatividade",
-    "const AdminAlertasChurn"
+    "const AdminRegrasInatividade"
    ]
   },
   "src/routes/pagePrefetchMap.ts": {
@@ -300744,10 +301060,24 @@
   }
  },
  "git": {
-  "sha": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
+  "sha": "fd3079d658744f8370f7bb8c697cbefea4a987c0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "fd3079d",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: tela de Momentos Críticos para os alertas de chamada (#751)",
+    "files": [
+     "src/components/layout/sidebar/sidebarMenuData.ts",
+     "src/hooks/useCriticalMoments.test.tsx",
+     "src/hooks/useCriticalMoments.ts",
+     "src/pages/MomentosCriticos.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/lazyPages.ts"
+    ]
+   },
    {
     "sha": "86f0654",
     "date": "2026-11-26",
@@ -301093,17 +301423,6 @@
      "src/hooks/win-loss/useWebhookResultTimers.ts",
      "src/pages/RaceArenaView.tsx"
     ]
-   },
-   {
-    "sha": "a656216",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "test: prova o A-88 na preferencia sincronizada e registra a convencao de supressao (QA-140) (#722)",
-    "files": [
-     "CONTRIBUTING.md",
-     "docs/qa/05-PROGRESSO.md",
-     "src/hooks/useSyncedSetting.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301116,15 +301435,15 @@
     6
    ],
    [
-    "docs/qa/05-PROGRESSO.md",
-    5
-   ],
-   [
     ".release-please-manifest.json",
     4
    ],
    [
     "CHANGELOG.md",
+    4
+   ],
+   [
+    "docs/qa/05-PROGRESSO.md",
     4
    ],
    [
@@ -301144,6 +301463,30 @@
     2
    ],
    [
+    "src/components/layout/sidebar/sidebarMenuData.ts",
+    1
+   ],
+   [
+    "src/hooks/useCriticalMoments.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/useCriticalMoments.ts",
+    1
+   ],
+   [
+    "src/pages/MomentosCriticos.tsx",
+    1
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
+    1
+   ],
+   [
+    "src/routes/lazyPages.ts",
+    1
+   ],
+   [
     "docs/estado/13_INTEGRACOES.md",
     1
    ],
@@ -301161,30 +301504,6 @@
    ],
    [
     "supabase/migrations/20261127001000_restaura_timeouts_dns_lento.sql",
-    1
-   ],
-   [
-    ".github/workflows/provisionar-secret-resend.yml",
-    1
-   ],
-   [
-    "docs/testes/suites-ci.md",
-    1
-   ],
-   [
-    "scripts/run-sql-tests.sh",
-    1
-   ],
-   [
-    "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql",
-    1
-   ],
-   [
-    ".github/workflows/auto-apply-migrations.yml",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
     1
    ]
   ]
