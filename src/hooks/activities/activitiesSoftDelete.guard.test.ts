@@ -59,15 +59,18 @@ function findUnfilteredReads(root: string) {
 }
 
 describe('soft-delete de activities — guard-rail', () => {
+  // Varredura de disco: com a suíte inteira em paralelo (jsdom por arquivo) a leitura
+  // dos milhares de arquivos passa dos 5s default e o teste falha por timeout, não por
+  // violação. Timeout maior só absorve a contenção de I/O; a asserção não muda.
   it('toda leitura de activities no front filtra deleted_at IS NULL', () => {
     const { reads, offenders } = findUnfilteredReads('src');
     expect(reads).toBeGreaterThan(0);
     expect(offenders).toEqual([]);
-  });
+  }, 20_000);
 
   it('toda leitura de activities nas edge functions filtra deleted_at IS NULL', () => {
     const { reads, offenders } = findUnfilteredReads('supabase/functions');
     expect(reads).toBeGreaterThan(0);
     expect(offenders).toEqual([]);
-  });
+  }, 20_000);
 });
