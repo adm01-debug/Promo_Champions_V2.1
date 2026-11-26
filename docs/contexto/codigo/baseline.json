@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b2246034b146c0e19cca729227a2b611d4537856",
+  "commit": "95042153465a41f06a9320a6beff7434f3d0c53f",
   "branch": "main",
-  "data_commit": "2026-11-26T13:28:01-03:00",
+  "data_commit": "2026-11-26T16:42:27-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9504215",
+    "data": "2026-11-26",
+    "assunto": "fix: estabiliza guard-rail de soft-delete de activities no CI (#760)"
+   },
    {
     "sha": "b224603",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "669c8a0",
     "data": "2026-11-24",
     "assunto": "feat: aciona o Supply quando o orçamento vira pedido (#731)"
-   },
-   {
-    "sha": "b241da2",
-    "data": "2026-11-24",
-    "assunto": "ci: provisiona o segredo do webhook Promo Supply (#732)"
    }
   ],
-  "arquivos_mudados_7d": 366,
+  "arquivos_mudados_7d": 367,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3698,
   "arquivos_codigo": 2629,
-  "linhas_codigo": 450964,
+  "linhas_codigo": 450967,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -608,7 +608,7 @@
   },
   "src/hooks": {
    "arquivos": 558,
-   "linhas": 66132
+   "linhas": 66135
   },
   "src/integrations": {
    "arquivos": 5,

@@ -761,7 +761,7 @@
   {
    "arquivo": "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
    "tipo": "unit",
-   "linhas": 74,
+   "linhas": 77,
    "testa": [],
    "casos": 5
   },

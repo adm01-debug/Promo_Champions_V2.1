@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b2246034b146c0e19cca729227a2b611d4537856` (2026-11-26T13:28:01-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `95042153465a41f06a9320a6beff7434f3d0c53f` (2026-11-26T16:42:27-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3698 |
 | arquivos_codigo | 2629 |
-| linhas_codigo | 450964 |
+| linhas_codigo | 450967 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -589,7 +589,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24549 nós · 75143 arestas · 1215 comunidades · grafo do commit `b2246034`
+- 24549 nós · 75143 arestas · 1215 comunidades · grafo do commit `95042153`
 - comunidades maiores: schema.sql (594), Card (591), Badge (393), framer-motion (337), DialogContent (308), SelectContent (296), client.ts (263), getCorsHeaders (251), public.register_race_daily_checkin (240), TableRow (240), public (233), public.sales (223)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -773,6 +773,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-26 `9504215` fix: estabiliza guard-rail de soft-delete de activities no CI (#760)
 - 2026-11-26 `b224603` fix: painel de integracao so aparece para quem pode ler os logs (#759)
 - 2026-11-26 `c720950` fix: restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) (#756)
 - 2026-11-26 `bae0352` fix: painel de integracao le os logs reais de email (#758)
@@ -787,7 +788,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `15514fd` chore: resgata a sonda de estado da fila Champions -> Supply (#747)
 - 2026-11-25 `e8630cc` chore: sonda read-only do estado da outbox no db-probe (#746)
 - 2026-11-24 `2498492` ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)
-- 2026-11-24 `4f3aabb` chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
