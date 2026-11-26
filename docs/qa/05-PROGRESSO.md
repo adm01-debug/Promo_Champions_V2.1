@@ -73,12 +73,12 @@ Exemplo:
 - [ ] 047 — Só marcar "aprovado" depois de a mudança ser aplicada — onda 2 — Alta · **APROV**
 - [ ] 048 — Decidir e resolver a entrada de cotações do parceiro — onda 2 — Alta · **APROV**
 - [x] 049 — Fazer o botão "Reprocessar" reprocessar — onda 2 — Alta — PR #649 - useV4Callbacks: Reprocessar desabilitado com attempts>=5 e "Resetar tentativas" zera attempts/next_retry_at
-- [ ] 050 — Dar policy de escrita a `cadence_alert_templates` — onda 2 — Alta · **APROV**
-- [ ] 051 — Dar policy de escrita a `cadence_outcome_rules` — onda 2 — Alta · **APROV**
+- [A] 050 — Dar policy de escrita a `cadence_alert_templates` — onda 2 — Alta · **APROV** — PR #756 — policy FOR ALL para admin/gestor, igual a cadence_enrollment_rules
+- [A] 051 — Dar policy de escrita a `cadence_outcome_rules` — onda 2 — Alta · **APROV** — PR #756 — policy FOR ALL para admin/gestor (as telas já mostram toast de erro, faltava só o banco)
 - [x] 052 — Resolver a gravação de `integration_logs` — onda 2 — Média — PR #757 — o painel de integrações não insere mais log falso: rele os últimos logs, calcula os erros sobre eles e informa o resultado real
 - [x] 053 — Resolver a gravação de `lead_score_trends` — onda 2 — Média — PR #757 — useLeadScoring le `lead_score_history` (série do trigger record_lead_score_history) e o realtime escuta essa tabela; teste novo falha sem a troca
-- [ ] 054 — Permitir marcar follow-up como enviado (e parar de engolir o erro) — onda 2 — Alta · **APROV**
-- [ ] 055 — Permitir excluir a conversa do assistente — onda 2 — Média · **APROV**
+- [A] 054 — Permitir marcar follow-up como enviado (e parar de engolir o erro) — onda 2 — Alta · **APROV** — PR #756 — policy de UPDATE para admin/gestor e FollowUpAudit passa a avisar quando o registro falha
+- [A] 055 — Permitir excluir a conversa do assistente — onda 2 — Média · **APROV** — PR #756 — policy de DELETE em chat_messages para o dono da conversa; deleteConversation aborta antes de apagar a conversa
 - [ ] 056 — Tornar transacional a mudança de status de orçamento — onda 2 — Alta · **APROV**
 - [x] 057 — Consertar a atualização otimista do pipeline — onda 2 — Alta — PR #650 - usePipeline: getQueriesData/setQueriesData por prefixo e restauracao por estagio no onError
 - [x] 058 — Consertar a atualização otimista de clientes — onda 2 — Alta — PR #691 - useClients: chave sem filtro morto (A-100) e invalidacao por prefixo confirmadas na main

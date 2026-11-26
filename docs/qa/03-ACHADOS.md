@@ -1061,6 +1061,13 @@ falham com erro visível.
 **O que falta para confirmar:** reproduzir cada chamada com uma sessão autenticada e
 observar o `42501`. O caminho está rastreado de ponta a ponta, mas o erro não foi visto.
 
+**Resolvido:** `cadence_alert_templates`, `cadence_outcome_rules`, `follow_up_audit_logs`,
+`chat_messages` e `error_logs` ganharam policy de escrita na PR #756 (migration
+`20261128120000_restaura_escrita_bloqueada_por_rls.sql`, aguardando o dono porque aplica DDL).
+`integration_logs` e `lead_score_trends` não ganharam policy: o navegador parou de escrever —
+o painel de integrações passa a reler os logs do servidor e a tendência de score vem de
+`lead_score_history`, que o trigger `record_lead_score_history` já alimenta (PR #757).
+
 ---
 
 ## CR-21 — A cadeia de dinheiro não tem escala única nem restrições
