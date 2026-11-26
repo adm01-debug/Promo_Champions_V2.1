@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -27,6 +27,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import {
   useCreditAnalysis,
+  type CreditAnalysisTotals,
   type CreditOutboxStatus,
   type PendingCreditOrder,
 } from '@/hooks/admin/useCreditAnalysis';
@@ -108,102 +109,15 @@ function AdminCreditAnalysisContent() {
           </Button>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Kpi
-            icon={Clock}
-            label="Aguardando análise"
-            value={totals?.awaiting ?? orders.length}
-            tone="bg-amber-500/10 text-amber-600"
-          />
-          <Kpi
-            icon={Send}
-            label="Envio em andamento"
-            value={totals?.inFlight ?? 0}
-            tone="bg-blue-500/10 text-blue-600"
-          />
-          <Kpi
-            icon={CheckCircle2}
-            label="Solicitação entregue"
-            value={totals?.delivered ?? 0}
-            tone="bg-emerald-500/10 text-emerald-600"
-          />
-          <Kpi
-            icon={AlertTriangle}
-            label="Envio falhou"
-            value={totals?.failed ?? 0}
-            tone="bg-red-500/10 text-red-600"
-          />
-        </div>
+        <CreditKpis totals={totals} awaitingFallback={orders.length} />
 
-        <Card>
-          <CardContent className="p-0">
-            {isLoading ? (
-              <div className="p-6 text-sm text-muted-foreground">Carregando fila…</div>
-            ) : isError ? (
-              <div className="p-6 text-sm text-destructive">
-                Não foi possível carregar a fila:{' '}
-                {(error as Error)?.message ?? 'erro desconhecido'}
-              </div>
-            ) : orders.length === 0 ? (
-              <div className="p-6 text-sm text-muted-foreground">
-                Nenhum pedido aguardando análise de crédito.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pedido</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead>Aguardando desde</TableHead>
-                    <TableHead>Solicitação ao Financeiro</TableHead>
-                    <TableHead />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.map(order => (
-                    <TableRow key={order.id}>
-                      <TableCell>
-                        <Link
-                          to={`/meus-pedidos/${order.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {order.order_number}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{order.client_name ?? '—'}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {order.client_cnpj ?? '—'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatBRL(order.total)}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {formatDistanceToNow(new Date(order.created_at), {
-                          locale: ptBR,
-                          addSuffix: true,
-                        })}
-                      </TableCell>
-                      <TableCell>
-                        <OutboxBadge status={order.outbox_status} />
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDetail(order)}
-                        >
-                          Detalhes
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+        <CreditQueue
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          orders={orders}
+          onOpenDetail={setDetail}
+        />
 
         <p className="text-xs text-muted-foreground">
           O parecer é registrado pelo Financeiro no endpoint autenticado{' '}
@@ -212,74 +126,204 @@ function AdminCreditAnalysisContent() {
         </p>
       </div>
 
-      <Sheet open={Boolean(detail)} onOpenChange={open => !open && setDetail(null)}>
-        <SheetContent className="w-full sm:max-w-md overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Pedido {detail?.order_number}</SheetTitle>
-          </SheetHeader>
-          {detail && (
-            <div className="mt-6 space-y-4 text-sm">
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Cliente</span>
-                <span className="text-right">{detail.client_name ?? '—'}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">CNPJ</span>
-                <span className="text-right">{detail.client_cnpj ?? '—'}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Valor do pedido</span>
-                <span className="text-right">{formatBRL(detail.total)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Criado em</span>
-                <span className="text-right">{formatDateTime(detail.created_at)}</span>
-              </div>
-              <div className="flex justify-between items-center gap-4">
-                <span className="text-muted-foreground">Solicitação</span>
-                <OutboxBadge status={detail.outbox_status} />
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Tentativas de envio</span>
-                <span className="text-right">{detail.outbox_attempts}</span>
-              </div>
-              {detail.outbox_next_attempt_at && (
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Próxima tentativa</span>
-                  <span className="text-right">
-                    {formatDateTime(detail.outbox_next_attempt_at)}
-                  </span>
-                </div>
-              )}
-              {detail.outbox_delivered_at && (
-                <div className="flex justify-between gap-4">
-                  <span className="text-muted-foreground">Entregue em</span>
-                  <span className="text-right">
-                    {formatDateTime(detail.outbox_delivered_at)}
-                  </span>
-                </div>
-              )}
-              {detail.outbox_last_error && (
-                <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3">
-                  <div className="text-xs font-medium text-destructive">
-                    Último erro de envio
-                  </div>
-                  <div className="mt-1 break-words text-xs text-muted-foreground">
-                    {detail.outbox_last_error}
-                  </div>
-                </div>
-              )}
-              <Button asChild variant="outline" className="w-full">
-                <Link to={`/meus-pedidos/${detail.id}`}>
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Abrir pedido
-                </Link>
-              </Button>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+      <CreditDetailSheet detail={detail} onClose={() => setDetail(null)} />
     </>
+  );
+}
+
+function CreditKpis({
+  totals,
+  awaitingFallback,
+}: {
+  totals: CreditAnalysisTotals | undefined;
+  awaitingFallback: number;
+}) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Kpi
+        icon={Clock}
+        label="Aguardando análise"
+        value={totals?.awaiting ?? awaitingFallback}
+        tone="bg-amber-500/10 text-amber-600"
+      />
+      <Kpi
+        icon={Send}
+        label="Envio em andamento"
+        value={totals?.inFlight ?? 0}
+        tone="bg-blue-500/10 text-blue-600"
+      />
+      <Kpi
+        icon={CheckCircle2}
+        label="Solicitação entregue"
+        value={totals?.delivered ?? 0}
+        tone="bg-emerald-500/10 text-emerald-600"
+      />
+      <Kpi
+        icon={AlertTriangle}
+        label="Envio falhou"
+        value={totals?.failed ?? 0}
+        tone="bg-red-500/10 text-red-600"
+      />
+    </div>
+  );
+}
+
+function CreditQueue({
+  isLoading,
+  isError,
+  error,
+  orders,
+  onOpenDetail,
+}: {
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  orders: PendingCreditOrder[];
+  onOpenDetail: (order: PendingCreditOrder) => void;
+}) {
+  return (
+    <Card>
+      <CardContent className="p-0">
+        {isLoading ? (
+          <div className="p-6 text-sm text-muted-foreground">Carregando fila…</div>
+        ) : isError ? (
+          <div className="p-6 text-sm text-destructive">
+            Não foi possível carregar a fila:{' '}
+            {(error as Error)?.message ?? 'erro desconhecido'}
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="p-6 text-sm text-muted-foreground">
+            Nenhum pedido aguardando análise de crédito.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Pedido</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>CNPJ</TableHead>
+                <TableHead className="text-right">Valor</TableHead>
+                <TableHead>Aguardando desde</TableHead>
+                <TableHead>Solicitação ao Financeiro</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.map(order => (
+                <CreditQueueRow
+                  key={order.id}
+                  order={order}
+                  onOpenDetail={onOpenDetail}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function CreditQueueRow({
+  order,
+  onOpenDetail,
+}: {
+  order: PendingCreditOrder;
+  onOpenDetail: (order: PendingCreditOrder) => void;
+}) {
+  return (
+    <TableRow>
+      <TableCell>
+        <Link to={`/meus-pedidos/${order.id}`} className="font-medium hover:underline">
+          {order.order_number}
+        </Link>
+      </TableCell>
+      <TableCell>{order.client_name ?? '—'}</TableCell>
+      <TableCell className="text-muted-foreground">{order.client_cnpj ?? '—'}</TableCell>
+      <TableCell className="text-right">{formatBRL(order.total)}</TableCell>
+      <TableCell className="text-muted-foreground">
+        {formatDistanceToNow(new Date(order.created_at), {
+          locale: ptBR,
+          addSuffix: true,
+        })}
+      </TableCell>
+      <TableCell>
+        <OutboxBadge status={order.outbox_status} />
+      </TableCell>
+      <TableCell className="text-right">
+        <Button variant="ghost" size="sm" onClick={() => onOpenDetail(order)}>
+          Detalhes
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function CreditDetailSheet({
+  detail,
+  onClose,
+}: {
+  detail: PendingCreditOrder | null;
+  onClose: () => void;
+}) {
+  return (
+    <Sheet open={Boolean(detail)} onOpenChange={open => !open && onClose()}>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Pedido {detail?.order_number}</SheetTitle>
+        </SheetHeader>
+        {detail && <CreditDetailBody detail={detail} />}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function CreditDetailBody({ detail }: { detail: PendingCreditOrder }) {
+  return (
+    <div className="mt-6 space-y-4 text-sm">
+      <DetailRow label="Cliente">{detail.client_name ?? '—'}</DetailRow>
+      <DetailRow label="CNPJ">{detail.client_cnpj ?? '—'}</DetailRow>
+      <DetailRow label="Valor do pedido">{formatBRL(detail.total)}</DetailRow>
+      <DetailRow label="Criado em">{formatDateTime(detail.created_at)}</DetailRow>
+      <div className="flex justify-between items-center gap-4">
+        <span className="text-muted-foreground">Solicitação</span>
+        <OutboxBadge status={detail.outbox_status} />
+      </div>
+      <DetailRow label="Tentativas de envio">{detail.outbox_attempts}</DetailRow>
+      {detail.outbox_next_attempt_at && (
+        <DetailRow label="Próxima tentativa">
+          {formatDateTime(detail.outbox_next_attempt_at)}
+        </DetailRow>
+      )}
+      {detail.outbox_delivered_at && (
+        <DetailRow label="Entregue em">
+          {formatDateTime(detail.outbox_delivered_at)}
+        </DetailRow>
+      )}
+      {detail.outbox_last_error && (
+        <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3">
+          <div className="text-xs font-medium text-destructive">Último erro de envio</div>
+          <div className="mt-1 break-words text-xs text-muted-foreground">
+            {detail.outbox_last_error}
+          </div>
+        </div>
+      )}
+      <Button asChild variant="outline" className="w-full">
+        <Link to={`/meus-pedidos/${detail.id}`}>
+          <ExternalLink className="h-4 w-4 mr-2" />
+          Abrir pedido
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
+function DetailRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="text-right">{children}</span>
+    </div>
   );
 }
 
