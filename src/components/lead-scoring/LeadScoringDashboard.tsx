@@ -31,7 +31,7 @@ export function LeadScoringDashboard() {
       .channel(uniqueChannelTopic('lead-scoring-realtime'))
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'lead_score_trends' },
+        { event: '*', schema: 'public', table: 'lead_score_history' },
         () => {
           setIsLoadingLeads(true);
           refetch().finally(() => setIsLoadingLeads(false));
@@ -172,10 +172,9 @@ export function LeadScoringDashboard() {
   const handleNeuralAnalysis = useCallback(async () => {
     const ids = allLeads.map(l => l.bestDealId).filter(Boolean) as string[];
     if (ids.length > 0) {
+      // A serie historica e gravada pelo servidor (trigger em lead_scores que
+      // alimenta lead_score_history); o navegador nao escreve mais a tendencia.
       await explainBatch.mutateAsync(ids.slice(0, 50));
-      await supabase
-        .from('lead_score_trends')
-        .insert(allLeads.map(l => ({ sale_id: l.bestDealId || l.id, score: l.score })));
     }
   }, [allLeads, explainBatch]);
 
