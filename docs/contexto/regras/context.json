@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d2fad00f44d3e757ea14b43c5cfb71546199ce76",
+  "sha": "5f1c0cdbe239affbd4eaecb679b0f48ecff44d0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 14:50 UTC",
-  "files_total": 3709,
-  "code_files": 3354,
-  "code_lines": 486360
+  "generated_at": "2026-11-26 14:52 UTC",
+  "files_total": 3710,
+  "code_files": 3355,
+  "code_lines": 486464
  },
  "version": "1.3.2",
- "facts_hash": "6b8ed9c4f45b813b",
+ "facts_hash": "e6b511d04564b5cf",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -426,7 +426,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1407,
+   ".tsx": 1408,
    ".ts": 1137,
    ".sql": 728,
    ".mjs": 72,
@@ -96454,7 +96454,7 @@
      "icp_data",
      "lead_churn_risk",
      "lead_score_explanations",
-     "lead_score_trends",
+     "lead_score_history",
      "sales"
     ],
     "invokes_transitive": [
@@ -96502,7 +96502,7 @@
      "lead_churn_risk",
      "lead_intelligence_metrics",
      "lead_score_explanations",
-     "lead_score_trends",
+     "lead_score_history",
      "lead_scores",
      "sales"
     ],
@@ -96762,7 +96762,7 @@
      "icp_data",
      "lead_churn_risk",
      "lead_score_explanations",
-     "lead_score_trends",
+     "lead_score_history",
      "pipeline_stages",
      "pipelines",
      "playbook_items",
@@ -107353,7 +107353,6 @@
     "intent_audit_logs",
     "ip_whitelist",
     "lead_detailed_logs",
-    "lead_score_trends",
     "lead_scores",
     "notification_preferences",
     "notifications",
@@ -107652,8 +107651,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 556,
-   "lines": 65899,
+   "files": 557,
+   "lines": 66003,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -107780,7 +107779,7 @@
     "lead_routing_log",
     "lead_routing_rules",
     "lead_score_explanations",
-    "lead_score_trends",
+    "lead_score_history",
     "lead_scores",
     "lead_source_configs",
     "league_members",
@@ -108080,12 +108079,12 @@
     "src/hooks/useLeadRouting.test.tsx",
     "src/hooks/useLeadRouting.ts",
     "src/hooks/useLeadRoutingEngine.ts",
+    "src/hooks/useLeadScoring.test.tsx",
     "src/hooks/useLeadScoring.ts",
     "src/hooks/useLeadSourceAnalysis.ts",
     "src/hooks/useLoginRateLimiter.test.tsx",
     "src/hooks/useLoginRateLimiter.ts",
-    "src/hooks/useMFA.ts",
-    "src/hooks/useMediaQuery.ts"
+    "src/hooks/useMFA.ts"
    ]
   },
   {
@@ -111155,9 +111154,6 @@
    "integration_logs": {
     "select": [
      "src/components/dashboard/IntegrationStatusPanel.tsx"
-    ],
-    "insert": [
-     "src/components/dashboard/IntegrationStatusPanel.tsx"
     ]
    },
    "integration_secret_refs": {
@@ -111272,10 +111268,7 @@
      "supabase/functions/predictive-scoring-explain/index.ts"
     ]
    },
-   "lead_score_trends": {
-    "ref": [
-     "src/components/lead-scoring/LeadScoringDashboard.tsx"
-    ],
+   "lead_score_history": {
     "select": [
      "src/hooks/useLeadScoring.ts"
     ]
@@ -114585,6 +114578,11 @@
    "lead_score_explanations": [
     "sale_id"
    ],
+   "lead_score_history": [
+    "recorded_at",
+    "sale_id",
+    "score"
+   ],
    "lead_scores": [
     "calculated_at",
     "client_id",
@@ -117733,7 +117731,7 @@
    "experiments",
    "external_seller_map",
    "follow_up_notifications",
-   "lead_score_history",
+   "lead_score_trends",
    "league_history",
    "maintenance_log",
    "mfa_verification_attempts",
@@ -120073,6 +120071,10 @@
    {
     "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "msg": "Erro ao carregar logs de integração"
+   },
+   {
+    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "msg": "logs_indisponiveis"
    },
    {
     "file": "src/components/debug/WebhookSimulationPanel.tsx",
@@ -123865,10 +123867,6 @@
    {
     "file": "src/components/competitive/FeatureComparison.tsx",
     "text": "* Market Intel da Arena: mostra apenas dados reais de concorrentes"
-   },
-   {
-    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
-    "text": "Simula disparo de teste e loga no banco para validação"
    },
    {
     "file": "src/components/executive-briefing/briefingHelpers.ts",
@@ -143405,12 +143403,6 @@
    {
     "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "field": "status",
-    "value": "success",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
-    "field": "status",
     "value": "sent",
     "kind": "compara"
    },
@@ -143460,6 +143452,12 @@
     "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "field": "type",
     "value": "email",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "field": "status",
+    "value": "error",
     "kind": "compara"
    },
    {
@@ -160769,6 +160767,14 @@
    {
     "file": "src/hooks/useLeadRouting.test.tsx",
     "name": "recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário"
+   },
+   {
+    "file": "src/hooks/useLeadScoring.test.tsx",
+    "name": "useLeadScoring"
+   },
+   {
+    "file": "src/hooks/useLeadScoring.test.tsx",
+    "name": "le a serie historica da tabela alimentada pelo servidor e monta a tendencia"
    },
    {
     "file": "src/hooks/useLoginRateLimiter.test.tsx",
@@ -199902,13 +199908,6 @@
     "files": [
      "src/pages/FollowUpAudit.tsx"
     ]
-   },
-   {
-    "table": "integration_logs",
-    "issue": "front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
-    "files": [
-     "src/components/dashboard/IntegrationStatusPanel.tsx"
-    ]
    }
   ],
   "service_role_files": [
@@ -228303,13 +228302,6 @@
     ]
    },
    {
-    "kind": "rls",
-    "msg": "`integration_logs`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
-    "where": [
-     "src/components/dashboard/IntegrationStatusPanel.tsx"
-    ]
-   },
-   {
     "kind": "dinheiro",
     "msg": "`slow_query_alerts.total_exec_ms` guarda dinheiro em `double precision NOT NULL` (ponto flutuante) — arredondamento imprevisível; padrão é numeric",
     "where": []
@@ -238500,7 +238492,7 @@
   },
   "src/components/dashboard/IntegrationStatusPanel.tsx": {
    "path": "src/components/dashboard/IntegrationStatusPanel.tsx",
-   "lines": 390,
+   "lines": 391,
    "exports": [
     "const IntegrationStatusPanel"
    ],
@@ -238512,14 +238504,11 @@
     {
      "table": "email_logs",
      "op": "select"
-    },
-    {
-     "table": "integration_logs",
-     "op": "insert"
     }
    ],
    "errors": [
-    "Erro ao carregar logs de integração"
+    "Erro ao carregar logs de integração",
+    "logs_indisponiveis"
    ],
    "status_values": [
     {
@@ -238574,11 +238563,6 @@
     },
     {
      "field": "status",
-     "value": "success",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
      "value": "sent",
      "kind": "compara"
     },
@@ -238623,6 +238607,11 @@
      "kind": "compara"
     },
     {
+     "field": "status",
+     "value": "error",
+     "kind": "compara"
+    },
+    {
      "field": "type",
      "value": "email",
      "kind": "compara"
@@ -238647,9 +238636,6 @@
      "value": "error",
      "kind": "compara"
     }
-   ],
-   "rule_comments": [
-    "Simula disparo de teste e loga no banco para validação"
    ],
    "pagination": [
     "20",
@@ -241347,15 +241333,9 @@
   },
   "src/components/lead-scoring/LeadScoringDashboard.tsx": {
    "path": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-   "lines": 259,
+   "lines": 258,
    "exports": [
     "function LeadScoringDashboard"
-   ],
-   "tables": [
-    {
-     "table": "lead_score_trends",
-     "op": "ref"
-    }
    ],
    "errors": [
     "Erro ao gerar relatório CSV."
@@ -252874,6 +252854,15 @@
     "useToggleRoutingRule"
    ]
   },
+  "src/hooks/useLeadScoring.test.tsx": {
+   "path": "src/hooks/useLeadScoring.test.tsx",
+   "lines": 104,
+   "is_test": true,
+   "tests": [
+    "useLeadScoring",
+    "le a serie historica da tabela alimentada pelo servidor e monta a tendencia"
+   ]
+  },
   "src/hooks/useLeadScoring.ts": {
    "path": "src/hooks/useLeadScoring.ts",
    "lines": 293,
@@ -252886,7 +252875,7 @@
    ],
    "tables": [
     {
-     "table": "lead_score_trends",
+     "table": "lead_score_history",
      "op": "select"
     },
     {
@@ -252907,6 +252896,11 @@
     }
    ],
    "table_cols": {
+    "lead_score_history": [
+     "recorded_at",
+     "sale_id",
+     "score"
+    ],
     "clients": [
      "company",
      "email",
@@ -301186,10 +301180,23 @@
   }
  },
  "git": {
-  "sha": "d2fad00f44d3e757ea14b43c5cfb71546199ce76",
+  "sha": "5f1c0cdbe239affbd4eaecb679b0f48ecff44d0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "5f1c0cd",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)",
+    "files": [
+     "docs/qa/05-PROGRESSO.md",
+     "src/components/dashboard/IntegrationStatusPanel.tsx",
+     "src/components/lead-scoring/LeadScoringDashboard.tsx",
+     "src/hooks/useLeadScoring.test.tsx",
+     "src/hooks/useLeadScoring.ts"
+    ]
+   },
    {
     "sha": "d2fad00",
     "date": "2026-11-26",
@@ -301520,16 +301527,6 @@
      "src/pages/AdminSupressaoEmails.test.tsx",
      "src/pages/AdminSupressaoEmails.tsx"
     ]
-   },
-   {
-    "sha": "93d5215",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs: varre acoes destrutivas sem confirmacao (QA-177) (#726)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "docs/qa/07-ACOES-DESTRUTIVAS.md"
-    ]
    }
   ],
   "hot_files": [
@@ -301554,10 +301551,6 @@
     3
    ],
    [
-    "docs/qa/07-ACOES-DESTRUTIVAS.md",
-    3
-   ],
-   [
     "src/components/settings/FollowUpTerritoryRules.tsx",
     2
    ],
@@ -301578,6 +301571,30 @@
     2
    ],
    [
+    "docs/qa/07-ACOES-DESTRUTIVAS.md",
+    2
+   ],
+   [
+    "docs/qa/05-PROGRESSO.md",
+    1
+   ],
+   [
+    "src/components/dashboard/IntegrationStatusPanel.tsx",
+    1
+   ],
+   [
+    "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    1
+   ],
+   [
+    "src/hooks/useLeadScoring.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/useLeadScoring.ts",
+    1
+   ],
+   [
     "src/components/sales/cadence/RuleAuditLogs.tsx",
     1
    ],
@@ -301591,26 +301608,6 @@
    ],
    [
     "src/hooks/win-loss/useSentimentTrend.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/contracts.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/aggregate-coaching-scorecard/index.ts",
-    1
-   ],
-   [
-    "src/pages/DesafiosSemanais.test.tsx",
-    1
-   ],
-   [
-    "src/pages/DesafiosSemanais.tsx",
-    1
-   ],
-   [
-    "src/hooks/useCriticalMoments.test.tsx",
     1
    ]
   ]

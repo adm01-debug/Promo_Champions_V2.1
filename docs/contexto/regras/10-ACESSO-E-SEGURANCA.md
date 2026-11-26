@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2fad00f44` · branch `main` · 2026-11-26 14:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f1c0cdbe2` · branch `main` · 2026-11-26 14:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -889,7 +889,6 @@ Middleware matcher (Next.js): nenhum
 |---|---|---|
 | `chat_messages` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
 | `follow_up_audit_logs` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
-| `integration_logs` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 
 ## Multi-tenancy
 

@@ -9173,7 +9173,7 @@
     "clients",
     "icp_data",
     "lead_churn_risk",
-    "lead_score_trends",
+    "lead_score_history",
     "sales"
    ],
    "rpcs": [],
@@ -9192,7 +9192,7 @@
     "src/components/lead-scoring/LeadScoringDashboard.tsx",
     "src/components/pipeline/PipelineBoard.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useLeadSourceAnalysis.ts",

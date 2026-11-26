@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2fad00f44` · branch `main` · 2026-11-26 14:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f1c0cdbe2` · branch `main` · 2026-11-26 14:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -490,7 +490,6 @@
 | tabela | tabela `users` usada no código não existe nas migrations/types do repo | `scripts/graphify/static-contracts.test.mjs` |
 | rls | `chat_messages`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
 | rls | `follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
-| rls | `integration_logs`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | dinheiro | `slow_query_alerts.total_exec_ms` guarda dinheiro em `double precision NOT NULL` (ponto flutuante) — arredondamento imprevisível; padrão é numeric |  |
 | edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
 | edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |

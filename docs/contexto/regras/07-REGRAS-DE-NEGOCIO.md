@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d2fad00f44` · branch `main` · 2026-11-26 14:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f1c0cdbe2` · branch `main` · 2026-11-26 14:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4050,6 +4050,7 @@ _nenhum item encontrado_
 | Erro ao limpar histórico | `src/components/dashboard/FuturisticSpeedometerDashboard.tsx` |
 | Erro ao salvar configurações | `src/components/dashboard/FuturisticSpeedometerDashboard.tsx` |
 | Erro ao carregar logs de integração | `src/components/dashboard/IntegrationStatusPanel.tsx` |
+| logs_indisponiveis | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | Erro ao executar simulação | `src/components/debug/WebhookSimulationPanel.tsx` |
 | Número de telefone ausente | `src/components/dialer/ClickToCallButton.tsx` |
 | Twilio não configurado | `src/components/dialer/ClickToCallButton.tsx` |
@@ -4178,8 +4179,7 @@ _nenhum item encontrado_
 | useAuth must be used within an AuthProvider | `src/contexts/AuthContext.tsx` |
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
-| Não autenticado | `src/hooks/useApiTokens.ts` |
-| … +698 linhas — lista completa em `context.json` | |
+| … +699 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1852 testes em 248 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1854 testes em 249 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4503,6 +4503,7 @@ _nenhum item encontrado_
 | `src/components/reports/EmailReportConfig.test.tsx` | 2 | EmailReportConfig — primeira configuração · insere com user_id do usuário logado (RLS exige user_id = auth.uid()) |
 | `src/hooks/useClientsNeedingContact.test.tsx` | 2 | useClientsNeedingContact · particiona a busca de contatos para carteiras grandes |
 | `src/hooks/useLeadAssignment.test.ts` | 2 | assignLeadRoundRobin · não mantém cursor de round-robin no módulo do navegador |
+| `src/hooks/useLeadScoring.test.tsx` | 2 | useLeadScoring · le a serie historica da tabela alimentada pelo servidor e monta a tendencia |
 | `src/hooks/bi/useChurnOverdueBySeller.test.tsx` | 2 | useChurnOverdueBySeller · particiona a consulta de vendedores quando há mais de 100 IDs |
 | `src/hooks/crm/useClientPortfolio.test.tsx` | 2 | useAssignClient · usa a RPC de atribuição manual, que é idempotente e registra auditoria no banco |
 | `src/hooks/dashboard/useDashboardKPIsPeriod.test.tsx` | 2 | useDashboardKPIsPeriod · deve buscar KPIs corretamente |
@@ -4830,7 +4831,6 @@ _nenhum item encontrado_
 | Filtra apenas cadências de quote_followup ativas | `src/components/cadences/quote/EnrollQuoteCadenceDialog.tsx` |
 | Extracted to keep the main component below the 400-LoC limit. | `src/components/clients/Client360ViewHelpers.ts` |
 | * Market Intel da Arena: mostra apenas dados reais de concorrentes | `src/components/competitive/FeatureComparison.tsx` |
-| Simula disparo de teste e loga no banco para validação | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | * Conversor minimalista de markdown -> HTML seguro (apenas h2/h3, parágrafos, bold, lista). | `src/components/executive-briefing/briefingHelpers.ts` |
 | Generate 7-day mini heatmap data (must be before early returns) | `src/components/gamification/StreakWidget.tsx` |
 | Preferência salva só vale se o papel atual tiver permissão para o modo. | `src/components/organisms/AppSidebar.tsx` |
@@ -5109,4 +5109,5 @@ _nenhum item encontrado_
 | Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
 | Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
-| … +142 linhas — lista completa em `context.json` | |
+| negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
+| … +141 linhas — lista completa em `context.json` | |

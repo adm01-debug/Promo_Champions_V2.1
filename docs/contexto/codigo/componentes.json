@@ -6054,7 +6054,7 @@
     "IntegrationStatusPanel"
    ],
    "export_default": "IntegrationStatusPanel",
-   "linhas": 390,
+   "linhas": 391,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [
@@ -9182,15 +9182,13 @@
     "LeadScoringDashboard"
    ],
    "export_default": "LeadScoringDashboard",
-   "linhas": 259,
+   "linhas": 258,
    "dominio": "components/lead-scoring",
    "hooks_locais": [
     "useExplainBatch",
     "useLeadScoring"
    ],
-   "tabelas": [
-    "lead_score_trends"
-   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false

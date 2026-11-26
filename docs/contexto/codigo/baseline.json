@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d2fad00f44d3e757ea14b43c5cfb71546199ce76",
+  "commit": "5f1c0cdbe239affbd4eaecb679b0f48ecff44d0c",
   "branch": "main",
-  "data_commit": "2026-11-26T11:46:00-03:00",
+  "data_commit": "2026-11-26T11:46:43-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "5f1c0cd",
+    "data": "2026-11-26",
+    "assunto": "fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)"
+   },
    {
     "sha": "d2fad00",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "9a949f0",
     "data": "2026-11-24",
     "assunto": "chore(main): release 1.8.0 (#661)"
-   },
-   {
-    "sha": "6938bcc",
-    "data": "2026-11-24",
-    "assunto": "chore: workflow para publicar DESIGN_SYNC_WEBHOOK_SECRET (#686)"
    }
   ],
-  "arquivos_mudados_7d": 360,
+  "arquivos_mudados_7d": 362,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 65
+    "mudancas": 66
    },
    {
     "pasta": "src/components/conversational",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
-    "mudancas": 30
+    "mudancas": 31
    },
    {
     "arquivo": "deno.lock",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3694,
-  "arquivos_codigo": 2626,
-  "linhas_codigo": 450620,
+  "arquivos_total": 3695,
+  "arquivos_codigo": 2627,
+  "linhas_codigo": 450724,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 421,
   "migrations": 716,
   "cron_jobs": 40,
-  "testes": 286,
+  "testes": 287,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 556,
-   "linhas": 65899
+   "arquivos": 557,
+   "linhas": 66003
   },
   "src/integrations": {
    "arquivos": 5,

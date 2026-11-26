@@ -6682,7 +6682,7 @@
     "icp_data",
     "lead_churn_risk",
     "lead_score_explanations",
-    "lead_score_trends",
+    "lead_score_history",
     "sales"
    ],
    "rpcs": [
@@ -6885,7 +6885,7 @@
     "lead_churn_risk",
     "lead_intelligence_metrics",
     "lead_score_explanations",
-    "lead_score_trends",
+    "lead_score_history",
     "lead_scores",
     "sales"
    ],
@@ -8024,7 +8024,7 @@
     "icp_data",
     "lead_churn_risk",
     "lead_score_explanations",
-    "lead_score_trends",
+    "lead_score_history",
     "pipeline_stages",
     "pipelines",
     "playbook_items",

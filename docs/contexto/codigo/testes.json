@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 286,
+ "total": 287,
  "por_tipo": {
   "contrato": 7,
   "e2e": 54,
   "pytest": 2,
-  "unit": 214
+  "unit": 215
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 198
+   "arquivos": 199
   },
   {
    "padrao": "tests/",
@@ -1219,6 +1219,15 @@
     "src/hooks/useLeadRouting.ts"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/useLeadScoring.test.tsx",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/hooks/useLeadScoring.ts"
+   ],
+   "casos": 1
   },
   {
    "arquivo": "src/hooks/useLoginRateLimiter.test.tsx",
@@ -2570,6 +2579,7 @@
   "src/hooks/useInactiveDeals.ts": 2,
   "src/hooks/useLeadAssignment.ts": 1,
   "src/hooks/useLeadRouting.ts": 1,
+  "src/hooks/useLeadScoring.ts": 1,
   "src/hooks/useLoginRateLimiter.ts": 1,
   "src/hooks/useMultichannel.ts": 1,
   "src/hooks/useNPSSurveys.ts": 1,
@@ -3098,7 +3108,6 @@
    "src/hooks/useKudos.ts",
    "src/hooks/useLeadEnrichment.ts",
    "src/hooks/useLeadRoutingEngine.ts",
-   "src/hooks/useLeadScoring.ts",
    "src/hooks/useLeadSourceAnalysis.ts",
    "src/hooks/useMediaQuery.ts",
    "src/hooks/useMFA.ts",
