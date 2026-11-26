@@ -416,11 +416,11 @@
   {
    "arquivo": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
    "tipo": "unit",
-   "linhas": 99,
+   "linhas": 120,
    "testa": [
     "src/components/dashboard/IntegrationStatusPanel.tsx"
    ],
-   "casos": 4
+   "casos": 5
   },
   {
    "arquivo": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",

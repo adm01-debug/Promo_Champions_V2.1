@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c72095095217bc55427854b9c5666b556c8d3113",
+  "sha": "b2246034b146c0e19cca729227a2b611d4537856",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 16:08 UTC",
+  "generated_at": "2026-11-26 16:31 UTC",
   "files_total": 3713,
   "code_files": 3358,
-  "code_lines": 486790
+  "code_lines": 486823
  },
  "version": "1.3.2",
- "facts_hash": "cbff711d8c6d0020",
+ "facts_hash": "4af11545b58fd274",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107362,7 +107362,7 @@
   {
    "module": "src/components",
    "files": 1243,
-   "lines": 195435,
+   "lines": 195468,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -123916,6 +123916,14 @@
    {
     "file": "src/components/competitive/FeatureComparison.tsx",
     "text": "* Market Intel da Arena: mostra apenas dados reais de concorrentes"
+   },
+   {
+    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "text": "envio de email estava parado. Sem permissao de leitura, nao ha o que exibir."
+   },
+   {
+    "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "text": "Enquanto o papel nao resolve, e para quem nao pode ler os logs, nao renderiza"
    },
    {
     "file": "src/components/executive-briefing/briefingHelpers.ts",
@@ -159882,6 +159890,10 @@
    {
     "file": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
     "name": "IntegrationStatusPanel"
+   },
+   {
+    "file": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
+    "name": "nao consulta o banco nem renderiza para quem nao le os logs de email"
    },
    {
     "file": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
@@ -238590,10 +238602,11 @@
   },
   "src/components/dashboard/IntegrationStatusPanel.test.tsx": {
    "path": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
-   "lines": 99,
+   "lines": 120,
    "is_test": true,
    "tests": [
     "IntegrationStatusPanel",
+    "nao consulta o banco nem renderiza para quem nao le os logs de email",
     "le os logs reais de email em vez da tabela sem produtor",
     "mostra o evento de email gravado pelo servidor",
     "declara ausencia de fonte de log para push em vez de simular sucesso",
@@ -238602,7 +238615,7 @@
   },
   "src/components/dashboard/IntegrationStatusPanel.tsx": {
    "path": "src/components/dashboard/IntegrationStatusPanel.tsx",
-   "lines": 367,
+   "lines": 379,
    "exports": [
     "const IntegrationStatusPanel"
    ],
@@ -238737,6 +238750,10 @@
      "value": "error",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "envio de email estava parado. Sem permissao de leitura, nao ha o que exibir.",
+    "Enquanto o papel nao resolve, e para quem nao pode ler os logs, nao renderiza"
    ],
    "pagination": [
     "30"
@@ -301302,10 +301319,20 @@
   }
  },
  "git": {
-  "sha": "c72095095217bc55427854b9c5666b556c8d3113",
+  "sha": "b2246034b146c0e19cca729227a2b611d4537856",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b224603",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: painel de integracao so aparece para quem pode ler os logs (#759)",
+    "files": [
+     "src/components/dashboard/IntegrationStatusPanel.test.tsx",
+     "src/components/dashboard/IntegrationStatusPanel.tsx"
+    ]
+   },
    {
     "sha": "c720950",
     "date": "2026-11-26",
@@ -301617,29 +301644,6 @@
      "src/hooks/gamification/useWeeklyRanking.test.ts",
      "src/hooks/gamification/useWeeklyRanking.ts"
     ]
-   },
-   {
-    "sha": "dd14171",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)",
-    "files": [
-     "docs/qa/07-ACOES-DESTRUTIVAS.md",
-     "src/components/admin/task-console/SquadManager.test.tsx",
-     "src/components/admin/task-console/SquadManager.tsx",
-     "src/components/admin/task-console/TaskCatalogManager.tsx",
-     "src/components/analytics/ObjectionsLibrary.tsx",
-     "src/components/cadences/EditCadenceDialog.tsx",
-     "src/components/cadences/EnrollmentRulesDialog.tsx",
-     "src/components/deal-intelligence/BuyingCommitteeCard.tsx",
-     "src/components/multichannel/TemplateManager.tsx",
-     "src/components/playbooks/PlaybookItemRow.test.tsx",
-     "src/components/playbooks/PlaybookItemRow.tsx",
-     "src/components/sequences/SequenceBuilder.tsx",
-     "src/components/settings/FollowUpTerritoryRules.tsx",
-     "src/pages/Agenda.tsx",
-     "src/pages/Cadencias.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -301660,19 +301664,19 @@
     4
    ],
    [
+    "src/components/dashboard/IntegrationStatusPanel.tsx",
+    3
+   ],
+   [
     "src/components/layout/sidebar/sidebarMenuData.ts",
     3
    ],
    [
+    "src/components/dashboard/IntegrationStatusPanel.test.tsx",
+    2
+   ],
+   [
     "docs/qa/05-PROGRESSO.md",
-    2
-   ],
-   [
-    "src/components/dashboard/IntegrationStatusPanel.tsx",
-    2
-   ],
-   [
-    "src/components/settings/FollowUpTerritoryRules.tsx",
     2
    ],
    [
@@ -301712,15 +301716,15 @@
     1
    ],
    [
-    "src/components/dashboard/IntegrationStatusPanel.test.tsx",
-    1
-   ],
-   [
     "src/components/lead-scoring/LeadScoringDashboard.tsx",
     1
    ],
    [
     "src/hooks/useLeadScoring.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/useLeadScoring.ts",
     1
    ]
   ]

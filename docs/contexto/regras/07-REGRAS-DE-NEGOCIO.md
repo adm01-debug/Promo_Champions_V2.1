@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c720950952` · branch `main` · 2026-11-26 16:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b2246034b1` · branch `main` · 2026-11-26 16:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1862 testes em 251 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1863 testes em 251 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4368,6 +4368,7 @@ _nenhum item encontrado_
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
 | `src/components/admin/AdminQuickLinks.test.tsx` | 6 | AdminQuickLinks — telas de alerta de webhook (etapa 110) · leva às configurações de alerta de webhook · leva ao histórico de alertas de webhook · AdminQuickLinks — telas de conformidade (etapa 111) … |
+| `src/components/dashboard/IntegrationStatusPanel.test.tsx` | 6 | IntegrationStatusPanel · nao consulta o banco nem renderiza para quem nao le os logs de email · le os logs reais de email em vez da tabela sem produtor · mostra o evento de email gravado pelo servidor … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
@@ -4389,7 +4390,6 @@ _nenhum item encontrado_
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
 | `src/components/cadences/ContactRulesDialog.test.tsx` | 5 | ContactRulesDialog · cria a linha via upsert quando o vendedor ainda não tem preferências · preserva chaves gravadas por outra tela ao salvar · mostra erro e não confirma quando o banco recusa a gravação … |
 | `src/components/clients/Client360HealthNbaSection.test.tsx` | 5 | Client360HealthNbaSection · não exibe confiança fixa inventada · não rotula a regra estática como IA · Agendar follow-up cria tarefa real para o cliente … |
-| `src/components/dashboard/IntegrationStatusPanel.test.tsx` | 5 | IntegrationStatusPanel · le os logs reais de email em vez da tabela sem produtor · mostra o evento de email gravado pelo servidor · declara ausencia de fonte de log para push em vez de simular sucesso … |
 | `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/pipeline/PipelineBoard.test.tsx` | 5 | PipelineBoard — vendas ganhas na semana · mostra a contagem real de vendas ganhas nos últimos 7 dias · não exibe o indicador fixo de Pipeline Health (92.4%) · usa singular quando há uma única venda ganha … |
@@ -4833,6 +4833,8 @@ _nenhum item encontrado_
 | Filtra apenas cadências de quote_followup ativas | `src/components/cadences/quote/EnrollQuoteCadenceDialog.tsx` |
 | Extracted to keep the main component below the 400-LoC limit. | `src/components/clients/Client360ViewHelpers.ts` |
 | * Market Intel da Arena: mostra apenas dados reais de concorrentes | `src/components/competitive/FeatureComparison.tsx` |
+| envio de email estava parado. Sem permissao de leitura, nao ha o que exibir. | `src/components/dashboard/IntegrationStatusPanel.tsx` |
+| Enquanto o papel nao resolve, e para quem nao pode ler os logs, nao renderiza | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | * Conversor minimalista de markdown -> HTML seguro (apenas h2/h3, parágrafos, bold, lista). | `src/components/executive-briefing/briefingHelpers.ts` |
 | Generate 7-day mini heatmap data (must be before early returns) | `src/components/gamification/StreakWidget.tsx` |
 | Preferência salva só vale se o papel atual tiver permissão para o modo. | `src/components/organisms/AppSidebar.tsx` |
@@ -5110,6 +5112,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos | `supabase/functions/generate-loss-coaching/index.ts` |
 | Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
 | • não tinha rate limit nem cache; | `supabase/functions/geocode-proxy/index.ts` |
-| Forma/limite dos campos via validador compartilhado; as regras de | `supabase/functions/geocode-proxy/index.ts` |
-| negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam. | `supabase/functions/geocode-proxy/index.ts` |
-| … +142 linhas — lista completa em `context.json` | |
+| … +144 linhas — lista completa em `context.json` | |

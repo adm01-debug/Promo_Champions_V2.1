@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c72095095217bc55427854b9c5666b556c8d3113",
+  "commit": "b2246034b146c0e19cca729227a2b611d4537856",
   "branch": "main",
-  "data_commit": "2026-11-26T13:05:56-03:00",
+  "data_commit": "2026-11-26T13:28:01-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b224603",
+    "data": "2026-11-26",
+    "assunto": "fix: painel de integracao so aparece para quem pode ler os logs (#759)"
+   },
    {
     "sha": "c720950",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "b241da2",
     "data": "2026-11-24",
     "assunto": "ci: provisiona o segredo do webhook Promo Supply (#732)"
-   },
-   {
-    "sha": "5d5329c",
-    "data": "2026-11-24",
-    "assunto": "chore: atualiza grupo de testes (jest-dom 8, user-event, vitest 5.1.1) (#730)"
    }
   ],
   "arquivos_mudados_7d": 366,
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 68
+    "mudancas": 70
    },
    {
     "pasta": "src/components/win-loss",
@@ -238,6 +238,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "mudancas": 5
+   },
+   {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 5
    },
@@ -267,10 +271,6 @@
    },
    {
     "arquivo": "src/components/analytics/ABCAnalysis.tsx",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "mudancas": 4
    },
    {
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3698,
   "arquivos_codigo": 2629,
-  "linhas_codigo": 450931,
+  "linhas_codigo": 450964,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1243,
-   "linhas": 195436
+   "linhas": 195469
   },
   "src/config": {
    "arquivos": 4,

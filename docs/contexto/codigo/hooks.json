@@ -11079,7 +11079,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 40,
+   "usado_por": 41,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -11088,6 +11088,7 @@
     "src/components/competitive/BattleArena.tsx",
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
+    "src/components/dashboard/IntegrationStatusPanel.tsx",
     "src/components/enablement/SalesEnablementHub.tsx",
     "src/components/engagement/EngagementLeaderboardWidget.tsx",
     "src/components/mobile/MobileDrawer.tsx",
@@ -11109,8 +11110,7 @@
     "src/hooks/sales/useSalesRealtime.ts",
     "src/hooks/useSDRAlertNotifications.ts",
     "src/hooks/useSecurityAlertNotifications.ts",
-    "src/pages/AccessDenied.tsx",
-    "src/pages/AccountBasedEngagement.tsx"
+    "src/pages/AccessDenied.tsx"
    ],
    "coberto_por_testes": 1
   },

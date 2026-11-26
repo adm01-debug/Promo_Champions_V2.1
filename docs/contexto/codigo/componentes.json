@@ -6054,9 +6054,11 @@
     "IntegrationStatusPanel"
    ],
    "export_default": "IntegrationStatusPanel",
-   "linhas": 367,
+   "linhas": 379,
    "dominio": "components/dashboard",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useUserRoles"
+   ],
    "tabelas": [
     "email_logs"
    ],
