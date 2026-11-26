@@ -8,7 +8,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 1 |
+| policies | 2 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -52,6 +52,16 @@
 
 
 ## Policies (RLS)
+
+### `Admins/managers can manage outcome rules`
+
+| campo | valor |
+|---|---|
+| comando | ALL |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `is_admin_or_manager(auth.uid())` |
+| WITH CHECK | `is_admin_or_manager(auth.uid())` |
 
 ### `Authenticated read for outcome rules`
 

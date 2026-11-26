@@ -8,7 +8,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -44,6 +44,16 @@
 
 
 ## Policies (RLS)
+
+### `Users can delete own chat_messages`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `(conversation_id IN ( SELECT chat_conversations.id    FROM chat_conversations   WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |
+| WITH CHECK |  |
 
 ### `Users can insert own chat_messages`
 

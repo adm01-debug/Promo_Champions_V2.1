@@ -93,11 +93,13 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.cadence_ab_tests | Admins/managers manage ab tests | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.cadence_ab_tests | Authenticated can view ab tests | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.cadence_advanced_stats | Leitura pública autenticada para stats | SELECT | PERMISSIVE | public | `(auth.role() = 'authenticated'::text)` |  |
+| public.cadence_alert_templates | Admins/managers can manage alert templates | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.cadence_alert_templates | Authenticated read for alert templates | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.cadence_enrollment_rules | Admins/managers can manage enrollment rules | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.cadence_enrollment_rules | Authenticated can view enrollment rules | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.cadence_funnel_rules | Authenticated users can view funnel rules | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.cadence_funnel_rules | Only admins can manage funnel rules | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
+| public.cadence_outcome_rules | Admins/managers can manage outcome rules | ALL | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.cadence_outcome_rules | Authenticated read for outcome rules | SELECT | PERMISSIVE | authenticated | `true` |  |
 | public.cadence_steps | Admins and managers can delete cadence_steps | DELETE | PERMISSIVE | public | `is_admin_or_manager(auth.uid())` |  |
 | public.cadence_steps | Admins and managers can insert cadence_steps | INSERT | PERMISSIVE | public |  | `is_admin_or_manager(auth.uid())` |
@@ -167,6 +169,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.chat_conversations | Users can insert own chat_conversations | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
 | public.chat_conversations | Users can read own chat_conversations | SELECT | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
 | public.chat_conversations | Users can update own chat_conversations | UPDATE | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
+| public.chat_messages | Users can delete own chat_messages | DELETE | PERMISSIVE | authenticated | `(conversation_id IN ( SELECT chat_conversations.id    FROM chat_conversations   WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |  |
 | public.chat_messages | Users can insert own chat_messages | INSERT | PERMISSIVE | authenticated |  | `(conversation_id IN ( SELECT chat_conversations.id    FROM chat_conversations   WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |
 | public.chat_messages | Users can read own chat_messages | SELECT | PERMISSIVE | authenticated | `(conversation_id IN ( SELECT chat_conversations.id    FROM chat_conversations   WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))` |  |
 | public.churn_alert_settings | Admins manage churn alert settings | ALL | PERMISSIVE | authenticated | `has_role(auth.uid(), 'admin'::app_role)` | `has_role(auth.uid(), 'admin'::app_role)` |
@@ -385,6 +388,7 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.feed_reactions | Authenticated can delete own reactions | DELETE | PERMISSIVE | authenticated | `(salesperson_id = get_current_salesperson_id())` |  |
 | public.feed_reactions | Authenticated can read feed_reactions | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
 | public.feed_reactions | Users can insert own feed_reactions | INSERT | PERMISSIVE | authenticated |  | `(salesperson_id = get_current_salesperson_id())` |
+| public.follow_up_audit_logs | Admins and managers can update audit logs | UPDATE | PERMISSIVE | authenticated | `is_admin_or_manager(auth.uid())` | `is_admin_or_manager(auth.uid())` |
 | public.follow_up_audit_logs | Authenticated users can insert audit logs | INSERT | PERMISSIVE | public |  | `(auth.uid() IS NOT NULL)` |
 | public.follow_up_audit_logs | Users can read audit logs | SELECT | PERMISSIVE | public | `(auth.uid() IS NOT NULL)` |  |
 | public.follow_up_notifications | Users can manage their own notifications | ALL | PERMISSIVE | public | `(user_id = auth.uid())` |  |

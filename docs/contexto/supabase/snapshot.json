@@ -89020,7 +89020,7 @@
               "hits": 8
             }
           ],
-          "code_total_files": 81,
+          "code_total_files": 82,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -91062,7 +91062,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 189,
+          "code_total_files": 190,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -91250,7 +91250,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 189,
+          "code_total_files": 190,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -126000,6 +126000,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.cadence_alert_templates.Admins/managers can manage alert templates",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.cadence_enrollment_rules.Admins/managers can manage enrollment rules",
         "severity": "BAIXA"
       },
@@ -126007,6 +126013,12 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.cadence_funnel_rules.Only admins can manage funnel rules",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.cadence_outcome_rules.Admins/managers can manage outcome rules",
         "severity": "BAIXA"
       },
       {
@@ -127405,6 +127417,12 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.feed_reactions.Authenticated can read feed_reactions",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.follow_up_audit_logs.Admins and managers can update audit logs",
         "severity": "BAIXA"
       },
       {
@@ -134484,6 +134502,11 @@
         "name": "20261127100000_backfill_supply_outbox_pedidos_pendentes",
         "statements": null,
         "version": "20261127100000"
+      },
+      {
+        "name": "20261128120000_restaura_escrita_bloqueada_por_rls",
+        "statements": null,
+        "version": "20261128120000"
       }
     ],
     "policies": [
@@ -135545,6 +135568,18 @@
         "with_check": null
       },
       {
+        "cmd": "ALL",
+        "name": "Admins/managers can manage alert templates",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "cadence_alert_templates",
+        "using": "is_admin_or_manager(auth.uid())",
+        "with_check": "is_admin_or_manager(auth.uid())"
+      },
+      {
         "cmd": "SELECT",
         "name": "Authenticated read for alert templates",
         "permissive": "PERMISSIVE",
@@ -135601,6 +135636,18 @@
         ],
         "schema": "public",
         "table": "cadence_funnel_rules",
+        "using": "is_admin_or_manager(auth.uid())",
+        "with_check": "is_admin_or_manager(auth.uid())"
+      },
+      {
+        "cmd": "ALL",
+        "name": "Admins/managers can manage outcome rules",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "cadence_outcome_rules",
         "using": "is_admin_or_manager(auth.uid())",
         "with_check": "is_admin_or_manager(auth.uid())"
       },
@@ -136430,6 +136477,18 @@
         "schema": "public",
         "table": "chat_conversations",
         "using": "(salesperson_id = get_current_salesperson_id())",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "name": "Users can delete own chat_messages",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "chat_messages",
+        "using": "(conversation_id IN ( SELECT chat_conversations.id\n   FROM chat_conversations\n  WHERE (chat_conversations.salesperson_id = get_current_salesperson_id())))",
         "with_check": null
       },
       {
@@ -139048,6 +139107,18 @@
         "table": "feed_reactions",
         "using": null,
         "with_check": "(salesperson_id = get_current_salesperson_id())"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "Admins and managers can update audit logs",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "follow_up_audit_logs",
+        "using": "is_admin_or_manager(auth.uid())",
+        "with_check": "is_admin_or_manager(auth.uid())"
       },
       {
         "cmd": "INSERT",

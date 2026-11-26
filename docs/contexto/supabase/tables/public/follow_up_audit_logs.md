@@ -8,7 +8,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -55,6 +55,16 @@
 
 
 ## Policies (RLS)
+
+### `Admins and managers can update audit logs`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `is_admin_or_manager(auth.uid())` |
+| WITH CHECK | `is_admin_or_manager(auth.uid())` |
 
 ### `Authenticated users can insert audit logs`
 

@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 16:21 UTC
+
+- **functions** alterado (3): `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`
+- **lints** adicionado (3): `policy_auth_fn_not_wrapped:public.cadence_alert_templates.Admins/managers can manage alert templates`, `policy_auth_fn_not_wrapped:public.cadence_outcome_rules.Admins/managers can manage outcome rules`, `policy_auth_fn_not_wrapped:public.follow_up_audit_logs.Admins and managers can update audit logs`
+- **migrations** adicionado (1): `20261128120000_20261128120000_restaura_escrita_bloqueada_por_rls`
+- **policies (RLS)** adicionado (4): `public.cadence_alert_templates.Admins/managers can manage alert templates`, `public.cadence_outcome_rules.Admins/managers can manage outcome rules`, `public.chat_messages.Users can delete own chat_messages`, `public.follow_up_audit_logs.Admins and managers can update audit logs`
+
 ## 2026-11-26 14:17 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_29`
