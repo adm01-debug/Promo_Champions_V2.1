@@ -172,6 +172,7 @@ import {
   WebhookAlertSettingsPage,
   AdminConexoesPage,
   AdminV4CallbacksPage,
+  AdminCreditAnalysisPage,
   AdminQuoteSyncInboundPage,
   AdminDesignInboundPage,
   AdminQuoteConversionsPage,
@@ -976,6 +977,14 @@ export function AppRoutes() {
                           element={
                             <Admin>
                               <AdminV4CallbacksPage />
+                            </Admin>
+                          }
+                        />
+                        <Route
+                          path="/admin/analise-credito"
+                          element={
+                            <Admin>
+                              <AdminCreditAnalysisPage />
                             </Admin>
                           }
                         />

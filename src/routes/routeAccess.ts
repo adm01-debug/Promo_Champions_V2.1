@@ -13,6 +13,7 @@ export const adminOnlyRoutes: readonly string[] = [
   '/admin/race-arena',
   '/admin/conexoes',
   '/admin/v4-callbacks',
+  '/admin/analise-credito',
   '/admin/quote-sync-inbound',
   '/admin/design-inbound',
   '/admin/quote-conversions',
