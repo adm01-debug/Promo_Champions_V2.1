@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd3079d658` · branch `main` · 2026-11-26 11:36 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `fd79e14efa` · branch `main` · 2026-11-26 12:12 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1838 testes em 245 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1842 testes em 246 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4308,9 +4308,9 @@ _nenhum item encontrado_
 | `scripts/db-audit/gen-migration-probes.test.mjs` | 19 | ALTER TABLE com vários ADD em uma linha carrega a tabela em todos · ALTER TABLE IF EXISTS não captura  · ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa · DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela … |
 | `src/hooks/email/failedDraftsHelpers.test.ts` | 19 | isPermanentError · não classifica ausência de erro como permanente · marca  · mantém  … |
 | `src/hooks/email/recoveryRateHelpers.test.ts` | 19 | failureTypeLabel · traduz códigos conhecidos · devolve o código bruto quando desconhecido · isPermanentFailureType … |
+| `src/routes/routeAccess.test.ts` | 19 | routeAccess — paridade com o roteador · lista de rotas exclusivas de admin bate com os wrappers <Admin> · lista de rotas de gestor bate com os wrappers <Manager> · nenhuma rota aparece nas duas listas … |
 | `tests/e2e/pages-crm-core.spec.ts` | 18 | Vendas — Deals Pipeline · carrega heading e filtros · title da página correto · Clientes — Client Hub … |
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
-| `src/routes/routeAccess.test.ts` | 17 | routeAccess — paridade com o roteador · lista de rotas exclusivas de admin bate com os wrappers <Admin> · lista de rotas de gestor bate com os wrappers <Manager> · nenhuma rota aparece nas duas listas … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
 | `src/services/salesService.test.ts` | 16 | salesService.getSales · mapeia rows do Supabase para o formato do domínio · faz fallback para client_name/product_name quando joins vêm nulos · sanitiza o searchTerm (remove vírgulas/parênteses) e chama .or() … |
@@ -4507,6 +4507,7 @@ _nenhum item encontrado_
 | `src/hooks/reports/useSalesReport.test.tsx` | 2 | useSalesReport · propaga o erro do fetch de salespeople em vez de ranking vazio |
 | `src/lib/supabase/all-in-calls.test.ts` | 2 | chunkedInClient guard-rail · no high-cardinality .in() call escapes chunkedInClient |
 | `src/pages/DealVelocityPage.test.tsx` | 2 | DealVelocityPage · mostra o comparativo real e não exibe o botão Exportar sem ação |
+| `src/pages/DesafiosSemanais.test.tsx` | 2 | DesafiosSemanais - desafios do vendedor logado · pede os desafios do vendedor autenticado, nao do primeiro da lista |
 | `src/pages/EvolutionCurvesPage.test.tsx` | 2 | EvolutionCurvesPage · mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação |
 | `src/pages/MetasAtividades.test.tsx` | 2 | MetasAtividades · mostra indicadores calculados das metas reais, sem valores fixos |
 | `src/pages/RaceSpectator.test.tsx` | 2 | RaceSpectator — canais de tempo real liberados (etapa 138) · remove o canal ao desmontar a tela |

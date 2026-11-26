@@ -17594,7 +17594,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 95,
+   "usado_por": 96,
    "orfao": false
   },
   {
@@ -18986,9 +18986,10 @@
     "DesafiosSemanais"
    ],
    "export_default": "DesafiosSemanais",
-   "linhas": 245,
+   "linhas": 246,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useChallengesWithProgress",
     "useGamificationData",
     "useUserRoles"

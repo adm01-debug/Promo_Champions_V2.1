@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (195)",
+   "co-localizado (*.test) (196)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)",
    "feat: tela de Momentos Críticos para os alertas de chamada (#751)",
    "chore(main): release 1.10.1 (#750)",
    "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)",
-   "chore(main): release 1.10.0 (#739)",
-   "chore: resgata a sonda de estado da fila Champions -> Supply (#747)"
+   "chore(main): release 1.10.0 (#739)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

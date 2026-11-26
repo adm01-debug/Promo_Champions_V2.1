@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 283,
+ "total": 284,
  "por_tipo": {
   "contrato": 6,
   "e2e": 54,
   "pytest": 2,
-  "unit": 212
+  "unit": 213
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 195
+   "arquivos": 196
   },
   {
    "padrao": "tests/",
@@ -1623,6 +1623,15 @@
    "casos": 1
   },
   {
+   "arquivo": "src/pages/DesafiosSemanais.test.tsx",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/pages/DesafiosSemanais.tsx"
+   ],
+   "casos": 1
+  },
+  {
    "arquivo": "src/pages/EvolutionCurvesPage.test.tsx",
    "tipo": "unit",
    "linhas": 46,
@@ -1696,11 +1705,12 @@
   {
    "arquivo": "src/routes/routeAccess.test.ts",
    "tipo": "unit",
-   "linhas": 146,
+   "linhas": 168,
    "testa": [
+    "src/components/layout/sidebar/sidebarMenuData.ts",
     "src/routes/routeAccess.ts"
    ],
-   "casos": 14
+   "casos": 15
   },
   {
    "arquivo": "src/services/callFeedbackService.test.ts",
@@ -2447,6 +2457,7 @@
   "src/components/email/aiEmailHelpers.ts": 1,
   "src/components/enablement/SalesEnablementHub.tsx": 1,
   "src/components/intelligence/PipelineStrategicReview.tsx": 1,
+  "src/components/layout/sidebar/sidebarMenuData.ts": 1,
   "src/components/pipeline/DealCard.tsx": 1,
   "src/components/pipeline/InactivityPanel.tsx": 1,
   "src/components/pipeline/PipelineBoard.tsx": 1,
@@ -2593,6 +2604,7 @@
   "src/pages/Auth.tsx": 1,
   "src/pages/Clientes.tsx": 1,
   "src/pages/DealVelocityPage.tsx": 1,
+  "src/pages/DesafiosSemanais.tsx": 1,
   "src/pages/EvolutionCurvesPage.tsx": 1,
   "src/pages/InactivityTriggers.tsx": 1,
   "src/pages/Index.tsx": 1,
@@ -2683,7 +2695,6 @@
    "src/pages/CustomerSuccessHub.tsx",
    "src/pages/DealIntelligence.tsx",
    "src/pages/Deduplication.tsx",
-   "src/pages/DesafiosSemanais.tsx",
    "src/pages/EmailAnalyticsPage.tsx",
    "src/pages/EmailEngagementScoring.tsx",
    "src/pages/EmailTracking.tsx",

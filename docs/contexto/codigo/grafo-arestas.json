@@ -10687,6 +10687,7 @@
    "src/components/ui/card.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tabs.tsx",
+   "src/contexts/AuthContext.tsx",
    "src/hooks/gamification/useGamificationData.ts",
    "src/hooks/gamification/useWeeklyChallenges.ts",
    "src/hooks/useUserRoles.ts"

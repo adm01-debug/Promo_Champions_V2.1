@@ -5,7 +5,7 @@
   "urls": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 134,
+  "itens_menu": 138,
   "lazy": 234
  },
  "urls": [
@@ -12029,6 +12029,15 @@
    "resolve_para": "src/pages/Configuracoes.tsx"
   },
   {
+   "rotulo": "Contas ABM (gestão)",
+   "destino": "/abm",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AccountBasedSelling.tsx"
+  },
+  {
    "rotulo": "Customer Success",
    "destino": "/customer-success",
    "grupo": null,
@@ -12171,6 +12180,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/ClientHealthScore.tsx"
+  },
+  {
+   "rotulo": "Histórico de Desafios",
+   "destino": "/desafios-diarios",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/HistoricoDesafiosDiarios.tsx"
   },
   {
    "rotulo": "Home",
@@ -12344,6 +12362,15 @@
    "resolve_para": "src/pages/MeuAssistente.tsx"
   },
   {
+   "rotulo": "Meu BI",
+   "destino": "/bi-vendedor",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/BIVendedor.tsx"
+  },
+  {
    "rotulo": "Meu Dashboard",
    "destino": "/dashboard-custom",
    "grupo": null,
@@ -12441,6 +12468,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/Orcamentos.tsx"
+  },
+  {
+   "rotulo": "Perfil Gamer",
+   "destino": "/perfil-gamer",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/GamifiedProfilePage.tsx"
   },
   {
    "rotulo": "Performance",
