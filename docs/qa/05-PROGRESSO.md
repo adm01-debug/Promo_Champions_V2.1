@@ -75,8 +75,8 @@ Exemplo:
 - [x] 049 — Fazer o botão "Reprocessar" reprocessar — onda 2 — Alta — PR #649 - useV4Callbacks: Reprocessar desabilitado com attempts>=5 e "Resetar tentativas" zera attempts/next_retry_at
 - [ ] 050 — Dar policy de escrita a `cadence_alert_templates` — onda 2 — Alta · **APROV**
 - [ ] 051 — Dar policy de escrita a `cadence_outcome_rules` — onda 2 — Alta · **APROV**
-- [ ] 052 — Resolver a gravação de `integration_logs` — onda 2 — Média
-- [ ] 053 — Resolver a gravação de `lead_score_trends` — onda 2 — Média
+- [x] 052 — Resolver a gravação de `integration_logs` — onda 2 — Média — PR #757 — o painel de integrações não insere mais log falso: rele os últimos logs, calcula os erros sobre eles e informa o resultado real
+- [x] 053 — Resolver a gravação de `lead_score_trends` — onda 2 — Média — PR #757 — useLeadScoring le `lead_score_history` (série do trigger record_lead_score_history) e o realtime escuta essa tabela; teste novo falha sem a troca
 - [ ] 054 — Permitir marcar follow-up como enviado (e parar de engolir o erro) — onda 2 — Alta · **APROV**
 - [ ] 055 — Permitir excluir a conversa do assistente — onda 2 — Média · **APROV**
 - [ ] 056 — Tornar transacional a mudança de status de orçamento — onda 2 — Alta · **APROV**

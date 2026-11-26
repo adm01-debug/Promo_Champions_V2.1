@@ -71,8 +71,9 @@ export const IntegrationStatusPanel = () => {
 
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
-  const fetchLogs = async () => {
+  const fetchLogs = async (): Promise<LogEntry[] | undefined> => {
     setLoading(true);
+    let fetchedLogs: LogEntry[] = [];
     try {
       // Tenta buscar da nova tabela de logs unificada
       const { data: unifiedLogs, error: unifiedError } = await supabase
@@ -105,6 +106,7 @@ export const IntegrationStatusPanel = () => {
           recipient: log.recipient_email,
         }));
 
+        fetchedLogs = formattedLogs;
         setLogs(formattedLogs);
       } else {
         const formattedLogs: LogEntry[] = (unifiedLogs || []).map(log => ({
@@ -121,14 +123,15 @@ export const IntegrationStatusPanel = () => {
             (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
           recipient: log.recipient ?? undefined,
         }));
+        fetchedLogs = formattedLogs;
         setLogs(formattedLogs);
       }
 
       // Atualiza status de infraestrutura baseado nos logs
-      const emailFails = logs.filter(
+      const emailFails = fetchedLogs.filter(
         l => l.type === 'email' && l.status === 'error'
       ).length;
-      const pushFails = logs.filter(
+      const pushFails = fetchedLogs.filter(
         l => l.type === 'push' && l.status === 'error'
       ).length;
 
@@ -151,9 +154,11 @@ export const IntegrationStatusPanel = () => {
       );
 
       toast.success('Diagnóstico concluído com sucesso');
+      return fetchedLogs;
     } catch (error) {
       console.error('Error fetching logs:', error);
       toast.error('Erro ao carregar logs de integração');
+      return undefined;
     } finally {
       setLoading(false);
     }
@@ -161,29 +166,25 @@ export const IntegrationStatusPanel = () => {
 
   useEffect(() => {
     fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- omite fetchLogs: o diagnostico roda so na montagem e fetchLogs e recriado a cada render; incluir dispararia ida a rede a cada render
   }, []);
 
   const testIntegration = async (type: 'email' | 'push') => {
+    const label = type === 'email' ? 'Email' : 'Push';
     toast.promise(
       async () => {
-        // Simula disparo de teste e loga no banco para validação
-        const { error } = await supabase.from('integration_logs').insert([
-          {
-            integration_type: type,
-            event_type: 'test_dispatch',
-            status: 'success',
-            details: { method: 'manual_trigger', origin: 'integration_panel' },
-            recipient: 'user@example.com',
-          },
-        ]);
-        if (error) throw error;
-        await fetchLogs();
+        // A tabela de logs nao aceita escrita do navegador: o registro e feito
+        // pelo servidor. Aqui relemos os ultimos registros e o estado derivado.
+        const fresh = await fetchLogs();
+        if (!fresh) throw new Error('logs_indisponiveis');
+        const fails = fresh.filter(l => l.type === type && l.status === 'error').length;
+        return fails > 0
+          ? `${label}: ${fails} erro(s) nos ultimos logs`
+          : `${label}: nenhum erro nos ultimos logs`;
       },
       {
-        loading: `Enviando teste de ${type}...`,
-        success: `${type === 'email' ? 'Email' : 'Push'} de teste enviado com sucesso!`,
-        error: `Falha ao testar ${type}`,
+        loading: `Verificando ${type}...`,
+        success: (message: string) => message,
+        error: `Falha ao verificar ${type}`,
       }
     );
   };

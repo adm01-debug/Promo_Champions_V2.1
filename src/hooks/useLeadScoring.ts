@@ -51,9 +51,9 @@ export const useLeadScoring = (leadId?: string) => {
     queryFn: async (): Promise<ScoredLead[]> => {
       // Get clients
       const { data: trends } = await supabase
-        .from('lead_score_trends')
-        .select('*')
-        .order('captured_at', { ascending: true });
+        .from('lead_score_history')
+        .select('sale_id, score, recorded_at')
+        .order('recorded_at', { ascending: true });
       const trendMap = new Map<string, number[]>();
       (trends || []).forEach(t => {
         const existing = trendMap.get(t.sale_id) || [];
