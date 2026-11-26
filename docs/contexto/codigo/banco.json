@@ -23486,11 +23486,11 @@
    ],
    "fks": [],
    "criada_em": "20260509115652_088f7d98-dabd-43e6-b438-b1e778e04fac.sql",
-   "usada_no_front": 1,
+   "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": false
+   "nao_usada": true
   },
   "integration_secret_refs": {
    "colunas": {

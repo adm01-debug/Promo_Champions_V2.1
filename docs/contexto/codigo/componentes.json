@@ -6054,12 +6054,11 @@
     "IntegrationStatusPanel"
    ],
    "export_default": "IntegrationStatusPanel",
-   "linhas": 391,
+   "linhas": 367,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [
-    "email_logs",
-    "integration_logs"
+    "email_logs"
    ],
    "edges": [],
    "usado_por": 1,

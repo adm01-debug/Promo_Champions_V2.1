@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (199)",
+   "co-localizado (*.test) (200)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: painel de integracao le os logs reais de email (#758)",
    "fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)",
    "fix: conserta contratos do front que consultavam relacoes inexistentes (#755)",
    "fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)",
-   "fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)",
-   "feat: tela de Momentos Críticos para os alertas de chamada (#751)"
+   "fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

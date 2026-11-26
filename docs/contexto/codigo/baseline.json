@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5f1c0cdbe239affbd4eaecb679b0f48ecff44d0c",
+  "commit": "bae0352ac66f134078cb944790e2c68d2c15071f",
   "branch": "main",
-  "data_commit": "2026-11-26T11:46:43-03:00",
+  "data_commit": "2026-11-26T12:45:08-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "bae0352",
+    "data": "2026-11-26",
+    "assunto": "fix: painel de integracao le os logs reais de email (#758)"
+   },
    {
     "sha": "5f1c0cd",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "b1e8ab3",
     "data": "2026-11-24",
     "assunto": "chore(deps-dev): bump @axe-core/playwright from 4.12.1 to 4.14.0 (#633)"
-   },
-   {
-    "sha": "9a949f0",
-    "data": "2026-11-24",
-    "assunto": "chore(main): release 1.8.0 (#661)"
    }
   ],
-  "arquivos_mudados_7d": 362,
+  "arquivos_mudados_7d": 363,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -152,16 +152,16 @@
     "mudancas": 70
    },
    {
+    "pasta": "src/components/dashboard",
+    "mudancas": 68
+   },
+   {
     "pasta": "src/components/win-loss",
     "mudancas": 67
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 66
-   },
-   {
     "pasta": "src/components/conversational",
-    "mudancas": 64
+    "mudancas": 63
    },
    {
     "pasta": "src/hooks/win-loss",
@@ -270,6 +270,10 @@
     "mudancas": 4
    },
    {
+    "arquivo": "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/components/pipeline/DealCard.test.tsx",
     "mudancas": 4
    },
@@ -279,10 +283,6 @@
    },
    {
     "arquivo": "src/hooks/gamification/useLeagues.ts",
-    "mudancas": 4
-   },
-   {
-    "arquivo": "src/hooks/sales/useSalesEnablement.ts",
     "mudancas": 4
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3695,
-  "arquivos_codigo": 2627,
-  "linhas_codigo": 450724,
+  "arquivos_total": 3696,
+  "arquivos_codigo": 2628,
+  "linhas_codigo": 450799,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 421,
   "migrations": 716,
   "cron_jobs": 40,
-  "testes": 287,
+  "testes": 288,
   "workflows": 31,
   "scripts": 78,
   "docs_md": 225
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1242,
-   "linhas": 195361
+   "arquivos": 1243,
+   "linhas": 195436
   },
   "src/config": {
    "arquivos": 4,

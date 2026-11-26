@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 287,
+ "total": 288,
  "por_tipo": {
   "contrato": 7,
   "e2e": 54,
   "pytest": 2,
-  "unit": 215
+  "unit": 216
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 199
+   "arquivos": 200
   },
   {
    "padrao": "tests/",
@@ -412,6 +412,15 @@
     "src/components/conversational/ConversationalIntelligenceHub.tsx"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/components/dashboard/IntegrationStatusPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/dashboard/IntegrationStatusPanel.tsx"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
@@ -2478,6 +2487,7 @@
   "src/components/competitive/LeagueSystem.tsx": 1,
   "src/components/conversational/BattleCardSuggestion.tsx": 1,
   "src/components/conversational/ConversationalIntelligenceHub.tsx": 1,
+  "src/components/dashboard/IntegrationStatusPanel.tsx": 1,
   "src/components/deal-intelligence/NextBestActionPanel.tsx": 1,
   "src/components/email/aiEmailHelpers.ts": 1,
   "src/components/enablement/SalesEnablementHub.tsx": 1,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f1c0cdbe2` · branch `main` · 2026-11-26 14:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bae0352ac6` · branch `main` · 2026-11-26 15:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3592,7 +3592,6 @@ _nenhum item encontrado_
 | 100 | `src/components/clients/ClientTimeline.tsx` |
 | 10 | `src/components/competitive/EnhancedTVMode.tsx` |
 | 20 | `src/components/dashboard/FuturisticSpeedometerDashboard.tsx` |
-| 20 | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | 30 | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | 5 | `src/components/dashboard/RecentDeals.tsx` |
 | 5 | `src/components/dashboard/widgets/CalendarPreviewWidget.tsx` |
@@ -3873,7 +3872,8 @@ _nenhum item encontrado_
 | 500 | `supabase/functions/report-embed-public/index.ts` |
 | 500 | `supabase/functions/revenue-forecast-ai/index.ts` |
 | 200 | `supabase/functions/revenue-intelligence/index.ts` |
-| … +41 linhas — lista completa em `context.json` | |
+| 5000 | `supabase/functions/revenue-intelligence/index.ts` |
+| … +40 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
@@ -4285,7 +4285,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1854 testes em 249 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1859 testes em 250 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4389,6 +4389,7 @@ _nenhum item encontrado_
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
 | `src/components/cadences/ContactRulesDialog.test.tsx` | 5 | ContactRulesDialog · cria a linha via upsert quando o vendedor ainda não tem preferências · preserva chaves gravadas por outra tela ao salvar · mostra erro e não confirma quando o banco recusa a gravação … |
 | `src/components/clients/Client360HealthNbaSection.test.tsx` | 5 | Client360HealthNbaSection · não exibe confiança fixa inventada · não rotula a regra estática como IA · Agendar follow-up cria tarefa real para o cliente … |
+| `src/components/dashboard/IntegrationStatusPanel.test.tsx` | 5 | IntegrationStatusPanel · le os logs reais de email em vez da tabela sem produtor · mostra o evento de email gravado pelo servidor · declara ausencia de fonte de log para push em vez de simular sucesso … |
 | `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/pipeline/PipelineBoard.test.tsx` | 5 | PipelineBoard — vendas ganhas na semana · mostra a contagem real de vendas ganhas nos últimos 7 dias · não exibe o indicador fixo de Pipeline Health (92.4%) · usa singular quando há uma única venda ganha … |
