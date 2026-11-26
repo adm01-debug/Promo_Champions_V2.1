@@ -10,34 +10,13 @@ export interface OrderWithDetails extends OrderRow {
 }
 
 /**
- * Raw shape returned by the purchase-history query. The `client_id` column and
- * the `order_items` / `profiles` relations are not present in the generated
- * Supabase types yet, so we describe the projection locally.
+ * Raw shape returned by the purchase-history query: the order row plus its
+ * embedded relations (`order_items` and the salesperson).
  */
 interface RawPurchaseOrder extends OrderRow {
   items?: OrderItemRow[] | null;
-  profiles?: { display_name: string | null } | null;
+  salesperson?: { name: string | null } | null;
   discount_amount?: number | null;
-}
-
-/** Minimal builder surface for the untyped purchase-history projection. */
-interface PurchaseHistoryQuery {
-  from: (table: string) => {
-    select: (cols: string) => {
-      eq: (
-        col: string,
-        value: string
-      ) => {
-        order: (
-          col: string,
-          opts: { ascending: boolean }
-        ) => Promise<{
-          data: RawPurchaseOrder[] | null;
-          error: { message: string } | null;
-        }>;
-      };
-    };
-  };
 }
 
 export function usePurchaseHistory(clientId?: string) {
@@ -47,36 +26,35 @@ export function usePurchaseHistory(clientId?: string) {
     queryFn: async (): Promise<OrderWithDetails[]> => {
       if (!clientId) return [];
 
-      // In a real scenario, orders would be linked to clients.
-      // Assuming a 'client_id' field exists in 'orders' table.
-      // We'll also fetch items and seller info.
-      // eslint-disable-next-line no-restricted-syntax
-      const { data, error } = await (supabase as unknown as PurchaseHistoryQuery)
+      // `orders.client_id` aponta para `clients`, `order_items.order_id` para
+      // `orders` e `orders.salesperson_id` para `salespeople`, o que permite os
+      // embeds abaixo com o client tipado.
+      const { data, error } = await supabase
         .from('orders')
         .select(
           `
           *,
           items:order_items(*),
-          profiles:user_id(display_name)
+          salesperson:salespeople(name)
         `
         )
-        .eq('client_id', clientId) // This assumes the schema has client_id
+        .eq('client_id', clientId)
         .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching purchase history:', error);
-        // Fallback or empty
         return [];
       }
 
-      return (data || []).map((order: RawPurchaseOrder): OrderWithDetails => ({
-        ...order,
-        items: order.items ?? [],
-        seller_name: order.profiles?.display_name || 'Sistema',
-        // Mocking some fields if they don't exist yet to fulfill the "Intelligence" requirement
-        discount_amount: order.discount_amount || 0,
-        category: order.items?.[0]?.product_name?.split(' ')[0] || 'Geral',
-      }));
+      return (
+        (data as RawPurchaseOrder[] | null)?.map((order): OrderWithDetails => ({
+          ...order,
+          items: order.items ?? [],
+          seller_name: order.salesperson?.name || 'Sistema',
+          discount_amount: order.discount_amount || 0,
+          category: order.items?.[0]?.product_name?.split(' ')[0] || 'Geral',
+        })) ?? []
+      );
     },
   });
 }

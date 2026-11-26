@@ -74,7 +74,7 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
       supabase.from("call_conversation_metrics").select("engagement_score, pace_score, health").eq("recording_id", recording_id).maybeSingle(),
       supabase.from("call_question_analysis").select("quality_score, health").eq("recording_id", recording_id).maybeSingle(),
       supabase.from("call_objection_analysis").select("handling_score, health").eq("recording_id", recording_id).maybeSingle(),
-      supabase.from("call_sentiment_timeline").select("sentiment_score").eq("recording_id", recording_id).limit(2000),
+      supabase.from("call_sentiment_timeline").select("score").eq("recording_id", recording_id).limit(2000),
       supabase.from("call_critical_moments").select("severity").eq("recording_id", recording_id).limit(500),
     ]);
 
@@ -114,7 +114,7 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
 
     const sentRows = sentRes.data ?? [];
     const sentiment_score = sentRows.length > 0
-      ? Math.round(((sentRows.reduce((s, r) => s + Number(r.sentiment_score ?? 0), 0) / sentRows.length) + 1) * 50)
+      ? Math.round(((sentRows.reduce((s, r) => s + Number(r.score ?? 0), 0) / sentRows.length) + 1) * 50)
       : ({ positive: 80, neutral: 55, negative: 30 } as Record<string, number>)[rec.sentiment ?? "neutral"] ?? 55;
 
     const moments = momRes.data ?? [];
