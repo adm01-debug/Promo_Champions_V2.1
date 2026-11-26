@@ -77,16 +77,24 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF NEW.client_id IS NULL THEN
-    RETURN NEW;
-  END IF;
-  IF NEW.credit_status IS DISTINCT FROM 'nao_aplicavel' THEN
-    RETURN NEW;
-  END IF;
-  IF NOT EXISTS (
+  -- O estado de credito e decidido aqui, nunca pelo INSERT (a policy de
+  -- "pedido proprio" deixaria o usuario nascer o pedido ja 'aprovado').
+  NEW.credit_status := 'nao_aplicavel';
+  NEW.credit_limit_approved := NULL;
+  NEW.credit_max_installments := NULL;
+  NEW.credit_notes := NULL;
+  NEW.credit_decided_at := NULL;
+
+  -- Primeira venda = nenhum pedido anterior liberado para este cliente
+  -- (anterior a regra = 'nao_aplicavel', ou aprovado pelo Financeiro).
+  -- Pedido reprovado ou ainda em analise nao conta como historico.
+  -- Sem cliente vinculado (orcamento sem e-mail/telefone) = cliente
+  -- desconhecido: tambem passa pelo Financeiro.
+  IF NEW.client_id IS NULL OR NOT EXISTS (
     SELECT 1 FROM public.orders o
      WHERE o.client_id = NEW.client_id
        AND o.status <> 'cancelled'
+       AND o.credit_status IN ('nao_aplicavel', 'aprovado')
   ) THEN
     NEW.credit_status := 'aguardando_credito';
   END IF;
@@ -115,7 +123,9 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  SELECT * INTO v_client FROM public.clients WHERE id = NEW.client_id;
+  IF NEW.client_id IS NOT NULL THEN
+    SELECT * INTO v_client FROM public.clients WHERE id = NEW.client_id;
+  END IF;
   SELECT s.email INTO v_email FROM public.salespeople s WHERE s.id = NEW.salesperson_id;
 
   INSERT INTO public.credit_outbox (order_id, event, payload)
@@ -201,11 +211,12 @@ BEGIN
 END;
 $$;
 
--- 7) Reserva/fechamento de lote para o credit-dispatch (copia do padrao supply).
+-- 7) Reserva/fechamento de lote para o credit-dispatch (copia do padrao supply,
+--    mas SECURITY INVOKER: so o service_role executa e ele ja tem os grants).
 CREATE OR REPLACE FUNCTION public.claim_credit_outbox(p_limit integer DEFAULT 25)
 RETURNS jsonb
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = public
 AS $$
 DECLARE
@@ -248,7 +259,7 @@ CREATE OR REPLACE FUNCTION public.finish_credit_outbox(
 )
 RETURNS integer
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = public
 AS $$
 DECLARE
@@ -284,8 +295,8 @@ GRANT EXECUTE ON FUNCTION public.claim_credit_outbox(integer) TO service_role;
 REVOKE ALL ON FUNCTION public.finish_credit_outbox(uuid[], boolean, text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.finish_credit_outbox(uuid[], boolean, text) TO service_role;
 
--- 8) Aplica a decisao do Finance. Aprovado: grava limite/parcelas e enfileira
---    no Supply os itens que ficaram represados. Reprovado: so marca.
+-- 8) Aplica a decisao do Finance (SECURITY INVOKER, so service_role). Aprovado:
+--    grava limite/parcelas e enfileira no Supply os itens represados. Reprovado: so marca.
 CREATE OR REPLACE FUNCTION public.aplicar_decisao_credito(
   p_order_id uuid,
   p_decisao text,
@@ -295,7 +306,7 @@ CREATE OR REPLACE FUNCTION public.aplicar_decisao_credito(
 )
 RETURNS jsonb
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = public
 AS $$
 DECLARE

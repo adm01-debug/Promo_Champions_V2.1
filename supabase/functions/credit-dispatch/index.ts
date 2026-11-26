@@ -49,6 +49,20 @@ Deno.serve(
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
+    // Segredo do cron antes de ler o corpo: visitante anonimo nao gasta parse.
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await supabase
+        .from('_internal_secrets')
+        .select('value')
+        .eq('key', 'coaching_cron_secret')
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) {
+      return errorEnvelope('UNAUTHORIZED', 'unauthorized', { requestId: ctx.requestId });
+    }
+
     let requestedLimit = BATCH_SIZE;
     const requestBody = await req.text();
     if (requestBody.trim()) {
@@ -66,19 +80,6 @@ Deno.serve(
         return validationErrorResponse(errors, corsHeaders);
       }
       if (typeof limit === 'number') requestedLimit = limit;
-    }
-
-    const authorized = await isAuthorizedCronRequest(req, async () => {
-      const { data, error } = await supabase
-        .from('_internal_secrets')
-        .select('value')
-        .eq('key', 'coaching_cron_secret')
-        .maybeSingle();
-      if (error) throw error;
-      return (data as { value?: string | null } | null)?.value;
-    });
-    if (!authorized) {
-      return errorEnvelope('UNAUTHORIZED', 'unauthorized', { requestId: ctx.requestId });
     }
 
     const secret = Deno.env.get('PROMO_FINANCE_CREDITO_WEBHOOK_SECRET');

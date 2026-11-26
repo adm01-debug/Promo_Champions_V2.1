@@ -11,7 +11,7 @@ import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
-import { createValidationErrorResponse, validateWebhookPayload } from "../_shared/webhook-validator.ts";
+import { validateWebhookPayload } from "../_shared/webhook-validator.ts";
 import {
   CREDIT_DECISION_EVENT,
   CreditDecisionPayloadSchema,
@@ -89,12 +89,11 @@ Deno.serve(withRequestId("receive-credit-decision", async (req, ctx) => {
 
   const validation = validateWebhookPayload(CreditDecisionPayloadSchema, payload);
   if (!validation.success || !validation.data) {
-    return createValidationErrorResponse(
-      validation.error ?? "invalid_payload",
-      validation.details ?? [],
-      validation.contract_version,
-      getCorsHeaders(req),
-    );
+    return errorEnvelope("BAD_REQUEST", validation.error ?? "invalid_payload", {
+      status: 422,
+      requestId: ctx.requestId,
+      details: { contract_version: validation.contract_version, issues: validation.details ?? [] },
+    });
   }
   const decision = validation.data;
 
