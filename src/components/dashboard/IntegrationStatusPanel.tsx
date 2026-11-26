@@ -73,66 +73,34 @@ export const IntegrationStatusPanel = () => {
 
   const fetchLogs = async (): Promise<LogEntry[] | undefined> => {
     setLoading(true);
-    let fetchedLogs: LogEntry[] = [];
     try {
-      // Tenta buscar da nova tabela de logs unificada
-      const { data: unifiedLogs, error: unifiedError } = await supabase
-        .from('integration_logs')
+      // `integration_logs` nao tem produtor: nenhuma funcao do sistema grava nela,
+      // entao a leitura voltava sempre vazia e o painel nunca mostrava evento real.
+      // `email_logs` e a fonte de verdade - gravada por send-transactional-email,
+      // send-alert-notifications, sdr-consecutive-alerts e demais funcoes de envio.
+      const { data: emailLogs, error: emailError } = await supabase
+        .from('email_logs')
         .select('*')
-        .order('timestamp', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(30);
 
-      if (unifiedError) {
-        console.warn(
-          'Unified logs table not accessible, falling back to email_logs',
-          unifiedError
-        );
-        // Fallback para email_logs se a tabela unificada falhar (compatibilidade)
-        const { data: emailLogs, error: emailError } = await supabase
-          .from('email_logs')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(20);
+      if (emailError) throw emailError;
 
-        if (emailError) throw emailError;
+      const fetchedLogs: LogEntry[] = (emailLogs || []).map(log => ({
+        id: log.id,
+        timestamp: log.created_at,
+        type: 'email',
+        event: log.subject || 'Email Notification',
+        status: log.status === 'sent' ? 'success' : 'error',
+        details: log.error_message || `Enviado para ${log.recipient_email}`,
+        recipient: log.recipient_email,
+      }));
 
-        const formattedLogs: LogEntry[] = (emailLogs || []).map(log => ({
-          id: log.id,
-          timestamp: log.created_at,
-          type: 'email',
-          event: log.subject || 'Email Notification',
-          status: log.status === 'sent' ? 'success' : 'error',
-          details: log.error_message || `Enviado para ${log.recipient_email}`,
-          recipient: log.recipient_email,
-        }));
-
-        fetchedLogs = formattedLogs;
-        setLogs(formattedLogs);
-      } else {
-        const formattedLogs: LogEntry[] = (unifiedLogs || []).map(log => ({
-          id: log.id,
-          timestamp: log.timestamp ?? '',
-          type: log.integration_type as LogEntry['type'],
-          event:
-            log.event_type === 'config_check'
-              ? `Diagnóstico: ${log.integration_type}`
-              : log.event_type,
-          status: log.status === 'success' ? 'success' : 'error',
-          details:
-            log.error_message ||
-            (log.details ? JSON.stringify(log.details) : 'Operação concluída'),
-          recipient: log.recipient ?? undefined,
-        }));
-        fetchedLogs = formattedLogs;
-        setLogs(formattedLogs);
-      }
+      setLogs(fetchedLogs);
 
       // Atualiza status de infraestrutura baseado nos logs
       const emailFails = fetchedLogs.filter(
         l => l.type === 'email' && l.status === 'error'
-      ).length;
-      const pushFails = fetchedLogs.filter(
-        l => l.type === 'push' && l.status === 'error'
       ).length;
 
       setIntegrations(prev =>
@@ -142,12 +110,6 @@ export const IntegrationStatusPanel = () => {
               ...i,
               errorCount: emailFails,
               status: emailFails > 5 ? 'error' : 'active',
-            };
-          if (i.type === 'push')
-            return {
-              ...i,
-              errorCount: pushFails,
-              status: pushFails > 3 ? 'error' : 'active',
             };
           return i;
         })
@@ -169,7 +131,13 @@ export const IntegrationStatusPanel = () => {
   }, []);
 
   const testIntegration = async (type: 'email' | 'push') => {
-    const label = type === 'email' ? 'Email' : 'Push';
+    // Push nao tem tabela de log de envio: ler "erros" ali seria inventar o
+    // resultado. O painel informa a ausencia de fonte em vez de simular OK.
+    if (type === 'push') {
+      toast.info('Push nao registra envio no banco: sem leitura de falhas');
+      return;
+    }
+    const label = 'Email';
     toast.promise(
       async () => {
         // A tabela de logs nao aceita escrita do navegador: o registro e feito
@@ -223,10 +191,16 @@ export const IntegrationStatusPanel = () => {
                     </span>
                   </div>
                   <Badge
-                    variant={integration.status === 'active' ? 'default' : 'destructive'}
+                    variant={
+                      integration.type === 'push'
+                        ? 'outline'
+                        : integration.status === 'active'
+                          ? 'default'
+                          : 'destructive'
+                    }
                     className="text-[9px] h-5 uppercase"
                   >
-                    {integration.status}
+                    {integration.type === 'push' ? 'sem log' : integration.status}
                   </Badge>
                 </div>
 
@@ -258,7 +232,9 @@ export const IntegrationStatusPanel = () => {
                         )}
                       />
                       <span className="text-[10px] font-mono">
-                        {integration.errorCount} ERROS
+                        {integration.type === 'push'
+                          ? 'SEM LOG'
+                          : integration.errorCount + ' ERROS'}
                       </span>
                     </div>
                   </div>
