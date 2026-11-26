@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f63bfae06c0374d0e708179a429474ff0b63981d",
+  "sha": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-25 19:20 UTC",
+  "generated_at": "2026-11-26 10:15 UTC",
   "files_total": 3703,
   "code_files": 3348,
   "code_lines": 484934
@@ -300744,10 +300744,31 @@
   }
  },
  "git": {
-  "sha": "f63bfae06c0374d0e708179a429474ff0b63981d",
+  "sha": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "86f0654",
+    "date": "2026-11-26",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.10.1 (#750)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "b564fa6",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)",
+    "files": [
+     "docs/estado/13_INTEGRACOES.md"
+    ]
+   },
    {
     "sha": "f63bfae",
     "date": "2026-11-25",
@@ -301083,51 +301104,28 @@
      "docs/qa/05-PROGRESSO.md",
      "src/hooks/useSyncedSetting.test.tsx"
     ]
-   },
-   {
-    "sha": "1cf9183",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs: varredura completa por erro de leitura engolido (QA-127) (#721)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "docs/qa/06-VARREDURA-ERRO-DE-LEITURA.md"
-    ]
-   },
-   {
-    "sha": "ceeefa8",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: modo calmo assina o evento uma vez por consumidor com provider (QA-135) (#720)",
-    "files": [
-     "src/contexts/DashboardThemeContext.test.tsx",
-     "src/contexts/RaceCalmContext.test.tsx",
-     "src/contexts/RaceCalmContext.tsx",
-     "src/hooks/race/useCalmMode.test.tsx",
-     "src/hooks/race/useCalmMode.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    "docs/qa/05-PROGRESSO.md",
+    "package-lock.json",
     6
    ],
    [
-    "package-lock.json",
-    5
+    "package.json",
+    6
    ],
    [
-    "package.json",
+    "docs/qa/05-PROGRESSO.md",
     5
    ],
    [
     ".release-please-manifest.json",
-    3
+    4
    ],
    [
     "CHANGELOG.md",
-    3
+    4
    ],
    [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
@@ -301144,6 +301142,10 @@
    [
     "deno.lock",
     2
+   ],
+   [
+    "docs/estado/13_INTEGRACOES.md",
+    1
    ],
    [
     "supabase/tests/supply_outbox_estado.sql",
@@ -301183,10 +301185,6 @@
    ],
    [
     "src/integrations/supabase/types.ts",
-    1
-   ],
-   [
-    "AGENTS.md",
     1
    ]
   ]

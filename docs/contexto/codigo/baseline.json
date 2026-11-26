@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f63bfae06c0374d0e708179a429474ff0b63981d",
+  "commit": "86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4",
   "branch": "main",
-  "data_commit": "2026-11-25T16:19:56-03:00",
+  "data_commit": "2026-11-26T07:13:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "86f0654",
+    "data": "2026-11-26",
+    "assunto": "chore(main): release 1.10.1 (#750)"
+   },
+   {
+    "sha": "b564fa6",
+    "data": "2026-11-26",
+    "assunto": "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)"
+   },
    {
     "sha": "f63bfae",
     "data": "2026-11-25",
@@ -121,16 +131,6 @@
     "sha": "bf7fc73",
     "data": "2026-11-24",
     "assunto": "fix: confirma exclusao de flag, conversa, token e supressao (QA-177) (#727)"
-   },
-   {
-    "sha": "93d5215",
-    "data": "2026-11-24",
-    "assunto": "docs: varre acoes destrutivas sem confirmacao (QA-177) (#726)"
-   },
-   {
-    "sha": "be7b39b",
-    "data": "2026-11-24",
-    "assunto": "chore: revisa supressoes de dependencias na leitura de dado (QA-210) (#724)"
    }
   ],
   "arquivos_mudados_7d": 349,
@@ -193,17 +193,17 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 32
+    "mudancas": 33
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "arquivo": "package.json",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "CHANGELOG.md",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -235,14 +235,6 @@
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
     "mudancas": 5
    },
    {
@@ -278,6 +270,14 @@
     "mudancas": 4
    },
    {
+    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 4
+   },
+   {
     "arquivo": "src/hooks/bi/useABCAnalysis.ts",
     "mudancas": 4
    },
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 262
+    "commits": 261
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 20
+    "commits": 21
    },
    {
     "autor": "dependabot[bot]",

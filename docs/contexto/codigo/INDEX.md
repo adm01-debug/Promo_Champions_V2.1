@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f63bfae06c0374d0e708179a429474ff0b63981d` (2026-11-25T16:19:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `86f0654cf7ecc53120ecf06d12fe9db91a2f9cc4` (2026-11-26T07:13:52-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -588,27 +588,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24469 nós · 74926 arestas · 1166 comunidades · grafo do commit `f63bfae0`
-- comunidades maiores: schema.sql (583), SelectContent (309), framer-motion (305), getCorsHeaders (295), Button (287), vitest (282), Badge (264), public (253), CardContent (237), CardHeader (234), client.ts (233), public.register_race_daily_checkin (214)
+- 24471 nós · 74928 arestas · 1225 comunidades · grafo do commit `86f0654c`
+- comunidades maiores: Card (854), schema.sql (591), Button (578), lucide-react (530), Índice (395), Badge (354), formatBRL (323), client.ts (315), getCorsHeaders (304), public (264), public.register_race_daily_checkin (234), set_updated_at (233)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (32)
-- package.json (32)
+- package-lock.json (33)
+- package.json (33)
 - docs/qa/05-PROGRESSO.md (30)
 - deno.lock (16)
-- CHANGELOG.md (14)
+- CHANGELOG.md (15)
 - src/integrations/supabase/types.ts (13)
 - .github/workflows/deploy.yml (7)
 - docs/pendencias/backlog-verificado.md (6)
 - src/components/pipeline/DealCard.tsx (6)
 - src/components/pipeline/PipelineBoard.tsx (5)
-- src/hooks/abm/useAccounts.test.tsx (5)
-- src/hooks/abm/useAccounts.ts (5)
 - AGENTS.md (4)
 - docs/DEPLOYMENT.md (4)
 - docs/agentes/branches-encerradas-261117.md (4)
+- docs/prod-readiness.md (4)
+- src/components/admin/AdminQuickLinks.tsx (4)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -712,7 +712,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `.github/ENVIRONMENTS.md` — GitHub Environments — Modelo de Segurança (73 linhas)
 - `.github/pull_request_template.md` (84 linhas)
 - `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (74 linhas)
-- `CHANGELOG.md` — Changelog (363 linhas)
+- `CHANGELOG.md` — Changelog (370 linhas)
 - `CLAUDE.md` (2 linhas)
 - `CODE_OF_CONDUCT.md` — Código de Conduta — Promo Champions (38 linhas)
 - `CONTRIBUTING.md` — Contribuindo com Promo Champions v2 (78 linhas)
@@ -769,9 +769,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/agentes (12), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/qa (8), docs/pendencias (5), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
-- CHANGELOG topo: [1.10.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.9.0...promo-champions-v2-v1.10.0) (2026-11-25)
+- CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-26 `86f0654` chore(main): release 1.10.1 (#750)
+- 2026-11-26 `b564fa6` fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)
 - 2026-11-25 `f63bfae` chore(main): release 1.10.0 (#739)
 - 2026-11-25 `15514fd` chore: resgata a sonda de estado da fila Champions -> Supply (#747)
 - 2026-11-25 `e8630cc` chore: sonda read-only do estado da outbox no db-probe (#746)
@@ -785,8 +787,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `930e42e` chore(main): release 1.9.0 (#733)
 - 2026-11-24 `ed11613` ci: dispara apply-migration no merge de migration (#734)
 - 2026-11-24 `652e105` chore(types): sincroniza types.ts com o banco oficial [auto] (#735)
-- 2026-11-24 `669c8a0` feat: aciona o Supply quando o orçamento vira pedido (#731)
-- 2026-11-24 `b241da2` ci: provisiona o segredo do webhook Promo Supply (#732)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
