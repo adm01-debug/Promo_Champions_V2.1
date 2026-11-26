@@ -191,6 +191,7 @@ import {
   SalesReportPage,
   AcompanhamentoPedidos,
   AcompanhamentoPedidoDetalhe,
+  MomentosCriticos,
 } from './lazyPages';
 
 // Helper to wrap admin-only routes
@@ -352,6 +353,7 @@ export function AppRoutes() {
                           path="/conversational-intelligence/gravacoes"
                           element={<ConversationalIntelligenceRecordings />}
                         />
+                        <Route path="/momentos-criticos" element={<MomentosCriticos />} />
                         <Route
                           path="/revenue-intelligence"
                           element={
