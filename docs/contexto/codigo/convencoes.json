@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)",
    "fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)",
    "feat: tela de Momentos Críticos para os alertas de chamada (#751)",
    "chore(main): release 1.10.1 (#750)",
-   "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)",
-   "chore(main): release 1.10.0 (#739)"
+   "fix: doc de integracoes descreve o throw que nao existe mais no notify-v4-quote-status (#749)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

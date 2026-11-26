@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fd79e14efabba7cc720b1291db3cf85ae21d47c0` (2026-11-26T09:10:33-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c69ce04334314763108ed04953211ac8ef5c9107` (2026-11-26T09:41:01-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,11 +36,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3692 |
 | arquivos_codigo | 2624 |
-| linhas_codigo | 450111 |
+| linhas_codigo | 450139 |
 | rotas | 171 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
-| itens_menu | 138 |
+| itens_menu | 147 |
 | modulos | 176 |
 | componentes | 1291 |
 | hooks | 484 |
@@ -148,8 +148,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 29 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 115 | 155 | 161 | 820 | 115 | 300 |
-| pages/admin | 1 | 13 | 13 | 82 | 10 | 47 |
+| pages | 123 | 155 | 161 | 820 | 115 | 300 |
+| pages/admin | 2 | 13 | 13 | 82 | 10 | 47 |
 | services | 0 | 0 | 6 | 0 | 0 | 13 |
 
 ## Rotas (url → arquivo)
@@ -589,8 +589,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24507 nós · 75056 arestas · 1172 comunidades · grafo do commit `fd79e14e`
-- comunidades maiores: schema.sql (541), CardContent (497), Input (346), Badge (344), vitest (329), Button (314), getCorsHeaders (310), lucide-react (304), date-fns (296), client.ts (292), public (255), CardDescription (252)
+- 24507 nós · 75057 arestas · 1170 comunidades · grafo do commit `c69ce043`
+- comunidades maiores: schema.sql (545), Card (479), Badge (391), client.ts (342), PageTransition (321), lucide-react (316), SelectContent (311), Button (290), vitest (276), public (255), react (247), TableRow (243)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -603,8 +603,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/integrations/supabase/types.ts (13)
 - .github/workflows/deploy.yml (7)
 - docs/pendencias/backlog-verificado.md (6)
+- src/components/layout/sidebar/sidebarMenuData.ts (6)
 - src/components/pipeline/DealCard.tsx (6)
-- src/components/layout/sidebar/sidebarMenuData.ts (5)
 - src/components/pipeline/PipelineBoard.tsx (5)
 - AGENTS.md (4)
 - docs/DEPLOYMENT.md (4)
@@ -773,6 +773,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-26 `c69ce04` fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)
 - 2026-11-26 `fd79e14` fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)
 - 2026-11-26 `fd3079d` feat: tela de Momentos Críticos para os alertas de chamada (#751)
 - 2026-11-26 `86f0654` chore(main): release 1.10.1 (#750)
@@ -787,7 +788,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `b45a2bf` ci: provisiona RESEND_API_KEY nas edge functions (#738)
 - 2026-11-24 `d52445e` chore: sonda read-only da fila do supply_outbox na suite remota (#737)
 - 2026-11-24 `a4084fb` fix: timeout de 60s para o cron supply-dispatch (#736)
-- 2026-11-24 `930e42e` chore(main): release 1.9.0 (#733)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

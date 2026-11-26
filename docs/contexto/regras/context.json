@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fd79e14efabba7cc720b1291db3cf85ae21d47c0",
+  "sha": "c69ce04334314763108ed04953211ac8ef5c9107",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-26 12:12 UTC",
+  "generated_at": "2026-11-26 12:43 UTC",
   "files_total": 3707,
   "code_files": 3352,
-  "code_lines": 485851
+  "code_lines": 485879
  },
  "version": "1.3.2",
- "facts_hash": "9203b2ab5f7a6593",
+ "facts_hash": "8e6a4dd565b7ac4c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -107320,7 +107320,7 @@
   {
    "module": "src/components",
    "files": 1242,
-   "lines": 195266,
+   "lines": 195279,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108485,7 +108485,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1912,
+   "lines": 1927,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -241188,7 +241188,7 @@
   },
   "src/components/layout/sidebar/sidebarMenuData.ts": {
    "path": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "lines": 426,
+   "lines": 439,
    "exports": [
     "interface MenuItem",
     "interface MenuGroup",
@@ -276903,7 +276903,7 @@
   },
   "src/routes/routeAccess.test.ts": {
    "path": "src/routes/routeAccess.test.ts",
-   "lines": 168,
+   "lines": 183,
    "is_test": true,
    "doc": "ACESSO-MENU — trava a fonte única de níveis de acesso. As listas de `routeAccess.ts` alimentam o filtro do menu e da paleta de comandos. Se o roteador mudar de guarda (`<Admin>` / `<Manager>`) e a lista não acompanhar, o menu volta a oferecer um caminho que termina em \"Acesso Negado\". O teste lê `Ap …",
    "tests": [
@@ -301096,10 +301096,20 @@
   }
  },
  "git": {
-  "sha": "fd79e14efabba7cc720b1291db3cf85ae21d47c0",
+  "sha": "c69ce04334314763108ed04953211ac8ef5c9107",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "c69ce04",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)",
+    "files": [
+     "src/components/layout/sidebar/sidebarMenuData.ts",
+     "src/routes/routeAccess.test.ts"
+    ]
+   },
    {
     "sha": "fd79e14",
     "date": "2026-11-26",
@@ -301435,23 +301445,6 @@
      "src/pages/WinLossIntelligence.tsx",
      "src/pages/admin/WebhooksDeadLettersAdmin.tsx"
     ]
-   },
-   {
-    "sha": "2e954fd",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore: justifica supressoes de dependencias na interface e gamificacao (QA-211) (#725)",
-    "files": [
-     "docs/qa/05-PROGRESSO.md",
-     "src/components/dashboard/Speedometer.tsx",
-     "src/components/race/PitStopPanel.tsx",
-     "src/components/race/ReactionFloater.tsx",
-     "src/components/race/track/TrackDustParticles.tsx",
-     "src/components/race/track/TrackTireMarks.tsx",
-     "src/components/ranking/RankingPositionBanner.tsx",
-     "src/components/win-loss/AtRiskSettingsPopover.tsx",
-     "src/hooks/race/useRaceAudioEngine.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -301472,15 +301465,15 @@
     4
    ],
    [
+    "src/components/layout/sidebar/sidebarMenuData.ts",
+    3
+   ],
+   [
     "docs/qa/07-ACOES-DESTRUTIVAS.md",
     3
    ],
    [
-    "docs/qa/05-PROGRESSO.md",
-    3
-   ],
-   [
-    "src/components/layout/sidebar/sidebarMenuData.ts",
+    "src/routes/routeAccess.test.ts",
     2
    ],
    [
@@ -301496,15 +301489,15 @@
     2
    ],
    [
+    "docs/qa/05-PROGRESSO.md",
+    2
+   ],
+   [
     "src/pages/DesafiosSemanais.test.tsx",
     1
    ],
    [
     "src/pages/DesafiosSemanais.tsx",
-    1
-   ],
-   [
-    "src/routes/routeAccess.test.ts",
     1
    ],
    [

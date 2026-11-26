@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fd79e14efabba7cc720b1291db3cf85ae21d47c0",
+  "commit": "c69ce04334314763108ed04953211ac8ef5c9107",
   "branch": "main",
-  "data_commit": "2026-11-26T09:10:33-03:00",
+  "data_commit": "2026-11-26T09:41:01-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "c69ce04",
+    "data": "2026-11-26",
+    "assunto": "fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)"
+   },
    {
     "sha": "fd79e14",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "a35b9ea",
     "data": "2026-11-24",
     "assunto": "fix: meta e ranking ignoram venda excluida logicamente (QA-069) (#692)"
-   },
-   {
-    "sha": "dd14171",
-    "data": "2026-11-24",
-    "assunto": "fix: confirma exclusoes P2 com dialogo acessivel (QA-257) (#729)"
    }
   ],
   "arquivos_mudados_7d": 354,
@@ -230,12 +230,12 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "arquivo": "src/components/layout/sidebar/sidebarMenuData.ts",
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/layout/sidebar/sidebarMenuData.ts",
-    "mudancas": 5
+    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "mudancas": 6
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
@@ -316,11 +316,11 @@
  "contagens": {
   "arquivos_total": 3692,
   "arquivos_codigo": 2624,
-  "linhas_codigo": 450111,
+  "linhas_codigo": 450139,
   "rotas": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 138,
+  "itens_menu": 147,
   "modulos": 176,
   "componentes": 1291,
   "hooks": 484,
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1242,
-   "linhas": 195267
+   "linhas": 195280
   },
   "src/config": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1912
+   "linhas": 1927
   },
   "src/services": {
    "arquivos": 9,

@@ -1705,7 +1705,7 @@
   {
    "arquivo": "src/routes/routeAccess.test.ts",
    "tipo": "unit",
-   "linhas": 168,
+   "linhas": 183,
    "testa": [
     "src/components/layout/sidebar/sidebarMenuData.ts",
     "src/routes/routeAccess.ts"

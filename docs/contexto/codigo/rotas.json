@@ -5,7 +5,7 @@
   "urls": 171,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 138,
+  "itens_menu": 147,
   "lazy": 234
  },
  "urls": [
@@ -11732,6 +11732,15 @@
    "resolve_para": "src/pages/AIAgents.tsx"
   },
   {
+   "rotulo": "Alertas de Churn",
+   "destino": "/admin/alertas-churn",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminAlertasChurn.tsx"
+  },
+  {
    "rotulo": "Análise de Funil",
    "destino": "/funil",
    "grupo": null,
@@ -11829,6 +11838,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/HistoricalBenchmark.tsx"
+  },
+  {
+   "rotulo": "BI Cliente 360",
+   "destino": "/ferramentas/bi",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/BusinessIntelligencePage.tsx"
   },
   {
    "rotulo": "BI Closer (Neural)",
@@ -11993,6 +12011,15 @@
    "resolve_para": "src/pages/AdminComissoes.tsx"
   },
   {
+   "rotulo": "Comparador de Preços",
+   "destino": "/comparador-precos",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/ComparadorPrecos.tsx"
+  },
+  {
    "rotulo": "Competências",
    "destino": "/competencias",
    "grupo": null,
@@ -12027,6 +12054,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/Configuracoes.tsx"
+  },
+  {
+   "rotulo": "Console de Tarefas & XP",
+   "destino": "/admin/tarefas",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminTasksPage.tsx"
   },
   {
    "rotulo": "Contas ABM (gestão)",
@@ -12072,6 +12108,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/DesafiosSemanais.tsx"
+  },
+  {
+   "rotulo": "Email Analytics",
+   "destino": "/analytics/emails",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/EmailAnalyticsPage.tsx"
   },
   {
    "rotulo": "Email Scoring",
@@ -12153,6 +12198,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/TeamActivityFeed.tsx"
+  },
+  {
+   "rotulo": "Fila de Tarefas Automáticas",
+   "destino": "/admin/fila-tarefas-automaticas",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminFilaTarefasAutomaticas.tsx"
   },
   {
    "rotulo": "Fonte de Leads",
@@ -12632,6 +12686,24 @@
    "resolve_para": "src/pages/RankingCompetitivo.tsx"
   },
   {
+   "rotulo": "Regras de Inatividade",
+   "destino": "/admin/regras-inatividade",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/AdminRegrasInatividade.tsx"
+  },
+  {
+   "rotulo": "Relatório de Atividades",
+   "destino": "/relatorio-atividades",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/RelatorioAtividades.tsx"
+  },
+  {
    "rotulo": "Relatório de Funil",
    "destino": "/relatorios/funil",
    "grupo": null,
@@ -12756,6 +12828,15 @@
    "papeis_nao_resolvidos": null,
    "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
    "resolve_para": "src/pages/AdminSupressaoEmails.tsx"
+  },
+  {
+   "rotulo": "Sync V4 Inbound",
+   "destino": "/admin/quote-sync-inbound",
+   "grupo": null,
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/layout/sidebar/sidebarMenuData.ts",
+   "resolve_para": "src/pages/admin/AdminQuoteSyncInboundPage.tsx"
   },
   {
    "rotulo": "Tarefas",
