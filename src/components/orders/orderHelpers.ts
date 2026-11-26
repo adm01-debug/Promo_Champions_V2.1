@@ -60,6 +60,36 @@ export function statusIndex(status: OrderStatus): number {
   return STATUS_STEPS.findIndex(s => s.key === status);
 }
 
+// Análise de crédito da 1ª venda (orders.credit_status), separada do status operacional.
+export type CreditStatus =
+  'nao_aplicavel' | 'aguardando_credito' | 'aprovado' | 'reprovado';
+
+export function creditStatusLabel(status: CreditStatus): string {
+  switch (status) {
+    case 'aguardando_credito':
+      return 'Aguardando crédito';
+    case 'aprovado':
+      return 'Crédito aprovado';
+    case 'reprovado':
+      return 'Crédito reprovado';
+    default:
+      return '';
+  }
+}
+
+export function creditStatusTone(status: CreditStatus): StatusTone {
+  switch (status) {
+    case 'aguardando_credito':
+      return 'warning';
+    case 'aprovado':
+      return 'success';
+    case 'reprovado':
+      return 'destructive';
+    default:
+      return 'default';
+  }
+}
+
 export const formatBRL = (value: number) => __formatBRL(value, { decimals: 2 });
 export const formatDateTime = (iso: string) =>
   new Date(iso).toLocaleString('pt-BR', {

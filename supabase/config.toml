@@ -36,6 +36,17 @@ verify_jwt = false
 [functions.supply-dispatch]
 verify_jwt = false
 
+# Job interno do cron `credit-dispatch-1min`: entrega a fila credit_outbox
+# (análise de crédito da 1ª venda) ao Promo Finance. Sem JWT; autenticação por
+# X-Cron-Secret + assinatura HMAC (PROMO_FINANCE_CREDITO_WEBHOOK_SECRET).
+[functions.credit-dispatch]
+verify_jwt = false
+
+# Webhook do Promo Finance (credito.decidido): sem JWT; assinatura HMAC dedicada
+# verificada no handler (FINANCE_CREDITO_WEBHOOK_SECRET).
+[functions.receive-credit-decision]
+verify_jwt = false
+
 # Telemetria pública: sem JWT; proteção por rate-limit + validação estrita
 # de payload no handler (amostras anônimas de Web Vitals).
 [functions.log-web-vitals]

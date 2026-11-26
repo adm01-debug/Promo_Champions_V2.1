@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { OrderStatus } from '@/components/orders/orderHelpers';
+import type { CreditStatus, OrderStatus } from '@/components/orders/orderHelpers';
 
 export interface OrderRow {
   id: string;
@@ -12,6 +12,12 @@ export interface OrderRow {
   total: number;
   cancellation_reason: string | null;
   notes: string | null;
+  // Análise de crédito da 1ª venda — opcionais até o types-sync regenerar types.ts.
+  credit_status?: CreditStatus | null;
+  credit_limit_approved?: number | null;
+  credit_max_installments?: number | null;
+  credit_notes?: string | null;
+  credit_decided_at?: string | null;
   created_at: string;
   updated_at: string;
 }
