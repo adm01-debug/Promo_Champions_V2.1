@@ -7,6 +7,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +32,45 @@ interface AuditLogEntry {
   } | null;
 }
 
+type IntentAuditLogRow = Database['public']['Tables']['intent_audit_logs']['Row'];
+
+/**
+ * `intent_audit_logs.lead_id` guarda o id do prospect da cadência (gravado pelo
+ * formulário e por `process_lead_intent_event`), sem FK declarada — o embed
+ * `leads:lead_id(client_name)` era rejeitado pelo PostgREST (PGRST200) e a
+ * auditoria ficava permanentemente vazia. O nome do cliente é resolvido em uma
+ * segunda consulta, via `prospect_cadences.sales`/`quotes`.
+ */
+async function withClientNames(rows: IntentAuditLogRow[]): Promise<AuditLogEntry[]> {
+  const leadIds = Array.from(
+    new Set(rows.map(row => row.lead_id).filter((id): id is string => Boolean(id)))
+  );
+  const clientNameById = new Map<string, string>();
+
+  if (leadIds.length > 0) {
+    const { data: prospects } = await supabase
+      .from('prospect_cadences')
+      .select('id, sales(client_name), quotes(client_name)')
+      .in('id', leadIds);
+
+    for (const prospect of parseRows<{
+      id: string;
+      sales?: { client_name: string | null } | null;
+      quotes?: { client_name: string | null } | null;
+    }>(prospects)) {
+      const clientName = prospect.sales?.client_name ?? prospect.quotes?.client_name;
+      if (clientName) clientNameById.set(prospect.id, clientName);
+    }
+  }
+
+  return parseRows<AuditLogEntry>(
+    rows.map(row => ({
+      ...row,
+      leads: row.lead_id ? { client_name: clientNameById.get(row.lead_id) } : null,
+    }))
+  );
+}
+
 export function RuleAuditLogs() {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [_loading, setLoading] = useState(true);
@@ -49,9 +90,10 @@ export function RuleAuditLogs() {
           table: 'intent_audit_logs',
         },
         payload => {
-          setLogs(prev =>
-            // eslint-disable-next-line no-restricted-syntax
-            [payload.new as unknown as AuditLogEntry, ...prev].slice(0, 50)
+          void withClientNames(parseRows<IntentAuditLogRow>([payload.new])).then(
+            entries => {
+              setLogs(prev => [...entries, ...prev].slice(0, 50));
+            }
           );
         }
       )
@@ -65,14 +107,16 @@ export function RuleAuditLogs() {
   const fetchLogs = async () => {
     const { data, error } = await supabase
       .from('intent_audit_logs')
-      .select('*, leads:lead_id(client_name)')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (!error) {
-      // eslint-disable-next-line no-restricted-syntax
-      setLogs((data as unknown as AuditLogEntry[]) || []);
+    if (error) {
+      setLoading(false);
+      return;
     }
+
+    setLogs(await withClientNames(data ?? []));
     setLoading(false);
   };
 

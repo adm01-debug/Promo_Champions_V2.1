@@ -79,6 +79,150 @@ function usedRelations() {
   return { relations, rpcs };
 }
 
+type ForeignKey = { name: string; columns: string[]; referencedRelation: string };
+
+/**
+ * FKs declaradas pelo banco por tabela do schema `public`. O PostgREST resolve
+ * `alias:coluna(...)` apenas quando a coluna tem FK (PGRST200 quando nao tem),
+ * e `alias:tabela!coluna(...)` (ou `!nome_da_constraint`) apenas quando existe
+ * essa FK. Views nao declaram relacionamentos no types.ts gerado, por isso
+ * ficam fora da verificacao.
+ */
+function generatedForeignKeys() {
+  const byTable = new Map<string, ForeignKey[]>();
+  let schema: string | null = null;
+  let block: string | null = null;
+  let table: string | null = null;
+  let current: ForeignKey | null = null;
+  for (const line of fs.readFileSync(TYPES_FILE, 'utf8').split(/\r?\n/)) {
+    let match = line.match(/^  (\w+): \{$/);
+    if (match) {
+      schema = match[1] ?? null;
+      block = null;
+      table = null;
+      continue;
+    }
+    match = line.match(/^    (Tables|Views|Functions): \{$/);
+    if (match) {
+      block = match[1] ?? null;
+      table = null;
+      continue;
+    }
+    if (/^  \}/.test(line)) {
+      schema = null;
+      block = null;
+      table = null;
+      continue;
+    }
+    if (schema !== 'public' || block !== 'Tables') continue;
+    match = line.match(/^      ([a-zA-Z0-9_]+): \{$/);
+    if (match) {
+      const name = match[1] ?? '';
+      table = name;
+      byTable.set(name, []);
+      current = null;
+      continue;
+    }
+    if (!table) continue;
+    match = line.match(/^\s+foreignKeyName: "([^"]+)"/);
+    if (match && current) {
+      current.name = match[1] ?? '';
+      continue;
+    }
+    match = line.match(/^\s+columns: \[([^\]]*)\],?$/);
+    if (match) {
+      const columns = [...(match[1] ?? '').matchAll(/"([^"]+)"/g)].map(m => m[1] ?? '');
+      current = { name: '', columns, referencedRelation: '' };
+      byTable.get(table)?.push(current);
+      continue;
+    }
+    match = line.match(/^\s+referencedRelation: "([^"]+)"/);
+    if (match && current) current.referencedRelation = match[1] ?? '';
+  }
+  return byTable;
+}
+
+/** Profundidade de parenteses de cada posicao da string de select. */
+function parenDepthAt(select: string, index: number) {
+  let depth = 0;
+  for (let i = 0; i < index; i++) {
+    if (select[i] === '(') depth++;
+    else if (select[i] === ')') depth--;
+  }
+  return depth;
+}
+
+/** Embeds de primeiro nivel cujo apelido aponta para coluna/tabela sem relacao declarada. */
+function brokenEmbeds(
+  table: string,
+  select: string,
+  fks: Map<string, ForeignKey[]>,
+  catalog: Set<string>
+) {
+  const relations = fks.get(table) ?? [];
+  // FK declarada na propria tabela: embed de linha unica (many-to-one).
+  const ownHints = new Set(
+    relations.flatMap(relation => [...relation.columns, relation.name].filter(Boolean))
+  );
+  const ownTargets = new Set(relations.map(relation => relation.referencedRelation));
+  // FK declarada na tabela filha apontando para esta: embed de colecao (one-to-many).
+  const childTargets = new Set(
+    [...fks]
+      .filter(([, childRelations]) =>
+        childRelations.some(relation => relation.referencedRelation === table)
+      )
+      .map(([child]) => child)
+  );
+  const broken: string[] = [];
+
+  for (const match of select.matchAll(
+    /([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)(!([a-zA-Z0-9_]+))?(?=\s*[(),])/g
+  )) {
+    if (parenDepthAt(select, match.index ?? 0) !== 0) continue;
+    const target = match[2] ?? '';
+    const hint = match[4];
+    const alias = match[0];
+    const isModifier = hint === 'inner' || hint === 'left';
+    const isKnownTarget = catalog.has(target);
+    const valid = isModifier
+      ? ownTargets.has(target) || childTargets.has(target)
+      : hint
+        ? ownHints.has(hint) || childTargets.has(target)
+        : isKnownTarget
+          ? ownTargets.has(target) || childTargets.has(target)
+          : ownHints.has(target);
+
+    if (!valid) broken.push(alias);
+  }
+  return broken;
+}
+
+/** Pares (tabela de `.from()`, string do `.select()` seguinte) usados no codigo. */
+function usedEmbeds() {
+  const pairs: Array<{ table: string; select: string; file: string }> = [];
+  const stringLiteral = /(['"`])((?:\\.|(?!\1)[\s\S])*)\1/;
+  for (const file of walk(SRC_ROOT)) {
+    const source = fs
+      .readFileSync(file, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+    for (const match of source.matchAll(/\.from\(\s*['"`]([a-zA-Z0-9_]+)['"`]\s*\)/g)) {
+      const table = match[1] ?? '';
+      const window = source.slice(
+        (match.index ?? 0) + match[0].length,
+        (match.index ?? 0) + 900
+      );
+      const selectCall = window.match(/\.select\(\s*/);
+      if (!selectCall) continue;
+      const rest = window.slice(selectCall.index ?? 0);
+      const literal = rest.match(stringLiteral);
+      if (!literal?.[2]) continue;
+      pairs.push({ table, select: literal[2], file: path.relative(SRC_ROOT, file) });
+    }
+  }
+  return pairs;
+}
+
 describe('contratos do front com o banco', () => {
   const { tables, views, functions } = generatedRelations();
   const { relations, rpcs } = usedRelations();
@@ -100,5 +244,52 @@ describe('contratos do front com o banco', () => {
       .filter(([name]) => !functions.has(name))
       .map(([name, file]) => `${name} (${file})`);
     expect(missing).toEqual([]);
+  });
+
+  it('nao embute relacao sem FK declarada no banco', () => {
+    const fks = generatedForeignKeys();
+    const catalog = new Set([...tables, ...views]);
+    const pairs = usedEmbeds().filter(({ table }) => tables.has(table));
+    expect(pairs.length).toBeGreaterThan(20);
+    const broken = pairs
+      .flatMap(({ table, select, file }) =>
+        brokenEmbeds(table, select, fks, catalog).map(
+          alias => `${table} -> ${alias} (${file})`
+        )
+      )
+      .sort();
+    expect(broken).toEqual([]);
+  });
+
+  it('le as FKs declaradas para as tabelas do catalogo', () => {
+    const fks = generatedForeignKeys();
+    expect(fks.size).toBeGreaterThan(300);
+    expect(
+      (fks.get('order_items') ?? []).map(relation => relation.referencedRelation)
+    ).toContain('orders');
+  });
+
+  it('detecta embed sem FK (regressao real de intent_audit_logs)', () => {
+    const fks = generatedForeignKeys();
+    const catalog = new Set([...tables, ...views]);
+    expect(
+      brokenEmbeds('intent_audit_logs', '*, leads:lead_id(client_name)', fks, catalog)
+    ).toEqual(['leads:lead_id']);
+    expect(
+      brokenEmbeds(
+        'prospect_cadences',
+        'id, sales(client_name), quotes(client_name)',
+        fks,
+        catalog
+      )
+    ).toEqual([]);
+    expect(
+      brokenEmbeds(
+        'deal_probability_scores',
+        '*, sales:sale_id(id, salespeople:salespeople!salesperson_id(name))',
+        fks,
+        catalog
+      )
+    ).toEqual([]);
   });
 });
