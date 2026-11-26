@@ -81,6 +81,72 @@ function usedRelations() {
 
 type ForeignKey = { name: string; columns: string[]; referencedRelation: string };
 
+/** Estado do parser linha a linha do `types.ts` gerado. */
+type TypesParserState = {
+  schema: string | null;
+  block: string | null;
+  table: string | null;
+  current: ForeignKey | null;
+};
+
+/** Cabecalhos de bloco (schema, secao, tabela). `true` = linha consumida. */
+function consumeTypesHeader(
+  line: string,
+  state: TypesParserState,
+  byTable: Map<string, ForeignKey[]>
+) {
+  const schema = line.match(/^  (\w+): \{$/);
+  if (schema) {
+    state.schema = schema[1] ?? null;
+    state.block = null;
+    state.table = null;
+    return true;
+  }
+  const section = line.match(/^    (Tables|Views|Functions): \{$/);
+  if (section) {
+    state.block = section[1] ?? null;
+    state.table = null;
+    return true;
+  }
+  if (/^  \}/.test(line)) {
+    state.schema = null;
+    state.block = null;
+    state.table = null;
+    return true;
+  }
+  const table = line.match(/^      ([a-zA-Z0-9_]+): \{$/);
+  if (table) {
+    state.table = table[1] ?? '';
+    state.current = null;
+    byTable.set(state.table, []);
+    return true;
+  }
+  return false;
+}
+
+/** Campos de uma FK: `foreignKeyName`, `columns` (abre a FK) e `referencedRelation`. */
+function consumeForeignKeyField(
+  line: string,
+  state: TypesParserState,
+  byTable: Map<string, ForeignKey[]>
+) {
+  if (!state.table) return;
+  const name = line.match(/^\s+foreignKeyName: "([^"]+)"/);
+  if (name && state.current) {
+    state.current.name = name[1] ?? '';
+    return;
+  }
+  const columns = line.match(/^\s+columns: \[([^\]]*)\],?$/);
+  if (columns) {
+    const parsed = [...(columns[1] ?? '').matchAll(/"([^"]+)"/g)].map(m => m[1] ?? '');
+    state.current = { name: '', columns: parsed, referencedRelation: '' };
+    byTable.get(state.table)?.push(state.current);
+    return;
+  }
+  const referenced = line.match(/^\s+referencedRelation: "([^"]+)"/);
+  if (referenced && state.current) state.current.referencedRelation = referenced[1] ?? '';
+}
+
 /**
  * FKs declaradas pelo banco por tabela do schema `public`. O PostgREST resolve
  * `alias:coluna(...)` apenas quando a coluna tem FK (PGRST200 quando nao tem),
@@ -90,54 +156,16 @@ type ForeignKey = { name: string; columns: string[]; referencedRelation: string 
  */
 function generatedForeignKeys() {
   const byTable = new Map<string, ForeignKey[]>();
-  let schema: string | null = null;
-  let block: string | null = null;
-  let table: string | null = null;
-  let current: ForeignKey | null = null;
+  const state: TypesParserState = {
+    schema: null,
+    block: null,
+    table: null,
+    current: null,
+  };
   for (const line of fs.readFileSync(TYPES_FILE, 'utf8').split(/\r?\n/)) {
-    let match = line.match(/^  (\w+): \{$/);
-    if (match) {
-      schema = match[1] ?? null;
-      block = null;
-      table = null;
-      continue;
-    }
-    match = line.match(/^    (Tables|Views|Functions): \{$/);
-    if (match) {
-      block = match[1] ?? null;
-      table = null;
-      continue;
-    }
-    if (/^  \}/.test(line)) {
-      schema = null;
-      block = null;
-      table = null;
-      continue;
-    }
-    if (schema !== 'public' || block !== 'Tables') continue;
-    match = line.match(/^      ([a-zA-Z0-9_]+): \{$/);
-    if (match) {
-      const name = match[1] ?? '';
-      table = name;
-      byTable.set(name, []);
-      current = null;
-      continue;
-    }
-    if (!table) continue;
-    match = line.match(/^\s+foreignKeyName: "([^"]+)"/);
-    if (match && current) {
-      current.name = match[1] ?? '';
-      continue;
-    }
-    match = line.match(/^\s+columns: \[([^\]]*)\],?$/);
-    if (match) {
-      const columns = [...(match[1] ?? '').matchAll(/"([^"]+)"/g)].map(m => m[1] ?? '');
-      current = { name: '', columns, referencedRelation: '' };
-      byTable.get(table)?.push(current);
-      continue;
-    }
-    match = line.match(/^\s+referencedRelation: "([^"]+)"/);
-    if (match && current) current.referencedRelation = match[1] ?? '';
+    if (consumeTypesHeader(line, state, byTable)) continue;
+    if (state.schema !== 'public' || state.block !== 'Tables') continue;
+    consumeForeignKeyField(line, state, byTable);
   }
   return byTable;
 }
