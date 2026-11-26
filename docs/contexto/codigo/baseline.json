@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "11fd96464f8662b77e13c381caf7aeca5cd49b24",
+  "commit": "d44d5664a12beaef7a570985a198a7b244d84b25",
   "branch": "main",
-  "data_commit": "2026-11-26T21:52:53Z",
+  "data_commit": "2026-11-26T19:27:11-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d44d566",
+    "data": "2026-11-26",
+    "assunto": "infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)"
+   },
    {
     "sha": "11fd964",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "a4084fb",
     "data": "2026-11-24",
     "assunto": "fix: timeout de 60s para o cron supply-dispatch (#736)"
-   },
-   {
-    "sha": "930e42e",
-    "data": "2026-11-24",
-    "assunto": "chore(main): release 1.9.0 (#733)"
    }
   ],
-  "arquivos_mudados_7d": 376,
+  "arquivos_mudados_7d": 377,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3703,
+  "arquivos_total": 3704,
   "arquivos_codigo": 2633,
   "linhas_codigo": 451544,
   "rotas": 171,
@@ -329,7 +329,7 @@
   "migrations": 718,
   "cron_jobs": 41,
   "testes": 290,
-  "workflows": 31,
+  "workflows": 32,
   "scripts": 78,
   "docs_md": 225
  },

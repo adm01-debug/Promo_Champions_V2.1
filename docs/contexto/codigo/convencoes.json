@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)",
    "chore(types): sincroniza types.ts com o banco oficial [auto] (#765)",
    "feat: análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance (#761)",
    "fix: tolera concorrencia no invariante de sequencia do stress de conversao (#762)",
-   "fix: estabiliza guard-rail de soft-delete de activities no CI (#760)",
-   "fix: painel de integracao so aparece para quem pode ler os logs (#759)"
+   "fix: estabiliza guard-rail de soft-delete de activities no CI (#760)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

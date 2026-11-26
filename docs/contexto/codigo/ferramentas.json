@@ -7,8 +7,8 @@
    "SQL (730)",
    "Markdown (225)",
    "JavaScript (78)",
+   "YAML (34)",
    "JSON (33)",
-   "YAML (33)",
    "Shell (7)",
    "Python (5)"
   ],
@@ -945,6 +945,27 @@
    "npm_scripts": [],
    "secrets": [
     "DESIGN_SYNC_WEBHOOK_SECRET",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/provisionar-secret-finance-credito.yml",
+   "nome": "Provisionar secrets da integracao de credito (Finance)",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "provisionar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
     "SUPABASE_ACCESS_TOKEN"
    ],
    "actions": []
