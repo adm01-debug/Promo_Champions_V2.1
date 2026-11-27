@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-27 00:35 UTC
+
+- **functions** alterado (2): `public.fn_admin_platform_slo()`, `public.has_role(_user_id uuid, _role app_role)`
+- **grants** removido (2): `public.stage_conversion_metrics:anon`, `public.v_platform_slo:anon`
+- **migrations** adicionado (1): `20261128150000_20261128150000_revoga_anon_metricas_conversao_e_slo`
+- **policies (RLS)** alterado (3): `public.stage_conversion_metrics.Service role manages conversion metrics insert`, `public.stage_conversion_metrics.Service role manages conversion metrics update`, `public.stage_conversion_metrics.Users view own and global conversion metrics`
+
 ## 2026-11-26 22:16 UTC
 
 - **colunas** adicionado (17): `public.clients.cnpj`, `public.credit_outbox.attempts`, `public.credit_outbox.created_at`, `public.credit_outbox.delivered_at`, `public.credit_outbox.event`, `public.credit_outbox.id`, `public.credit_outbox.last_error`, `public.credit_outbox.next_attempt_at`, `public.credit_outbox.order_id`, `public.credit_outbox.payload`, `public.credit_outbox.status`, `public.credit_outbox.updated_at`, `public.orders.credit_decided_at`, `public.orders.credit_limit_approved`, `public.orders.credit_max_installments`, `public.orders.credit_notes`, `public.orders.credit_status`

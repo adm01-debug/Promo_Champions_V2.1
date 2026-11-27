@@ -87490,9 +87490,13 @@
             {
               "file": "src/hooks/admin/usePlatformSLO.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261128150000_revoga_anon_metricas_conversao_e_slo.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90990,7 +90994,7 @@
               "hits": 10
             }
           ],
-          "code_total_files": 161,
+          "code_total_files": 162,
           "cron": [],
           "db": [
             "private.auto_promote_sequence_winners",
@@ -104180,12 +104184,6 @@
           "table": "stage_bottleneck_insights"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
-          "schema": "public",
-          "table": "stage_conversion_metrics"
-        },
-        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
           "schema": "public",
@@ -104892,12 +104890,6 @@
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "v_pipeline_coverage_summary"
-        },
-        {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
-          "schema": "public",
-          "table": "v_platform_slo"
         },
         {
           "grantee": "authenticated",
@@ -135107,6 +135099,11 @@
         "name": "20261128130000_analise_credito_primeira_venda",
         "statements": null,
         "version": "20261128130000"
+      },
+      {
+        "name": "20261128150000_revoga_anon_metricas_conversao_e_slo",
+        "statements": null,
+        "version": "20261128150000"
       }
     ],
     "policies": [
@@ -145162,7 +145159,7 @@
         "name": "Service role manages conversion metrics insert",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "stage_conversion_metrics",
@@ -145174,7 +145171,7 @@
         "name": "Service role manages conversion metrics update",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "stage_conversion_metrics",
@@ -145186,7 +145183,7 @@
         "name": "Users view own and global conversion metrics",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "stage_conversion_metrics",

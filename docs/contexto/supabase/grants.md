@@ -1061,7 +1061,6 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.stage_bottleneck_insights | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.stage_bottleneck_insights | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.stage_bottleneck_insights | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.stage_conversion_metrics | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.stage_conversion_metrics | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.stage_conversion_metrics | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.stage_inactivity_rules | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
@@ -1180,7 +1179,6 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.v_pipeline_coverage_summary | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.v_pipeline_coverage_summary | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.v_pipeline_coverage_summary | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.v_platform_slo | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.v_platform_slo | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.v_platform_slo | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_platform_wal_health | authenticated | SELECT |
