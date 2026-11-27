@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d1aa531f96ab33123f0acbd7325a535c0f3bb161` (2026-11-26T20:43:41-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `42e104500c0a795a8caaa88563a8de623dd30932` (2026-11-26T21:17:13-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2555), SQL (730), Markdown (225), JavaScript (78), YAML (34), JSON (33), Shell (7), Python (5)
+- linguagens: TypeScript (2555), SQL (731), Markdown (225), JavaScript (78), YAML (34), JSON (33), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3707 |
+| arquivos_total | 3708 |
 | arquivos_codigo | 2636 |
 | linhas_codigo | 452160 |
 | rotas | 172 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 485 |
 | edge_functions | 175 |
 | tabelas | 422 |
-| migrations | 718 |
+| migrations | 719 |
 | cron_jobs | 41 |
 | testes | 291 |
 | workflows | 32 |
@@ -593,7 +593,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24644 nós · 75407 arestas · 1216 comunidades · grafo do commit `d1aa531f`
+- 24645 nós · 75407 arestas · 1217 comunidades · grafo do commit `42e10450`
 - comunidades maiores: Card (595), schema.sql (582), DialogContent (329), Input (326), cn (324), Badge (318), client.ts (309), lucide-react (307), react (251), public (245), public.sales (241), Skeleton (235)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -778,6 +778,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-26 `42e1045` fix: tira a leitura anonima das metricas de conversao e do SLO (#763)
 - 2026-11-26 `d1aa531` feat: tela admin da fila de análise de crédito da 1ª venda (#766)
 - 2026-11-26 `d44d566` infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)
 - 2026-11-26 `11fd964` chore(types): sincroniza types.ts com o banco oficial [auto] (#765)
@@ -792,7 +793,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `c69ce04` fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)
 - 2026-11-26 `fd79e14` fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)
 - 2026-11-26 `fd3079d` feat: tela de Momentos Críticos para os alertas de chamada (#751)
-- 2026-11-26 `86f0654` chore(main): release 1.10.1 (#750)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

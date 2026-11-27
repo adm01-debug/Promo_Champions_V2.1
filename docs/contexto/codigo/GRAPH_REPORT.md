@@ -1,17 +1,17 @@
-# Graph Report - Promo_Champions_V2.1  (2026-11-26)
+# Graph Report - Promo_Champions_V2.1  (2026-11-27)
 
 ## Corpus Check
-- 3665 files · ~2,503,018 words
+- 3666 files · ~2,503,449 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 29 file(s) not represented in the graph (top: (none) 16, .toml 6, .lock 2)
 
 ## Summary
-- 24644 nodes · 75407 edges · 1216 communities (884 shown, 332 thin omitted)
+- 24645 nodes · 75407 edges · 1217 communities (884 shown, 333 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 1054 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d1aa531f`
+- Built from commit: `42e10450`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1001,7 +1001,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1216 total, 332 thin omitted)
+## Communities (1217 total, 333 thin omitted)
 
 ### Community 0 - "Card"
 Cohesion: 0.01
@@ -4541,8 +4541,8 @@ Nodes (3): idx_experiment_variants_experiment_id_fk, idx_experiment_variants_exp
 
 ## Knowledge Gaps
 - **9 isolated node(s):** `PATH`, `@/views/Home.vue`, `RFC-4180`, `ADR-0010`, `RFC-8058` (+4 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8749 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **332 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 8750 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **333 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -4554,7 +4554,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Card` be split into smaller, more focused modules?**
   _Cohesion score 0.012160823925529808 - nodes in this community are weakly interconnected._
 - **Why does `now()` connect `now` to `Card`, `.collect`, `Índice`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
 - **Should `schema.sql` be split into smaller, more focused modules?**
   _Cohesion score 0.0056071118050996325 - nodes in this community are weakly interconnected._
 - **Why does ``ABCMatrixShift` — remontado sobre dado real (PR #568, 17/11)` connect `Card` to `As 3 telas que a reescrita de `main` descartou — 17/11/2026`, `now`?**

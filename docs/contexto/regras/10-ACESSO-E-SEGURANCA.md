@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d1aa531f96` · branch `main` · 2026-11-26 23:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `42e104500c` · branch `main` · 2026-11-27 00:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -873,7 +873,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon, authenticated | all | `private.add_salesperson_xp`, `private.refresh_competitive_ranking`, `private.refresh_monthly_sales_summary`, `private.snapshot_race_daily`, `private.award_achievement_if_not_exists`, `private.check_is_first_activation`, `private.update_performance_bet_progress`, `private.update_territory_conquests`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health` … +93 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_battle_achievements`, `compute_scheduled_report_next_run`, `fn_calculate_icp_score`, `increment_asset_view_count`, `maintain_sales_streaks`, `manage_stock_on_sale`, `generate_mfa_backup_codes`, `get_current_user_email`, `record_engagement_signal`, `is_authenticated`, `backfill_orders_conversion_seq`, `fn_slo_burn_rate`, `fn_check_slo_burn_rate`, `increment_race_car_wins`, `increment_race_car_overtakes` … +6 |
 | revoke | PUBLIC, anon, authenticated | insert, update, delete | `maintenance_log` |
-| revoke | anon | all | `salespeople_public`, `salespeople_public`, `salespeople_public`, `fn_cleanup_webhook_dedupe`, `webhook_inbound_dedupe`, `fn_cleanup_webhook_dedupe`, `edge_call_failures`, `webhook_allowed_domains` |
+| revoke | anon | all | `salespeople_public`, `salespeople_public`, `salespeople_public`, `fn_cleanup_webhook_dedupe`, `webhook_inbound_dedupe`, `fn_cleanup_webhook_dedupe`, `edge_call_failures`, `webhook_allowed_domains`, `stage_conversion_metrics`, `v_platform_slo` |
 | revoke | anon | execute | `public`, `public`, `get_current_salesperson_id`, `handle_sale_commissions`, `set_sdr_id_on_insert`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `log_audit_event`, `verify_reauth_request`, `get_mfa_status`, `get_monthly_sales_benchmark` |
 | revoke | anon | select | `monthly_sales_summary`, `territories` |
 | revoke | anon, authenticated | all | `mv_competitive_ranking`, `mv_competitive_ranking`, `mv_competitive_ranking`, `geocode_cache`, `webhook_dispatch_rate`, `supply_outbox`, `credit_outbox` |

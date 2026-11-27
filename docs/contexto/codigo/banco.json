@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 718,
+ "migrations": 719,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -41869,19 +41869,19 @@
     {
      "nome": "Service role manages conversion metrics insert",
      "comando": "insert",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
      "nome": "Service role manages conversion metrics update",
      "comando": "update",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
      "nome": "Users view own and global conversion metrics",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],

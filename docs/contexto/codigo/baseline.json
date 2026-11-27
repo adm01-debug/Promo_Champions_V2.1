@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d1aa531f96ab33123f0acbd7325a535c0f3bb161",
+  "commit": "42e104500c0a795a8caaa88563a8de623dd30932",
   "branch": "main",
-  "data_commit": "2026-11-26T20:43:41-03:00",
+  "data_commit": "2026-11-26T21:17:13-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "42e1045",
+    "data": "2026-11-26",
+    "assunto": "fix: tira a leitura anonima das metricas de conversao e do SLO (#763)"
+   },
    {
     "sha": "d1aa531",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "b45a2bf",
     "data": "2026-11-24",
     "assunto": "ci: provisiona RESEND_API_KEY nas edge functions (#738)"
-   },
-   {
-    "sha": "d52445e",
-    "data": "2026-11-24",
-    "assunto": "chore: sonda read-only da fila do supply_outbox na suite remota (#737)"
    }
   ],
-  "arquivos_mudados_7d": 380,
+  "arquivos_mudados_7d": 381,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3707,
+  "arquivos_total": 3708,
   "arquivos_codigo": 2636,
   "linhas_codigo": 452160,
   "rotas": 172,
@@ -326,7 +326,7 @@
   "hooks": 485,
   "edge_functions": 175,
   "tabelas": 422,
-  "migrations": 718,
+  "migrations": 719,
   "cron_jobs": 41,
   "testes": 291,
   "workflows": 32,
