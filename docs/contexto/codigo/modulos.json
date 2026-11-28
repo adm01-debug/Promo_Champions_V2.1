@@ -7784,13 +7784,13 @@
   },
   {
    "modulo": "components/security",
-   "arquivos": 19,
+   "arquivos": 20,
    "testes": 1,
-   "linhas": 4115,
+   "linhas": 4221,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 19,
+   "componentes": 20,
    "hooks_locais": [
     "useAuth",
     "useBlockedIPs",
@@ -16092,7 +16092,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 12,
-   "linhas": 40067,
+   "linhas": 40069,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

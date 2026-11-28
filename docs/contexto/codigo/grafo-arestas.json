@@ -6632,6 +6632,12 @@
    "src/components/ui/tabs.tsx",
    "src/hooks/useMFA.ts"
   ],
+  "src/components/security/PasskeyOnboardingPrompt.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useWebAuthn.ts"
+  ],
   "src/components/security/PasskeySettings.tsx": [
    "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
@@ -10946,6 +10952,7 @@
    "src/components/gamification/CompetitiveStatusBar.tsx",
    "src/components/onboarding/OnboardingChecklist.tsx",
    "src/components/ranking/RankingPositionBanner.tsx",
+   "src/components/security/PasskeyOnboardingPrompt.tsx",
    "src/components/skeletons/PageLoadingSkeleton.tsx",
    "src/components/skeletons/SkeletonTransition.tsx",
    "src/components/transitions/PageTransition.tsx",

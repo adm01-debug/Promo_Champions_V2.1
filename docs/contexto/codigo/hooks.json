@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 96,
+   "usado_por": 97,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -11251,8 +11251,9 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
+    "src/components/security/PasskeyOnboardingPrompt.tsx",
     "src/components/security/PasskeySettings.tsx",
     "src/hooks/auth/useAuthForm.ts"
    ],

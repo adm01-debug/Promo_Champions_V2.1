@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dc8ce3cbc3` · branch `main` · 2026-11-28 18:09 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `41e6e0e219` · branch `main` · 2026-11-28 18:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3057,6 +3057,7 @@ _nenhum item encontrado_
 | `MAX_MARKS` | `30` | `src/components/race/track/TrackTireMarks.tsx` |
 | `FADE_MS` | `1500` | `src/components/race/track/TrackTireMarks.tsx` |
 | `PERIOD_DAYS` | `30` | `src/components/sales/cadence/EliteCadenceAnalytics.tsx` |
+| `DISMISS_TTL_MS` | `30` | `src/components/security/PasskeyOnboardingPrompt.tsx` |
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
@@ -3350,6 +3351,7 @@ _nenhum item encontrado_
 | `staleTime: 5 * 60 * 1000,` | `src/components/sdr/SDRIntelligenceHighlights.tsx` |
 | `staleTime: 5 * 60 * 1000,` | `src/components/sdr/SDRSequenceOrchestrator.tsx` |
 | `: new Date(Date.now() + parseInt(expiresIn) * 60 * 60 * 1000).toISOString();` | `src/components/security/BlockedIPsPanel.tsx` |
+| `const DISMISS_TTL_MS = 30 * 24 * 60 * 60 * 1000;` | `src/components/security/PasskeyOnboardingPrompt.tsx` |
 | `const [dateFrom, setDateFrom] = useState<Date \| undefined>(subDays(new Date(), 7));` | `src/components/settings/AccessDeniedLogs.tsx` |
 | `dateFrom?.toDateString() !== subDays(new Date(), 7).toDateString() \|\|` | `src/components/settings/AccessDeniedLogs.tsx` |
 | `setDateFrom(subDays(new Date(), 7));` | `src/components/settings/AccessDeniedLogs.tsx` |
@@ -3581,8 +3583,7 @@ _nenhum item encontrado_
 | `const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();` | `supabase/functions/recompute-stage-baselines/index.ts` |
 | `const TTL_MS = 5 * 60 * 1000;` | `supabase/functions/semantic-search/index.ts` |
 | `const TTL_MS = 2 * 60 * 1000;` | `supabase/functions/semantic-search-universal/index.ts` |
-| `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
-| … +159 linhas — lista completa em `context.json` | |
+| … +160 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4871,6 +4872,7 @@ _nenhum item encontrado_
 | ---------- Parser mínimo + amostragem De Casteljau ---------- | `src/components/race/raceTrackHelpers.ts` |
 | borda branca fina visível (limite interno do curb) */} | `src/components/race/track/TrackAsphalt.tsx` |
 | Base: apenas vendas ganhas com custo conhecido — vendedores sem custo não aparecem. | `src/components/reports/sales/SalesMarkupRankingTable.tsx` |
+| * Convite para criar a primeira passkey, exibido só depois do login e apenas | `src/components/security/PasskeyOnboardingPrompt.tsx` |
 | Permission Denied Warning */} | `src/components/security/PushNotificationSettings.tsx` |
 | Writes agregados em até 2 queries (evita N+1 por permissão). | `src/components/settings/PermissionMatrix.tsx` |
 | o seletor espelha a mesma regra para não oferecer um responsável que dá erro. | `src/components/tasks/CreateTaskDialog.tsx` |
@@ -5130,5 +5132,4 @@ _nenhum item encontrado_
 | Resolve owner_id (required by deal_stakeholders) | `supabase/functions/extract-committee-from-call/index.ts` |
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/extract-deal-stakeholders/index.ts` |
 | Auth: requer JWT do usuário. Rate-limit: 20 req/min por usuário. | `supabase/functions/forecast-narrative/index.ts` |
-| Retry apenas em 429 / 5xx. 402/4xx não-retryable — throw como Response e isRetryable filtra. | `supabase/functions/forecast-narrative/index.ts` |
-| … +149 linhas — lista completa em `context.json` | |
+| … +150 linhas — lista completa em `context.json` | |

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
+  "commit": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
   "branch": "main",
-  "data_commit": "2026-11-28T15:06:12-03:00",
+  "data_commit": "2026-11-28T15:18:13-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "41e6e0e",
+    "data": "2026-11-28",
+    "assunto": "feat: convite para criar a primeira passkey apos o login (#771)"
+   },
    {
     "sha": "dc8ce3c",
     "data": "2026-11-28",
@@ -126,14 +131,9 @@
     "sha": "2498492",
     "data": "2026-11-24",
     "assunto": "ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)"
-   },
-   {
-    "sha": "4f3aabb",
-    "data": "2026-11-24",
-    "assunto": "chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)"
    }
   ],
-  "arquivos_mudados_7d": 334,
+  "arquivos_mudados_7d": 335,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -192,29 +192,29 @@
     "mudancas": 35
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 33
+    "pasta": "docs/qa/05-PROGRESSO.md",
+    "mudancas": 32
    }
   ],
   "arquivos_mais_mudados_90d": [
-   {
-    "arquivo": "package-lock.json",
-    "mudancas": 33
-   },
-   {
-    "arquivo": "package.json",
-    "mudancas": 33
-   },
    {
     "arquivo": "docs/qa/05-PROGRESSO.md",
     "mudancas": 32
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 16
+    "arquivo": "package-lock.json",
+    "mudancas": 32
+   },
+   {
+    "arquivo": "package.json",
+    "mudancas": 32
    },
    {
     "arquivo": "CHANGELOG.md",
+    "mudancas": 15
+   },
+   {
+    "arquivo": "deno.lock",
     "mudancas": 15
    },
    {
@@ -314,15 +314,15 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3713,
-  "arquivos_codigo": 2641,
-  "linhas_codigo": 452769,
+  "arquivos_total": 3714,
+  "arquivos_codigo": 2642,
+  "linhas_codigo": 452877,
   "rotas": 173,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 148,
   "modulos": 176,
-  "componentes": 1293,
+  "componentes": 1294,
   "hooks": 486,
   "edge_functions": 175,
   "tabelas": 422,
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1244,
-   "linhas": 195720
+   "arquivos": 1245,
+   "linhas": 195826
   },
   "src/config": {
    "arquivos": 4,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 189,
-   "linhas": 46259
+   "linhas": 46261
   },
   "src/routes": {
    "arquivos": 5,

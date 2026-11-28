@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1293,
+ "total": 1294,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -14336,6 +14336,23 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/security/PasskeyOnboardingPrompt.tsx",
+   "exports": [
+    "PasskeyOnboardingPrompt"
+   ],
+   "export_default": null,
+   "linhas": 106,
+   "dominio": "components/security",
+   "hooks_locais": [
+    "useAuth",
+    "useWebAuthn"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/security/PasskeySettings.tsx",
    "exports": [
     "PasskeySettings"
@@ -15785,7 +15802,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 546,
+   "usado_por": 547,
    "orfao": false
   },
   {
@@ -15817,7 +15834,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 718,
+   "usado_por": 719,
    "orfao": false
   },
   {
@@ -17610,7 +17627,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 96,
+   "usado_por": 97,
    "orfao": false
   },
   {
@@ -19390,7 +19407,7 @@
     "Index"
    ],
    "export_default": "Index",
-   "linhas": 475,
+   "linhas": 477,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

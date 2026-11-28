@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2358,
- "arestas": 9739,
+ "nos": 2359,
+ "arestas": 9744,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 718
+   "importado_por": 719
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 546
+   "importado_por": 547
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -69,11 +69,11 @@
    "importado_por": 103
   },
   {
-   "arquivo": "src/constants/index.ts",
-   "importado_por": 98
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 99
   },
   {
-   "arquivo": "src/contexts/AuthContext.tsx",
+   "arquivo": "src/constants/index.ts",
    "importado_por": 98
   },
   {

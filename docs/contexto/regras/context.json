@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
+  "sha": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-28 18:09 UTC",
-  "files_total": 3728,
-  "code_files": 3372,
-  "code_lines": 489089
+  "generated_at": "2026-11-28 18:24 UTC",
+  "files_total": 3729,
+  "code_files": 3373,
+  "code_lines": 489197
  },
  "version": "1.3.2",
- "facts_hash": "c9007643bd182891",
+ "facts_hash": "fd7eecdc63121840",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -433,7 +433,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1413,
+   ".tsx": 1414,
    ".ts": 1146,
    ".sql": 731,
    ".mjs": 72,
@@ -95239,14 +95239,15 @@
      "xp_history"
     ],
     "invokes_transitive": [
-     "notify-ranking-position"
+     "notify-ranking-position",
+     "webauthn"
     ],
     "rpc_transitive": [
      "award_sale_xp",
      "get_active_salespeople",
      "get_dashboard_kpis"
     ],
-    "deps_count": 55
+    "deps_count": 58
    },
    {
     "path": "",
@@ -96538,14 +96539,15 @@
      "xp_history"
     ],
     "invokes_transitive": [
-     "notify-ranking-position"
+     "notify-ranking-position",
+     "webauthn"
     ],
     "rpc_transitive": [
      "award_sale_xp",
      "get_active_salespeople",
      "get_dashboard_kpis"
     ],
-    "deps_count": 57
+    "deps_count": 60
    },
    {
     "path": "/dashboard-custom",
@@ -103858,7 +103860,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1244,
+  "components_count": 1245,
   "hooks": [
    {
     "name": "useContacts",
@@ -107834,8 +107836,8 @@
   },
   {
    "module": "src/components",
-   "files": 1244,
-   "lines": 195719,
+   "files": 1245,
+   "lines": 195825,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108810,7 +108812,7 @@
   {
    "module": "src/pages",
    "files": 189,
-   "lines": 46259,
+   "lines": 46261,
    "tables": [
     "achievements",
     "activities",
@@ -124561,6 +124563,10 @@
    {
     "file": "src/components/reports/sales/SalesMarkupRankingTable.tsx",
     "text": "Base: apenas vendas ganhas com custo conhecido — vendedores sem custo não aparecem."
+   },
+   {
+    "file": "src/components/security/PasskeyOnboardingPrompt.tsx",
+    "text": "* Convite para criar a primeira passkey, exibido só depois do login e apenas"
    },
    {
     "file": "src/components/security/PushNotificationSettings.tsx",
@@ -141318,6 +141324,11 @@
     "value": "30"
    },
    {
+    "file": "src/components/security/PasskeyOnboardingPrompt.tsx",
+    "name": "DISMISS_TTL_MS",
+    "value": "30"
+   },
+   {
     "file": "src/components/ui/sidebar.tsx",
     "name": "SIDEBAR_COOKIE_MAX_AGE",
     "value": "60"
@@ -156939,6 +156950,10 @@
    {
     "file": "src/components/security/BlockedIPsPanel.tsx",
     "line": ": new Date(Date.now() + parseInt(expiresIn) * 60 * 60 * 1000).toISOString();"
+   },
+   {
+    "file": "src/components/security/PasskeyOnboardingPrompt.tsx",
+    "line": "const DISMISS_TTL_MS = 30 * 24 * 60 * 60 * 1000;"
    },
    {
     "file": "src/components/settings/AccessDeniedLogs.tsx",
@@ -248504,6 +248519,25 @@
     "Código inválido"
    ]
   },
+  "src/components/security/PasskeyOnboardingPrompt.tsx": {
+   "path": "src/components/security/PasskeyOnboardingPrompt.tsx",
+   "lines": 106,
+   "exports": [
+    "function PasskeyOnboardingPrompt"
+   ],
+   "params": [
+    {
+     "name": "DISMISS_TTL_MS",
+     "value": "30"
+    }
+   ],
+   "rule_comments": [
+    "* Convite para criar a primeira passkey, exibido só depois do login e apenas"
+   ],
+   "temporal": [
+    "const DISMISS_TTL_MS = 30 * 24 * 60 * 60 * 1000;"
+   ]
+  },
   "src/components/security/PasskeySettings.tsx": {
    "path": "src/components/security/PasskeySettings.tsx",
    "lines": 247,
@@ -275579,7 +275613,7 @@
   },
   "src/pages/Index.tsx": {
    "path": "src/pages/Index.tsx",
-   "lines": 475,
+   "lines": 477,
    "exports": [
     "default Index"
    ],
@@ -302851,10 +302885,20 @@
   }
  },
  "git": {
-  "sha": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
+  "sha": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "41e6e0e",
+    "date": "2026-11-28",
+    "author": "adm01-debug",
+    "subject": "feat: convite para criar a primeira passkey apos o login (#771)",
+    "files": [
+     "src/components/security/PasskeyOnboardingPrompt.tsx",
+     "src/pages/Index.tsx"
+    ]
+   },
    {
     "sha": "dc8ce3c",
     "date": "2026-11-28",
@@ -303176,15 +303220,6 @@
      "scripts/run-sql-tests.sh",
      "supabase/tests/supply_outbox_diagnostics.sql"
     ]
-   },
-   {
-    "sha": "a4084fb",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: timeout de 60s para o cron supply-dispatch (#736)",
-    "files": [
-     "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -303245,6 +303280,14 @@
     2
    ],
    [
+    "src/components/security/PasskeyOnboardingPrompt.tsx",
+    1
+   ],
+   [
+    "src/pages/Index.tsx",
+    1
+   ],
+   [
     "src/components/settings/PushPreferencesCard.tsx",
     1
    ],
@@ -303258,14 +303301,6 @@
    ],
    [
     "src/pages/Notificacoes.tsx",
-    1
-   ],
-   [
-    "supabase/functions/_shared/push-preferences.ts",
-    1
-   ],
-   [
-    "supabase/functions/_shared/push-preferences_test.ts",
     1
    ]
   ]
