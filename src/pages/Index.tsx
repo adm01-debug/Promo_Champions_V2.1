@@ -4,6 +4,7 @@ import React, { Suspense, lazy, useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { RankingPositionBanner } from '@/components/ranking/RankingPositionBanner';
 import { OnboardingChecklist } from '@/components/onboarding/OnboardingChecklist';
+import { PasskeyOnboardingPrompt } from '@/components/security/PasskeyOnboardingPrompt';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
 import { CompetitiveStatusBar } from '@/components/gamification/CompetitiveStatusBar';
@@ -182,6 +183,7 @@ const Index = () => {
         <RankingPositionBanner />
         <CompetitiveStatusBar />
         <OnboardingChecklist />
+        <PasskeyOnboardingPrompt />
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="flex-1">
             <DashboardHeader />
