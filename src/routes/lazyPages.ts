@@ -352,6 +352,9 @@ export const AdminPlatformSLOPage = lazyWithPrefetch(
 export const AdminWebVitalsPage = lazyWithPrefetch(
   () => import('@/pages/admin/AdminWebVitalsPage')
 );
+export const AdminRankingApiPlaygroundPage = lazyWithPrefetch(
+  () => import('@/pages/admin/AdminRankingApiPlaygroundPage')
+);
 export const AdminComercial = lazyWithPrefetch(
   () => import('@/pages/admin/AdminComercial')
 );

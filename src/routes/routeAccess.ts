@@ -19,6 +19,7 @@ export const adminOnlyRoutes: readonly string[] = [
   '/admin/quote-conversions',
   '/admin/platform-slo',
   '/admin/web-vitals',
+  '/admin/ranking-api',
   '/admin/tarefas',
   '/admin/webhooks-dead-letters',
   '/admin/webhooks-timeline',
