@@ -1,4 +1,4 @@
-﻿import { withRequestId } from "../_shared/request-id.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
@@ -268,6 +268,7 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
           tag: "new-device-alert",
           data: {
             type: "new_device",
+            category: "security",
             url: "/dashboard/seguranca",
             device: data.device_fingerprint,
           },
