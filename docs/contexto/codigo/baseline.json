@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
+  "commit": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
   "branch": "main",
-  "data_commit": "2026-11-28T13:43:07-03:00",
+  "data_commit": "2026-11-28T14:24:37-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4dbfb77",
+    "data": "2026-11-28",
+    "assunto": "fix: relatorios de funil e cohort em rotas proprias (#769)"
+   },
    {
     "sha": "4f2fc32",
     "data": "2026-11-28",
@@ -126,14 +131,9 @@
     "sha": "d7d7f73",
     "data": "2026-11-24",
     "assunto": "feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)"
-   },
-   {
-    "sha": "4565034",
-    "data": "2026-11-24",
-    "assunto": "fix: restaura timeouts de DNS lento derrubados pela 20261127000000 (#742)"
    }
   ],
-  "arquivos_mudados_7d": 362,
+  "arquivos_mudados_7d": 328,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -230,15 +230,15 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 7
+   },
+   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
    {
     "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/routes/AppRoutes.tsx",
     "mudancas": 6
    },
    {
@@ -255,6 +255,10 @@
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 5
+   },
+   {
+    "arquivo": "src/routes/routeAccess.ts",
     "mudancas": 5
    },
    {
@@ -292,10 +296,6 @@
    {
     "arquivo": "src/hooks/gamification/useLeagues.ts",
     "mudancas": 4
-   },
-   {
-    "arquivo": "src/hooks/useEligibleBonuses.ts",
-    "mudancas": 4
    }
   ],
   "autores_30d": [
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 3708,
   "arquivos_codigo": 2636,
-  "linhas_codigo": 452184,
+  "linhas_codigo": 452190,
   "rotas": 173,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -628,7 +628,7 @@
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1950
+   "linhas": 1956
   },
   "src/services": {
    "arquivos": 9,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1172
+   "linhas": 1176
   },
   {
    "arquivo": "scripts/graphify-local.mjs",

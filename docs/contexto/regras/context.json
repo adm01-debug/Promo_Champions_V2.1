@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
+  "sha": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-28 16:43 UTC",
+  "generated_at": "2026-11-28 17:31 UTC",
   "files_total": 3723,
   "code_files": 3367,
-  "code_lines": 488504
+  "code_lines": 488510
  },
  "version": "1.3.2",
- "facts_hash": "20ba3429f452a8c3",
+ "facts_hash": "d301668adac5bd82",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103420,7 +103420,7 @@
    },
    {
     "path": "/race-arena/closer",
-    "component": "RaceTransitionWrapper",
+    "component": "Manager",
     "guard": "",
     "roles": [],
     "file": "src/routes/AppRoutes.tsx"
@@ -103434,7 +103434,7 @@
    },
    {
     "path": "/race-arena/sdr",
-    "component": "RaceTransitionWrapper",
+    "component": "Manager",
     "guard": "",
     "roles": [],
     "file": "src/routes/AppRoutes.tsx"
@@ -109001,7 +109001,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1950,
+   "lines": 1956,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -277137,7 +277137,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1172,
+   "lines": 1176,
    "exports": [
     "function AppRoutes"
    ],
@@ -277785,18 +277785,6 @@
      "roles": []
     },
     {
-     "path": "/relatorios/funil",
-     "component": "Manager",
-     "guard": "",
-     "roles": []
-    },
-    {
-     "path": "/relatorios/cohort",
-     "component": "Manager",
-     "guard": "",
-     "roles": []
-    },
-    {
      "path": "/top-produtos",
      "component": "TopProductsRanking",
      "guard": "",
@@ -277887,6 +277875,18 @@
      "roles": []
     },
     {
+     "path": "/relatorios/funil",
+     "component": "Manager",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/relatorios/cohort",
+     "component": "Manager",
+     "guard": "",
+     "roles": []
+    },
+    {
      "path": "/race-arena",
      "component": "RaceTransitionWrapper",
      "guard": "",
@@ -277894,13 +277894,13 @@
     },
     {
      "path": "/race-arena/closer",
-     "component": "RaceTransitionWrapper",
+     "component": "Manager",
      "guard": "",
      "roles": []
     },
     {
      "path": "/race-arena/sdr",
-     "component": "RaceTransitionWrapper",
+     "component": "Manager",
      "guard": "",
      "roles": []
     },
@@ -278350,7 +278350,7 @@
   },
   "src/routes/routeAccess.ts": {
    "path": "src/routes/routeAccess.ts",
-   "lines": 166,
+   "lines": 168,
    "exports": [
     "const adminOnlyRoutes",
     "const managerOnlyRoutes",
@@ -302662,10 +302662,21 @@
   }
  },
  "git": {
-  "sha": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
+  "sha": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4dbfb77",
+    "date": "2026-11-28",
+    "author": "adm01-debug",
+    "subject": "fix: relatorios de funil e cohort em rotas proprias (#769)",
+    "files": [
+     "docs/FUNCIONALIDADES_SEM_UI.md",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/routeAccess.ts"
+    ]
+   },
    {
     "sha": "4f2fc32",
     "date": "2026-11-28",
@@ -302981,25 +302992,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "ed11613",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "ci: dispara apply-migration no merge de migration (#734)",
-    "files": [
-     ".github/workflows/auto-apply-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
    [
-    "src/components/layout/sidebar/sidebarMenuData.ts",
+    "src/routes/AppRoutes.tsx",
     4
    ],
    [
-    "src/routes/AppRoutes.tsx",
-    3
+    "src/components/layout/sidebar/sidebarMenuData.ts",
+    4
    ],
    [
     "src/routes/lazyPages.ts",
@@ -303026,6 +303028,10 @@
     3
    ],
    [
+    "src/routes/routeAccess.ts",
+    2
+   ],
+   [
     "src/components/dashboard/IntegrationStatusPanel.test.tsx",
     2
    ],
@@ -303046,6 +303052,10 @@
     2
    ],
    [
+    "docs/FUNCIONALIDADES_SEM_UI.md",
+    1
+   ],
+   [
     "src/pages/ConversationalIntelligenceHub.tsx",
     1
    ],
@@ -303063,14 +303073,6 @@
    ],
    [
     "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/admin/AdminCreditAnalysisPage.tsx",
-    1
-   ],
-   [
-    "src/routes/routeAccess.ts",
     1
    ]
   ]

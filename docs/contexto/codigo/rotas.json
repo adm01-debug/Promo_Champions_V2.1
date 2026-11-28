@@ -8760,6 +8760,7 @@
   {
    "protegida": false,
    "wrappers": [
+    "Manager",
     "RaceTransitionWrapper"
    ],
    "pai": null,
@@ -8988,6 +8989,7 @@
   {
    "protegida": false,
    "wrappers": [
+    "Manager",
     "RaceTransitionWrapper"
    ],
    "pai": null,
