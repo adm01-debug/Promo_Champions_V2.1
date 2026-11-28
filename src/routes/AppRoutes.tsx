@@ -179,6 +179,7 @@ import {
   AdminQuoteConversionsPage,
   AdminPlatformSLOPage,
   AdminWebVitalsPage,
+  AdminRankingApiPlaygroundPage,
   AdminComercial,
   Competencias,
   CustomerSuccessHubPage,
@@ -1034,6 +1035,14 @@ export function AppRoutes() {
                           element={
                             <Admin>
                               <AdminWebVitalsPage />
+                            </Admin>
+                          }
+                        />
+                        <Route
+                          path="/admin/ranking-api"
+                          element={
+                            <Admin>
+                              <AdminRankingApiPlaygroundPage />
                             </Admin>
                           }
                         />
