@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.11.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.1...promo-champions-v2-v1.11.0) (2026-11-28)
+
+
+### Funcionalidades
+
+* análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance ([#761](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/761)) ([a751303](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/a7513039cc1abaac13d3f2c8146b1e09af1694fb))
+* convite para criar a primeira passkey apos o login ([#771](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/771)) ([41e6e0e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a))
+* preferencias de push (categorias e horario de silencio) ([#770](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/770)) ([dc8ce3c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac))
+* tela admin da fila de análise de crédito da 1ª venda ([#766](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/766)) ([d1aa531](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d1aa531f96ab33123f0acbd7325a535c0f3bb161))
+* tela de Momentos Críticos para os alertas de chamada ([#751](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/751)) ([fd3079d](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fd3079d658744f8370f7bb8c697cbefea4a987c0))
+
+
+### Correções
+
+* conserta contratos do front que consultavam relacoes inexistentes ([#755](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/755)) ([d2fad00](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d2fad00f44d3e757ea14b43c5cfb71546199ce76))
+* da rota e link ao hub de insights conversacionais ([#768](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/768)) ([4f2fc32](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4f2fc32d8cb1893cb2e751e0e136e797ff16ff28))
+* desafios do vendedor logado e religa paginas sem caminho no menu ([#753](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/753)) ([fd79e14](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fd79e14efabba7cc720b1291db3cf85ae21d47c0))
+* estabiliza guard-rail de soft-delete de activities no CI ([#760](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/760)) ([9504215](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/95042153465a41f06a9320a6beff7434f3d0c53f))
+* painel de integracao le os logs reais de email ([#758](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/758)) ([bae0352](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/bae0352ac66f134078cb944790e2c68d2c15071f))
+* painel de integracao so aparece para quem pode ler os logs ([#759](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/759)) ([b224603](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b2246034b146c0e19cca729227a2b611d4537856))
+* relatorios de funil e cohort em rotas proprias ([#769](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/769)) ([4dbfb77](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4dbfb77c6862050db5bd49ec3bb6417200b396b9))
+* religa no menu 9 paginas de gestao e admin sem caminho na UI ([#754](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/754)) ([c69ce04](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/c69ce04334314763108ed04953211ac8ef5c9107))
+* restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) ([#756](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/756)) ([c720950](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/c72095095217bc55427854b9c5666b556c8d3113))
+* tira a escrita de log e de tendencia do navegador (etapas 052 e 053) ([#757](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/757)) ([5f1c0cd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5f1c0cdbe239affbd4eaecb679b0f48ecff44d0c))
+* tira a leitura anonima das metricas de conversao e do SLO ([#763](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/763)) ([42e1045](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/42e104500c0a795a8caaa88563a8de623dd30932))
+* tolera concorrencia no invariante de sequencia do stress de conversao ([#762](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/762)) ([736d7cc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/736d7cc3569a17a757ab3b3f8688f754eccd74d1))
+
 ## [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 
