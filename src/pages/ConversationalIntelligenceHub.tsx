@@ -5,12 +5,11 @@ const ConversationalIntelligenceHubPage = () => {
   return (
     <>
       <Helmet>
-        <title>Conversational Intelligence | Promo Champions</title>
+        <title>Insights Conversacionais | Promo Champions</title>
         <meta
           name="description"
-          content="Análise de chamadas com IA: sentimento, talk ratio, objeções e próximos passos automatizados."
+          content="Inteligência conversacional: sentimento, sinais de compra e de risco, objeções e tendências em calls, e-mails e WhatsApp."
         />
-        <link rel="canonical" href="/conversational-intelligence" />
       </Helmet>
       <main className="container mx-auto p-4 md:p-6">
         <ConversationalIntelligenceHub />

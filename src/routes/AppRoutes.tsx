@@ -50,6 +50,7 @@ import {
   EmailTracking,
   Automacoes,
   ConversationalIntelligence,
+  ConversationalIntelligenceHub,
   ConversationalIntelligenceRecordings,
   RevenueIntelligence,
   RevenueForecast,
@@ -353,6 +354,10 @@ export function AppRoutes() {
                         <Route
                           path="/conversational-intelligence/gravacoes"
                           element={<ConversationalIntelligenceRecordings />}
+                        />
+                        <Route
+                          path="/conversational-intelligence/insights"
+                          element={<ConversationalIntelligenceHub />}
                         />
                         <Route path="/momentos-criticos" element={<MomentosCriticos />} />
                         <Route

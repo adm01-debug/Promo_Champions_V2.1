@@ -71,6 +71,11 @@ export const Automacoes = lazyWithPrefetch(() => import('@/pages/Automacoes'));
 export const ConversationalIntelligence = lazyWithPrefetch(
   () => import('@/pages/ConversationalIntelligenceHub')
 );
+// Hub de KPIs de inteligência conversacional (calls/e-mails/WhatsApp).
+// Até aqui não tinha rota: nenhum link do app levava a ele.
+export const ConversationalIntelligenceHub = lazyWithPrefetch(
+  () => import('@/pages/ConversationalIntelligenceHub')
+);
 export const ConversationalIntelligenceRecordings = lazyWithPrefetch(
   () => import('@/pages/ConversationalIntelligence')
 );
