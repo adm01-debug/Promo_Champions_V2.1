@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a` (2026-11-28T15:18:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `46e61d1e20b4d9c8deb0a01872c05085888dfafc` (2026-11-28T15:18:19-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -594,8 +594,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24667 nós · 75468 arestas · 1208 comunidades · grafo do commit `41e6e0e2`
-- comunidades maiores: Card (660), schema.sql (564), Badge (469), client.ts (415), lucide-react (381), Button (339), getCorsHeaders (321), button.tsx (305), public (260), race/index.ts (255), badge.tsx (249), Input (242)
+- 24667 nós · 75468 arestas · 1203 comunidades · grafo do commit `46e61d1e`
+- comunidades maiores: schema.sql (564), lucide-react (455), CardHeader (437), client.ts (398), Button (368), react (344), getCorsHeaders (321), Badge (305), CardContent (275), public (260), Input (242), public.sales (238)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -779,6 +779,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-28 `46e61d1` chore: registra no backlog da UI os itens de push e passkey entregues (#772)
 - 2026-11-28 `41e6e0e` feat: convite para criar a primeira passkey apos o login (#771)
 - 2026-11-28 `dc8ce3c` feat: preferencias de push (categorias e horario de silencio) (#770)
 - 2026-11-28 `4dbfb77` fix: relatorios de funil e cohort em rotas proprias (#769)
@@ -793,7 +794,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `b224603` fix: painel de integracao so aparece para quem pode ler os logs (#759)
 - 2026-11-26 `c720950` fix: restaura escrita bloqueada por RLS (cadencia, follow-up, conversas e error_logs) (#756)
 - 2026-11-26 `bae0352` fix: painel de integracao le os logs reais de email (#758)
-- 2026-11-26 `5f1c0cd` fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

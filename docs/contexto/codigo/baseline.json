@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
+  "commit": "46e61d1e20b4d9c8deb0a01872c05085888dfafc",
   "branch": "main",
-  "data_commit": "2026-11-28T15:18:13-03:00",
+  "data_commit": "2026-11-28T15:18:19-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "46e61d1",
+    "data": "2026-11-28",
+    "assunto": "chore: registra no backlog da UI os itens de push e passkey entregues (#772)"
+   },
    {
     "sha": "41e6e0e",
     "data": "2026-11-28",
@@ -126,14 +131,9 @@
     "sha": "e8630cc",
     "data": "2026-11-25",
     "assunto": "chore: sonda read-only do estado da outbox no db-probe (#746)"
-   },
-   {
-    "sha": "2498492",
-    "data": "2026-11-24",
-    "assunto": "ci: release dispara o deploy (tag do GITHUB_TOKEN nao gera evento) (#740)"
    }
   ],
-  "arquivos_mudados_7d": 335,
+  "arquivos_mudados_7d": 332,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 260
+    "commits": 261
    },
    {
     "autor": "github-actions[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 18
+    "commits": 17
    }
   ]
  },

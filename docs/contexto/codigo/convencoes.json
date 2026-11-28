@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: registra no backlog da UI os itens de push e passkey entregues (#772)",
    "feat: convite para criar a primeira passkey apos o login (#771)",
    "feat: preferencias de push (categorias e horario de silencio) (#770)",
    "fix: relatorios de funil e cohort em rotas proprias (#769)",
-   "fix: da rota e link ao hub de insights conversacionais (#768)",
-   "fix: tira a leitura anonima das metricas de conversao e do SLO (#763)"
+   "fix: da rota e link ao hub de insights conversacionais (#768)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

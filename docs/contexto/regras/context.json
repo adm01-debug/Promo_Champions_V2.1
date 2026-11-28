@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
+  "sha": "46e61d1e20b4d9c8deb0a01872c05085888dfafc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-28 18:24 UTC",
+  "generated_at": "2026-11-28 19:14 UTC",
   "files_total": 3729,
   "code_files": 3373,
   "code_lines": 489197
@@ -302885,10 +302885,19 @@
   }
  },
  "git": {
-  "sha": "41e6e0e219d0cd8644f3d824ec7bb9f9c98aa04a",
+  "sha": "46e61d1e20b4d9c8deb0a01872c05085888dfafc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "46e61d1",
+    "date": "2026-11-28",
+    "author": "adm01-debug",
+    "subject": "chore: registra no backlog da UI os itens de push e passkey entregues (#772)",
+    "files": [
+     "docs/FUNCIONALIDADES_SEM_UI.md"
+    ]
+   },
    {
     "sha": "41e6e0e",
     "date": "2026-11-28",
@@ -303209,17 +303218,6 @@
     "files": [
      ".github/workflows/provisionar-secret-resend.yml"
     ]
-   },
-   {
-    "sha": "d52445e",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore: sonda read-only da fila do supply_outbox na suite remota (#737)",
-    "files": [
-     "docs/testes/suites-ci.md",
-     "scripts/run-sql-tests.sh",
-     "supabase/tests/supply_outbox_diagnostics.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -303238,6 +303236,10 @@
    [
     "src/components/dashboard/IntegrationStatusPanel.tsx",
     3
+   ],
+   [
+    "docs/FUNCIONALIDADES_SEM_UI.md",
+    2
    ],
    [
     "src/routes/routeAccess.ts",
@@ -303273,10 +303275,6 @@
    ],
    [
     ".github/workflows/db-probe.yml",
-    2
-   ],
-   [
-    "supabase/tests/supply_outbox_diagnostics.sql",
     2
    ],
    [
