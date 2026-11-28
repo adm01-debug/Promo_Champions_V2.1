@@ -54,7 +54,7 @@ describe('Playground da ranking-api', () => {
     await userEvent.click(screen.getByRole('button', { name: /executar/i }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toContain('/functions/v1/ranking-api/v2/users');
     expect(init.method).toBe('GET');
     expect(init.headers.Authorization).toBe('Bearer tok_123');

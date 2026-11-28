@@ -33,6 +33,7 @@ import {
 } from '@/hooks/admin/rankingApiPlayground';
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? '';
+const FIRST_ROUTE = RANKING_API_ROUTES[0] as RankingApiRoute;
 
 function valuesForRoute(route: RankingApiRoute, current: Record<string, string>) {
   const next: Record<string, string> = {};
@@ -107,15 +108,15 @@ function RankingApiPlaygroundContent() {
   const [token, setToken] = useState('');
   const [routeIndex, setRouteIndex] = useState(0);
   const [values, setValues] = useState<Record<string, string>>(() =>
-    valuesForRoute(RANKING_API_ROUTES[0], {})
+    valuesForRoute(FIRST_ROUTE, {})
   );
   const [result, setResult] = useState<RankingApiCallResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
-  const route = RANKING_API_ROUTES[routeIndex];
+  const route = RANKING_API_ROUTES[routeIndex] ?? FIRST_ROUTE;
   const path = resolveRoutePath(route, values);
-  const url = buildRequestUrl(SUPABASE_URL, route.method, path);
+  const url = buildRequestUrl(SUPABASE_URL, path);
   const missing = missingPathParams(route, values);
   const hasBody = route.method === 'POST' || route.method === 'PUT';
 
@@ -132,7 +133,7 @@ function RankingApiPlaygroundContent() {
 
   const selectRoute = (index: number) => {
     setRouteIndex(index);
-    setValues(valuesForRoute(RANKING_API_ROUTES[index], values));
+    setValues(valuesForRoute(RANKING_API_ROUTES[index] ?? FIRST_ROUTE, values));
     setResult(null);
     setError(null);
   };

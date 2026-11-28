@@ -210,7 +210,7 @@ export function buildRoutePath(
     .map(segment => {
       const match = /^\{(.+)\}$/.exec(segment);
       if (!match) return segment;
-      const value = (values[match[1]] ?? '').trim();
+      const value = (values[match[1] ?? ''] ?? '').trim();
       return value;
     })
     .join('/');
@@ -253,11 +253,7 @@ export function buildRequestBody(
 }
 
 /** URL absoluta da function a partir da origem do projeto Supabase. */
-export function buildRequestUrl(
-  supabaseUrl: string,
-  method: RankingApiMethod,
-  route: string
-): string {
+export function buildRequestUrl(supabaseUrl: string, route: string): string {
   return `${supabaseUrl.replace(/\/+$/, '')}/functions/v1/ranking-api/v2/${route}`;
 }
 

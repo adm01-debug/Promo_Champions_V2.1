@@ -8,6 +8,7 @@
  */
 import {
   buildRequestBody,
+  buildRequestUrl,
   buildRoutePath,
   type RankingApiRoute,
 } from './rankingApiCatalog';
@@ -43,7 +44,7 @@ export async function callRankingApi(options: {
 }): Promise<RankingApiCallResult> {
   const { supabaseUrl, method, path, token, route, values } = options;
   const base = supabaseUrl.replace(/\/+$/, '');
-  const url = `${base}/functions/v1/ranking-api/v2/${path}`;
+  const url = buildRequestUrl(base, path);
   const hasBody = method === 'POST' || method === 'PUT';
   const startedAt = performance.now();
 

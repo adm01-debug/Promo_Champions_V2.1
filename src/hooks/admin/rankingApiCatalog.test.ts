@@ -94,7 +94,7 @@ describe('montagem da requisição', () => {
   });
 
   it('monta a URL da function a partir da origem do projeto', () => {
-    expect(buildRequestUrl('https://x.supabase.co/', 'GET', 'users')).toBe(
+    expect(buildRequestUrl('https://x.supabase.co/', 'users')).toBe(
       'https://x.supabase.co/functions/v1/ranking-api/v2/users'
     );
   });
