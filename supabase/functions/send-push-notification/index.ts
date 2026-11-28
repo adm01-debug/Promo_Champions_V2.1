@@ -3,8 +3,38 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import {
+  PUSH_PREFS_KEY,
+  type PushPreferences,
+  type SuppressReason,
+  suppressReasons,
+} from "../_shared/push-preferences.ts";
 
-// Constant-time string compare to avoid timing side-channels.
+/** user_id -> motivo de supressão, consultando `user_app_settings` em blocos. */
+async function resolveSuppressedUsers(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  userIds: string[],
+  category: string | undefined,
+): Promise<Map<string, SuppressReason>> {
+  const suppressed = new Map<string, SuppressReason>();
+  const rows = await chunkedIn<{ user_id: string; value: PushPreferences }>(
+    userIds,
+    (chunk) =>
+      supabase
+        .from('user_app_settings')
+        .select('user_id, value')
+        .eq('key', PUSH_PREFS_KEY)
+        .in('user_id', chunk),
+    { parallel: true, label: 'send-push-notification.preferences' },
+  );
+  const now = new Date();
+  for (const row of rows ?? []) {
+    const reason = suppressReasons(row.value, category, now);
+    if (reason) suppressed.set(row.user_id, reason);
+  }
+  return suppressed;
+}
 function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -389,9 +419,32 @@ Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
       }
     }
 
+    // Respeita as preferências do destinatário (categoria + horário de silêncio),
+    // gravadas pelo app em `user_app_settings` sob a chave `push-preferences`.
+    // Push de teste do próprio usuário (`!isServiceCall`) nunca é suprimido.
+    let targets: string[] = user_ids;
+    if (isServiceCall) {
+      const suppressedByUser = await resolveSuppressedUsers(
+        supabase,
+        user_ids,
+        typeof data?.category === 'string' ? data.category : undefined,
+      );
+      targets = user_ids.filter((id: string) => !suppressedByUser.has(id));
+      if (targets.length === 0) {
+        return new Response(
+          JSON.stringify({
+            success: true,
+            sent: 0,
+            suppressed: [...suppressedByUser.entries()].map(([user_id, reason]) => ({ user_id, reason })),
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
     // Chunked p/ evitar overflow de URL (mesmo com limite de 100, tokens longos podem passar de 4KB).
     const subscriptions = await chunkedIn<{ id: string; user_id: string; endpoint: string; p256dh: string; auth: string }>(
-      user_ids,
+      targets,
       (chunk) => supabase
         .from('push_subscriptions')
         .select('id, user_id, endpoint, p256dh, auth')

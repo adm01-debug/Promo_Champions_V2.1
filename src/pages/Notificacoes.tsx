@@ -47,6 +47,7 @@ import { SoundSettings } from '@/components/settings/SoundSettings';
 import { SDRAlertHistory } from '@/components/sdr/SDRAlertHistory';
 import { TestSDRAlertButton } from '@/components/sdr/TestSDRAlertButton';
 import { BrowserPushSettings } from '@/components/settings/BrowserPushSettings';
+import { PushPreferencesCard } from '@/components/settings/PushPreferencesCard';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { NotificationPreferenceCard } from '@/components/notifications/NotificationPreferenceCard';
 import { toast } from 'sonner';
@@ -484,6 +485,7 @@ export default function Notificacoes() {
               <TabsContent value="sons" className="space-y-6">
                 <SoundSettings />
                 <BrowserPushSettings />
+                <PushPreferencesCard />
               </TabsContent>
             </Tabs>
           </div>
