@@ -2329,6 +2329,7 @@
    "/contas/:id",
    "/conversational-intelligence",
    "/conversational-intelligence/gravacoes",
+   "/conversational-intelligence/insights",
    "/customer-success",
    "/customer-success-360",
    "/deal-intelligence",

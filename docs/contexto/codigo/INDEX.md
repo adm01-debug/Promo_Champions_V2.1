@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `42e104500c0a795a8caaa88563a8de623dd30932` (2026-11-26T21:17:13-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4f2fc32d8cb1893cb2e751e0e136e797ff16ff28` (2026-11-28T13:43:07-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,11 +36,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3708 |
 | arquivos_codigo | 2636 |
-| linhas_codigo | 452160 |
-| rotas | 172 |
+| linhas_codigo | 452184 |
+| rotas | 173 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
-| itens_menu | 147 |
+| itens_menu | 148 |
 | modulos | 176 |
 | componentes | 1292 |
 | hooks | 485 |
@@ -148,7 +148,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 29 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 123 | 155 | 161 | 820 | 115 | 298 |
+| pages | 124 | 156 | 161 | 820 | 115 | 298 |
 | pages/admin | 2 | 14 | 14 | 83 | 10 | 49 |
 | services | 0 | 0 | 6 | 0 | 0 | 13 |
 
@@ -226,6 +226,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/contas/:id` [tela] → **ARQUIVO NÃO RESOLVIDO**
 - `/conversational-intelligence` [tela] → src/pages/ConversationalIntelligenceHub.tsx
 - `/conversational-intelligence/gravacoes` [tela] → src/pages/ConversationalIntelligence.tsx
+- `/conversational-intelligence/insights` [tela] → src/pages/ConversationalIntelligenceHub.tsx
 - `/customer-success` [tela] → src/pages/CustomerSuccessHub.tsx
 - `/customer-success-360` [tela] → src/pages/CustomerSuccess360.tsx
 - `/deal-intelligence` [tela] → src/pages/DealIntelligence.tsx
@@ -572,7 +573,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Permissões / papéis
 - papéis no código: user (52), system (43), closer (23), admin (22), sdr (22), alert (14), hybrid (14), status (14), region (10), manager (9), authenticated (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), salesperson (2), tab (2), tool (2), Roles (1), account_owner (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
 - enums de papel: salesperson_role: sdr|closer|hybrid; app_role: admin|manager|salesperson
-- guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 37 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /momentos-criticos, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
+- guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 37 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /conversational-intelligence/insights, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /momentos-criticos, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
 - feature flags: ENABLE_RLS, FEATURE_X, experimental_ui, nova-tela, novo-inbox
 
 ## Alertas (baseline.json → alertas)
@@ -593,8 +594,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24645 nós · 75407 arestas · 1217 comunidades · grafo do commit `42e10450`
-- comunidades maiores: Card (595), schema.sql (582), DialogContent (329), Input (326), cn (324), Badge (318), client.ts (309), lucide-react (307), react (251), public (245), public.sales (241), Skeleton (235)
+- 24646 nós · 75411 arestas · 1213 comunidades · grafo do commit `4f2fc32d`
+- comunidades maiores: schema.sql (599), Card (556), Button (419), cn (401), Índice (395), card.tsx (313), client.ts (311), public (266), Badge (265), TabsTrigger (260), set_updated_at (240), Skeleton (233)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -606,14 +607,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG.md (15)
 - src/integrations/supabase/types.ts (14)
 - .github/workflows/deploy.yml (7)
+- src/components/layout/sidebar/sidebarMenuData.ts (7)
 - docs/pendencias/backlog-verificado.md (6)
-- src/components/layout/sidebar/sidebarMenuData.ts (6)
 - src/components/pipeline/DealCard.tsx (6)
+- src/routes/AppRoutes.tsx (6)
+- src/routes/lazyPages.ts (6)
 - src/components/admin/AdminQuickLinks.tsx (5)
 - src/components/dashboard/IntegrationStatusPanel.tsx (5)
 - src/components/pipeline/PipelineBoard.tsx (5)
-- src/routes/AppRoutes.tsx (5)
-- src/routes/lazyPages.ts (5)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -778,6 +779,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-28 `4f2fc32` fix: da rota e link ao hub de insights conversacionais (#768)
 - 2026-11-26 `42e1045` fix: tira a leitura anonima das metricas de conversao e do SLO (#763)
 - 2026-11-26 `d1aa531` feat: tela admin da fila de análise de crédito da 1ª venda (#766)
 - 2026-11-26 `d44d566` infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)
@@ -792,7 +794,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `d2fad00` fix: conserta contratos do front que consultavam relacoes inexistentes (#755)
 - 2026-11-26 `c69ce04` fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)
 - 2026-11-26 `fd79e14` fix: desafios do vendedor logado e religa paginas sem caminho no menu (#753)
-- 2026-11-26 `fd3079d` feat: tela de Momentos Críticos para os alertas de chamada (#751)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

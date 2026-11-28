@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: da rota e link ao hub de insights conversacionais (#768)",
    "fix: tira a leitura anonima das metricas de conversao e do SLO (#763)",
    "feat: tela admin da fila de análise de crédito da 1ª venda (#766)",
    "infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)",
-   "chore(types): sincroniza types.ts com o banco oficial [auto] (#765)",
-   "feat: análise de crédito da 1ª venda — estado aguardando_credito, outbox e callback do Finance (#761)"
+   "chore(types): sincroniza types.ts com o banco oficial [auto] (#765)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -18879,7 +18879,7 @@
     "ConversationalIntelligenceHubPage"
    ],
    "export_default": "ConversationalIntelligenceHubPage",
-   "linhas": 23,
+   "linhas": 22,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],
@@ -20653,7 +20653,7 @@
     "AppRoutes"
    ],
    "export_default": null,
-   "linhas": 1167,
+   "linhas": 1172,
    "dominio": "routes",
    "hooks_locais": [],
    "tabelas": [],

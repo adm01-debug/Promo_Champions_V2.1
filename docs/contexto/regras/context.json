@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "42e104500c0a795a8caaa88563a8de623dd30932",
+  "sha": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-27 00:21 UTC",
+  "generated_at": "2026-11-28 16:43 UTC",
   "files_total": 3723,
   "code_files": 3367,
-  "code_lines": 488480
+  "code_lines": 488504
  },
  "version": "1.3.2",
- "facts_hash": "a1b30905918242fc",
+ "facts_hash": "20ba3429f452a8c3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94957,57 +94957,6 @@
    },
    {
     "path": "",
-    "file": "src/pages/ConversationalIntelligenceHub.tsx",
-    "component": "ConversationalIntelligenceHub",
-    "tables_transitive": [
-     "call_coaching_scorecards",
-     "call_conversation_metrics",
-     "call_critical_moments",
-     "call_insights",
-     "call_objection_analysis",
-     "call_objections",
-     "call_question_analysis",
-     "call_questions",
-     "call_recordings",
-     "call_sentiment_timeline",
-     "coaching_actions",
-     "committee_coverage_history",
-     "competitor_mentions",
-     "competitors_registry",
-     "deal_committee_coverage",
-     "lead_detailed_logs",
-     "objection_library",
-     "sales",
-     "sales_enablement_assets",
-     "sales_goals",
-     "salespeople",
-     "salesperson_coaching_aggregates",
-     "tabela",
-     "user_roles"
-    ],
-    "invokes_transitive": [
-     "aggregate-coaching-scorecard",
-     "analyze-call",
-     "analyze-conversation-metrics",
-     "analyze-objection-handling",
-     "analyze-question-quality",
-     "analyze-sentiment-timeline",
-     "calculate-committee-coverage",
-     "detect-competitor-mentions",
-     "detect-critical-moments",
-     "extract-coaching-actions",
-     "extract-committee-from-call",
-     "summarize-call-recording"
-    ],
-    "rpc_transitive": [
-     "create_activities_from_action_items",
-     "get_current_salesperson_id",
-     "search_call_library"
-    ],
-    "deps_count": 96
-   },
-   {
-    "path": "",
     "file": "src/pages/CustomerSuccess360.tsx",
     "component": "CustomerSuccess360",
     "tables_transitive": [
@@ -96510,6 +96459,57 @@
      "get_current_salesperson_id"
     ],
     "deps_count": 34
+   },
+   {
+    "path": "/conversational-intelligence/insights",
+    "file": "src/pages/ConversationalIntelligenceHub.tsx",
+    "component": "ConversationalIntelligenceHub",
+    "tables_transitive": [
+     "call_coaching_scorecards",
+     "call_conversation_metrics",
+     "call_critical_moments",
+     "call_insights",
+     "call_objection_analysis",
+     "call_objections",
+     "call_question_analysis",
+     "call_questions",
+     "call_recordings",
+     "call_sentiment_timeline",
+     "coaching_actions",
+     "committee_coverage_history",
+     "competitor_mentions",
+     "competitors_registry",
+     "deal_committee_coverage",
+     "lead_detailed_logs",
+     "objection_library",
+     "sales",
+     "sales_enablement_assets",
+     "sales_goals",
+     "salespeople",
+     "salesperson_coaching_aggregates",
+     "tabela",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "aggregate-coaching-scorecard",
+     "analyze-call",
+     "analyze-conversation-metrics",
+     "analyze-objection-handling",
+     "analyze-question-quality",
+     "analyze-sentiment-timeline",
+     "calculate-committee-coverage",
+     "detect-competitor-mentions",
+     "detect-critical-moments",
+     "extract-coaching-actions",
+     "extract-committee-from-call",
+     "summarize-call-recording"
+    ],
+    "rpc_transitive": [
+     "create_activities_from_action_items",
+     "get_current_salesperson_id",
+     "search_call_library"
+    ],
+    "deps_count": 96
    },
    {
     "path": "/corrida/espectador/:seasonId, /race-arena/spectator/:seasonId",
@@ -102873,6 +102873,13 @@
     "file": "src/routes/AppRoutes.tsx"
    },
    {
+    "path": "/conversational-intelligence/insights",
+    "component": "ConversationalIntelligenceHub",
+    "guard": "",
+    "roles": [],
+    "file": "src/routes/AppRoutes.tsx"
+   },
+   {
     "path": "/corrida/espectador/:seasonId",
     "component": "RaceSpectator",
     "guard": "",
@@ -107822,7 +107829,7 @@
   {
    "module": "src/components",
    "files": 1243,
-   "lines": 195504,
+   "lines": 195519,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108797,7 +108804,7 @@
   {
    "module": "src/pages",
    "files": 189,
-   "lines": 46258,
+   "lines": 46257,
    "tables": [
     "achievements",
     "activities",
@@ -108994,7 +109001,7 @@
   {
    "module": "src/routes",
    "files": 5,
-   "lines": 1940,
+   "lines": 1950,
    "tables": [],
    "exports": [
     "AppRoutes.tsx: AppRoutes",
@@ -242364,7 +242371,7 @@
   },
   "src/components/layout/sidebar/sidebarMenuData.ts": {
    "path": "src/components/layout/sidebar/sidebarMenuData.ts",
-   "lines": 439,
+   "lines": 454,
    "exports": [
     "interface MenuItem",
     "interface MenuGroup",
@@ -274941,12 +274948,9 @@
   },
   "src/pages/ConversationalIntelligenceHub.tsx": {
    "path": "src/pages/ConversationalIntelligenceHub.tsx",
-   "lines": 23,
+   "lines": 22,
    "exports": [
     "default ConversationalIntelligenceHubPage"
-   ],
-   "navigates": [
-    "/conversational-intelligence"
    ]
   },
   "src/pages/CustomReports.tsx": {
@@ -277133,7 +277137,7 @@
   },
   "src/routes/AppRoutes.tsx": {
    "path": "src/routes/AppRoutes.tsx",
-   "lines": 1167,
+   "lines": 1172,
    "exports": [
     "function AppRoutes"
    ],
@@ -277399,6 +277403,12 @@
     {
      "path": "/conversational-intelligence/gravacoes",
      "component": "ConversationalIntelligenceRecordings",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/conversational-intelligence/insights",
+     "component": "ConversationalIntelligenceHub",
      "guard": "",
      "roles": []
     },
@@ -278238,7 +278248,7 @@
   },
   "src/routes/lazyPages.ts": {
    "path": "src/routes/lazyPages.ts",
-   "lines": 365,
+   "lines": 370,
    "exports": [
     "const Index",
     "const Auth",
@@ -278277,6 +278287,7 @@
     "const EmailTracking",
     "const Automacoes",
     "const ConversationalIntelligence",
+    "const ConversationalIntelligenceHub",
     "const ConversationalIntelligenceRecordings",
     "const MomentosCriticos",
     "const RevenueIntelligence",
@@ -278298,8 +278309,7 @@
     "const CommissionRules",
     "const AdminPremiacoes",
     "const AdminAuditoriaPremiacoes",
-    "const AdminFilaTarefasAutomaticas",
-    "const AdminRegrasInatividade"
+    "const AdminFilaTarefasAutomaticas"
    ]
   },
   "src/routes/pagePrefetchMap.ts": {
@@ -302652,10 +302662,22 @@
   }
  },
  "git": {
-  "sha": "42e104500c0a795a8caaa88563a8de623dd30932",
+  "sha": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4f2fc32",
+    "date": "2026-11-28",
+    "author": "adm01-debug",
+    "subject": "fix: da rota e link ao hub de insights conversacionais (#768)",
+    "files": [
+     "src/components/layout/sidebar/sidebarMenuData.ts",
+     "src/pages/ConversationalIntelligenceHub.tsx",
+     "src/routes/AppRoutes.tsx",
+     "src/routes/lazyPages.ts"
+    ]
+   },
    {
     "sha": "42e1045",
     "date": "2026-11-26",
@@ -302968,24 +302990,23 @@
     "files": [
      ".github/workflows/auto-apply-migrations.yml"
     ]
-   },
-   {
-    "sha": "652e105",
-    "date": "2026-11-24",
-    "author": "github-actions[bot]",
-    "subject": "chore(types): sincroniza types.ts com o banco oficial [auto] (#735)",
-    "files": [
-     "src/integrations/supabase/types.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    "src/components/dashboard/IntegrationStatusPanel.tsx",
+    "src/components/layout/sidebar/sidebarMenuData.ts",
+    4
+   ],
+   [
+    "src/routes/AppRoutes.tsx",
     3
    ],
    [
-    "src/components/layout/sidebar/sidebarMenuData.ts",
+    "src/routes/lazyPages.ts",
+    3
+   ],
+   [
+    "src/components/dashboard/IntegrationStatusPanel.tsx",
     3
    ],
    [
@@ -303003,18 +303024,6 @@
    [
     "package.json",
     3
-   ],
-   [
-    "src/routes/AppRoutes.tsx",
-    2
-   ],
-   [
-    "src/routes/lazyPages.ts",
-    2
-   ],
-   [
-    "src/integrations/supabase/types.ts",
-    2
    ],
    [
     "src/components/dashboard/IntegrationStatusPanel.test.tsx",
@@ -303035,6 +303044,10 @@
    [
     "supabase/tests/supply_outbox_diagnostics.sql",
     2
+   ],
+   [
+    "src/pages/ConversationalIntelligenceHub.tsx",
+    1
    ],
    [
     "supabase/migrations/20261128150000_revoga_anon_metricas_conversao_e_slo.sql",

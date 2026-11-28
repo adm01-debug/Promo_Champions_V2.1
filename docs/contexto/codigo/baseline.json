@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "42e104500c0a795a8caaa88563a8de623dd30932",
+  "commit": "4f2fc32d8cb1893cb2e751e0e136e797ff16ff28",
   "branch": "main",
-  "data_commit": "2026-11-26T21:17:13-03:00",
+  "data_commit": "2026-11-28T13:43:07-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4f2fc32",
+    "data": "2026-11-28",
+    "assunto": "fix: da rota e link ao hub de insights conversacionais (#768)"
+   },
    {
     "sha": "42e1045",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "4565034",
     "data": "2026-11-24",
     "assunto": "fix: restaura timeouts de DNS lento derrubados pela 20261127000000 (#742)"
-   },
-   {
-    "sha": "b45a2bf",
-    "data": "2026-11-24",
-    "assunto": "ci: provisiona RESEND_API_KEY nas edge functions (#738)"
    }
   ],
-  "arquivos_mudados_7d": 381,
+  "arquivos_mudados_7d": 362,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -226,15 +226,23 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/components/layout/sidebar/sidebarMenuData.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": "docs/pendencias/backlog-verificado.md",
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/layout/sidebar/sidebarMenuData.ts",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 6
    },
    {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
+    "arquivo": "src/routes/AppRoutes.tsx",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "src/routes/lazyPages.ts",
     "mudancas": 6
    },
    {
@@ -247,14 +255,6 @@
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/routes/AppRoutes.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/routes/lazyPages.ts",
     "mudancas": 5
    },
    {
@@ -316,11 +316,11 @@
  "contagens": {
   "arquivos_total": 3708,
   "arquivos_codigo": 2636,
-  "linhas_codigo": 452160,
-  "rotas": 172,
+  "linhas_codigo": 452184,
+  "rotas": 173,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
-  "itens_menu": 147,
+  "itens_menu": 148,
   "modulos": 176,
   "componentes": 1292,
   "hooks": 485,
@@ -592,7 +592,7 @@
   },
   "src/components": {
    "arquivos": 1243,
-   "linhas": 195505
+   "linhas": 195520
   },
   "src/config": {
    "arquivos": 4,
@@ -624,11 +624,11 @@
   },
   "src/pages": {
    "arquivos": 189,
-   "linhas": 46258
+   "linhas": 46257
   },
   "src/routes": {
    "arquivos": 5,
-   "linhas": 1940
+   "linhas": 1950
   },
   "src/services": {
    "arquivos": 9,
@@ -706,7 +706,7 @@
   },
   {
    "arquivo": "src/routes/AppRoutes.tsx",
-   "linhas": 1167
+   "linhas": 1172
   },
   {
    "arquivo": "scripts/graphify-local.mjs",
