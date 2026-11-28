@@ -739,22 +739,6 @@ export function AppRoutes() {
                             </ProtectedRoute>
                           }
                         />
-                        <Route
-                          path="/relatorios/funil"
-                          element={
-                            <Manager>
-                              <FunnelReport />
-                            </Manager>
-                          }
-                        />
-                        <Route
-                          path="/relatorios/cohort"
-                          element={
-                            <Manager>
-                              <CohortReport />
-                            </Manager>
-                          }
-                        />
                         <Route path="/top-produtos" element={<TopProductsRanking />} />
                         <Route
                           path="/evolucao-precos"
@@ -814,6 +798,22 @@ export function AppRoutes() {
                         <Route path="/perfil-gamer" element={<GamifiedProfilePage />} />
                         <Route path="/arena" element={<ArenaCompetitiva />} />
                         <Route
+                          path="/relatorios/funil"
+                          element={
+                            <Manager>
+                              <FunnelReport />
+                            </Manager>
+                          }
+                        />
+                        <Route
+                          path="/relatorios/cohort"
+                          element={
+                            <Manager>
+                              <CohortReport />
+                            </Manager>
+                          }
+                        />
+                        <Route
                           path="/race-arena"
                           element={
                             <RaceTransitionWrapper>
@@ -824,17 +824,21 @@ export function AppRoutes() {
                         <Route
                           path="/race-arena/closer"
                           element={
-                            <RaceTransitionWrapper>
-                              <RaceArenaCloser />
-                            </RaceTransitionWrapper>
+                            <Manager>
+                              <RaceTransitionWrapper>
+                                <RaceArenaCloser />
+                              </RaceTransitionWrapper>
+                            </Manager>
                           }
                         />
                         <Route
                           path="/race-arena/sdr"
                           element={
-                            <RaceTransitionWrapper>
-                              <RaceArenaSDR />
-                            </RaceTransitionWrapper>
+                            <Manager>
+                              <RaceTransitionWrapper>
+                                <RaceArenaSDR />
+                              </RaceTransitionWrapper>
+                            </Manager>
                           }
                         />
                         <Route

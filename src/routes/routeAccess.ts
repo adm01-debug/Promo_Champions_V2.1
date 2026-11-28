@@ -60,6 +60,8 @@ export const managerOnlyRoutes: readonly string[] = [
   '/sla-tracking',
   '/lead-routing',
   '/workflows',
+  '/race-arena/closer',
+  '/race-arena/sdr',
   '/analytics',
   '/analytics/abc',
   '/analytics/closing-time',
