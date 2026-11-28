@@ -32,8 +32,15 @@ interface PasskeyOnboardingPromptProps {
  */
 export function PasskeyOnboardingPrompt({ className }: PasskeyOnboardingPromptProps) {
   const { user } = useAuth();
-  const { isSupported, isAvailable, isLoading, loadError, credentials, loadCredentials, registerPasskey } =
-    useWebAuthn();
+  const {
+    isSupported,
+    isAvailable,
+    isLoading,
+    loadError,
+    credentials,
+    loadCredentials,
+    registerPasskey,
+  } = useWebAuthn();
   const [dismissed, setDismissed] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -74,8 +81,8 @@ export function PasskeyOnboardingPrompt({ className }: PasskeyOnboardingPromptPr
           <div>
             <p className="text-sm font-semibold">Entre sem digitar senha</p>
             <p className="text-xs text-muted-foreground">
-              Crie uma passkey neste aparelho: entrada com biometria ou PIN e menos
-              risco de phishing. Sua senha continua funcionando.
+              Crie uma passkey neste aparelho: entrada com biometria ou PIN e menos risco
+              de phishing. Sua senha continua funcionando.
             </p>
           </div>
         </div>
