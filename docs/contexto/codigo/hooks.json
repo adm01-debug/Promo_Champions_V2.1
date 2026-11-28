@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 485,
+ "total": 486,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -10029,6 +10029,26 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/usePushPreferences.ts",
+   "hooks_exportados": [
+    "usePushPreferences"
+   ],
+   "linhas": 120,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/settings/PushPreferencesCard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
    "arquivo": "src/hooks/useQueryPerformance.ts",
    "hooks_exportados": [
     "useQueryPerformance"
@@ -10832,9 +10852,10 @@
     "useRef"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/purchase-intelligence/IntelligenceSettings.tsx",
+    "src/hooks/usePushPreferences.ts",
     "src/hooks/win-loss/useAtRiskSettings.ts"
    ],
    "coberto_por_testes": 1

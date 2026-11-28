@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
+  "sha": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-28 17:31 UTC",
-  "files_total": 3723,
-  "code_files": 3367,
-  "code_lines": 488510
+  "generated_at": "2026-11-28 18:09 UTC",
+  "files_total": 3728,
+  "code_files": 3372,
+  "code_lines": 489089
  },
  "version": "1.3.2",
- "facts_hash": "d301668adac5bd82",
+ "facts_hash": "c9007643bd182891",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -433,8 +433,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1412,
-   ".ts": 1142,
+   ".tsx": 1413,
+   ".ts": 1146,
    ".sql": 731,
    ".mjs": 72,
    ".js": 6,
@@ -97091,6 +97091,7 @@
      "sales_goals",
      "salespeople",
      "sdr_alert_history",
+     "user_app_settings",
      "user_roles"
     ],
     "invokes_transitive": [
@@ -97102,7 +97103,7 @@
      "mark_all_notifications_read",
      "send_notification"
     ],
-    "deps_count": 48
+    "deps_count": 51
    },
    {
     "path": "/nps",
@@ -101320,7 +101321,8 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "push_subscriptions",
-     "sales"
+     "sales",
+     "user_app_settings"
     ],
     "env": [
      "SUPABASE_ANON_KEY",
@@ -103856,7 +103858,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1243,
+  "components_count": 1244,
   "hooks": [
    {
     "name": "useContacts",
@@ -106783,6 +106785,10 @@
     "file": "src/hooks/usePushNotifications.ts"
    },
    {
+    "name": "usePushPreferences",
+    "file": "src/hooks/usePushPreferences.ts"
+   },
+   {
     "name": "useQueryPerformance",
     "file": "src/hooks/useQueryPerformance.ts"
    },
@@ -107828,8 +107834,8 @@
   },
   {
    "module": "src/components",
-   "files": 1243,
-   "lines": 195519,
+   "files": 1244,
+   "lines": 195719,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108159,8 +108165,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 559,
-   "lines": 66268,
+   "files": 561,
+   "lines": 66453,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -108804,7 +108810,7 @@
   {
    "module": "src/pages",
    "files": 189,
-   "lines": 46257,
+   "lines": 46259,
    "tables": [
     "achievements",
     "activities",
@@ -109216,8 +109222,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 337,
-   "lines": 68623,
+   "files": 339,
+   "lines": 68815,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -109392,6 +109398,7 @@
     "team_members",
     "teams",
     "twilio_call_sessions",
+    "user_app_settings",
     "user_roles",
     "v4_callback_alert_settings",
     "v4_callback_alerts",
@@ -109442,6 +109449,7 @@
     "notification-categories.ts: NOTIFICATION_CATEGORIES, NotificationCategory, NOTIFICATION_PRIORITIES, NotificationPriority, notificationCategorySchema, notificationPrioritySchema",
     "oauth-state.ts: base64UrlEncode, base64UrlDecode, SignedOAuthState, createSignedOAuthState, verifySignedOAuthState",
     "pii.ts: maskEmail, maskPhone, maskDoc, maskFreeText",
+    "push-preferences.ts: PUSH_PREFS_KEY, PushPreferences, SuppressReason, suppressReasons, isSuppressed",
     "rate-limit.ts: RateLimitConfig, rateLimitUserKey, RateLimitResult, checkRateLimit, rateLimitHeaders, enforceRateLimit",
     "request-body.ts: readUtf8BodyWithinLimit",
     "request-id.ts: extractOrMintRequestId, extractUserIdFromJwt, withRequestIdHeader, attachRequestId, logWithRequestId, RequestIdContext",
@@ -109459,8 +109467,7 @@
     "unsubscribe.ts: OptOutFilterResult, normalizeEmail, makeUnsubscribeToken, safeEqual, verifyUnsubscribeToken, buildUnsubscribeUrl",
     "validation.ts: ValidationError, ValidationResult, validateString, validateUUID, validateArray, validateNumber",
     "webauthn-helpers.ts: bytesToBase64url, base64urlToBytes, expectedOrigins",
-    "webhook-auth.ts: EnvReader, WebhookAuthentication, timingSafeEqual, hmacSha256Hex, hmacSha256Base64, hmacSha1Base64",
-    "webhook-integrity.ts: NormalizedMessageStatus, previousStatusesFor, canAdvanceMessageStatus, InboundEmailProvider, InboundEventType, InboundEmailPayload"
+    "webhook-auth.ts: EnvReader, WebhookAuthentication, timingSafeEqual, hmacSha256Hex, hmacSha256Base64, hmacSha1Base64"
    ],
    "docs": [
     "ai-gateway.ts: Ponto único de configuração dos endpoints de IA (OpenAI-compatíveis). Chat e embeddings apontam para o OpenRouter (endpoints OpenAI). Para mudar, defina o env OPENROUTER_BASE_URL (ex.: \"https://openrouter.ai/api/v1\"). Ambos usam o env OPENROUTER_API_KEY (sk-or-...).",
@@ -109521,6 +109528,8 @@
     "supabase/functions/_shared/operational-cron-auth_contract_test.ts",
     "supabase/functions/_shared/pii.ts",
     "supabase/functions/_shared/privileged-churn-auth_contract_test.ts",
+    "supabase/functions/_shared/push-preferences.ts",
+    "supabase/functions/_shared/push-preferences_test.ts",
     "supabase/functions/_shared/race-leaderboard-status_contract_test.ts",
     "supabase/functions/_shared/rate-limit.ts",
     "supabase/functions/_shared/request-body.ts",
@@ -109560,9 +109569,7 @@
     "supabase/functions/account-engagement-aggregator/index.ts",
     "supabase/functions/activity-goal-alerts/index.ts",
     "supabase/functions/admin-conversion-trail/index.ts",
-    "supabase/functions/aggregate-coaching-scorecard/index.ts",
-    "supabase/functions/ai-agent-orchestrator/index.ts",
-    "supabase/functions/ai-copilot/index.ts"
+    "supabase/functions/aggregate-coaching-scorecard/index.ts"
    ]
   },
   {
@@ -113781,7 +113788,8 @@
    "user_app_settings": {
     "select": [
      "src/components/dashboard/FuturisticSpeedometerDashboard.tsx",
-     "src/hooks/useSyncedSetting.ts"
+     "src/hooks/useSyncedSetting.ts",
+     "supabase/functions/send-push-notification/index.ts"
     ],
     "upsert": [
      "src/components/dashboard/FuturisticSpeedometerDashboard.tsx",
@@ -119377,6 +119385,11 @@
     "values": "excellent | healthy | warning | critical"
    },
    {
+    "file": "src/hooks/usePushPreferences.ts",
+    "name": "PUSH_CATEGORIES",
+    "values": "'sdr_alerts', 'security', 'milestones', 'streaks', 'urgent_tasks',"
+   },
+   {
     "file": "src/hooks/useSDRActivityTrend.ts",
     "name": "PeriodFilter",
     "values": "week | month | quarter"
@@ -119870,6 +119883,11 @@
     "file": "supabase/functions/_shared/notification-categories.ts",
     "name": "NOTIFICATION_PRIORITIES",
     "values": "\"low\", \"medium\", \"high\", \"critical\","
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences.ts",
+    "name": "SuppressReason",
+    "values": "category | quiet_hours"
    },
    {
     "file": "supabase/functions/_shared/sale-statuses.ts",
@@ -122865,6 +122883,26 @@
     "msg": "${offenders.length} edge function(s) inserem em notifications sem partitionNotificationBatch:\\n${msg}\\n"
    },
    {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "msg": "${message}: esperado ${e}, recebido ${a}"
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "msg": "a categoria deve vir de data.category"
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "msg": "a fonte das preferencias deve ser user_app_settings"
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "msg": "o filtro de preferencias deve rodar apenas em chamadas service_role"
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "msg": "o filtro deve consultar user_app_settings"
+   },
+   {
     "file": "supabase/functions/_shared/request-body.ts",
     "msg": "invalid_body_limit"
    },
@@ -124641,6 +124679,14 @@
     "text": "Request notification permission"
    },
    {
+    "file": "src/hooks/usePushPreferences.ts",
+    "text": "payload de `send-push-notification` (`data.category`) e por isso não pode"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.ts",
+    "text": "* Verdadeiro quando o envio deve ser suprimido pelas preferências do usuário."
+   },
+   {
     "file": "src/hooks/useQuotes.ts",
     "text": "sem limite, o teto de 1000 linhas do PostgREST truncava silencioso."
    },
@@ -125111,6 +125157,14 @@
    {
     "file": "supabase/functions/_shared/notification-inserters_test.ts",
     "text": "Todo edge function que insere em `notifications` DEVE passar por"
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences.ts",
+    "text": "* Motivo pelo qual o push deve ser suprimido, ou `null` se pode ser enviado."
+   },
+   {
+    "file": "supabase/functions/_shared/push-preferences_test.ts",
+    "text": "Data local explicita: a regra usa hora local do servidor."
    },
    {
     "file": "supabase/functions/_shared/rate-limit.ts",
@@ -141352,6 +141406,11 @@
     "file": "src/hooks/useMyBonusAwards.ts",
     "name": "CHUNK",
     "value": "1000"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.ts",
+    "name": "SCHEMA_VERSION",
+    "value": "1"
    },
    {
     "file": "src/hooks/useQueryPerformance.ts",
@@ -161664,6 +161723,34 @@
    {
     "file": "src/hooks/useProductRecommendations.test.tsx",
     "name": "agrega counts ignorando product_id null e tolera product_name/amount nulos"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "sanitizePushPreferences"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "devolve os padrões quando nada foi gravado"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "preserva escolhas válidas e descarta lixo"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "isPushSuppressed"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "respeita categoria desligada sem afetar as demais"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "trata janela que cruza a meia-noite como intervalo contínuo"
+   },
+   {
+    "file": "src/hooks/usePushPreferences.test.ts",
+    "name": "não suprime quando o silêncio está desligado"
    },
    {
     "file": "src/hooks/useRunRateProjection.test.ts",
@@ -200975,6 +201062,8 @@
    "supabase/functions/_shared/edge-runtime-regressions_contract_test.ts",
    "supabase/functions/_shared/internal-service-auth.ts",
    "supabase/functions/_shared/privileged-churn-auth_contract_test.ts",
+   "supabase/functions/_shared/push-preferences.ts",
+   "supabase/functions/_shared/push-preferences_test.ts",
    "supabase/functions/_shared/rate-limit.ts",
    "supabase/functions/_shared/retry.ts",
    "supabase/functions/_shared/secret-refs.ts",
@@ -249183,6 +249272,13 @@
     "function PortfolioSettings"
    ]
   },
+  "src/components/settings/PushPreferencesCard.tsx": {
+   "path": "src/components/settings/PushPreferencesCard.tsx",
+   "lines": 200,
+   "exports": [
+    "function PushPreferencesCard"
+   ]
+  },
   "src/components/settings/RoleManagement.tsx": {
    "path": "src/components/settings/RoleManagement.tsx",
    "lines": 237,
@@ -255599,6 +255695,53 @@
    ],
    "side_effects": [
     "invoke("
+   ]
+  },
+  "src/hooks/usePushPreferences.test.ts": {
+   "path": "src/hooks/usePushPreferences.test.ts",
+   "lines": 65,
+   "is_test": true,
+   "tests": [
+    "sanitizePushPreferences",
+    "devolve os padrões quando nada foi gravado",
+    "preserva escolhas válidas e descarta lixo",
+    "isPushSuppressed",
+    "respeita categoria desligada sem afetar as demais",
+    "trata janela que cruza a meia-noite como intervalo contínuo",
+    "não suprime quando o silêncio está desligado"
+   ]
+  },
+  "src/hooks/usePushPreferences.ts": {
+   "path": "src/hooks/usePushPreferences.ts",
+   "lines": 120,
+   "exports": [
+    "const PUSH_CATEGORIES",
+    "type PushCategory",
+    "interface PushPreferences",
+    "const PUSH_DEFAULTS",
+    "function sanitizePushPreferences",
+    "function isPushSuppressed",
+    "interface UsePushPreferencesResult",
+    "function usePushPreferences"
+   ],
+   "enums": [
+    {
+     "name": "PUSH_CATEGORIES",
+     "values": "'sdr_alerts', 'security', 'milestones', 'streaks', 'urgent_tasks',"
+    }
+   ],
+   "params": [
+    {
+     "name": "SCHEMA_VERSION",
+     "value": "1"
+    }
+   ],
+   "rule_comments": [
+    "payload de `send-push-notification` (`data.category`) e por isso não pode",
+    "* Verdadeiro quando o envio deve ser suprimido pelas preferências do usuário."
+   ],
+   "hooks": [
+    "usePushPreferences"
    ]
   },
   "src/hooks/useQueryPerformance.ts": {
@@ -275724,7 +275867,7 @@
   },
   "src/pages/Notificacoes.tsx": {
    "path": "src/pages/Notificacoes.tsx",
-   "lines": 495,
+   "lines": 497,
    "exports": [
     "function Notificacoes"
    ],
@@ -280063,6 +280206,43 @@
      "table": "auto_task_queue_settings",
      "op": "ref"
     }
+   ],
+   "uses_service_role": true
+  },
+  "supabase/functions/_shared/push-preferences.ts": {
+   "path": "supabase/functions/_shared/push-preferences.ts",
+   "lines": 57,
+   "exports": [
+    "const PUSH_PREFS_KEY",
+    "interface PushPreferences",
+    "type SuppressReason",
+    "function suppressReasons",
+    "function isSuppressed"
+   ],
+   "enums": [
+    {
+     "name": "SuppressReason",
+     "values": "category | quiet_hours"
+    }
+   ],
+   "rule_comments": [
+    "* Motivo pelo qual o push deve ser suprimido, ou `null` se pode ser enviado."
+   ],
+   "doc": "Regras de supressão de push por preferência do destinatário. O app grava as escolhas em `user_app_settings` (chave `push-preferences`, RLS por usuário). O envio é feito por service_role, por isso o filtro só pode existir aqui: o remetente não conhece o fuso nem as escolhas de quem recebe. Módulo pur …",
+   "uses_service_role": true
+  },
+  "supabase/functions/_shared/push-preferences_test.ts": {
+   "path": "supabase/functions/_shared/push-preferences_test.ts",
+   "lines": 81,
+   "errors": [
+    "${message}: esperado ${e}, recebido ${a}",
+    "a categoria deve vir de data.category",
+    "a fonte das preferencias deve ser user_app_settings",
+    "o filtro de preferencias deve rodar apenas em chamadas service_role",
+    "o filtro deve consultar user_app_settings"
+   ],
+   "rule_comments": [
+    "Data local explicita: a regra usa hora local do servidor."
    ],
    "uses_service_role": true
   },
@@ -288672,7 +288852,7 @@
   },
   "supabase/functions/new-device-alert/index.ts": {
    "path": "supabase/functions/new-device-alert/index.ts",
-   "lines": 328,
+   "lines": 329,
    "tables": [
     {
      "table": "known_devices",
@@ -293850,8 +294030,12 @@
   },
   "supabase/functions/send-push-notification/index.ts": {
    "path": "supabase/functions/send-push-notification/index.ts",
-   "lines": 452,
+   "lines": 505,
    "tables": [
+    {
+     "table": "user_app_settings",
+     "op": "select"
+    },
     {
      "table": "push_subscriptions",
      "op": "select"
@@ -293862,6 +294046,11 @@
     }
    ],
    "table_cols": {
+    "user_app_settings": [
+     "key",
+     "user_id",
+     "value"
+    ],
     "push_subscriptions": [
      "auth",
      "endpoint",
@@ -302662,10 +302851,26 @@
   }
  },
  "git": {
-  "sha": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
+  "sha": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "dc8ce3c",
+    "date": "2026-11-28",
+    "author": "adm01-debug",
+    "subject": "feat: preferencias de push (categorias e horario de silencio) (#770)",
+    "files": [
+     "src/components/settings/PushPreferencesCard.tsx",
+     "src/hooks/usePushPreferences.test.ts",
+     "src/hooks/usePushPreferences.ts",
+     "src/pages/Notificacoes.tsx",
+     "supabase/functions/_shared/push-preferences.ts",
+     "supabase/functions/_shared/push-preferences_test.ts",
+     "supabase/functions/new-device-alert/index.ts",
+     "supabase/functions/send-push-notification/index.ts"
+    ]
+   },
    {
     "sha": "4dbfb77",
     "date": "2026-11-28",
@@ -302980,18 +303185,6 @@
     "files": [
      "supabase/migrations/20261127000000_supply_dispatch_timeout_60s.sql"
     ]
-   },
-   {
-    "sha": "930e42e",
-    "date": "2026-11-24",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.9.0 (#733)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -303012,22 +303205,6 @@
     3
    ],
    [
-    ".release-please-manifest.json",
-    3
-   ],
-   [
-    "CHANGELOG.md",
-    3
-   ],
-   [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
-    3
-   ],
-   [
     "src/routes/routeAccess.ts",
     2
    ],
@@ -303044,6 +303221,22 @@
     2
    ],
    [
+    ".release-please-manifest.json",
+    2
+   ],
+   [
+    "CHANGELOG.md",
+    2
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
     ".github/workflows/db-probe.yml",
     2
    ],
@@ -303052,27 +303245,27 @@
     2
    ],
    [
-    "docs/FUNCIONALIDADES_SEM_UI.md",
+    "src/components/settings/PushPreferencesCard.tsx",
     1
    ],
    [
-    "src/pages/ConversationalIntelligenceHub.tsx",
+    "src/hooks/usePushPreferences.test.ts",
     1
    ],
    [
-    "supabase/migrations/20261128150000_revoga_anon_metricas_conversao_e_slo.sql",
+    "src/hooks/usePushPreferences.ts",
     1
    ],
    [
-    "src/components/admin/AdminQuickLinks.tsx",
+    "src/pages/Notificacoes.tsx",
     1
    ],
    [
-    "src/hooks/admin/useCreditAnalysis.ts",
+    "supabase/functions/_shared/push-preferences.ts",
     1
    ],
    [
-    "src/pages/admin/AdminCreditAnalysisPage.test.tsx",
+    "supabase/functions/_shared/push-preferences_test.ts",
     1
    ]
   ]

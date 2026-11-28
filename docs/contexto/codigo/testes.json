@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 291,
+ "total": 292,
  "por_tipo": {
   "contrato": 8,
   "e2e": 54,
   "pytest": 2,
-  "unit": 218
+  "unit": 219
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 203
+   "arquivos": 204
   },
   {
    "padrao": "tests/",
@@ -1300,6 +1300,15 @@
     "src/hooks/useProductRecommendations.ts"
    ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/usePushPreferences.test.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/hooks/usePushPreferences.ts"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/hooks/useRunRateProjection.test.ts",
@@ -2626,6 +2635,7 @@
   "src/hooks/usePlaybooks.ts": 1,
   "src/hooks/usePricingIntelligence.ts": 1,
   "src/hooks/useProductRecommendations.ts": 1,
+  "src/hooks/usePushPreferences.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,
   "src/hooks/useSyncedSetting.ts": 1,

@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4dbfb77c68` · branch `main` · 2026-11-28 17:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dc8ce3cbc3` · branch `main` · 2026-11-28 18:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 336 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 338 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -349,6 +349,8 @@
 - `supabase/functions/_shared/edge-runtime-regressions_contract_test.ts`
 - `supabase/functions/_shared/internal-service-auth.ts`
 - `supabase/functions/_shared/privileged-churn-auth_contract_test.ts`
+- `supabase/functions/_shared/push-preferences.ts`
+- `supabase/functions/_shared/push-preferences_test.ts`
 - `supabase/functions/_shared/rate-limit.ts`
 - `supabase/functions/_shared/retry.ts`
 - `supabase/functions/_shared/secret-refs.ts`
@@ -470,9 +472,7 @@
 - `supabase/functions/twilio-call-status/index.ts`
 - `supabase/functions/twilio-call-twiml/index.ts`
 - `supabase/functions/twilio-click-to-call/index.ts`
-- `supabase/functions/visual-search/index.ts`
-- `supabase/functions/wal-health-alert/index.ts`
-- … +186 (lista completa em `context.json`)
+- … +188 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

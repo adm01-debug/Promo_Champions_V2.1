@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1292,
+ "total": 1293,
  "orfaos": 0,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -14993,6 +14993,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/settings/PushPreferencesCard.tsx",
+   "exports": [
+    "PushPreferencesCard"
+   ],
+   "export_default": null,
+   "linhas": 200,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "usePushPreferences"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/settings/RoleManagement.tsx",
    "exports": [
     "RoleManagement"
@@ -15735,7 +15751,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 557,
+   "usado_por": 558,
    "orfao": false
   },
   {
@@ -15769,7 +15785,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 545,
+   "usado_por": 546,
    "orfao": false
   },
   {
@@ -15801,7 +15817,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 717,
+   "usado_por": 718,
    "orfao": false
   },
   {
@@ -15943,7 +15959,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 187,
+   "usado_por": 188,
    "orfao": false
   },
   {
@@ -15957,7 +15973,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 138,
+   "usado_por": 139,
    "orfao": false
   },
   {
@@ -16216,7 +16232,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 65,
+   "usado_por": 66,
    "orfao": false
   },
   {
@@ -19599,7 +19615,7 @@
     "Notificacoes"
    ],
    "export_default": "Notificacoes",
-   "linhas": 495,
+   "linhas": 497,
    "dominio": "pages",
    "hooks_locais": [
     "useCreateNotificationPreference",

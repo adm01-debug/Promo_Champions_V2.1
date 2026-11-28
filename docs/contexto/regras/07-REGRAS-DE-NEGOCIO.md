@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4dbfb77c68` · branch `main` · 2026-11-28 17:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dc8ce3cbc3` · branch `main` · 2026-11-28 18:09 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1687,6 +1687,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | NotificationPriority | low \| medium \| high \| critical | `src/hooks/useNotifications.ts` |
 | PipelineStageId | lead \| qualified \| proposal \| negotiation \| won \| lost \| closed | `src/hooks/usePipeline.ts` |
 | PricingHealth | excellent \| healthy \| warning \| critical | `src/hooks/usePricingIntelligence.ts` |
+| PUSH_CATEGORIES | 'sdr_alerts', 'security', 'milestones', 'streaks', 'urgent_tasks', | `src/hooks/usePushPreferences.ts` |
 | PeriodFilter | week \| month \| quarter | `src/hooks/useSDRActivityTrend.ts` |
 | ViewMode | activity \| comparison | `src/hooks/useSDRActivityTrend.ts` |
 | ActivityTypeFilter | all \| call \| email \| meeting \| linkedin \| whatsapp | `src/hooks/useSDRActivityTrend.ts` |
@@ -1786,6 +1787,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ErrorCode | BAD_REQUEST \| UNAUTHORIZED \| FORBIDDEN \| NOT_FOUND \| CONFLICT \| RATE_LIMITED \| UPSTREAM_ERROR \| INTERNAL_ERROR | `supabase/functions/_shared/http-envelope.ts` |
 | NOTIFICATION_CATEGORIES | "general", "sales", "goals", "gamification", "security", "system", "team", "ai", "approval", | `supabase/functions/_shared/notification-categories.ts` |
 | NOTIFICATION_PRIORITIES | "low", "medium", "high", "critical", | `supabase/functions/_shared/notification-categories.ts` |
+| SuppressReason | category \| quiet_hours | `supabase/functions/_shared/push-preferences.ts` |
 | WON_SALE_STATUSES | "completed", "won", "closed" | `supabase/functions/_shared/sale-statuses.ts` |
 | LOST_SALE_STATUSES | "lost", "cancelled" | `supabase/functions/_shared/sale-statuses.ts` |
 | OPEN_SALE_STATUSES | "lead", "prospecting", "qualified", "proposal", "negotiation", "pending", | `supabase/functions/_shared/sale-statuses.ts` |
@@ -3073,6 +3075,7 @@ _nenhum item encontrado_
 | `CHUNK_SIZE` | `500` | `src/hooks/useLeadScoring.ts` |
 | `MAX_ATTEMPTS` | `5` | `src/hooks/useLoginRateLimiter.ts` |
 | `CHUNK` | `1000` | `src/hooks/useMyBonusAwards.ts` |
+| `SCHEMA_VERSION` | `1` | `src/hooks/usePushPreferences.ts` |
 | `MAX_STORED_METRICS` | `100` | `src/hooks/useQueryPerformance.ts` |
 | `ALERT_COOLDOWN_MS` | `30000` | `src/hooks/useQueryPerformance.ts` |
 | `JITTER_FACTOR` | `0.3` | `src/hooks/useRetryMutation.ts` |
@@ -4191,7 +4194,7 @@ _nenhum item encontrado_
 | useAuth must be used within an AuthProvider | `src/contexts/AuthContext.tsx` |
 | useDashboardTheme must be used within a DashboardThemeProvider | `src/contexts/DashboardThemeContext.tsx` |
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
-| … +704 linhas — lista completa em `context.json` | |
+| … +709 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4297,7 +4300,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1872 testes em 253 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1879 testes em 254 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4371,6 +4374,7 @@ _nenhum item encontrado_
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |
 | `src/lib/winRate.test.ts` | 8 | winRate — fonte única da fórmula · calcula percentual entre deals decididos · retorna 0 quando não há deals decididos · retorna 100 quando só há vitórias … |
+| `src/hooks/usePushPreferences.test.ts` | 7 | sanitizePushPreferences · devolve os padrões quando nada foi gravado · preserva escolhas válidas e descarta lixo · isPushSuppressed … |
 | `src/hooks/automation/useAutomationWorkflows.test.tsx` | 7 | useUpdateWorkflow · atualiza o mesmo registro com os campos do construtor · mostra toast de erro quando o banco recusa · trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso … |
 | `src/hooks/cadences/useCadenceReport.test.tsx` | 7 | aggregateCadenceReport · sem linhas devolve zeros (sem número inventado) · pondera resposta/conversão pelo número de inscritos de cada cadência · useCadenceChannelExecution … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
@@ -4896,6 +4900,8 @@ _nenhum item encontrado_
 | Falha de fetch não pode parecer "MFA inativo" — expõe o erro. | `src/hooks/useMFA.ts` |
 | QueryClient global nao pode servir dados da sessao anterior. | `src/hooks/usePipelineVelocity.ts` |
 | Request notification permission | `src/hooks/usePushNotifications.ts` |
+| payload de `send-push-notification` (`data.category`) e por isso não pode | `src/hooks/usePushPreferences.ts` |
+| * Verdadeiro quando o envio deve ser suprimido pelas preferências do usuário. | `src/hooks/usePushPreferences.ts` |
 | sem limite, o teto de 1000 linhas do PostgREST truncava silencioso. | `src/hooks/useQuotes.ts` |
 | A função no banco cuida de: lock, idempotência, autorização, validação | `src/hooks/useQuotes.ts` |
 | Hook para gerenciar configurações de rate limit | `src/hooks/useRateLimit.ts` |
@@ -5014,6 +5020,8 @@ _nenhum item encontrado_
 | inteiro deve falhar (ex.: cron-failure-alerter — nada é melhor que dado ruim). | `supabase/functions/_shared/notification-categories.ts` |
 | * Split-based: separa válidas de inválidas. Use quando o job deve continuar | `supabase/functions/_shared/notification-categories.ts` |
 | Todo edge function que insere em `notifications` DEVE passar por | `supabase/functions/_shared/notification-inserters_test.ts` |
+| * Motivo pelo qual o push deve ser suprimido, ou `null` se pode ser enviado. | `supabase/functions/_shared/push-preferences.ts` |
+| Data local explicita: a regra usa hora local do servidor. | `supabase/functions/_shared/push-preferences_test.ts` |
 | _shared/rate-limit.ts | `supabase/functions/_shared/rate-limit.ts` |
 | limiter — the effective global limit is (instances × limit). For basic abuse | `supabase/functions/_shared/rate-limit.ts` |
 | como chave de bucket de rate limit. A verificação de identidade continua | `supabase/functions/_shared/rate-limit.ts` |
@@ -5123,8 +5131,4 @@ _nenhum item encontrado_
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/extract-deal-stakeholders/index.ts` |
 | Auth: requer JWT do usuário. Rate-limit: 20 req/min por usuário. | `supabase/functions/forecast-narrative/index.ts` |
 | Retry apenas em 429 / 5xx. 402/4xx não-retryable — throw como Response e isRetryable filtra. | `supabase/functions/forecast-narrative/index.ts` |
-| Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/generate-coaching-actions/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/generate-executive-briefing/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos | `supabase/functions/generate-loss-coaching/index.ts` |
-| Segunda camada: limite por usuário (IP é spoofável e compartilhado em NAT). | `supabase/functions/generate-revenue-forecast/index.ts` |
-| … +145 linhas — lista completa em `context.json` | |
+| … +149 linhas — lista completa em `context.json` | |

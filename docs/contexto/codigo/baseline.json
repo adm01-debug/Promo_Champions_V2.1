@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4dbfb77c6862050db5bd49ec3bb6417200b396b9",
+  "commit": "dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac",
   "branch": "main",
-  "data_commit": "2026-11-28T14:24:37-03:00",
+  "data_commit": "2026-11-28T15:06:12-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "dc8ce3c",
+    "data": "2026-11-28",
+    "assunto": "feat: preferencias de push (categorias e horario de silencio) (#770)"
+   },
    {
     "sha": "4dbfb77",
     "data": "2026-11-28",
@@ -126,14 +131,9 @@
     "sha": "4f3aabb",
     "data": "2026-11-24",
     "assunto": "chore: sonda mede retries sem desfecho e timeout vigente em produção (#741)"
-   },
-   {
-    "sha": "d7d7f73",
-    "data": "2026-11-24",
-    "assunto": "feat: enfileira no Supply os pedidos pendentes que ficaram fora do gatilho (#743)"
    }
   ],
-  "arquivos_mudados_7d": 328,
+  "arquivos_mudados_7d": 334,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/race",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "supabase/functions/_shared",
-    "mudancas": 77
+    "mudancas": 79
    },
    {
     "pasta": "src/components/admin",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3708,
-  "arquivos_codigo": 2636,
-  "linhas_codigo": 452190,
+  "arquivos_total": 3713,
+  "arquivos_codigo": 2641,
+  "linhas_codigo": 452769,
   "rotas": 173,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 148,
   "modulos": 176,
-  "componentes": 1292,
-  "hooks": 485,
+  "componentes": 1293,
+  "hooks": 486,
   "edge_functions": 175,
   "tabelas": 422,
   "migrations": 719,
   "cron_jobs": 41,
-  "testes": 291,
+  "testes": 292,
   "workflows": 32,
   "scripts": 78,
   "docs_md": 225
@@ -591,8 +591,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1243,
-   "linhas": 195520
+   "arquivos": 1244,
+   "linhas": 195720
   },
   "src/config": {
    "arquivos": 4,
@@ -607,8 +607,8 @@
    "linhas": 747
   },
   "src/hooks": {
-   "arquivos": 559,
-   "linhas": 66268
+   "arquivos": 561,
+   "linhas": 66453
   },
   "src/integrations": {
    "arquivos": 5,
@@ -624,7 +624,7 @@
   },
   "src/pages": {
    "arquivos": 189,
-   "linhas": 46257
+   "linhas": 46259
   },
   "src/routes": {
    "arquivos": 5,
@@ -647,8 +647,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 337,
-   "linhas": 68623
+   "arquivos": 339,
+   "linhas": 68815
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -778,12 +778,12 @@
   }
  ],
  "qualidade": {
-  "any": 6,
+  "any": 7,
   "console_log": 167,
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 7,
-  "arquivos_acima_500_linhas": 72
+  "arquivos_acima_500_linhas": 73
  },
  "todos": [
   {

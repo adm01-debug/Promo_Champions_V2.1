@@ -7712,6 +7712,7 @@
     "useNotifications",
     "usePageTransitionConfig",
     "usePushNotifications",
+    "usePushPreferences",
     "useQuery",
     "useQueryClient",
     "useReducedMotion",
@@ -7739,6 +7740,7 @@
     "useNotificationPreferences",
     "useNotifications",
     "usePushNotifications",
+    "usePushPreferences",
     "useReducedMotion",
     "useSaleNotificationAudits",
     "useSalespeople",
@@ -7758,6 +7760,7 @@
     "sales_goals",
     "salespeople",
     "sdr_alert_history",
+    "user_app_settings",
     "user_roles"
    ],
    "rpcs": [
@@ -7779,7 +7782,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 49
+   "arquivos_puxados": 52
   },
   {
    "protegida": false,

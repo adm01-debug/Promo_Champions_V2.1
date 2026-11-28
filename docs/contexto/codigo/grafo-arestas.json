@@ -6981,6 +6981,15 @@
    "src/components/ui/switch.tsx",
    "src/hooks/usePortfolioSettings.ts"
   ],
+  "src/components/settings/PushPreferencesCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/hooks/usePushPreferences.ts"
+  ],
   "src/components/settings/RoleManagement.tsx": [
    "src/components/ui/avatar.tsx",
    "src/components/ui/badge.tsx",
@@ -9392,6 +9401,9 @@
    "src/integrations/supabase/client.ts",
    "src/lib/log/logger.ts"
   ],
+  "src/hooks/usePushPreferences.ts": [
+   "src/hooks/useSyncedSetting.ts"
+  ],
   "src/hooks/useQueryPerformance.ts": [
    "src/lib/log/logger.ts"
   ],
@@ -11094,6 +11106,7 @@
    "src/components/sdr/SDRAlertHistory.tsx",
    "src/components/sdr/TestSDRAlertButton.tsx",
    "src/components/settings/BrowserPushSettings.tsx",
+   "src/components/settings/PushPreferencesCard.tsx",
    "src/components/settings/SoundSettings.tsx",
    "src/components/skeletons/PageLoadingSkeleton.tsx",
    "src/components/skeletons/SkeletonTransition.tsx",
@@ -12343,6 +12356,9 @@
   "supabase/functions/_shared/oauth-state_test.ts": [
    "supabase/functions/_shared/oauth-state.ts"
   ],
+  "supabase/functions/_shared/push-preferences_test.ts": [
+   "supabase/functions/_shared/push-preferences.ts"
+  ],
   "supabase/functions/_shared/rate-limit.ts": [
    "supabase/functions/_shared/cors.ts"
   ],
@@ -13551,6 +13567,7 @@
    "supabase/functions/_shared/chunked-in.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/fetch-with-timeout.ts",
+   "supabase/functions/_shared/push-preferences.ts",
    "supabase/functions/_shared/request-id.ts"
   ],
   "supabase/functions/send-quote-to-client/index.ts": [

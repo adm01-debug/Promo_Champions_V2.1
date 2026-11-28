@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4dbfb77c6862050db5bd49ec3bb6417200b396b9` (2026-11-28T14:24:37-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `dc8ce3cbc3b966578be08ea8e09e54d42b6f47ac` (2026-11-28T15:06:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2555), SQL (731), Markdown (225), JavaScript (78), YAML (34), JSON (33), Shell (7), Python (5)
+- linguagens: TypeScript (2560), SQL (731), Markdown (225), JavaScript (78), YAML (34), JSON (33), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3708 |
-| arquivos_codigo | 2636 |
-| linhas_codigo | 452190 |
+| arquivos_total | 3713 |
+| arquivos_codigo | 2641 |
+| linhas_codigo | 452769 |
 | rotas | 173 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 148 |
 | modulos | 176 |
-| componentes | 1292 |
-| hooks | 485 |
+| componentes | 1293 |
+| hooks | 486 |
 | edge_functions | 175 |
 | tabelas | 422 |
 | migrations | 719 |
 | cron_jobs | 41 |
-| testes | 291 |
+| testes | 292 |
 | workflows | 32 |
 | scripts | 78 |
 | docs_md | 225 |
 
 ## Onde ficam as coisas
 - telas: src/pages (168)
-- componentes: src/components (1110), src/pages (175), src/contexts (5)
-- hooks: src/hooks (473), src/contexts (6), src/components (4)
+- componentes: src/components (1111), src/pages (175), src/contexts (5)
+- hooks: src/hooks (474), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (54), src/services (6), src/integrations (4)
-- testes: co-localizado (*.test) (203), tests/ (59), outro (19)
+- testes: co-localizado (*.test) (204), tests/ (59), outro (19)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -101,7 +101,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 376 | 33 | 167 |
+| components/navigation | 0 | 0 | 9 | 377 | 33 | 167 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
 | components/pipeline | 0 | 0 | 18 | 63 | 3 | 30 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
@@ -118,7 +118,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/sdr | 0 | 0 | 26 | 23 | 2 | 18 |
 | components/security | 0 | 0 | 19 | 15 | 3 | 15 |
 | components/sequences | 0 | 0 | 20 | 33 | 6 | 15 |
-| components/settings | 0 | 0 | 25 | 28 | 4 | 24 |
+| components/settings | 0 | 0 | 26 | 29 | 4 | 25 |
 | components/shared | 0 | 0 | 8 | 4 | 0 | 2 |
 | components/skeletons | 0 | 0 | 5 | 1 | 0 | 0 |
 | components/tasks | 0 | 0 | 7 | 18 | 1 | 10 |
@@ -127,7 +127,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
 | components/win-loss | 0 | 0 | 62 | 45 | 5 | 22 |
 | contexts | 0 | 0 | 6 | 5 | 0 | 1 |
-| hooks | 0 | 0 | 148 | 203 | 23 | 113 |
+| hooks | 0 | 0 | 149 | 204 | 23 | 113 |
 | hooks/admin | 0 | 0 | 11 | 35 | 2 | 24 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
@@ -148,7 +148,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 29 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 124 | 156 | 161 | 820 | 115 | 298 |
+| pages | 124 | 156 | 161 | 821 | 115 | 298 |
 | pages/admin | 2 | 14 | 14 | 83 | 10 | 49 |
 | services | 0 | 0 | 6 | 0 | 0 | 13 |
 
@@ -489,7 +489,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `send-churn-alert-email` — tabelas: churn_alert_settings; chamada por 1 arquivo(s) do front
 - `send-multichannel-message` — tabelas: channel_credentials; chamada por 2 arquivo(s) do front
 - `send-password-reset` — tabelas: password_reset_requests; chamada por 1 arquivo(s) do front
-- `send-push-notification` — tabelas: push_subscriptions; chamada por 0 arquivo(s) do front
+- `send-push-notification` — tabelas: push_subscriptions, user_app_settings; chamada por 0 arquivo(s) do front
 - `send-quote-to-client` — tabelas: client_interactions, clients, quotes, salespeople; chamada por 1 arquivo(s) do front
 - `send-time-optimizer` — tabelas: email_tracking_events, sales, send_time_profiles; chamada por 1 arquivo(s) do front
 - `send-transactional-email` — tabelas: email_logs, salespeople; chamada por 2 arquivo(s) do front
@@ -594,8 +594,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:180
 
 ## Grafo de código (graphify)
-- 24636 nós · 75366 arestas · 1237 comunidades · grafo do commit `4dbfb77c`
-- comunidades maiores: Card (597), schema.sql (580), client.ts (498), Badge (462), Índice (395), button.tsx (363), Button (359), framer-motion (322), date-fns (288), react (269), getCorsHeaders (244), public (237)
+- 24663 nós · 75445 arestas · 1191 comunidades · grafo do commit `dc8ce3cb`
+- comunidades maiores: Card (612), schema.sql (547), react (475), Badge (384), PageTransition (361), client.ts (348), vitest (338), Input (309), SelectContent (297), date-fns (264), lucide-react (250), public (249)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -779,6 +779,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.10.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.10.0...promo-champions-v2-v1.10.1) (2026-11-26)
 
 ## Últimos commits
+- 2026-11-28 `dc8ce3c` feat: preferencias de push (categorias e horario de silencio) (#770)
 - 2026-11-28 `4dbfb77` fix: relatorios de funil e cohort em rotas proprias (#769)
 - 2026-11-28 `4f2fc32` fix: da rota e link ao hub de insights conversacionais (#768)
 - 2026-11-26 `42e1045` fix: tira a leitura anonima das metricas de conversao e do SLO (#763)
@@ -793,7 +794,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `bae0352` fix: painel de integracao le os logs reais de email (#758)
 - 2026-11-26 `5f1c0cd` fix: tira a escrita de log e de tendencia do navegador (etapas 052 e 053) (#757)
 - 2026-11-26 `d2fad00` fix: conserta contratos do front que consultavam relacoes inexistentes (#755)
-- 2026-11-26 `c69ce04` fix: religa no menu 9 paginas de gestao e admin sem caminho na UI (#754)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

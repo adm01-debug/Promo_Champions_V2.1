@@ -45338,7 +45338,9 @@
    ],
    "criada_em": "20260421193256_2f28d138-f04d-4be4-97d0-c8a3391467f4.sql",
    "usada_no_front": 2,
-   "usada_em_edges": [],
+   "usada_em_edges": [
+    "send-push-notification"
+   ],
    "triggers": [
     "user_app_settings_touch_updated_at"
    ],

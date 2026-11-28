@@ -6,12 +6,12 @@
    "src/pages (168)"
   ],
   "componentes": [
-   "src/components (1110)",
+   "src/components (1111)",
    "src/pages (175)",
    "src/contexts (5)"
   ],
   "hooks": [
-   "src/hooks (473)",
+   "src/hooks (474)",
    "src/contexts (6)",
    "src/components (4)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (203)",
+   "co-localizado (*.test) (204)",
    "tests/ (59)",
    "outro (19)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1292)"
+  ".tsx (1293)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: preferencias de push (categorias e horario de silencio) (#770)",
    "fix: relatorios de funil e cohort em rotas proprias (#769)",
    "fix: da rota e link ao hub de insights conversacionais (#768)",
    "fix: tira a leitura anonima das metricas de conversao e do SLO (#763)",
-   "feat: tela admin da fila de análise de crédito da 1ª venda (#766)",
-   "infra: workflow que provisiona os secrets da integração de crédito (Champions + Finance) (#764)"
+   "feat: tela admin da fila de análise de crédito da 1ª venda (#766)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

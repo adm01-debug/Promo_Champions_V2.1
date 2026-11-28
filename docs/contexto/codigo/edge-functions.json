@@ -70,6 +70,8 @@
   "supabase/functions/_shared/operational-cron-auth_contract_test.ts",
   "supabase/functions/_shared/pii.ts",
   "supabase/functions/_shared/privileged-churn-auth_contract_test.ts",
+  "supabase/functions/_shared/push-preferences.ts",
+  "supabase/functions/_shared/push-preferences_test.ts",
   "supabase/functions/_shared/race-leaderboard-status_contract_test.ts",
   "supabase/functions/_shared/rate-limit.ts",
   "supabase/functions/_shared/request-body.ts",
@@ -3623,7 +3625,7 @@
    "nome": "new-device-alert",
    "entrada": "supabase/functions/new-device-alert/index.ts",
    "arquivos": 2,
-   "linhas": 357,
+   "linhas": 358,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5716,13 +5718,14 @@
    "nome": "send-push-notification",
    "entrada": "supabase/functions/send-push-notification/index.ts",
    "arquivos": 1,
-   "linhas": 452,
+   "linhas": 505,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
    ],
    "tabelas": [
-    "push_subscriptions"
+    "push_subscriptions",
+    "user_app_settings"
    ],
    "rpcs": [],
    "env": [
@@ -5740,6 +5743,7 @@
     "chunked-in.ts",
     "cors.ts",
     "fetch-with-timeout.ts",
+    "push-preferences.ts",
     "request-id.ts"
    ],
    "chamada_pelo_front": [],
