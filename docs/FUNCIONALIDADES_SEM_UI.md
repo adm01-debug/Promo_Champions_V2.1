@@ -31,8 +31,8 @@
 
 | Item                           | O que falta                                                                                   | Onde                             |
 | ------------------------------ | --------------------------------------------------------------------------------------------- | -------------------------------- |
-| Centro de preferências de push | `push-subscribe` e `send-push-notification` rodam em produção sem tela de categorias/horários | `src/pages/Settings*`            |
-| Onboarding de passkey no login | `useWebAuthn` só é consumido em `Settings`; falta o convite de criação no fluxo de login      | `src/hooks/auth/useAuthForm.ts`  |
+| Centro de preferências de push | **Resolvido** (#770): `PushPreferencesCard` (categorias + horário de silêncio) e filtro no envio via `_shared/push-preferences.ts` | `src/hooks/usePushPreferences.ts` |
+| Onboarding de passkey no login | **Resolvido** (#771): `PasskeyOnboardingPrompt` na home, só para quem ainda não tem credencial | `src/components/security/PasskeyOnboardingPrompt.tsx` |
 | Playground da `ranking-api`    | API pública documentada sem UI de teste para integradores                                     | `supabase/functions/ranking-api` |
 
 > Edições/registros anteriores do documento (tabelas por hook, tiers e "Top 10 prioridades") foram
